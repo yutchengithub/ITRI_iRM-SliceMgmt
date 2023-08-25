@@ -57,7 +57,7 @@ export class CommonService {
       this.http.get('./assets/config/connection.json').subscribe(
         (res: any) => {
           this.isLocal = true;
-          this.restPath = 'http://192.168.137.136:8080/o2_smo/webresources/ocloud';
+          this.restPath = 'http://140.96.102.123:8080/o2_smo/webresources/ocloud';
           // this.isLocal = res['local'];
           //this.restPath = res['url'] + ':' + res['port'] + res['root'];
           resolve(true);
@@ -1367,43 +1367,143 @@ export class CommonService {
   softwareList: SoftwareList[] = [
     {
       id: "s0011001",
-      fileName: "Os_image_2.tar",
-      version: "1.1.0",
+      manufacturer: "ITRI",
+      model: "Os_image_2.tar",
       type: 0,
-      description: "CU",
-      md5: "dfa7e36b8932de22aeec348e9e0970bb"
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
     },
     {
       id: "s0011002",
-      fileName: "Os_image_3.tar",
-      version: "1.1.1",
+      manufacturer: "Compal",
+      model: "Os_image_2.tar",
       type: 0,
-      description: "CU",
-      md5: "0d4376a409626e63204052bb1cd0961d"
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
     },
     {
       id: "s0011003",
-      fileName: "Os_image_4.tar",
-      version: "1.1.3",
-      type: 1,
-      description: "O-Cloud",
-      md5: "ca4e024465c1d5d8cbf64db196f3f043"
+      manufacturer: "ITRI",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
     },
     {
       id: "s0011004",
-      fileName: "NF_image_5.tar",
-      version: "1.2.0",
-      type: 1,
-      description: "O-Cloud",
-      md5: "fe5e567884c3d5c7hfdf64dr597gd53f5"
+      manufacturer: "Compal",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
     },
     {
       id: "s0011005",
-      fileName: "NF_image_7.tar",
-      version: "1.2.0",
-      type: 2,
-      description: "O-Cloud",
-      md5: "dfa7e36b8932de22aeec348e9e0970bb"
+      manufacturer: "ITRI",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
+    },
+    {
+      id: "s0011002",
+      manufacturer: "Compal",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
+    },
+    {
+      id: "s0011003",
+      manufacturer: "ITRI",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
+    },
+    {
+      id: "s0011004",
+      manufacturer: "Compal",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
+    },
+    {
+      id: "s0011002",
+      manufacturer: "Compal",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
+    },
+    {
+      id: "s0011003",
+      manufacturer: "ITRI",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
+    },
+    {
+      id: "s0011004",
+      manufacturer: "Compal",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
+    },
+    {
+      id: "s0011002",
+      manufacturer: "Compal",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
+    },
+    {
+      id: "s0011003",
+      manufacturer: "ITRI",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
+    },
+    {
+      id: "s0011004",
+      manufacturer: "Compal",
+      model: "Os_image_2.tar",
+      type: 0,
+      version: "1.0.0",
+      notes: "Os_image_2.tar",
+      uploadTime: "2023-07-01 20:01:30",
+      fileName: "fw-v1-0-0.zip"
     }
   ];
 
