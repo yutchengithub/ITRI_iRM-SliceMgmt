@@ -11,12 +11,13 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 export interface SoftwareList {
   id: string;
-  fileName: string;
-  version: string;
+  manufacturer: string;
+  model: string;
   type: number;
-  description: string;
-  md5: string;
-  sessionid?: string;
+  version: string;
+  notes: string;
+  uploadTime: string;
+  fileName: string;
 }
 
 @Component({
@@ -163,11 +164,13 @@ export class SoftwareManagementComponent implements OnInit {
       this.commonService.softwareList.push(
         {
           id: "s0011009",
-          fileName: "Os_image_2.tar",
-          version: "1.1.0",
+          manufacturer: "ITRI",
+          model: "Os_image_2.tar",
           type: 0,
-          description: "Test",
-          md5: "fe5e567884c3d5c7hfdf64dr597gd53f5"
+          version: "1.0.0",
+          notes: "Os_image_2.tar",
+          uploadTime: "2023-07-01 20: 01: 30",
+          fileName: "fw-v1-0-0.zip"
         }
       );
       this.createModalRef.close();

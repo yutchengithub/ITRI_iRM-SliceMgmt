@@ -43,14 +43,16 @@
     <tbody>
       <tr
         *ngFor="let opt of softwareList | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-        <td>ITRI</td>
-        <td>A001</td>
-        <td>CU + DU + RU</td>
-        <td>1.0.0</td>
-        <td></td>
-        <td>2023-8-16 10:45:20</td>
-        <td>Upload File</td>
-        <td class="icon"><span class="material-symbols-outlined"  tooltip="{{languageService.i18n['index.view']}}">description</span></td>
+        <td>{{opt.manufacturer}}</td>
+        <td>{{opt.model}}</td>
+        <td>{{typeText(opt.type)}}</td>
+        <td>{{opt.version}}</td>
+        <td>{{opt.notes}}</td>
+        <td>{{opt.uploadTime}}</td>
+        <td>{{opt.fileName}}</td>
+        <td class="icon">
+          <span class="material-symbols-outlined"  tooltip="{{languageService.i18n['index.view']}}">description</span>
+        </td>
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)">delete_forever</mat-icon>
         </td>
