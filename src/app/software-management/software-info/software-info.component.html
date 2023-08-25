@@ -1,0 +1,71 @@
+<div class="ocloudInfo">
+  <h5>
+    <button (click)="back()">
+      <span class="material-icons">arrow_back</span>Back
+    </button>
+    Software {{languageService.i18n['information']}} – {{softwareInfo.firm}}/{{softwareInfo.modelname}} {{commonService.NFdetails(softwareInfo.uploadtype)}} {{softwareInfo.uploadversion}}
+  </h5>
+
+  <div class="BOX col-md-3 basicInfo h30">
+    <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
+    <ul>
+      <li><label>{{languageService.i18n['manufacturer']}}</label><span>{{softwareInfo.firm}}</span></li>
+      <li><label>{{languageService.i18n['model']}}</label><span>{{softwareInfo.modelname}}</span></li>
+      <li><label>{{languageService.i18n['type']}}</label><span>{{commonService.NFdetails(softwareInfo.uploadtype)}}</span></li>
+      <li><label>{{languageService.i18n['version']}}</label><span>{{softwareInfo.uploadversion}}</span></li>
+      <li><label>{{languageService.i18n['notes']}}</label><span>{{softwareInfo.description}}</span></li>
+      <li><label>File</label><span>{{softwareInfo.uploadinfo}}</span></li>
+      <li><label>File size</label><span>{{softwareInfo.size}}</span></li>
+      <li><label>CheckSum</label><span>{{softwareInfo.checksum}}</span></li>
+      <li><label>FTP Account</label><span>{{softwareInfo.ftpid}}</span></li>
+      <li><label>FTP Password</label><span>{{softwareInfo.ftpkey}}</span></li>
+    </ul>
+
+    <label class="boxTitle">Modify Software Content</label>
+    <ul>
+      <li>
+        <span>
+          <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">Update Settings</button>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+<ng-template #updateModal>
+  <h5>{{languageService.i18n['software_update']}}</h5>
+  <form [formGroup]="updateForm">
+    <ul>
+      <li>
+        <label>Current Version</label>
+        <span>{{softwareInfo.uploadversion}}</span>
+      </li>
+      <li>
+        <label>Update Software</label>
+        <span class="SoftwareUpdate">
+          <mat-button-toggle-group formControlName="type" (change)="changeType($event)">
+            <mat-button-toggle value="imageUrl">Image URL</mat-button-toggle>
+            <mat-button-toggle value="existedFile">Existed File</mat-button-toggle>
+          </mat-button-toggle-group>
+
+          <div *ngIf="updateForm.controls['type'].value === 'imageUrl'">
+            <input type="text" formControlName="imageUrl" placeholder="Image URL" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
+            <mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+          </div>
+          <div *ngIf="updateForm.controls['type'].value === 'existedFile'">
+              <span>
+                <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".txt" #fileInput>
+              </span>
+            <mat-error *ngIf="formValidated&&updateForm.controls['fileName'].invalid">Required</mat-error>
+            <div class="UV" *ngIf="updateForm.controls['type'].value === 'existedFile'">
+              Update Version : {{softwareVersion()}}
+            </div>
+          </div>
+        </span>
+      </li>
+    </ul>
+    <div class="buttons">
+      <button type="button" mat-dialog-close>Cancel</button>
+      <button type="button">OK</button>
+    </div>
+  </form>
+</ng-template>

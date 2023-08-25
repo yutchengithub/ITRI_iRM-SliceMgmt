@@ -1,7 +1,7 @@
 export const TwLanguage = {
   'logon':'登入',
   'logon.welcome':'歡迎',
-  'logon.field_mgr_system':'RAN EMS & Non-RT RIC 入口網',
+  'logon.field_mgr_system':'Athena Orchestrator',
   'logon.user_logon':'用戶登入',
   'logon.password_error':'用戶名或密碼輸入錯誤',
   'logon.required_error':'請輸入帳號或密碼',
@@ -10,7 +10,7 @@ export const TwLanguage = {
   'logon.404':'此賬號不存在',
   'index.menu_dashboard':'主畫面',
   'index.menu_fieldMgr':'Field 管理',
-  'index.menu_iRmSys':'RAN EMS & Non-RT RIC 入口網',
+  'index.menu_iRmSys':'Athena Orchestrator',
   'index.menu_gNB':'gNB 管理',
   'index.menu_componentMgr':'Component Management',
   'index.menu_faultMgr':'故障管理',

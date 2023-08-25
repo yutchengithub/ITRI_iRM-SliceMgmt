@@ -13,6 +13,7 @@ import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud
 import { NfPerformanceInfoComponent } from './performance-management/nf-performance-info/nf-performance-info.component';
 import { SoftwareManagementComponent } from './software-management/software-management.component';      // 軟體管理
 import { AuthGuard } from './shared/guard/auth.guard';
+import { SoftwareInfoComponent } from './software-management/software-info/software-info.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -34,11 +35,17 @@ const routes: Routes = [
           { path: 'info/:nfId/:dmsId', component: NfInfoComponent },
         ]
       },
+      {
+        path: 'software-mgr',
+        children: [
+          { path: '', component: SoftwareManagementComponent },
+          { path: 'info/:cloudId/:cloudName', component: SoftwareInfoComponent }
+        ]
+      },
       { path: 'fault-mgr/:cloudName/:nfName', component: FaultManagementComponent },
       { path: 'performance-mgr', component: PerformanceManagementComponent },
       { path: 'o-cloud-performance-info/:cloudId/:name', component: OCloudPerformanceInfoComponent },
-      { path: 'nf-performance-info/:nfId/:name', component: NfPerformanceInfoComponent },
-      { path: 'software-mgr', component: SoftwareManagementComponent }
+      { path: 'nf-performance-info/:nfId/:name', component: NfPerformanceInfoComponent }
     ]
   },
 ];

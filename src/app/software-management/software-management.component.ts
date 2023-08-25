@@ -8,16 +8,33 @@ import { LanguageService } from '../shared/service/language.service';
 import { Item } from '../shared/models/item';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import * as _ from 'lodash';
 
 export interface SoftwareList {
   id: string;
-  manufacturer: string;
+  firm: string;
   model: string;
   type: number;
   version: string;
   notes: string;
   uploadTime: string;
   fileName: string;
+}
+
+export interface SoftwareLists {
+  uploadinfos: uploadinfos[];
+}
+
+export interface uploadinfos {
+  id: string;
+  firm: string;
+  modelname: string;
+  uploadtime: string;
+  uploadtype: number;
+  uploadversion: string;
+  description: string;
+  uploadinfo: string;
+  uploadurl: string;
 }
 
 @Component({
@@ -30,6 +47,10 @@ export class SoftwareManagementComponent implements OnInit {
   softwareList: SoftwareList[] = [];
   @ViewChild('createModal') createModal: any;
   @ViewChild('deleteModal') deleteModal: any;
+  @ViewChild('advancedModal') advancedModal: any;
+  advancedModalRef!: MatDialogRef<any>;
+  advancedForm!: FormGroup;
+  isSettingAdvanced = false;
   createModalRef!: MatDialogRef<any>;
   deleteModalRef!: MatDialogRef<any>;
   createForm!: FormGroup;
@@ -48,10 +69,10 @@ export class SoftwareManagementComponent implements OnInit {
   uploadType = 'upload';
 
   searchTypeList: Item[] = [
-    { displayName: 'O-Cloud', value: '0' },
-    { displayName: `NF(${this.nfTypeList[0]})`, value: '1' },
-    { displayName: `NF(${this.nfTypeList[1]})`, value: '2' },
-    { displayName: `NF(${this.nfTypeList[2]})`, value: '3' }
+    { displayName: 'CU', value: '0' },
+    { displayName: `DU`, value: '1' },
+    { displayName: `CU+DU`, value: '2' },
+    { displayName: `CU+DU+RU`, value: '3' }
   ];
 
   constructor(
@@ -164,7 +185,7 @@ export class SoftwareManagementComponent implements OnInit {
       this.commonService.softwareList.push(
         {
           id: "s0011009",
-          manufacturer: "ITRI",
+          firm: "ITRI",
           model: "Os_image_2.tar",
           type: 0,
           version: "1.0.0",
@@ -236,6 +257,30 @@ export class SoftwareManagementComponent implements OnInit {
     }
   }
 
+  openAdvancedModal() {
+    const orgAdvancedForm = _.cloneDeep(this.advancedForm);
+    // this.advancedForm.controls['cloudName'].setValue(this.searchForm.controls['cloudName'].value);
+    // this.advancedForm.controls['nfName'].setValue(this.searchForm.controls['nfName'].value);
+    // this.advancedForm.controls['from'].setValue(this.searchForm.controls['from'].value);
+    // this.advancedForm.controls['to'].setValue(this.searchForm.controls['to'].value);
+    // this.advancedForm.controls['severity'].setValue(this.searchForm.controls['severity'].value);
+    // this.advancedModalRef = this.dialog.open(this.advancedModal, { id: 'faultAdvancedModal' });
+    // this.advancedModalRef.afterClosed().subscribe((result) => {
+    //   if (result === 'OK') {
+    //     this.isSettingAdvanced = true;
+    //     this.searchForm.controls['cloudName'].setValue(this.advancedForm.controls['cloudName'].value);
+    //     this.searchForm.controls['nfName'].setValue(this.advancedForm.controls['nfName'].value);
+    //     this.searchForm.controls['from'].setValue(this.advancedForm.controls['from'].value);
+    //     this.searchForm.controls['to'].setValue(this.advancedForm.controls['to'].value);
+    //     this.searchForm.controls['severity'].setValue(this.advancedForm.controls['severity'].value);
+    //     this.p = 1;
+    //     //this.getFMAdvanceSearch();
+    //   } else {
+    //     this.advancedForm = orgAdvancedForm;
+    //   }
+    // });
+  }
+
   typeText(type: number): string {
     return this.typeMap.get(type) as string;
   }
@@ -261,5 +306,9 @@ export class SoftwareManagementComponent implements OnInit {
     }
     body['sessionid'] = this.sessionId;
     console.log(body);
+  }
+
+  viewPage(softwareList: SoftwareList) {
+    this.router.navigate(['/main/software-mgr/info', softwareList.id, softwareList.fileName]);
   }
 }

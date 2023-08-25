@@ -1,7 +1,7 @@
 export const Enlanguage = {
   'logon':'Login',
   'logon.welcome':'Welcome to the',
-  'logon.field_mgr_system':'RAN EMS & Non-RT RIC Portal',
+  'logon.field_mgr_system':'Athena Orchestrator',
   'logon.user_logon':'USER LOGIN',
   'logon.password_error':'Username or password Eentered Incorrectly',
   'logon.required_error':'Please Enter Account or Password',
@@ -10,7 +10,7 @@ export const Enlanguage = {
   'logon.404':'This account does not exist',
   'index.menu_dashboard':'Dashboard',
   'index.menu_fieldMgr':'Field Management',
-  'index.menu_iRmSys':'RAN EMS & Non-RT RIC Portal',
+  'index.menu_iRmSys':'Athena Orchestrator',
   'index.menu_gNB':'gNB Management',
   'index.menu_componentMgr':'Component Management',
   'index.menu_faultMgr':'Fault Management',

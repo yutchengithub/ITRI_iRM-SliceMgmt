@@ -12,6 +12,7 @@ import { NfManagementComponent } from './nf-management/nf-management.component';
 import { FaultManagementComponent } from './fault-management/fault-management.component';
 import { PerformanceManagementComponent } from './performance-management/performance-management.component';
 import { SoftwareManagementComponent } from './software-management/software-management.component';
+import { SoftwareInfoComponent } from './software-management/software-info/software-info.component';
 import { MainComponent } from './main/main.component';
 import { DxCircularGaugeModule } from 'devextreme-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -54,6 +55,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     FaultManagementComponent,
     PerformanceManagementComponent,
     SoftwareManagementComponent,
+    SoftwareInfoComponent,
     MainComponent,
     OCloudInfoComponent,
     DatePickerFormatDirective,

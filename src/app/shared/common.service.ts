@@ -8,6 +8,7 @@ import { FaultMessage, FaultMessages, FmStatus, FmStatusRecord } from '../fault-
 import * as _ from 'lodash';
 import { PerformanceList } from '../performance-management/o-cloud-performance/o-cloud-performance.component';
 import { SoftwareList } from '../software-management/software-management.component';
+import { SoftwareInfo } from '../software-management/software-info/software-info.component';
 import { MainComponent } from '../main/main.component';
 import { Nf, OcloudDmsList } from '../nf-management/nf-management.component';
 import { OcloudCpuLoading, OcloudCpuUsage, OcloudDiskRate, OcloudDiskUsage, OcloudInterfaceUsage, OcloudMemoryUsage, OcloudNetworkThroughput, OcloudPower, OverviewKpi } from '../performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
@@ -44,11 +45,24 @@ export class CommonService {
     { displayName: 'Fail Deploy', value: '2' },
     { displayName: 'Stopped', value: '3' }
   ];
+
+  TypeList: Item[] = [
+    { displayName: 'All', value: 'All' },
+    { displayName: 'CU', value: '0' },
+    { displayName: 'DU', value: '1' },
+    { displayName: 'CU+DU', value: '2' },
+    { displayName: 'CU+DU+RU', value: '3' }
+  ];
   statusMapDisplayName: Map<string, string> = new Map();
+  typeMapDisplayName: Map<string, string> = new Map();
 
   constructor(private http: HttpClient) {
     this.statusList.forEach((row) => {
       this.statusMapDisplayName.set(row.value, row.displayName);
+    });
+
+    this.TypeList.forEach((row) => {
+      this.typeMapDisplayName.set(row.value, row.displayName);
     });
   }
 
@@ -155,6 +169,10 @@ export class CommonService {
 
   details(status: number): string {
     return this.statusMapDisplayName.get(status.toString()) as string;
+  }
+
+  NFdetails(status: number): string {
+    return this.typeMapDisplayName.get(status.toString()) as string;
   }
 
   /* 第一個字母大寫，其餘小寫 */
@@ -1367,7 +1385,7 @@ export class CommonService {
   softwareList: SoftwareList[] = [
     {
       id: "s0011001",
-      manufacturer: "ITRI",
+      firm: "ITRI",
       model: "Os_image_2.tar",
       type: 0,
       version: "1.0.0",
@@ -1377,9 +1395,9 @@ export class CommonService {
     },
     {
       id: "s0011002",
-      manufacturer: "Compal",
+      firm: "Compal",
       model: "Os_image_2.tar",
-      type: 0,
+      type: 1,
       version: "1.0.0",
       notes: "Os_image_2.tar",
       uploadTime: "2023-07-01 20:01:30",
@@ -1387,9 +1405,9 @@ export class CommonService {
     },
     {
       id: "s0011003",
-      manufacturer: "ITRI",
+      firm: "ITRI",
       model: "Os_image_2.tar",
-      type: 0,
+      type: 2,
       version: "1.0.0",
       notes: "Os_image_2.tar",
       uploadTime: "2023-07-01 20:01:30",
@@ -1397,9 +1415,9 @@ export class CommonService {
     },
     {
       id: "s0011004",
-      manufacturer: "Compal",
+      firm: "Compal",
       model: "Os_image_2.tar",
-      type: 0,
+      type: 3,
       version: "1.0.0",
       notes: "Os_image_2.tar",
       uploadTime: "2023-07-01 20:01:30",
@@ -1407,7 +1425,7 @@ export class CommonService {
     },
     {
       id: "s0011005",
-      manufacturer: "ITRI",
+      firm: "ITRI",
       model: "Os_image_2.tar",
       type: 0,
       version: "1.0.0",
@@ -1417,7 +1435,7 @@ export class CommonService {
     },
     {
       id: "s0011002",
-      manufacturer: "Compal",
+      firm: "Compal",
       model: "Os_image_2.tar",
       type: 0,
       version: "1.0.0",
@@ -1427,7 +1445,7 @@ export class CommonService {
     },
     {
       id: "s0011003",
-      manufacturer: "ITRI",
+      firm: "ITRI",
       model: "Os_image_2.tar",
       type: 0,
       version: "1.0.0",
@@ -1437,7 +1455,7 @@ export class CommonService {
     },
     {
       id: "s0011004",
-      manufacturer: "Compal",
+      firm: "Compal",
       model: "Os_image_2.tar",
       type: 0,
       version: "1.0.0",
@@ -1447,7 +1465,7 @@ export class CommonService {
     },
     {
       id: "s0011002",
-      manufacturer: "Compal",
+      firm: "Compal",
       model: "Os_image_2.tar",
       type: 0,
       version: "1.0.0",
@@ -1457,7 +1475,7 @@ export class CommonService {
     },
     {
       id: "s0011003",
-      manufacturer: "ITRI",
+      firm: "ITRI",
       model: "Os_image_2.tar",
       type: 0,
       version: "1.0.0",
@@ -1467,7 +1485,7 @@ export class CommonService {
     },
     {
       id: "s0011004",
-      manufacturer: "Compal",
+      firm: "Compal",
       model: "Os_image_2.tar",
       type: 0,
       version: "1.0.0",
@@ -1477,7 +1495,7 @@ export class CommonService {
     },
     {
       id: "s0011002",
-      manufacturer: "Compal",
+      firm: "Compal",
       model: "Os_image_2.tar",
       type: 0,
       version: "1.0.0",
@@ -1487,7 +1505,7 @@ export class CommonService {
     },
     {
       id: "s0011003",
-      manufacturer: "ITRI",
+      firm: "ITRI",
       model: "Os_image_2.tar",
       type: 0,
       version: "1.0.0",
@@ -1497,7 +1515,7 @@ export class CommonService {
     },
     {
       id: "s0011004",
-      manufacturer: "Compal",
+      firm: "Compal",
       model: "Os_image_2.tar",
       type: 0,
       version: "1.0.0",
@@ -1506,6 +1524,23 @@ export class CommonService {
       fileName: "fw-v1-0-0.zip"
     }
   ];
+
+  softwareInfo: SoftwareInfo = {
+      id:"5c4ecc47c4da49b9ae36",
+      firm:"ITRI",
+      modelname:"A001",
+      uploadtime:"2023-06-12 09:25:03",
+      uploadtype:3,
+      uploadversion:"1.0.0",
+      description:"test",
+      uploadinfo:"ITRI_1.0.0.img",
+      uploadurl:"sftp://140.96.102.47:22/home/k200/irm-itri-6565/irm-itri/server/uploadFolder/ftpFolder/ITRI_1.0.0.img",
+      ftpid:"k200",
+      ftpkey:"k200123",
+      checksum:"6c4d426bcdb914708c9e7b8019116ddf",
+      size:10485760
+    };
+
 
   nfList: Nf[] = [
     {

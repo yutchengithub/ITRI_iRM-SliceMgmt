@@ -3,25 +3,20 @@
 </h5>
   <form [formGroup]="searchForm">
     <div class="filter">
-      <span><label>{{languageService.i18n['firm']}}</label>
-        <select>
-          <option>All</option>
-          <option></option>
-        </select>
+      <span><label>Manufacturer</label>
+        <input type="text">
       </span>
-      <span><label>{{languageService.i18n['model']}}</label>
-        <select>
-          <option value="All">All</option>
-          <option></option>
-        </select>
+      <span><label>Model</label>
+          <input type="text">
       </span>
       <span><label>{{languageService.i18n['type']}}</label>
         <select>
           <option value="All">All</option>
-          <option></option>
+          <option *ngFor="let opt of searchTypeList" [value]="opt.value">{{opt.displayName}}</option>
         </select>
       </span>
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+      <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span>
     </div>
   </form>
 
@@ -43,7 +38,7 @@
     <tbody>
       <tr
         *ngFor="let opt of softwareList | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-        <td>{{opt.manufacturer}}</td>
+        <td>{{opt.firm}}</td>
         <td>{{opt.model}}</td>
         <td>{{typeText(opt.type)}}</td>
         <td>{{opt.version}}</td>
@@ -51,7 +46,8 @@
         <td>{{opt.uploadTime}}</td>
         <td>{{opt.fileName}}</td>
         <td class="icon">
-          <span class="material-symbols-outlined"  tooltip="{{languageService.i18n['index.view']}}">description</span>
+          <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>
+          <!-- <span class="material-symbols-outlined"  tooltip="{{languageService.i18n['index.view']}}">description</span> -->
         </td>
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)">delete_forever</mat-icon>
@@ -173,4 +169,40 @@
     <button type="button" mat-dialog-close>Cancel</button>
     <button type="button" (click)="delete()">Delete</button>
   </div>
+</ng-template>
+
+<ng-template #advancedModal>
+  <form [formGroup]="advancedForm">
+    <h5>Software  {{languageService.i18n['performance_Advanced_Search']}}</h5>
+
+      <ul>
+      <li>
+        <span>Global ID:</span> <input type="text" formControlName="version">
+      </li>
+      <li>
+        <span>Field {{languageService.i18n['table.header_name']}}:</span> <input type="text" formControlName="version">
+      </li>
+      <li>
+        <span>NF ID:</span> <input type="text" formControlName="version">
+      </li>
+      <li>
+        <span>NF {{languageService.i18n['table.header_name']}}:</span> <input type="text" formControlName="version">
+      </li>
+      <li>
+        <span>From:</span>
+        <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+        <span class="widthInit">To:</span>
+        <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+      </li>
+      <li>
+        <span>Acknowledge Owner:</span> <input type="text" formControlName="version">
+      </li>
+    </ul>
+
+    <div class="buttons">
+      <button type="button" mat-dialog-close>Cancel</button>
+      <button type="button" mat-dialog-close="OK">Ok</button>
+      <!-- <button type="button" (click)="debug()">debug</button> -->
+    </div>
+  </form>
 </ng-template>
