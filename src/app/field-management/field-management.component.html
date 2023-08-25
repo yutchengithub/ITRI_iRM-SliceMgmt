@@ -1,0 +1,129 @@
+<h5>{{languageService.i18n['field.list']}}
+  <mat-icon tooltip="{{languageService.i18n['createNF']}}" (click)="openCreateModal()">add</mat-icon>
+</h5>
+<div class="table">
+  <table>
+    <thead>
+      <tr>
+        <th>{{languageService.i18n['table.header_name']}}</th>
+        <th>{{languageService.i18n['table.globalID']}}</th>
+        <th>{{languageService.i18n['table.Status']}}</th>
+        <th>{{languageService.i18n['table.header_nfCount']}}</th>
+        <th>{{languageService.i18n['table.header_dmsCount']}}</th>
+        <!-- <th>{{languageService.i18n['table.performance']}}</th> -->
+        <th colspan="2">{{languageService.i18n['action']}}</th>
+        <!-- <th>{{languageService.i18n['table.delete']}}</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let opt of ocloudList | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+        <td>{{opt.name}}</td>
+        <td>{{opt.id}}</td>
+        <td>
+          <!-- <ng-template [ngIf]="opt.deployStatus !== 'Deployment Finished'">
+            <mat-progress-bar mode="determinate" value="{{levelValue(opt.deployStatus)}}"></mat-progress-bar>
+          </ng-template> -->
+          <div class="deployStatus" [ngSwitch]="opt.deployStatus">
+              <span *ngSwitchCase="'Running'" class="greenLight"></span>
+              <span *ngSwitchCase="'Failed Deployment'" class="redLight"></span>
+              <span *ngSwitchDefault class="grayLight"></span>
+              {{opt.deployStatus}}
+          </div>
+        </td>
+        <td>{{opt.nfCount}}</td>
+        <td>{{opt.dmsCount}}</td>
+        <!-- <td>
+          <label *ngIf="opt.deployStatus === 'Deployment Finished'" class="greenLight"></label>
+        </td> -->
+        <td class="action">
+          <mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="viewPage(opt)">search</mat-icon>
+        </td>
+        <td class="action">
+          <mat-icon tooltip="{{languageService.i18n['delItem']}}" *ngIf="opt.deployStatus !== 'Deployment Finisheds'" (click)="openDelectModal(opt)">delete_forever
+          </mat-icon>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
+  nextLabel="" id="display">
+</pagination-controls>
+
+
+<ng-template #createModal>
+  <h5>{{languageService.i18n['add_field']}}</h5>
+  <form [formGroup]="createForm">
+    <ul>
+      <li>
+        <label>Field {{languageService.i18n['table.header_name']}}</label>
+        <span>
+          <input type="text" formControlName="name" class="{{formValidated&&createForm.controls['name'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['name'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['description']}}</label>
+        <span>
+          <textarea formControlName="description"></textarea>
+        </span>
+      </li>
+      <li>
+        <label>選擇新增方式</label>
+        <span>
+        <mat-button-toggle-group formControlName="method" (change)="changeMethod($event)">
+          <mat-button-toggle value="existing">納管既有的 Field</mat-button-toggle>
+          <mat-button-toggle value="smo">透過 SMO 建立 Field</mat-button-toggle>
+        </mat-button-toggle-group>
+        <ng-template [ngIf]="createForm.controls['method'].value === 'existing'">
+          <div>
+            <label>IMS Endpoint</label>
+            <span>
+              <input type="text" formControlName="imsEndpoint" class="{{formValidated&&createForm.controls['imsEndpoint'].invalid?'required':''}}">
+              <mat-error *ngIf="formValidated&&createForm.controls['imsEndpoint'].invalid">Required</mat-error>
+            </span>
+          </div>
+          <div>
+            <label>Field ID</label>
+            <span>
+              <input type="text" formControlName="oCloudId" class="{{formValidated&&createForm.controls['oCloudId'].invalid?'required':''}}">
+              <mat-error *ngIf="formValidated&&createForm.controls['oCloudId'].invalid">Required</mat-error>
+            </span>
+          </div>
+        </ng-template>
+
+        <ng-template [ngIf]="createForm.controls['method'].value === 'smo'">
+          <div>
+            <label>First Node URL</label>
+            <span>
+              <input type="text" formControlName="firstNode" class="{{formValidated&&createForm.controls['firstNode'].invalid?'required':''}}">
+              <mat-error *ngIf="formValidated&&createForm.controls['firstNode'].invalid">Required</mat-error>
+            </span>
+          </div>
+          <div>
+            <label>Image URL</label>
+            <span>
+              <input type="text" formControlName="image" class="{{formValidated&&createForm.controls['image'].invalid?'required':''}}">
+              <mat-error *ngIf="formValidated&&createForm.controls['image'].invalid">Required</mat-error>
+            </span>
+          </div>
+        </ng-template>
+      </span>
+      </li>
+    </ul>
+    <div class="buttons">
+      <button type="button" mat-dialog-close>Cancel</button>
+      <button type="button" (click)="create()">OK</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #deleteModal>
+  <h5>{{languageService.i18n['table.delete']}} Field
+  </h5>
+  <p>{{languageService.i18n['confirm_del_field']}} - {{selectOcloud.name}} ?</p>
+  <div class="buttons">
+    <button type="button" mat-dialog-close>Cancel</button>
+    <button type="button" (click)="delete()">Delete</button>
+  </div>
+</ng-template>

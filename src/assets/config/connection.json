@@ -1,0 +1,6 @@
+{
+  "local": true,
+  "url": "http://140.96.102.141",
+  "port": "8080",
+  "root": "/restapi/webresources/ocloud"
+}

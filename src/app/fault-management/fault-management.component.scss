@@ -1,0 +1,86 @@
+.table table {
+  width: 97.5%;
+  margin: 0;
+  text-align: center;
+  max-height: 70vh;
+}
+table thead th {
+  white-space: nowrap;
+}
+table tr td {
+  min-width: 5vw;
+  text-align: center;
+}
+table tr td.time{
+  width: 3vw;
+  text-align: left;
+}
+table tr td:nth-child(2),
+table tr td:nth-child(4){
+  white-space: nowrap;
+  min-width: 13vw;
+}
+table tr td:nth-last-child(2){
+  width: 3vw;
+}
+table tr td:nth-last-child(3),
+table tr td:nth-last-child(4) {
+  text-align: left;
+}
+td mat-icon {
+  cursor: pointer;
+}
+td label {
+  display: inline-block;
+}
+:host ::ng-deep p-calendar {
+  width: initial;
+}
+
+div.tab {
+    display: block;
+    text-align: center;
+    margin: 1em auto;
+}
+.widthInit  {
+  width: initial!important;
+  min-width: initial!important;
+}
+:host ::ng-deep .switch .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+  padding: 4px 10px;
+}
+input[name="processComment"] {
+  margin: 0.5em;
+  width: 70%;
+  padding: 2px 4px;
+}
+button.modify {
+  background-color: #2879c5;
+  border: 0;
+  font-size: 1em;
+  color: #fff !important;
+  padding: 0.3em 0.8em;
+  border-radius: 1.2em;
+}
+.statusTable td{
+  width: 30vw!important;
+}
+.statusTable td .material-symbols-outlined {
+  vertical-align: middle;
+  font-size: 20px;
+}
+.statusTable table {
+  display: block;
+  width: 88% !important;
+  margin: auto;
+  max-height: 42vh;
+  font-size: 1em;
+}
+
+@media screen and (max-width:1366px) {
+
+.table table {
+  width: 98.5%;
+  max-height: 60vh;
+}
+}

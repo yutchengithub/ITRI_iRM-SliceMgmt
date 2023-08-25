@@ -1,0 +1,304 @@
+.wrap {
+  background: #fff;
+  background: linear-gradient(to top, rgb(177 184 191 / 40%) 0%, rgb(255 255 255 / 70%) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#ffffff", endColorstr="#ffffff",GradientType=1 );
+  color: #333;
+}
+div.header {
+  color: #a2cbed;
+  background-color: #1d61a1;
+  box-shadow: 0 0 5px #000;
+}
+div.header button {
+  opacity: .5;
+  background: transparent;
+}
+div.header button:hover .mat-icon {
+  color: #fff;
+}
+.logout {
+  opacity: 1;
+  color: #abd7ff!important;
+  background-color: #17416a!important;
+}
+h5 .mat-icon {
+  background-color: #2979c6;
+}
+.dashboard .leftArea div.w30 > div {
+  background-color: #ffffff;
+  border: 1px solid #63acc9;
+}
+.dashboard .w70 > div {
+  background-color: #ffffff;
+  border: 1px solid #63acc9;
+}
+.cpu .bold {
+  color: #5288b6;
+}
+.cpu span div {
+  color: #000;
+}
+.menu ul li {
+  color: #323c4e;
+}
+.menu ul li .mat-icon  {
+
+  opacity: .8;
+}
+.menu ul li.active {
+  color: #2979c6;
+}
+.menu ul li.active .mat-icon  {
+  color: #2979c6;
+  opacity: 1;
+}
+.table table tbody tr {
+  border: 1px solid #63acc9;
+}
+.table table th {
+  color: #056897;
+  background-color: #c2e7ff;
+  border: 1px solid #63acc9;
+}
+td .mat-icon,
+td .material-symbols-outlined {
+  color: #2979c6;
+}
+
+.mat-progress-bar-buffer {
+  background-color: #c5c5c5;
+}
+.ngx-pagination .disabled {
+  color: #424242!important;
+}
+.ngx-pagination .small-screen {
+  color: #424242;
+}
+mat-dialog-container {
+  background-color: #ffffff !important;
+  color: #3e4348 !important;
+}
+mat-dialog-container div.buttons button {
+  background-color: transparent;
+  border: 2px solid #a7d0f7;
+  color: #0b58a3;
+}
+mat-dialog-container div.buttons button:hover {
+  border-color: #50a5ff;
+  filter: initial;
+}
+.filter span label {
+  color: #333;
+}
+.filter {
+  background-color: #ebe8d0;
+  color: #333;
+  border-left: 7px solid #46b1d9;
+}
+.filter select, .filter input[type=text] {
+  border: 1px solid #95bccf;
+}
+.ngx-pagination a {
+  color: #525252 !important;
+}
+.filter .material-icons,
+.filter .material-symbols-outlined {
+  color: #00abeb;
+  border: 1px solid #a5d0f5;
+}
+.ngx-pagination a:hover {
+  background: #8fcbf3 !important;
+}
+.upload > span {
+  color: #fff;
+  background-color: #2672ba;
+  }
+.dashboard .leftArea .nodes {
+    background-color: #c2e7ff;
+    opacity: 1;
+    border: 1px solid #63acc9;
+}
+.dashboard .boxTitle {
+  color: #2a6da7!important;
+  border-bottom: 1px solid rgb(144 201 249);
+}
+.dashboard .bigValue {
+  color: #2a6da7!important;
+}
+.dashboard .unit {
+  color: #2a6da7!important;
+}
+.chart g.dxg-title text {
+  fill: #2a6da7!important;
+  font-weight: bold!important;
+}
+.dashboard .rightArea > div {
+  background-color: #ffffff;
+  opacity: 0.8;
+  border: 1px solid #63acc9;
+}
+.dashboard .table table tr td {
+  color: #333;
+}
+.dashboard .leftArea .nodes span:after, .dashboard .rightArea > div.resource > span:after {
+  border-right: 2px solid #a0cff7;
+}
+h5 {
+  color: #333;
+}
+.chartPanel .p-tabview .p-tabview-panels {
+  background: transparent;
+  /*background: #c2e7ff;*/
+  border: 2px solid skyblue;
+}
+.chartList {
+  display: inline-block;
+  vertical-align: top;
+  width: 23%;
+  margin: 1%;
+  border-radius: 3px;
+  background-color: transparent;
+  padding: .5%;
+  cursor: pointer;
+}
+.chartPanel .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  color: #979fa5;
+  margin: 0;
+}
+.Query {
+  padding:0 0 0 2em;
+  width: 60vw;
+  display: block;
+  color : black;
+  text-align: left;
+}
+.Query > label {
+  display: inline-block;
+  margin: 0 .5em 0 0;
+  font-weight: bold;
+  color : black;
+  font-family: Microsoft JhengHei;
+}
+.Query mat-radio-button {
+  margin: 0 1em 0 0;
+}
+.Query .mat-radio-button.mat-accent .mat-radio-outer-circle {
+  border-color: #517491 !important;
+  margin: 0 1em 0 0;
+}
+.ocloudInfo h5 button {
+  color: #559fd9;
+  border: 1px solid #84c0ef;
+}
+.ocloudInfo .BOX {
+  background-color: #c2e7ff;
+  border: 1px solid #63acc9;
+}
+.ocloudInfo .boxTitle {
+  color: #3472a5;
+  border-bottom: 1px solid #63abe9;
+}
+.ocloudInfo,
+.basicInfo ul li span {
+  color: #2c2b2b;
+}
+.ocloudInfo .BOX.col-md-3{
+  background-color: #fff;
+}
+.cpu > span .unit {
+  color: #206faf;
+}
+.bigValue {
+  color: #2a6da7;
+}
+.percent {
+  background: #fff;
+  color: #222;
+  box-shadow: inset 0 0 50px #c2e7ff;
+}
+.greenLight {
+  background-color: #69b015;
+}
+.redLight {
+  background-color: #d01837;
+}
+.dashboard .rightArea > div {
+  opacity: 1;
+}
+mat-dialog-container input[type=text],
+mat-dialog-container textarea,
+mat-dialog-container select {
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #4093e6;
+}
+table td {
+  background-color: #fff;
+}
+.p-tabview .p-tabview-panels {
+  background: #ffffff;
+}
+.filter .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #2199e8;
+}
+.filter .mat-button-toggle-appearance-standard {
+  color: rgb(241 241 241 / 94%);
+  background: #b3b1a6;
+}
+.chartPanel .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  color: #6b6b6b;
+  background: #a5a7acdb;
+  border: 1px solid rgba(0, 0, 0, 0.14) !important;
+  margin: 0;
+}
+span.material-symbols-outlined.stop {
+  color: #e17216;
+}
+.BOX.col-md-4.basicInfo ,
+.BOX.col-md-4.nf {
+  background-color: #fff!important;
+}
+.basicInfo ul li {
+  color: #6182ae;
+}
+.cpu span label {
+  color: #3a3a3a;
+}
+h6 {
+  color: #2a2a2a!important;
+}
+#nfInfoCreateModal .center {
+  background-color: #e0eeff!important;
+}
+input[ng-reflect-is-disabled=true] {
+  filter: grayscale(1) brightness(0.8)!important;
+}
+/* 整個捲軸 */
+::-webkit-scrollbar { width: 10px; }
+/* 捲軸的軌道 */
+::-webkit-scrollbar-track {
+    background: #dddddd;
+    border-radius: 1em;
+}
+/*捲軸尚未滑到的軌道*/
+::-webkit-scrollbar-track-piece{
+    background: #dddddd;
+    border-radius: 1em;
+}
+/* 滑動的區塊 */
+::-webkit-scrollbar-thumb {
+    background: #9e9e9e;
+    border-radius: 1em;
+}
+/* 滑鼠移到滑動的區塊上 */
+::-webkit-scrollbar-thumb:hover { background: #9e9e9e; }
+@media only screen and (max-width:1600px) {
+  .menu ul li.active .mat-icon {
+    color: #abd7ff;
+  }
+  /* .menu ul li {
+    color: #0e141e;
+  } */
+}
+

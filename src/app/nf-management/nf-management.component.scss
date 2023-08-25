@@ -1,0 +1,156 @@
+.table table {
+  width: 97.5%;
+  margin: 0;
+  text-align: center;
+  max-height: 74vh;
+}
+table tr td {
+  width: 13vw;
+}
+td.action {
+  width: 3vw!important;
+}
+table tr td:nth-child(3){
+  width: 40vw;
+  text-align: left;
+}
+table tr td:nth-child(4){
+  width: 6vw;
+}
+table tr td:nth-child(5){
+  text-align: left;
+}
+table tr td:last-child{
+  width: 10vw;
+}
+
+.action mat-icon,
+.action span {
+  margin: 0 .5em 0 0;
+  transform: scale(1.1);
+}
+
+.filter > span {
+  display: inline-block;
+  margin: 0 1em 0 0;
+}
+.filter > span > span {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+.filter > span > span label {
+  font-size: 1.05em!important;
+}
+.filter select,
+.filter input[type="text"] {
+  margin: 0 5px;
+  padding: 0.3em;
+  border-radius: 4px;
+  min-width: 10em;
+  font-size: 15px;
+  border: none!important;
+}
+.filter .material-icons {
+  cursor: pointer;
+  vertical-align: middle;
+  margin: 0;
+  border-radius: 50em;
+  padding: 0.2em;
+  transition: all .3s;
+}
+.upload > span {
+  outline: 0;
+  padding: 0.3em 2em;
+  border: 0;
+  margin: 0 0.5em 0 0;
+  vertical-align: middle;
+  font-size: 0.9em;
+  border-radius: 50em;
+  cursor: pointer;
+}
+.upload > span input {
+  position: absolute;
+  font-size: 50px;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 27px;
+  opacity: 0;
+  cursor: pointer;
+  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+}
+.upload label {
+  word-wrap: break-word;
+  display: inline-block;
+  max-width: 75%;
+  line-height: 1;
+  vertical-align: middle;
+}
+span.upload {
+  width: 70%;
+}
+li.dms > li.dms span {
+  width: 50%;
+}
+li.dms > span {
+  width: auto;
+  max-width: initial;
+}
+.DMSinfo {
+  display: inline-block;
+  vertical-align: top;
+  padding: 0 0 0 0.5em;
+  color: #a5cef9;
+  width: auto !important;
+  max-width: 18em !important;
+  border-radius: 3px;
+  background-color: #436588;
+  font-size: .9em;
+}
+.DMSinfo > label {
+  display: block;
+  text-align: center;
+  padding: 0 0 0.3em;
+  margin: 0 0 0.3em;
+  width: 100% !important;
+  max-width: initial !important;
+  font-size: 1.1em;
+  border-bottom: 1px solid #232934;
+}
+.DMSinfo > span {
+  width: 48%;
+  display: inline-block;
+  vertical-align: top;
+}
+.DMSinfo > span > label::after {
+  content: ':';
+}
+.DMSinfo > span > label {
+  width: auto!important;
+}
+
+span.material-symbols-outlined.play {
+  color: #88a8df;
+}
+
+
+@media only screen and (max-width:1366px) {
+  .table table {
+    width: 98.5%;
+  }
+  table tbody td {
+    font-size: 100%;
+  }
+  table thead th {
+    font-size: 1em;
+  }
+  table thead tr th:nth-child(3),
+  table tbody tr td:nth-child(3){
+    width: 50%;
+  }
+  table thead tr th {
+    min-width: 13vw;
+  }
+
+}

@@ -1,0 +1,266 @@
+.wrap {
+    background: #0d3782;
+    background: linear-gradient(to right, #071226 0%, #000000 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#0d3782", endColorstr="#180ea0",GradientType=1 );
+    color: #fff;
+}
+
+div.header {
+    color: #a2cbed;
+    background-color: #1d61a1;
+    box-shadow: 0 0 5px #000;
+  }
+  div.header button {
+    /* color: #a2cbed; */
+    opacity: .4;
+    background: transparent;
+  }
+  div.header button:hover .mat-icon {
+    color: #fff;
+  }
+  .logout {
+    opacity: 1!important;
+    color: #5390c7!important;
+    background-color: #17416a!important;
+  }
+  h5 .mat-icon {
+    background-color: #2979c6;
+  }
+  .menu {
+    /*opacity: .85;*/
+  }
+  .menu ul li {
+    color: #7c98cb;
+  }
+  .menu ul li.active {
+    color: #fff;
+  }
+  .menu ul li.active .mat-icon  {
+    color: #2f8ce3;
+    opacity: 1;
+  }
+  .table table tbody tr {
+    border: 1px solid #223b50;
+    }
+  .table table th {
+    color: #517491;
+    background-color: #091730;
+    border: 1px solid #223b50;
+  }
+  td .mat-icon ,
+  td .material-symbols-outlined{
+    cursor: pointer;
+    color: #2d73ec;
+  }
+  .ngx-pagination .small-screen {
+    color: #ddd;
+  }
+  mat-dialog-container {
+    background-color: #232934!important;
+    color: #c7cbcf!important;
+  }
+  mat-dialog-container div.buttons button {
+    background-color: transparent;
+    border: 2px solid #1f4970;
+    color: #418fdb;
+  }
+  .filter span label {
+    color: #fff;
+  }
+  .filter {
+    background-color: #053e74;
+    color: #333;
+    border-left: 7px solid #00abeb;
+  }
+  .filter select,
+  .filter input[type="text"] {
+    border:1px solid #11648b;
+  }
+  .ngx-pagination a {
+    color: #d1d1d1!important;
+  }
+  .filter .material-icons,
+  .filter .material-symbols-outlined {
+    color: #00abeb;
+    border: 1px solid #045981;
+  }
+  .filter .material-icons:hover ,
+  .filter .material-symbols-outlined:hover {
+    border: 1px solid #00abeb;
+  }
+  .dashboard .leftArea div.w30 > div {
+    background-color: #0c0f16d9;
+    border: 1px solid #223b50;
+}
+    .upload > span {
+        background-color: #1d61a1;
+        color: #fff;
+    }
+    .dashboard .w70 > div {
+      background-color: #0c0f16d9;
+      border: 1px solid #223b50;
+  }
+    .dashboard .leftArea .nodes {
+        background-color: #0c0f16;
+        opacity: .8;
+        border: 1px solid #223b50;
+    }
+    .dashboard .boxTitle {
+        color: #2e94e7;
+        border-bottom: 1px solid #2c3548;
+    }
+    .dashboard .unit {
+        color: #7b8893;
+      }
+    .chart g.dxg-title text {
+        fill: #fff!important;
+    }
+    .dashboard .rightArea > div {
+        background-color: #0c0f16;
+        opacity: .8;
+        border: 1px solid #223b50;
+    }
+    .dashboard .table table tr td {
+        color: #ddd;
+    }
+    .dashboard .leftArea .nodes span:after,
+    .dashboard .rightArea > div.resource > span:after {
+    border-right: 1px solid #333;
+}
+.chartList {
+  display: inline-block;
+  vertical-align: top;
+  width: 23%;
+  margin: 1%;
+  border-radius: 3px;
+  background-color: transparent;
+  padding: .5%;
+  cursor: pointer;
+  color: white;
+}
+.chartPanel .p-tabview .p-tabview-panels {
+  /*background: #c2e7ff;*/
+  background: #091730;
+  border: 2 px solid #223b50;
+}
+.chartPanel .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  color: #979fa5;
+  background: #4f607ddb;
+  border: 1px solid rgba(0, 0, 0, 0.14) !important;
+  margin: 0;
+}
+
+.Query {
+  padding:0 0 0 2em;
+  width: 60vw;
+  display: block;
+  color : white;
+  text-align: left;
+}
+.Query > label {
+  display: inline-block;
+  margin: 0 .5em 0 0;
+  font-weight: bold;
+  color : white;
+  font-family: Microsoft JhengHei;
+}
+.Query mat-radio-button {
+  margin: 0 1em 0 0;
+}
+.Query .mat-radio-button.mat-accent .mat-radio-outer-circle {
+  border-color: #517491 !important;
+  margin: 0 1em 0 0;
+}
+ h5 button {
+    color: #559fd9;
+    border: 1px solid #1c6dad;
+  }
+  .ocloudInfo .BOX {
+    background-color: #0c0f16;
+    border: 1px solid #223b50;
+  }
+  .ocloudInfo .boxTitle {
+    color: #297fc5;
+    border-bottom: 1px solid #2c3548;
+  }
+  .ocloudInfo,
+  .basicInfo ul li span,
+  .bigValue,
+  .cpu > span .unit {
+    color: #eee;
+  }
+  .percent {
+    background: #222;
+    color: #fff;
+    box-shadow: inset 0 0 50px #000;
+  }
+  .greenLight {
+    background-color: #89d135;
+  }
+  .redLight {
+    background-color: #d1354f;
+  }
+  mat-dialog-container input[type=text],
+  mat-dialog-container textarea,
+  mat-dialog-container select {
+    color: #2c3340;
+    background-color: #fff;
+    border: 1px solid #4093e6;
+}
+.p-tabview .p-tabview-panels {
+  background: #dee2e5;
+}
+.filter .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #ba5a2a;
+}
+.filter .mat-button-toggle-appearance-standard {
+  color: rgb(126 132 133 / 94%);
+  background: #566177d4;
+}
+span.material-symbols-outlined.stop {
+  color: #35d164;
+}
+.basicInfo ul li {
+  color: #8a9bb2;
+}
+.cpu span label {
+  color: #c8c8c8;
+}
+#nfInfoCreateModal .center {
+  background-color: #273a52;
+}
+.table.performance tr:nth-child(even) td {
+  background-color: #000;
+}
+.table.performance tr td {
+  border-right: 1px solid #223b50;
+}
+/* 整個捲軸 */
+::-webkit-scrollbar { width: 10px; }
+/* 捲軸的軌道 */
+::-webkit-scrollbar-track {
+    background: #9e9e9e;
+    border-radius: 1em;
+}
+/*捲軸尚未滑到的軌道*/
+::-webkit-scrollbar-track-piece{
+    background: #9e9e9e;
+    border-radius: 1em;
+}
+/* 滑動的區塊 */
+::-webkit-scrollbar-thumb {
+    background: #4d4d4d;
+    border-radius: 1em;
+}
+/* 滑鼠移到滑動的區塊上 */
+::-webkit-scrollbar-thumb:hover { background: #4d4d4d; }
+  @media only screen and (max-width:1600px) {
+    .menu ul li.active .mat-icon {
+      color: #abd7ff;
+      opacity: 1!important;
+    }
+   /*  .menu ul li {
+      color: #0e141e;
+    } */
+  }

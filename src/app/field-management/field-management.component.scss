@@ -1,0 +1,38 @@
+.table table {
+  width: 98%;
+  margin: 0;
+  text-align: center;
+  max-height: 78vh;
+}
+table tr td {
+  width: 7vw;
+}
+
+table tr td:nth-child(2){
+  width: 40vw;
+  text-align: left;
+}
+table tr td:nth-child(3){
+  width: 20vw;
+  text-align: left;
+}
+/*.deployStatus {
+  display: block;
+  margin: 0.3em auto;
+  font-size: 0.8em;
+  text-align: center;
+}*/
+td.action {
+  width: 3vw!important;
+}
+@media screen and (max-width:1366px) {
+  table tr td {
+    width: 8vw;
+  }
+  td.action {
+    width: 4vw !important;
+  }
+  table tr td {
+    width: 9vw;
+  }
+}

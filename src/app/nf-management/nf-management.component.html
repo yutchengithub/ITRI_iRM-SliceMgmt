@@ -1,0 +1,221 @@
+<h5>{{languageService.i18n['index.menu_nfMgr']}}
+  <mat-icon tooltip="{{languageService.i18n['createNF']}}" (click)="openCreateModal()">add</mat-icon>
+</h5>
+<form [formGroup]="searchForm">
+  <div class="filter">
+    <span><label>Field</label>
+      <!-- <select formControlName="cloudId">
+        <option value="All">All</option>
+        <option *ngFor="let opt of ocloudList" [value]="opt.id">{{opt.id}}</option>
+      </select> -->
+      <input type="text" formControlName="cloudId">
+    </span>
+    <span><label>Cloud {{languageService.i18n['table.header_name']}}</label>
+      <input type="text" formControlName="cloudName">
+    </span>
+    <span><label>NF {{languageService.i18n['table.header_name']}}</label>
+      <input type="text" formControlName="nfName">
+    </span>
+    <span><label>{{languageService.i18n['table.Status']}}</label>
+      <select formControlName="status">
+        <option *ngFor="let opt of commonService.statusList" [value]="opt.value">{{opt.displayName}}</option>
+      </select>
+    </span>
+    <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+  </div>
+</form>
+
+<div class="table">
+  <table>
+    <thead>
+      <tr>
+        <th>NF {{languageService.i18n['table.header_name']}}</th>
+        <th>Field {{languageService.i18n['table.header_name']}}</th>
+        <th>Field Global ID</th>
+        <th>{{languageService.i18n['table.Status']}}</th>
+        <!-- <th>{{languageService.i18n['table.detail']}}</th> -->
+        <th colspan="3">{{languageService.i18n['action']}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let opt of nfList | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+        <td>{{opt.nfname}}</td>
+        <td>{{opt.ocloudName}}</td>
+        <td>{{opt.globalId}}</td>
+        <td>
+          <label tooltip="{{languageService.i18n['nfRun']}}" *ngIf="opt.status === 0" class="greenLight"></label>
+          <label tooltip="{{languageService.i18n['nfRun']}}" *ngIf="opt.status === 1" class="blueLight"></label>
+          <label tooltip="{{languageService.i18n['nfNotRun']}}" *ngIf="opt.status === 2" class="redLight"></label>
+          <label tooltip="{{languageService.i18n['nfNotRun']}}" *ngIf="opt.status === 3" class="grayLight"></label>
+          {{commonService.details(opt.status)}}
+        </td>
+        <!-- <td>{{commonService.details(opt.status)}}</td> -->
+        <td class="action">
+          <mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="viewPage(opt)">search</mat-icon>
+        </td>
+        <td class="action">
+          <span tooltip="{{languageService.i18n['stopDE']}}" *ngIf="opt.status === 0 || opt.status === 1" class="material-symbols-outlined" (click)="openActionModal(opt)">stop_circle</span>
+          <span *ngIf="opt.status === 2" class="material-symbols-outlined" (click)="openActionModal(opt)" >refresh</span>
+          <span tooltip="{{languageService.i18n['startDE']}}" *ngIf="opt.status === 3" class="material-symbols-outlined" (click)="openActionModal(opt)" >play_circle</span>
+        </td>
+        <td class="action"><mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)">delete_forever</mat-icon></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
+  nextLabel="" id="display">
+</pagination-controls>
+
+<ng-template #createModal>
+  <h5>{{languageService.i18n['createNF']}}</h5>
+  <form [formGroup]="createForm">
+    <ul>
+      <li>
+        <label>Field {{languageService.i18n['table.header_name']}}</label>
+        <span>
+          <select formControlName="globalId" (change)="changeOcloud()" class="{{formValidated&&createForm.controls['globalId'].invalid?'required':''}}">
+            <option *ngFor="let opt of ocloudList" [value]="opt.id">{{opt.name}}</option>
+          </select>
+          <mat-error *ngIf="formValidated&&createForm.controls['globalId'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>Global Field ID</label>
+        <span>
+          <input type="text" [value]="createForm.controls['globalId'].value" disabled>
+        </span>
+      </li>
+      <li class="dms">
+        <label>DMS {{languageService.i18n['table.header_name']}}</label>
+        <span>
+          <select formControlName="dmsId" (change)="changeDMS()" class="{{formValidated&&createForm.controls['dmsId'].invalid?'required':''}}">
+            <option value=""></option>
+            <option *ngFor="let opt of dmsList" [value]="opt.id">{{opt.name}}</option>
+          </select>
+          <mat-error *ngIf="formValidated&&createForm.controls['dmsId'].invalid">Required</mat-error>
+        </span>
+        <span class="DMSinfo" *ngIf="createForm.controls['globalId'].value !=='' && createForm.controls['dmsId'].value !== ''">
+          <label>Available Capacity</label>
+              <span>
+                <label>CPUs</label>
+                {{selectDms.cpu}}
+              </span>
+              <span>
+                <label>Memory</label>
+                {{selectDms.memory}}
+              </span>
+              <span>
+                <label>Storage</label>
+                {{selectDms.storage}}
+              </span>
+              <span>
+                <label>Interfaces</label>
+                {{selectDms.network}}
+              </span>
+        </span>
+      </li>
+      <li>
+        <label>DMS ID</label>
+        <span>
+          <input type="text" [value]="createForm.controls['dmsId'].value" disabled>
+        </span>
+
+      </li>
+      <hr>
+      <li>
+        <label>NF {{languageService.i18n['table.header_name']}}</label>
+        <span>
+          <input type="text" formControlName="nfName" class="{{formValidated&&createForm.controls['nfName'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['nfName'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['description']}}</label>
+        <span>
+          <input type="text" formControlName="descriptorName">
+        </span>
+      </li>
+      <li>
+        <label>Artifact Repo. URL</label>
+        <span>
+          <input type="text" formControlName="artifactRepoUrl" class="{{formValidated&&createForm.controls['artifactRepoUrl'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['artifactRepoUrl'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>Artifact {{languageService.i18n['table.header_name']}}</label>
+        <span>
+          <input type="text" formControlName="artifactName" class="{{formValidated&&createForm.controls['artifactName'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['artifactName'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>NF {{languageService.i18n['type']}}</label>
+        <span>
+          <select formControlName="type" class="{{formValidated&&createForm.controls['type'].invalid?'required':''}}">
+            <option *ngFor="let displayName of nfTypeList" [value]="displayName">{{displayName}}</option>
+          </select>
+          <mat-error *ngIf="formValidated&&createForm.controls['type'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>Input Params</label>
+        <span class="upload {{formValidated&&createForm.controls['fileName'].invalid?'required':''}}">
+          <span>{{languageService.i18n['upload']}}
+            <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".txt" #fileInput>
+          </span>
+          <label>{{createForm.controls['fileName'].value}}</label>
+          <mat-error *ngIf="formValidated&&createForm.controls['fileName'].invalid">is Required</mat-error>
+          <mat-error *ngIf="fileMsg">{{fileMsg}}</mat-error>
+        </span>
+      </li>
+    </ul>
+    <div class="buttons">
+      <button type="button" mat-dialog-close>Cancel</button>
+      <button type="button" (click)="create()">OK</button>
+    </div>
+  </form>
+</ng-template>
+
+<!--
+// 0 running
+// 1 deploying
+// 2 fail deploy
+// 3 stopped
+  <span tooltip="{{languageService.i18n['stopDE']}}" *ngIf="opt.status === 0 || opt.status === 1" class="material-symbols-outlined" (click)="openActionModal(opt)" ngClass="stop">stop_circle</span>
+<span *ngIf="opt.status === 2" class="material-symbols-outlined" (click)="openActionModal(opt)" ngClass="stop">refresh</span>
+<span tooltip="{{languageService.i18n['startDE']}}" *ngIf="opt.status === 3" class="material-symbols-outlined" (click)="openActionModal(opt)" ngClass="play">play_circle</span>
+-->
+<ng-template #actionModal>
+  <ng-template [ngIf]="selectNf.status === 3">
+    <h5>Deploy Network Function</h5>
+    <p>Confirm to deploy NF  - {{selectNf.nfname}} ?</p>
+  </ng-template>
+  <ng-template [ngIf]="selectNf.status === 0">
+    <h5>Terminate Network Function</h5>
+    <p>Confirm to terminate NF  - {{selectNf.nfname}} ?</p>
+  </ng-template>
+  <ng-template [ngIf]="selectNf.status === 1">
+    <h5>Stopped Network Function</h5>
+    <p>Confirm to stop NF  - {{selectNf.nfname}} ?</p>
+  </ng-template>
+  <ng-template [ngIf]="selectNf.status === 2">
+    <h5>Restart Network Function</h5>
+    <p>Confirm to restart NF  - {{selectNf.nfname}} ?</p>
+  </ng-template>
+  <div class="buttons">
+    <button type="button" mat-dialog-close>Cancel</button>
+    <button type="button" (click)="actionOk()">Ok</button>
+  </div>
+</ng-template>
+
+<ng-template #deleteModal>
+  <h5>Delete Network Function</h5>
+  <p>{{languageService.i18n['confirm_del_nf']}} NF  - {{selectNf.nfname}} ?</p>
+  <div class="buttons">
+    <button type="button" mat-dialog-close>Cancel</button>
+    <button type="button" (click)="delete()">Delete</button>
+  </div>
+</ng-template>

@@ -1,0 +1,236 @@
+<h5>{{languageService.i18n['index.faultMsg']}}</h5>
+
+<form [formGroup]="searchForm">
+  <div class="filter">
+    <span><label>Field {{languageService.i18n['table.header_name']}}</label>
+      <input type="text" formControlName="cloudName">
+    </span>
+    <span><label>NF {{languageService.i18n['table.header_name']}}</label>
+      <input type="text" formControlName="nfName">
+    </span>
+    <span><label>Owner</label>
+      <input type="text" formControlName="acknowledgeOwner">
+    </span>
+    <span><label>{{languageService.i18n['severity']}}</label>
+      <select formControlName="severity">
+        <option value="All">All</option>
+        <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
+      </select>
+      <mat-error *ngIf="searchForm.controls['severity'].invalid">Required</mat-error>
+    </span>
+    <span><label>From</label>
+      <span>
+        <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+      </span>
+    </span>
+    <span><label>To</label>
+      <span>
+        <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+      </span>
+    </span>
+    <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+    <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span>
+  </div>
+</form>
+
+<div class="table">
+  <table>
+    <thead>
+      <tr>
+        <th>{{languageService.i18n['time']}}</th>
+        <th>Global ID</th>
+        <th>Cloud {{languageService.i18n['table.header_name']}}</th>
+        <th>NF ID</th>
+        <th>NF {{languageService.i18n['table.header_name']}}</th>
+        <th>{{languageService.i18n['severity']}}</th>
+        <th>{{languageService.i18n['faultContext']}}</th>
+        <th>Processing {{languageService.i18n['table.Status']}}</th>
+        <th>Acknowledge Owner</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let opt of faultMessage.faultMessages;let i=index">
+        <td class="time">{{opt.timestamp}}</td>
+        <td>{{opt.cloudId}}</td>
+        <td>{{opt.cloudName}}</td>
+        <td>{{opt.nfId}}</td>
+        <td>{{opt.nfName}}</td>
+        <td>{{commonService.textTransfer(opt.severity)}}</td>
+        <td>{{opt.context}}</td>
+        <!-- <td>{{opt.isCleared?'Cleared':'New'}}</td> -->
+        <td>
+          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf="opt.processStatus === 0" class="greenLight"></label>
+          <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf="opt.processStatus === 1" class="redLight"></label>
+          {{opt.processComment}}
+        </td>
+        <td>{{opt.acknowledgeOwner}}</td>
+        <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openStatusModal(opt)">search</mat-icon></td>
+      </tr>
+      <tr class="notFind" *ngIf="faultMessage.totalMessageNumber === 0">
+        <td colspan="7">{{languageService.i18n['no_results']}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <!-- pagination -->
+  <div class="pagination">
+    <ng-template
+      *ngFor="let item of nullList| paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+    </ng-template>
+    <span class="total">總共 {{faultMessage.totalMessageNumber}} 筆資料</span>
+    <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
+      nextLabel="" id="display">
+    </pagination-controls>
+  </div>
+</div>
+
+<ng-template #statusModal>
+  <h5>Fault Message Status</h5>
+  <!-- processing_status -->
+  <div class="tab">
+    <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
+      <mat-button-toggle value="processing_status">Processing Status</mat-button-toggle>
+      <mat-button-toggle value="processing_status_record">Processing Status Record</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+  <ul *ngIf="type === 'processing_status'">
+    <li>
+      <span>Field Global ID : </span><span>{{fmStatus.cloudId}}</span>
+    </li>
+    <li>
+      <span>NF ID : </span><span>{{fmStatus.nfId}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['severity']}} : </span><span>{{commonService.textTransfer(fmStatus.severity)}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['faultContext']}} : </span><span>{{fmStatus.context}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['time']}} : </span><span>{{fmStatus.timestamp}}</span>
+    </li>
+    <li>
+      <span>Fault Status : </span><span>
+        <label *ngIf="fmStatus.processStatus === 0" class="greenLight"></label>
+        <label *ngIf="fmStatus.processStatus === 1" class="redLight"></label>
+      </span>
+    </li>
+    <li>
+      <span>Acknowledge Owner : </span><span>{{fmStatus.acknowledgeOwner}}</span>
+    </li>
+    <li>
+      <span>Process Status : </span>
+      <span>
+        <!-- <div class="vc-toggle-container">
+          <label class="vc-switch">
+            <input type="checkbox" class="vc-switch-input" [checked]="switchProcessStatus()" (change)="changeProcessSwitch()">
+            <span class="vc-switch-label" data-on="PENDING" data-off="RESOLVE"></span>
+            <span class="vc-handle"></span>
+          </label>
+        </div> -->
+        <span class="switch">
+          <mat-button-toggle-group name="isCleared" [(ngModel)]="fmStatus.__processStatus">
+            <mat-button-toggle value="PENDING">Pending</mat-button-toggle>
+            <mat-button-toggle value="RESOLVE">Resolve</mat-button-toggle>
+          </mat-button-toggle-group>
+        </span>
+        <input type="text" name="processComment" [(ngModel)]="fmStatus.processComment">
+        <button class="modify" type="button" (click)="modify()">Modify</button>
+
+        <p *ngIf="show200Msg" style="color:#46c116"><span class="material-symbols-outlined">done</span>Modify successfully</p>
+        <p *ngIf="show500Msg" style="color:#ff469c"><span class="material-symbols-outlined">error</span>Fail modify Pending Status and Add CPU</p>
+      </span>
+    </li>
+
+  </ul>
+  <!-- processing_status_record -->
+  <ng-template [ngIf]="type === 'processing_status_record'">
+    <div class="table statusTable">
+    <table>
+      <thead>
+        <tr>
+          <th (click)="doSortTime()">{{languageService.i18n['time']}}
+            <span class="material-symbols-outlined" *ngIf="timeSort === 'asc'">
+              arrow_downward
+            </span>
+            <span class="material-symbols-outlined" *ngIf="timeSort === 'desc'">
+              arrow_upward
+            </span>
+
+          </th>
+          <th>Processing Status</th>
+          <th>Acknowledge Owner</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let opt of fmStatusRecordList| paginate: { itemsPerPage: record_pageSize, currentPage: record_p, totalItems: record_totalItems, id: 'record' } ">
+          <td>{{opt.timestamp}}</td>
+          <td>
+            <label *ngIf="opt.processStatus === 0" class="greenLight"></label>
+            <label *ngIf="opt.processStatus === 1" class="redLight"></label>
+            {{opt.processComment}}
+          </td>
+          <td>{{opt.acknowledgeOwner}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <pagination-controls (pageChange)="recordPageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel="" nextLabel="" id="record"></pagination-controls>
+  </div>
+  </ng-template>
+
+  <div class="buttons">
+    <button type="button" mat-dialog-close>Cancel</button>
+  </div>
+</ng-template>
+
+<ng-template #modifyModal>
+  <h5>{{languageService.i18n['modify_faultMsg_status']}}</h5>
+  <p>{{languageService.i18n['confirm_modify']}} ?</p>
+  <div class="buttons">
+    <button type="button" mat-dialog-close>Cancel</button>
+    <button type="button" mat-dialog-close="OK">OK</button>
+  </div>
+</ng-template>
+
+<ng-template #advancedModal>
+  <form [formGroup]="advancedForm">
+    <h5>Fault Message  {{languageService.i18n['performance_Advanced_Search']}}</h5>
+
+      <ul>
+      <li>
+        <span>Global ID:</span> <input type="text" formControlName="globalId">
+      </li>
+      <li>
+        <span>Field {{languageService.i18n['table.header_name']}}:</span> <input type="text" formControlName="cloudName">
+      </li>
+      <li>
+        <span>NF ID:</span> <input type="text" formControlName="nfId">
+      </li>
+      <li>
+        <span>NF {{languageService.i18n['table.header_name']}}:</span> <input type="text" formControlName="nfName">
+      </li>
+      <li>
+        <span>From:</span>
+        <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+        <span class="widthInit">To:</span>
+        <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+      </li>
+      <li>
+        <span>{{languageService.i18n['severity']}}</span>
+        <select formControlName="severity">
+          <option value="All">All</option>
+          <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
+        </select>
+      </li>
+      <li>
+        <span>Acknowledge Owner:</span> <input type="text" formControlName="acknowledgeOwner">
+      </li>
+    </ul>
+
+    <div class="buttons">
+      <button type="button" mat-dialog-close>Cancel</button>
+      <button type="button" mat-dialog-close="OK">Ok</button>
+      <!-- <button type="button" (click)="debug()">debug</button> -->
+    </div>
+  </form>
+</ng-template>

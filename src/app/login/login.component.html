@@ -1,0 +1,35 @@
+<div class="loginPage">
+    <div class="loginform">
+      <div class="logo">{{languageService.i18n['logon.welcome']}}<br/>{{languageService.i18n['logon.field_mgr_system']}}</div>
+      <div class="center">{{languageService.i18n['logon.user_logon']}}</div>
+      <div class="logon_error" *ngIf="errorPorperty">
+        <span class="material-icons">warning</span>
+        {{languageService.i18n[errorPorperty]}}
+      </div>
+      <p><span class="material-icons">account_circle</span>
+        <!-- <label>Username</label> -->
+        <input type="text" [(ngModel)]="userId" (keypress)="keypressHandler($event)" autocomplete="false">
+      </p>
+      <p><span class="material-icons">lock</span>
+        <!-- <label>Password</label> -->
+        <input type="password" [(ngModel)]="password" (keypress)="keypressHandler($event)" autocomplete="false">
+      </p>
+      <button (click)="onLoggedin()">{{languageService.i18n['logon']}}</button>
+      <!-- <div class="languageChange center">
+        <div class="vc-toggle-container">
+          <label class="vc-switch">
+            <input type="checkbox" class="vc-switch-input" [checked]="languageService.status()" (change)="languageService.toggleChange($event)" />
+            <span class="vc-switch-label" data-on="中" data-off="EN"></span>
+            <span class="vc-handle"></span>
+          </label>
+        </div>
+      </div> -->
+      <div class="switch">
+        <mat-button-toggle-group name="language" [(ngModel)]="languageService.language" (ngModelChange)="languageService.toggleChange()">
+          <mat-button-toggle value="TW">中</mat-button-toggle>
+          <mat-button-toggle value="EN">EN</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+  </div>

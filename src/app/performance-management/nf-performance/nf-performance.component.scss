@@ -1,0 +1,27 @@
+.table table {
+  width: 97.5%;
+  margin: 0;
+  text-align: center;
+  max-height: 73vh;
+}
+table tr td {
+  width: 8vw;
+}
+table tr td:nth-child(2){
+  width: 18vw;
+  text-align: left;
+}
+table tr td:nth-child(3){
+  width: 9vw;
+}
+table tr td:nth-child(4){
+  width: 25.5vw;
+  text-align: left;
+  white-space: nowrap;
+}
+@media screen and (max-width:1366px) {
+  .table table {
+    width: 98.5%;
+    max-height: 60vh;
+  }
+}

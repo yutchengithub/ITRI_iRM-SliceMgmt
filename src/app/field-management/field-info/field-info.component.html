@@ -1,0 +1,295 @@
+<div class="ocloudInfo">
+  <h5>
+    <button (click)="back()">
+      <span class="material-icons">arrow_back</span>Back
+    </button>
+    Field {{languageService.i18n['information']}} – {{ocloudInfo.name}}
+  </h5>
+
+
+  <div class="BOX col-md-4 cpu">
+    <label class="boxTitle">{{languageService.i18n['index.resourceMsg']}}
+      <a href="javascript:void(0)" (click)="goPerformanceMgr()">
+       {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
+      </a>
+    </label>
+    <div>
+      <span>
+        <img src="assets/img/cpu.png">
+        <div><label>{{languageService.i18n['index.cpuLoading']}}</label>{{ocloudPerformance.cpu}}</div>
+      </span>
+      <span>
+        <img src="assets/img/database.png">
+        <div><label>{{languageService.i18n['index.diskUsage']}}</label>{{ocloudPerformance.storage}}</div>
+      </span>
+      <span>
+        <img src="assets/img/memory.png">
+        <div><label>{{languageService.i18n['index.memoryUsage']}}</label><!--span class="bold"-->{{ocloudPerformance.memory}}<!--/span--></div>
+      </span>
+      <span>
+        <img src="assets/img/network.png">
+        <div><label>{{languageService.i18n['index.networkThroughput']}}</label>{{ocloudPerformance.network}}</div>
+      </span>
+    </div>
+
+  </div>
+
+  <div class="BOX col-md-4 center Fault ">
+    <label class="boxTitle">{{languageService.i18n['index.faultMsg']}}
+      <a href="javascript:void(0)" (click)="goFaultMgr()">
+       {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
+      </a>
+    </label>
+    <span class="percent {{severityText(severity)}}" *ngFor="let severity of severitys;let i=index">
+      {{severityText(severity)}}<br>{{severityCount(severity)}}
+
+    </span>
+  </div>
+
+  <div class="BOX col-md-3 basicInfo h30">
+    <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
+    <ul>
+      <li><label>{{languageService.i18n['table.header_name']}}</label><span>{{ocloudInfo.name}}</span></li>
+      <li><label>{{languageService.i18n['table.globalID']}}</label><span>{{ocloudInfo.id}}</span></li>
+      <li><label>{{languageService.i18n['ims.endpoint']}}</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+    </ul>
+
+    <label class="boxTitle">{{languageService.i18n['software.info']}}</label>
+    <ul>
+      <li>
+        <label>{{languageService.i18n['version']}}</label>
+        <span>{{ocloudInfo.softwareVersion}}
+          <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">{{languageService.i18n['update']}}</button>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="BOX col-md-3 nf h30">
+    <label class="boxTitle">{{languageService.i18n['nf.list']}}</label>
+    <div class="table">
+      <table>
+        <thead>
+          <tr>
+            <th>{{languageService.i18n['table.header_name']}}</th>
+            <th>DMS</th>
+            <th>{{languageService.i18n['table.Status']}}</th>
+            <th>{{languageService.i18n['index.view']}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let opt of ocloudInfo.nf">
+            <td>{{opt.name}}</td>
+            <td>{{opt.dmsName}}</td>
+            <td>
+              <label tooltip="{{languageService.i18n['nfRun']}}" *ngIf="opt.status === 0" class="greenLight"></label>
+              <label tooltip="{{languageService.i18n['nfRun']}}" *ngIf="opt.status === 1" class="blueLight"></label>
+              <label tooltip="{{languageService.i18n['nfNotRun']}}" *ngIf="opt.status === 2" class="redLight"></label>
+              <label tooltip="{{languageService.i18n['nfNotRun']}}" *ngIf="opt.status === 3" class="grayLight"></label>
+              {{commonService.details(opt.status)}}
+            </td>
+            <td (click)="veiw(opt)">
+              <mat-icon tooltip="{{languageService.i18n['view_detail']}}">search</mat-icon>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="BOX col-md-3 h30">
+    <label class="boxTitle">Resource Pools</label>
+    <div>
+      <div *ngFor="let resourcepool of ocloudInfo.resourcepool;let i=index">
+        <div class="table">
+          <div class="opt" (click)="resourcepool.active = !resourcepool.active" class="{{resourcepool.active?'active':''}}">{{resourcepool.poolName}}
+            <span class="material-icons">expand_less</span>
+          </div>
+          <table *ngIf="resourcepool.active">
+            <thead>
+              <tr>
+                <th>Node</th>
+                <th>CPU</th>
+                <th>Memory</th>
+                <th>Storage</th>
+                <th>Interface</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let node of resourcepool.node;let j=index">
+                <td>{{node.nodeName}}</td>
+                <!-- Tooltip Cpu -->
+                <td class="ResourceTooltip">
+                  <a href="javascript:void(0)" [tooltip]="$any(cpuContent)" [options]="$any(tooltipOptions)" contentType="template">{{node.cpu.length}}</a>
+                  <ng-template #cpuContent>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>{{languageService.i18n['table.header_name']}}</th>
+                          <th>Product</th>
+                          <th>Capacity</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let cpu of node.cpu">
+                          <td>{{cpu.name}}</td>
+                          <td>{{cpu.product}}</td>
+                          <td>{{cpu.capacity}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </ng-template>
+                  <!-- <a href="javascript:void(0)" (mouseover)="showTooltipCpu[i+'_'+j]=true"
+                    (mouseout)="showTooltipCpu[i+'_'+j]=false">{{node.cpu.length}}</a>
+                  <div *ngIf="showTooltipCpu[i+'_'+j]">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Product</th>
+                          <th>Capacity</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let cpu of node.cpu">
+                          <td>{{cpu.name}}</td>
+                          <td>{{cpu.product}}</td>
+                          <td>{{cpu.capacity}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div> -->
+                </td>
+                <td>{{node.memory.size}}</td>
+                <!-- Tooltip Cpu -->
+                <td class="ResourceTooltip">
+                  <a href="javascript:void(0)" [tooltip]="$any(storageContent)" [options]="$any(tooltipOptions)" contentType="template">{{node.storage.total}}</a>
+                  <ng-template #storageContent>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>{{languageService.i18n['table.header_name']}}</th>
+                          <th>Size</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let item of node.storage.items">
+                          <td>{{item.name}}</td>
+                          <td>{{item.size}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </ng-template>
+                  <!-- <a href="javascript:void(0)" (mouseover)="showTooltipStorage[i+'_'+j]=true"
+                    (mouseout)="showTooltipStorage[i+'_'+j]=false">{{node.storage.total}}</a>
+                  <div *ngIf="showTooltipStorage[i+'_'+j]">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Size</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let item of node.storage.items">
+                          <td>{{item.name}}</td>
+                          <td>{{item.size}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div> -->
+
+                </td>
+                <!-- Tooltip Nic -->
+                <td class="Interface ResourceTooltip">
+                  <a href="javascript:void(0)" [tooltip]="$any(nicContent)" [options]="$any(tooltipOptions)" contentType="template">{{node.nic.length}}</a>
+                  <ng-template #nicContent>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Product</th>
+                          <th>Capacity</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let nic of node.nic">
+                          <td>{{nic.name}}</td>
+                          <td>{{nic.product}}</td>
+                          <td>{{nic.capacity}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </ng-template>
+                  <!-- <a href="javascript:void(0)" (mouseover)="showTooltipNic[i+'_'+j]=true"
+                    (mouseout)="showTooltipNic[i+'_'+j]=false">{{node.nic.length}}</a>
+                  <div *ngIf="showTooltipNic[i+'_'+j]">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Product</th>
+                          <th>Capacity</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let nic of node.nic">
+                          <td>{{nic.name}}</td>
+                          <td>{{nic.product}}</td>
+                          <td>{{nic.capacity}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div> -->
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<ng-template #updateModal>
+  <h5>{{languageService.i18n['software_update']}}</h5>
+  <form [formGroup]="updateForm">
+    <ul>
+      <li>
+        <label>Current Version</label>
+        <span>{{ocloudInfo.softwareVersion}}</span>
+      </li>
+      <li>
+        <label>Update Software</label>
+        <span class="SoftwareUpdate">
+          <mat-button-toggle-group formControlName="type" (change)="changeType($event)">
+            <mat-button-toggle value="imageUrl">Image URL</mat-button-toggle>
+            <mat-button-toggle value="existedFile">Existed File</mat-button-toggle>
+          </mat-button-toggle-group>
+
+          <div *ngIf="updateForm.controls['type'].value === 'imageUrl'">
+            <input type="text" formControlName="imageUrl" placeholder="Image URL" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
+            <mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+          </div>
+          <div *ngIf="updateForm.controls['type'].value === 'existedFile'">
+            <select formControlName="fileName" class="{{formValidated&&updateForm.controls['fileName'].invalid?'required':''}}">
+              <option *ngFor="let opt of softwareList" [value]="opt.fileName">{{opt.fileName}}</option>
+            </select>
+            <mat-error *ngIf="formValidated&&updateForm.controls['fileName'].invalid">Required</mat-error>
+            <div class="UV" *ngIf="updateForm.controls['type'].value === 'existedFile'">
+              Update Version : {{softwareVersion()}}
+            </div>
+          </div>
+        </span>
+      </li>
+    </ul>
+    <div class="buttons">
+      <button type="button" mat-dialog-close>Cancel</button>
+      <button type="button" (click)="update()">OK</button>
+    </div>
+  </form>
+</ng-template>

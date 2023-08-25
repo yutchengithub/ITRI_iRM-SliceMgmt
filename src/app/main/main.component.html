@@ -1,0 +1,48 @@
+<div class="wrap">
+  <div class="header"><img src="assets/img/logo.png">{{languageService.i18n['index.menu_iRmSys']}}
+      <!--{{title}}-->
+
+      <mat-menu #menu="matMenu">
+        <button *ngFor="let opt of styles" (click)="changeStyle(opt)" mat-menu-item>
+          <mat-icon>{{styleType === opt.value?'radio_button_checked':'radio_button_unchecked'}}</mat-icon>
+          <span>{{opt.displayName}}</span>
+        </button>
+      </mat-menu>
+      <span class="header_btn">
+
+        <span class="switch">
+          <mat-button-toggle-group name="language" [(ngModel)]="languageService.language" (ngModelChange)="languageService.toggleChange()">
+            <mat-button-toggle value="TW">中</mat-button-toggle>
+            <mat-button-toggle value="EN">EN</mat-button-toggle>
+          </mat-button-toggle-group>
+        </span>
+        <button tooltip="{{languageService.i18n['theme']}}" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+          <mat-icon>format_color_fill</mat-icon>
+          <label>Change Color</label>
+        </button>
+        <button tooltip="{{languageService.i18n['logout_now']}}" class="logout" type="button" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+        </button>
+
+      </span>
+
+    <div class="menu">
+      <ul>
+        <li (click)="changePage(pageRourter['performance-management'])" class="{{page === 'performance-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_performMgr']}}"><mat-icon>trending_up</mat-icon><label>{{languageService.i18n['index.menu_performMgr']}}</label></li>
+        <li (click)="changePage(pageRourter['software-management'])" class="{{page === 'software-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_softwareMgr']}}"><mat-icon>display_settings</mat-icon><label>{{languageService.i18n['index.menu_softwareMgr']}}</label></li>
+      </ul>
+    </div>
+  </div>
+  <div class="menu">
+    <ul>
+      <li (click)="changePage(pageRourter['performance-management'])" class="{{page === 'performance-management'?'active':''}}" ><mat-icon>trending_up</mat-icon><label>{{languageService.i18n['index.menu_performMgr']}}</label></li>
+      <li (click)="changePage(pageRourter['software-management'])" class="{{page === 'software-management'?'active':''}}"><mat-icon>display_settings</mat-icon><label>{{languageService.i18n['index.menu_softwareMgr']}}</label></li>
+    </ul>
+  </div>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+  <div class="footer">
+    <p>Current Verion: 1.x.x Copyright © 2023 ITRI.</p>
+  </div>
+</div>

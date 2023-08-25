@@ -1,0 +1,113 @@
+.loginPage {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    background-image: url(../../assets/img/loginBG.svg);
+    background-size: cover;
+}
+.logo {
+    font-size: 1.35em;
+    line-height: 1.5;
+    padding: 2em 1em 0 2em;
+    height: 8em;
+    background-image: url(../../assets/img/login.png);
+    background-size: cover;
+}
+.loginform {
+    font-size: 1.1em;
+    position: relative;
+    width: 20em;
+    min-height: 28em;
+    top: 50%;
+    text-align: left;
+    transform: translate(0, -60%);
+    display: block;
+    margin: auto;
+    background-color: #FFF;
+    box-shadow: 0 13px 25px #242e42;
+}
+.loginform div {
+    display: block;
+    margin: 5px 0;
+}
+.loginform p {
+    position: relative;
+    margin-left: 2.5em;
+}
+.loginform div.center {
+    color: #686868;
+    margin: .5em auto;
+}
+.loginform p .material-icons {
+    position: absolute;
+    left: 0.25em;
+    top: 0.25em;
+    color: #52a6da;
+}
+.loginform p input {
+    padding: 0.3em 0.3em 0.3em 2em;
+    border-radius: 0;
+    border: 1px solid #3aabf1;
+    outline: 0;
+    font-size: 1.1em;
+}
+.loginform button {
+    cursor: pointer;
+    margin: 1em auto;
+    padding: 0.4em 1.8em;
+    border: 2px solid #278bca;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    background-color: transparent;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 16px;
+    transition: 0.3s;
+    z-index: 1;
+    font-family: inherit;
+    color: #0c8ccc;
+}
+   
+.loginform button::before {
+    content: '';
+    width: 0;
+    height: 300%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    background: #3aabf1;
+
+    transition: .5s ease;
+    display: block;
+    z-index: -1;
+   }
+   
+   .loginform button:hover::before {
+    width: 105%;
+   }
+   
+   .loginform button:hover {
+    color: #fff;
+   }
+   .center {
+    text-align: center;
+   }
+
+   .logon_error {
+    color: #dc3298;
+    text-align: center;
+}
+.logon_error .material-icons {
+    vertical-align: middle;
+}
+.languageChange {
+    color: #333;
+}
+.switch {
+    text-align: center;
+}

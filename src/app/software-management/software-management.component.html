@@ -1,0 +1,174 @@
+<h5>{{languageService.i18n['index.menu_softwareMgr']}}
+  <mat-icon tooltip="{{languageService.i18n['addSoftware']}}" (click)="openCreateModal()">add</mat-icon>
+</h5>
+  <form [formGroup]="searchForm">
+    <div class="filter">
+      <span><label>{{languageService.i18n['firm']}}</label>
+        <select>
+          <option>All</option>
+          <option></option>
+        </select>
+      </span>
+      <span><label>{{languageService.i18n['model']}}</label>
+        <select>
+          <option value="All">All</option>
+          <option></option>
+        </select>
+      </span>
+      <span><label>{{languageService.i18n['type']}}</label>
+        <select>
+          <option value="All">All</option>
+          <option></option>
+        </select>
+      </span>
+      <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+    </div>
+  </form>
+
+<div class="table">
+  <table>
+    <thead>
+      <tr>
+        <th>{{languageService.i18n['manufacturer']}}</th>
+        <th>{{languageService.i18n['model']}}</th>
+        <th>{{languageService.i18n['type']}}</th>
+        <th>{{languageService.i18n['version']}}</th>
+        <th>{{languageService.i18n['notes']}}</th>
+        <th>{{languageService.i18n['upload_time']}}</th>
+        <th>{{languageService.i18n['file.Url']}}</th>
+        <th>{{languageService.i18n['index.view']}}</th>
+        <th>{{languageService.i18n['table.delete']}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let opt of softwareList | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+        <td>ITRI</td>
+        <td>A001</td>
+        <td>CU + DU + RU</td>
+        <td>1.0.0</td>
+        <td></td>
+        <td>2023-8-16 10:45:20</td>
+        <td>Upload File</td>
+        <td class="icon"><span class="material-symbols-outlined"  tooltip="{{languageService.i18n['index.view']}}">description</span></td>
+        <td class="icon">
+          <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)">delete_forever</mat-icon>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
+  nextLabel="" id="display">
+</pagination-controls>
+
+
+<ng-template #createModal>
+  <h5>{{languageService.i18n['addSoftware']}}</h5>
+  <form [formGroup]="createForm">
+    <ul>
+      <li>
+        <label>{{languageService.i18n['firm']}}</label>
+        <span>
+          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+        </span>
+        <!-- <span class="upload {{formValidated&&createForm.controls['fileName'].invalid?'required':''}}">
+          <span>{{languageService.i18n['upload']}}
+            <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".zip, .tar" #fileInput>
+          </span>
+          <label>{{createForm.controls['fileName'].value}}</label>
+          <mat-error *ngIf="formValidated&&createForm.controls['fileName'].invalid">is Required</mat-error>
+          <mat-error *ngIf="fileMsg">{{fileMsg}}</mat-error>
+        </span> -->
+      </li>
+      <li>
+        <label>{{languageService.i18n['model']}}</label>
+        <span>
+          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+        </span>
+      </li>
+
+
+
+      <li>
+        <label>{{languageService.i18n['type']}}</label>
+        <span>
+          <select name="" id="">
+            <option value=""></option>
+          </select>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['version']}}</label>
+        <span>
+          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['add.method']}}</label>
+        <span class="btn-group">
+            <mat-button-toggle-group [(ngModel)]="uploadType" >
+              <mat-button-toggle value="upload">{{languageService.i18n['upload.file']}}</mat-button-toggle>
+              <mat-button-toggle value="url">{{languageService.i18n['url']}}</mat-button-toggle>
+            </mat-button-toggle-group>
+            <ng-container *ngIf="uploadType == 'upload'">
+              <div>
+                <input type="file" name="uploadedFile">
+                <!-- view detail 才出現以下二個 -->
+                <div>
+                  File Size:
+                  <br/>
+                  Checksum:
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="uploadType == 'url'">
+                <input type="text" placeholder="Url">
+            </ng-container>
+        </span>
+      </li>
+        <li>
+        <label>{{languageService.i18n['notes']}}</label>
+        <span>
+          <textarea></textarea>
+        </span>
+      </li>
+
+      <li>
+        <label>{{languageService.i18n['ftp.account']}}</label>
+        <span>
+          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['ftp.password']}}</label>
+        <span>
+          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+        </span>
+      </li>
+
+    </ul>
+    <div class="buttons">
+      <button type="button" mat-dialog-close>Cancel</button>
+      <button type="button" (click)="create()">OK</button>
+      <!-- <button (click)="debug()">debug</button> -->
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #deleteModal>
+  <h5>{{languageService.i18n['delsoftware']}}
+  </h5>
+  <p>{{languageService.i18n['confirm_del_soft']}} – {{selectSoftware.fileName}} ?</p>
+  <div class="buttons">
+    <button type="button" mat-dialog-close>Cancel</button>
+    <button type="button" (click)="delete()">Delete</button>
+  </div>
+</ng-template>

@@ -1,0 +1,36 @@
+<div class="table">
+  <table>
+    <thead>
+      <tr>
+        <th>NF {{languageService.i18n['table.header_name']}}</th>
+        <th>NF ID</th>
+        <th>Field {{languageService.i18n['table.header_name']}}</th>
+        <th class="width20">Field Global ID</th>
+        <th>{{languageService.i18n['index.cpuLoading']}}</th>
+        <th>{{languageService.i18n['index.memoryUsage']}}</th>
+        <th>{{languageService.i18n['index.diskUsage']}}</th>
+        <th>{{languageService.i18n['index.networkThroughput']}}</th>
+        <th>{{languageService.i18n['index.view']}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let opt of nfPerformanceList | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'nf-table' } ">
+        <td>{{opt.nfname}}</td>
+        <td>{{opt.nfId}}</td>
+        <td>{{opt.ocloudName}}</td>
+        <td>{{opt.ocloudId}}</td>
+        <td>{{opt.cpuLoading}}</td>
+        <td>{{opt.memoryUsage}}</td>
+        <td>{{opt.diskUsage}}</td>
+        <td>{{opt.networkThroughput}}</td>
+        <td>
+          <mat-icon tooltip="{{languageService.i18n['view_detail']}}"  (click)="viewPage(opt)">search</mat-icon>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
+  nextLabel="" id="nf-table">
+</pagination-controls>

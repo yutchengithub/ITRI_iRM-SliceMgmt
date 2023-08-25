@@ -1,0 +1,55 @@
+<h5>
+  <button (click)="back()">
+    <span class="material-icons">arrow_back</span>Back
+  </button>
+  {{languageService.i18n['index.menu_performMgr']}} – {{name}}
+</h5>
+
+<div class="chartPanel">
+<p-tabView [(activeIndex)]="activeIndex" (onChange)="changeTab(tabs[activeIndex].value)">
+  <p-tabPanel *ngFor="let tab of tabs;let i=index" header="{{tab.diplayName}}">
+    <ng-template [ngIf]="i === 0">
+      <div class="chartList" *ngFor="let key of overviewChart.chartList" (click)="changeTab(key)">
+        <h4>{{chartTitle(key)}}</h4>
+        <p-chart type="line" [data]="overviewChart[key].data" [options]="overviewChart[key].options"></p-chart>
+      </div>
+    </ng-template>
+    <ng-template [ngIf]="i !== 0">
+      <div *ngIf="activeIndex !== 0"  class="Query">
+        <label>Interval:
+
+        </label>
+        <mat-radio-group aria-label="Select an option" [(ngModel)]="tabs[activeIndex]['intervalType']">
+          <mat-radio-button value="real-time">Real Time</mat-radio-button>
+          <mat-radio-button value="1-day">1-Day</mat-radio-button>
+          <mat-radio-button value="7-day">7-Day</mat-radio-button>
+          <mat-radio-button value="30-day">30-Day</mat-radio-button>
+          <mat-radio-button value="custom">Custom</mat-radio-button>
+        </mat-radio-group>
+        <span *ngIf="tabs[activeIndex]['intervalType'] === 'custom'">
+          <span><label>From</label>
+            <span>
+              <p-calendar [(ngModel)]="tabs[activeIndex]['from']" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+            </span>
+          </span>
+          <span><label>To</label>
+            <span>
+              <p-calendar [(ngModel)]="tabs[activeIndex]['to']" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+            </span>
+          </span>
+          <span class="warning" *ngIf="showDateError()">Maximum 3 years</span>
+        </span>
+        <button (click)="query(tabs[activeIndex].value)">Query</button>
+        <span class="note" *ngIf="tabs[activeIndex]['intervalType'] !== 'custom'">
+          {{intervalText()}}
+        </span>
+      </div>
+      <div class="singleChart">
+        <p-chart type="line" [data]="tabs[i].chartData" [options]="tabs[i].chartOption"></p-chart>
+      </div>
+    </ng-template>
+  </p-tabPanel>
+</p-tabView>
+</div>
+
+<input type="hidden" id="drawColorChange" (click)="drawColorChange()">

@@ -1,0 +1,156 @@
+.wrap {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+div.header {
+  display: block;
+  font-size: 1.75em;
+  padding: 0.3em 0 0 2.5%;
+  margin: 0 0 0.5em 0;
+  letter-spacing: 1px;
+  font-style: italic;
+  font-weight: bold;
+}
+div.header img {
+    height: 1.5em;
+    width: auto;
+    vertical-align: middle;
+    margin: 0 0.5em .2em .4em;
+}
+div.header .header_btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+div.header button {
+  border: none;
+  cursor: pointer;
+  padding: .3em 2em 0;
+  vertical-align: middle;
+  transition: all 0.25s;
+}
+div.header button:hover {
+  color: #abd7ff;
+  opacity: .8!important;
+}
+.header > .menu {
+  display: none;
+}
+.logout {
+  padding: 0.6em 1.3em!important;
+}
+.logout .mat-icon {
+  font-size: 30px;
+}
+.menu,.content {
+    display: inline-block;
+    vertical-align: top;
+}
+.menu {
+  width: 14%;
+}
+.menu ul li {
+  padding: 0 0 0 5em;
+  cursor: pointer;
+  font-size: 135%;
+  line-height: 115%;
+  transition: all 0.25s;
+  position: relative;
+  margin: 1em 0;
+}
+.menu ul li label {
+  cursor: pointer;
+  word-break: break-word;
+}
+.content {
+    width: 84%;
+}
+.content.only {
+  width: 90%;
+  margin: auto;
+  display: block;
+}
+.content > div {
+    display: inline-block;
+}
+.menu ul li .mat-icon {
+  display: inline-block;
+  opacity: 0.5;
+  position: absolute;
+  left: 2.5em;
+  top: 0;
+}
+
+.mat-menu-item .mat-icon {
+  margin-right: 6px;
+}
+div.header button label {
+  display: none;
+}
+:host ::ng-deep .switch .mat-button-toggle-group-appearance-standard {
+  padding: 0.2em 0.3em;
+}
+:host ::ng-deep .switch .mat-button-toggle-appearance-standard {
+  background-color: transparent;
+  color: white;
+  border: none !important;
+  min-width: 1em;
+  transition: all 0.3s;
+  font-size: .7em;
+}
+:host ::ng-deep .switch .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+  line-height: 10px !important;
+}
+:host ::ng-deep .switch .mat-button-toggle-checked {
+  color: rgba(0, 0, 0, 1) !important;
+}
+@media only screen and (max-width:1366px) {
+  .wrap {
+    overflow: auto;
+    position: relative;
+  }
+  div.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+  }
+  .header + .menu {
+    display: none;
+  }
+  .header > .menu {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 11em;
+    text-align: right;
+    width: auto;
+    z-index: 99999;
+  }
+  .header > .menu ul  {
+    padding: 0;
+    margin: 0;
+  }
+  .header > .menu ul li {
+    display: inline-block;
+    padding: 0 0.4em;
+    margin: 0.4em;
+    vertical-align: top;
+  }
+  .header > .menu ul li label,
+  div.header button label {
+    display: none;
+  }
+
+  .header > .menu ul li .mat-icon {
+    font-size: 28px;
+  }
+  .content {
+    width: 93%;
+    margin: auto;
+    display: block;
+    margin-top: 5em;
+  }
+
+}
