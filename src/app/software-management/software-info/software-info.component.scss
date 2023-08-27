@@ -58,7 +58,6 @@ svg circle {
   r:70px;
 }
 .ocloudInfo h5 button {
-  background: transparent;
   border-radius: 50em;
   cursor: pointer;
   font-size: .8em;
@@ -73,8 +72,8 @@ svg circle {
 }
 .boxTitle {
   display: block;
-  font-size: 2em;
-  line-height: 1.6;
+  font-size: 1.5em;
+  line-height: 2;
   margin: 0 0 0.5em;
   text-align: center;
   padding: 0;
@@ -185,7 +184,7 @@ svg circle {
 .basicInfo ul li label {
   display: inline-block;
   margin:  0;
-  width: 28%;
+  /* width: 28%; */
 
 }
 .basicInfo ul li label::after {
@@ -195,7 +194,7 @@ svg circle {
 }
 .basicInfo ul li span {
   display: inline-block;
-  width: 70%;
+ /*  width: 70%; */
   word-break: break-all;
   vertical-align: top;
 }
@@ -352,11 +351,11 @@ svg circle {
   }
   .BOX {
     padding: 0 1em 1.5em;
-    height: 17em;
+
   }
   .boxTitle {
-    font-size: 1.8em;
-    line-height: 1.5;
+    font-size: 1.35em;
+    line-height: 2;
 }
 .basicInfo ul {
   font-size: .9em;
@@ -370,9 +369,7 @@ svg circle {
 }
 
 @media screen and (max-width:1366px) {
-  .BOX {
-    height: 11em;
-}
+
   .h30 {
     height: 22em;
   }

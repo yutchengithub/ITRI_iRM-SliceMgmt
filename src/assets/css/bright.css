@@ -189,9 +189,10 @@ h5 {
 .ocloudInfo h5 button {
   color: #559fd9;
   border: 1px solid #84c0ef;
+  background-color: #dbf3ff;
 }
 .ocloudInfo .BOX {
-  background-color: #c2e7ff;
+  background-color: #ffff;
   border: 1px solid #63acc9;
 }
 .ocloudInfo .boxTitle {
