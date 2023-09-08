@@ -99,5 +99,6 @@ export const Enlanguage = {
   'upload.file':'Upload File',
   'url':'Url',
   'add.method':'Add Method',
-  'file.size':'File Size'
+  'file.size':'File Size',
+  'field_list':'Field List'
 }

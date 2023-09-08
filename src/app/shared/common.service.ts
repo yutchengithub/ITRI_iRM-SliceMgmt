@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { OCloudList } from './../field-management/field-management.component';
 import { SystemSummary } from '../dashboard/dashboard.component';
 import { OcloudSummary } from '../dashboard/dashboard.component';
+import { FieldSummary } from '../dashboard/dashboard.component';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { OcloudInfo, OcloudPerformance } from '../field-management/field-info/field-info.component';
 import { FaultMessage, FaultMessages, FmStatus, FmStatusRecord } from '../fault-management/fault-management.component';
 import * as _ from 'lodash';
 import { PerformanceList } from '../performance-management/o-cloud-performance/o-cloud-performance.component';
 import { SoftwareList } from '../software-management/software-management.component';
+import { SoftwareLists} from '../software-management/software-management.component';
 import { SoftwareInfo } from '../software-management/software-info/software-info.component';
 import { MainComponent } from '../main/main.component';
 import { Nf, OcloudDmsList } from '../nf-management/nf-management.component';
@@ -244,6 +246,12 @@ export class CommonService {
   }
 
   // softwareType: 0 = O-Cloud; 1= NF(CU); 2=NF(DU); 3=NF(CU+DU); All
+  queryUploadFileList(): Observable<any> {
+    const url = `${this.restPath}/queryUploadFileList/${this.getSessionId()}`;
+    return this.http.get(url);
+  }
+  
+  // softwareType: 0 = O-Cloud; 1= NF(CU); 2=NF(DU); 3=NF(CU+DU); All
   querySoftwareList(fileName: string, type: string, version: string): Observable<any> {
     const url = `${this.restPath}/querySoftwareList/${this.getSessionId()}?fileName=${fileName}&type=${type}&version=${version}`;
     return this.http.get(url);
@@ -409,6 +417,16 @@ export class CommonService {
     totalMemory: "72 GB",
     avgStorage: "70.123 KBps",
     avgNetwork: "3.475 KBps"
+  };
+
+  fieldSummary: FieldSummary = {
+    fieldSummaryInfo: [
+      {
+        "bsNum": 1,
+        "fieldNum": 2,
+        "ueNum": "itri 13"
+      }
+    ]
   };
 
   ocloudSummary: OcloudSummary[] = [
@@ -1381,6 +1399,56 @@ export class CommonService {
     }
   ];
 
+  softwareLists: SoftwareLists=
+    {
+      uploadinfos: [
+        {
+          id: '5c4ecc47c4da49b9ae36',
+          firm: 'ITRI',
+          modelname: 'A001',
+          uploadtime: '2023-06-12 09:25:03',
+          uploadtype: 1,
+          uploadversion: '1.0.0',
+          description: 'CU',
+          uploadinfo: 'ITRI_1.0.0.img',
+          uploadurl: 'sftp://140.96.102.47:22/home/k200/irm-itri-6565/irm-itri/server/uploadFolder/ftpFolder/ITRI_1.0.0.img',
+        },
+        {
+          id: '12345cc47c4da49b9ae36',
+          firm: 'ITRI2',
+          modelname: 'A002',
+          uploadtime: '2023-06-12 09:25:03',
+          uploadtype: 2,
+          uploadversion: '1.0.0',
+          description: 'DU',
+          uploadinfo: 'ITRI_2.0.0.img',
+          uploadurl: 'sftp://140.96.102.47:22/home/k200/irm-itri-6565/irm-itri/server/uploadFolder/ftpFolder/ITRI_1.0.0.img',
+        },
+        {
+          id: '12345cc47c4da49b9ae36',
+          firm: 'ITRI3',
+          modelname: 'A003',
+          uploadtime: '2023-06-12 09:25:03',
+          uploadtype: 3,
+          uploadversion: '1.0.0',
+          description: 'CU',
+          uploadinfo: 'ITRI_3.0.0.img',
+          uploadurl: 'sftp://140.96.102.47:22/home/k200/irm-itri-6565/irm-itri/server/uploadFolder/ftpFolder/ITRI_1.0.0.img',
+        },
+        {
+          id: '12345cc47c4da49b9ae36',
+          firm: 'ITRI4',
+          modelname: 'A004',
+          uploadtime: '2023-06-12 09:25:03',
+          uploadtype: 0,
+          uploadversion: '1.0.0',
+          description: 'DU',
+          uploadinfo: 'ITRI_4.0.0.img',
+          uploadurl: 'sftp://140.96.102.47:22/home/k200/irm-itri-6565/irm-itri/server/uploadFolder/ftpFolder/ITRI_1.0.0.img',
+        }
+      ]
+    };
+
 
   softwareList: SoftwareList[] = [
     {
@@ -1398,126 +1466,6 @@ export class CommonService {
       firm: "Compal",
       model: "Os_image_2.tar",
       type: 1,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011003",
-      firm: "ITRI",
-      model: "Os_image_2.tar",
-      type: 2,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011004",
-      firm: "Compal",
-      model: "Os_image_2.tar",
-      type: 3,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011005",
-      firm: "ITRI",
-      model: "Os_image_2.tar",
-      type: 0,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011002",
-      firm: "Compal",
-      model: "Os_image_2.tar",
-      type: 0,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011003",
-      firm: "ITRI",
-      model: "Os_image_2.tar",
-      type: 0,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011004",
-      firm: "Compal",
-      model: "Os_image_2.tar",
-      type: 0,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011002",
-      firm: "Compal",
-      model: "Os_image_2.tar",
-      type: 0,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011003",
-      firm: "ITRI",
-      model: "Os_image_2.tar",
-      type: 0,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011004",
-      firm: "Compal",
-      model: "Os_image_2.tar",
-      type: 0,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011002",
-      firm: "Compal",
-      model: "Os_image_2.tar",
-      type: 0,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011003",
-      firm: "ITRI",
-      model: "Os_image_2.tar",
-      type: 0,
-      version: "1.0.0",
-      notes: "Os_image_2.tar",
-      uploadTime: "2023-07-01 20:01:30",
-      fileName: "fw-v1-0-0.zip"
-    },
-    {
-      id: "s0011004",
-      firm: "Compal",
-      model: "Os_image_2.tar",
-      type: 0,
       version: "1.0.0",
       notes: "Os_image_2.tar",
       uploadTime: "2023-07-01 20:01:30",

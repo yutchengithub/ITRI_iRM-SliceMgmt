@@ -1,49 +1,14 @@
 <div class="dashboard">
-  <!-- <div class="leftArea">
-    <div class="nodes">
-      <label class="boxTitle">Nodes</label>
-      <span><label class="unit">Total</label><label class="bigValue">{{systemSummary.totalNodes}}</label></span>
-      <span><label class="unit">Used</label><label class="bigValue">{{systemSummary.usedNodes}}</label></span>
-      <div class="chart">
-        <ng-template [ngIf]="showVircularGauge">
-          <dx-circular-gauge id="gauge" [value]="utilizationPercent">
-            <dxo-scale [startValue]="0" [endValue]="100" [tickInterval]="10">
-              <dxo-label [useRangeColors]="true">
-                <dxo-font [size]="commonService.scaleFontSize"></dxo-font>
-              </dxo-label>
-            </dxo-scale>
-            <dxo-size [height]="circularHeight"></dxo-size>
-            <dxo-range-container palette="pastel" [width]="commonService.rangeWidth">
-              <dxi-range [startValue]="0" [endValue]="90" [color]="commonService.colorOne()"></dxi-range>
-              <dxi-range [startValue]="90" [endValue]="95" [color]="commonService.colorTwo()"></dxi-range>
-              <dxi-range [startValue]="95" [endValue]="100" [color]="commonService.colorThree()"></dxi-range>
-            </dxo-range-container>
-            <dxo-title text="Utilization {{utilizationPercent}}%">
-              <dxo-font [size]="30"></dxo-font>
-            </dxo-title>
-          </dx-circular-gauge>
-        </ng-template>
-      </div>
-    </div>
-  </div> -->
-
-  <!-- <div class="resource">
-      <label class="boxTitle">Resource Utilization</label>
-      <span><label class="unit">CPU</label><label class="bigValue">{{systemSummary.cpuUtilized}}</label></span>
-      <span><label class="unit">Interface</label><label
-          class="bigValue">{{systemSummary.interfaceUtilized}}</label></span>
-    </div> -->
-
   <div class="leftArea">
     <div class="w30">
       <div>
         <label class="boxTitle">Fields</label>
-        <span class="bigValue">{{systemSummary.ocloudCount}}</span>
+        <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{field.fieldNum}}</span>
       </div>
 
       <div>
-        <label class="boxTitle">{{languageService.i18n['index.netFun']}}</label>
-        <span class="bigValue">{{systemSummary.nfCount}}</span>
+        <label class="boxTitle">gNbs</label>
+        <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{field.bsNum}}</span>
       </div>
     </div>
     <div class="w70">
@@ -58,39 +23,22 @@
         </span>
       </div>
       <div>
-        <label class="boxTitle">{{languageService.i18n['index.resourceMsg']}}</label>
-        <div class="cpu">
-          <span>
-            <img src="assets/img/cpu.png">
-            <div><label>{{languageService.i18n['index.cpuLoading']}}</label>{{systemSummary.avgCpu}}</div>
-          </span>
-          <span>
-            <img src="assets/img/database.png">
-            <div><label>{{languageService.i18n['index.diskUsage']}}</label>{{systemSummary.avgStorage}}</div>
-          </span>
-          <span>
-            <img src="assets/img/memory.png">
-            <div><label>{{languageService.i18n['index.memoryUsage']}}</label>{{systemSummary.totalMemory}}</div>
-          </span>
-          <span>
-            <img src="assets/img/network.png">
-            <div><label>{{languageService.i18n['index.networkThroughput']}}</label>{{systemSummary.avgNetwork}}</div>
-          </span>
-        </div>
+        <label class="boxTitle">UEs</label>
+        <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{ueNum}}</span>
       </div>
     </div>
 </div>
     <div class="rightArea">
       <div class="table">
-        <label class="boxTitle">{{languageService.i18n['ocloud.list']}}</label>
+        <label class="boxTitle">{{languageService.i18n['field_list']}}</label>
         <table>
           <thead>
             <tr>
               <th>Field {{languageService.i18n['table.header_name']}}</th>
-              <th>{{languageService.i18n['table.header_dmsCount']}}</th>
-              <th>{{languageService.i18n['table.header_nfCount']}}</th>
-              <th>{{languageService.i18n['table.header_faultCount']}}</th>
-              <th>{{languageService.i18n['index.view']}}</th>
+              <th>Number of gNBs</th>
+              <th>Number of UEs</th>
+              <th>Coverage</th>
+              <th>View</th>
             </tr>
           </thead>
           <tbody>

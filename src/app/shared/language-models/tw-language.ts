@@ -99,5 +99,6 @@ export const TwLanguage = {
   'upload.file':'上傳檔案',
   'url':'連結',
   'add.method':'選擇新增方式',
-  'file.size':'檔案大小'
+  'file.size':'檔案大小',
+  'field_list':'場域列表'
 }

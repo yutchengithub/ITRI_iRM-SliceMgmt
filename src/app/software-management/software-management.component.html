@@ -37,14 +37,14 @@
     </thead>
     <tbody>
       <tr
-        *ngFor="let opt of softwareList | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+        *ngFor="let opt of softwareLists.uploadinfos | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
         <td>{{opt.firm}}</td>
-        <td>{{opt.model}}</td>
-        <td>{{typeText(opt.type)}}</td>
-        <td>{{opt.version}}</td>
-        <td>{{opt.notes}}</td>
-        <td>{{opt.uploadTime}}</td>
-        <td>{{opt.fileName}}</td>
+        <td>{{opt.modelname}}</td>
+        <td>{{typeText(opt.uploadtype)}}</td>
+        <td>{{opt.uploadversion}}</td>
+        <td>{{opt.description}}</td>
+        <td>{{opt.uploadtime}}</td>
+        <td>{{opt.uploadinfo}}</td>
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>
           <!-- <span class="material-symbols-outlined"  tooltip="{{languageService.i18n['index.view']}}">description</span> -->
@@ -164,7 +164,7 @@
 <ng-template #deleteModal>
   <h5>{{languageService.i18n['delsoftware']}}
   </h5>
-  <p>{{languageService.i18n['confirm_del_soft']}} – {{selectSoftware.fileName}} ?</p>
+  <p>{{languageService.i18n['confirm_del_soft']}} – {{selectSoftware.uploadinfo}} ?</p>
   <div class="buttons">
     <button type="button" mat-dialog-close>Cancel</button>
     <button type="button" (click)="delete()">Delete</button>

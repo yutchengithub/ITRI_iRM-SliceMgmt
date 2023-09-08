@@ -22,10 +22,10 @@ export interface SoftwareList {
 }
 
 export interface SoftwareLists {
-  uploadinfos: uploadinfos[];
+  uploadinfos: Uploadinfos[];
 }
 
-export interface uploadinfos {
+export interface Uploadinfos {
   id: string;
   firm: string;
   modelname: string;
@@ -45,6 +45,7 @@ export interface uploadinfos {
 export class SoftwareManagementComponent implements OnInit {
   sessionId: string = '';
   softwareList: SoftwareList[] = [];
+  softwareLists: SoftwareLists = {} as SoftwareLists;
   @ViewChild('createModal') createModal: any;
   @ViewChild('deleteModal') deleteModal: any;
   @ViewChild('advancedModal') advancedModal: any;
@@ -54,7 +55,7 @@ export class SoftwareManagementComponent implements OnInit {
   createModalRef!: MatDialogRef<any>;
   deleteModalRef!: MatDialogRef<any>;
   createForm!: FormGroup;
-  selectSoftware!: SoftwareList;
+  selectSoftware!: Uploadinfos;
   nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
   file: any;
   typeMap: Map<number, string> = new Map();
@@ -117,12 +118,13 @@ export class SoftwareManagementComponent implements OnInit {
     console.log(`version=${version}`);
     if (this.commonService.isLocal) {
       /* local file test */
-      this.softwareList = this.commonService.softwareList;
+      this.softwareLists = this.commonService.softwareLists;
+      console.log(this.softwareLists);
       this.softwareListDeal();
     } else {
-      this.commonService.querySoftwareList(fileName, type, version).subscribe(
+      this.commonService.queryUploadFileList().subscribe(
         res => {
-          console.log('getSoftwareList:');
+          console.log('Get software list:');
           console.log(res);
           this.softwareList = res as SoftwareList[];
           this.softwareListDeal();
@@ -231,7 +233,7 @@ export class SoftwareManagementComponent implements OnInit {
     }
   }
 
-  openDelectModal(softwareList: SoftwareList) {
+  openDelectModal(softwareList: Uploadinfos) {
     this.selectSoftware = softwareList;
     this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
   }
@@ -308,7 +310,7 @@ export class SoftwareManagementComponent implements OnInit {
     console.log(body);
   }
 
-  viewPage(softwareList: SoftwareList) {
-    this.router.navigate(['/main/software-mgr/info', softwareList.id, softwareList.fileName]);
+  viewPage(softwareList: Uploadinfos) {
+    this.router.navigate(['/main/software-mgr/info', softwareList.id, softwareList.uploadinfo]);
   }
 }

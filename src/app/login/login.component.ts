@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
 
       if (this.userId.toLowerCase() === 'admin' && this.password.toLowerCase() === 'admin') {
         this.commonService.setSessionId('sessionId_test_0800');
-        this.router.navigate(['/main/performance-mgr']);
+        this.router.navigate(['/main/dashboard']);
       } else {
         this.showErrMssage('logon.password_error');
       }
@@ -69,7 +69,7 @@ export class LoginComponent implements OnInit {
           // }
 
           this.commonService.setSessionId(res['sessionId']);  // 儲存 sessiondId
-          this.router.navigate(['/main/performance-mgr']);    // 導向主頁
+          this.router.navigate(['/main/dashboard']);    // 導向主頁
 
         }, (err: ResponseMessage) => {
           this.showErrMssage(err.respMsg as string);

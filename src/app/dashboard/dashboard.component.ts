@@ -19,6 +19,16 @@ export interface SystemSummary {
   avgNetwork: string;
 }
 
+export interface FieldSummary {
+  fieldSummaryInfo: FieldSummaryInfo[];
+}
+
+export interface FieldSummaryInfo {
+  bsNum: number;
+  fieldNum: number;
+  ueNum: string;
+}
+
 export interface OcloudSummary {
   id: string;
   name: string;
@@ -36,10 +46,12 @@ export interface OcloudSummary {
 export class DashboardComponent implements OnInit {
   sessionId: string = '';
   systemSummary: SystemSummary = {} as SystemSummary;
+  fieldSummary: FieldSummary = {} as FieldSummary;
   ocloudSummary: OcloudSummary[] = [];
   // utilizationPercent: number = 0;
   resizeTime: any;
   circularHeight!: number;
+  ueNum: string = '0';
   showVircularGauge: boolean = false;
   /* CRITICAL,MAJOR,MINOR,WARNING */
   severitys: string[];
@@ -54,23 +66,47 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.sessionId = this.commonService.getSessionId();
-    // System Summary
-    this.getSystemSummary();
+    // Field Summary
+    this.getfieldSummaryInfo();
     // Ocloud Summary
     this.getOcloudSummary();
   }
 
-  getSystemSummary() {
+  // getSystemSummary() {
+  //   if (this.commonService.isLocal) {
+  //     /* local file test */
+  //     this.systemSummary = this.commonService.systemSummary;
+  //     this.systemSummaryDeal();
+
+  //   } else {
+  //     const url = `${this.commonService.restPath}/querySystemSummary/${this.sessionId}`;
+  //     this.http.get(url).subscribe(
+  //       res => {
+  //         console.log('getSystemSummary:');
+  //         console.log(res);
+  //         this.systemSummary = res as SystemSummary;
+  //         this.systemSummaryDeal();
+  //       }
+  //     );
+  //   }
+  // }
+
+  getfieldSummaryInfo() {
     if (this.commonService.isLocal) {
       /* local file test */
-      this.systemSummary = this.commonService.systemSummary;
+      this.fieldSummary = this.commonService.fieldSummary;
+      this.fieldSummary.fieldSummaryInfo.forEach(field => {
+        // Use a regular expression to extract the number from the string
+        this.ueNum = (field.ueNum.match(/\d+/)?.[0] || '0').toString();
+      //field.ueNum = extractedNumber;
+      });
+      console.log('fieldSummaryInfo:', this.fieldSummary);
       this.systemSummaryDeal();
-
     } else {
-      const url = `${this.commonService.restPath}/querySystemSummary/${this.sessionId}`;
+      const url = `${this.commonService.restPath}/queryFieldSummaryInfo/${this.sessionId}`;
       this.http.get(url).subscribe(
         res => {
-          console.log('getSystemSummary:');
+          console.log('queryFieldSummaryInfo:');
           console.log(res);
           this.systemSummary = res as SystemSummary;
           this.systemSummaryDeal();
