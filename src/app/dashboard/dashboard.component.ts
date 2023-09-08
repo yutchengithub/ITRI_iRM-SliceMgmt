@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonService } from '../shared/common.service';
 import * as _ from 'lodash';
 import { Router } from '@angular/router';
-import { OcloudInfo, OcloudPerformance } from '../field-management/field-info/field-info.component';
+																									
 import { LanguageService } from '../shared/service/language.service';
 
 export interface SystemSummary {
@@ -29,6 +29,55 @@ export interface FieldSummaryInfo {
   ueNum: string;
 }
 
+export interface FieldList {
+  fields: Fields[];
+}
+
+export interface Fields {
+  id: string;
+  name: string;
+  phone: string;
+  fieldposition1: string;
+  fieldposition2: string;
+  fieldposition3: string;
+  fieldposition4: string;
+  bsinfo: Bsinfo[];
+  bsNum: number;
+  ueNum: string;
+  coverage: string;
+  accessibility: string;
+  availability: string;
+  mobility: string;
+  retainability: string;
+  energy: string;
+  integrity: Integrity;
+  utilization: Utilization;
+  alarmCriticalNum: number;
+  alarmMajorNum: number;
+  alarmMinorNum: number;
+  alarmWarningNum: number;
+}
+
+export interface Bsinfo {
+  id: string;
+  name: string;
+}
+
+export interface Integrity {
+  downlinkDelay: string;
+  uplinkDelay: string;
+  downlinkThrouthput: string;
+  uplinkThrouthput: string;
+}
+
+export interface Utilization {
+  pdu: string;
+  resourceProcess: string;
+  resourceMemory: string;
+  resourceDisk: string;
+  maxPdu: string;
+}
+
 export interface OcloudSummary {
   id: string;
   name: string;
@@ -47,11 +96,14 @@ export class DashboardComponent implements OnInit {
   sessionId: string = '';
   systemSummary: SystemSummary = {} as SystemSummary;
   fieldSummary: FieldSummary = {} as FieldSummary;
+  fieldList: FieldList = {} as FieldList;
+  ueNumList: string[] = [];
   ocloudSummary: OcloudSummary[] = [];
   // utilizationPercent: number = 0;
   resizeTime: any;
   circularHeight!: number;
   ueNum: string = '0';
+					  
   showVircularGauge: boolean = false;
   /* CRITICAL,MAJOR,MINOR,WARNING */
   severitys: string[];
@@ -68,39 +120,38 @@ export class DashboardComponent implements OnInit {
     this.sessionId = this.commonService.getSessionId();
     // Field Summary
     this.getfieldSummaryInfo();
+    this.getfieldListInfo();
     // Ocloud Summary
     this.getOcloudSummary();
   }
 
-  // getSystemSummary() {
-  //   if (this.commonService.isLocal) {
-  //     /* local file test */
-  //     this.systemSummary = this.commonService.systemSummary;
-  //     this.systemSummaryDeal();
-
-  //   } else {
-  //     const url = `${this.commonService.restPath}/querySystemSummary/${this.sessionId}`;
-  //     this.http.get(url).subscribe(
-  //       res => {
-  //         console.log('getSystemSummary:');
-  //         console.log(res);
-  //         this.systemSummary = res as SystemSummary;
-  //         this.systemSummaryDeal();
-  //       }
-  //     );
-  //   }
-  // }
+  getSystemSummary() {
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.systemSummary = this.commonService.systemSummary;
+      this.systemSummaryDeal();
+    } else {
+      const url = `${this.commonService.restPath}/querySystemSummary/${this.sessionId}`;
+      this.http.get(url).subscribe(
+        res => {
+          console.log('getSystemSummary:');
+          console.log(res);
+          this.systemSummary = res as SystemSummary;
+          this.systemSummaryDeal();
+        }
+      );
+    }
+  }
 
   getfieldSummaryInfo() {
     if (this.commonService.isLocal) {
       /* local file test */
       this.fieldSummary = this.commonService.fieldSummary;
-      this.fieldSummary.fieldSummaryInfo.forEach(field => {
-        // Use a regular expression to extract the number from the string
+	    this.fieldSummary.fieldSummaryInfo.forEach(field => {
         this.ueNum = (field.ueNum.match(/\d+/)?.[0] || '0').toString();
       //field.ueNum = extractedNumber;
       });
-      console.log('fieldSummaryInfo:', this.fieldSummary);
+      console.log('fieldSummaryInfo:', this.fieldSummary);				
       this.systemSummaryDeal();
     } else {
       const url = `${this.commonService.restPath}/queryFieldSummaryInfo/${this.sessionId}`;
@@ -108,11 +159,34 @@ export class DashboardComponent implements OnInit {
         res => {
           console.log('queryFieldSummaryInfo:');
           console.log(res);
-          this.systemSummary = res as SystemSummary;
+          this.fieldSummary = res as FieldSummary;
           this.systemSummaryDeal();
         }
       );
     }
+  }
+
+  getfieldListInfo() {
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.fieldList = this.commonService.fieldList;
+      this.systemSummaryDeal();
+    } else {
+      const url = `${this.commonService.restPath}/queryFieldList/${this.sessionId}`;
+      this.http.get(url).subscribe(
+        res => {
+          console.log('queryFieldList:');
+          console.log(res);
+          this.fieldList = res as FieldList;
+          this.systemSummaryDeal();
+        }
+      );
+    }
+  }
+
+  NumUes(inputString: string): string {
+    const matches = inputString.match(/\d+/);
+    return matches ? matches[0] : '0';
   }
 
   systemSummaryDeal() {
@@ -155,9 +229,9 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  veiw(ocloudSummary: OcloudSummary) {
+  view(fields: Fields) {
     //console.log(ocloudSummary);
-    this.router.navigate(['/main/field-mgr/info', ocloudSummary.id]);
+    this.router.navigate(['/main/field-mgr/info', fields.id]);
   }
 
   viewMore() {

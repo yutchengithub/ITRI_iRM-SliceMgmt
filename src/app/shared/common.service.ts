@@ -3,6 +3,7 @@ import { OCloudList } from './../field-management/field-management.component';
 import { SystemSummary } from '../dashboard/dashboard.component';
 import { OcloudSummary } from '../dashboard/dashboard.component';
 import { FieldSummary } from '../dashboard/dashboard.component';
+import { FieldList } from '../dashboard/dashboard.component';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { OcloudInfo, OcloudPerformance } from '../field-management/field-info/field-info.component';
 import { FaultMessage, FaultMessages, FmStatus, FmStatusRecord } from '../fault-management/fault-management.component';
@@ -425,6 +426,91 @@ export class CommonService {
         "bsNum": 1,
         "fieldNum": 2,
         "ueNum": "itri 13"
+      }
+    ]
+  };
+
+  fieldList: FieldList = {
+    fields: [
+      {
+        "id": "a542f7ab40a24ec48e84",
+        "name": "f1",
+        "phone": "0912345678",
+        "fieldposition1": "[121.570381,25.033778]",
+        "fieldposition2": "[121.560381,25.033778]",
+        "fieldposition3": "[121.560381,25.023778]",
+        "fieldposition4": "[121.570381,25.023778]",
+        bsinfo: [
+          {
+            "id": "fd005824997144b987d5",
+            "name": "bs_1x2x4"
+          }
+        ],
+        "bsNum": 1,
+        "ueNum": "fake 0",
+        "coverage": "15",
+        "accessibility": "string",
+        "availability": "string",
+        "mobility": "string",
+        "retainability": "string",
+        "energy": "string",
+        integrity: {
+          "downlinkDelay": "0",
+          "uplinkDelay": "0",
+          "downlinkThrouthput": "0",
+          "uplinkThrouthput": "0"
+        },
+        utilization: {
+          "pdu": "0",
+          "resourceProcess": "0",
+          "resourceMemory": "0",
+          "resourceDisk": "0",
+          "maxPdu": "0"
+        },
+        "alarmCriticalNum": 36106,
+        "alarmMajorNum": 289582,
+        "alarmMinorNum": 557217,
+        "alarmWarningNum": 18212
+      },
+      {
+        "id": "a542f7ab40a24ec48e84",
+        "name": "f2",
+        "phone": "0912345678",
+        "fieldposition1": "[121.570381,25.033778]",
+        "fieldposition2": "[121.560381,25.033778]",
+        "fieldposition3": "[121.560381,25.023778]",
+        "fieldposition4": "[121.570381,25.023778]",
+        bsinfo: [
+          {
+            "id": "fd005824997144b987d5",
+            "name": "bs_1x2x4"
+          }
+        ],
+        "bsNum": 2,
+        "ueNum": "itri 2",
+        "coverage": "10",
+        "accessibility": "string",
+        "availability": "string",
+        "mobility": "string",
+        "retainability": "string",
+        "energy": "string",
+        integrity: {
+          "downlinkDelay": "0",
+          "uplinkDelay": "0",
+          "downlinkThrouthput": "0",
+          "uplinkThrouthput": "0"
+        },
+        utilization: {
+          "pdu": "0",
+          "resourceProcess": "0",
+          "resourceMemory": "0",
+          "resourceDisk": "0",
+          "maxPdu": "0"
+        },
+        "alarmCriticalNum": 100,
+        "alarmMajorNum": 200,
+        "alarmMinorNum": 300,
+        "alarmWarningNum": 100
       }
     ]
   };

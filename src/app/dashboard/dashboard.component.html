@@ -38,16 +38,24 @@
               <th>Number of gNBs</th>
               <th>Number of UEs</th>
               <th>Coverage</th>
+              <th>Critical Alarm</th>
+              <th>Major Alarm</th>
+              <th>Minor Alarm</th>
+              <th>Warning  Alarm</th>
               <th>View</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let opt of ocloudSummary">
+            <tr *ngFor="let opt of fieldList.fields">
               <td>{{opt.name}}</td>
-              <td>{{opt.dmsCount}}</td>
-              <td>{{opt.nfCount}}</td>
-              <td>{{opt.faultCount}}</td>
-              <td (click)="veiw(opt)">
+              <td>{{opt.bsNum}}</td>
+              <td>{{NumUes(opt.ueNum) }}</td>
+              <td>{{opt.coverage}}</td>
+              <td>{{opt.alarmCriticalNum}}</td>
+              <td>{{opt.alarmMajorNum}}</td>
+              <td>{{opt.alarmMinorNum}}</td>
+              <td>{{opt.alarmWarningNum}}</td>
+              <td (click)="view(opt)">
                 <mat-icon tooltip="{{languageService.i18n['view_detail']}}">search</mat-icon>
               </td>
             </tr>
