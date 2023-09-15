@@ -449,11 +449,11 @@ export class CommonService {
         "bsNum": 1,
         "ueNum": "fake 0",
         "coverage": "15",
-        "accessibility": "string",
+        "accessibility": "DRB Accessibility:14",
         "availability": "string",
-        "mobility": "string",
-        "retainability": "string",
-        "energy": "string",
+        "mobility": "NG-RAN handover success rate:null",
+        "retainability": "DRB Retainability:null",
+        "energy": "NG-RAN data Energy Efficiency:null",
         integrity: {
           "downlinkDelay": "0",
           "uplinkDelay": "0",
@@ -489,23 +489,63 @@ export class CommonService {
         "bsNum": 2,
         "ueNum": "itri 2",
         "coverage": "10",
-        "accessibility": "string",
+        "accessibility": "DRB Accessibility:14",
         "availability": "string",
-        "mobility": "string",
-        "retainability": "string",
-        "energy": "string",
+        "mobility": "NG-RAN handover success rate:null",
+        "retainability": "DRB Retainability:null",
+        "energy": "NG-RAN data Energy Efficiency:null",
         integrity: {
-          "downlinkDelay": "0",
-          "uplinkDelay": "0",
-          "downlinkThrouthput": "0",
-          "uplinkThrouthput": "0"
+          "downlinkDelay": "2",
+          "uplinkDelay": "2",
+          "downlinkThrouthput": "2",
+          "uplinkThrouthput": "2"
         },
         utilization: {
           "pdu": "0",
-          "resourceProcess": "0",
+          "resourceProcess": "5",
+          "resourceMemory": "5",
+          "resourceDisk": "5",
+          "maxPdu": "5"
+        },
+        "alarmCriticalNum": 100,
+        "alarmMajorNum": 200,
+        "alarmMinorNum": 300,
+        "alarmWarningNum": 100
+      },
+      {
+        "id": "a542f7ab40a24ec48e84",
+        "name": "f3",
+        "phone": "0912345678",
+        "fieldposition1": "[121.570381,25.033778]",
+        "fieldposition2": "[121.560381,25.033778]",
+        "fieldposition3": "[121.560381,25.023778]",
+        "fieldposition4": "[121.570381,25.023778]",
+        bsinfo: [
+          {
+            "id": "fd005824997144b987d5",
+            "name": "bs_1x2x4"
+          }
+        ],
+        "bsNum": 2,
+        "ueNum": "itri 3",
+        "coverage": "10",
+        "accessibility": "DRB Accessibility:14",
+        "availability": "string",
+        "mobility": "NG-RAN handover success rate:null",
+        "retainability": "DRB Retainability:null",
+        "energy": "NG-RAN data Energy Efficiency:null",
+        integrity: {
+          "downlinkDelay": "3",
+          "uplinkDelay": "3",
+          "downlinkThrouthput": "6",
+          "uplinkThrouthput": "6"
+        },
+        utilization: {
+          "pdu": "1",
+          "resourceProcess": "1",
           "resourceMemory": "0",
           "resourceDisk": "0",
-          "maxPdu": "0"
+          "maxPdu": "3"
         },
         "alarmCriticalNum": 100,
         "alarmMajorNum": 200,

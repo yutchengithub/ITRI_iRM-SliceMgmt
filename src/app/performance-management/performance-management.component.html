@@ -3,17 +3,37 @@
   <table>
     <thead>
       <tr>
-        <th>Field Name</th>
-        <th>DRB Accessibility</th>
-        <th>Integrity<div>(4 Indicator)</div></th>
-        <th>DRB Retainability</th>
-        <th>NG-RAN Data Energy Efficiency</th>
-        <th>Utilization<div>(5 Indicator)</div></th>
-        <th>Mobility<div>(NG-RAN handover success rate)</div></th>
+        <th>{{languageService.i18n['pm.field']}}</th>
+        <th>{{languageService.i18n['pm.accessibility']}}</th>
+        <th>{{languageService.i18n['pm.integrity']}}</th>
+        <th>{{languageService.i18n['pm.retainability']}}</th>
+        <th>{{languageService.i18n['pm.efficiency']}}</th>
+        <th>{{languageService.i18n['pm.utilization']}}</th>
+        <th>{{languageService.i18n['pm.mobility']}}</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
+      <tr *ngFor="let opt of fieldList.fields | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'pmList' } ">
+        <td>{{opt.name}}</td>
+        <td>{{opt.accessibility}}</td>
+        <td>
+          Integrated downlink delay:{{opt.integrity.downlinkDelay}}<br>
+          Integrated uplink delay:{{opt.integrity.uplinkDelay}}<br>
+          DL RAN UE throughput:{{opt.integrity.downlinkThrouthput}}<br>
+          UL RAN UE throughput:{{opt.integrity.uplinkThrouthput}}
+        </td>
+        <td>{{opt.retainability}}</td>
+        <td>{{opt.energy}}</td>
+        <td>
+          Mean number of PDU:{{opt.utilization.pdu}}<br>
+          Resource Disk:{{opt.utilization.resourceDisk}}<br>
+          Resource Memory:{{opt.utilization.resourceMemory}}<br>
+          Resource Process:{{opt.utilization.resourceProcess}}<br>
+          Maximum number of PDU:{{opt.utilization.maxPdu}}
+        </td>
+        <td>{{opt.mobility}}</td>
+      </tr>      
+      <!-- <tr>
         <td>Field01</td>
         <td>100</td>
         <td>
@@ -122,11 +142,11 @@
         </td>
         <td>-</td>
       </tr>
-
+-->
     </tbody>
   </table>
 </div>
 
 <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
-  nextLabel="" id="o-cloud-table">
+  nextLabel="" id="pmList">
 </pagination-controls>

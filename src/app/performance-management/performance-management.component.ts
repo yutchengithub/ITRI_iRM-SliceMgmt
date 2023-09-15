@@ -12,6 +12,49 @@ import { NfPerformanceComponent } from './nf-performance/nf-performance.componen
 import { LanguageService } from '../shared/service/language.service';
 import * as _ from 'lodash';
 
+export interface FieldList {
+  fields: Fields[];
+}
+
+export interface Fields {
+  id: string;
+  name: string;
+  phone: string;
+  fieldposition1: string;
+  fieldposition2: string;
+  fieldposition3: string;
+  fieldposition4: string;
+  bsNum: number;
+  ueNum: string;
+  coverage: string;
+  accessibility: string;
+  availability: string;
+  mobility: string;
+  retainability: string;
+  energy: string;
+  integrity: Integrity;
+  utilization: Utilization;
+  alarmCriticalNum: number;
+  alarmMajorNum: number;
+  alarmMinorNum: number;
+  alarmWarningNum: number;
+}
+
+export interface Integrity {
+  downlinkDelay: string;
+  uplinkDelay: string;
+  downlinkThrouthput: string;
+  uplinkThrouthput: string;
+}
+
+export interface Utilization {
+  pdu: string;
+  resourceProcess: string;
+  resourceMemory: string;
+  resourceDisk: string;
+  maxPdu: string;
+}
+
 @Component({
   selector: 'app-performance-management',
   templateUrl: './performance-management.component.html',
@@ -19,8 +62,9 @@ import * as _ from 'lodash';
 })
 
 export class PerformanceManagementComponent implements OnInit {
+  sessionId: string = '';
   p: number = 1;            // 當前頁數
-  pageSize: number = 10;    // 每頁幾筆
+  pageSize: number = 2;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
 
   @ViewChild('oCloudPerformanceComponent') oCloudPerformanceComponent!: OCloudPerformanceComponent;
@@ -28,6 +72,7 @@ export class PerformanceManagementComponent implements OnInit {
   refreshTimeout!: any;
   refreshTime: number = 300;
   searchForm!: FormGroup;
+  fieldList: FieldList = {} as FieldList;
   ocloudList: OCloudList[] = [];
   nfList: Nf[] = [];
   afterSearchOcloudId = '';
@@ -55,6 +100,7 @@ export class PerformanceManagementComponent implements OnInit {
       'nfName': new FormControl('')
     });
     this.createAdvancedForm();
+
   }
 
   ngOnInit(): void {
@@ -73,12 +119,33 @@ export class PerformanceManagementComponent implements OnInit {
     });
     console.log('init searchForm:')
     console.log(this.searchForm.value);
+
+    this.sessionId = this.commonService.getSessionId();
+    // Field Summary
+    this.getfieldListInfo();
+
     // this.getOcloudList();
     // this.getNfList();
   }
 
   ngOnDestroy() {
     clearTimeout(this.refreshTimeout);
+  }
+
+  getfieldListInfo() {
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.fieldList = this.commonService.fieldList;
+    } else {
+      const url = `${this.commonService.restPath}/queryFieldList/${this.sessionId}`;
+      // this.http.get(url).subscribe(
+      //   res => {
+      //     console.log('queryFieldList:');
+      //     console.log(res);
+      //     this.fieldList = res as FieldList;
+      //   }
+      //);
+    }
   }
 
   // getOcloudList() {
