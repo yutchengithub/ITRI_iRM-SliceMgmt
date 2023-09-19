@@ -451,21 +451,21 @@ export class CommonService {
         "coverage": "15",
         "accessibility": "DRB Accessibility:14",
         "availability": "string",
-        "mobility": "NG-RAN handover success rate:null",
-        "retainability": "DRB Retainability:null",
-        "energy": "NG-RAN data Energy Efficiency:null",
+        "mobility": "NG-RAN handover success rate:78.21",
+        "retainability": "DRB Retainability:0.36",
+        "energy": "NG-RAN data Energy Efficiency:27.67",
         integrity: {
-          "downlinkDelay": "0",
-          "uplinkDelay": "0",
-          "downlinkThrouthput": "0",
-          "uplinkThrouthput": "0"
+          "downlinkDelay": "6504264",
+          "uplinkDelay": "6507722",
+          "downlinkThrouthput": "1617437",
+          "uplinkThrouthput": "1629079"
         },
         utilization: {
-          "pdu": "0",
-          "resourceProcess": "0",
-          "resourceMemory": "0",
-          "resourceDisk": "0",
-          "maxPdu": "0"
+          "pdu": "1627179",
+          "resourceProcess": "29.1",
+          "resourceMemory": "60.43",
+          "resourceDisk": "3.05",
+          "maxPdu": "1674863"
         },
         "alarmCriticalNum": 36106,
         "alarmMajorNum": 289582,
@@ -489,23 +489,23 @@ export class CommonService {
         "bsNum": 2,
         "ueNum": "itri 2",
         "coverage": "10",
-        "accessibility": "DRB Accessibility:14",
+        "accessibility": "DRB Accessibility:23",
         "availability": "string",
-        "mobility": "NG-RAN handover success rate:null",
-        "retainability": "DRB Retainability:null",
-        "energy": "NG-RAN data Energy Efficiency:null",
+        "mobility": "NG-RAN handover success rate:81.36",
+        "retainability": "DRB Retainability:0.33",
+        "energy": "NG-RAN data Energy Efficiency:25.35",
         integrity: {
-          "downlinkDelay": "2",
-          "uplinkDelay": "2",
-          "downlinkThrouthput": "2",
-          "uplinkThrouthput": "2"
+          "downlinkDelay": "6502345",
+          "uplinkDelay": "6506657",
+          "downlinkThrouthput": "1617241",
+          "uplinkThrouthput": "1626573"
         },
         utilization: {
-          "pdu": "0",
-          "resourceProcess": "5",
-          "resourceMemory": "5",
-          "resourceDisk": "5",
-          "maxPdu": "5"
+          "pdu": "1626024",
+          "resourceProcess": "31.2",
+          "resourceMemory": "72.15",
+          "resourceDisk": "5.31",
+          "maxPdu": "1674863"
         },
         "alarmCriticalNum": 100,
         "alarmMajorNum": 200,
@@ -529,23 +529,23 @@ export class CommonService {
         "bsNum": 2,
         "ueNum": "itri 3",
         "coverage": "10",
-        "accessibility": "DRB Accessibility:14",
+        "accessibility": "DRB Accessibility:51",
         "availability": "string",
-        "mobility": "NG-RAN handover success rate:null",
-        "retainability": "DRB Retainability:null",
-        "energy": "NG-RAN data Energy Efficiency:null",
+        "mobility": "NG-RAN handover success rate:77.38",
+        "retainability": "DRB Retainability:0.32",
+        "energy": "NG-RAN data Energy Efficiency:29.56",
         integrity: {
-          "downlinkDelay": "3",
-          "uplinkDelay": "3",
-          "downlinkThrouthput": "6",
-          "uplinkThrouthput": "6"
+          "downlinkDelay": "6487754",
+          "uplinkDelay": "6495574",
+          "downlinkThrouthput": "1606875",
+          "uplinkThrouthput": "1618045"
         },
         utilization: {
-          "pdu": "1",
-          "resourceProcess": "1",
-          "resourceMemory": "0",
-          "resourceDisk": "0",
-          "maxPdu": "3"
+          "pdu": "1605781",
+          "resourceProcess": "25.3",
+          "resourceMemory": "52.78",
+          "resourceDisk": "2.85",
+          "maxPdu": "1678754"
         },
         "alarmCriticalNum": 100,
         "alarmMajorNum": 200,
