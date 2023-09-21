@@ -86,6 +86,7 @@ export class PerformanceManagementComponent implements OnInit {
   isSettingAdvanced = false;
 
   constructor(
+    private http: HttpClient,
     private fb: FormBuilder,
     private commonService: CommonService,
     private route: ActivatedRoute,
@@ -138,13 +139,13 @@ export class PerformanceManagementComponent implements OnInit {
       this.fieldList = this.commonService.fieldList;
     } else {
       const url = `${this.commonService.restPath}/queryFieldList/${this.sessionId}`;
-      // this.http.get(url).subscribe(
-      //   res => {
-      //     console.log('queryFieldList:');
-      //     console.log(res);
-      //     this.fieldList = res as FieldList;
-      //   }
-      //);
+      this.http.get(url).subscribe(
+        res => {
+          console.log('queryFieldList:');
+          console.log(res);
+          this.fieldList = res as FieldList;
+        }
+      );
     }
   }
 

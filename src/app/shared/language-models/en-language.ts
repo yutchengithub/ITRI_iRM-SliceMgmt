@@ -37,6 +37,18 @@ export const Enlanguage = {
   'table.Status':'Status',
   'table.performance':'Performance',
   'table.delete':'Delete',
+    //Fault Management
+    'fm.no':'No.',
+    'fm.field':'Field Name',
+    'fm.gnb':'gNB Name',
+    'fm.component':'Component Name',
+    'fm.alarm':'Alarm Name',
+    'fm.severity':'Severity',
+    'fm.count':'Count',
+    'fm.occurtime':'OccurTime',
+    'fm.status':'Status',
+    'fm.situation':'Situation',
+    'fm.owner':'Acknowledge Owner',
   //Performance Management
   'pm.field':'Field Name',
   'pm.accessibility':'Accessibility',
