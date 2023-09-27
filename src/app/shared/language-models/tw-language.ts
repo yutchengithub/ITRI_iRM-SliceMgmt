@@ -38,6 +38,8 @@ export const TwLanguage = {
   'table.performance':'部署狀態',
   'table.delete':'刪除',
   //Fault Management (故障管理)
+  'fm.start':'起始時間',
+  'fm.end':'結束時間',
   'fm.no':'序號',
   'fm.field':'場域名稱',
   'fm.gnb':'基站名稱',
@@ -49,6 +51,9 @@ export const TwLanguage = {
   'fm.status':'告警狀態',
   'fm.situation':'處理狀況',
   'fm.owner':'回應人員',
+  'fm.view':'檢視',
+  'fm.total1':'全部共有',
+  'fm.total2':'項訊息',
   //Performance Management (效能管理)
   'pm.field':'場域名稱',
   'pm.accessibility':'可用性',

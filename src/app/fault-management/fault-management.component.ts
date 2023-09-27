@@ -18,16 +18,21 @@ export interface FaultMessage {
 
 export interface FaultMessages {
   faultId: string;   // new add
+  fieldName: string;   // add by Charles
+  bsName: string;   // add by Charles
+  compname: string;   // add by Charles
+  count: number;  // add by Charles  
   timestamp: string;
   cloudId: string;
   cloudName: string;
   nfId: string;
   nfName: string;
-  severity: string;
-  context: string;
+  status: string; // add by Charles
+  eventtype: string; //modify by Charles (severity -> eventtype)
+  probablecause: string; // modify by Charles (context -> probablecause)
   isCleared: boolean;
-  processStatus: number;
-  processComment: string;
+  processstatus: number; //modify by Charles (processStatus -> processstatus)
+  processresult: string; //modify by Charles (processComment -> processresult)
   acknowledgeOwner: string;
 }
 
@@ -236,7 +241,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   }
 
   openStatusModal(faultMessages: FaultMessages) {
-    if (faultMessages.processStatus === 1) {
+    if (faultMessages.processstatus === 1) {
       this.fmStatus = {} as FmStatus;
       this.selectFaultId = faultMessages.faultId;
       this.type = 'processing_status';

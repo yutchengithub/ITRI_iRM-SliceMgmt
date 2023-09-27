@@ -2,28 +2,28 @@
 
 <form [formGroup]="searchForm">
   <div class="filter">
-    <span><label>Field {{languageService.i18n['table.header_name']}}</label>
+    <span><label>{{languageService.i18n['fm.field']}}</label>
       <input type="text" formControlName="cloudName">
     </span>
-    <span><label>NF {{languageService.i18n['table.header_name']}}</label>
+    <span><label>{{languageService.i18n['fm.gnb']}}</label>
       <input type="text" formControlName="nfName">
     </span>
-    <span><label>Owner</label>
+    <span><label>{{languageService.i18n['fm.component']}}</label>
       <input type="text" formControlName="acknowledgeOwner">
     </span>
-    <span><label>{{languageService.i18n['severity']}}</label>
+    <span><label>{{languageService.i18n['fm.severity']}}</label>
       <select formControlName="severity">
         <option value="All">All</option>
         <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
       </select>
       <mat-error *ngIf="searchForm.controls['severity'].invalid">Required</mat-error>
     </span>
-    <span><label>From</label>
+    <span><label>{{languageService.i18n['fm.start']}}</label>
       <span>
         <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
       </span>
     </span>
-    <span><label>To</label>
+    <span><label>{{languageService.i18n['fm.end']}}</label>
       <span>
         <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
       </span>
@@ -48,39 +48,41 @@
         <th>{{languageService.i18n['fm.status']}}</th>
         <th>{{languageService.i18n['fm.situation']}}</th>
         <th>{{languageService.i18n['fm.owner']}}</th>
+        <th>{{languageService.i18n['fm.view']}}</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let opt of faultMessage.faultMessages;let i=index">
-        <td class="time">{{opt.timestamp}}</td>
-        <td>{{opt.cloudId}}</td>
-        <td>{{opt.cloudName}}</td>
-        <td>{{opt.nfId}}</td>
-        <td>{{opt.nfName}}</td>
-        <td>{{commonService.textTransfer(opt.severity)}}</td>
-        <td>{{opt.context}}</td>
+        <td>{{opt.faultId}}</td>
+        <td>{{opt.fieldName}}</td>
+        <td>{{opt.bsName}}</td>
+        <td>{{opt.compname}}</td>
+        <td>{{opt.probablecause}}</td>
+        <td>{{opt.eventtype}}</td>
+        <td>{{opt.count}}</td>
+        <td>{{opt.timestamp}}</td>
+        <td>{{opt.status}}</td>
         <!-- <td>{{opt.isCleared?'Cleared':'New'}}</td> -->
         <td>
-          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf="opt.processStatus === 0" class="greenLight"></label>
-          <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf="opt.processStatus === 1" class="redLight"></label>
-          {{opt.processComment}}
+          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf="opt.processstatus === 0" class="greenLight"></label>
+          <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf="opt.processstatus === 1" class="redLight"></label>
+          {{opt.processresult}}
         </td>
         <td>{{opt.acknowledgeOwner}}</td>
-        <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openStatusModal(opt)">search</mat-icon></td>
+        <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openStatusModal(opt)">remove_red_eye</mat-icon></td>
       </tr>
       <tr class="notFind" *ngIf="faultMessage.totalMessageNumber === 0">
         <td colspan="7">{{languageService.i18n['no_results']}}</td>
       </tr>
     </tbody>
   </table>
-  <!-- pagination -->
   <div class="pagination">
     <ng-template
-      *ngFor="let item of nullList| paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-    </ng-template>
-    <span class="total">總共 {{faultMessage.totalMessageNumber}} 筆資料</span>
+     *ngFor="let item of nullList| paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fmList' } "> 
+    </ng-template> 
+    <span class="total">{{languageService.i18n['fm.total1']}} {{faultMessage.totalMessageNumber}} {{languageService.i18n['fm.total2']}}</span>
     <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
-      nextLabel="" id="display">
+  nextLabel="" id="fmList">
     </pagination-controls>
   </div>
 </div>
