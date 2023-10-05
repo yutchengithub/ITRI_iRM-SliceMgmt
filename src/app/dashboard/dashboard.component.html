@@ -1,66 +1,60 @@
 <div class="dashboard">
   <div class="leftArea">
-    <div class="w30">
-      <div>
-        <label class="boxTitle">Fields</label>
+    <span>
+      <img src="assets/img/fields.svg">
+      <label class="boxTitle">Number of Fields
         <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{field.fieldNum}}</span>
-      </div>
+      </label>
+    </span>
 
-      <div>
-        <label class="boxTitle">gNbs</label>
+    <span>
+      <img src="assets/img/gNB01.svg">
+      <label class="boxTitle">Number of gNBs
         <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{field.bsNum}}</span>
-      </div>
-    </div>
-    <div class="w70">
-      <div class="Fault">
-        <label class="boxTitle">{{languageService.i18n['index.faultMsg']}}
-          <a href="javascript:void(0)" (click)="viewMore()">
-            {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
-          </a>
-        </label>
-        <span class="percent {{severityText(severity)}}" *ngFor="let severity of severitys;let i=index">
-          {{severityText(severity)}}<br>{{severityCount(severity)}}
-        </span>
-      </div>
-      <div>
-        <label class="boxTitle">UEs</label>
-        <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{ueNum}}</span>
-      </div>
-    </div>
-</div>
-    <div class="rightArea">
-      <div class="table">
-        <label class="boxTitle">{{languageService.i18n['field_list']}}</label>
-        <table>
-          <thead>
-            <tr>
-              <th>Field {{languageService.i18n['table.header_name']}}</th>
-              <th>Number of gNBs</th>
-              <th>Number of UEs</th>
-              <th>Coverage</th>
-              <th>Critical Alarm</th>
-              <th>Major Alarm</th>
-              <th>Minor Alarm</th>
-              <th>Warning  Alarm</th>
-              <th>View</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let opt of fieldList.fields">
-              <td>{{opt.name}}</td>
-              <td>{{opt.bsNum}}</td>
-              <td>{{NumUes(opt.ueNum) }}</td>
-              <td>{{opt.coverage}}</td>
-              <td>{{opt.alarmCriticalNum}}</td>
-              <td>{{opt.alarmMajorNum}}</td>
-              <td>{{opt.alarmMinorNum}}</td>
-              <td>{{opt.alarmWarningNum}}</td>
-              <td (click)="view(opt)">
-                <mat-icon tooltip="{{languageService.i18n['view_detail']}}">search</mat-icon>
-              </td>
-            </tr>
+      </label>
+    </span>
 
-          </tbody>
-        </table>
-      </div>
+    <span>
+      <img src="assets/img/ues.svg">
+      <label class="boxTitle">Number of UEs
+        <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{ueNum}}</span>
+      </label>
+    </span>
+  </div>
+ 
+  <div class="rightArea">
+    <div class="table">
+      <h5>{{languageService.i18n['field_list']}}</h5>
+      <table>
+        <thead>
+          <tr>
+            <th>Field {{languageService.i18n['table.header_name']}}</th>
+            <th>Number of gNBs</th>
+            <th>Number of UEs</th>
+            <th>Coverage</th>
+            <th>Critical Alarm</th>
+            <th>Major Alarm</th>
+            <th>Minor Alarm</th>
+            <th>Warning  Alarm</th>
+            <th>View</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let opt of fieldList.fields">
+            <td>{{opt.name}}</td>
+            <td>{{opt.bsNum}}</td>
+            <td>{{NumUes(opt.ueNum) }}</td>
+            <td>{{opt.coverage}}</td>
+            <td>{{opt.alarmCriticalNum}}</td>
+            <td>{{opt.alarmMajorNum}}</td>
+            <td>{{opt.alarmMinorNum}}</td>
+            <td>{{opt.alarmWarningNum}}</td>
+            <td (click)="view(opt)">
+              <mat-icon tooltip="{{languageService.i18n['view_detail']}}">search</mat-icon>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
     </div>
+  </div>

@@ -6,35 +6,22 @@
 .dashboard .leftArea {
     width: 100%;
 }
-.dashboard .leftArea div.w30 > div {
-    border-radius: 10px;
-    margin: 0 3% 3% 0;
-    height: 14.7em;
-}
-.w30 {
-    width: 35%;
+.dashboard .leftArea > span {
+    width: 31%;
     display: inline-block;
     vertical-align: top;
+    border-radius: 1em;
+    border: 1px solid #1d4b85;
+    padding: 1%;
+    color: #000;
 }
-.w70 {
-    width: 62%;
-    display: inline-block;
-    vertical-align: top;
-
+.dashboard .leftArea > span:not(:last-child) {
+    margin: 0 1% 1% 0;
 }
-.w70 > div {
-    display: block;
-    text-align: center;
-    border-radius: 10px;
-    margin:  0 0 1em 0;
-    padding-bottom: 1.5em;
-    min-height: 14.75em;
-}
-.w70 > div:last-child {
-    padding-bottom: 1;
-}
-.Fault .boxTitle {
-   /* margin-bottom:.9em!important;*/
+.dashboard .leftArea > span img {
+    width: auto;
+    height: 9em;
+    margin: 1% 0 0 5%;
 }
 .dashboard .rightArea {
     width: 97%;
@@ -82,7 +69,9 @@
     margin: 0 0 0 0.2em;
     font-size: 20px;
 }
-
+.dashboard .table table tr th {
+    white-space: nowrap;
+}
 .dashboard .table table tr th,
 .dashboard .table table tr td {
     width: 7vw;
@@ -133,11 +122,10 @@
 .dashboard .bigValue {
     font-size: 4.5em;
     font-weight: bold;
-    text-align: center !important;
     display: block;
     font-family: sans-serif;
     line-height: 1;
-    margin: 0.5em 0 0;
+    margin: 0;
 }
 .resource .bigValue {
     margin-top: 0;
@@ -155,11 +143,14 @@
 .dashboard .boxTitle {
     font-size: 1.5em;
     line-height: 2em;
-    margin: 0 0 0.5em;
-    display: block;
-    text-align: center;
+    margin: 0 20% 0 0;
+    float: right;
+    text-align: left;
 }
-
+.rightArea .boxTitle {
+ float: none;
+ margin: 0 0 0.3em 1.5%;
+}
 .dashboard .unit {
     font-size: 1.3em;
 }
@@ -236,7 +227,22 @@
     width: 100%;
   }
 @media screen and (max-width:1920px) {
-
+    .dashboard .leftArea > span img {
+        height: 7em;
+    }
+    .table table {
+        font-size: 1em;
+        max-height: 54vh;
+    }
+    .dashboard .boxTitle {
+        font-size: 1.5em;
+        line-height: 2em;
+        margin: 0 15% 0 0;
+    }
+    .dashboard .table table tr th,
+    .dashboard .table table tr td {
+        width: 9vw;
+    }
 }
 @media screen and (max-width:1680px){
   .dashboard .leftArea .nodes {
@@ -265,17 +271,16 @@
         height: 3.5em;
     }
     .dashboard .table table {
-        max-height: 32vh;
         margin: 0;
     }
     .dashboard .table table td,
     .dashboard .table table th {
     padding: .5% 1%;
     }
-    .dashboard .boxTitle {
+ /*    .dashboard .boxTitle {
         font-size: 1.3em;
         padding: 0;
-    }
+    } */
     .dashboard .leftArea .nodes {
       height: 18.6em;
   }
@@ -293,6 +298,28 @@
 }
 
 @media only screen and (max-width: 1366px) {
+    .dashboard .leftArea > span {
+        width: 32%;
+    }
+    .dashboard .leftArea {
+        text-align: center;
+    }
+    .dashboard .rightArea {
+        width: 100%;
+        margin: auto;
+        display: block;
+    }
+    .dashboard .rightArea h5 {
+        margin-left: 1em;
+    }
+    .dashboard .leftArea > span img {
+        height: 5em;
+      }
+      .dashboard .boxTitle {
+        font-size: 1.25em;
+        line-height: 1.5em;
+        margin: 0 14% 0 0;
+      }
     .w70 > div {
         margin: 0 0 0.8em 0;
         padding-bottom: 0em;
@@ -306,7 +333,6 @@
   }
   .dashboard .table table {
       margin: 0 auto .5em;
-      max-height: 24vh;
   }
   .dashboard .table table th,.dashboard .table table td {
       font-size: 100%!important;
@@ -325,13 +351,12 @@
     margin: 0.2em 0 0;
   }
   .dashboard .bigValue {
-      font-size: 3.5em;
+      font-size: 2.5em;
   }
   .dashboard .rightArea > div.resource > span:last-child .bigValue {
       margin-left: 1.8em;
   }
-  .dashboard .rightArea > div {
-  }
+
 
   .dashboard .leftArea div.w30 > div {
     height:9.9em;
@@ -362,5 +387,8 @@
   .dashboard .table table tr th,
   .dashboard .table table tr td {
     width: 9vw;
+}
+.table table {
+    max-height: 42vh;
 }
 }

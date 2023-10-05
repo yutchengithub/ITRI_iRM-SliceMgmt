@@ -283,22 +283,29 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
 
  .table {
   display: block;
-  margin: .5% 0 0;
+  margin: 1% 0 0;
 }
 .table table {
   margin: 0 auto 1em;
-  max-height: 30vh;
+  max-height: 60vh;
   overflow: auto;
   z-index: 9999;
   font-size: 1.25em;
   display: block;
-  width: 97%;
+  width: 98%;
+  border-radius: 10px 10px 0 0;
   font-family: Microsoft JhengHei;
 }
 .table table th {
     position: sticky;
-    top: 0px;
+    top: -1px;
     font-weight: bold;
+}
+ table thead tr th:first-child {
+  border-radius: 5px 0 0 0;
+}
+ table thead tr th:last-child {
+  border-radius: 0 5px 0 0;
 }
 .table table td,
 .table table th {
@@ -315,7 +322,13 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
 .table table td .material-symbols-outlined:hover {
     filter: brightness(1.05);
 }
-
+.table table td ul {
+  vertical-align: top;
+}
+.table table td ul li {
+  margin: 0 0 0 1.5em;
+  white-space: nowrap;
+}
 .greenLight {
   display: inline-block;
   margin: auto;
@@ -561,6 +574,7 @@ border-radius: 3px;
 .filter {
 padding: 8px 0 6px 2%;
 width: 97.65%;
+border-radius: 5px;
 }
 .filter span {
   margin: 0 .5em 0 0;
@@ -849,7 +863,49 @@ p-calendar #time {
   margin: 0;
   top: 5vh !important;
 }
+.filter input[type=text] {
+  max-width: 10em;
+}
+@media screen and (max-width:1920px) {
+  .table table {
+      font-size: 1em;
+  }
+  .filter span label {
+    font-size: 1em;
+  }
+  .dashboard .bigValue {
+    font-size: 3em;
+}
+  .filter input[type=text] {
+    max-width: 7em;
+    font-size: .9em;
+  }
+  mat-dialog-container h5 {
+    font-size: 1.1em !important;
+}
+}
 @media only screen and (max-width: 1366px) {
+  .p-calendar .p-datepicker {
+    transform: scale(.7) translateY(-30%);
+  }
+  .mat-dialog-container {
+    transform: scale(.9)!important;}
+  h5 {
+    font-size: 1.25em !important;
+}
+#faultAdvancedModal #time, p-calendar #time,.filter input[type=text], .filter select {
+  font-size: .9em;
+}
+
+.filter input[type=text] {
+ /*  max-width: 6em; */
+  font-size: .9em;
+  line-height: 1;
+  padding: 5px;
+}
+.filter span {
+  margin: 0;
+}
   .content {
     padding: 0;
   }
@@ -872,7 +928,7 @@ p-calendar #time {
     font-size: 1em;
   }
   .table table td, .table table th {
-    font-size: .95em;
+    font-size: .85em;
     line-height: 1;
   }
   .filter {
@@ -881,5 +937,6 @@ p-calendar #time {
   .filter span label {
     font-size: 1em;
   }
-
+  .material-icons {
+    font-size: 20px;}
 }

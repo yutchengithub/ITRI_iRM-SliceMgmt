@@ -6,9 +6,8 @@
 }
 table tr td {
   width: 15vw;
-  //text-align: center;
   text-align: left;
-  border-right:1px solid #63acc9;
+  font-size: .9em;
 }
 
 table tr td > div {
@@ -30,7 +29,9 @@ table tr th div {
   font-size: .9em;
 
 }
-
+.table table td ul li label {
+  margin: 0 0 0 .5em;
+}
 @media screen and (max-width:1366px) {
 
 }

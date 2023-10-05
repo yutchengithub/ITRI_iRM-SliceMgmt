@@ -369,16 +369,18 @@ svg circle {
 }
 
 @media screen and (max-width:1366px) {
-
+  .table table {
+    max-height: 50vh!important;
+  }
   .h30 {
     height: 22em;
   }
   .boxTitle {
-    font-size: 1.35em;
+    font-size: 1.15em;
     line-height: 1.5;
   }
   .basicInfo ul {
-    font-size: .9em;
+    font-size: .8em;
   }
 
   .percent {
@@ -426,7 +428,7 @@ svg circle {
     white-space: nowrap;
   }
   .basicInfo ul li span {
-    width: 85%;
+    width: 65%;
   }
   .cpu span img {
     margin: 0 0.5em 0 0;
