@@ -110,7 +110,7 @@ export const Enlanguage = {
   'limit.min':'min',
   'modify_faultMsg_status':'Modify Fault Message Status',
   'confirm_modify':'Confirm to modify',
-  'pending_error':'Pending Error',
+  'pending_error':'Pending', //Modify by Charles (Pending Error->Pending)
   'resolved':'Resolved',
   'no_results':'No results were found. Please verify your search terms and try again.',
   'firm':'Firm',

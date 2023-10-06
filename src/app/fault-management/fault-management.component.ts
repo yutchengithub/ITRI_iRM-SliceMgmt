@@ -18,13 +18,12 @@ export interface FaultMessage {
 
 export interface FaultMessages {
   faultId: string;   // new add
-  fieldName: string;   // add by Charles
+  fieldName: string;   // modify by Charles (cloudName -> fieldName)
   bsName: string;   // add by Charles
   compname: string;   // add by Charles
   count: number;  // add by Charles  
   timestamp: string;
   cloudId: string;
-  cloudName: string;
   nfId: string;
   nfName: string;
   status: string; // add by Charles
@@ -67,7 +66,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   nfList: Nf[] = [];
   faultMessage: FaultMessage = {} as FaultMessage;
   p: number = 1;            // 當前頁數
-  pageSize: number = 10;    // 每頁幾筆
+  pageSize: number = 5;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
   nullList: string[] = [];  // 給頁籤套件使用
   searchForm!: FormGroup;
@@ -112,7 +111,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     // 格式驗證需要處理?
 
     this.searchForm = this.fb.group({
-      'cloudName': new FormControl(''),
+      'fieldName': new FormControl(''),
       'nfName': new FormControl(''),
       'acknowledgeOwner': new FormControl(''),
       'severity': new FormControl('All'),
@@ -126,8 +125,8 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.sessionId = this.commonService.getSessionId();
     this.route.params.subscribe((params) => {
-      if (params['cloudName'] !== 'All') {
-        this.searchForm.controls['cloudName'].setValue(params['cloudName']);
+      if (params['fieldName'] !== 'All') {
+        this.searchForm.controls['fieldName'].setValue(params['fieldName']);
       }
       if (params['nfName'] !== 'All') {
         this.searchForm.controls['nfName'].setValue(params['nfName']);
@@ -188,7 +187,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       this.faultMessage = this.commonService.faultMessage;
       this.faultMessageDeal();
     } else {
-      const cloudName = this.searchForm.controls['cloudName'].value;
+      const fieldName = this.searchForm.controls['fieldName'].value;
       const nfName = this.searchForm.controls['nfName'].value;
       const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
       const severity = this.searchForm.controls['severity'].value;
@@ -197,7 +196,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       const offset = (this.p - 1) * this.pageSize;
       const limit = 10;
       if (this.queryFaultMessageScpt) this.queryFaultMessageScpt.unsubscribe();
-      this.queryFaultMessageScpt = this.commonService.queryFaultMessage(cloudName, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
+      this.queryFaultMessageScpt = this.commonService.queryFaultMessage(fieldName, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
         res => {
           console.log('getFaultMessage:');
           console.log(res);
@@ -393,7 +392,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   createAdvancedForm() {
     this.advancedForm = this.fb.group({
       'globalId': new FormControl(''),
-      'cloudName': new FormControl(''),
+      'fieldName': new FormControl(''),
       'nfId': new FormControl(''),
       'nfName': new FormControl(''),
       'from': new FormControl(''),
@@ -405,7 +404,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
 
   openAdvancedModal() {
     const orgAdvancedForm = _.cloneDeep(this.advancedForm);
-    this.advancedForm.controls['cloudName'].setValue(this.searchForm.controls['cloudName'].value);
+    this.advancedForm.controls['fieldName'].setValue(this.searchForm.controls['fieldName'].value);
     this.advancedForm.controls['nfName'].setValue(this.searchForm.controls['nfName'].value);
     this.advancedForm.controls['from'].setValue(this.searchForm.controls['from'].value);
     this.advancedForm.controls['to'].setValue(this.searchForm.controls['to'].value);
@@ -414,7 +413,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.advancedModalRef.afterClosed().subscribe((result) => {
       if (result === 'OK') {
         this.isSettingAdvanced = true;
-        this.searchForm.controls['cloudName'].setValue(this.advancedForm.controls['cloudName'].value);
+        this.searchForm.controls['fieldName'].setValue(this.advancedForm.controls['fieldName'].value);
         this.searchForm.controls['nfName'].setValue(this.advancedForm.controls['nfName'].value);
         this.searchForm.controls['from'].setValue(this.advancedForm.controls['from'].value);
         this.searchForm.controls['to'].setValue(this.advancedForm.controls['to'].value);
@@ -436,7 +435,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       this.faultMessageDeal();
     } else {
       const globalId = this.advancedForm.controls['globalId'].value;
-      const cloudName = this.advancedForm.controls['cloudName'].value;
+      const fieldName = this.advancedForm.controls['fieldName'].value;
       const nfId = this.advancedForm.controls['nfId'].value;
       const nfName = this.advancedForm.controls['nfName'].value;
       const acknowledgeOwner = this.advancedForm.controls['acknowledgeOwner'].value;
@@ -446,7 +445,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       const offset = (this.p - 1) * this.pageSize;
       const limit = 10;
       if (this.queryFMAdvanceSearchScpt) this.queryFMAdvanceSearchScpt.unsubscribe();
-      this.queryFMAdvanceSearchScpt = this.commonService.queryFMAdvanceSearch(globalId, cloudName, nfId, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
+      this.queryFMAdvanceSearchScpt = this.commonService.queryFMAdvanceSearch(globalId, fieldName, nfId, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
         res => {
           console.log('getFMAdvanceSearch:');
           console.log(res);
