@@ -290,7 +290,7 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
   max-height: 60vh;
   overflow: auto;
   z-index: 9999;
-  font-size: 1.25em;
+  /* font-size: 1.25em; */
   display: block;
   width: 98%;
   border-radius: 10px 10px 0 0;
@@ -326,7 +326,7 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
   vertical-align: top;
 }
 .table table td ul li {
-  margin: 0 0 0 1.5em;
+  margin: 0 0 .5em 1.5em;
   white-space: nowrap;
 }
 .greenLight {
@@ -866,10 +866,13 @@ p-calendar #time {
 .filter input[type=text] {
   max-width: 10em;
 }
+.filter .p-calendar input[type=text] {
+  max-width: 9em!important;
+}
 @media screen and (max-width:1920px) {
-  .table table {
+ /*  .table table {
       font-size: 1em;
-  }
+  } */
   .filter span label {
     font-size: 1em;
   }
@@ -878,6 +881,9 @@ p-calendar #time {
 }
   .filter input[type=text] {
     max-width: 7em;
+    font-size: .9em;
+  }
+  .filter select {
     font-size: .9em;
   }
   mat-dialog-container h5 {
@@ -927,10 +933,11 @@ p-calendar #time {
   .table table {
     font-size: 1em;
   }
-  .table table td, .table table th {
+  /* .table table td {
     font-size: .85em;
     line-height: 1;
   }
+   */
   .filter {
     width: 98.5%;
   }
@@ -939,4 +946,8 @@ p-calendar #time {
   }
   .material-icons {
     font-size: 20px;}
+    .table table td ul li {
+      margin: 0 0 0.5em 1.5em;
+      white-space: break-spaces;
+  }
 }

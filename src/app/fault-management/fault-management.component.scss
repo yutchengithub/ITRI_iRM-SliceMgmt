@@ -29,7 +29,7 @@ table tr td:nth-last-child(4) {
   text-align: left;
 }
 table tr td:nth-last-child(3) {
-  white-space: nowrap;
+  min-width: 8vw;
 }
 
 td mat-icon {
@@ -83,22 +83,26 @@ button.modify {
 }
 @media screen and (max-width:1920px) {
   .table table {
-    max-height: 65vh;
+    max-height: 70vh;
   }
-  table thead tr th:first-child,
-table tbody tr td:first-child {
-  min-width: 3vw;
-}
-table tr td:nth-child(2), table tr td:nth-child(4) {
-  white-space: nowrap;
-  min-width: 11vw;
-}
+  table tr td:nth-child(2), table tr td:nth-child(4) {
+    white-space: nowrap;
+  }
+  table tr td:nth-child(5) {
+    width: 8vw;
+  }
 }
 
 @media screen and (max-width:1366px) {
-
-.table table {
-  width: 98.5%;
-  max-height: 46vh;
+  .table table {
+    width: 98.5%;
+    max-height: 63vh;
+  }
+  table tr td:nth-child(2), table tr td:nth-child(4) {
+    white-space: nowrap;
+    min-width: 11.5vw;
 }
+  table tr td:nth-child(5) {
+    width: 11vw;
+  }
 }

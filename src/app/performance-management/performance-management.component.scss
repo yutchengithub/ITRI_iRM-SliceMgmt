@@ -7,9 +7,20 @@
 table tr td {
   width: 15vw;
   text-align: left;
-  font-size: .9em;
+  /* font-size: .9em; */
 }
-
+table tr td:nth-child(1),
+table tr td:nth-child(2) {
+  width: 7vw;
+}
+table tr td:nth-child(4),
+table tr td:nth-child(5) {
+  width: 9vw;
+}
+table tr td:nth-child(3),
+table tr td:nth-child(6) {
+  width: 20vw;
+}
 table tr td > div {
   padding: 3px 0;
   white-space: nowrap;
@@ -33,5 +44,7 @@ table tr th div {
   margin: 0 0 0 .5em;
 }
 @media screen and (max-width:1366px) {
-
+  table tr td:nth-child(4), table tr td:nth-child(5) {
+    width: 11vw;
+}
 }

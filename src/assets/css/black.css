@@ -46,16 +46,16 @@ div.header {
     border: 1px solid #223b50;
   }
   .table table tbody tr:nth-child(even) td {
-    background-color: #0d1625c2;
+    background-color: #0d2032e6;
 }
   .table table th {
-    color: #517491;
+    color: #498cc3;
     background: linear-gradient( 0deg, #3b9af6 0%, #000 5%,#07141f 100%);
   }
   td .mat-icon ,
   td .material-symbols-outlined{
     cursor: pointer;
-    color: #2d73ec;
+    color: #3b82f6;
   }
   .ngx-pagination .small-screen {
     color: #ddd;
@@ -231,7 +231,7 @@ span.material-symbols-outlined.stop {
   background-color: #273a52;
 }
 .table.performance tr:nth-child(even) td {
-  background-color: #000;
+  background-color: #0d2032e6;
 }
 .table.performance tr td {
   border-right: 1px solid #223b50;
