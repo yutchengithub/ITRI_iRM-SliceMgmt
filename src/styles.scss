@@ -165,8 +165,8 @@ mat-dialog-container ul li::marker,ul li::marker  {
 mat-dialog-container ul li {
   margin: 0 0 .5em 1.5em;
 }
-mat-dialog-container ul li label,
-mat-dialog-container ul li span {
+mat-dialog-container ul li > label,
+mat-dialog-container ul li > span {
   display: inline-block;
   vertical-align: top;
   margin: 0 1%;
@@ -223,7 +223,7 @@ mat-dialog-container div.buttons button:hover {
 .mat-dialog-container#createModal select {
   width: 21.5em;
 }
-.mat-dialog-container ul li div {
+.mat-dialog-container ul li > div {
   margin: .2em 0 0 0.7em;
 }
 .mat-dialog-container ul li div input[type="text"] ,
@@ -831,9 +831,9 @@ p-calendar #time {
   width: 9em;
   padding: 5px 6px;
 }
-.p-calendar .p-datepicker {
+/* .p-calendar .p-datepicker {
   transform: scale(.85);
-}
+} */
 .p-datepicker table td > span,
 .p-datepicker table th > span  {
   width: 1.5rem;
@@ -846,8 +846,8 @@ p-calendar #time {
   margin: 0;
   top: -39vh!important;
 }
-.widthInit ~ p-calendar .p-datepicker {
-  transform:scale(.85) translateX(-80%)!important;
+#faultAdvancedModal p-calendar .p-datepicker {
+  transform:scale(0.85) translate(-50%, 50%);
 }
 .filter p-calendar {
   display: inline-block;
