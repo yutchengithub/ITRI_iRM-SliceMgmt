@@ -56,6 +56,11 @@ select {
 ul li select {
   margin: 0;
 }
+@media screen and (max-width:1920px) {
+  .table table {
+    max-height: 65vh;
+  }
+}
 @media screen and (max-width:1366px) {
 
   table tr td {

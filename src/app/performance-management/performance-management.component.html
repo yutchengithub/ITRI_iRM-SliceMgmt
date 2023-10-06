@@ -17,19 +17,24 @@
         <td>{{opt.name}}</td>
         <td>{{opt.accessibility}}</td>
         <td>
-          . Integrated downlink delay:{{opt.integrity.downlinkDelay}}<br>
-          . Integrated uplink delay:{{opt.integrity.uplinkDelay}}<br>
-          . DL RAN UE throughput:{{opt.integrity.downlinkThrouthput}}<br>
-          . UL RAN UE throughput:{{opt.integrity.uplinkThrouthput}}
+          <ul>
+            <li>Integrated downlink delay:<label>{{opt.integrity.downlinkDelay}}</label></li>
+            <li>Integrated uplink delay:<label>{{opt.integrity.uplinkDelay}}</label></li>
+            <li>DL RAN UE throughput:<label>{{opt.integrity.downlinkThrouthput}}</label></li>
+            <li>UL RAN UE throughput:<label>{{opt.integrity.uplinkThrouthput}}</label></li>
+          </ul>
+          
         </td>
         <td>{{opt.retainability}}</td>
         <td>{{opt.energy}}</td>
         <td>
-          . Mean number of PDU:{{opt.utilization.pdu}}<br>
-          . Resource Disk:{{opt.utilization.resourceDisk}}<br>
-          . Resource Memory:{{opt.utilization.resourceMemory}}<br>
-          . Resource Process:{{opt.utilization.resourceProcess}}<br>
-          . Maximum number of PDU:{{opt.utilization.maxPdu}}
+          <ul>
+            <li>Mean number of PDU:<label>{{opt.utilization.pdu}}</label></li>
+            <li>Resource Disk:<label>{{opt.utilization.resourceDisk}}</label></li>
+            <li>Resource Memory:<label>{{opt.utilization.resourceMemory}}</label></li>
+            <li>Resource Process:<label>{{opt.utilization.resourceProcess}}</label></li>
+            <li>Maximum number of PDU:<label>{{opt.utilization.maxPdu}}</label></li>
+          </ul>
         </td>
         <td>{{opt.mobility}}</td>
       </tr>    

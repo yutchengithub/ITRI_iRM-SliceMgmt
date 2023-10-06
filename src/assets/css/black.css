@@ -18,6 +18,9 @@ div.header {
   div.header button:hover .mat-icon {
     color: #fff;
   }
+  .dashboard .boxTitle {
+    color: #fff;
+  }
   .logout {
     opacity: 1!important;
     color: #5390c7!important;
@@ -26,9 +29,9 @@ div.header {
   h5 .mat-icon {
     background-color: #2979c6;
   }
-  .menu {
-    /*opacity: .85;*/
-  }
+  .dashboard .leftArea > span {
+    background: linear-gradient(45deg, #34b8dbe8 13%, #a369f4 100%);
+}
   .menu ul li {
     color: #7c98cb;
   }
@@ -39,13 +42,15 @@ div.header {
     color: #2f8ce3;
     opacity: 1;
   }
-  .table table tbody tr {
+  .table table {
     border: 1px solid #223b50;
-    }
+  }
+  .table table tbody tr:nth-child(even) td {
+    background-color: #0d1625c2;
+}
   .table table th {
     color: #517491;
-    background-color: #091730;
-    border: 1px solid #223b50;
+    background: linear-gradient( 0deg, #3b9af6 0%, #000 5%,#07141f 100%);
   }
   td .mat-icon ,
   td .material-symbols-outlined{
@@ -105,21 +110,17 @@ div.header {
         opacity: .8;
         border: 1px solid #223b50;
     }
-    .dashboard .boxTitle {
+    /* .dashboard .boxTitle {
         color: #2e94e7;
         border-bottom: 1px solid #2c3548;
-    }
+    } */
     .dashboard .unit {
         color: #7b8893;
       }
     .chart g.dxg-title text {
         fill: #fff!important;
     }
-    .dashboard .rightArea > div {
-        background-color: #0c0f16;
-        opacity: .8;
-        border: 1px solid #223b50;
-    }
+    
     .dashboard .table table tr td {
         color: #ddd;
     }
@@ -183,12 +184,11 @@ div.header {
     color: #297fc5;
     border-bottom: 1px solid #2c3548;
   }
-  .ocloudInfo,
-  .basicInfo ul li span,
-  .bigValue,
+
   .cpu > span .unit {
-    color: #eee;
+    color: #0f1628;
   }
+
   .percent {
     background: #222;
     color: #fff;
@@ -234,6 +234,9 @@ span.material-symbols-outlined.stop {
   background-color: #000;
 }
 .table.performance tr td {
+  border-right: 1px solid #223b50;
+}
+.table tr td {
   border-right: 1px solid #223b50;
 }
 /* 整個捲軸 */

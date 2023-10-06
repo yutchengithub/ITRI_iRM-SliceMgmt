@@ -1,7 +1,6 @@
 .table table {
-  //width: 97.5%;
+  width: 97.5%;
   margin: 0;
-  width: fit-content;
   text-align: center;
   max-height: 70vh;
 }
@@ -16,10 +15,11 @@ table tr td.time{
   width: 3vw;
   text-align: left;
 }
+
 table tr td:nth-child(2),
 table tr td:nth-child(4){
   white-space: nowrap;
-  //min-width: 13vw;
+  min-width: 12vw;
 }
 table tr td:nth-last-child(2){
   width: 3vw;
@@ -28,6 +28,10 @@ table tr td:nth-last-child(3),
 table tr td:nth-last-child(4) {
   text-align: left;
 }
+table tr td:nth-last-child(3) {
+  white-space: nowrap;
+}
+
 td mat-icon {
   cursor: pointer;
 }
@@ -72,16 +76,29 @@ button.modify {
 }
 .statusTable table {
   display: block;
-  width: 88% !important;  
+  width: 88% !important;
   margin: auto;
   max-height: 42vh;
   font-size: 1em;
+}
+@media screen and (max-width:1920px) {
+  .table table {
+    max-height: 65vh;
+  }
+  table thead tr th:first-child,
+table tbody tr td:first-child {
+  min-width: 3vw;
+}
+table tr td:nth-child(2), table tr td:nth-child(4) {
+  white-space: nowrap;
+  min-width: 11vw;
+}
 }
 
 @media screen and (max-width:1366px) {
 
 .table table {
   width: 98.5%;
-  max-height: 60vh;
+  max-height: 46vh;
 }
 }
