@@ -1124,7 +1124,7 @@ export class CommonService {
         isCleared: false,
         processstatus: 0,
         processresult: "",
-        cloudName: "cloud1",
+        //cloudName: "cloud1",
         nfName: "nf1",
         status: "New",
         acknowledgeOwner: "Sam"
@@ -1143,7 +1143,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Sam"
@@ -1162,7 +1162,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "IO Changed",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Charles"
@@ -1181,7 +1181,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 0,
         processresult: "",
-        cloudName: "cloud2",
+       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Kevin"
@@ -1200,7 +1200,7 @@ export class CommonService {
         isCleared: false,
         processstatus: 0,
         processresult: "",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Kevin"
@@ -1219,7 +1219,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Sam"
@@ -1238,7 +1238,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "IO Changed",
-        cloudName: "cloud2",
+       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Sam"
@@ -1257,7 +1257,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 0,
         processresult: "",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Kevin"
@@ -1276,7 +1276,7 @@ export class CommonService {
         isCleared: false,
         processstatus: 0,
         processresult: "",
-        cloudName: "cloud2",
+       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Charles"
@@ -1295,7 +1295,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        cloudName: "cloud2",
+       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Sam"
@@ -1314,7 +1314,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        cloudName: "cloud2",
+       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Charles"
@@ -1333,7 +1333,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Kevin"
@@ -1652,8 +1652,8 @@ export class CommonService {
         probablecause: "主機錯誤",
         isCleared: false,
         processstatus: 0,
-        processresult: "",
-        cloudName: "cloud1",
+        processresult: "fixed",
+        //cloudName: "cloud1",
         nfName: "nf1",
         status: "New",
         acknowledgeOwner: "Sam"
@@ -1672,7 +1672,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Sam"
@@ -1691,7 +1691,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "IO Changed",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Charles"
@@ -1709,8 +1709,8 @@ export class CommonService {
         probablecause: "結束待命錯誤",
         isCleared: true,
         processstatus: 0,
-        processresult: "",
-        cloudName: "cloud2",
+        processresult: "closed",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Kevin"
@@ -1728,8 +1728,8 @@ export class CommonService {
         probablecause: "授權錯誤",
         isCleared: false,
         processstatus: 0,
-        processresult: "",
-        cloudName: "cloud2",
+        processresult: "fixed",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Kevin"
@@ -1748,7 +1748,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Sam"
@@ -1767,7 +1767,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "IO Changed",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Sam"
@@ -1786,7 +1786,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 0,
         processresult: "",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Kevin"
@@ -1805,7 +1805,7 @@ export class CommonService {
         isCleared: false,
         processstatus: 0,
         processresult: "",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Charles"
@@ -1824,7 +1824,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Sam"
@@ -1843,7 +1843,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Charles"
@@ -1862,7 +1862,7 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        cloudName: "cloud2",
+        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
         acknowledgeOwner: "Kevin"

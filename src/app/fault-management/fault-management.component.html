@@ -65,7 +65,7 @@
         <!-- <td>{{opt.isCleared?'Cleared':'New'}}</td> -->
         <td>
           <label tooltip="{{languageService.i18n['resolved']}}" *ngIf="opt.processstatus === 0" class="greenLight"></label>
-          <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf="opt.processstatus === 1" class="redLight"></label>
+          <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf="opt.processstatus === 1" class="redLight" (click)="openStatusModal(opt)"></label>
           {{opt.processresult}}
         </td>
         <td>{{opt.acknowledgeOwner}}</td>
@@ -76,9 +76,10 @@
       </tr>
     </tbody>
   </table>
+  <!-- pagination -->
   <div class="pagination">
     <ng-template
-     *ngFor="let item of nullList| paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fmList' } "> 
+     *ngFor="let item of nullList | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fmList' } "> 
     </ng-template> 
     <span class="total">{{languageService.i18n['fm.total1']}} {{faultMessage.totalMessageNumber}} {{languageService.i18n['fm.total2']}}</span>
     <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""

@@ -7,7 +7,7 @@
     width: 100%;
 }
 .dashboard .leftArea > span {
-    width: 31%;
+    width: 30%;
     display: inline-block;
     vertical-align: top;
     border-radius: 1em;
@@ -16,7 +16,7 @@
     color: #000;
 }
 .dashboard .leftArea > span:not(:last-child) {
-    margin: 0 1% 1% 0;
+    margin:0 1.5% 1%;
 }
 .dashboard .leftArea > span img {
     width: auto;
@@ -226,13 +226,16 @@
   .table {
     width: 100%;
   }
+  .table h5 {
+    margin-left: 1em;
+  }
 @media screen and (max-width:1920px) {
     .dashboard .leftArea > span img {
         height: 7em;
     }
     .table table {
         font-size: 1em;
-        max-height: 54vh;
+        max-height: 60vh;
     }
     .dashboard .boxTitle {
         font-size: 1.5em;
@@ -299,7 +302,7 @@
 
 @media only screen and (max-width: 1366px) {
     .dashboard .leftArea > span {
-        width: 32%;
+        width: 30%;
     }
     .dashboard .leftArea {
         text-align: center;
@@ -389,6 +392,6 @@
     width: 11vw;
     }
     .table table {
-        max-height: 42vh;
+        max-height: 55vh;
     }
 }

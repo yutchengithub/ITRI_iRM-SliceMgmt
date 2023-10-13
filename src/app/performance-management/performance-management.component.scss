@@ -2,7 +2,7 @@
   width: 98%;
   margin: 0;
   text-align: center;
-  max-height: 70vh;
+  max-height: 79vh;
 }
 table tr td {
   width: 15vw;
@@ -38,13 +38,28 @@ table tr td > div > label {
 }
 table tr th div {
   font-size: .9em;
-
+}
+table tr th {
+  white-space: nowrap;
 }
 .table table td ul li label {
   margin: 0 0 0 .5em;
 }
+@media screen and (max-width:1600px){
+  .table table td ul li {
+    word-break: break-all;
+    white-space: initial;
+}
+}
 @media screen and (max-width:1366px) {
   table tr td:nth-child(4), table tr td:nth-child(5) {
     width: 11vw;
+}
+.table table td ul li {
+  word-break: break-all;
+  white-space: initial;
+}
+table tr td:nth-child(3), table tr td:nth-child(6) {
+  width: 22vw;
 }
 }
