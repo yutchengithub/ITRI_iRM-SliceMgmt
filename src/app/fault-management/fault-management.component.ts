@@ -225,7 +225,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
       }
-    }, 5 * 1000);
+    }, 100); //timeout 100ms
   }
 
   pageChanged(page: number) {
