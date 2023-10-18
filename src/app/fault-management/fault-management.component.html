@@ -29,7 +29,7 @@
       </span>
     </span>
     <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-    <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span>
+    <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
   </div>
 </form>
 
@@ -52,7 +52,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let opt of faultMessage.faultMessages;let i=index">
+      <tr *ngFor="let opt of faultMessage.faultMessages | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fmList' }">
         <td>{{opt.faultId}}</td>
         <td>{{opt.fieldName}}</td>
         <td>{{opt.bsName}}</td>
@@ -76,16 +76,12 @@
       </tr>
     </tbody>
   </table>
-  <!-- pagination -->
-  <div class="pagination">
-    <ng-template
-     *ngFor="let item of nullList | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fmList' } "> 
-    </ng-template> 
-    <span class="total">{{languageService.i18n['fm.total1']}} {{faultMessage.totalMessageNumber}} {{languageService.i18n['fm.total2']}}</span>
-    <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
-  nextLabel="" id="fmList">
-    </pagination-controls>
-  </div>
+  
+  <!-- pagination -->    
+  <span class="total">{{languageService.i18n['fm.total1']}} {{faultMessage.totalMessageNumber}} {{languageService.i18n['fm.total2']}}</span>
+  <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
+nextLabel="" id="fmList">
+  </pagination-controls>
 </div>
 
 <ng-template #statusModal>

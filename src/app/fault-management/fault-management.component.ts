@@ -66,7 +66,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   nfList: Nf[] = [];
   faultMessage: FaultMessage = {} as FaultMessage;
   p: number = 1;            // 當前頁數
-  pageSize: number = 5;    // 每頁幾筆
+  pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
   nullList: string[] = [];  // 給頁籤套件使用
   searchForm!: FormGroup;
@@ -234,25 +234,25 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   }
 
   search() {
-    this.isSettingAdvanced = false;
-    this.p = 1;
-    this.getFaultMessage();
+    // this.isSettingAdvanced = false;
+    // this.p = 1;
+    // this.getFaultMessage();
   }
 
   openStatusModal(faultMessages: FaultMessages) {
-    if (faultMessages.processstatus === 1) {
-      this.fmStatus = {} as FmStatus;
-      this.selectFaultId = faultMessages.faultId;
-      this.type = 'processing_status';
-      this.show200Msg = false;
-      this.show500Msg = false;
-      this.getFMstatus().then((value) => {
-        this.statusModalRef = this.dialog.open(this.statusModal, { id: 'statusModal' });
-        this.statusModalRef.afterClosed().subscribe(() => {
+    //if (faultMessages.processstatus === 1) {
+    this.fmStatus = {} as FmStatus;
+    this.selectFaultId = faultMessages.faultId;
+    this.type = 'processing_status';
+    this.show200Msg = false;
+    this.show500Msg = false;
+    this.getFMstatus().then((value) => {
+      this.statusModalRef = this.dialog.open(this.statusModal, { id: 'statusModal' });
+      this.statusModalRef.afterClosed().subscribe(() => {
 
-        });
       });
-    }
+    });
+    //}
   }
 
   getFMstatus(): Promise<any> {
