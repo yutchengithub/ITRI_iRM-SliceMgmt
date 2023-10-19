@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 import { PerformanceList } from '../performance-management/o-cloud-performance/o-cloud-performance.component';
 import { SoftwareList } from '../software-management/software-management.component';
 import { SoftwareLists} from '../software-management/software-management.component';
+import { AccountLists} from '../account-management/account-management.component';
 import { SoftwareInfo } from '../software-management/software-info/software-info.component';
 import { MainComponent } from '../main/main.component';
 import { Nf, OcloudDmsList } from '../nf-management/nf-management.component';
@@ -21,6 +22,7 @@ import { NfPerformanceList } from '../performance-management/nf-performance/nf-p
 import { NfCpuLoading, NfCpuUsage, NfDiskRate, NfDiskUsage, NfInterfaceUsage, NfMemoryUsage, NfNetworkThroughput, NfOverviewKpi, NfPower } from '../performance-management/nf-performance-info/nf-performance-info.component';
 import { Item } from './models/item';
 import { FormGroup } from '@angular/forms';
+import { AccountInfo } from '../account-management/account-info/account-info.component';
 
 export interface NowTime {
   year: string;
@@ -74,7 +76,7 @@ export class CommonService {
       this.http.get('./assets/config/connection.json').subscribe(
         (res: any) => {
           this.isLocal = true;
-          this.restPath = 'http://140.96.102.123:8080/o2_smo/webresources/ocloud';
+          this.restPath = 'http://140.96.102.202:8080/o2_smo/webresources/ocloud';
           // this.isLocal = res['local'];
           //this.restPath = res['url'] + ':' + res['port'] + res['root'];
           resolve(true);
@@ -2046,6 +2048,37 @@ export class CommonService {
     };
 
 
+    accountLists: AccountLists=
+    {
+      users: [
+        {
+          id: 'k200',
+          role: '1',
+        },
+        {
+          id: 'k300',
+          role: '1',
+        },
+        {
+          id: 'k100',
+          role: '1',
+        },
+        {
+          id: 'k200',
+          role: '2',
+        }
+      ]
+    };
+
+    accountInfo: AccountInfo=
+    {
+      id: 'k200',
+      key: 'abcd1234',
+      role: '2',
+      expiretime: '2023-06-02 20:12:37'
+    };
+
+
   softwareList: SoftwareList[] = [
     {
       id: "s0011001",
@@ -2074,7 +2107,7 @@ export class CommonService {
       firm:"ITRI",
       modelname:"A001",
       uploadtime:"2023-06-12 09:25:03",
-      uploadtype:3,
+      uploadtype:2,
       uploadversion:"1.0.0",
       description:"test",
       uploadinfo:"ITRI_1.0.0.img",

@@ -9,58 +9,68 @@
   <div class="BOX  basicInfo ">
     <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
     <ul>
-      <li><label>{{languageService.i18n['manufacturer']}}</label><span>{{softwareInfo.firm}}</span></li>
-      <li><label>{{languageService.i18n['model']}}</label><span>{{softwareInfo.modelname}}</span></li>
-      <li><label>{{languageService.i18n['type']}}</label><span>{{commonService.NFdetails(softwareInfo.uploadtype)}}</span></li>
-      <li><label>{{languageService.i18n['version']}}</label><span>{{softwareInfo.uploadversion}}</span></li>
-      <li><label>{{languageService.i18n['notes']}}</label><span>{{softwareInfo.description}}</span></li>
-      <li><label>File</label><span>{{softwareInfo.uploadinfo}}</span></li>
+      <li><label>{{languageService.i18n['manufacturer']}}</label>
+        <input type="text" [(ngModel)]="softwareInfo.firm" name="firm"></li>
+      <li><label>{{languageService.i18n['model']}}</label>
+        <input type="text" [(ngModel)]="softwareInfo.modelname" name="modelname"></li>
+      <li><label>{{languageService.i18n['type']}}</label>
+        <select [(ngModel)]="softwareInfo.uploadtype" name="uploadtype">
+          <option *ngFor="let opt of notesTypeList" [value]="opt.value">{{opt.displayName}}</option>
+        </select>
+        <!-- <input type="text" [(ngModel)]="softwareInfo.uploadtype" name="uploadtype"></li> -->
+      <li><label>{{languageService.i18n['version']}}</label>
+        <input type="text" [(ngModel)]="softwareInfo.uploadversion" name="uploadversion"></li>
+      <li><label>{{languageService.i18n['notes']}}</label>
+        <input type="text" [(ngModel)]="softwareInfo.description" name="description"></li>
       <li><label>File size</label><span>{{softwareInfo.size}}</span></li>
       <li><label>CheckSum</label><span>{{softwareInfo.checksum}}</span></li>
-      <li><label>FTP Account</label><span>{{softwareInfo.ftpid}}</span></li>
-      <li><label>FTP Password</label><span>{{softwareInfo.ftpkey}}</span></li>
+      <li><label>FTP Account</label>
+        <input type="text" [(ngModel)]="softwareInfo.ftpid" name="modelname"></li>
+      <li><label>FTP Password</label>
+        <input type="text" [(ngModel)]="softwareInfo.ftpkey" name="ftpkey"></li>
     </ul>
 
     <label class="boxTitle">Modify Software Content</label>
     <ul>
       <li>
-        <span>
-          <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">Update Settings</button>
-        </span>
+        <span class="btn-group">
+          <mat-button-toggle-group [(ngModel)]="uploadType" >
+            <mat-button-toggle value="upload">{{languageService.i18n['upload.file']}}</mat-button-toggle>
+            <mat-button-toggle value="url">{{languageService.i18n['url']}}</mat-button-toggle>
+          </mat-button-toggle-group>
+          <ng-container *ngIf="uploadType == 'upload'">
+            <div>
+              <input type="file" name="uploadedFile">
+              <!-- view detail 才出現以下二個 -->
+              <div>
+                File Size:
+                <br/>
+                Checksum:
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="uploadType == 'url'">
+              <input type="text" placeholder="Url">
+          </ng-container>
+      </span>
       </li>
     </ul>
+    <div class="buttons">
+      <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">Update Settings</button>
+    </div>
   </div>
 
 <ng-template #updateModal>
-  <h5>{{languageService.i18n['software_update']}}</h5>
+  <h5>Confirm to {{languageService.i18n['software_update']}}</h5>
   <form [formGroup]="updateForm">
     <ul>
       <li>
-        <label>Current Version</label>
+        <label>Update Version: </label>
         <span>{{softwareInfo.uploadversion}}</span>
       </li>
       <li>
-        <label>Update Software</label>
-        <span class="SoftwareUpdate">
-          <mat-button-toggle-group formControlName="type" (change)="changeType($event)">
-            <mat-button-toggle value="imageUrl">Image URL</mat-button-toggle>
-            <mat-button-toggle value="existedFile">Existed File</mat-button-toggle>
-          </mat-button-toggle-group>
-
-          <div *ngIf="updateForm.controls['type'].value === 'imageUrl'">
-            <input type="text" formControlName="imageUrl" placeholder="Image URL" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-            <mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
-          </div>
-          <div *ngIf="updateForm.controls['type'].value === 'existedFile'">
-              <span>
-                <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".txt" #fileInput>
-              </span>
-            <mat-error *ngIf="formValidated&&updateForm.controls['fileName'].invalid">Required</mat-error>
-            <div class="UV" *ngIf="updateForm.controls['type'].value === 'existedFile'">
-              Update Version : {{softwareVersion()}}
-            </div>
-          </div>
-        </span>
+        <label>Manufacturer: </label>
+        <span>{{softwareInfo.firm}}</span>
       </li>
     </ul>
     <div class="buttons">

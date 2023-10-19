@@ -12,6 +12,8 @@ import { NfManagementComponent } from './nf-management/nf-management.component';
 import { FaultManagementComponent } from './fault-management/fault-management.component';
 import { PerformanceManagementComponent } from './performance-management/performance-management.component';
 import { SoftwareManagementComponent } from './software-management/software-management.component';
+import { AccountManagementComponent } from './account-management/account-management.component';
+import { AccountInfoComponent } from './account-management/account-info/account-info.component';
 import { SoftwareInfoComponent } from './software-management/software-info/software-info.component';
 import { MainComponent } from './main/main.component';
 import { DxCircularGaugeModule } from 'devextreme-angular';
@@ -55,6 +57,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     FaultManagementComponent,
     PerformanceManagementComponent,
     SoftwareManagementComponent,
+    AccountManagementComponent,
+    AccountInfoComponent,
     SoftwareInfoComponent,
     MainComponent,
     OCloudInfoComponent,

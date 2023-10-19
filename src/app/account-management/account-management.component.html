@@ -1,7 +1,7 @@
-<h5>{{languageService.i18n['index.menu_softwareMgr']}}
+<h5>{{languageService.i18n['index.menu_accountMgr']}}
   <mat-icon tooltip="{{languageService.i18n['addSoftware']}}" (click)="openCreateModal()">add</mat-icon>
 </h5>
-  <form [formGroup]="searchForm">
+  <!-- <form [formGroup]="searchForm">
     <div class="filter">
       <span><label>Manufacturer</label>
         <input type="text">
@@ -18,39 +18,31 @@
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
       <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span>
     </div>
-  </form>
+  </form> -->
 
 <div class="table">
   <table>
     <thead>
       <tr>
-        <th>{{languageService.i18n['manufacturer']}}</th>
-        <th>{{languageService.i18n['model']}}</th>
-        <th>{{languageService.i18n['type']}}</th>
-        <th>{{languageService.i18n['version']}}</th>
-        <th>{{languageService.i18n['notes']}}</th>
-        <th>{{languageService.i18n['upload_time']}}</th>
-        <th>{{languageService.i18n['file.Url']}}</th>
+        <th>User</th>
+        <th>Role</th>
         <th>{{languageService.i18n['index.view']}}</th>
         <th>{{languageService.i18n['table.delete']}}</th>
       </tr>
     </thead>
     <tbody>
       <tr
-        *ngFor="let opt of softwareLists.uploadinfos | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-        <td>{{opt.firm}}</td>
-        <td>{{opt.modelname}}</td>
-        <td>{{typeText(opt.uploadtype)}}</td>
-        <td>{{opt.uploadversion}}</td>
-        <td>{{opt.description}}</td>
-        <td>{{opt.uploadtime}}</td>
-        <td>{{opt.uploadinfo}}</td>
+        *ngFor="let opt of accountLists.users | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+        <td>{{opt.id}}</td>
+        <td>{{typeText(+opt.role)}}</td>
+        <!-- <td>{{opt.role}}</td> -->
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>
-          <!-- <span class="material-symbols-outlined"  tooltip="{{languageService.i18n['index.view']}}">description</span> -->
+          <!-- <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>-->
         </td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)">delete_forever</mat-icon>
+          <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)" >delete_forever</mat-icon>
+          <!-- (click)="openDelectModal(opt)" -->
         </td>
       </tr>
     </tbody>
@@ -164,7 +156,7 @@
 <ng-template #deleteModal>
   <h5>{{languageService.i18n['delsoftware']}}
   </h5>
-  <p>{{languageService.i18n['confirm_del_soft']}} – {{selectSoftware.uploadinfo}}</p>
+  <p>{{languageService.i18n['confirm_del_soft']}} – {{selectUser.id}}</p>
   <div class="buttons">
     <button type="button" mat-dialog-close>Cancel</button>
     <button type="button" (click)="delete()">Delete</button>

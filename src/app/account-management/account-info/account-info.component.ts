@@ -3,12 +3,13 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from './../../shared/common.service';
 import { SoftwareList } from './../../software-management/software-management.component';
+import { AccountLists } from './../../account-management/account-management.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
-import { Item } from 'src/app/shared/models/item';
+
 
 export interface SoftwareInfo {
   id: string;
@@ -26,13 +27,23 @@ export interface SoftwareInfo {
   size: number;
 }
 
+export interface AccountInfo {
+  id: string;
+  key: string;
+  role: string;
+  expiretime: string;
+}
+export class Item {
+  displayName!: string;
+  value!: string;
+}
 @Component({
-  selector: 'app-software-info',
-  templateUrl: './software-info.component.html',
-  styleUrls: ['./software-info.component.scss']
+  selector: 'app-account-info',
+  templateUrl: './account-info.component.html',
+  styleUrls: ['./account-info.component.scss']
 })
 
-export class SoftwareInfoComponent implements OnInit {
+export class AccountInfoComponent implements OnInit {
   sessionId: string = '';
   cloudId: string = '';
   cloudName: string = '';
@@ -41,15 +52,27 @@ export class SoftwareInfoComponent implements OnInit {
   createForm!: FormGroup;
   // utilizationPercent: number = 0;
   softwareInfo: SoftwareInfo = {} as SoftwareInfo;
+  accountInfo: AccountInfo = {} as AccountInfo;
   softwareList: SoftwareList[] = [];
   systemSummary: SystemSummary = {} as SystemSummary;;
   fileNameMapSoftware: Map<string, SoftwareList> = new Map();
+  typeMap: Map<number, string> = new Map();
   faultColors: string[] = ['#FF0000', '#FFA042', '	#FFFF37', '#00FFFF'];
   nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
   showTooltipCpu: any = {};
   showTooltipStorage: any = {};
   showTooltipNic: any = {};
   uploadType = 'upload';
+  userTypeList: Item[] = [
+    { displayName: 'Administrator', value: '1' },
+    { displayName: `Manager`, value: '2' },
+    { displayName: `Monitor`, value: '3' }
+  ];
+  showDropdown = false;
+
+  toggleDropdown() {
+    this.showDropdown = !this.showDropdown;
+  }
   @ViewChild('updateModal') updateModal: any;
   updateModalRef!: MatDialogRef<any>;
   updateForm!: FormGroup;
@@ -62,13 +85,6 @@ export class SoftwareInfoComponent implements OnInit {
     hideDelay: 250
   };
 
-  notesTypeList: Item[] = [
-    { displayName: 'CU', value: '0' },
-    { displayName: `DU`, value: '1' },
-    { displayName: `CU+DU`, value: '2' },
-    { displayName: `CU+DU+RU`, value: '3' }
-  ];
-
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -78,6 +94,7 @@ export class SoftwareInfoComponent implements OnInit {
     public languageService: LanguageService
   ) {
     this.severitys = this.commonService.severitys;
+    this.userTypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
   }
 
   ngOnInit(): void {
@@ -125,7 +142,7 @@ export class SoftwareInfoComponent implements OnInit {
   getSoftwareInfo() {
     if (this.commonService.isLocal) {
       /* local file test */
-      this.softwareInfo = this.commonService.softwareInfo;
+      this.accountInfo = this.commonService.accountInfo;
     } else {
       this.commonService.queryOcloudInfo(this.cloudId).subscribe(
         res => {
@@ -158,13 +175,9 @@ export class SoftwareInfoComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/main/software-mgr']);
+    this.router.navigate(['/main/account-mgr']);
   }
 
-
-  goFaultMgr() {
-    this.router.navigate(['/main/fault-mgr', this.cloudName, 'All']);
-  }
 
   openUpdateModel() {
     this.formValidated = false;
