@@ -125,5 +125,13 @@ export const TwLanguage = {
   'url':'連結',
   'add.method':'選擇新增方式',
   'file.size':'檔案大小',
-  'field_list':'場域列表'
+  'field_list':'場域列表',
+  //Account Management 帳號管理
+  'user_account':'帳號',
+  'key_account':'密碼',
+  'role_account':'角色',
+  'expired_time_account':'有效時間',
+  'addaccount':'新增帳號',
+  'delaccount':'刪除帳號',
+  'confirm_del_acc':'確定要刪除帳號'
 }

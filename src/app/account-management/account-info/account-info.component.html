@@ -9,16 +9,16 @@
   <div class="BOX  basicInfo ">
     <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
     <ul>
-      <li><label>User</label>
+      <li><label>{{languageService.i18n['user_account']}}</label>
         <input type="text" [(ngModel)]="accountInfo.id" name="id" readonly></li>
-      <li><label>Password</label>
+      <li><label>{{languageService.i18n['key_account']}}</label>
         <input type="text" [(ngModel)]="accountInfo.key" name="key"></li>
-        <li><label>Role</label>
+        <li><label>{{languageService.i18n['role_account']}}</label>
           <select [(ngModel)]="accountInfo.role" name="role">
             <option *ngFor="let opt of userTypeList" [value]="opt.value">{{opt.displayName}}</option>
           </select>
         </li>        
-      <li><label>Expired Time</label><br>
+      <li><label>{{languageService.i18n['expired_time_account']}}</label><br>
         <span>{{accountInfo.expiretime}}</span></li>   
     </ul>
     <div class="buttons">

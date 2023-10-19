@@ -46,6 +46,13 @@ export interface Users {
   role: string;
 }
 
+export interface CreateUsers {
+  session: string;
+  id: string;
+  key: string;
+  role: string;
+}
+
 @Component({
   selector: 'app-account-management',
   templateUrl: './account-management.component.html',
@@ -56,6 +63,7 @@ export class AccountManagementComponent implements OnInit {
   softwareList: SoftwareList[] = [];
   softwareLists: SoftwareLists = {} as SoftwareLists;
   accountLists: AccountLists = {} as AccountLists;
+  accountInfo: CreateUsers = {} as CreateUsers;
   @ViewChild('createModal') createModal: any;
   @ViewChild('deleteModal') deleteModal: any;
   @ViewChild('advancedModal') advancedModal: any;
@@ -79,9 +87,8 @@ export class AccountManagementComponent implements OnInit {
 
   uploadType = 'upload';
   role = 'upload';
-
-  searchTypeList: Item[] = [
-    { displayName: `Administrator`, value: '1' },
+  userTypeList: Item[] = [
+    { displayName: 'Administrator', value: '1' },
     { displayName: `Manager`, value: '2' },
     { displayName: `Monitor`, value: '3' }
   ];
@@ -94,7 +101,7 @@ export class AccountManagementComponent implements OnInit {
     private fb: FormBuilder,
     public languageService: LanguageService
   ) {
-    this.searchTypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
+    this.userTypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
     this.searchForm = this.fb.group({
       'fileName': new FormControl(''),
       'type': new FormControl('All'),
@@ -104,7 +111,7 @@ export class AccountManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.sessionId = this.commonService.getSessionId();
-    this.getSoftwareList();
+    this.getAccountList();
   }
 
   changeMethod(e: MatButtonToggleChange) {
@@ -118,7 +125,7 @@ export class AccountManagementComponent implements OnInit {
   }
 
 
-  getSoftwareList() {
+  getAccountList() {
     const fileName = this.searchForm.controls['fileName'].value;
     const type = this.searchForm.controls['type'].value;
     const version = this.searchForm.controls['version'].value;
@@ -207,7 +214,7 @@ export class AccountManagementComponent implements OnInit {
         }
       );
       this.createModalRef.close();
-      this.getSoftwareList();
+      this.getAccountList();
 
     } else {
       const body = this.createForm.value;
@@ -233,11 +240,11 @@ export class AccountManagementComponent implements OnInit {
           this.http.post(uploadUrl, formData, options).subscribe(
             () => {
               this.createModalRef.close();
-              this.getSoftwareList();
+              this.getAccountList();
             }
           );
           this.createModalRef.close();
-          this.getSoftwareList();
+          this.getAccountList();
         }
       );
     }
@@ -258,12 +265,12 @@ export class AccountManagementComponent implements OnInit {
         }
       }
       this.deleteModalRef.close();
-      this.getSoftwareList();
+      this.getAccountList();
     } else {
       this.commonService.deleteSoftware(this.selectSoftware.id).subscribe(
         res => {
           this.deleteModalRef.close();
-          this.getSoftwareList();
+          this.getAccountList();
         }
       );
     }
@@ -279,7 +286,7 @@ export class AccountManagementComponent implements OnInit {
   }
 
   // search() {
-  //   this.getSoftwareList();
+  //   this.getAccountList();
   // }
 
   debug() {

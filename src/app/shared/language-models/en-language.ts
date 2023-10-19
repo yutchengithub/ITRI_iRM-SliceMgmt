@@ -125,5 +125,13 @@ export const Enlanguage = {
   'url':'Url',
   'add.method':'Add Method',
   'file.size':'File Size',
-  'field_list':'Field List'
+  'field_list':'Field List',
+  // Account Management
+  'user_account':'User',
+  'key_account':'Password',
+  'role_account':'Role',
+  'expired_time_account':'Expired Time',
+  'addaccount':'Create Account',
+  'delaccount':'Delete Account',
+  'confirm_del_acc':'Confirm to Delete Account'
 }
