@@ -9,25 +9,27 @@
   <div class="BOX  basicInfo ">
     <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
     <ul>
-      <li><label>{{languageService.i18n['manufacturer']}}</label>
-        <input type="text" [(ngModel)]="softwareInfo.firm" name="firm"></li>
-      <li><label>{{languageService.i18n['model']}}</label>
-        <input type="text" [(ngModel)]="softwareInfo.modelname" name="modelname"></li>
-      <li><label>{{languageService.i18n['type']}}</label>
-        <select [(ngModel)]="softwareInfo.uploadtype" name="uploadtype">
+      <li><label>{{languageService.i18n['manufacturer']}}</label><span>{{softwareInfo.firm}}</span></li>
+        <!-- <input type="text" [(ngModel)]="softwareInfo.firm" name="firm"></li> -->
+      <li><label>{{languageService.i18n['model']}}</label><span>{{softwareInfo.modelname}}</span></li>
+        <!-- <input type="text" [(ngModel)]="softwareInfo.modelname" name="modelname"></li> -->
+      <li><label>{{languageService.i18n['type']}}</label><span>{{commonService.NFdetails(softwareInfo.uploadtype)}}</span></li>
+        <!-- <select [(ngModel)]="softwareInfo.uploadtype" name="uploadtype">
           <option *ngFor="let opt of notesTypeList" [value]="opt.value">{{opt.displayName}}</option>
-        </select>
+        </select> -->
         <!-- <input type="text" [(ngModel)]="softwareInfo.uploadtype" name="uploadtype"></li> -->
-      <li><label>{{languageService.i18n['version']}}</label>
-        <input type="text" [(ngModel)]="softwareInfo.uploadversion" name="uploadversion"></li>
-      <li><label>{{languageService.i18n['notes']}}</label>
-        <input type="text" [(ngModel)]="softwareInfo.description" name="description"></li>
+      <li><label>{{languageService.i18n['version']}}</label><span>{{softwareInfo.uploadversion}}</span></li>
+        <!-- <input type="text" [(ngModel)]="softwareInfo.uploadversion" name="uploadversion"></li> -->
+      <li><label>{{languageService.i18n['notes']}}</label><span>{{softwareInfo.description}}</span></li>
+        <!-- <input type="text" [(ngModel)]="softwareInfo.description" name="description"></li> -->
+      <li><label>File name</label><span>{{softwareInfo.uploadinfo}}</span></li>
+      <li><label>URL</label><span>{{softwareInfo.uploadurl}}</span></li>
       <li><label>File size</label><span>{{softwareInfo.size}}</span></li>
       <li><label>CheckSum</label><span>{{softwareInfo.checksum}}</span></li>
-      <li><label>FTP Account</label>
-        <input type="text" [(ngModel)]="softwareInfo.ftpid" name="modelname"></li>
-      <li><label>FTP Password</label>
-        <input type="text" [(ngModel)]="softwareInfo.ftpkey" name="ftpkey"></li>
+      <li><label>FTP Account</label><span>{{softwareInfo.ftpid}}</span></li>
+        <!-- <input type="text" [(ngModel)]="softwareInfo.ftpid" name="modelname"></li> -->
+      <li><label>FTP Password</label><span>{{softwareInfo.ftpkey}}</span></li>
+        <!-- <input type="text" [(ngModel)]="softwareInfo.ftpkey" name="ftpkey"></li> -->
     </ul>
 
     <label class="boxTitle">Modify Software Content</label>

@@ -68,6 +68,7 @@ export class AccountInfoComponent implements OnInit {
     { displayName: `Manager`, value: '2' },
     { displayName: `Monitor`, value: '3' }
   ];
+  roleMapDisplayName: Map<string, string> = new Map();
   showDropdown = false;
 
   toggleDropdown() {
@@ -97,6 +98,9 @@ export class AccountInfoComponent implements OnInit {
     this.userTypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
   }
 
+  Accountroledetails(status: number): string {
+    return this.roleMapDisplayName.get(status.toString()) as string;
+  }
   ngOnInit(): void {
     this.sessionId = this.commonService.getSessionId();
     this.route.params.subscribe((params) => {
@@ -107,6 +111,11 @@ export class AccountInfoComponent implements OnInit {
       console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
       this.getSoftwareInfo();
     });
+  }
+
+  roleDisplayName(role: string): string {
+    const userType = this.userTypeList.find(item => item.value === role);
+    return userType ? userType.displayName : '';
   }
 
   fileChange(e: any) {
