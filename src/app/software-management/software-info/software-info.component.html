@@ -41,7 +41,7 @@
             <mat-button-toggle value="url">{{languageService.i18n['url']}}</mat-button-toggle>
           </mat-button-toggle-group>
           <ng-container *ngIf="uploadType == 'upload'">
-            <div>
+            <div class="upload">
               <input type="file" name="uploadedFile">
               <!-- view detail 才出現以下二個 -->
               <div>
@@ -52,13 +52,13 @@
             </div>
           </ng-container>
           <ng-container *ngIf="uploadType == 'url'">
-              <input type="text" placeholder="Url">
+              <div class="url"><input type="text" placeholder="Url"></div>
           </ng-container>
       </span>
       </li>
     </ul>
     <div class="buttons">
-      <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">Update Settings</button>
+      <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">{{languageService.i18n['updateSoftware']}}</button>
     </div>
   </div>
 

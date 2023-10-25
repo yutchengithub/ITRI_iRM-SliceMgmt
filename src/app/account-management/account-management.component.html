@@ -74,9 +74,9 @@
         </span>
       </li>
       <li><label>{{languageService.i18n['role_account']}}</label>
-        <select [(ngModel)]="accountInfo.role" name="role">
+        <span><select [(ngModel)]="accountInfo.role" name="role">
           <option *ngFor="let opt of userTypeList" [value]="opt.value">{{opt.displayName}}</option>
-        </select>
+        </select></span>
       </li>   
 
     </ul>

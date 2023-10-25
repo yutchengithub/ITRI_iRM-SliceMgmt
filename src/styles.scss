@@ -391,6 +391,7 @@ nav[role="navigation"] {
 .mat-button-toggle-appearance-standard {
   color: rgba(0,0,0,.87);
   background: #d0d1d1;
+  font-size: 15px;
 }
 .mat-button-toggle-group-appearance-standard .mat-button-toggle+.mat-button-toggle {
   border-left: none;
@@ -435,8 +436,9 @@ input[type="text"].required + .mat-error {
   min-width: 40vw;
 }
 #createModal ul li label {
-  width: 14%;
+  width: 16%;
   min-width: initial;
+  margin: 0;
 }
 #createModal .upload label {
   width: initial;
@@ -452,7 +454,7 @@ input[type="text"].required + .mat-error {
   color: rgba(0,0,0,.87);
 }
 .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
-  line-height: 38px!important;
+  line-height: 35px!important;
 }
 .center {
   text-align: center;
@@ -725,7 +727,7 @@ transition: all 0.3s;
 .switch .mat-button-toggle-group-appearance-standard {
   border: 0;
   padding: 0.3em;
-  font-size: .85em;
+  font-size: .9em;
   font-style: initial;
   background: #3082bd;
   border-radius: 5em;
@@ -737,18 +739,21 @@ transition: all 0.3s;
   min-width: 1em;
   transition: all .3s;
   font-family: Microsoft JhengHei;
+  border-radius: 4px 0 0 4px;
 }
-
+.switch .mat-button-toggle-appearance-standard:not(:first-child) {
+  border-radius: 0 4px 4px 0;
+}
 .switch .mat-button-toggle-checked {
   background-color: #fff!important;
   color: rgba(0, 0, 0, 1) !important;
-  border-radius: 5em;
+  /* border-radius: 5em; */
 }
 .switch .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
-  padding: 4px;
+  padding: 6px 10px;
 }
 .switch .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
-  line-height: 16px!important;
+  line-height: 20px!important;
 }
 .switch .mat-button-toggle-appearance-standard .mat-button-toggle-focus-overlay {
   background-color: #000;
@@ -868,6 +873,13 @@ p-calendar #time {
 }
 .filter .p-calendar input[type=text] {
   max-width: 9em!important;
+}
+.mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+  background: #418fdb!important;
+  color: #fff!important;
+}
+.mat-button-toggle-standalone.mat-button-toggle-appearance-standard, .mat-button-toggle-group-appearance-standard {
+ border: 0!important;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {

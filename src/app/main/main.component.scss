@@ -26,7 +26,7 @@ div.header .header_btn {
 div.header button {
   border: none;
   cursor: pointer;
-  padding: .3em 2em 0;
+  padding: .3em 1.5em 0;
   vertical-align: middle;
   transition: all 0.25s;
 }
@@ -88,10 +88,10 @@ div.header button:hover {
 div.header button label {
   display: none;
 }
-:host ::ng-deep .switch .mat-button-toggle-group-appearance-standard {
+:host ::ng-deep .header_btn .switch .mat-button-toggle-group-appearance-standard {
   padding: 0.2em 0.3em;
 }
-:host ::ng-deep .switch .mat-button-toggle-appearance-standard {
+:host ::ng-deep .header_btn .switch .mat-button-toggle-appearance-standard {
   background-color: transparent;
   color: white;
   border: none !important;
@@ -99,11 +99,13 @@ div.header button label {
   transition: all 0.3s;
   font-size: .7em;
 }
-:host ::ng-deep .switch .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+:host ::ng-deep .header_btn .switch .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
   line-height: 10px !important;
 }
-:host ::ng-deep .switch .mat-button-toggle-checked {
-  color: rgba(0, 0, 0, 1) !important;
+:host ::ng-deep .header_btn .switch .mat-button-toggle-checked {
+  color: black !important;
+  border-radius: 5em;
+  background-color: #fff!important;
 }
 @media only screen and (max-width:1366px) {
   .wrap {
@@ -123,7 +125,7 @@ div.header button label {
     display: inline-block;
     position: absolute;
     top: 0;
-    right: 11em;
+    right: 12em;
     text-align: right;
     width: auto;
     z-index: 99999;

@@ -15,7 +15,12 @@
     <tbody>
       <tr *ngFor="let opt of fieldList.fields | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'pmList' } ">
         <td>{{opt.name}}</td>
-        <td>{{opt.accessibility}}</td>
+        <td>
+          <ul>
+            <li>{{opt.accessibility}}</li>
+          </ul>
+          
+        </td>
         <td>
           <ul>
             <li>Integrated downlink delay:<label>{{opt.integrity.downlinkDelay}}</label></li>
@@ -25,7 +30,11 @@
           </ul>
           
         </td>
-        <td>{{opt.retainability}}</td>
+        <td>
+          <ul>
+            <li>{{opt.retainability}}</li>
+          </ul>
+          </td>
         <td>
           <ul>
             <li>{{opt.energy}}</li>
