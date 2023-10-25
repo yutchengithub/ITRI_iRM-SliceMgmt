@@ -299,7 +299,11 @@
         height: 21.9em;
   }
 }
-
+@media only screen and (max-width: 1600px) {
+    .table table {
+        max-height: 55vh;
+    }
+}
 @media only screen and (max-width: 1366px) {
     .dashboard .leftArea > span {
         width: 30%;

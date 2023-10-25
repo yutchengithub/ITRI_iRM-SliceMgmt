@@ -94,7 +94,10 @@ button.modify {
 }
 @media screen and (max-width:1600px) {
   table tr td:nth-child(2), table tr td:nth-child(4) {
-    min-width: 10vw;
+    min-width: 10.3vw;
+}
+.table table {
+    max-height: 66vh;
 }
 }
 @media screen and (max-width:1366px) {

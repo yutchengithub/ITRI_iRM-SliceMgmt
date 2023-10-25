@@ -50,6 +50,9 @@ table tr th {
     word-break: break-all;
     white-space: initial;
 }
+.table table {
+  max-height: 76vh;
+}
 }
 @media screen and (max-width:1366px) {
   table tr td:nth-child(4), table tr td:nth-child(5) {

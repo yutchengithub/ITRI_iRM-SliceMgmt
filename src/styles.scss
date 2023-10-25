@@ -878,6 +878,11 @@ p-calendar #time {
   background: #418fdb!important;
   color: #fff!important;
 }
+.loginPage .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+  border-radius: 5em;
+  background: #ffffff !important;
+  color: #000 !important;
+}
 .mat-button-toggle-standalone.mat-button-toggle-appearance-standard, .mat-button-toggle-group-appearance-standard {
  border: 0!important;
 }
