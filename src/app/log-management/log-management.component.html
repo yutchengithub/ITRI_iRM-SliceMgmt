@@ -1,0 +1,99 @@
+<h5>{{languageService.i18n['index.menu_logMgr']}}
+  <mat-icon tooltip="{{languageService.i18n['addSoftware']}}" (click)="openCreateModal()">add</mat-icon>
+</h5>
+  <!-- <form [formGroup]="searchForm">
+    <div class="filter">
+      <span><label>Manufacturer</label>
+        <input type="text">
+      </span>
+      <span><label>Model</label>
+          <input type="text">
+      </span>
+      <span><label>{{languageService.i18n['type']}}</label>
+        <select>
+          <option value="All">All</option>
+          <option *ngFor="let opt of searchTypeList" [value]="opt.value">{{opt.displayName}}</option>
+        </select>
+      </span>
+      <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+      <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span>
+    </div>
+  </form> -->
+
+<div class="table">
+  <table>
+    <thead>
+      <tr>
+        <th>{{languageService.i18n['user_log']}}</th>
+        <th>{{languageService.i18n['role_log']}}</th>
+        <th>{{languageService.i18n['index.view']}}</th>
+        <th>{{languageService.i18n['table.delete']}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let opt of logLists.users | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+        <td>{{opt.id}}</td>
+        <td>{{typeText(+opt.role)}}</td>
+        <!-- <td>{{opt.role}}</td> -->
+        <td class="icon">
+          <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>
+          <!-- <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>-->
+        </td>
+        <td class="icon">
+          <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)" >delete_forever</mat-icon>
+          <!-- (click)="openDelectModal(opt)" -->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
+  nextLabel="" id="display">
+</pagination-controls>
+
+
+<ng-template #createModal>
+  <h5>{{languageService.i18n['addlog']}}</h5>
+  <form [formGroup]="createForm">
+    <ul>
+      <li>
+        <label>{{languageService.i18n['user_log']}}</label>
+        <span>
+          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['key_log']}}</label>
+        <span>
+          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li><label>{{languageService.i18n['role_log']}}</label>
+        <span><select [(ngModel)]="logInfo.role" name="role">
+          <option *ngFor="let opt of userTypeList" [value]="opt.value">{{opt.displayName}}</option>
+        </select></span>
+      </li>   
+
+    </ul>
+    <div class="buttons">
+      <button type="button" mat-dialog-close>Cancel</button>
+      <button type="button" (click)="create()">OK</button>
+      <!-- <button (click)="debug()">debug</button> -->
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #deleteModal>
+  <h5>{{languageService.i18n['dellog']}}
+  </h5>
+  <p>{{languageService.i18n['confirm_del_acc']}} – {{selectUser.id}}</p>
+  <div class="buttons">
+    <button type="button" mat-dialog-close>Cancel</button>
+    <button type="button" (click)="delete()">Delete</button>
+  </div>
+</ng-template>

@@ -17,7 +17,7 @@ export const TwLanguage = {
   'index.menu_performMgr':'效能管理',
   'index.menu_softwareMgr':'軟體管理',
   'index.menu_scheduleMgr':'排程管理',
-  'index.menu_logMgr':'Log管理',
+  'index.menu_logMgr':'日誌管理',     // "log" -> "日誌" by yuchen @10/25
   'index.menu_accountMgr':'帳號管理',
   'index.netFun':'網路功能',
   'index.faultMsg':'告警資訊',

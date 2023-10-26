@@ -15,7 +15,9 @@ export interface style {
 })
 export class MainComponent implements OnInit {
   title = 'Dashboard';
-  page: 'dashboard' | 'field-management' | 'nf-management' | 'fault-management' | 'performance-management' | 'software-management' | 'account-management' = 'dashboard';
+
+  // Add 'log-management' by yuchen @10/25
+  page: 'dashboard' | 'field-management' | 'nf-management' | 'fault-management' | 'performance-management' | 'software-management' | 'account-management' | 'log-management' = 'dashboard';
   styles: style[] = [
     { displayName: 'Dark Style', value: 'black' },
     { displayName: 'Light Style', value: 'bright' }
@@ -29,7 +31,8 @@ export class MainComponent implements OnInit {
     'fault-management': '/main/fault-mgr/All/All',
     'performance-management': '/main/performance-mgr',
     'software-management': '/main/software-mgr',
-    'account-management': '/main/account-mgr'
+    'account-management': '/main/account-mgr',
+    'log-management': '/main/log-mgr' // Add by yuchen @10/25
   }
 
   constructor(private router: Router, private commonService: CommonService, public languageService: LanguageService) { }
@@ -81,6 +84,9 @@ export class MainComponent implements OnInit {
     } else if (routerUrl.indexOf('/main/account-mgr') >= 0) {
       this.title = 'Account Management';
       this.page = 'account-management';
+    } else if (routerUrl.indexOf('/main/log-mgr') >= 0) {   // Add by yuchen @10/25
+      this.title = 'Log Management';
+      this.page = 'log-management';
     }
     
   }

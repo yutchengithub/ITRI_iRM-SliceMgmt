@@ -15,6 +15,8 @@ import { SoftwareManagementComponent } from './software-management/software-mana
 import { AccountManagementComponent } from './account-management/account-management.component';
 import { AccountInfoComponent } from './account-management/account-info/account-info.component';
 import { SoftwareInfoComponent } from './software-management/software-info/software-info.component';
+import { LogManagementComponent } from './log-management/log-management.component'; // add by yutchen @10/25
+import { LogInfoComponent } from './log-management/log-info/log-info.component';    // add by yutchen @10/25
 import { MainComponent } from './main/main.component';
 import { DxCircularGaugeModule } from 'devextreme-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -57,9 +59,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     FaultManagementComponent,
     PerformanceManagementComponent,
     SoftwareManagementComponent,
+    SoftwareInfoComponent,
     AccountManagementComponent,
     AccountInfoComponent,
-    SoftwareInfoComponent,
+    LogManagementComponent,    // add by yutchen @10/25
+    LogInfoComponent,          // add by yutchen @10/25
     MainComponent,
     OCloudInfoComponent,
     DatePickerFormatDirective,
