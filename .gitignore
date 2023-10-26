@@ -1,0 +1,6 @@
+## node_modules
+node_modules/
+
+## connection related setting files
+package-lock.json
+src/assets/config/connection.json
