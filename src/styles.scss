@@ -371,6 +371,13 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
   text-align: right;
   width: 96%;
 }
+.ngx-pagination li {
+  margin:0;
+}
+.ngx-pagination li span{
+  margin:0;
+  padding: 0;
+}
 .ngx-pagination a:hover {
   background: #1069a5!important;
 }
@@ -758,6 +765,11 @@ transition: all 0.3s;
 .switch .mat-button-toggle-appearance-standard .mat-button-toggle-focus-overlay {
   background-color: #000;
 }
+#statusModal .switch .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+  background: #fff!important;
+  color: #000!important;
+  border-radius: 5em!important;
+}
 .tab {
   border-bottom: 2px solid #11648b;
   width: 90%;
@@ -789,11 +801,11 @@ transition: all 0.3s;
   margin: 0!important;
 }
 #statusModal .ngx-pagination .disabled {
-  padding: 0.1rem 0.625rem;
+  padding: 0 0.625rem;
   vertical-align: top;
 }
 #statusModal .ngx-pagination .small-screen {
-  left: 19px;
+  left: 3em;
 }
 #statusModal pagination-controls {
   width: 96%;
