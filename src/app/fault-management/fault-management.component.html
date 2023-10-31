@@ -69,7 +69,7 @@
           {{opt.processresult}}
         </td>
         <td>{{opt.acknowledgeOwner}}</td>
-        <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openStatusModal(opt)">remove_red_eye</mat-icon></td>
+        <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openItemDetail(opt)">remove_red_eye</mat-icon></td>
       </tr>
       <tr class="notFind" *ngIf="faultMessage.totalMessageNumber === 0">
         <td colspan="7">{{languageService.i18n['no_results']}}</td>
@@ -233,4 +233,56 @@ nextLabel="" id="fmList">
       <!-- <button type="button" (click)="debug()">debug</button> -->
     </div>
   </form>
+</ng-template>
+
+<ng-template #itemDetail>
+  <h5>{{languageService.i18n['fm.detail']}}</h5>
+   <ul>
+    <li>
+      <span>{{languageService.i18n['fm.field']}}: </span><span>{{fmStatus.cloudId}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.gnb']}}: </span><span>{{fmStatus.nfId}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.component']}}: </span><span>{{fmStatus.nfId}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.alarm']}}: </span><span>{{fmStatus.nfId}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.severity']}}: </span><span>{{commonService.textTransfer(fmStatus.severity)}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.status']}}: </span><span>{{fmStatus.nfId}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.occurtime']}}: </span><span>{{fmStatus.nfId}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.createtime']}}: </span><span>{{fmStatus.nfId}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.updatetime']}}: </span><span>{{fmStatus.nfId}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.count']}}: </span><span>{{fmStatus.nfId}}</span>
+    </li>
+  </ul>
+  <br/>
+  <ul>
+    <li>
+      <span>{{languageService.i18n['fm.eType']}}: </span><span>{{fmStatus.cloudId}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.eCause']}}: </span><span>{{fmStatus.cloudId}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.eDesc']}}: </span><span>{{fmStatus.cloudId}}</span>
+    </li>
+  </ul>
+
+  <div class="buttons">
+    <button type="button" mat-dialog-close>{{languageService.i18n['cancel']}}</button>
+  </div>
 </ng-template>

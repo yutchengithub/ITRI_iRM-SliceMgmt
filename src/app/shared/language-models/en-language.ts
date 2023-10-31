@@ -37,6 +37,8 @@ export const Enlanguage = {
   'table.Status':'Status',
   'table.performance':'Performance',
   'table.delete':'Delete',
+  //Common Items
+  'cancel':'Cancel',
   //Fault Management
   'fm.start':'StartTime',
   'fm.end':'EndTime',
@@ -48,12 +50,18 @@ export const Enlanguage = {
   'fm.severity':'Severity',
   'fm.count':'Count',
   'fm.occurtime':'OccurTime',
+  'fm.createtime':'Create Time',
+  'fm.updatetime':'Update Time',
   'fm.status':'Status',
   'fm.situation':'Situation',
   'fm.owner':'Acknowledge Owner',
   'fm.view':'View',
   'fm.total1':'Total',
   'fm.total2':'Alarms',
+  'fm.eType':'Event Type',
+  'fm.eCause':'Event Cause',
+  'fm.eDesc':'Event Description',
+  'fm.detail':'Fault Message Detail',
   //Performance Management
   'pm.field':'Field Name',
   'pm.accessibility':'Accessibility',

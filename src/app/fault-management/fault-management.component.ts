@@ -73,6 +73,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   severitys: string[];
   refreshTimeout!: any;
   queryFaultMessageScpt!: Subscription;
+  @ViewChild('itemDetail') itemDetail: any;
   @ViewChild('statusModal') statusModal: any;
   statusModalRef!: MatDialogRef<any>;
   selectFaultId: string = '';
@@ -275,6 +276,20 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
         );
       }
     });
+  }
+
+  openItemDetail(faultMessages: FaultMessages) {
+    this.fmStatus = {} as FmStatus;
+    this.selectFaultId = faultMessages.faultId;
+    this.type = 'processing_status';
+    this.show200Msg = false;
+    this.show500Msg = false;
+    this.getFMstatus().then((value) => {
+      this.statusModalRef = this.dialog.open(this.itemDetail, { id: 'itemDetail' });
+      this.statusModalRef.afterClosed().subscribe(() => {
+
+      });
+    });  
   }
 
   fMstatusDeal() {

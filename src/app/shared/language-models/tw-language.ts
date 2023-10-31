@@ -37,6 +37,8 @@ export const TwLanguage = {
   'table.Status':'部署情況',
   'table.performance':'部署狀態',
   'table.delete':'刪除',
+  //Common Items (共用項目)
+  'cancel':'取消',
   //Fault Management (故障管理)
   'fm.start':'起始時間',
   'fm.end':'結束時間',
@@ -48,12 +50,18 @@ export const TwLanguage = {
   'fm.severity':'嚴重度',
   'fm.count':'發生次數',
   'fm.occurtime':'事件時間',
+  'fm.createtime':'首次紀錄時間',
+  'fm.updatetime':'最新更新時間',
   'fm.status':'告警狀態',
   'fm.situation':'處理狀況',
   'fm.owner':'回應人員',
   'fm.view':'檢視',
   'fm.total1':'全部共有',
   'fm.total2':'項訊息',
+  'fm.eType':'告警分類',
+  'fm.eCause':'告警原因',
+  'fm.eDesc':'詳細描述',
+  'fm.detail':'詳細告警訊息',
   //Performance Management (效能管理)
   'pm.field':'場域名稱',
   'pm.accessibility':'可用性',
