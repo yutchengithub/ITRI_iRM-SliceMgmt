@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LogManagementComponent } from './log-management.component';
+import { LogManagementComponent } from './log-management.component';  // Fault -> Log @10/30 by yuchen
 
 describe('LogManagementComponent', () => {
   let component: LogManagementComponent;

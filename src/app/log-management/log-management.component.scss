@@ -4,77 +4,139 @@
   text-align: center;
   max-height: 70vh;
 }
+table thead th {
+  white-space: nowrap;
+}
 table tr td {
-  width: 15vw;
+  min-width: 5vw;
+  text-align: center;
 }
-table tr td.icon {
-  width: 7vw;
+table tr td.time{
+  width: 3vw;
+  text-align: left;
 }
-.upload > span {
-  outline: 0;
-  padding: 0.3em 2em;
-  border: 0;
-  margin: 0 0.5em 0 0;
-  vertical-align: middle;
-  font-size: 0.9em;
-  border-radius: 50em;
+
+table tr td:nth-child(2),
+table tr td:nth-child(4){
+  white-space: nowrap;
+  min-width: 12vw;
+}
+table tr td:nth-last-child(2){
+  width: 3vw;
+}
+table tr td:nth-last-child(3),
+table tr td:nth-last-child(4) {
+  text-align: left;
+}
+table tr td:nth-last-child(3) {
+  min-width: 8vw;
+}
+
+td mat-icon {
   cursor: pointer;
 }
-.upload > span input {
-  position: absolute;
-  font-size: 50px;
-  right: 0;
-  top: 0;
-  width: 100%;
-  height: 27px;
-  opacity: 0;
-  cursor: pointer;
-  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);
-}
-.upload label {
-  word-wrap: break-word;
+td label {
   display: inline-block;
-  max-width: 75%;
-  line-height: 1;
+}
+:host ::ng-deep p-calendar {
+  width: initial;
+}
+
+div.tab {
+    display: block;
+    text-align: center;
+    margin: 1em auto;
+}
+.widthInit  {
+  width: initial!important;
+  min-width: initial!important;
+}
+:host ::ng-deep .switch .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+  padding: 4px 10px;
+}
+
+input[name="processComment"] {
+  margin: 0.5em;
+  width: 70%;
+  padding: 2px 4px;
+}
+button.modify {
+  background-color: #2879c5;
+  border: 0;
+  font-size: 1em;
+  color: #fff !important;
+  padding: 0.3em 0.8em;
+  border-radius: 1.2em;
+}
+.statusTable td{
+  width: 30vw!important;
+}
+.statusTable td .material-symbols-outlined {
   vertical-align: middle;
+  font-size: 20px;
 }
-span.upload {
-  width: 70%;
+.statusTable table {
+  display: block;
+  width: 88% !important;
+  margin: auto;
+  max-height: 42vh;
+  font-size: 1em;
 }
-.nfType {
-  width: 70%;
+
+
+table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: fixed; // 固定列寬
 }
-.nfType span {
-  display: inline-flex;
+
+table thead th, table tbody td {
+  text-align: center;
+  padding: 8px;
+  white-space: nowrap;
+  //text-overflow: ellipsis;
+  //overflow: hidden;
 }
-.nfType .mat-button-toggle {
-  width: 11.05em;
+
+table tbody td {
+  width: 14.28%; // 平均分配列寬，有7個欄位: 100 % / 7 ≈ 14.28% 
 }
-select {
-  margin: 0 5px;
+
+table tbody td.time {
+  text-align: left;
 }
-ul li select {
-  margin: 0;
-}
+
 
 
 @media screen and (max-width:1920px) {
   .table table {
-    max-height: 72vh;
+    max-height: 70vh;
+  }
+  table tr td:nth-child(2), table tr td:nth-child(4) {
+    white-space: nowrap;
+  }
+  table tr td:nth-child(5) {
+    width: 8vw;
   }
 }
-@media screen and (max-width:1920px) {
-  .table table {
-    max-height: 75vh;
+@media screen and (max-width:1600px) {
+  table tr td:nth-child(2), table tr td:nth-child(4) {
+    min-width: 10.3vw;
+}
+.table table {
+    max-height: 66vh;
 }
 }
 @media screen and (max-width:1366px) {
-
-  table tr td {
-    width: 13vw;
+  .table table {
+    width: 98.5%;
+    max-height: 58vh;
+  }
+  table tr td:nth-child(2), table tr td:nth-child(4) {
+    white-space: nowrap;
+    min-width: 11.5vw;
 }
-.table table {
-  width: 98.5%;
-  max-height: 60vh;
-}
+  table tr td:nth-child(5) {
+    width: 11vw;
+  }
 }

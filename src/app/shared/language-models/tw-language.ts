@@ -1,4 +1,5 @@
 export const TwLanguage = {
+
   'logon':'登入',
   'logon.welcome':'歡迎',
   'logon.field_mgr_system':'Athena Orchestrator',
@@ -7,42 +8,46 @@ export const TwLanguage = {
   'logon.required_error':'請輸入帳號或密碼',
   'logon.401':'Session ID 已過期，請重新登錄',
   'logon.403':'用戶名或密碼輸入錯誤',
-  'logon.404':'此賬號不存在',
+  'logon.404':'此帳號不存在',
+
   'index.menu_dashboard':'主畫面',
-  'index.menu_fieldMgr':'Field 管理',
+  'index.menu_fieldMgr':'場域管理',
   'index.menu_iRmSys':'Athena Orchestrator',
-  'index.menu_gNB':'gNB 管理',
+  'index.menu_gNB':'基站管理',
   'index.menu_componentMgr':'Component Management',
   'index.menu_faultMgr':'故障管理',
   'index.menu_performMgr':'效能管理',
   'index.menu_softwareMgr':'軟體管理',
   'index.menu_scheduleMgr':'排程管理',
-  'index.menu_logMgr':'日誌管理',     // "log" -> "日誌" by yuchen @10/25
   'index.menu_accountMgr':'帳號管理',
+  'index.menu_logMgr':'日誌管理',   // "log" -> "日誌" @10/25 by yuchen
+
   'index.netFun':'網路功能',
   'index.faultMsg':'告警資訊',
-  'index.viewMore':'詳情信息',
-  'index.view':'詳情信息',
-  'index.resourceMsg':'資源信息',
+  'index.viewMore':'詳情訊息',
+  'index.view':'詳情訊息',
+  'index.resourceMsg':'資源訊息',
   'index.cpuLoading':'CPU 負載',
   'index.diskUsage':'硬碟使用量',
   'index.memoryUsage':'內存使用量',
-  'index.networkThroughput':'網路流通量',
+  'index.networkThroughput':'網路吞吐量',
   'table.header_name':'名稱',
   'table.header_dmsCount':'DMS 數量',
   'table.header_nfCount':'NF 數量',
   'table.header_faultCount':'故障數量',
-  'field.list':'Field 列表',
+  'field.list':'場域列表',
   'table.globalID':'Global ID',
   'table.Status':'部署情況',
   'table.performance':'部署狀態',
   'table.delete':'刪除',
+  
   //Common Items (共用項目)
   'cancel':'取消',
-  //Fault Management (故障管理)
+
+  // Fault Management (故障管理)
   'fm.start':'起始時間',
   'fm.end':'結束時間',
-  'fm.no':'序號',
+  'fm.no':'編號',
   'fm.field':'場域名稱',
   'fm.gnb':'基站名稱',
   'fm.component':'元件名稱',
@@ -50,7 +55,7 @@ export const TwLanguage = {
   'fm.severity':'嚴重度',
   'fm.count':'發生次數',
   'fm.occurtime':'事件時間',
-  'fm.createtime':'首次紀錄時間',
+  'fm.createtime':'首次記錄時間',
   'fm.updatetime':'最新更新時間',
   'fm.status':'告警狀態',
   'fm.situation':'處理狀況',
@@ -62,7 +67,8 @@ export const TwLanguage = {
   'fm.eCause':'告警原因',
   'fm.eDesc':'詳細描述',
   'fm.detail':'詳細告警訊息',
-  //Performance Management (效能管理)
+  
+  // Performance Management (效能管理)
   'pm.field':'場域名稱',
   'pm.accessibility':'可用性',
   'pm.integrity':'完整性 (4指標)',
@@ -70,12 +76,12 @@ export const TwLanguage = {
   'pm.efficiency':'能源效率',
   'pm.utilization':'利用率 (5指標)',
   'pm.mobility':'移動性',
-  'information':'詳情資料',
-  'basic.info':'基本信息',
+  'information':'詳情資訊',
+  'basic.info':'基本訊息',
   'nf.list':'NF 列表',
   'resource.pools':'Resource Pools',
   'ims.endpoint':'IMS 末端端點',
-  'software.info':'軟體信息',
+  'software.info':'軟體訊息',
   'version':'版本',
   'update':'更新',
   'theme':'調整主題',
@@ -104,23 +110,23 @@ export const TwLanguage = {
   'softwareFile':'軟體',
   'faultContext':'故障內容',
   'processComment':'備註',
-  'npInfo':'網路效能信息',
+  'npInfo':'網路效能訊息',
   'send':'傳送量',
   'receive':'接收量',
   'confirm_del_soft':'確定要刪除軟體',
-  'confirm_del_field':'確定要刪除 Field',
+  'confirm_del_field':'確定要刪除場域',
   'confirm_del_nf':'確定要刪除 NF',
   'performance_Advanced_Search':'進階查詢',
   'software_update':'軟體更新',
-  'add_field':'新增 Field',
+  'add_field':'場域新增',
   'detail':'NF動態',
   'limit.max':'上限',
   'limit.min':'下限',
-  'modify_faultMsg_status':'修改故障信息狀態',
+  'modify_faultMsg_status':'修改故障訊息狀態',
   'confirm_modify':'確認修改',
   'pending_error':'待處理',
   'resolved':'已解決',
-  'no_results':'没有找到与您的搜索相关的数据。请尝试修改搜索词',
+  'no_results':'未找到您想搜尋的相關數據。請嘗試修改搜尋關鍵字',
   'firm':'Firm',
   'model':'Model',
   'manufacturer':'Manufacturer',
@@ -134,12 +140,40 @@ export const TwLanguage = {
   'add.method':'選擇新增方式',
   'file.size':'檔案大小',
   'field_list':'場域列表',
-  //Account Management 帳號管理
+  
+  // Account Management (帳號管理)
   'user_account':'帳號',
   'key_account':'密碼',
   'role_account':'角色',
   'expired_time_account':'有效時間',
-  'addaccount':'新增帳號',
-  'delaccount':'刪除帳號',
-  'confirm_del_acc':'確定要刪除帳號'
+  'addaccount':'帳號新增',
+  'delaccount':'帳號刪除',
+  'confirm_del_acc':'確定帳號刪除',
+
+  // Log Management (日誌管理)  @10/31 add by yuchen
+  'LogLists': '日誌列表',
+  'UserLogs': '用戶日誌',
+  'NELogs': '網元日誌',     // NE = Network Element
+  'Log.start':'起始時間',   // @11/01 add by yuchen
+  'Log.end':'結束時間',     // @11/01 add by yuchen
+
+  'UserLog.No':'編號',
+  'UserLog.userid':'用戶',
+  'UserLog.logtype':'類別',
+  'UserLog.loglevel':'層級',
+  'UserLog.logmsg':'執行動作',
+  'UserLog.logtime':'執行時間',
+  'UserLog.view':'檢視',
+  'UserLog.total1':'全部共',       // @11/01 add by yuchen
+  'UserLog.total2':'項用戶日誌訊息', // @11/01 add by yuchen
+  
+  'NElog.No':'編號',
+  'NElog.userid':'用戶',
+  'NElog.operation':'操作類別',
+  'NElog.req_data':'請求數據',
+  'NElog.resp_data':'回應數據',
+  'NElog.logtime':'執行時間',
+  'NElog.view':'檢視',
+  'NElog.total1':'全部共',       // @11/01 add by yuchen
+  'NElog.total2':'項網元日誌訊息'  // @11/01 add by yuchen
 }

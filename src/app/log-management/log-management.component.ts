@@ -1,310 +1,516 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { CommonService } from '../shared/common.service';
+import { Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 import { LanguageService } from '../shared/service/language.service';
-import { Item } from '../shared/models/item';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 
-export interface SoftwareList {
-  id: string;
-  firm: string;
-  model: string;
-  type: number;
-  version: string;
-  notes: string;
-  uploadTime: string;
-  fileName: string;
+
+export interface UserLogsList {   // FaultMessage -> LogList @10/30 by yuchen
+  logNumber: number;              // totalMessageNumber -> logNumber @10/30 by yuchen
+  UserLogsinfo: UserLogsinfo[];   // faultMessages & FaultMessages -> logs & Logs @10/30 by yuchen
 }
 
-export interface SoftwareLists {
-  uploadinfos: Uploadinfos[];
+export interface UserLogsinfo {   // FaultMessages -> loginfo @10/30 by yuchen
+  userlogID: string; // add by yuchen @10/31
+  userid: string;    // add by yuchen @10/30
+  logtype: string;   // add by yuchen @10/30
+  loglevel: number;  // add by yuchen @10/30
+  logmsg: string;    // add by yuchen @10/30
+  logtime: string;   // add by yuchen @10/30  
 }
 
-export interface Uploadinfos {
-  id: string;
-  firm: string;
-  modelname: string;
-  uploadtime: string;
-  uploadtype: number;
-  uploadversion: string;
-  description: string;
-  uploadinfo: string;
-  uploadurl: string;
+// add by yuchen @10/30
+export interface NELogsList { 
+  logNumber: number;       
+  NELogsinfo: NELogsinfo[];             
 }
 
-export interface LogLists {
-  users: Users[];
+// add by yuchen @10/30
+export interface NELogsinfo { 
+  NElogID: string; // add by yuchen @10/31
+  userid: string;    
+  operation: string;   
+  req_data: string;  
+  resp_data: string;   
+  logtime: string;    
 }
 
-export interface Users {
-  id: string;
-  role: string;
+
+export interface FmStatus {
+  timestamp: string;
+  cloudId: string;
+  nfId: string;
+  severity: string;
+  context: string;
+  isCleared: boolean;
+  processStatus: number;
+  __processStatus?: string;
+  processComment: string;
+  acknowledgeOwner: string;
 }
 
-export interface CreateUsers {
-  session: string;
-  id: string;
-  key: string;
-  role: string;
+export interface FmStatusRecord {
+  timestamp: string;
+  processStatus: number;
+  processComment: string;
+  acknowledgeOwner: string;
 }
+
 
 @Component({
-  selector: 'app-log-management',
-  templateUrl: './log-management.component.html',
-  styleUrls: ['./log-management.component.scss'],
+  selector: 'app-log-management',                 // fault -> log @10/30 by yuchen
+  templateUrl: './log-management.component.html', // fault -> log @10/30 by yuchen
+  styleUrls: ['./log-management.component.scss']  // fault -> log @10/30 by yuchen
 })
-export class LogManagementComponent implements OnInit {
+
+export class LogManagementComponent implements OnInit, OnDestroy { 
   sessionId: string = '';
-  softwareList: SoftwareList[] = [];
-  softwareLists: SoftwareLists = {} as SoftwareLists;
-  logLists: LogLists = {} as LogLists;
-  logInfo: CreateUsers = {} as CreateUsers;
-  @ViewChild('createModal') createModal: any;
-  @ViewChild('deleteModal') deleteModal: any;
+  // ocloudList: OCloudList[] = [];
+  //nfList: Nf[] = [];
+
+  UserLogsList: UserLogsList = {} as UserLogsList;  // FaultMessage -> UserLogsList @10/30 by yuchen
+  NELogsList: NELogsList = {} as NELogsList;        // add by yuchen @10/30
+  UserLogDetail: UserLogsinfo = {} as UserLogsinfo; // add by yuchen @10/31
+  NELogDetail: NELogsinfo = {} as NELogsinfo;       // add by yuchen @10/31
+  selectuserlogID: string ='';                      // add by yuchen @10/31 用於顯示 Userlog 項目細節功能
+  selectNElogID: string ='';                        // add by yuchen @10/31 用於顯示 NElog 項目細節功能
+  type: string = 'User_Logs';   // 預設選擇 "User Logs" add by yuchen @10/31
+  //type: string = 'NE_Logs';   // 預設選擇 "NE Logs" @11/01 add by yuchen
+  UserLogTypes: string[];     // @11/01 add by yuchen
+  NELogTypes: string[];       // @11/01 add by yuchen
+
+  p: number = 1;            // 當前頁數
+  pageSize: number = 10;    // 每頁幾筆
+  totalItems: number = 0;   // 總筆數
+  nullList: string[] = [];  // 給頁籤套件使用
+  searchForm!: FormGroup;
+  severitys: string[];
+  refreshTimeout!: any;
+  queryFaultMessageScpt!: Subscription;
+  @ViewChild('statusModal') statusModal: any;
+  statusModalRef!: MatDialogRef<any>;
+  //fmStatus: FmStatus = {} as FmStatus;
+  queryFMstatusScpt!: Subscription;
+  
+  queryFMstatusrecordScpt!: Subscription;
+  //orgFmStatusRecordList: FmStatusRecord[] = [];   // 原始FmStatusRecord資料
+  //fmStatusRecordList: FmStatusRecord[] = [];      // 呈現FmStatusRecord資料
+  @ViewChild('modifyModal') modifyModal: any;
+  modifyModalRef!: MatDialogRef<any>;
+  queryFMProcessScpt!: Subscription;
+  show200MsgTimeout!: any;
+  show200Msg = false;
+  show500Msg = false;
+  record_p: number = 1;
+  record_pageSize: number = 5;
+  record_totalItems: number = 0;
+  timeSort: '' | 'asc' | 'desc' = '';
   @ViewChild('advancedModal') advancedModal: any;
   advancedModalRef!: MatDialogRef<any>;
   advancedForm!: FormGroup;
   isSettingAdvanced = false;
-  createModalRef!: MatDialogRef<any>;
-  deleteModalRef!: MatDialogRef<any>;
-  createForm!: FormGroup;
-  selectSoftware!: Uploadinfos;
-  selectUser!: Users;
-  file: any;
-  typeMap: Map<number, string> = new Map();
-  p: number = 1;            // 當前頁數
-  pageSize: number = 10;    // 每頁幾筆
-  totalItems: number = 0;   // 總筆數
-  fileMsg: string = '';
-  formValidated = false;
-  searchForm!: FormGroup;
-
-
-  uploadType = 'upload';
-  role = 'upload';
-  userTypeList: Item[] = [
-    { displayName: 'Administrator', value: '1' },
-    { displayName: `Manager`, value: '2' },
-    { displayName: `Monitor`, value: '3' }
-  ];
+  queryFMAdvanceSearchScpt!: Subscription;
 
   constructor(
-    private dialog: MatDialog,
-    private router: Router,
-    private commonService: CommonService,
     private http: HttpClient,
+    public commonService: CommonService,
     private fb: FormBuilder,
-    public languageService: LanguageService
+    private route: ActivatedRoute,
+    public languageService: LanguageService,
+    private dialog: MatDialog,
   ) {
-    this.userTypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
+    const nowTime = this.commonService.getNowTime();
+    // console.log(nowTime)
+    // 格式驗證需要處理?
+
     this.searchForm = this.fb.group({
-      'fileName': new FormControl(''),
-      'type': new FormControl('All'),
-      'version': new FormControl(''),
+      'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)), 
+      'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
+      //'fieldName': new FormControl(''),
+      //'nfName': new FormControl(''),
+      //'acknowledgeOwner': new FormControl(''),
+      //'severity': new FormControl('All'),
+      'UserLogType': new FormControl('All'),
+      'NELogType': new FormControl('All'),
     });
+    this.severitys = this.commonService.severitys;
+
+    this.UserLogTypes = this.commonService.UserLogType; // @11/01 add by yuchen
+    this.NELogTypes = this.commonService.NELogType;     // @11/01 add by yuchen
+
+    this.createAdvancedForm();
   }
 
   ngOnInit(): void {
+
+    this.type = 'User_Logs';// 設定初始化預設值
     this.sessionId = this.commonService.getSessionId();
-    this.getLogList();
+
+    /*this.route.params.subscribe((params) => {
+      if (params['fieldName'] !== 'All') {
+        this.searchForm.controls['fieldName'].setValue(params['fieldName']);
+      }
+      if (params['nfName'] !== 'All') {
+        this.searchForm.controls['nfName'].setValue(params['nfName']);
+      }
+    });*/
+    
+    this.getUserloginfo(); // @10/31 faultxxx -> Userloginfo
+    this.getNEloginfo();   // @11/01 Add NEloginfo
   }
 
-  changeMethod(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    if (e.value === 'existing') {
-
-    } else {
-
-    }
-
+  ngOnDestroy() {
+    clearTimeout(this.refreshTimeout);
+    if (this.queryFaultMessageScpt) this.queryFaultMessageScpt.unsubscribe();
+    if (this.queryFMstatusScpt) this.queryFMstatusScpt.unsubscribe();
+    if (this.queryFMstatusrecordScpt) this.queryFMstatusrecordScpt.unsubscribe();
+    if (this.queryFMProcessScpt) this.queryFMProcessScpt.unsubscribe();
+    if (this.queryFMAdvanceSearchScpt) this.queryFMAdvanceSearchScpt.unsubscribe();
   }
 
-
-  getLogList() {
-    const fileName = this.searchForm.controls['fileName'].value;
-    const type = this.searchForm.controls['type'].value;
-    const version = this.searchForm.controls['version'].value;
-    console.log('querySoftwareList params:')
-    console.log(`fileName=${fileName}`);
-    console.log(`type=${type}`);
-    console.log(`version=${version}`);
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.logLists = this.commonService.accountLists;
-      console.log(this.logLists);
-      this.softwareListDeal();
+  
+  // Get User Logs @10/31 Add
+  getUserloginfo() {
+    console.log('getUserloginfo() Start');
+    clearTimeout(this.refreshTimeout);
+    if (this.commonService.isLocal) { // 是否在 local 測試
+      // local file test
+      this.UserLogsList = this.commonService.UserLogsList;
+      this.UserloginfoDeal();
     } else {
-      this.commonService.queryUploadFileList().subscribe(
+      const fieldName = this.searchForm.controls['fieldName'].value;
+      const nfName = this.searchForm.controls['nfName'].value;
+      const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
+      const severity = this.searchForm.controls['severity'].value;
+      const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
+      const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
+      const offset = (this.p - 1) * this.pageSize;
+      const limit = 10;
+      if (this.queryFaultMessageScpt) this.queryFaultMessageScpt.unsubscribe();
+      this.queryFaultMessageScpt = this.commonService.queryFaultMessage(fieldName, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
         res => {
-          console.log('Get software list:');
+          console.log('getUserloginfo:');
           console.log(res);
-          this.softwareList = res as SoftwareList[];
-          this.softwareListDeal();
+          const str = JSON.stringify(res);//convert array to string
+          this.UserLogsList = JSON.parse(str);
+          this.UserLogsList = res as UserLogsList;
+          this.getUserloginfo();
         }
       );
     }
   }
 
-  softwareListDeal() {
-    this.totalItems = this.softwareList.length;
-  }
+  UserloginfoDeal() {
+    // this.p = 1;
+    this.totalItems = this.UserLogsList.logNumber;
+    this.nullList = new Array(this.totalItems);
+    this.refreshTimeout = window.setTimeout(() => {
+      if (this.p === 1) {
+        console.log(`page[${this.p}] ===> refresh.`);
+        if (this.isSettingAdvanced) {
+          this.getFMAdvanceSearch();
+        } else {
+          this.getUserloginfo();
+        }
 
-  openCreateModal() {
-    this.formValidated = false;
-    this.createForm = this.fb.group({
-      'fileName': new FormControl('', [Validators.required]),
-      'description': new FormControl(''),
-      'version': new FormControl('', [Validators.required]),
-      'mode': new FormControl('ocloud'),
-      'type': new FormControl('0'),
-      'sessionid': this.sessionId
-    });
-    this.createModalRef = this.dialog.open(this.createModal, { id: 'createModal' });
-    this.createModalRef.afterClosed().subscribe(() => {
-      this.fileMsg = '';
-      this.formValidated = false;
-    });
-  }
-
-  fileChange(e: any) {
-    // console.log(e);
-    this.fileMsg = '';
-    let passFile = null;
-    const files = e.target.files;
-    if ('0' in files) {
-      if (files[0].name.indexOf('.zip') >= 0 || files[0].name.indexOf('.tar') >= 0) {
-        passFile = files[0];
       } else {
-        this.fileMsg = '格式只允許[file].zip 和.tar';
+        console.log(`page[${this.p}] ===> no refresh.`);
       }
-    }
-    if (passFile === null) {
-      this.file = null;
-      this.createForm.controls['fileName'].setValue('');
-    } else {
-      this.file = files[0];
-      this.createForm.controls['fileName'].setValue(files[0].name);
-    }
-    // console.log(files);
+    }, 100); // timeout: 100 ms
   }
 
-  create() {
-    // 先呼叫createSoftware、然後利用return softwareId呼叫uploadSoftwar
-    this.formValidated = true;
-    if (!this.createForm.valid) {
-      return;
-    }
+
+  // Get NE Logs @11/01 Add
+  getNEloginfo() {
+    console.log('getNEloginfo() Start');
+
+    clearTimeout(this.refreshTimeout);
     if (this.commonService.isLocal) {
-      /* local file test */
-      this.commonService.softwareList.push(
-        {
-          id: "s0011009",
-          firm: "ITRI",
-          model: "Os_image_2.tar",
-          type: 0,
-          version: "1.0.0",
-          notes: "Os_image_2.tar",
-          uploadTime: "2023-07-01 20: 01: 30",
-          fileName: "fw-v1-0-0.zip"
-        }
-      );
-      this.createModalRef.close();
-      this.getLogList();
+      
+      // local file test
+      this.NELogsList = this.commonService.NELogsList;
+      this.NEloginfoDeal();
 
     } else {
-      const body = this.createForm.value;
-      if (this.createForm.controls['type'].value === 'CU') {
-        body['type'] = 1;
-      } else if (this.createForm.controls['type'].value === 'DU') {
-        body['type'] = 2;
-      } else if (this.createForm.controls['type'].value === 'CU+DU') {
-        body['type'] = 3;
-      } else {
-        body['type'] = 0;
-      }
-      body['sessionid'] = this.sessionId;
-      this.commonService.createSoftware(body).subscribe(
-        (res: any) => {
-          console.log('createSoftware:');
-          console.log(res);
-          const softwareId = res['softwareId'];
-          const uploadUrl = `${this.commonService.restPath}/uploadSoftware/${this.sessionId}/${softwareId}`;
-          const options = this.commonService.options;
-          const formData = new FormData();
-          formData.append('file', this.file);
-          this.http.post(uploadUrl, formData, options).subscribe(
-            () => {
-              this.createModalRef.close();
-              this.getLogList();
-            }
-          );
-          this.createModalRef.close();
-          this.getLogList();
-        }
-      );
-    }
-  }
-
-  openDelectModal(logLists: Users) {
-    this.selectUser = logLists;
-    this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
-  }
-
-  delete() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      for (let i = 0; i < this.commonService.softwareList.length; i++) {
-        if (this.selectSoftware.id === this.commonService.softwareList[i].id) {
-          this.commonService.softwareList.splice(i, 1);
-          break;
-        }
-      }
-      this.deleteModalRef.close();
-      this.getLogList();
-    } else {
-      this.commonService.deleteSoftware(this.selectSoftware.id).subscribe(
+      const fieldName = this.searchForm.controls['fieldName'].value;
+      const nfName = this.searchForm.controls['nfName'].value;
+      const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
+      const severity = this.searchForm.controls['severity'].value;
+      const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
+      const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
+      const offset = (this.p - 1) * this.pageSize;
+      const limit = 10;
+      if (this.queryFaultMessageScpt) this.queryFaultMessageScpt.unsubscribe();
+      this.queryFaultMessageScpt = this.commonService.queryFaultMessage(fieldName, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
         res => {
-          this.deleteModalRef.close();
-          this.getLogList();
+          console.log('getNEloginfo:');
+          console.log(res);
+          const str = JSON.stringify(res);//convert array to string
+          this.NELogsList = JSON.parse(str);
+          this.NELogsList = res as NELogsList;
+          this.getNEloginfo();
         }
       );
     }
   }
 
+  NEloginfoDeal() {
+    // this.p = 1;
+    this.totalItems = this.NELogsList.logNumber;
+    this.nullList = new Array(this.totalItems);
+    this.refreshTimeout = window.setTimeout(() => {
+      if (this.p === 1) {
+        console.log(`page[${this.p}] ===> refresh.`);
+        if (this.isSettingAdvanced) {
+          this.getFMAdvanceSearch();
+        } else {
+          this.getNEloginfo();
+        }
 
-  typeText(role: number): string {
-    return this.typeMap.get(role) as string;
+      } else {
+        console.log(`page[${this.p}] ===> no refresh.`);
+      }
+    }, 100); //timeout 100ms
   }
 
   pageChanged(page: number) {
     this.p = page;
+    this.getUserloginfo(); // @10/31 faultxxx -> Userloginfo
+    this.getNEloginfo();   // @11/01 Add NEloginfo
   }
 
-  // search() {
-  //   this.getLogList();
+
+  /*openStatusModal(faultMessages: FaultMessages) {
+    //if (faultMessages.processstatus === 1) {
+    this.fmStatus = {} as FmStatus;
+    this.selectFaultId = faultMessages.faultId;
+    this.type = 'processing_status';
+    this.show200Msg = false;
+    this.show500Msg = false;
+    this.getFMstatus().then((value) => {
+      this.statusModalRef = this.dialog.open(this.statusModal, { id: 'statusModal' });
+      this.statusModalRef.afterClosed().subscribe(() => {
+
+      });
+    });
+    //}
+  }*/
+
+
+// add by yuchen @10/31
+  openUserlogDetail(UserLogsList: UserLogsinfo) {
+    
+    this.UserLogDetail = {} as UserLogsinfo;
+    this.selectuserlogID = UserLogsList.userlogID;
+    this.type = 'User_Logs';
+    this.show200Msg = false;
+    this.show500Msg = false;
+    /*this.getFMstatus().then((value) => {
+      this.statusModalRef = this.dialog.open(this.statusModal, { id: 'statusModal' });
+      this.statusModalRef.afterClosed().subscribe(() => {
+
+      });
+    });*/
+  }
+
+  // add by yuchen @10/31
+  openNElogDetail(NELogsList: NELogsinfo) {
+      
+    this.NELogDetail = {} as NELogsinfo;
+    this.selectNElogID = NELogsList.NElogID;
+    this.type = 'NE_Logs';
+    this.show200Msg = false;
+    this.show500Msg = false;
+    /*this.getFMstatus().then((value) => {
+      this.statusModalRef = this.dialog.open(this.statusModal, { id: 'statusModal' });
+      this.statusModalRef.afterClosed().subscribe(() => {
+
+      });
+    });*/
+  }
+
+  /*
+  getFMstatus(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (this.commonService.isLocal) {
+        // local file test 
+        this.UserLogsList = this.commonService.UserLogsList;
+        this.fMstatusDeal();
+        resolve(true);
+      } else {
+        if (this.queryFMstatusScpt) this.queryFMstatusScpt.unsubscribe();
+        this.queryFMstatusScpt = this.commonService.queryFMstatus(this.selectFaultId).subscribe(
+          res => {
+            console.log('getUserLogsList:');
+            console.log(res);
+            this.UserLogsList = res as UserLogsList;
+            this.fMstatusDeal();
+            resolve(true);
+          }
+        );
+      }
+    });
+  }*/
+  
+
+  /*fMstatusDeal() {
+    this.fmStatus.__processStatus = 'PENDING';
+  }*/
+
+  /*
+  changeType(e: MatButtonToggleChange) {
+    console.log(this.type); // 目前的 type 值
+    console.log(e.value); // 用戶選擇的值
+  
+    if (e.value === 'User_Logs')
+      this.type = 'User_Logs';  // 切換至 User Logs
+    else if (e.value === 'NE_Logs')     
+      this.type = 'NE_Logs';  // 切換至 NE Logs
+  }*/
+  
+  search() {
+    // this.isSettingAdvanced = false;
+    // this.p = 1;
+    // this.getFaultMessage();
+  }
+
+  
+  changeType(e: MatButtonToggleChange) {
+    console.log(this.type);
+    if (this.type === 'User_Logs') 
+      this.getUserloginfo();
+    else if (e.value === 'NE_Logs')
+      this.getNEloginfo();
+    
+  }
+
+  // switchProcessStatus(): boolean {
+  //   return this.fmStatus.isCleared;
   // }
 
-  debug() {
-    const body = this.createForm.value;
-    if (this.createForm.controls['type'].value === 'CU') {
-      body['type'] = 1;
-    } else if (this.createForm.controls['type'].value === 'DU') {
-      body['type'] = 2;
-    } else if (this.createForm.controls['type'].value === 'CU+DU') {
-      body['type'] = 3;
-    } else {
-      body['type'] = 0;
-    }
-    body['sessionid'] = this.sessionId;
-    console.log(body);
+  // changeProcessSwitch() {
+  //   this.fmStatus.isCleared = !this.fmStatus.isCleared;
+  // }
+
+
+  /*
+  fMstatusrecordDeal() {
+    this.fmStatusRecordList = _.cloneDeep(this.orgFmStatusRecordList);
+    this.record_p = 1;
+    this.record_totalItems = this.fmStatusRecordList.length;
   }
 
-  viewPage(logwareList: Users) {
-    this.router.navigate(['/main/log-mgr/info', logwareList.id, logwareList.role]);
+  recordPageChanged(page: number) {
+    this.record_p = page;
+  }
+
+  doSortTime() {
+    if (this.timeSort === '') {
+      this.timeSort = 'asc';
+    } else if (this.timeSort === 'asc') {
+      this.timeSort = 'desc';
+    } else {
+      this.timeSort = '';
+    }
+    if (this.timeSort === '') {
+      this.fmStatusRecordList = _.cloneDeep(this.orgFmStatusRecordList);
+    } else {
+      this.fmStatusRecordList = _.orderBy(this.orgFmStatusRecordList, ['timestamp'], [this.timeSort as any]);
+    }
+  }*/
+
+  /*queryFMProcess() {
+    return new Promise((resolve, reject) => {
+      if (this.commonService.isLocal) {
+        // local file test
+        const num = Math.floor(Math.random() * 2); //回傳0或1
+        const status = (num === 0) ? 200 : 500;
+        resolve(status);
+      } else {
+        if (this.queryFMProcessScpt) this.queryFMProcessScpt.unsubscribe();
+        const processStatus = (this.fmStatus.__processStatus === 'PENDING') ? 0 : 1;
+        this.queryFMstatusrecordScpt = this.commonService.queryFMProcess(this.selectFaultId, processStatus, this.fmStatus.processComment, this.fmStatus.acknowledgeOwner).subscribe(
+          (res: HttpResponse<any>) => {
+            console.log('queryFMProcess:');
+            console.log(res.status);
+            resolve(res.status);
+          }
+        );
+      }
+    });
+  }
+*/
+  createAdvancedForm() {
+    this.advancedForm = this.fb.group({
+      'globalId': new FormControl(''),
+      'fieldName': new FormControl(''),
+      'nfId': new FormControl(''),
+      'nfName': new FormControl(''),
+      'from': new FormControl(''),
+      'to': new FormControl(''),
+      'severity': new FormControl(''),
+      'acknowledgeOwner': new FormControl('')
+    });
+  }
+
+  openAdvancedModal() {
+    const orgAdvancedForm = _.cloneDeep(this.advancedForm);
+    this.advancedForm.controls['fieldName'].setValue(this.searchForm.controls['fieldName'].value);
+    this.advancedForm.controls['nfName'].setValue(this.searchForm.controls['nfName'].value);
+    this.advancedForm.controls['from'].setValue(this.searchForm.controls['from'].value);
+    this.advancedForm.controls['to'].setValue(this.searchForm.controls['to'].value);
+    this.advancedForm.controls['severity'].setValue(this.searchForm.controls['severity'].value);
+    this.advancedModalRef = this.dialog.open(this.advancedModal, { id: 'faultAdvancedModal' });
+    this.advancedModalRef.afterClosed().subscribe((result) => {
+      if (result === 'OK') {
+        this.isSettingAdvanced = true;
+        this.searchForm.controls['fieldName'].setValue(this.advancedForm.controls['fieldName'].value);
+        this.searchForm.controls['nfName'].setValue(this.advancedForm.controls['nfName'].value);
+        this.searchForm.controls['from'].setValue(this.advancedForm.controls['from'].value);
+        this.searchForm.controls['to'].setValue(this.advancedForm.controls['to'].value);
+        this.searchForm.controls['severity'].setValue(this.advancedForm.controls['severity'].value);
+        this.p = 1;
+        this.getFMAdvanceSearch();
+      } else {
+        this.advancedForm = orgAdvancedForm;
+      }
+    });
+  }
+
+  getFMAdvanceSearch() {/*
+    console.log('getFMAdvanceSearch:');
+    clearTimeout(this.refreshTimeout);
+    if (this.commonService.isLocal) {
+      // local file test 
+      this.faultMessage = this.commonService.fmAdvanceSearch;
+      this.faultMessageDeal();
+    } else {
+      const globalId = this.advancedForm.controls['globalId'].value;
+      const fieldName = this.advancedForm.controls['fieldName'].value;
+      const nfId = this.advancedForm.controls['nfId'].value;
+      const nfName = this.advancedForm.controls['nfName'].value;
+      const acknowledgeOwner = this.advancedForm.controls['acknowledgeOwner'].value;
+      const severity = this.advancedForm.controls['severity'].value;
+      const start = this.commonService.dealPostDate(this.advancedForm.controls['from'].value);
+      const end = this.commonService.dealPostDate(this.advancedForm.controls['to'].value);
+      const offset = (this.p - 1) * this.pageSize;
+      const limit = 10;
+      if (this.queryFMAdvanceSearchScpt) this.queryFMAdvanceSearchScpt.unsubscribe();
+      this.queryFMAdvanceSearchScpt = this.commonService.queryFMAdvanceSearch(globalId, fieldName, nfId, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
+        res => {
+          console.log('getFMAdvanceSearch:');
+          console.log(res);
+          const str = JSON.stringify(res);//convert array to string
+          this.faultMessage = JSON.parse(str);
+          this.faultMessage = res as FaultMessage;
+          this.faultMessageDeal();
+        }
+      );
+    }*/
   }
 }

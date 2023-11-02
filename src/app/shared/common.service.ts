@@ -23,6 +23,9 @@ import { NfCpuLoading, NfCpuUsage, NfDiskRate, NfDiskUsage, NfInterfaceUsage, Nf
 import { Item } from './models/item';
 import { FormGroup } from '@angular/forms';
 import { AccountInfo } from '../account-management/account-info/account-info.component';
+import { UserLogsList } from '../log-management/log-management.component'; // Add by yutchen @10/27
+import { NELogsList } from '../log-management/log-management.component'; // Add by yutchen @10/27
+
 
 export interface NowTime {
   year: string;
@@ -41,6 +44,11 @@ export class CommonService {
   restPath!: string;
   options = { headers: new HttpHeaders({ 'Content-Type': 'multipart/form-data' }) };
   severitys: string[] = ['CRITICAL', 'MAJOR', 'MINOR', 'WARNING'];
+
+  // @11/01 add by yuchen "類別需再調查"
+  UserLogType: string[] = ['GET', 'POST', 'DELETE'];
+  NELogType: string[] = ['get', 'get-config', 'edit-config'];
+
   scaleFontSize: number = 20;
   rangeWidth: number = 10;
   statusList: Item[] = [
@@ -2562,4 +2570,70 @@ export class CommonService {
       acknowledgeOwner: "Edith"
     }
   ];
+
+  // add User logs by yutchen @10/27
+  UserLogsList: UserLogsList = {
+  
+    logNumber: 3,  // number
+    UserLogsinfo: [
+      {
+        userlogID: '1',   // string
+        userid: "k200",   // string
+        logtype: "POST",  // string
+        loglevel: 20,     // number
+        logmsg: "k200 login success session: irm_session_0309079f",  // string
+        logtime: "2023-06-14 13:59:46"  // string
+      },
+      {
+        userlogID: '2',
+        userid: "k200",
+        logtype: "GET",
+        loglevel: 20,
+        logmsg: "queryUploadFileList success field Id: k200",
+        logtime: "2023-10-27 17:44:19"
+      },
+      {
+        userlogID: '3',
+        userid: "k200",
+        logtype: "GET",
+        loglevel: 20,
+        logmsg: "k200 queryJobTicketList success",
+        logtime: "2023-10-27 17:21:04"
+      }
+    ]
+  };
+
+  // add NE logs by yutchen @10/27
+  NELogsList: NELogsList = {
+    
+    logNumber: 3,
+    NELogsinfo: [
+      {
+        NElogID: '1',               // string
+        userid: "k200",             // string
+        operation: "get-config",    // string
+        // string
+        req_data: "<filter><software-inventory xmlns=\"urn:itri-software-management\"><software-slot></software-slot></software-inventory></filter>",
+        // string
+        resp_data: "<?xml version=\"1.0\" ?>\n<data xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n\t<software-inventory xmlns=\"urn:itri-software-management\">\n\t\t<software-slot>\n\t\t\t<name>slot-1</name>\n\t\t\t<status>VALID</status>\n\t\t\t<active>true</active>\n\t\t\t<running>true</running>\n\t\t\t<access>READ_ONLY</access>\n\t\t\t<vendor-code>K2</vendor-code>\n\t\t\t<build-id>b01</build-id>\n\t\t\t<build-name>product-default</build-name>\n\t\t\t<build-version>0.1.0</build-version>\n\t\t\t<files>\n\t\t\t\t<name>file-1</name>\n\t\t\t\t<version>0.2.3</version>\n\t\t\t\t<local-path>~/some_dir/</local-path>\n\t\t\t\t<integrity>OK</integrity>\n\t\t\t</files>\n\t\t</software-slot>\n\t\t<software-slot>\n\t\t\t<name>slot-2</name>\n\t\t\t<status>EMPTY</status>\n\t\t\t<active>false</active>\n\t\t\t<running>false</running>\n\t\t\t<access>READ_WRITE</access>\n\t\t</software-slot>\n\t\t<software-slot>\n\t\t\t<name>slot-3</name>\n\t\t\t<status>EMPTY</status>\n\t\t\t<active>false</active>\n\t\t\t<running>false</running>\n\t\t\t<access>READ_WRITE</access>\n\t\t</software-slot>\n\t\t<software-slot>\n\t\t\t<name>slot-4</name>\n\t\t\t<status>EMPTY</status>\n\t\t\t<active>false</active>\n\t\t\t<running>false</running>\n\t\t\t<access>READ_WRITE</access>\n\t\t</software-slot>\n\t</software-inventory>\n</data>\n",
+        logtime: "2023-06-14 13:59:46"   // string
+      },
+      {
+        NElogID: '2',               
+        userid: "k200",
+        operation: "get-config",
+        req_data: "<filter><software-inventory xmlns=\"urn:itri-software-management\"><software-slot></software-slot></software-inventory></filter>",
+        resp_data: "<?xml version=\"1.0\" ?>\n<data xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\">",
+        logtime: "2023-10-27 17:44:19"   // string
+      },
+      {
+        NElogID: '3', 
+        userid: "k200",
+        operation: "get-config",
+        req_data: "",
+        resp_data: "<?xml version=\"1.0\" ?>\n<data xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n\t<software-inventory xmlns=\"urn:o-ran:software-management:1.0\">\n\t\t<software-slot>\n\t\t\t<name>slot-1</name>\n\t\t\t<status>VALID</status>\n\t\t\t<active>true</active>\n\t\t\t<running>true</running>\n\t\t\t<access>READ_ONLY</access>\n\t\t\t<vendor-code>K2</vendor-code>\n\t\t\t<build-id>b01</build-id>\n\t\t\t<build-name>product-default</build-name>\n\t\t\t<build-version>0.1.0</build-version>\n\t\t\t<files>\n\t\t\t\t<name>file-1</name>\n\t\t\t\t<version>0.2.3</version>\n\t\t\t\t<local-path>~/some_dir/</local-path>\n\t\t\t\t<integrity>OK</integrity>\n\t\t\t</files>\n\t\t</software-slot>\n\t\t<software-slot>\n\t\t\t<name>slot-2</name>\n\t\t\t<status>EMPTY</status>\n\t\t\t<active>false</active>\n\t\t\t<running>false</running>\n\t\t\t<access>READ_WRITE</access>\n\t\t</software-slot>\n\t\t<software-slot>\n\t\t\t<name>slot-3</name>\n\t\t\t<status>EMPTY</status>\n\t\t\t<active>false</active>\n\t\t\t<running>false</running>\n\t\t\t<access>READ_WRITE</access>\n\t\t</software-slot>\n\t\t<software-slot>\n\t\t\t<name>slot-4</name>\n\t\t\t<status>EMPTY</status>\n\t\t\t<active>false</active>\n\t\t\t<running>false</running>\n\t\t\t<access>READ_WRITE</access>\n\t\t</software-slot>\n\t</software-inventory>\n</data>\n",
+        logtime: "2023-10-27 17:21:04"   // string
+      }
+    ]
+  };
 }

@@ -13,11 +13,11 @@ import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud
 import { NfPerformanceInfoComponent } from './performance-management/nf-performance-info/nf-performance-info.component';
 import { SoftwareManagementComponent } from './software-management/software-management.component';      // 軟體管理
 import { AccountManagementComponent } from './account-management/account-management.component';      // 帳號管理
-import { LogManagementComponent } from './log-management/log-management.component';      // 日誌管理 add by yutchen @10/25
 import { AuthGuard } from './shared/guard/auth.guard';
 import { SoftwareInfoComponent } from './software-management/software-info/software-info.component';
 import { AccountInfoComponent } from './account-management/account-info/account-info.component';
-import { LogInfoComponent } from './log-management/log-info/log-info.component';
+import { LogManagementComponent } from './log-management/log-management.component';      // 日誌管理 add by yutchen @10/25
+
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -54,11 +54,11 @@ const routes: Routes = [
         ]
       },
       { // add by yutchen @10/25
-        path: 'log-mgr',
-        children: [
+        path: 'log-mgr', component: LogManagementComponent
+        /*children: [
           { path: '', component: LogManagementComponent },
           { path: 'info/:cloudId/:cloudName', component: LogInfoComponent }
-        ]
+        ]*/
       },
       { path: 'fault-mgr/:cloudName/:nfName', component: FaultManagementComponent },
       { path: 'performance-mgr', component: PerformanceManagementComponent },

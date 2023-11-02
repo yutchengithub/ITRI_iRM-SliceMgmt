@@ -1,4 +1,5 @@
 export const Enlanguage = {
+
   'logon':'Login',
   'logon.welcome':'Welcome to the',
   'logon.field_mgr_system':'Athena Orchestrator',
@@ -7,6 +8,7 @@ export const Enlanguage = {
   'logon.required_error':'Please Enter Account or Password',
   'logon.401':'Session ID has expired, please log in again',
   'logon.403':'Username or password Eentered Incorrectly',
+
   'logon.404':'This account does not exist',
   'index.menu_dashboard':'Dashboard',
   'index.menu_fieldMgr':'Field Management',
@@ -17,8 +19,9 @@ export const Enlanguage = {
   'index.menu_performMgr':'Performance Management',
   'index.menu_softwareMgr':'Software Management',
   'index.menu_scheduleMgr':'Schedule Management',
-  'index.menu_logMgr':'Log Management',
   'index.menu_accountMgr':'Account Management',
+  'index.menu_logMgr':'Log Management',
+
   'index.netFun':'Network Functions',
   'index.faultMsg':'Fault Messages',
   'index.viewMore':'View More',
@@ -37,9 +40,11 @@ export const Enlanguage = {
   'table.Status':'Status',
   'table.performance':'Performance',
   'table.delete':'Delete',
+  
   //Common Items
   'cancel':'Cancel',
-  //Fault Management
+
+  // Fault Management
   'fm.start':'StartTime',
   'fm.end':'EndTime',
   'fm.no':'No.',
@@ -62,7 +67,8 @@ export const Enlanguage = {
   'fm.eCause':'Event Cause',
   'fm.eDesc':'Event Description',
   'fm.detail':'Fault Message Detail',
-  //Performance Management
+
+  // Performance Management
   'pm.field':'Field Name',
   'pm.accessibility':'Accessibility',
   'pm.integrity':'Integrity (4 Indicator)',
@@ -134,6 +140,7 @@ export const Enlanguage = {
   'add.method':'Add Method',
   'file.size':'File Size',
   'field_list':'Field List',
+
   // Account Management
   'user_account':'User',
   'key_account':'Password',
@@ -141,5 +148,32 @@ export const Enlanguage = {
   'expired_time_account':'Expired Time',
   'addaccount':'Create Account',
   'delaccount':'Delete Account',
-  'confirm_del_acc':'Confirm to Delete Account'
+  'confirm_del_acc':'Confirm to Delete Account',
+
+  // Log Management @10/31 add by yuchen
+  'LogLists': 'Log Lists',
+  'UserLogs': 'User Logs',
+  'NELogs': 'NE Logs',       // NE = Network Element
+  'Log.start':'StartTime',   // @11/01 add by yuchen
+  'Log.end':'EndTime',       // @11/01 add by yuchen
+
+  'UserLog.No':'No.',
+  'UserLog.userid':'User',
+  'UserLog.logtype':'Type',
+  'UserLog.loglevel':'Level',
+  'UserLog.logmsg':'Action Executed',
+  'UserLog.logtime':'Execution Time',
+  'UserLog.view':'View',
+  'UserLog.total1':'Total',     // @11/01 add by yuchen
+  'UserLog.total2':'User Logs', // @11/01 add by yuchen
+
+  'NElog.No':'No.',
+  'NElog.userid':'User',
+  'NElog.operation':'Type',
+  'NElog.req_data':'Request Data',
+  'NElog.resp_data':'Response Data',
+  'NElog.logtime':'Execution Time',
+  'NElog.view':'View',
+  'NElog.total1':'Total',   // @11/01 add by yuchen
+  'NElog.total2':'NE Logs'  // @11/01 add by yuchen
 }
