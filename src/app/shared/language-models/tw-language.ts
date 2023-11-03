@@ -99,7 +99,7 @@ export const TwLanguage = {
   'a_search':'進階搜索',
   'addSoftware':'新增軟體',
   'delsoftware':'刪除軟體',
-  'type':'類別',
+  'type':'類型',
   'description':'描述',
   'fileName':'軟體名稱',
   'action':'動作',
@@ -159,21 +159,22 @@ export const TwLanguage = {
 
   'UserLog.No':'編號',
   'UserLog.userid':'用戶',
-  'UserLog.logtype':'類別',
+  'UserLog.logtype':'類型',
   'UserLog.loglevel':'層級',
   'UserLog.logmsg':'執行動作',
   'UserLog.logtime':'執行時間',
   'UserLog.view':'檢視',
-  'UserLog.total1':'全部共',       // @11/01 add by yuchen
+  'UserLog.total1':'總共',       // @11/01 add by yuchen
   'UserLog.total2':'項用戶日誌訊息', // @11/01 add by yuchen
   
   'NElog.No':'編號',
   'NElog.userid':'用戶',
-  'NElog.operation':'操作類別',
+  'NElog.operation':'類型',
   'NElog.req_data':'請求數據',
   'NElog.resp_data':'回應數據',
   'NElog.logtime':'執行時間',
   'NElog.view':'檢視',
-  'NElog.total1':'全部共',       // @11/01 add by yuchen
-  'NElog.total2':'項網元日誌訊息'  // @11/01 add by yuchen
+  'NElog.total1':'總共',            // @11/01 add by yuchen
+  'NElog.total2':'項網元日誌訊息',     // @11/01 add by yuchen
+  'NElog.logKeywordString':'關鍵字:'   // @11/03 add by yuchen
 }

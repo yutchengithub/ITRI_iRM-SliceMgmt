@@ -174,6 +174,7 @@ export const Enlanguage = {
   'NElog.resp_data':'Response Data',
   'NElog.logtime':'Execution Time',
   'NElog.view':'View',
-  'NElog.total1':'Total',   // @11/01 add by yuchen
-  'NElog.total2':'NE Logs'  // @11/01 add by yuchen
+  'NElog.total1':'Total',    // @11/01 add by yuchen
+  'NElog.total2':'NE Logs',  // @11/01 add by yuchen
+  'NElog.logKeywordString':'Keywords:'  // @11/03 add by yuchen
 }

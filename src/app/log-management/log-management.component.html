@@ -93,6 +93,13 @@
           </select>
           <mat-error *ngIf="searchForm.controls['NELogType'].invalid">Required</mat-error>
         </span>
+
+        <!-- Keyword Filter @11/03 add by yuchen -->
+        <span style="margin-left: 10px;">
+          <label style="margin-right: 5px !important">{{languageService.i18n['NElog.logKeywordString']}}</label>
+          <input style="width: 400px" formControlName="keyword">
+        </span>
+
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
         <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
       </div>

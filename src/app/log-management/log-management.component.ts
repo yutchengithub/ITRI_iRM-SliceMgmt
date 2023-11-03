@@ -79,8 +79,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   NELogDetail: NELogsinfo = {} as NELogsinfo;       // add by yuchen @10/31
   selectuserlogID: string ='';                      // add by yuchen @10/31 用於顯示 Userlog 項目細節功能
   selectNElogID: string ='';                        // add by yuchen @10/31 用於顯示 NElog 項目細節功能
-  type: string = 'User_Logs';   // 預設選擇 "User Logs" add by yuchen @10/31
-  //type: string = 'NE_Logs';   // 預設選擇 "NE Logs" @11/01 add by yuchen
+  //type: string = 'User_Logs';   // 預設選擇 "User Logs" add by yuchen @10/31
+  type: string = 'NE_Logs';   // 預設選擇 "NE Logs" @11/01 add by yuchen
   UserLogTypes: string[];     // @11/01 add by yuchen
   NELogTypes: string[];       // @11/01 add by yuchen
 
@@ -88,6 +88,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
   nullList: string[] = [];  // 給頁籤套件使用
+
   searchForm!: FormGroup;
   severitys: string[];
   refreshTimeout!: any;
@@ -148,7 +149,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.type = 'User_Logs';// 設定初始化預設值
+    this.type = 'User_Logs';  // 設定初始化預設值
+    //this.type = 'NE_Logs';
     this.sessionId = this.commonService.getSessionId();
 
     /*this.route.params.subscribe((params) => {
@@ -303,6 +305,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
 
 // add by yuchen @10/31
+// For click "View"
   openUserlogDetail(UserLogsList: UserLogsinfo) {
     
     this.UserLogDetail = {} as UserLogsinfo;
@@ -319,6 +322,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }
 
   // add by yuchen @10/31
+  // For click "View"
   openNElogDetail(NELogsList: NELogsinfo) {
       
     this.NELogDetail = {} as NELogsinfo;

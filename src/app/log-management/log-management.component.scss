@@ -83,7 +83,7 @@ button.modify {
   font-size: 1em;
 }
 
-
+// For Log Management table @11/02 add by yuchen
 table {
   width: 100%;
   max-width: 100%;
@@ -99,13 +99,12 @@ table thead th, table tbody td {
 }
 
 table tbody td {
-  width: 14.28%; // 平均分配列寬，有7個欄位: 100 % / 7 ≈ 14.28% 
+  width: 14.28%; // 平均分配列寬，有 7 個欄位: 100 % / 7 ≈ 14.28% 
 }
 
 table tbody td.time {
   text-align: left;
 }
-
 
 
 @media screen and (max-width:1920px) {
