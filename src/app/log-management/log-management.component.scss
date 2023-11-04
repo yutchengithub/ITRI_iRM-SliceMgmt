@@ -16,22 +16,15 @@ table tr td.time{
   text-align: left;
 }
 
-table tr td:nth-child(2),
-table tr td:nth-child(4){
+table tr td:nth-child(2) {
   white-space: nowrap;
   min-width: 12vw;
 }
 table tr td:nth-last-child(2){
   width: 3vw;
 }
-table tr td:nth-last-child(3),
-table tr td:nth-last-child(4) {
-  text-align: left;
-}
-table tr td:nth-last-child(3) {
-  min-width: 8vw;
-}
 
+.userLog
 td mat-icon {
   cursor: pointer;
 }
@@ -101,12 +94,47 @@ table thead th, table tbody td {
 table tbody td {
   width: 14.28%; // 平均分配列寬，有 7 個欄位: 100 % / 7 ≈ 14.28% 
 }
-
+table.neLog tbody td {
+  width: 8vw;
+}
+table.neLog tr td:nth-last-child(3),
+table.neLog tr td:nth-last-child(4) {
+  text-align: left;
+  width: 20vw;
+  max-width: 30vw;
+  word-break: break-all;
+  white-space: pre-line;
+}
+ 
 table tbody td.time {
   text-align: left;
 }
-
-
+.filter {
+  position: relative;
+  padding-left: 15em;
+}
+.logTab {
+  position: absolute;
+    z-index: 999;
+    margin-top: 0.3em;
+    margin-left: 2em;
+}
+:host ::ng-deep .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+  background-color:#ba5a2a!important;
+}
+:host ::ng-deep .mat-button-toggle-appearance-standard{
+  background-color:#485c77!important;
+  color:#ddd;
+}
+:host ::ng-deep .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
+    border-left:0;
+}
+.filter input {
+  width: 15em;
+  border-radius: 3px;
+  border: 0;
+  line-height: 2.2;
+}
 @media screen and (max-width:1920px) {
   .table table {
     max-height: 70vh;

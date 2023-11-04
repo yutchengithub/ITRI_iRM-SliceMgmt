@@ -2,9 +2,9 @@
 
 <div class="table">
 
-  <h5 style="text-align: center;">{{languageService.i18n['LogLists']}}</h5>
+  <h4>{{languageService.i18n['LogLists']}}</h4>
 
-  <div class="tab">
+  <div class="logTab">
     <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
       <mat-button-toggle value="User_Logs">{{languageService.i18n['UserLogs']}}</mat-button-toggle>
       <mat-button-toggle value="NE_Logs">{{languageService.i18n['NELogs']}}</mat-button-toggle>
@@ -15,6 +15,8 @@
   <ul *ngIf="type === 'User_Logs'">
     <form [formGroup]="searchForm" style="padding-bottom: 10px;">
       <div class="filter">
+        
+        
         <span><label>{{languageService.i18n['Log.start']}}</label>
           <span>
             <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
@@ -37,7 +39,7 @@
       </div>
     </form>
 
-    <table class>
+    <table class="userLog">
       <thead>
         <tr>
           <th>{{languageService.i18n['UserLog.No']}}</th>
@@ -55,7 +57,7 @@
           <td>{{opt.userid}}</td>
           <td>{{opt.logtype}}</td>
           <td style="text-align: center;">{{opt.loglevel}}</td>
-          <td>{{opt.logmsg}}</td>
+          <td style="text-align: left;">{{opt.logmsg}}</td>
           <td>{{opt.logtime}}</td>
           <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openUserlogDetail(opt)">remove_red_eye</mat-icon></td>
         </tr>
@@ -105,7 +107,7 @@
       </div>
     </form>
 
-    <table>
+    <table class="neLog">
       <thead>
         <tr>
           <th>{{languageService.i18n['NElog.No']}}</th>

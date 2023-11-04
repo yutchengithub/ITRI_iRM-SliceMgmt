@@ -237,7 +237,7 @@ nextLabel="" id="fmList">
 
 <ng-template #itemDetail>
   <h5>{{languageService.i18n['fm.detail']}}</h5>
-   <ul>
+   <ul class="faultMsg_detail">
     <li>
       <span>{{languageService.i18n['fm.field']}}: </span><span>{{fmStatus.cloudId}}</span>
     </li>
@@ -270,7 +270,7 @@ nextLabel="" id="fmList">
     </li>
   </ul>
   <br/>
-  <ul>
+  <ul class="faultMsg_detail">
     <li>
       <span>{{languageService.i18n['fm.eType']}}: </span><span>{{fmStatus.cloudId}}</span>
     </li>

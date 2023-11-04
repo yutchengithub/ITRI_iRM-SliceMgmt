@@ -585,7 +585,7 @@ padding: 8px 0 6px 2%;
 width: 97.65%;
 border-radius: 5px;
 }
-.filter span {
+.filter > span {
   margin: 0 .5em 0 0;
   }
 .filter select {
@@ -848,9 +848,9 @@ p-calendar #time {
   width: 9em;
   padding: 5px 6px;
 }
-/* .p-calendar .p-datepicker {
-  transform: scale(.85);
-} */
+.p-datepicker table th {
+  background: #d8e5f5!important;
+}
 .p-datepicker table td > span,
 .p-datepicker table th > span  {
   width: 1.5rem;
@@ -858,6 +858,9 @@ p-calendar #time {
 }
 .p-datepicker table td {
   padding: 0.25rem;
+}
+.p-datepicker table tbody tr:nth-child(even) td {
+  background-color: #eee!important;
 }
 .p-calendar .p-datepicker {
   margin: 0;
@@ -897,6 +900,10 @@ p-calendar #time {
 }
 .mat-button-toggle-standalone.mat-button-toggle-appearance-standard, .mat-button-toggle-group-appearance-standard {
  border: 0!important;
+}
+h4 {
+  font-size: 1.3em!important;
+  font-family: Microsoft JhengHei!important;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {
