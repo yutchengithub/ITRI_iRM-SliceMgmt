@@ -24,7 +24,7 @@ export interface UserLogsinfo {   // FaultMessages -> loginfo @10/30 by yuchen
   logtime: string;   // add by yuchen @10/30  
 }
 
-// add by yuchen @11/06
+/// For click View User Log Detail Page @11/06 add by yuchen 
 export interface UserLogdetail {
   userid: string;
   logtype: string;
@@ -49,7 +49,7 @@ export interface NELogsinfo {
   logtime: string;    
 }
 
-// add by yuchen @11/06
+// For click View NE Log Detail Page @11/06 add by yuchen 
 export interface NELogdetail {
   userid: string;
   operation: string;
@@ -92,26 +92,36 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
   UserLogsList: UserLogsList = {} as UserLogsList;  // FaultMessage -> UserLogsList @10/30 by yuchen
   NELogsList: NELogsList = {} as NELogsList;        // add by yuchen @10/30
-  UserLogDetail: UserLogsinfo = {} as UserLogsinfo; // add by yuchen @10/31
-  NELogDetail: NELogsinfo = {} as NELogsinfo;       // add by yuchen @10/31
-  selectuserlogID: string ='';                      // add by yuchen @10/31 用於顯示 Userlog 項目細節功能
-  selectNElogID: string ='';                        // add by yuchen @10/31 用於顯示 NElog 項目細節功能
-  //type: string = 'User_Logs';   // 預設選擇 "User Logs" add by yuchen @10/31
-  type: string = 'NE_Logs';   // 預設選擇 "NE Logs" @11/01 add by yuchen
-  UserLogTypes: string[];     // @11/01 add by yuchen
-  NELogTypes: string[];       // @11/01 add by yuchen
-  @ViewChild('userlogDetail') userlogDetail: any; // @11/03 add by yuchen
-  @ViewChild('nelogDetail') nelogDetail: any;     // @11/03 add by yuchen
-  userLogdetail: UserLogdetail = {} as UserLogdetail; // @11/06 add by yuchen
-  neLogdetail: NELogdetail = {} as NELogdetail;       // @11/06 add by yuchen
-  UserlogDetailRef!: MatDialogRef<any>;               // @11/06 add by yuchen
-  NElogDetailRef!: MatDialogRef<any>;                 // @11/06 add by yuchen
+  type: string = 'User_Logs';   // 預設選擇 "User Logs" add by yuchen @10/31
+  //type: string = 'NE_Logs';   // 預設選擇 "NE Logs" @11/01 add by yuchen
+  UserLogTypes: string[];       // @11/01 add by yuchen
+  NELogTypes: string[];         // @11/01 add by yuchen
 
 
+  // For click View Page
+  selectuserlogID: string ='';                        // 用於記錄選擇的 User Log 的 ID     @10/31 add by yuchen
+  selectNElogID: string ='';                          // 用於記錄選擇的 NE Log 的 ID       @10/31 add by yuchen
+  userLogdetail: UserLogdetail = {} as UserLogdetail; // 用於存儲選擇的 User Log 的詳細訊息 @11/06 add by yuchen
+  neLogdetail: NELogdetail = {} as NELogdetail;       // 用於存儲選擇的 NE Log 的詳細訊息   @11/06 add by yuchen
+
+  /* 用於查找名為'userlogDetail'的元件 <ng-template>，
+     用於定義 User Log 日誌詳細訊息的彈出視窗內容。   @11/03 add by yuchen */
+  @ViewChild('userlogDetail') userlogDetail: any;    
+
+  /* 用於查找名為'nelogDetail'的元件 (ng-template)，
+     通常用於定義 NE Log 詳細訊息的彈出視窗內容。  @11/03 add by yuchen */
+  @ViewChild('nelogDetail') nelogDetail: any;
+
+  UserlogDetailRef!: MatDialogRef<any>;   // 用於記錄 User Log 詳細資訊的對照視窗，以便在需要時操作和控制 User Log 詳細資訊的彈出視窗。 @11/06 add by yuchen
+  NElogDetailRef!: MatDialogRef<any>;     // 用於記錄 NE Log 詳細資訊的對照視窗，以便在需要時操作和控制 NE Log 詳細資訊的彈出視窗。    @11/06 add by yuchen
+  
+
+  // For page number
   p: number = 1;            // 當前頁數
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
   nullList: string[] = [];  // 給頁籤套件使用
+
 
   searchForm!: FormGroup;
   severitys: string[];
@@ -326,34 +336,75 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     });
     //}
   }*/
+  
 
+/* ↓ For click View ↓ */
 
-// add by yuchen @11/06
-// For click "View" of User Logs
+  // Add by yuchen @11/06
+  // 當使用者點擊「 View 」User Log 時
   openUserlogDetail(UserLogsinfo: UserLogsinfo) {
-    this.userLogdetail = {} as UserLogdetail;
+
+    // 複製 User Log 的詳細資訊以供顯示
+    this.userLogdetail = {
+      userid: UserLogsinfo.userid,
+      logtype: UserLogsinfo.logtype,
+      loglevel: UserLogsinfo.loglevel,
+      logtime: UserLogsinfo.logtime,
+      logmsg: UserLogsinfo.logmsg
+    };
+
+    // 記錄所選 User Log 的ID
     this.selectuserlogID = UserLogsinfo.userlogID;
+
+    // 隱藏200訊息
     this.show200Msg = false;
+
+    // 隱藏500訊息
     this.show500Msg = false;
+
+    // 開啟用戶日誌詳細資訊的視窗
     this.UserlogDetailRef = this.dialog.open(this.userlogDetail, { id: 'userlogDetail' });
+
+    // 監聽視窗關閉事件
     this.UserlogDetailRef.afterClosed().subscribe(() => {
 
     });
   }
 
-  // add by yuchen @11/06
-  // For click "View" of NE Logs 
+  // Add by yuchen @11/06
+  // 當使用者點擊「 View 」NE Log 時
   openNElogDetail(NELogsinfo: NELogsinfo) {
-    this.neLogdetail = {} as NELogdetail;
+
+    // 複製 NE Log 的詳細資訊以供顯示
+    this.neLogdetail = {
+      userid: NELogsinfo.userid,
+      operation: NELogsinfo.operation,
+      req_data: NELogsinfo.req_data,
+      resp_data: NELogsinfo.resp_data,
+      logtime: NELogsinfo.logtime
+    };
+
+    // 記錄所選 NE Log 的 ID
     this.selectNElogID = NELogsinfo.NElogID;
+
+    // 隱藏 200 訊息
     this.show200Msg = false;
+
+    // 隱藏 500 訊息
     this.show500Msg = false;
+
+    // 開啟 NE Log 詳細資訊的視窗
     this.NElogDetailRef = this.dialog.open(this.nelogDetail, { id: 'nelogDetail' });
+
+    // 監聽視窗關閉事件
     this.NElogDetailRef.afterClosed().subscribe(() => {
 
     });
   }
-  
+
+/* ↑ For click View ↑ */
+
+
   search() {
     // this.isSettingAdvanced = false;
     // this.p = 1;
