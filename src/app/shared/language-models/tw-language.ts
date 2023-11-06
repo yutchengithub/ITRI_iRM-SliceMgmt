@@ -166,6 +166,8 @@ export const TwLanguage = {
   'UserLog.view':'檢視',
   'UserLog.total1':'總共',       // @11/01 add by yuchen
   'UserLog.total2':'項用戶日誌訊息', // @11/01 add by yuchen
+  'UserLog.detail':'詳細用戶日誌訊息', // @11/03 add by yuchen
+  'UserLog.detailclose':'關閉',      // @11/03 add by yuchen
   
   'NElog.No':'編號',
   'NElog.userid':'用戶',
@@ -176,5 +178,7 @@ export const TwLanguage = {
   'NElog.view':'檢視',
   'NElog.total1':'總共',            // @11/01 add by yuchen
   'NElog.total2':'項網元日誌訊息',     // @11/01 add by yuchen
-  'NElog.logKeywordString':'關鍵字:'   // @11/03 add by yuchen
+  'NElog.logKeywordString':'關鍵字:', // @11/03 add by yuchen
+  'NElog.detail':'詳細網元日誌訊息',    // @11/03 add by yuchen
+  'NElog.detailclose':'關閉',         // @11/03 add by yuchen
 }
