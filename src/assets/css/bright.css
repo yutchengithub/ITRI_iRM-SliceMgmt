@@ -301,3 +301,15 @@ input[ng-reflect-is-disabled=true] {
   
 }
 
+ul + .buttons button {
+  color: #559fd9;
+  border: 1px solid #84c0ef;
+  background-color: #dbf3ff;
+  padding: 6px 18px;
+  margin: 0 8px;
+  border-radius: 50em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 6em;
+}

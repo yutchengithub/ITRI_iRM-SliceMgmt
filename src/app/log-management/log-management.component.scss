@@ -17,8 +17,7 @@ table tr td.time{
 }
 
 table tr td:nth-child(2) {
-  white-space: nowrap;
-  min-width: 12vw;
+  
 }
 table tr td:nth-last-child(2){
   width: 3vw;
@@ -92,6 +91,7 @@ table thead th, table tbody td {
 }
 
 table tbody td {
+  vertical-align: top;
   width: 14.28%; // 平均分配列寬，有 7 個欄位: 100 % / 7 ≈ 14.28% 
 }
 table.neLog tbody td {
@@ -139,15 +139,13 @@ table tbody td.time {
   .table table {
     max-height: 70vh;
   }
-  table tr td:nth-child(2), table tr td:nth-child(4) {
-    white-space: nowrap;
-  }
+  
   table tr td:nth-child(5) {
     width: 8vw;
   }
 }
 @media screen and (max-width:1600px) {
-  table tr td:nth-child(2), table tr td:nth-child(4) {
+   table tr td:nth-child(4) {
     min-width: 10.3vw;
 }
 .table table {
@@ -159,8 +157,8 @@ table tbody td.time {
     width: 98.5%;
     max-height: 58vh;
   }
-  table tr td:nth-child(2), table tr td:nth-child(4) {
-    white-space: nowrap;
+ table tr td:nth-child(4) {
+    
     min-width: 11.5vw;
 }
   table tr td:nth-child(5) {

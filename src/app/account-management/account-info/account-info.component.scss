@@ -59,16 +59,3 @@ ul + .buttons {
   display: block;
   text-align: center;
 }
-ul + .buttons button {
-  background-color: transparent;
-  border: 2px solid #1f4970;
-  color: #418fdb;
-  padding: 6px 18px;
-    margin: 0 8px;
-    border-radius: 50em;
-    font-size: 1em;
-    cursor: pointer;
-    transition: all 0.3s;
-    min-width: 6em;
-    
-}
