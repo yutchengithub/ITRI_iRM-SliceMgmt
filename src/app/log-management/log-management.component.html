@@ -147,3 +147,55 @@
   </ul>
   
 </div>
+
+<!-- View of User Logs -->
+<ng-template #userlogDetail>
+  <h5>{{languageService.i18n['UserLog.detail']}}</h5>
+   <ul>
+    <li>
+      <span>{{languageService.i18n['UserLog.userid']}}: </span><span>{{userLogdetail.userid}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['UserLog.logtype']}}: </span><span>{{userLogdetail.logtype}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['UserLog.loglevel']}}: </span><span>{{userLogdetail.loglevel}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['UserLog.logtime']}}: </span><span>{{userLogdetail.logtime}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['UserLog.logmsg']}}: </span><span>{{userLogdetail.logmsg}}</span>
+    </li>
+  </ul>
+
+  <div class="buttons">
+    <button type="button" mat-dialog-close>{{languageService.i18n['UserLog.detailclose']}}</button>
+  </div>
+</ng-template>
+
+<!-- View of NE Logs -->
+<ng-template #nelogDetail>
+  <h5>{{languageService.i18n['NElog.detail']}}</h5>
+   <ul>
+    <li>
+      <span>{{languageService.i18n['NElog.userid']}}: </span><span>{{neLogdetail.userid}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['NElog.operation']}}: </span><span>{{neLogdetail.operation}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['NElog.req_data']}}: </span><span>{{neLogdetail.req_data}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['NElog.resp_data']}}: </span><span>{{neLogdetail.resp_data}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['NElog.logtime']}}: </span><span>{{neLogdetail.logtime}}</span>
+    </li>
+  </ul>
+
+  <div class="buttons">
+    <button type="button" mat-dialog-close>{{languageService.i18n['NElog.detailclose']}}</button>
+  </div>
+</ng-template>

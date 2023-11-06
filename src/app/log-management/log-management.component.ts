@@ -24,6 +24,15 @@ export interface UserLogsinfo {   // FaultMessages -> loginfo @10/30 by yuchen
   logtime: string;   // add by yuchen @10/30  
 }
 
+// add by yuchen @11/06
+export interface UserLogdetail {
+  userid: string;
+  logtype: string;
+  loglevel: number;
+  logtime: string;
+  logmsg: string;
+}
+
 // add by yuchen @10/30
 export interface NELogsList { 
   logNumber: number;       
@@ -40,6 +49,14 @@ export interface NELogsinfo {
   logtime: string;    
 }
 
+// add by yuchen @11/06
+export interface NELogdetail {
+  userid: string;
+  operation: string;
+  req_data: string;
+  resp_data: string;
+  logtime: string;
+}
 
 export interface FmStatus {
   timestamp: string;
@@ -83,6 +100,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   type: string = 'NE_Logs';   // 預設選擇 "NE Logs" @11/01 add by yuchen
   UserLogTypes: string[];     // @11/01 add by yuchen
   NELogTypes: string[];       // @11/01 add by yuchen
+  @ViewChild('userlogDetail') userlogDetail: any; // @11/03 add by yuchen
+  @ViewChild('nelogDetail') nelogDetail: any;     // @11/03 add by yuchen
+  userLogdetail: UserLogdetail = {} as UserLogdetail; // @11/06 add by yuchen
+  neLogdetail: NELogdetail = {} as NELogdetail;       // @11/06 add by yuchen
+  UserlogDetailRef!: MatDialogRef<any>;               // @11/06 add by yuchen
+  NElogDetailRef!: MatDialogRef<any>;                 // @11/06 add by yuchen
+
 
   p: number = 1;            // 當前頁數
   pageSize: number = 10;    // 每頁幾筆
@@ -304,78 +328,31 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }*/
 
 
-// add by yuchen @10/31
-// For click "View"
-  openUserlogDetail(UserLogsList: UserLogsinfo) {
-    
-    this.UserLogDetail = {} as UserLogsinfo;
-    this.selectuserlogID = UserLogsList.userlogID;
-    this.type = 'User_Logs';
+// add by yuchen @11/06
+// For click "View" of User Logs
+  openUserlogDetail(UserLogsinfo: UserLogsinfo) {
+    this.userLogdetail = {} as UserLogdetail;
+    this.selectuserlogID = UserLogsinfo.userlogID;
     this.show200Msg = false;
     this.show500Msg = false;
-    /*this.getFMstatus().then((value) => {
-      this.statusModalRef = this.dialog.open(this.statusModal, { id: 'statusModal' });
-      this.statusModalRef.afterClosed().subscribe(() => {
+    this.UserlogDetailRef = this.dialog.open(this.userlogDetail, { id: 'userlogDetail' });
+    this.UserlogDetailRef.afterClosed().subscribe(() => {
 
-      });
-    });*/
-  }
-
-  // add by yuchen @10/31
-  // For click "View"
-  openNElogDetail(NELogsList: NELogsinfo) {
-      
-    this.NELogDetail = {} as NELogsinfo;
-    this.selectNElogID = NELogsList.NElogID;
-    this.type = 'NE_Logs';
-    this.show200Msg = false;
-    this.show500Msg = false;
-    /*this.getFMstatus().then((value) => {
-      this.statusModalRef = this.dialog.open(this.statusModal, { id: 'statusModal' });
-      this.statusModalRef.afterClosed().subscribe(() => {
-
-      });
-    });*/
-  }
-
-  /*
-  getFMstatus(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if (this.commonService.isLocal) {
-        // local file test 
-        this.UserLogsList = this.commonService.UserLogsList;
-        this.fMstatusDeal();
-        resolve(true);
-      } else {
-        if (this.queryFMstatusScpt) this.queryFMstatusScpt.unsubscribe();
-        this.queryFMstatusScpt = this.commonService.queryFMstatus(this.selectFaultId).subscribe(
-          res => {
-            console.log('getUserLogsList:');
-            console.log(res);
-            this.UserLogsList = res as UserLogsList;
-            this.fMstatusDeal();
-            resolve(true);
-          }
-        );
-      }
     });
-  }*/
-  
+  }
 
-  /*fMstatusDeal() {
-    this.fmStatus.__processStatus = 'PENDING';
-  }*/
+  // add by yuchen @11/06
+  // For click "View" of NE Logs 
+  openNElogDetail(NELogsinfo: NELogsinfo) {
+    this.neLogdetail = {} as NELogdetail;
+    this.selectNElogID = NELogsinfo.NElogID;
+    this.show200Msg = false;
+    this.show500Msg = false;
+    this.NElogDetailRef = this.dialog.open(this.nelogDetail, { id: 'nelogDetail' });
+    this.NElogDetailRef.afterClosed().subscribe(() => {
 
-  /*
-  changeType(e: MatButtonToggleChange) {
-    console.log(this.type); // 目前的 type 值
-    console.log(e.value); // 用戶選擇的值
-  
-    if (e.value === 'User_Logs')
-      this.type = 'User_Logs';  // 切換至 User Logs
-    else if (e.value === 'NE_Logs')     
-      this.type = 'NE_Logs';  // 切換至 NE Logs
-  }*/
+    });
+  }
   
   search() {
     // this.isSettingAdvanced = false;
