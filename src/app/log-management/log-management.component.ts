@@ -183,7 +183,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.type = 'User_Logs';  // 設定初始化預設值
+    //this.type = 'User_Logs';  // 設定初始化預設值
     //this.type = 'NE_Logs';
     this.sessionId = this.commonService.getSessionId();
 
@@ -196,8 +196,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       }
     });*/
     
-    this.getUserloginfo(); // @10/31 faultxxx -> Userloginfo
-    this.getNEloginfo();   // @11/01 Add NEloginfo
+    this.getUserLogsInfo();   // 預設初始化時取得 User Logs 資訊 @10/31 add by yuchen
+    //this.getNELogsInfo();   // 預設初始化時取得 NE Logs 資訊   @11/01 add by yuchen
   }
 
   ngOnDestroy() {
@@ -211,8 +211,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
   
   // Get User Logs @10/31 Add
-  getUserloginfo() {
-    console.log('getUserloginfo() Start');
+  getUserLogsInfo() {
+    console.log('getUserLogsInfo() - Start');
     clearTimeout(this.refreshTimeout);
     if (this.commonService.isLocal) { // 是否在 local 測試
       // local file test
@@ -230,12 +230,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       if (this.queryFaultMessageScpt) this.queryFaultMessageScpt.unsubscribe();
       this.queryFaultMessageScpt = this.commonService.queryFaultMessage(fieldName, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
         res => {
-          console.log('getUserloginfo:');
+          console.log('getUserLogsInfo:');
           console.log(res);
           const str = JSON.stringify(res);//convert array to string
           this.UserLogsList = JSON.parse(str);
           this.UserLogsList = res as UserLogsList;
-          this.getUserloginfo();
+          this.getUserLogsInfo();
         }
       );
     }
@@ -251,7 +251,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         if (this.isSettingAdvanced) {
           this.getFMAdvanceSearch();
         } else {
-          this.getUserloginfo();
+          this.getUserLogsInfo();
         }
 
       } else {
@@ -262,8 +262,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
 
   // Get NE Logs @11/01 Add
-  getNEloginfo() {
-    console.log('getNEloginfo() Start');
+  getNELogsInfo() {
+    console.log('getNELogsInfo() - Start');
 
     clearTimeout(this.refreshTimeout);
     if (this.commonService.isLocal) {
@@ -284,12 +284,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       if (this.queryFaultMessageScpt) this.queryFaultMessageScpt.unsubscribe();
       this.queryFaultMessageScpt = this.commonService.queryFaultMessage(fieldName, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
         res => {
-          console.log('getNEloginfo:');
+          console.log('getNELogsInfo:');
           console.log(res);
           const str = JSON.stringify(res);//convert array to string
           this.NELogsList = JSON.parse(str);
           this.NELogsList = res as NELogsList;
-          this.getNEloginfo();
+          this.getNELogsInfo();
         }
       );
     }
@@ -305,7 +305,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         if (this.isSettingAdvanced) {
           this.getFMAdvanceSearch();
         } else {
-          this.getNEloginfo();
+          this.getNELogsInfo();
         }
 
       } else {
@@ -316,8 +316,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
   pageChanged(page: number) {
     this.p = page;
-    this.getUserloginfo(); // @10/31 faultxxx -> Userloginfo
-    this.getNEloginfo();   // @11/01 Add NEloginfo
+    this.getUserLogsInfo(); // @10/31 faultxxx -> getUserLogsInfo
+    this.getNELogsInfo();   // @11/01 Add getNELogsInfo
   }
 
 
@@ -338,10 +338,10 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }*/
   
 
-/* ↓ For click View ↓ */
+/* ↓ For click "View" ↓ */
 
   // Add by yuchen @11/06
-  // 當使用者點擊「 View 」User Log 時
+  // 當使用者點擊 User Log 的 "View" 時
   openUserlogDetail(UserLogsinfo: UserLogsinfo) {
 
     // 複製 User Log 的詳細資訊以供顯示
@@ -372,7 +372,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }
 
   // Add by yuchen @11/06
-  // 當使用者點擊「 View 」NE Log 時
+  // 當使用者點擊 NE Log 的 "View" 時
   openNElogDetail(NELogsinfo: NELogsinfo) {
 
     // 複製 NE Log 的詳細資訊以供顯示
@@ -402,7 +402,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-/* ↑ For click View ↑ */
+/* ↑ For click "View" ↑ */
 
 
   search() {
@@ -411,15 +411,20 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     // this.getFaultMessage();
   }
 
-  
+
+  // 用於點擊對應的 Button 時切換頁面
   changeType(e: MatButtonToggleChange) {
+
     console.log(this.type);
+    console.log(this.p);    // 用於測試點擊時的頁數     @11/07 Add by yuchen 
+    this.p = 1;             // 預設點擊時，將頁數設為 1  @11/07 Add by yuchen 
+
     if (this.type === 'User_Logs') 
-      this.getUserloginfo();
+      this.getUserLogsInfo();
     else if (e.value === 'NE_Logs')
-      this.getNEloginfo();
-    
+      this.getNELogsInfo();
   }
+
 
   // switchProcessStatus(): boolean {
   //   return this.fmStatus.isCleared;
