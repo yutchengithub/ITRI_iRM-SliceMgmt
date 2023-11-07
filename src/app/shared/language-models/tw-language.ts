@@ -92,11 +92,11 @@ export const TwLanguage = {
   'updateSoftware':'更新此軟件',
   'nfRun':'NF 執行中',
   'nfNotRun':'NF 停止執行',
-  'search':'搜索',
+  'search':'搜尋',
   'stopDE':'停止部署',
   'startDE':'開始部署',
   'createNFcapacity':'新增 NF Capacity',
-  'a_search':'進階搜索',
+  'a_search':'進階搜尋',
   'addSoftware':'新增軟體',
   'delsoftware':'刪除軟體',
   'type':'類型',
@@ -164,11 +164,13 @@ export const TwLanguage = {
   'UserLog.logmsg':'執行動作',
   'UserLog.logtime':'執行時間',
   'UserLog.view':'檢視',
-  'UserLog.total1':'總共',           // @11/01 add by yuchen
-  'UserLog.total2':'項用戶日誌訊息',   // @11/01 add by yuchen
-  'UserLog.detail':'用戶日誌詳細訊息', // @11/03 add by yuchen
-  'UserLog.detailclose':'關閉',      // @11/03 add by yuchen
-  
+  'UserLog.total1':'總共有',               // @11/01 add by yuchen
+  'UserLog.total2':'項用戶日誌訊息',        // @11/01 add by yuchen
+  'UserLog.detail':'用戶日誌詳細訊息',      // @11/03 add by yuchen
+  'UserLog.detailclose':'關閉',           // @11/03 add by yuchen
+  'UserLog.ExportCSV':'匯出用戶日誌為 .csv', // @11/07 add by yuchen
+
+
   'NElog.No':'編號',
   'NElog.userid':'用戶',
   'NElog.operation':'類型',
@@ -176,9 +178,10 @@ export const TwLanguage = {
   'NElog.resp_data':'回應數據',
   'NElog.logtime':'執行時間',
   'NElog.view':'檢視',
-  'NElog.total1':'總共',              // @11/01 add by yuchen
-  'NElog.total2':'項網元日誌訊息',      // @11/01 add by yuchen
-  'NElog.logKeywordString':'關鍵字:',  // @11/03 add by yuchen
-  'NElog.detail':'網元日誌詳細訊息',     // @11/03 add by yuchen
-  'NElog.detailclose':'關閉',          // @11/03 add by yuchen
+  'NElog.total1':'總共有',                // @11/01 add by yuchen
+  'NElog.total2':'項網元日誌訊息',         // @11/01 add by yuchen
+  'NElog.logKeywordString':'關鍵字:',     // @11/03 add by yuchen
+  'NElog.detail':'網元日誌詳細訊息',        // @11/03 add by yuchen
+  'NElog.detailclose':'關閉',             // @11/03 add by yuchen
+  'NElog.ExportCSV':'匯出網元日誌為 .csv',  // @11/07 add by yuchen
 }

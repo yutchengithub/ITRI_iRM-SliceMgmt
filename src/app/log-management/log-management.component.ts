@@ -425,6 +425,61 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       this.getNELogsInfo();
   }
 
+  
+  // @1107 add by yuchen
+  // 用於將指定 Log 匯出成 .csv 檔案  
+  // ## 還需要更動成依據 Filters 的設定去進行匯出，如只匯出指定時間段的資料 (未完成)
+  exportToCSV(dataType: string) {
+    
+    // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsinfo 矩陣或是 NELogsinfo 矩陣
+    let dataToExport: UserLogsinfo[] | NELogsinfo[] = [];
+
+    if (dataType === 'UserLogs') {
+
+      // 如 dataType 是 'UserLogs'，則將 UserLogsinfo 資料設定為 dataToExport
+      dataToExport = this.commonService.UserLogsList.UserLogsinfo;
+
+    } else if (dataType === 'NELogs') {
+
+      // 如是 'NELogs'，則將 NELogsinfo 資料設定為 dataToExport
+      dataToExport = this.commonService.NELogsList.NELogsinfo;
+    }
+
+    // 將資料轉換成 CSV 格式
+    const csvData = this.convertToCSV(dataToExport);
+    
+    // 創建一個 Blob，用於儲存 CSV 資料
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    
+    // 創建一個 URL 以便下載 CSV 檔案
+    const url = window.URL.createObjectURL(blob); // 創建 URL 物件，以供下載或顯示資源
+    const a = document.createElement('a');        // 創建一個新的超鏈結元素
+    a.href = url;                                 // 設定超鏈結的 URL
+
+    // 根據 dataType 設定下載的檔名  
+    // ## 檔名還需依據 Filters 的設定去進行命名 (未完成)
+    if (dataType === 'UserLogs')
+      a.download = 'user_logs.csv';
+    else if (dataType === 'NELogs')
+      a.download = 'ne_logs.csv';
+
+    // 觸發點擊事件以下載檔案
+    a.click();
+    window.URL.revokeObjectURL(url); // 釋放 URL 物件，以回收資源和釋放記憶體
+  }
+
+  // @1107 add by yuchen
+  // 用於將指定資料轉換成 .csv 格式
+  convertToCSV(data: any[]): string {
+
+    // 創建 CSV 檔案的標頭行，以及資料行
+    const header = Object.keys(data[0]).join(',');              // 創建標頭行，將資料物件的屬性名稱逗號分隔
+    const rows = data.map(row => Object.values(row).join(',')); // 創建資料行，將每個資料物件的值逗號分隔
+
+    // 返回完整的 CSV 字串，包括標頭行和資料行
+    return header + '\n' + rows.join('\n');
+  }
+
 
   // switchProcessStatus(): boolean {
   //   return this.fmStatus.isCleared;

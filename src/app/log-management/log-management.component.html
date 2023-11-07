@@ -36,6 +36,10 @@
         </span>
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
         <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
+        
+        <!-- Button of Export User logs to CSV @1107 add by yuchen -->
+        <span tooltip="{{languageService.i18n['UserLog.ExportCSV']}}" class="material-icons" (click)="exportToCSV('UserLogs')">content_paste_go</span>
+        
       </div>
     </form>
 
@@ -104,6 +108,10 @@
 
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
         <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
+
+        <!-- Button of Export NE logs to CSV @1107 add by yuchen -->
+        <span tooltip="{{languageService.i18n['NElog.ExportCSV']}}" class="material-icons" (click)="exportToCSV('NELogs')">content_paste_go</span>
+
       </div>
     </form>
 
