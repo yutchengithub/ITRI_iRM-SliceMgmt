@@ -239,46 +239,43 @@ nextLabel="" id="fmList">
   <h5>{{languageService.i18n['fm.detail']}}</h5>
    <ul class="faultMsg_detail">
     <li>
-      <span>{{languageService.i18n['fm.field']}}: </span><span>{{fmStatus.cloudId}}</span>
+      <span>{{languageService.i18n['fm.field']}}: </span><span>{{selectedMsg.fieldName}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.gnb']}}: </span><span>{{fmStatus.nfId}}</span>
+      <span>{{languageService.i18n['fm.gnb']}}: </span><span>{{selectedMsg.bsName}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.component']}}: </span><span>{{fmStatus.nfId}}</span>
+      <span>{{languageService.i18n['fm.component']}}: </span><span>{{selectedMsg.compname}}</span>
+    </li>    
+    <li>
+      <span>{{languageService.i18n['fm.severity']}}: </span><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.alarm']}}: </span><span>{{fmStatus.nfId}}</span>
+      <span>{{languageService.i18n['fm.status']}}: </span><span>{{selectedMsg.status}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.severity']}}: </span><span>{{commonService.textTransfer(fmStatus.severity)}}</span>
+      <span>{{languageService.i18n['fm.occurtime']}}: </span><span>{{selectedMsg.timestamp}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.status']}}: </span><span>{{fmStatus.nfId}}</span>
+      <span>{{languageService.i18n['fm.createtime']}}: </span><span>{{selectedMsg.createtime}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.occurtime']}}: </span><span>{{fmStatus.nfId}}</span>
+      <span>{{languageService.i18n['fm.updatetime']}}: </span><span>{{selectedMsg.updatetime}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.createtime']}}: </span><span>{{fmStatus.nfId}}</span>
-    </li>
-    <li>
-      <span>{{languageService.i18n['fm.updatetime']}}: </span><span>{{fmStatus.nfId}}</span>
-    </li>
-    <li>
-      <span>{{languageService.i18n['fm.count']}}: </span><span>{{fmStatus.nfId}}</span>
+      <span>{{languageService.i18n['fm.count']}}: </span><span>{{selectedMsg.count}}</span>
     </li>
   </ul>
   <br/>
   <ul class="faultMsg_detail">
     <li>
-      <span>{{languageService.i18n['fm.eType']}}: </span><span>{{fmStatus.cloudId}}</span>
+      <span>{{languageService.i18n['fm.eType']}}: </span><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.eCause']}}: </span><span>{{fmStatus.cloudId}}</span>
+      <span>{{languageService.i18n['fm.eCause']}}: </span><span>{{selectedMsg.probablecause}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.eDesc']}}: </span><span>{{fmStatus.cloudId}}</span>
+      <span>{{languageService.i18n['fm.eDesc']}}: </span><span>{{selectedMsg.eDesc}}</span>
     </li>
   </ul>
 

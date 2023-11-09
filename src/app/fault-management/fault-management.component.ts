@@ -33,6 +33,9 @@ export interface FaultMessages {
   processstatus: number; //modify by Charles (processStatus -> processstatus)
   processresult: string; //modify by Charles (processComment -> processresult)
   acknowledgeOwner: string;
+  createtime: string; //add by Charles
+  updatetime: string; //add by Charles
+  eDesc: string; //add by Charles
 }
 
 export interface FmStatus {
@@ -65,6 +68,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   // ocloudList: OCloudList[] = [];
   nfList: Nf[] = [];
   faultMessage: FaultMessage = {} as FaultMessage;
+  selectedMsg: FaultMessages= {} as FaultMessages;
   p: number = 1;            // 當前頁數
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
@@ -279,11 +283,12 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   }
 
   openItemDetail(faultMessages: FaultMessages) {
-    this.fmStatus = {} as FmStatus;
+    // this.fmStatus = {} as FmStatus;
     this.selectFaultId = faultMessages.faultId;
-    this.type = 'processing_status';
-    this.show200Msg = false;
-    this.show500Msg = false;
+    // this.type = 'processing_status';
+    // this.show200Msg = false;
+    // this.show500Msg = false;
+    this.selectedMsg = faultMessages;
     this.getFMstatus().then((value) => {
       this.statusModalRef = this.dialog.open(this.itemDetail, { id: 'itemDetail' });
       this.statusModalRef.afterClosed().subscribe(() => {

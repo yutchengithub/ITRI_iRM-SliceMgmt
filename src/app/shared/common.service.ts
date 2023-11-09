@@ -1117,7 +1117,6 @@ export class CommonService {
   }
 
   faultMessage: FaultMessage = {
-    //totalMessageNumber: 1000,
     totalMessageNumber: 12,
     faultMessages: [
       {
@@ -1134,10 +1133,12 @@ export class CommonService {
         isCleared: false,
         processstatus: 0,
         processresult: "",
-        //cloudName: "cloud1",
         nfName: "nf1",
         status: "New",
-        acknowledgeOwner: "Sam"
+        acknowledgeOwner: "Sam",
+        createtime: "2022-02-21T09:28:00Z",
+        updatetime: "2022-02-21T09:28:02Z",
+        eDesc: "No external sync source"
       },
       {
         faultId: '2',
@@ -1153,10 +1154,12 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Sam"
+        acknowledgeOwner: "Sam",
+        createtime: "2023-05-20T10:23:00Z",
+        updatetime: "2023-05-20T10:23:02Z",
+        eDesc: "Configuration file corrupted conflicting"
       },
       {
         faultId: '3',
@@ -1172,10 +1175,12 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "IO Changed",
-        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Charles"
+        acknowledgeOwner: "Charles",
+        createtime: "2023-07-23T08:23:00Z",
+        updatetime: "2023-07-23T08:23:02Z",
+        eDesc: "Ambient temperature violation"
       },
       {
         faultId: '4',
@@ -1191,10 +1196,12 @@ export class CommonService {
         isCleared: true,
         processstatus: 0,
         processresult: "",
-       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Kevin"
+        acknowledgeOwner: "Kevin",
+        createtime: "2020-11-23T15:12:00Z",
+        updatetime: "2020-11-23T15:12:20Z",
+        eDesc: "WARNING Fault Message"
       },
       {
         faultId: '5',
@@ -1210,10 +1217,12 @@ export class CommonService {
         isCleared: false,
         processstatus: 0,
         processresult: "",
-        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Kevin"
+        acknowledgeOwner: "Kevin",
+        createtime: "2021-05-21T18:12:00Z",
+        updatetime: "2021-05-21T18:12:20Z",
+        eDesc: "No external sync source"
       },
       {
         faultId: '6',
@@ -1229,10 +1238,12 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Sam"
+        acknowledgeOwner: "Sam",
+        createtime: "2023-08-11T18:15:00Z",
+        updatetime: "2023-08-11T18:15:02Z",
+        eDesc: "Configuration file corrupted conflicting"
       },
       {
         faultId: '7',
@@ -1248,10 +1259,12 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "IO Changed",
-       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Sam"
+        acknowledgeOwner: "Sam",
+        createtime: "2023-08-11T17:22:00Z",
+        updatetime: "2023-08-11T17:22:02Z",
+        eDesc: "Ambient temperature violation"
       },
       {
         faultId: '8',
@@ -1267,10 +1280,12 @@ export class CommonService {
         isCleared: true,
         processstatus: 0,
         processresult: "",
-        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Kevin"
+        acknowledgeOwner: "Kevin",
+        createtime: "2023-08-17T18:23:00Z",
+        updatetime: "2023-08-17T18:23:02Z",
+        eDesc: "WARNING Fault Message"
       },
       {
         faultId: '9',
@@ -1286,10 +1301,12 @@ export class CommonService {
         isCleared: false,
         processstatus: 0,
         processresult: "",
-       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Charles"
+        acknowledgeOwner: "Charles",
+        createtime: "2020-11-15T20:48:00Z",
+        updatetime: "2020-11-15T20:48:02Z",
+        eDesc: "No external sync source"
       },
       {
         faultId: '10',
@@ -1305,10 +1322,12 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Sam"
+        acknowledgeOwner: "Sam",
+        createtime: "2023-08-11T18:15:00Z",
+        updatetime: "2023-08-11T18:15:02Z",
+        eDesc: "Configuration file corrupted conflicting"
       },
       {
         faultId: '11',
@@ -1324,10 +1343,12 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Charles"
+        acknowledgeOwner: "Charles",
+        createtime: "2023-06-14T18:08:00Z",
+        updatetime: "2023-06-14T18:08:20Z",
+        eDesc: "Configuration file corrupted conflicting"
       },
       {
         faultId: '12',
@@ -1343,10 +1364,12 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Kevin"
+        acknowledgeOwner: "Kevin",
+        createtime: "2023-03-19T09:16:20Z",
+        updatetime: "2023-03-19T09:16:22Z",
+        eDesc: "Configuration file corrupted conflicting"
       }
     ]
   };
@@ -1662,11 +1685,14 @@ export class CommonService {
         probablecause: "主機錯誤",
         isCleared: false,
         processstatus: 0,
-        processresult: "fixed",
+        processresult: "",
         //cloudName: "cloud1",
         nfName: "nf1",
         status: "New",
-        acknowledgeOwner: "Sam"
+        acknowledgeOwner: "Sam",
+        createtime: "2022-02-21T09:28:00Z",
+        updatetime: "2022-02-21T09:28:02Z",
+        eDesc: "No external sync source"
       },
       {
         faultId: '2',
@@ -1685,7 +1711,10 @@ export class CommonService {
         //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Sam"
+        acknowledgeOwner: "Sam",
+        createtime: "2023-05-20T10:23:00Z",
+        updatetime: "2023-05-20T10:23:02Z",
+        eDesc: "Configuration file corrupted conflicting"
       },
       {
         faultId: '3',
@@ -1704,7 +1733,10 @@ export class CommonService {
         //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Charles"
+        acknowledgeOwner: "Charles",
+        createtime: "2023-07-23T08:23:00Z",
+        updatetime: "2023-07-23T08:23:02Z",
+        eDesc: "Ambient temperature violation"
       },
       {
         faultId: '4',
@@ -1719,11 +1751,14 @@ export class CommonService {
         probablecause: "結束待命錯誤",
         isCleared: true,
         processstatus: 0,
-        processresult: "closed",
-        //cloudName: "cloud2",
+        processresult: "",
+       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Kevin"
+        acknowledgeOwner: "Kevin",
+        createtime: "2020-11-23T15:12:00Z",
+        updatetime: "2020-11-23T15:12:20Z",
+        eDesc: "WARNING Fault Message"
       },
       {
         faultId: '5',
@@ -1738,11 +1773,14 @@ export class CommonService {
         probablecause: "授權錯誤",
         isCleared: false,
         processstatus: 0,
-        processresult: "fixed",
+        processresult: "",
         //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Kevin"
+        acknowledgeOwner: "Kevin",
+        createtime: "2021-05-21T18:12:00Z",
+        updatetime: "2021-05-21T18:12:20Z",
+        eDesc: "No external sync source"
       },
       {
         faultId: '6',
@@ -1761,7 +1799,10 @@ export class CommonService {
         //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Sam"
+        acknowledgeOwner: "Sam",
+        createtime: "2023-08-11T18:15:00Z",
+        updatetime: "2023-08-11T18:15:02Z",
+        eDesc: "Configuration file corrupted conflicting"
       },
       {
         faultId: '7',
@@ -1777,10 +1818,13 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "IO Changed",
-        //cloudName: "cloud2",
+       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Sam"
+        acknowledgeOwner: "Sam",
+        createtime: "2023-08-11T17:22:00Z",
+        updatetime: "2023-08-11T17:22:02Z",
+        eDesc: "Ambient temperature violation"
       },
       {
         faultId: '8',
@@ -1799,7 +1843,10 @@ export class CommonService {
         //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Kevin"
+        acknowledgeOwner: "Kevin",
+        createtime: "2023-08-17T18:23:00Z",
+        updatetime: "2023-08-17T18:23:02Z",
+        eDesc: "WARNING Fault Message"
       },
       {
         faultId: '9',
@@ -1815,10 +1862,13 @@ export class CommonService {
         isCleared: false,
         processstatus: 0,
         processresult: "",
-        //cloudName: "cloud2",
+       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Charles"
+        acknowledgeOwner: "Charles",
+        createtime: "2020-11-15T20:48:00Z",
+        updatetime: "2020-11-15T20:48:02Z",
+        eDesc: "No external sync source"
       },
       {
         faultId: '10',
@@ -1834,10 +1884,13 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        //cloudName: "cloud2",
+       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Sam"
+        acknowledgeOwner: "Sam",
+        createtime: "2023-08-11T18:15:00Z",
+        updatetime: "2023-08-11T18:15:02Z",
+        eDesc: "Configuration file corrupted conflicting"
       },
       {
         faultId: '11',
@@ -1853,10 +1906,13 @@ export class CommonService {
         isCleared: true,
         processstatus: 1,
         processresult: "By sswu",
-        //cloudName: "cloud2",
+       // cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Charles"
+        acknowledgeOwner: "Charles",
+        createtime: "2023-06-14T18:08:00Z",
+        updatetime: "2023-06-14T18:08:20Z",
+        eDesc: "Configuration file corrupted conflicting"
       },
       {
         faultId: '12',
@@ -1875,7 +1931,10 @@ export class CommonService {
         //cloudName: "cloud2",
         nfName: "nf2",
         status: "New",
-        acknowledgeOwner: "Kevin"
+        acknowledgeOwner: "Kevin",
+        createtime: "2023-03-19T09:16:20Z",
+        updatetime: "2023-03-19T09:16:22Z",
+        eDesc: "Configuration file corrupted conflicting"
       }
     ]
   };
