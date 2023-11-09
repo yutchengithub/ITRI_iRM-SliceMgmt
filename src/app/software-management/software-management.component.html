@@ -173,12 +173,10 @@
         <span>{{languageService.i18n['model']}}</span> <input type="text" formControlName="model">
       </li>
       <li>
-        <span><label>{{languageService.i18n['type']}}:</label>
-          <select>
-            <option value="All">All</option>
-            <option *ngFor="let opt of searchTypeList" [value]="opt.value">{{opt.displayName}}</option>
-          </select>
-        </span>
+        <span>{{languageService.i18n['type']}}</span><select>
+          <option value="All">All</option>
+          <option *ngFor="let opt of searchTypeList" [value]="opt.value">{{opt.displayName}}</option>
+        </select>
       </li>
       <li>
         <span>{{languageService.i18n['version']}}</span> <input type="text" formControlName="version">
