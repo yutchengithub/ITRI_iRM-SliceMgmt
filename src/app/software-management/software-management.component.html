@@ -4,19 +4,20 @@
   <form [formGroup]="searchForm">
     <div class="filter">
       <span><label>Manufacturer</label>
-        <input type="text">
+        <input type="text"formControlName="firm">
       </span>
       <span><label>Model</label>
-          <input type="text">
+          <input type="text"formControlName="model">
       </span>
       <span><label>{{languageService.i18n['type']}}</label>
-        <select>
+        <select formControlName="type">
           <option value="All">All</option>
           <option *ngFor="let opt of searchTypeList" [value]="opt.value">{{opt.displayName}}</option>
         </select>
       </span>
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
       <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span>
+      <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSetting()">clear</span>
     </div>
   </form>
 
@@ -30,7 +31,7 @@
         <th>{{languageService.i18n['version']}}</th>
         <th>{{languageService.i18n['notes']}}</th>
         <th>{{languageService.i18n['upload_time']}}</th>
-        <th>{{languageService.i18n['file.Url']}}</th>
+        <th>{{languageService.i18n['fileName']}}</th>
         <th>{{languageService.i18n['index.view']}}</th>
         <th>{{languageService.i18n['table.delete']}}</th>
       </tr>
@@ -47,7 +48,6 @@
         <td>{{opt.uploadinfo}}</td>
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>
-          <!-- <span class="material-symbols-outlined"  tooltip="{{languageService.i18n['index.view']}}">description</span> -->
         </td>
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)">delete_forever</mat-icon>
@@ -73,14 +73,6 @@
           <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
           <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
         </span>
-        <!-- <span class="upload {{formValidated&&createForm.controls['fileName'].invalid?'required':''}}">
-          <span>{{languageService.i18n['upload']}}
-            <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".zip, .tar" #fileInput>
-          </span>
-          <label>{{createForm.controls['fileName'].value}}</label>
-          <mat-error *ngIf="formValidated&&createForm.controls['fileName'].invalid">is Required</mat-error>
-          <mat-error *ngIf="fileMsg">{{fileMsg}}</mat-error>
-        </span> -->
       </li>
       <li>
         <label>{{languageService.i18n['model']}}</label>
@@ -93,8 +85,9 @@
       <li>
         <label>{{languageService.i18n['type']}}</label>
         <span>
-          <select name="" id="">
-            <option value=""></option>
+          <select>
+            <option value="All">All</option>
+            <option *ngFor="let opt of searchTypeList" [value]="opt.value">{{opt.displayName}}</option>
           </select>
         </span>
       </li>
@@ -107,25 +100,24 @@
       </li>
       <li>
         <label>{{languageService.i18n['add.method']}}</label>
-        <span class="btn-group">
-            <mat-button-toggle-group [(ngModel)]="uploadType" >
-              <mat-button-toggle value="upload">{{languageService.i18n['upload.file']}}</mat-button-toggle>
-              <mat-button-toggle value="url">{{languageService.i18n['url']}}</mat-button-toggle>
-            </mat-button-toggle-group>
-            <ng-container *ngIf="uploadType == 'upload'">
+        <span>
+          <mat-button-toggle-group formControlName="method">
+            <mat-button-toggle value="upload">{{languageService.i18n['upload.file']}}</mat-button-toggle>
+            <mat-button-toggle value="url">{{languageService.i18n['url']}}</mat-button-toggle>
+          </mat-button-toggle-group>
+          <ng-template [ngIf]="createForm.controls['method'].value === 'upload'">
+            <div class="upload">
+              <input type="file" name="uploadedFile">
               <div>
-                <input type="file" name="uploadedFile">
-                <!-- view detail 才出現以下二個 -->
-                <div>
-                  File Size:
-                  <br/>
-                  Checksum:
-                </div>
+                File Size:
+                <br/>
+                Checksum:
               </div>
-            </ng-container>
-            <ng-container *ngIf="uploadType == 'url'">
-                <input type="text" placeholder="Url">
-            </ng-container>
+            </div>
+          </ng-template>
+          <ng-template [ngIf]="createForm.controls['method'].value === 'url'">
+            <div class="url"><input type="text" placeholder="Url"></div>
+          </ng-template>
         </span>
       </li>
         <li>
@@ -175,32 +167,36 @@
 
       <ul>
       <li>
-        <span>Global ID:</span> <input type="text" formControlName="version">
+        <span>{{languageService.i18n['manufacturer']}}</span> <input type="text" formControlName="firm">
       </li>
       <li>
-        <span>Field {{languageService.i18n['table.header_name']}}:</span> <input type="text" formControlName="version">
+        <span>{{languageService.i18n['model']}}</span> <input type="text" formControlName="model">
       </li>
       <li>
-        <span>NF ID:</span> <input type="text" formControlName="version">
+        <span><label>{{languageService.i18n['type']}}:</label>
+          <select>
+            <option value="All">All</option>
+            <option *ngFor="let opt of searchTypeList" [value]="opt.value">{{opt.displayName}}</option>
+          </select>
+        </span>
       </li>
       <li>
-        <span>NF {{languageService.i18n['table.header_name']}}:</span> <input type="text" formControlName="version">
+        <span>{{languageService.i18n['version']}}</span> <input type="text" formControlName="version">
       </li>
       <li>
         <span>From:</span>
         <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
-        <span class="widthInit">To:</span>
+        <span>To:</span>
         <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
       </li>
       <li>
-        <span>Acknowledge Owner:</span> <input type="text" formControlName="version">
+        <span>{{languageService.i18n['fileName']}}</span> <input type="text" formControlName="fileName">
       </li>
     </ul>
 
     <div class="buttons">
       <button type="button" mat-dialog-close>Cancel</button>
       <button type="button" mat-dialog-close="OK">Ok</button>
-      <!-- <button type="button" (click)="debug()">debug</button> -->
     </div>
   </form>
 </ng-template>

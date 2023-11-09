@@ -37,6 +37,10 @@ export interface Uploadinfos {
   uploadurl: string;
 }
 
+export interface FaultMessage {
+  uploadinfos: Uploadinfos[];
+}
+
 @Component({
   selector: 'app-software-management',
   templateUrl: './software-management.component.html',
@@ -51,6 +55,8 @@ export class SoftwareManagementComponent implements OnInit {
   @ViewChild('advancedModal') advancedModal: any;
   advancedModalRef!: MatDialogRef<any>;
   advancedForm!: FormGroup;
+  afterAdvancedForm!: FormGroup;
+  refreshTimeout!: any;
   isSettingAdvanced = false;
   createModalRef!: MatDialogRef<any>;
   deleteModalRef!: MatDialogRef<any>;
@@ -65,9 +71,9 @@ export class SoftwareManagementComponent implements OnInit {
   fileMsg: string = '';
   formValidated = false;
   searchForm!: FormGroup;
-
-
-  uploadType = 'upload';
+  afterSearchForm!: FormGroup;
+  updateForm!: FormGroup;
+  isSearch: boolean = false;
 
   searchTypeList: Item[] = [
     { displayName: 'CU', value: '0' },
@@ -85,11 +91,8 @@ export class SoftwareManagementComponent implements OnInit {
     public languageService: LanguageService
   ) {
     this.searchTypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
-    this.searchForm = this.fb.group({
-      'fileName': new FormControl(''),
-      'type': new FormControl('All'),
-      'version': new FormControl(''),
-    });
+    this.createSearchForm();
+    this.createAdvancedForm();
   }
 
   ngOnInit(): void {
@@ -97,23 +100,12 @@ export class SoftwareManagementComponent implements OnInit {
     this.getSoftwareList();
   }
 
-  changeMethod(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    if (e.value === 'existing') {
-
-    } else {
-
-    }
-
-  }
-
-
   getSoftwareList() {
-    const fileName = this.searchForm.controls['fileName'].value;
+    const firm = this.searchForm.controls['firm'].value;
     const type = this.searchForm.controls['type'].value;
     const version = this.searchForm.controls['version'].value;
     console.log('querySoftwareList params:')
-    console.log(`fileName=${fileName}`);
+    console.log(`fileName=${firm}`);
     console.log(`type=${type}`);
     console.log(`version=${version}`);
     if (this.commonService.isLocal) {
@@ -137,12 +129,25 @@ export class SoftwareManagementComponent implements OnInit {
     this.totalItems = this.softwareList.length;
   }
 
+  createSearchForm() {
+    const nowTime = this.commonService.getNowTime();
+    this.searchForm = this.fb.group({
+      'firm': new FormControl(''),
+      'model': new FormControl(''),
+      'type': new FormControl('All'),
+      'version': new FormControl(''),
+      'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),
+      'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
+      'fileName': new FormControl(''),
+    });
+  }
   openCreateModal() {
     this.formValidated = false;
     this.createForm = this.fb.group({
       'fileName': new FormControl('', [Validators.required]),
       'description': new FormControl(''),
       'version': new FormControl('', [Validators.required]),
+      'method': new FormControl('upload'),
       'mode': new FormControl('ocloud'),
       'type': new FormControl('0'),
       'sessionid': this.sessionId
@@ -177,7 +182,6 @@ export class SoftwareManagementComponent implements OnInit {
   }
 
   create() {
-    // 先呼叫createSoftware、然後利用return softwareId呼叫uploadSoftwar
     this.formValidated = true;
     if (!this.createForm.valid) {
       return;
@@ -258,29 +262,96 @@ export class SoftwareManagementComponent implements OnInit {
       );
     }
   }
+  changeType(e: MatButtonToggleChange) {
+    this.formValidated = false;
+    if (e.value === 'imageUrl') {
+      this.updateForm.controls['imageUrl'].setValidators([Validators.required]);
+      this.updateForm.controls['fileName'].setValidators(null);
+      this.updateForm.controls['fileName'].setValue('');
+    } else {
+      this.updateForm.controls['imageUrl'].setValidators(null);
+      this.updateForm.controls['imageUrl'].setValue('');
+      this.updateForm.controls['fileName'].setValidators([Validators.required]);
+    }
+    this.updateForm.controls['imageUrl'].updateValueAndValidity();
+    this.updateForm.controls['fileName'].updateValueAndValidity();
+  }
 
+  createAdvancedForm() {
+    this.advancedForm = this.fb.group({
+      'firm': new FormControl(''),
+      'model': new FormControl(''),
+      'type': new FormControl(''),
+      'version': new FormControl(''),
+      'from': new FormControl(''),
+      'to': new FormControl(''),
+      'fileName': new FormControl('')
+    });
+  }
   openAdvancedModal() {
     const orgAdvancedForm = _.cloneDeep(this.advancedForm);
-    // this.advancedForm.controls['cloudName'].setValue(this.searchForm.controls['cloudName'].value);
-    // this.advancedForm.controls['nfName'].setValue(this.searchForm.controls['nfName'].value);
-    // this.advancedForm.controls['from'].setValue(this.searchForm.controls['from'].value);
-    // this.advancedForm.controls['to'].setValue(this.searchForm.controls['to'].value);
-    // this.advancedForm.controls['severity'].setValue(this.searchForm.controls['severity'].value);
-    // this.advancedModalRef = this.dialog.open(this.advancedModal, { id: 'faultAdvancedModal' });
-    // this.advancedModalRef.afterClosed().subscribe((result) => {
-    //   if (result === 'OK') {
-    //     this.isSettingAdvanced = true;
-    //     this.searchForm.controls['cloudName'].setValue(this.advancedForm.controls['cloudName'].value);
-    //     this.searchForm.controls['nfName'].setValue(this.advancedForm.controls['nfName'].value);
-    //     this.searchForm.controls['from'].setValue(this.advancedForm.controls['from'].value);
-    //     this.searchForm.controls['to'].setValue(this.advancedForm.controls['to'].value);
-    //     this.searchForm.controls['severity'].setValue(this.advancedForm.controls['severity'].value);
-    //     this.p = 1;
-    //     //this.getFMAdvanceSearch();
-    //   } else {
-    //     this.advancedForm = orgAdvancedForm;
-    //   }
-    // });
+    this.advancedForm.controls['firm'].setValue(this.searchForm.controls['firm'].value);
+    this.advancedForm.controls['model'].setValue(this.searchForm.controls['model'].value);
+    this.advancedForm.controls['type'].setValue(this.searchForm.controls['type'].value);
+    this.advancedForm.controls['from'].setValue(this.searchForm.controls['from'].value);
+    this.advancedForm.controls['to'].setValue(this.searchForm.controls['to'].value);
+    this.advancedForm.controls['fileName'].setValue(this.searchForm.controls['fileName'].value);
+    this.advancedModalRef = this.dialog.open(this.advancedModal, { id: 'faultAdvancedModal' });
+    this.advancedModalRef.afterClosed().subscribe((result) => {
+      if (result === 'OK') {
+        this.isSettingAdvanced = true;
+        this.searchForm.controls['cloudName'].setValue(this.advancedForm.controls['cloudName'].value);
+        this.searchForm.controls['nfName'].setValue(this.advancedForm.controls['nfName'].value);
+        this.searchForm.controls['from'].setValue(this.advancedForm.controls['from'].value);
+        this.searchForm.controls['to'].setValue(this.advancedForm.controls['to'].value);
+        this.p = 1;
+        this.getFMAdvanceSearch();
+      } else {
+        this.advancedForm = orgAdvancedForm;
+      }
+    });
+  }
+
+  getFMAdvanceSearch() {
+    const globalId = this.afterAdvancedForm.controls['globalId'].value;
+    const cloudName = encodeURIComponent(this.afterAdvancedForm.controls['cloudName'].value);
+    const nfId = this.afterAdvancedForm.controls['nfId'].value;
+    const nfName = encodeURIComponent(this.afterAdvancedForm.controls['nfName'].value);
+    const acknowledgeOwner = encodeURIComponent(this.afterAdvancedForm.controls['acknowledgeOwner'].value);
+    const start = this.commonService.dealPostDate(this.afterAdvancedForm.controls['from'].value);
+    const end = this.commonService.dealPostDate(this.afterAdvancedForm.controls['to'].value);
+    const offset = (this.p - 1) * this.pageSize;
+    console.log('getFMAdvanceSearch:');
+    console.log(`globalId=${globalId}, cloudName=${cloudName}, nfId=${nfId}, nfName=${nfName}, acknowledgeOwner=${acknowledgeOwner}, start=${start}, end=${end}, offset=${offset}`);
+    clearTimeout(this.refreshTimeout);
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.softwareLists = this.commonService.softwareLists;
+      console.log(this.softwareLists);
+      this.softwareListDeal();
+    } else {
+      const globalId = this.afterAdvancedForm.controls['globalId'].value;
+      const cloudName = encodeURIComponent(this.afterAdvancedForm.controls['cloudName'].value);
+      const nfId = this.afterAdvancedForm.controls['nfId'].value;
+      const nfName = encodeURIComponent(this.afterAdvancedForm.controls['nfName'].value);
+      const acknowledgeOwner = encodeURIComponent(this.afterAdvancedForm.controls['acknowledgeOwner'].value);
+      const severity = this.afterAdvancedForm.controls['severity'].value;
+      const start = this.commonService.dealPostDate(this.afterAdvancedForm.controls['from'].value);
+      const end = this.commonService.dealPostDate(this.afterAdvancedForm.controls['to'].value);
+      const offset = (this.p - 1) * this.pageSize;
+      const limit = 10;
+    //   if (this.queryFMAdvanceSearchScpt) this.queryFMAdvanceSearchScpt.unsubscribe();
+    //   this.queryFMAdvanceSearchScpt = this.commonService.queryFMAdvanceSearch(globalId, cloudName, nfId, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
+    //     res => {
+    //       console.log('getFMAdvanceSearch:');
+    //       console.log(res);
+    //       const str = JSON.stringify(res);//convert array to string
+    //       this.faultMessage = JSON.parse(str);
+    //       this.faultMessage = res as FaultMessage;
+    //       this.faultMessageDeal();
+    //     }
+    //   );
+     }
   }
 
   typeText(type: number): string {
@@ -312,5 +383,13 @@ export class SoftwareManagementComponent implements OnInit {
 
   viewPage(softwareList: Uploadinfos) {
     this.router.navigate(['/main/software-mgr/info', softwareList.id, softwareList.uploadinfo]);
+  }
+
+  clearSetting() {
+    this.isSearch = false;
+    this.createSearchForm();
+    this.createAdvancedForm();
+    this.afterSearchForm = _.cloneDeep(this.searchForm);
+    this.getSoftwareList();
   }
 }
