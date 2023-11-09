@@ -85,41 +85,42 @@ nextLabel="" id="fmList">
 </div>
 
 <ng-template #statusModal>
-  <h5>Fault Message Status</h5>
+  <h5>{{languageService.i18n['fm.situation']}}</h5>
   <!-- processing_status -->
   <div class="tab">
     <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
-      <mat-button-toggle value="processing_status">Processing Status</mat-button-toggle>
-      <mat-button-toggle value="processing_status_record">Processing Status Record</mat-button-toggle>
+      <mat-button-toggle value="add_situation">{{languageService.i18n['fm.addsitch']}}</mat-button-toggle>
+      <mat-button-toggle value="situation_history">{{languageService.i18n['fm.sHistory']}}</mat-button-toggle>
     </mat-button-toggle-group>
   </div>
-  <ul *ngIf="type === 'processing_status'">
+  <ul *ngIf="type === 'add_situation'">
     <li>
-      <span>Field Global ID : </span><span>{{fmStatus.cloudId}}</span>
+      <span>{{languageService.i18n['fm.field']}} </span><span>{{selectedMsg.fieldName}}</span>
     </li>
     <li>
-      <span>NF ID : </span><span>{{fmStatus.nfId}}</span>
+      <span>{{languageService.i18n['fm.gnb']}} </span><span>{{selectedMsg.bsName}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['severity']}} : </span><span>{{commonService.textTransfer(fmStatus.severity)}}</span>
+      <span>{{languageService.i18n['fm.component']}} </span><span>{{selectedMsg.compname}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['faultContext']}} : </span><span>{{fmStatus.context}}</span>
+      <span>{{languageService.i18n['fm.eCause']}} </span><span>{{selectedMsg.probablecause}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['time']}} : </span><span>{{fmStatus.timestamp}}</span>
+      <span>{{languageService.i18n['fm.severity']}} </span><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
     </li>
     <li>
-      <span>Fault Status : </span><span>
-        <label *ngIf="fmStatus.processStatus === 0" class="greenLight"></label>
-        <label *ngIf="fmStatus.processStatus === 1" class="redLight"></label>
+      <span>{{languageService.i18n['fm.occurtime']}} </span><span>{{selectedMsg.timestamp}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.status']}} </span><span>{{selectedMsg.status}}</span>
+    </li>
+    <li>
+      <span>{{languageService.i18n['fm.situation']}} </span><span>
+        <label *ngIf="selectedMsg.processstatus === 0" class="greenLight"></label>
+        <label *ngIf="selectedMsg.processstatus === 1" class="redLight"></label> {{selectedMsg.processresult}} 
       </span>
-    </li>
-    <li>
-      <span>Acknowledge Owner : </span><span>{{fmStatus.acknowledgeOwner}}</span>
-    </li>
-    <li>
-      <span>Process Status : </span>
+    <p>
       <span>
         <!-- <div class="vc-toggle-container">
           <label class="vc-switch">
@@ -130,12 +131,13 @@ nextLabel="" id="fmList">
         </div> -->
         <span class="switch">
           <mat-button-toggle-group name="isCleared" [(ngModel)]="fmStatus.__processStatus">
-            <mat-button-toggle value="PENDING">Pending</mat-button-toggle>
-            <mat-button-toggle value="RESOLVE">Resolve</mat-button-toggle>
+            <mat-button-toggle value="PENDING">{{languageService.i18n['fm.pending']}}</mat-button-toggle>
+            <mat-button-toggle value="RESOLVE">{{languageService.i18n['fm.ended']}}</mat-button-toggle>
           </mat-button-toggle-group>
         </span>
-        <input type="text" name="processComment" [(ngModel)]="fmStatus.processComment">
-        <button class="modify" type="button" (click)="modify()">Modify</button>
+        <!-- <input type="text" name="processComment" [(ngModel)]="fmStatus.processComment"> -->
+        <input type="text" name="processComment">
+        <button class="modify" type="button" (click)="modify()">{{languageService.i18n['fm.add']}}</button>
 
         <p *ngIf="show200Msg" style="color:#46c116"><span class="material-symbols-outlined">done</span>Modify successfully</p>
         <p *ngIf="show500Msg" style="color:#ff469c"><span class="material-symbols-outlined">error</span>Fail modify Pending Status and Add CPU</p>
@@ -144,7 +146,7 @@ nextLabel="" id="fmList">
 
   </ul>
   <!-- processing_status_record -->
-  <ng-template [ngIf]="type === 'processing_status_record'">
+  <ng-template [ngIf]="type === 'situation_history'">
     <div class="table statusTable">
     <table>
       <thead>

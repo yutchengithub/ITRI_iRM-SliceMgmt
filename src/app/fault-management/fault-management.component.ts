@@ -246,11 +246,12 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
 
   openStatusModal(faultMessages: FaultMessages) {
     //if (faultMessages.processstatus === 1) {
-    this.fmStatus = {} as FmStatus;
+    // this.fmStatus = {} as FmStatus;
     this.selectFaultId = faultMessages.faultId;
-    this.type = 'processing_status';
-    this.show200Msg = false;
-    this.show500Msg = false;
+    this.type = 'add_situation';
+    // this.show200Msg = false;
+    // this.show500Msg = false;
+    this.selectedMsg = faultMessages;
     this.getFMstatus().then((value) => {
       this.statusModalRef = this.dialog.open(this.statusModal, { id: 'statusModal' });
       this.statusModalRef.afterClosed().subscribe(() => {
@@ -303,7 +304,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
 
   changeType(e: MatButtonToggleChange) {
     console.log(this.type);
-    if (this.type === 'processing_status') {
+    if (this.type === 'add_situation') {
       this.getFMstatus();
     } else {
       this.getFMstatusrecord();

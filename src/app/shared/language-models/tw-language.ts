@@ -67,7 +67,12 @@ export const TwLanguage = {
   'fm.eCause':'告警原因',
   'fm.eDesc':'詳細描述',
   'fm.detail':'詳細告警訊息',
-  
+  'fm.addsitch':'新增處理狀況',
+  'fm.sHistory':'處理狀況歷史紀錄',
+  'fm.add':'新增',
+  'fm.pending':'待處理',
+  'fm.ended':'結束',
+
   // Performance Management (效能管理)
   'pm.field':'場域名稱',
   'pm.accessibility':'可用性',

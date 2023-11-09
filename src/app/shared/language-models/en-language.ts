@@ -67,6 +67,11 @@ export const Enlanguage = {
   'fm.eCause':'Event Cause',
   'fm.eDesc':'Event Description',
   'fm.detail':'Fault Message Detail',
+  'fm.addsitch':'Add Situation',
+  'fm.sHistory':'Situation History',
+  'fm.add':'Add',
+  'fm.pending':'Pending',
+  'fm.ended':'Ended',
 
   // Performance Management
   'pm.field':'Field Name',
