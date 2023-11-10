@@ -34,7 +34,7 @@
           </select>
           <mat-error *ngIf="searchForm.controls['UserLogType'].invalid">Required</mat-error>
         </span>
-        <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+        <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_UserLogs()">search</span>
         <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
         
         <!-- Button of Export User logs to CSV @1107 add by yuchen -->
@@ -56,7 +56,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let opt of UserLogsList.UserLogsinfo | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'userlogsList' }">
+        <tr *ngFor="let opt of userlogsToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: userlogsToDisplay.length, id: 'userlogsList' }">
           <td>{{opt.userlogID}}</td>
           <td>{{opt.userid}}</td>
           <td>{{opt.logtype}}</td>
@@ -65,14 +65,13 @@
           <td>{{opt.logtime}}</td>
           <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openUserlogDetail(opt)">remove_red_eye</mat-icon></td>
         </tr>
-        <!--
-        <tr class="notFind" *ngIf="faultMessage.totalMessageNumber === 0">
+        <tr class="notFind" *ngIf="userlogsToDisplay.length === 0">
           <td colspan="7">{{languageService.i18n['no_results']}}</td>
-        </tr> -->
+        </tr> 
       </tbody>
       </table>
       <!-- pagination @11/01 Add by yuchen --> 
-      <span class="total">{{languageService.i18n['UserLog.total1']}} {{UserLogsList.logNumber}} {{languageService.i18n['UserLog.total2']}}</span>
+      <span class="total">{{languageService.i18n['UserLog.total1']}} {{userlogsToDisplay.length}} {{languageService.i18n['UserLog.total2']}}</span>
       <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel="" 
       nextLabel="" id="userlogsList"> 
       </pagination-controls>
@@ -106,7 +105,7 @@
           <input style="width: 400px" formControlName="keyword">
         </span>
 
-        <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+        <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="nelogs_search()">search</span>
         <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
 
         <!-- Button of Export NE logs to CSV @1107 add by yuchen -->

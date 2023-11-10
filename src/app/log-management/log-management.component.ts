@@ -8,6 +8,7 @@ import { LanguageService } from '../shared/service/language.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
+import { ChangeDetectorRef } from '@angular/core'; // @11/09 Add by yuchen
 
 
 export interface UserLogsList {   // FaultMessage -> LogList @10/30 by yuchen
@@ -23,6 +24,7 @@ export interface UserLogsinfo {   // FaultMessages -> loginfo @10/30 by yuchen
   logmsg: string;    // add by yuchen @10/30
   logtime: string;   // add by yuchen @10/30  
 }
+
 
 /// For click View User Log Detail Page @11/06 add by yuchen 
 export interface UserLogdetail {
@@ -79,6 +81,8 @@ export interface FmStatusRecord {
 }
 
 
+
+
 @Component({
   selector: 'app-log-management',                 // fault -> log @10/30 by yuchen
   templateUrl: './log-management.component.html', // fault -> log @10/30 by yuchen
@@ -87,10 +91,8 @@ export interface FmStatusRecord {
 
 export class LogManagementComponent implements OnInit, OnDestroy { 
   sessionId: string = '';
-  // ocloudList: OCloudList[] = [];
-  //nfList: Nf[] = [];
-
-  UserLogsList: UserLogsList = {} as UserLogsList;  // FaultMessage -> UserLogsList @10/30 by yuchen
+  
+  UserLogsList: UserLogsList = {} as UserLogsList;
   NELogsList: NELogsList = {} as NELogsList;        // add by yuchen @10/30
   type: string = 'User_Logs';   // 預設選擇 "User Logs" add by yuchen @10/31
   //type: string = 'NE_Logs';   // 預設選擇 "NE Logs" @11/01 add by yuchen
@@ -120,23 +122,22 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   p: number = 1;            // 當前頁數
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
+  userLogs_totalItems: number = 0;
   nullList: string[] = [];  // 給頁籤套件使用
 
 
   searchForm!: FormGroup;
-  severitys: string[];
+  afterSearchForm!: FormGroup;
+
+
   refreshTimeout!: any;
   queryFaultMessageScpt!: Subscription;
   @ViewChild('statusModal') statusModal: any;
   statusModalRef!: MatDialogRef<any>;
-  //fmStatus: FmStatus = {} as FmStatus;
   queryFMstatusScpt!: Subscription;
   
   queryFMstatusrecordScpt!: Subscription;
-  //orgFmStatusRecordList: FmStatusRecord[] = [];   // 原始FmStatusRecord資料
-  //fmStatusRecordList: FmStatusRecord[] = [];      // 呈現FmStatusRecord資料
-  @ViewChild('modifyModal') modifyModal: any;
-  modifyModalRef!: MatDialogRef<any>;
+
   queryFMProcessScpt!: Subscription;
   show200MsgTimeout!: any;
   show200Msg = false;
@@ -158,6 +159,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public languageService: LanguageService,
     private dialog: MatDialog,
+    private cd: ChangeDetectorRef // @11/09 add by yuchen
   ) {
     const nowTime = this.commonService.getNowTime();
     // console.log(nowTime)
@@ -166,24 +168,21 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.searchForm = this.fb.group({
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)), 
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
-      //'fieldName': new FormControl(''),
-      //'nfName': new FormControl(''),
-      //'acknowledgeOwner': new FormControl(''),
-      //'severity': new FormControl('All'),
       'UserLogType': new FormControl('All'),
       'NELogType': new FormControl('All'),
     });
-    this.severitys = this.commonService.severitys;
 
+
+
+    this.createSearchForm();
+    this.createAdvancedForm();
     this.UserLogTypes = this.commonService.UserLogType; // @11/01 add by yuchen
     this.NELogTypes = this.commonService.NELogType;     // @11/01 add by yuchen
-
-    this.createAdvancedForm();
   }
 
   ngOnInit(): void {
 
-    //this.type = 'User_Logs';  // 設定初始化預設值
+    this.type = 'User_Logs';  // 設定初始化預設值
     //this.type = 'NE_Logs';
     this.sessionId = this.commonService.getSessionId();
 
@@ -195,13 +194,15 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         this.searchForm.controls['nfName'].setValue(params['nfName']);
       }
     });*/
-    
+
+    this.afterSearchForm = _.cloneDeep(this.searchForm);
     this.getUserLogsInfo();   // 預設初始化時取得 User Logs 資訊 @10/31 add by yuchen
     //this.getNELogsInfo();   // 預設初始化時取得 NE Logs 資訊   @11/01 add by yuchen
   }
 
   ngOnDestroy() {
     clearTimeout(this.refreshTimeout);
+
     if (this.queryFaultMessageScpt) this.queryFaultMessageScpt.unsubscribe();
     if (this.queryFMstatusScpt) this.queryFMstatusScpt.unsubscribe();
     if (this.queryFMstatusrecordScpt) this.queryFMstatusrecordScpt.unsubscribe();
@@ -209,7 +210,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     if (this.queryFMAdvanceSearchScpt) this.queryFMAdvanceSearchScpt.unsubscribe();
   }
 
-  
+
+
   // Get User Logs @10/31 Add
   getUserLogsInfo() {
     console.log('getUserLogsInfo() - Start');
@@ -314,29 +316,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     }, 100); //timeout 100ms
   }
 
-  pageChanged(page: number) {
-    this.p = page;
-    this.getUserLogsInfo(); // @10/31 faultxxx -> getUserLogsInfo
-    this.getNELogsInfo();   // @11/01 Add getNELogsInfo
-  }
 
-
-  /*openStatusModal(faultMessages: FaultMessages) {
-    //if (faultMessages.processstatus === 1) {
-    this.fmStatus = {} as FmStatus;
-    this.selectFaultId = faultMessages.faultId;
-    this.type = 'processing_status';
-    this.show200Msg = false;
-    this.show500Msg = false;
-    this.getFMstatus().then((value) => {
-      this.statusModalRef = this.dialog.open(this.statusModal, { id: 'statusModal' });
-      this.statusModalRef.afterClosed().subscribe(() => {
-
-      });
-    });
-    //}
-  }*/
-  
 
 /* ↓ For click "View" ↓ */
 
@@ -404,20 +384,38 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
 /* ↑ For click "View" ↑ */
 
-
-  search() {
-    // this.isSettingAdvanced = false;
-    // this.p = 1;
-    // this.getFaultMessage();
+  createSearchForm() {
+    const nowTime = this.commonService.getNowTime();
+    this.searchForm = this.fb.group({
+      'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)), 
+      'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
+      'UserLogType': new FormControl('All'),
+      'NELogType': new FormControl('All')
+    });
   }
 
+  createAdvancedForm() {
+    this.advancedForm = this.fb.group({
+      'from': new FormControl(''),
+      'to': new FormControl(''),
+      'UserLogType': new FormControl(''),
+      'NELogType': new FormControl('')
+    });
+  }
+
+  
+  pageChanged(page: number) {
+    this.p = page;
+    this.getUserLogsInfo(); // @10/31 faultxxx -> getUserLogsInfo
+    this.getNELogsInfo();   // @11/01 Add getNELogsInfo
+  }
 
   // 用於點擊對應的 Button 時切換頁面
   changeType(e: MatButtonToggleChange) {
 
     console.log(this.type);
     console.log(this.p);    // 用於測試點擊時的頁數     @11/07 Add by yuchen 
-    this.p = 1;             // 預設點擊時，將頁數設為 1  @11/07 Add by yuchen 
+    this.p = 1;             // 點擊任一頁面對應 Button 時，將表格頁數預設為 1  @11/07 Add by yuchen 
 
     if (this.type === 'User_Logs') 
       this.getUserLogsInfo();
@@ -425,7 +423,80 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       this.getNELogsInfo();
   }
 
+
+/* ↓ For click "Search" ↓ */
+
+  filtered_UserLogs: UserLogsinfo[] = [];
+  isSearch_userLogs: boolean = false;
+  search_UserLogs() {
+
+    this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
+
+    const from = this.searchForm.get('from')?.value;
+    const to = this.searchForm.get('to')?.value;
+    const userLogType = this.searchForm.get('UserLogType')?.value;
+
+    // 格式化日期為所需的格式
+    const formattedFrom = this.commonService.dealPostDate(from);
+    const formattedTo = this.commonService.dealPostDate(to);
+
+    // 清除以前的搜尋結果
+    this.filtered_UserLogs = [];
+    this.isSearch_userLogs = false;
+
+    // 如果是在本地環境測試
+    if (this.commonService.isLocal) {
+
+      this.filtered_UserLogs = this.UserLogsList.UserLogsinfo.filter(log => {
+        const logDate = new Date(log.logtime);
+        const isAfterFrom = logDate >= new Date(formattedFrom);
+        const isBeforeTo = logDate <= new Date(formattedTo);
+        const isTypeMatch = userLogType === 'All' || log.logtype === userLogType;
+
+        return isAfterFrom && isBeforeTo && isTypeMatch;
+      });
+      this.isSearch_userLogs = true;  // 本地 Search 完畢，設置標記為 true
+
+      this.totalItems = this.filtered_UserLogs.length; // 確保更新 totalItems 以反映搜尋結果的數量
+
+    } else {
+
+      // 假設您有一個從後端取得日誌的方法，這裡是使用 HTTP 客戶端調用 API 的偽代碼
+      const queryParams = { from: formattedFrom, to: formattedTo, userLogType };
+
+      this.http.get<UserLogsList>('/api/userlogs', { params: queryParams }).subscribe(
+        data => {
+          this.UserLogsList = data;
+          this.filtered_UserLogs = data.UserLogsinfo; // 假定後端已經過濾了數據
+          this.totalItems = data.logNumber; // 更新總條目數量以供分頁
+          this.isSearch_userLogs = true;  // 伺服器 Search 完畢，設置標記為 true
+        },
+        error => {
+          console.error('Error fetching filtered logs:', error);
+        }
+      );
+    }
+  }
+
+  get userlogsToDisplay(): UserLogsinfo[] {
+    // 如 isSearch_userLogs 為 true，則表示已經進行了搜尋，應該顯示 filtered_UserLogs
+    // 否則，顯示全部 UserLogsList.UserLogsinfo
+    return this.isSearch_userLogs ? this.filtered_UserLogs : this.UserLogsList.UserLogsinfo;
+  }
   
+
+
+  // For search NE Logs
+  filtered_NELogs: NELogsinfo[] = [];
+  isSearch_neLogs: boolean = false;
+  nelogs_search() {
+    this.isSearch_neLogs = true;
+  }
+
+/* ↑ For click "Search" ↑ */
+
+  
+
   // @1107 add by yuchen
   // 用於將指定 Log 匯出成 .csv 檔案  
   // ## 還需要更動成依據 Filters 的設定去進行匯出，如只匯出指定時間段的資料 (未完成)
@@ -481,74 +552,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }
 
 
-  // switchProcessStatus(): boolean {
-  //   return this.fmStatus.isCleared;
-  // }
-
-  // changeProcessSwitch() {
-  //   this.fmStatus.isCleared = !this.fmStatus.isCleared;
-  // }
 
 
-  /*
-  fMstatusrecordDeal() {
-    this.fmStatusRecordList = _.cloneDeep(this.orgFmStatusRecordList);
-    this.record_p = 1;
-    this.record_totalItems = this.fmStatusRecordList.length;
-  }
-
-  recordPageChanged(page: number) {
-    this.record_p = page;
-  }
-
-  doSortTime() {
-    if (this.timeSort === '') {
-      this.timeSort = 'asc';
-    } else if (this.timeSort === 'asc') {
-      this.timeSort = 'desc';
-    } else {
-      this.timeSort = '';
-    }
-    if (this.timeSort === '') {
-      this.fmStatusRecordList = _.cloneDeep(this.orgFmStatusRecordList);
-    } else {
-      this.fmStatusRecordList = _.orderBy(this.orgFmStatusRecordList, ['timestamp'], [this.timeSort as any]);
-    }
-  }*/
-
-  /*queryFMProcess() {
-    return new Promise((resolve, reject) => {
-      if (this.commonService.isLocal) {
-        // local file test
-        const num = Math.floor(Math.random() * 2); //回傳0或1
-        const status = (num === 0) ? 200 : 500;
-        resolve(status);
-      } else {
-        if (this.queryFMProcessScpt) this.queryFMProcessScpt.unsubscribe();
-        const processStatus = (this.fmStatus.__processStatus === 'PENDING') ? 0 : 1;
-        this.queryFMstatusrecordScpt = this.commonService.queryFMProcess(this.selectFaultId, processStatus, this.fmStatus.processComment, this.fmStatus.acknowledgeOwner).subscribe(
-          (res: HttpResponse<any>) => {
-            console.log('queryFMProcess:');
-            console.log(res.status);
-            resolve(res.status);
-          }
-        );
-      }
-    });
-  }
-*/
-  createAdvancedForm() {
-    this.advancedForm = this.fb.group({
-      'globalId': new FormControl(''),
-      'fieldName': new FormControl(''),
-      'nfId': new FormControl(''),
-      'nfName': new FormControl(''),
-      'from': new FormControl(''),
-      'to': new FormControl(''),
-      'severity': new FormControl(''),
-      'acknowledgeOwner': new FormControl('')
-    });
-  }
 
   openAdvancedModal() {
     const orgAdvancedForm = _.cloneDeep(this.advancedForm);
