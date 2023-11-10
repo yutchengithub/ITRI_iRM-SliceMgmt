@@ -140,7 +140,7 @@ mat-dialog-container {
 mat-dialog-container h5 {
   color: #fff;
   /* background-color: #2979c6; */
-  padding: 2% 6%;
+  padding: .75em 1em;
   font-size: 1.3em!important;
 
   /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#1d8ee5+0,1e5799+100 */
@@ -908,6 +908,30 @@ h4 {
 ul.modify li {
   display: block;
   margin: 0 0 0 .5em!important;
+}
+#nelogDetail {
+  max-width: 70em;
+}
+
+input::file-selector-button {
+  font-weight: normal;
+  color:#000;
+  padding: 0.5em;
+  border: 1px solid #000;
+  border-radius: 4px;
+}
+input[type="file"] {
+  font-size: 13px;
+  margin: 5px 0;
+}
+.url {
+  margin-top: .5em;
+}
+.url input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #3b82f6;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {
