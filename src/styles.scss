@@ -827,7 +827,7 @@ transition: all 0.3s;
   display: inline-block;
   width: initial;
 }
-#faultAdvancedModal ul li > span {
+#faultAdvancedModal ul li > span:first-child {
   min-width: 5em;
   width: 7em;
   text-align: right;
@@ -904,6 +904,10 @@ p-calendar #time {
 h4 {
   font-size: 1.3em!important;
   font-family: Microsoft JhengHei!important;
+}
+ul.modify li {
+  display: block;
+  margin: 0 0 0 .5em!important;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {
