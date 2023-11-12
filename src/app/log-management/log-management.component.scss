@@ -1,4 +1,4 @@
-.table table {
+/* .table table {
   width: 97.5%;
   margin: 0;
   text-align: center;
@@ -14,15 +14,15 @@ table tr td {
 table tr td.time{
   width: 3vw;
   text-align: left;
-}
-
+} */
+/* 
 table tr td:nth-child(2) {
   
 }
 table tr td:nth-last-child(2){
   width: 3vw;
 }
-
+ */
 .userLog
 td mat-icon {
   cursor: pointer;
@@ -86,20 +86,19 @@ table thead th, table tbody td {
   text-align: center;
   padding: 8px;
   white-space: nowrap;
-  width: 14.28%; // 平均分配列寬，有 7 個欄位: 100 % / 7 ≈ 14.28% 
+  /* width: 14.28%; */ // 平均分配列寬，有 7 個欄位: 100 % / 7 ≈ 14.28% 
   vertical-align: top;
   //text-overflow: ellipsis;
   //overflow: hidden;
 }
 
 table.neLog tbody td {
-  width: 8vw;
+  min-width: 5vw;
 }
 table.neLog tr td:nth-last-child(3),
 table.neLog tr td:nth-last-child(4) {
   text-align: left;
-  width: 20vw;
-  max-width: 30vw;
+  max-width: 35vw;
   word-break: break-all;
   white-space: pre-line;
 }
@@ -133,14 +132,22 @@ table tbody td.time {
   border: 0;
   line-height: 2.2;
 }
+table.userLog th,
+table.userLog td {
+  min-width: 5vw;
+}
+table.userLog th.logmsg,
+table.userLog td.logmsg {
+  width: 40vw;
+}
+table.userLog td.logmsg {
+  text-align: left;
+}
 @media screen and (max-width:1920px) {
   .table table {
     max-height: 70vh;
   }
-  
-  table tr td:nth-child(5) {
-    width: 8vw;
-  }
+
 }
 @media screen and (max-width:1600px) {
    table tr td:nth-child(4) {
@@ -155,11 +162,5 @@ table tbody td.time {
     width: 98.5%;
     max-height: 58vh;
   }
- table tr td:nth-child(4) {
-    
-    min-width: 11.5vw;
-}
-  table tr td:nth-child(5) {
-    width: 11vw;
-  }
+
 }

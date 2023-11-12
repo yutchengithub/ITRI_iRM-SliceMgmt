@@ -909,9 +909,18 @@ ul.modify li {
   display: block;
   margin: 0 0 0 .5em!important;
 }
-#nelogDetail {
-  max-width: 70em;
+#nelogDetail ul li >span:nth-child(2),
+#userlogDetail ul li >span:nth-child(2){
+  word-break: break-all;
 }
+
+#nelogDetail ul li > span:first-child,
+#userlogDetail ul li > span:first-child {
+  width: 7em;
+  text-align: right;
+  margin: 0;
+}
+
 
 input::file-selector-button {
   font-weight: normal;
@@ -932,6 +941,14 @@ input[type="file"] {
   padding: 8px;
   border-radius: 4px;
   border: 1px solid #3b82f6;
+}
+
+#nelogDetail {
+  max-width: 70em!important;
+}
+#nelogDetail li > span:nth-child(2) {
+  max-width: 85%;
+  word-break: break-all;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {

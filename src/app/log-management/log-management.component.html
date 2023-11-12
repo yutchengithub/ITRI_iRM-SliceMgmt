@@ -50,7 +50,7 @@
           <th>{{languageService.i18n['UserLog.userid']}}</th>
           <th>{{languageService.i18n['UserLog.logtype']}}</th>
           <th>{{languageService.i18n['UserLog.loglevel']}}</th>
-          <th>{{languageService.i18n['UserLog.logmsg']}}</th>
+          <th class="logmsg">{{languageService.i18n['UserLog.logmsg']}}</th>
           <th>{{languageService.i18n['UserLog.logtime']}}</th>
           <th>{{languageService.i18n['UserLog.view']}}</th>
         </tr>
@@ -60,8 +60,8 @@
           <td>{{opt.userlogID}}</td>
           <td>{{opt.userid}}</td>
           <td>{{opt.logtype}}</td>
-          <td style="text-align: center;">{{opt.loglevel}}</td>
-          <td style="text-align: left;">{{opt.logmsg}}</td>
+          <td class="center">{{opt.loglevel}}</td>
+          <td class="logmsg">{{opt.logmsg}}</td>
           <td>{{opt.logtime}}</td>
           <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openUserlogDetail(opt)">remove_red_eye</mat-icon></td>
         </tr>
