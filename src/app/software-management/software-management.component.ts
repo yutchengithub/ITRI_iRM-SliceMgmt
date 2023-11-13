@@ -7,7 +7,7 @@ import { CommonService } from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
 import { Item } from '../shared/models/item';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 export interface SoftwareList {
@@ -48,7 +48,7 @@ export interface FaultMessage {
 })
 export class SoftwareManagementComponent implements OnInit {
   sessionId: string = '';
-  softwareList: SoftwareList[] = [];
+  //softwareList: SoftwareList[] = [];
   softwareLists: SoftwareLists = {} as SoftwareLists;
   @ViewChild('createModal') createModal: any;
   @ViewChild('deleteModal') deleteModal: any;
@@ -74,8 +74,10 @@ export class SoftwareManagementComponent implements OnInit {
   afterSearchForm!: FormGroup;
   updateForm!: FormGroup;
   isSearch: boolean = false;
+  querySoftwareScpt!: Subscription;
+  querySWAdvanceSearchScpt!: Subscription;
 
-  searchTypeList: Item[] = [
+  uploadtypeList: Item[] = [
     { displayName: 'CU', value: '0' },
     { displayName: `DU`, value: '1' },
     { displayName: `CU+DU`, value: '2' },
@@ -90,24 +92,26 @@ export class SoftwareManagementComponent implements OnInit {
     private fb: FormBuilder,
     public languageService: LanguageService
   ) {
-    this.searchTypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
+    this.uploadtypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
     this.createSearchForm();
     this.createAdvancedForm();
   }
 
   ngOnInit(): void {
     this.sessionId = this.commonService.getSessionId();
+    this.afterSearchForm = _.cloneDeep(this.searchForm);
     this.getSoftwareList();
   }
 
   getSoftwareList() {
     const firm = this.searchForm.controls['firm'].value;
-    const type = this.searchForm.controls['type'].value;
-    const version = this.searchForm.controls['version'].value;
+    const uploadtype = this.searchForm.controls['uploadtype'].value;
+    const model = this.searchForm.controls['model'].value;
     console.log('querySoftwareList params:')
     console.log(`fileName=${firm}`);
-    console.log(`type=${type}`);
-    console.log(`version=${version}`);
+    console.log(`uploadtype=${uploadtype}`);
+    console.log(`model=${model}`);
+    clearTimeout(this.refreshTimeout);
     if (this.commonService.isLocal) {
       /* local file test */
       this.softwareLists = this.commonService.softwareLists;
@@ -118,7 +122,7 @@ export class SoftwareManagementComponent implements OnInit {
         res => {
           console.log('Get software list:');
           console.log(res);
-          this.softwareList = res as SoftwareList[];
+          this.softwareLists = res as SoftwareLists;
           this.softwareListDeal();
         }
       );
@@ -126,7 +130,13 @@ export class SoftwareManagementComponent implements OnInit {
   }
 
   softwareListDeal() {
-    this.totalItems = this.softwareList.length;
+    this.totalItems = this.softwareLists.uploadinfos.length;
+  }
+
+  ngOnDestroy() {
+    clearTimeout(this.refreshTimeout);
+    if (this.querySoftwareScpt) this.querySoftwareScpt.unsubscribe();
+    if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
   }
 
   createSearchForm() {
@@ -134,7 +144,7 @@ export class SoftwareManagementComponent implements OnInit {
     this.searchForm = this.fb.group({
       'firm': new FormControl(''),
       'model': new FormControl(''),
-      'type': new FormControl('All'),
+      'uploadtype': new FormControl('All'),
       'version': new FormControl(''),
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
@@ -144,12 +154,14 @@ export class SoftwareManagementComponent implements OnInit {
   openCreateModal() {
     this.formValidated = false;
     this.createForm = this.fb.group({
-      'fileName': new FormControl('', [Validators.required]),
-      'description': new FormControl(''),
+      'firm': new FormControl(''),
+      'model': new FormControl(''),
+      'uploadtype': new FormControl('All'),
       'version': new FormControl('', [Validators.required]),
       'method': new FormControl('upload'),
-      'mode': new FormControl('ocloud'),
-      'type': new FormControl('0'),
+      'notes': new FormControl(''),
+      'ftpaccount': new FormControl(''),
+      'ftppassword': new FormControl(''),
       'sessionid': this.sessionId
     });
     this.createModalRef = this.dialog.open(this.createModal, { id: 'createModal' });
@@ -205,14 +217,14 @@ export class SoftwareManagementComponent implements OnInit {
 
     } else {
       const body = this.createForm.value;
-      if (this.createForm.controls['type'].value === 'CU') {
-        body['type'] = 1;
-      } else if (this.createForm.controls['type'].value === 'DU') {
-        body['type'] = 2;
-      } else if (this.createForm.controls['type'].value === 'CU+DU') {
-        body['type'] = 3;
+      if (this.createForm.controls['uploadtype'].value === 'CU') {
+        body['uploadtype'] = 1;
+      } else if (this.createForm.controls['uploadtype'].value === 'DU') {
+        body['uploadtype'] = 2;
+      } else if (this.createForm.controls['uploadtype'].value === 'CU+DU') {
+        body['uploadtype'] = 3;
       } else {
-        body['type'] = 0;
+        body['uploadtype'] = 0;
       }
       body['sessionid'] = this.sessionId;
       this.commonService.createSoftware(body).subscribe(
@@ -245,9 +257,9 @@ export class SoftwareManagementComponent implements OnInit {
   delete() {
     if (this.commonService.isLocal) {
       /* local file test */
-      for (let i = 0; i < this.commonService.softwareList.length; i++) {
-        if (this.selectSoftware.id === this.commonService.softwareList[i].id) {
-          this.commonService.softwareList.splice(i, 1);
+      for (let i = 0; i < this.commonService.softwareLists.uploadinfos.length; i++) {
+        if (this.selectSoftware.id === this.commonService.softwareLists.uploadinfos[i].id) {
+          this.commonService.softwareLists.uploadinfos.splice(i, 1);
           break;
         }
       }
@@ -281,7 +293,7 @@ export class SoftwareManagementComponent implements OnInit {
     this.advancedForm = this.fb.group({
       'firm': new FormControl(''),
       'model': new FormControl(''),
-      'type': new FormControl(''),
+      'uploadtype': new FormControl(''),
       'version': new FormControl(''),
       'from': new FormControl(''),
       'to': new FormControl(''),
@@ -292,7 +304,7 @@ export class SoftwareManagementComponent implements OnInit {
     const orgAdvancedForm = _.cloneDeep(this.advancedForm);
     this.advancedForm.controls['firm'].setValue(this.searchForm.controls['firm'].value);
     this.advancedForm.controls['model'].setValue(this.searchForm.controls['model'].value);
-    this.advancedForm.controls['type'].setValue(this.searchForm.controls['type'].value);
+    this.advancedForm.controls['uploadtype'].setValue(this.searchForm.controls['uploadtype'].value);
     this.advancedForm.controls['from'].setValue(this.searchForm.controls['from'].value);
     this.advancedForm.controls['to'].setValue(this.searchForm.controls['to'].value);
     this.advancedForm.controls['fileName'].setValue(this.searchForm.controls['fileName'].value);
@@ -300,10 +312,14 @@ export class SoftwareManagementComponent implements OnInit {
     this.advancedModalRef.afterClosed().subscribe((result) => {
       if (result === 'OK') {
         this.isSettingAdvanced = true;
-        this.searchForm.controls['cloudName'].setValue(this.advancedForm.controls['cloudName'].value);
-        this.searchForm.controls['nfName'].setValue(this.advancedForm.controls['nfName'].value);
+        this.isSearch = true;
+        this.searchForm.controls['firm'].setValue(this.advancedForm.controls['firm'].value);
+        this.searchForm.controls['model'].setValue(this.advancedForm.controls['model'].value);
         this.searchForm.controls['from'].setValue(this.advancedForm.controls['from'].value);
         this.searchForm.controls['to'].setValue(this.advancedForm.controls['to'].value);
+        this.searchForm.controls['fileName'].setValue(this.advancedForm.controls['fileName'].value);
+        this.afterAdvancedForm = _.cloneDeep(this.advancedForm);
+        this.afterSearchForm = _.cloneDeep(this.advancedForm);
         this.p = 1;
         this.getFMAdvanceSearch();
       } else {
@@ -313,16 +329,16 @@ export class SoftwareManagementComponent implements OnInit {
   }
 
   getFMAdvanceSearch() {
-    const globalId = this.afterAdvancedForm.controls['globalId'].value;
-    const cloudName = encodeURIComponent(this.afterAdvancedForm.controls['cloudName'].value);
-    const nfId = this.afterAdvancedForm.controls['nfId'].value;
-    const nfName = encodeURIComponent(this.afterAdvancedForm.controls['nfName'].value);
-    const acknowledgeOwner = encodeURIComponent(this.afterAdvancedForm.controls['acknowledgeOwner'].value);
+    const firm = this.afterAdvancedForm.controls['firm'].value;
+    const model = encodeURIComponent(this.afterAdvancedForm.controls['model'].value);
+    const uploadtype = this.afterAdvancedForm.controls['uploadtype'].value;
     const start = this.commonService.dealPostDate(this.afterAdvancedForm.controls['from'].value);
     const end = this.commonService.dealPostDate(this.afterAdvancedForm.controls['to'].value);
+    const fileName = this.afterAdvancedForm.controls['fileName'].value;
     const offset = (this.p - 1) * this.pageSize;
     console.log('getFMAdvanceSearch:');
-    console.log(`globalId=${globalId}, cloudName=${cloudName}, nfId=${nfId}, nfName=${nfName}, acknowledgeOwner=${acknowledgeOwner}, start=${start}, end=${end}, offset=${offset}`);
+    console.log(`firm=${firm}, model=${model}, start=${start}, end=${end}, fileName=${fileName}, offset=${offset}`);
+    console.log(`uploadtype=${uploadtype}`);
     clearTimeout(this.refreshTimeout);
     if (this.commonService.isLocal) {
       /* local file test */
@@ -330,27 +346,23 @@ export class SoftwareManagementComponent implements OnInit {
       console.log(this.softwareLists);
       this.softwareListDeal();
     } else {
-      const globalId = this.afterAdvancedForm.controls['globalId'].value;
-      const cloudName = encodeURIComponent(this.afterAdvancedForm.controls['cloudName'].value);
-      const nfId = this.afterAdvancedForm.controls['nfId'].value;
-      const nfName = encodeURIComponent(this.afterAdvancedForm.controls['nfName'].value);
-      const acknowledgeOwner = encodeURIComponent(this.afterAdvancedForm.controls['acknowledgeOwner'].value);
-      const severity = this.afterAdvancedForm.controls['severity'].value;
+      const firm = this.afterAdvancedForm.controls['firm'].value;
+      const model = encodeURIComponent(this.afterAdvancedForm.controls['model'].value);
+      const fileName = this.afterAdvancedForm.controls['fileName'].value;
+      const uploadtype = this.afterAdvancedForm.controls['uploadtype'].value;
       const start = this.commonService.dealPostDate(this.afterAdvancedForm.controls['from'].value);
       const end = this.commonService.dealPostDate(this.afterAdvancedForm.controls['to'].value);
       const offset = (this.p - 1) * this.pageSize;
       const limit = 10;
-    //   if (this.queryFMAdvanceSearchScpt) this.queryFMAdvanceSearchScpt.unsubscribe();
-    //   this.queryFMAdvanceSearchScpt = this.commonService.queryFMAdvanceSearch(globalId, cloudName, nfId, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
-    //     res => {
-    //       console.log('getFMAdvanceSearch:');
-    //       console.log(res);
-    //       const str = JSON.stringify(res);//convert array to string
-    //       this.faultMessage = JSON.parse(str);
-    //       this.faultMessage = res as FaultMessage;
-    //       this.faultMessageDeal();
-    //     }
-    //   );
+      if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
+      this.querySWAdvanceSearchScpt = this.commonService.querySoftwareAdvanceSearch(firm, model, fileName, start, end, offset, limit).subscribe(
+        res => {
+          console.log('getFMAdvanceSearch:');
+          console.log(res);
+          const str = JSON.stringify(res);//convert array to string
+          this.softwareLists = JSON.parse(str);
+        }
+      );
      }
   }
 
@@ -368,14 +380,14 @@ export class SoftwareManagementComponent implements OnInit {
 
   debug() {
     const body = this.createForm.value;
-    if (this.createForm.controls['type'].value === 'CU') {
-      body['type'] = 1;
-    } else if (this.createForm.controls['type'].value === 'DU') {
-      body['type'] = 2;
-    } else if (this.createForm.controls['type'].value === 'CU+DU') {
-      body['type'] = 3;
+    if (this.createForm.controls['uploadtype'].value === 'CU') {
+      body['uploadtype'] = 1;
+    } else if (this.createForm.controls['uploadtype'].value === 'DU') {
+      body['uploadtype'] = 2;
+    } else if (this.createForm.controls['uploadtype'].value === 'CU+DU') {
+      body['uploadtype'] = 3;
     } else {
-      body['type'] = 0;
+      body['uploadtype'] = 0;
     }
     body['sessionid'] = this.sessionId;
     console.log(body);

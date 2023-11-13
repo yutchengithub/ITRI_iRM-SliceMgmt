@@ -275,7 +275,7 @@ export class CommonService {
   }
 
   deleteSoftware(id: string): Observable<any> {
-    const url = `${this.restPath}/deleteSoftware/${this.getSessionId()}/${id}`;
+    const url = `${this.restPath}/removeUploadFileInfo/${this.getSessionId()}/${id}`;
     return this.http.delete(url);
   }
 
@@ -413,6 +413,11 @@ export class CommonService {
 
   queryFMAdvanceSearch(globalId: string, cloudName: string, nfId: string, nfName: string, acknowledgeOwner: string, severity: string, start: string, end: string, offset: number, limit: number): Observable<any> {
     const url = `${this.restPath}/queryFMAdvanceSearch/${this.getSessionId()}/}?cloudId=${globalId}&cloudName=${cloudName}&nfId=${nfId}&nfname=${nfName}&start=${start}&end=${end}&severity=${severity}&acknowledgeOwner=${acknowledgeOwner}&offset=${offset}&limit=${limit}`;
+    return this.http.get(url);
+  }
+
+  querySoftwareAdvanceSearch(firm: string, model: string, filename: string, start: string, end: string, offset: number, limit: number): Observable<any> {
+    const url = `${this.restPath}/querySWAdvanceSearch/${this.getSessionId()}/}?firm=${firm}&model=${model}&start=${start}&end=${end}&filename=${filename}&offset=${offset}&limit=${limit}`;
     return this.http.get(url);
   }
 

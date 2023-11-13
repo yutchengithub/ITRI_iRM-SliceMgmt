@@ -10,9 +10,9 @@
           <input type="text"formControlName="model">
       </span>
       <span><label>{{languageService.i18n['type']}}</label>
-        <select formControlName="type">
+        <select formControlName="uploadtype">
           <option value="All">All</option>
-          <option *ngFor="let opt of searchTypeList" [value]="opt.value">{{opt.displayName}}</option>
+          <option *ngFor="let opt of uploadtypeList" [value]="opt.value">{{opt.displayName}}</option>
         </select>
       </span>
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
@@ -70,15 +70,15 @@
       <li>
         <label>{{languageService.i18n['firm']}}</label>
         <span>
-          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+          <input type="text" formControlName="firm" class="{{formValidated&&createForm.controls['firm'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['firm'].invalid">Required</mat-error>
         </span>
       </li>
       <li>
         <label>{{languageService.i18n['model']}}</label>
         <span>
-          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+          <input type="text" formControlName="model" class="{{formValidated&&createForm.controls['model'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['model'].invalid">Required</mat-error>
         </span>
       </li>
 
@@ -87,7 +87,7 @@
         <span>
           <select>
             <option value="All">All</option>
-            <option *ngFor="let opt of searchTypeList" [value]="opt.value">{{opt.displayName}}</option>
+            <option *ngFor="let opt of uploadtypeList" [value]="opt.value">{{opt.displayName}}</option>
           </select>
         </span>
       </li>
@@ -123,22 +123,22 @@
         <li>
         <label>{{languageService.i18n['notes']}}</label>
         <span>
-          <textarea></textarea>
+          <textarea formControlName="notes"></textarea>
         </span>
       </li>
 
       <li>
         <label>{{languageService.i18n['ftp.account']}}</label>
         <span>
-          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+          <input type="text" formControlName="ftpaccount" class="{{formValidated&&createForm.controls['ftpaccount'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['ftpaccount'].invalid">Required</mat-error>
         </span>
       </li>
       <li>
         <label>{{languageService.i18n['ftp.password']}}</label>
         <span>
-          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+          <input type="text" formControlName="ftppassword" class="{{formValidated&&createForm.controls['ftppassword'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['ftppassword'].invalid">Required</mat-error>
         </span>
       </li>
 
@@ -173,9 +173,10 @@
         <span>{{languageService.i18n['model']}}</span> <input type="text" formControlName="model">
       </li>
       <li>
-        <span>{{languageService.i18n['type']}}</span><select>
+        <span>{{languageService.i18n['type']}}</span>
+        <select formControlName="uploadtype">
           <option value="All">All</option>
-          <option *ngFor="let opt of searchTypeList" [value]="opt.value">{{opt.displayName}}</option>
+          <option *ngFor="let opt of uploadtypeList" [value]="opt.value">{{opt.displayName}}</option>
         </select>
       </li>
       <li>

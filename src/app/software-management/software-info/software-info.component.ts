@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from './../../shared/common.service';
-import { SoftwareList } from './../../software-management/software-management.component';
+import { SoftwareLists } from './../../software-management/software-management.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
@@ -41,9 +41,9 @@ export class SoftwareInfoComponent implements OnInit {
   createForm!: FormGroup;
   // utilizationPercent: number = 0;
   softwareInfo: SoftwareInfo = {} as SoftwareInfo;
-  softwareList: SoftwareList[] = [];
+  //softwareList: SoftwareList[] = [];
   systemSummary: SystemSummary = {} as SystemSummary;;
-  fileNameMapSoftware: Map<string, SoftwareList> = new Map();
+  fileNameMapSoftware: Map<string, SoftwareInfo> = new Map();
   faultColors: string[] = ['#FF0000', '#FFA042', '	#FFFF37', '#00FFFF'];
   nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
   showTooltipCpu: any = {};
@@ -141,9 +141,9 @@ export class SoftwareInfoComponent implements OnInit {
 
   softwareDeal() {
     this.fileNameMapSoftware = new Map();
-    this.softwareList.forEach((row) => {
-      this.fileNameMapSoftware.set(row.fileName, row);
-    });
+    // this.softwareInfo.forEach((row) => {
+    //   this.fileNameMapSoftware.set(row.fileName, row);
+    // });
   }
 
 
