@@ -1,28 +1,4 @@
-/* .table table {
-  width: 97.5%;
-  margin: 0;
-  text-align: center;
-  max-height: 70vh;
-}
-table thead th {
-  white-space: nowrap;
-}
-table tr td {
-  min-width: 5vw;
-  text-align: center;
-}
-table tr td.time{
-  width: 3vw;
-  text-align: left;
-} */
-/* 
-table tr td:nth-child(2) {
-  
-}
-table tr td:nth-last-child(2){
-  width: 3vw;
-}
- */
+
 .userLog
 td mat-icon {
   cursor: pointer;
@@ -78,14 +54,14 @@ button.modify {
 // For Log Management table @11/02 add by yuchen
 table {
   width: 100%;
-  max-width: 100%;
+  max-width: 97.65%;
   table-layout: fixed; // 固定列寬
 }
 
 table thead th, table tbody td {
   text-align: center;
   padding: 8px;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   /* width: 14.28%; */ // 平均分配列寬，有 7 個欄位: 100 % / 7 ≈ 14.28% 
   vertical-align: top;
   //text-overflow: ellipsis;
@@ -93,14 +69,13 @@ table thead th, table tbody td {
 }
 
 table.neLog tbody td {
-  min-width: 5vw;
+  width: 6vw;
 }
 table.neLog tr td:nth-last-child(3),
 table.neLog tr td:nth-last-child(4) {
   text-align: left;
-  max-width: 35vw;
+  width: 28vw;
   word-break: break-all;
-  white-space: pre-line;
 }
  
 table tbody td.time {
@@ -138,7 +113,7 @@ table.userLog td {
 }
 table.userLog th.logmsg,
 table.userLog td.logmsg {
-  width: 40vw;
+  width: 50vw;
 }
 table.userLog td.logmsg {
   text-align: left;

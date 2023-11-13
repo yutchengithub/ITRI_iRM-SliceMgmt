@@ -218,21 +218,22 @@ mat-dialog-container div.buttons button {
 mat-dialog-container div.buttons button:hover {
   filter: brightness(1.5);
 }
-.mat-dialog-container#createModal input[type="text"],
-.mat-dialog-container#createModal textarea,
-.mat-dialog-container#createModal select {
-  width: 21.5em;
-}
+
 .mat-dialog-container ul li > div {
   margin: .2em 0 0 0.7em;
 }
 .mat-dialog-container ul li div input[type="text"] ,
 .mat-dialog-container ul li div select {
-  width: 20.6em!important;
+  width: 20.6em;
   margin: 0;
 }
 .mat-dialog-container ul li div label {
   min-width: 15em!important;
+}
+.mat-dialog-container#createModal input[type="text"],
+.mat-dialog-container#createModal textarea,
+.mat-dialog-container#createModal select {
+  width: 21.5em;
 }
 mat-button-toggle-group {
   margin: .5em 0;
@@ -286,7 +287,7 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
   margin: 1% 0 0;
 }
 .table table {
-  margin: 0 auto 1em;
+  margin: 0 0 1em;
   max-height: 60vh;
   overflow: auto;
   z-index: 9999;
@@ -845,7 +846,7 @@ transition: all 0.3s;
 
 #faultAdvancedModal #time,
 p-calendar #time {
-  width: 9em;
+  width: 10.06em;
   padding: 5px 6px;
 }
 .p-datepicker table th {
@@ -916,7 +917,7 @@ ul.modify li {
 
 #nelogDetail ul li > span:first-child,
 #userlogDetail ul li > span:first-child {
-  width: 7em;
+  width: 7.3em;
   text-align: right;
   margin: 0;
 }
@@ -933,7 +934,7 @@ input[type="file"] {
   font-size: 13px;
   margin: 5px 0;
 }
-.url {
+#createModal .url {
   margin-top: .5em;
 }
 .url input {
