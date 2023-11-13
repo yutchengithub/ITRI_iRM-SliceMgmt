@@ -632,26 +632,41 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     // 根據 dataType 和日期範圍設定下載的檔名  
     // ## 檔名還需依據 Filters 的設定去進行命名 (未完成)
-    if (dataType === 'UserLogs')
-      a.download = `User_Logs_${formattedFromDate}_to_${formattedToDate}.csv`;
-    else if (dataType === 'NELogs')
-      a.download = `NE_Logs_${formattedFromDate}_to_${formattedToDate}.csv`;
+    const fileName = dataType === 'UserLogs' ? 
+      `User_Logs_${formattedFromDate}_to_${formattedToDate}.csv` :
+      `NE_Logs_${formattedFromDate}_to_${formattedToDate}.csv`;
+
+    a.download = fileName;
 
     // 觸發點擊事件以下載檔案
     a.click();
     window.URL.revokeObjectURL(url); // 釋放 URL 物件，以回收資源和釋放記憶體
   }
+  
 
-  // @1107 add by yuchen
-  // 用於將指定資料轉換成 .csv 格式
+  // @11/07 add by yuchen 
+  // 用於將指定資料轉換成 .csv 格式 @11/13 updated
   convertToCSV(data: any[]): string {
 
-    // 創建 CSV 檔案的標頭行，以及資料行
-    const header = Object.keys(data[0]).join(',');              // 創建標頭行，將資料物件的屬性名稱逗號分隔
-    const rows = data.map(row => Object.values(row).join(',')); // 創建資料行，將每個資料物件的值逗號分隔
+    // 創建 CSV 檔的標頭行
+    const header = Object.keys(data[0]).join(',');
+  
+    const rows = data.map(row => {
+      return Object.values(row).map(value => {
 
-    // 返回完整的 CSV 字串，包括標頭行和資料行
-    return header + '\n' + rows.join('\n');
+        // 將 value 轉換為字符串，處理特殊字符與換行符號
+        const stringValue = typeof value === 'string' ? value : String(value);
+
+        // 雙引號內的雙引號需要被轉義（即替換為兩個雙引號）
+        const escapedStringValue = stringValue.replace(/"/g, '""');
+
+        // 如字串包含逗號、雙引號或換行符號，則需要將整個字串包在雙引號中
+        return `"${escapedStringValue}"`;
+      }).join(',');
+    });
+  
+    // 將標頭行和所有數據行結合成一個 CSV 格式的字串
+    return [header, ...rows].join('\n');
   }
-
+  
 }
