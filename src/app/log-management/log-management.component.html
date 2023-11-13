@@ -34,6 +34,13 @@
           </select>
           <mat-error *ngIf="searchForm.controls['UserLogType'].invalid">Required</mat-error>
         </span>
+
+        <!-- Keyword Filter for User Logs @11/13 add by yuchen -->
+        <span style="margin-left: 10px;">
+          <label style="margin-right: 5px !important">{{languageService.i18n['UserLog.logKeywordString']}}</label>
+          <input style="width: 400px" formControlName="keyword">
+        </span>
+
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_UserLogs()">search</span>
         <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
         
@@ -105,7 +112,7 @@
           <input style="width: 400px" formControlName="keyword">
         </span>
 
-        <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="nelogs_search()">search</span>
+        <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_NELogs()">search</span>
         <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
 
         <!-- Button of Export NE logs to CSV @1107 add by yuchen -->
@@ -127,7 +134,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let opt of NELogsList.NELogsinfo | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'nelogsList' }">
+        <tr *ngFor="let opt of neLogsToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: neLogsToDisplay.length, id: 'nelogsList' }">
           <td>{{opt.NElogID}}</td>
           <td>{{opt.userid}}</td>
           <td>{{opt.operation}}</td>
@@ -147,7 +154,7 @@
     </table>
     
     <!-- pagination @10/31 changed by yuchen --> 
-    <span class="total">{{languageService.i18n['NElog.total1']}} {{NELogsList.logNumber}} {{languageService.i18n['NElog.total2']}}</span>
+    <span class="total">{{languageService.i18n['NElog.total1']}} {{neLogsToDisplay.length}} {{languageService.i18n['NElog.total2']}}</span>
     <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination2" previousLabel="" 
     nextLabel="" id="nelogsList"> 
     </pagination-controls>

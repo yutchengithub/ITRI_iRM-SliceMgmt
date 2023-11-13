@@ -184,6 +184,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     this.type = 'User_Logs';  // 設定初始化預設值
     //this.type = 'NE_Logs';
+
     this.sessionId = this.commonService.getSessionId();
 
     /*this.route.params.subscribe((params) => {
@@ -250,11 +251,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.refreshTimeout = window.setTimeout(() => {
       if (this.p === 1) {
         console.log(`page[${this.p}] ===> refresh.`);
-        if (this.isSettingAdvanced) {
-          this.getFMAdvanceSearch();
-        } else {
-          this.getUserLogsInfo();
-        }
+        this.getUserLogsInfo();
 
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
@@ -303,13 +300,9 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.nullList = new Array(this.totalItems);
     this.refreshTimeout = window.setTimeout(() => {
       if (this.p === 1) {
+        
         console.log(`page[${this.p}] ===> refresh.`);
-        if (this.isSettingAdvanced) {
-          this.getFMAdvanceSearch();
-        } else {
-          this.getNELogsInfo();
-        }
-
+        this.getNELogsInfo();
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
       }
@@ -384,22 +377,27 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
 /* ↑ For click "View" ↑ */
 
+
+
+  // 建立搜尋表單
   createSearchForm() {
     const nowTime = this.commonService.getNowTime();
     this.searchForm = this.fb.group({
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)), 
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
-      'UserLogType': new FormControl('All'),
-      'NELogType': new FormControl('All')
+      'UserLogType': new FormControl('All'),  // User Logs 類型欄位
+      'NELogType': new FormControl('All'),    // NE Logs 類型欄位
+      'keyword': new FormControl('')          // 新增關鍵字欄位 @11/13 Add by yuchen 
     });
-  }
+}
 
   createAdvancedForm() {
     this.advancedForm = this.fb.group({
       'from': new FormControl(''),
       'to': new FormControl(''),
-      'UserLogType': new FormControl(''),
-      'NELogType': new FormControl('')
+      'UserLogType': new FormControl(''),  // User Logs 類型欄位
+      'NELogType': new FormControl(''),    // NE Logs 類型欄位
+      'keyword': new FormControl('')       // 新增關鍵字欄位 @11/13 Add by yuchen
     });
   }
 
@@ -410,22 +408,52 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.getNELogsInfo();   // @11/01 Add getNELogsInfo
   }
 
-  // 用於點擊對應的 Button 時切換頁面
+  // 用於點擊至對應的 Button 時，進行頁面的切換
   changeType(e: MatButtonToggleChange) {
 
-    console.log(this.type);
-    console.log(this.p);    // 用於測試點擊時的頁數     @11/07 Add by yuchen 
-    this.p = 1;             // 點擊任一頁面對應 Button 時，將表格頁數預設為 1  @11/07 Add by yuchen 
+    this.p = 1;  // 將頁數重置為 1
 
-    if (this.type === 'User_Logs') 
-      this.getUserLogsInfo();
-    else if (e.value === 'NE_Logs')
-      this.getNELogsInfo();
+    this.searchForm.reset({
+      from: this.searchForm.get('from')?.value, 
+      to: this.searchForm.get('to')?.value,
+      UserLogType: 'All',
+      NELogType: 'All',
+      keyword: ''
+    });  // 重置搜尋表單的條件 @11/13 Add by yuchen
+
+    // 重置搜尋狀態標記  @11/13 Add by yuchen
+    this.isSearch_userLogs = false;
+    this.isSearch_neLogs = false;
+
+    // 重置篩選後的 Log Lists @11/13 Add by yuchen
+    this.filtered_UserLogs = [];
+    this.filtered_NELogs = [];
+
+    // 根據當前選擇的 Log 類型載入數據
+    if (e.value === 'User_Logs') {
+
+      this.type = 'User_Logs';
+      this.getUserLogsInfo();  // 載入 User Logs 數據 ( 這將獲取未經篩選的 User Logs )
+
+    } else if (e.value === 'NE_Logs') {
+
+      this.type = 'NE_Logs';
+      this.getNELogsInfo();    // 載入 NE Logs 數據 ( 這將獲取未經篩選的 NE Logs )
+    }
+
+    // 更新當前類型，以便知道哪個 Log 類型被選中
+    // Set the log type to display after tab switch
+    this.type = e.value;
+    console.log('頁面切換後，顯示的 Log 類型:', this.type);
+    console.log('Log type displayed after tab switch:', this.type);
   }
+
 
 
 /* ↓ For click "Search" ↓ */
 
+
+  // For search User Logs
   filtered_UserLogs: UserLogsinfo[] = [];
   isSearch_userLogs: boolean = false;
   search_UserLogs() {
@@ -435,6 +463,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     const from = this.searchForm.get('from')?.value;
     const to = this.searchForm.get('to')?.value;
     const userLogType = this.searchForm.get('UserLogType')?.value;
+    const keyword = this.searchForm.get('keyword')?.value || '';    // 新增關鍵字篩選  @11/13 Add by yuchen
 
     // 格式化日期為所需的格式
     const formattedFrom = this.commonService.dealPostDate(from);
@@ -444,7 +473,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.filtered_UserLogs = [];
     this.isSearch_userLogs = false;
 
-    // 如果是在本地環境測試
+    // 如果是在 Local 環境測試
     if (this.commonService.isLocal) {
 
       this.filtered_UserLogs = this.UserLogsList.UserLogsinfo.filter(log => {
@@ -453,23 +482,28 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         const isBeforeTo = logDate <= new Date(formattedTo);
         const isTypeMatch = userLogType === 'All' || log.logtype === userLogType;
 
-        return isAfterFrom && isBeforeTo && isTypeMatch;
+        // 新增關鍵字篩選判斷  @11/13 Add by yuchen
+        // 確認 log 中的請求資料或回應資料是否包含關鍵字，透過將字串轉換為小寫來實現不區分大小寫的比對  
+        const isKeywordMatch = !keyword || log.logmsg.toLowerCase().includes(keyword.toLowerCase());
+
+
+        return isAfterFrom && isBeforeTo && isTypeMatch && isKeywordMatch;
       });
-      this.isSearch_userLogs = true;  // 本地 Search 完畢，設置標記為 true
+      this.isSearch_userLogs = true;  // Local Search 完畢，設置標記為 true
 
       this.totalItems = this.filtered_UserLogs.length; // 確保更新 totalItems 以反映搜尋結果的數量
 
     } else {
 
       // 假設您有一個從後端取得日誌的方法，這裡是使用 HTTP 客戶端調用 API 的偽代碼
-      const queryParams = { from: formattedFrom, to: formattedTo, userLogType };
-
+      const queryParams = { from: formattedFrom, to: formattedTo, userLogType, keyword };
+  
       this.http.get<UserLogsList>('/api/userlogs', { params: queryParams }).subscribe(
         data => {
-          this.UserLogsList = data;
-          this.filtered_UserLogs = data.UserLogsinfo; // 假定後端已經過濾了數據
+          this.UserLogsList  = data;
+          this.filtered_UserLogs  = data.UserLogsinfo; // 假定後端已經篩選了數據
           this.totalItems = data.logNumber; // 更新總條目數量以供分頁
-          this.isSearch_userLogs = true;  // 伺服器 Search 完畢，設置標記為 true
+          this.isSearch_userLogs  = true;   // 伺服器 Search 完畢，設置標記為 true
         },
         error => {
           console.error('Error fetching filtered logs:', error);
@@ -486,24 +520,92 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   
 
 
-  // For search NE Logs
+  // For search NE Logs  @11/13 Add by yuchen
   filtered_NELogs: NELogsinfo[] = [];
   isSearch_neLogs: boolean = false;
-  nelogs_search() {
-    this.isSearch_neLogs = true;
+  search_NELogs() {
+
+    this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
+
+    const from = this.searchForm.get('from')?.value;
+    const to = this.searchForm.get('to')?.value;
+    const neLogType = this.searchForm.get('NELogType')?.value;
+    const keyword = this.searchForm.get('keyword')?.value || ''; // 新增關鍵字篩選
+
+    // 格式化日期為所需的格式
+    const formattedFrom = this.commonService.dealPostDate(from);
+    const formattedTo = this.commonService.dealPostDate(to);
+
+    // 清除以前的搜尋結果
+    this.filtered_NELogs = [];
+    this.isSearch_neLogs = false;
+
+    // 如果是在本地環境測試
+    if (this.commonService.isLocal) {
+
+      this.filtered_NELogs = this.NELogsList.NELogsinfo.filter(log => {
+        const logDate = new Date(log.logtime);
+        const isAfterFrom = logDate >= new Date(formattedFrom);
+        const isBeforeTo = logDate <= new Date(formattedTo);
+        const isTypeMatch = neLogType === 'All' || log.operation === neLogType;
+
+        // 確認 log 中的請求資料或回應資料是否包含關鍵字
+        // 透過將字串轉換為小寫來實現不區分大小寫的比對  
+        const isKeywordMatch = !keyword || 
+                       log.req_data.toLowerCase().includes(keyword.toLowerCase()) || 
+                       log.resp_data.toLowerCase().includes(keyword.toLowerCase());
+
+
+        return isAfterFrom && isBeforeTo && isTypeMatch && isKeywordMatch;
+      });
+      this.isSearch_neLogs = true;  // 本地 Search 完畢，設置標記為 true
+
+      this.totalItems = this.filtered_NELogs.length; // 確保更新 totalItems 以反映搜尋結果的數量
+
+    } else {
+
+      // 假設您有一個從後端取得日誌的方法，這裡是使用 HTTP 客戶端調用 API 的偽代碼
+      const queryParams = { from: formattedFrom, to: formattedTo, neLogType, keyword };
+
+      this.http.get<NELogsList>('/api/nElogs', { params: queryParams }).subscribe(
+        data => {
+          this.NELogsList = data;
+          this.filtered_NELogs = data.NELogsinfo; // 假定後端已經篩選了數據
+          this.totalItems = data.logNumber; // 更新總條目數量以供分頁
+          this.isSearch_neLogs = true;  // 伺服器 Search 完畢，設置標記為 true
+        },
+        error => {
+          console.error('Error fetching filtered logs:', error);
+        }
+      );
+    }
   }
+
+  // 用於顯示的 NE Logs 數據  @11/13 Add by yuchen
+  get neLogsToDisplay(): NELogsinfo[] {
+    // 如果 isSearch_neLogs 為 true，則表示已經進行了搜尋，應該顯示 filtered_NELogs
+    // 否則，顯示全部 NELogsList.NELogsinfo
+    return this.isSearch_neLogs ? this.filtered_NELogs : this.NELogsList.NELogsinfo;
+  }
+
 
 /* ↑ For click "Search" ↑ */
 
   
-
-  // @1107 add by yuchen
+  // @11/07 add by yuchen
   // 用於將指定 Log 匯出成 .csv 檔案  
   // ## 還需要更動成依據 Filters 的設定去進行匯出，如只匯出指定時間段的資料 (未完成)
   exportToCSV(dataType: string) {
     
     // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsinfo 矩陣或是 NELogsinfo 矩陣
     let dataToExport: UserLogsinfo[] | NELogsinfo[] = [];
+
+    // 從 searchForm 獲取日期範圍並格式化
+    const from = this.commonService.dealPostDate(this.searchForm.get('from')?.value);
+    const to = this.commonService.dealPostDate(this.searchForm.get('to')?.value);
+    const formattedFromDate = from.split(' ')[0]; // 取得日期部分
+    const formattedToDate = to.split(' ')[0];     // 取得日期部分
+
 
     if (dataType === 'UserLogs') {
 
@@ -516,6 +618,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       dataToExport = this.commonService.NELogsList.NELogsinfo;
     }
 
+  
     // 將資料轉換成 CSV 格式
     const csvData = this.convertToCSV(dataToExport);
     
@@ -527,12 +630,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     const a = document.createElement('a');        // 創建一個新的超鏈結元素
     a.href = url;                                 // 設定超鏈結的 URL
 
-    // 根據 dataType 設定下載的檔名  
+    // 根據 dataType 和日期範圍設定下載的檔名  
     // ## 檔名還需依據 Filters 的設定去進行命名 (未完成)
     if (dataType === 'UserLogs')
-      a.download = 'user_logs.csv';
+      a.download = `User_Logs_${formattedFromDate}_to_${formattedToDate}.csv`;
     else if (dataType === 'NELogs')
-      a.download = 'ne_logs.csv';
+      a.download = `NE_Logs_${formattedFromDate}_to_${formattedToDate}.csv`;
 
     // 觸發點擊事件以下載檔案
     a.click();
@@ -551,63 +654,4 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     return header + '\n' + rows.join('\n');
   }
 
-
-
-
-
-  openAdvancedModal() {
-    const orgAdvancedForm = _.cloneDeep(this.advancedForm);
-    this.advancedForm.controls['fieldName'].setValue(this.searchForm.controls['fieldName'].value);
-    this.advancedForm.controls['nfName'].setValue(this.searchForm.controls['nfName'].value);
-    this.advancedForm.controls['from'].setValue(this.searchForm.controls['from'].value);
-    this.advancedForm.controls['to'].setValue(this.searchForm.controls['to'].value);
-    this.advancedForm.controls['severity'].setValue(this.searchForm.controls['severity'].value);
-    this.advancedModalRef = this.dialog.open(this.advancedModal, { id: 'faultAdvancedModal' });
-    this.advancedModalRef.afterClosed().subscribe((result) => {
-      if (result === 'OK') {
-        this.isSettingAdvanced = true;
-        this.searchForm.controls['fieldName'].setValue(this.advancedForm.controls['fieldName'].value);
-        this.searchForm.controls['nfName'].setValue(this.advancedForm.controls['nfName'].value);
-        this.searchForm.controls['from'].setValue(this.advancedForm.controls['from'].value);
-        this.searchForm.controls['to'].setValue(this.advancedForm.controls['to'].value);
-        this.searchForm.controls['severity'].setValue(this.advancedForm.controls['severity'].value);
-        this.p = 1;
-        this.getFMAdvanceSearch();
-      } else {
-        this.advancedForm = orgAdvancedForm;
-      }
-    });
-  }
-
-  getFMAdvanceSearch() {/*
-    console.log('getFMAdvanceSearch:');
-    clearTimeout(this.refreshTimeout);
-    if (this.commonService.isLocal) {
-      // local file test 
-      this.faultMessage = this.commonService.fmAdvanceSearch;
-      this.faultMessageDeal();
-    } else {
-      const globalId = this.advancedForm.controls['globalId'].value;
-      const fieldName = this.advancedForm.controls['fieldName'].value;
-      const nfId = this.advancedForm.controls['nfId'].value;
-      const nfName = this.advancedForm.controls['nfName'].value;
-      const acknowledgeOwner = this.advancedForm.controls['acknowledgeOwner'].value;
-      const severity = this.advancedForm.controls['severity'].value;
-      const start = this.commonService.dealPostDate(this.advancedForm.controls['from'].value);
-      const end = this.commonService.dealPostDate(this.advancedForm.controls['to'].value);
-      const offset = (this.p - 1) * this.pageSize;
-      const limit = 10;
-      if (this.queryFMAdvanceSearchScpt) this.queryFMAdvanceSearchScpt.unsubscribe();
-      this.queryFMAdvanceSearchScpt = this.commonService.queryFMAdvanceSearch(globalId, fieldName, nfId, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
-        res => {
-          console.log('getFMAdvanceSearch:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.faultMessage = JSON.parse(str);
-          this.faultMessage = res as FaultMessage;
-          this.faultMessageDeal();
-        }
-      );
-    }*/
-  }
 }
