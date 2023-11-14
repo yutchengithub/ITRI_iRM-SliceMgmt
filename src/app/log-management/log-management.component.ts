@@ -577,13 +577,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     if (dataType === 'UserLogs') {
 
-      // 如 dataType 是 'UserLogs'，則將 UserLogsinfo 資料設定為 dataToExport
-      dataToExport = this.commonService.UserLogsList.UserLogsinfo;
+      // 如 dataType 是 'UserLogs'，則將 userlogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
+      dataToExport = this.userlogsToDisplay;  // @11/14 調整為輸出即時顯示於頁面上的 User Logs
 
     } else if (dataType === 'NELogs') {
 
-      // 如是 'NELogs'，則將 NELogsinfo 資料設定為 dataToExport
-      dataToExport = this.commonService.NELogsList.NELogsinfo;
+      // 如是 'NELogs'，則將 neLogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
+      dataToExport = this.neLogsToDisplay;    // @11/14 調整為輸出即時顯示於頁面上的 NE Logs
     }
 
   
