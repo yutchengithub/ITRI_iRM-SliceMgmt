@@ -568,11 +568,16 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsinfo 矩陣或是 NELogsinfo 矩陣
     let dataToExport: UserLogsinfo[] | NELogsinfo[] = [];
 
+    // 依據用戶選擇的 dataType 確定是使用 UserLogType 還是 NELogType
+    // 從 searchForm 獲取用戶選擇的日誌類型，如無選擇則默認為 'All'
+    const logType = dataType === 'UserLogs' ? this.searchForm.get('UserLogType')?.value || 'All' 
+                                            : this.searchForm.get('NELogType')?.value || 'All';
+    
+    const formattedLogType = logType.replace(/\s+/g, '_'); // 將空白符號替換為下底線
+
     // 從 searchForm 獲取日期範圍並格式化
-    const from = this.commonService.dealPostDate(this.searchForm.get('from')?.value);
-    const to = this.commonService.dealPostDate(this.searchForm.get('to')?.value);
-    const formattedFromDate = from.split(' ')[0]; // 取得日期部分
-    const formattedToDate = to.split(' ')[0];     // 取得日期部分
+    const formattedFromDate = this.commonService.dealPostDate(this.searchForm.get('from')?.value).split(' ')[0]; // 取得日期部分(從)
+    const formattedToDate = this.commonService.dealPostDate(this.searchForm.get('to')?.value).split(' ')[0];     // 取得日期部分(至)
 
 
     if (dataType === 'UserLogs') {
@@ -598,11 +603,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     const a = document.createElement('a');        // 創建一個新的超鏈結元素
     a.href = url;                                 // 設定超鏈結的 URL
 
-    // 根據 dataType 和日期範圍設定下載的檔名  
-    // ## 檔名還需依據 Filters 的設定去進行命名 (未完成)
-    const fileName = dataType === 'UserLogs' ? 
-      `User_Logs_${formattedFromDate}_to_${formattedToDate}.csv` :
-      `NE_Logs_${formattedFromDate}_to_${formattedToDate}.csv`;
+    // 根據 dataType 、日期範圍和 log 類型設定下載的檔名  @11/14 changed by yuchen
+    const fileName = `${dataType}_${formattedLogType}_${formattedFromDate}_to_${formattedToDate}.csv`;
 
     a.download = fileName;
 
