@@ -17,7 +17,6 @@ export interface UserLogsList {   // FaultMessage -> LogList @10/30 by yuchen
 }
 
 export interface UserLogsinfo {   // FaultMessages -> loginfo @10/30 by yuchen
-  userlogID: string; // add by yuchen @10/31
   userid: string;    // add by yuchen @10/30
   logtype: string;   // add by yuchen @10/30
   loglevel: number;  // add by yuchen @10/30
@@ -43,7 +42,6 @@ export interface NELogsList {
 
 // add by yuchen @10/30
 export interface NELogsinfo { 
-  NElogID: string; // add by yuchen @10/31
   userid: string;    
   operation: string;   
   req_data: string;  
@@ -59,28 +57,6 @@ export interface NELogdetail {
   resp_data: string;
   logtime: string;
 }
-
-export interface FmStatus {
-  timestamp: string;
-  cloudId: string;
-  nfId: string;
-  severity: string;
-  context: string;
-  isCleared: boolean;
-  processStatus: number;
-  __processStatus?: string;
-  processComment: string;
-  acknowledgeOwner: string;
-}
-
-export interface FmStatusRecord {
-  timestamp: string;
-  processStatus: number;
-  processComment: string;
-  acknowledgeOwner: string;
-}
-
-
 
 
 @Component({
@@ -101,8 +77,6 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
 
   // For click View Page
-  selectuserlogID: string ='';                        // 用於記錄選擇的 User Log 的 ID     @10/31 add by yuchen
-  selectNElogID: string ='';                          // 用於記錄選擇的 NE Log 的 ID       @10/31 add by yuchen
   userLogdetail: UserLogdetail = {} as UserLogdetail; // 用於存儲選擇的 User Log 的詳細訊息 @11/06 add by yuchen
   neLogdetail: NELogdetail = {} as NELogdetail;       // 用於存儲選擇的 NE Log 的詳細訊息   @11/06 add by yuchen
 
@@ -326,9 +300,6 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       logmsg: UserLogsinfo.logmsg
     };
 
-    // 記錄所選 User Log 的ID
-    this.selectuserlogID = UserLogsinfo.userlogID;
-
     // 隱藏200訊息
     this.show200Msg = false;
 
@@ -356,9 +327,6 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       resp_data: NELogsinfo.resp_data,
       logtime: NELogsinfo.logtime
     };
-
-    // 記錄所選 NE Log 的 ID
-    this.selectNElogID = NELogsinfo.NElogID;
 
     // 隱藏 200 訊息
     this.show200Msg = false;

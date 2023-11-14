@@ -63,15 +63,16 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let opt of userlogsToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: userlogsToDisplay.length, id: 'userlogsList' }">
-          <td>{{opt.userlogID}}</td>
-          <td>{{opt.userid}}</td>
-          <td>{{opt.logtype}}</td>
-          <td class="center">{{opt.loglevel}}</td>
-          <td class="logmsg">{{opt.logmsg}}</td>
-          <td>{{opt.logtime}}</td>
-          <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openUserlogDetail(opt)">remove_red_eye</mat-icon></td>
-        </tr>
+        <tr *ngFor="let opt of userlogsToDisplay | paginate: { itemsPerPage: pageSize,
+           currentPage: p, totalItems: userlogsToDisplay.length, id: 'userlogsList' }; let i = index">
+          <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 User log 的編號 @11/14 changed by yuchen-->
+          <td>{{ opt.userid }}</td>
+          <td>{{ opt.logtype }}</td>
+          <td class="center">{{ opt.loglevel }}</td>
+          <td class="logmsg">{{ opt.logmsg }}</td>
+          <td>{{ opt.logtime }}</td>
+          <td><mat-icon tooltip="{{ languageService.i18n['view_detail'] }}" (click)="openUserlogDetail(opt)">remove_red_eye</mat-icon></td>
+        </tr>        
         <tr class="notFind" *ngIf="userlogsToDisplay.length === 0">
           <td colspan="7">{{languageService.i18n['no_results']}}</td>
         </tr> 
@@ -134,8 +135,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let opt of neLogsToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: neLogsToDisplay.length, id: 'nelogsList' }">
-          <td>{{opt.NElogID}}</td>
+        <tr *ngFor="let opt of neLogsToDisplay | paginate: { itemsPerPage: pageSize,
+           currentPage: p, totalItems: neLogsToDisplay.length, id: 'nelogsList' }; let i = index">
+          <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 NE log 的編號 @11/14 changed by yuchen-->
           <td>{{opt.userid}}</td>
           <td>{{opt.operation}}</td>
           <td>

@@ -2641,7 +2641,6 @@ export class CommonService {
     logNumber: 15,  // number
     UserLogsinfo: [
       {
-        userlogID: '1',   // string
         userid: "k200",   // string
         logtype: "POST",  // string
         loglevel: 20,     // number
@@ -2649,7 +2648,6 @@ export class CommonService {
         logtime: "2023-06-14 13:59:46"  // string
       },
       {
-        userlogID: '2',
         userid: "k200",
         logtype: "GET",
         loglevel: 20,
@@ -2657,7 +2655,6 @@ export class CommonService {
         logtime: "2023-10-27 17:44:19"
       },
       {
-        userlogID: '3',
         userid: "k200",
         logtype: "GET",
         loglevel: 20,
@@ -2665,7 +2662,6 @@ export class CommonService {
         logtime: "2023-10-27 17:21:04"
       },
       {
-        userlogID: '4',
         userid: "k200",
         logtype: "GET",
         loglevel: 20,
@@ -2673,7 +2669,6 @@ export class CommonService {
         logtime: "2023-09-27 16:48:34"
       },
       {
-        userlogID: '5',
         userid: "k200",
         logtype: "GET",
         loglevel: 20,
@@ -2681,7 +2676,6 @@ export class CommonService {
         logtime: "2023-09-27 16:48:34"
       },
       {
-        userlogID: '6',
         userid: "k200",
         logtype: "GET",
         loglevel: 20,
@@ -2689,7 +2683,6 @@ export class CommonService {
         logtime: "2023-09-27 16:48:34"
       },
       {
-        userlogID: '7',
         userid: "k200",
         logtype: "GET",
         loglevel: 20,
@@ -2697,7 +2690,6 @@ export class CommonService {
         logtime: "2023-09-27 16:48:37"
       },
       {
-        userlogID: '8',
         userid: "k200",
         logtype: "GET",
         loglevel: 20,
@@ -2705,7 +2697,6 @@ export class CommonService {
         logtime: "2023-09-27 16:48:38"
       },
       {
-        userlogID: '9',
         userid: "k200",
         logtype: "GET",
         loglevel: 20,
@@ -2713,7 +2704,6 @@ export class CommonService {
         logtime: "2023-09-27 16:48:39"
       },
       {
-        userlogID: '10',
         userid: "k200",
         logtype: "GET",
         loglevel: 20,
@@ -2721,7 +2711,6 @@ export class CommonService {
         logtime: "2023-09-27 16:48:47"
       },
       {
-        userlogID: '11',
         userid: "k200",
         logtype: "DELETE",
         loglevel: 20,
@@ -2729,7 +2718,6 @@ export class CommonService {
         logtime: "2023-10-31 16:35:52"
       },
       {
-        userlogID: '12',
         userid: "k200",
         logtype: "GET",
         loglevel: 20,
@@ -2737,7 +2725,6 @@ export class CommonService {
         logtime: "2023-10-31 16:35:53"
       },
       {
-        userlogID: '13',
         userid: "k200",
         logtype: "GET",
         loglevel: 20,
@@ -2745,7 +2732,6 @@ export class CommonService {
         logtime: "2023-10-31 16:35:54"
       },
       {
-        userlogID: '14',
         userid: "k200",
         logtype: "DELETE",
         loglevel: 20,
@@ -2753,7 +2739,6 @@ export class CommonService {
         logtime: "2023-10-31 16:35:59"
       },
       {
-        userlogID: '15',
         userid: "k200",
         logtype: "POST",
         loglevel: 20,
@@ -2769,7 +2754,6 @@ export class CommonService {
     logNumber: 15,
     NELogsinfo: [
       {
-        NElogID: '1',               // string
         userid: "itri_10.0.2.17",             // string
         operation: "get-config",    // string
         // string
@@ -2778,16 +2762,14 @@ export class CommonService {
         resp_data: "<?xml version=\"1.0\" ?>\n<data xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n\t<software-inventory xmlns=\"urn:itri-software-management\">\n\t\t<software-slot>\n\t\t\t<name>slot-1</name>\n\t\t\t<status>VALID</status>\n\t\t\t<active>true</active>\n\t\t\t<running>true</running>\n\t\t\t<access>READ_ONLY</access>\n\t\t\t<vendor-code>K2</vendor-code>\n\t\t\t<build-id>b01</build-id>\n\t\t\t<build-name>product-default</build-name>\n\t\t\t<build-version>0.1.0</build-version>\n\t\t\t<files>\n\t\t\t\t<name>file-1</name>\n\t\t\t\t<version>0.2.3</version>\n\t\t\t\t<local-path>~/some_dir/</local-path>\n\t\t\t\t<integrity>OK</integrity>\n\t\t\t</files>\n\t\t</software-slot>\n\t\t<software-slot>\n\t\t\t<name>slot-2</name>\n\t\t\t<status>EMPTY</status>\n\t\t\t<active>false</active>\n\t\t\t<running>false</running>\n\t\t\t<access>READ_WRITE</access>\n\t\t</software-slot>\n\t\t<software-slot>\n\t\t\t<name>slot-3</name>\n\t\t\t<status>EMPTY</status>\n\t\t\t<active>false</active>\n\t\t\t<running>false</running>\n\t\t\t<access>READ_WRITE</access>\n\t\t</software-slot>\n\t\t<software-slot>\n\t\t\t<name>slot-4</name>\n\t\t\t<status>EMPTY</status>\n\t\t\t<active>false</active>\n\t\t\t<running>false</running>\n\t\t\t<access>READ_WRITE</access>\n\t\t</software-slot>\n\t</software-inventory>\n</data>\n",
         logtime: "2023-06-14 13:59:46"   // string
       },
-      {
-        NElogID: '2',               
+      {              
         userid: "itri_10.0.2.17",
         operation: "get-config",
         req_data: "<filter><software-inventory xmlns=\"urn:itri-software-management\"><software-slot></software-slot></software-inventory></filter>",
         resp_data: "<?xml version=\"1.0\" ?>\n<data xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\">",
         logtime: "2023-10-27 17:44:19"   // string
       },
-      {
-        NElogID: '3', 
+      { 
         userid: "itri_10.0.2.17",
         operation: "get-config",
         req_data: "",
@@ -2795,7 +2777,6 @@ export class CommonService {
         logtime: "2023-10-27 17:21:04"   // string
       },
       {
-        NElogID: '4',
         userid: "itri_10.0.2.17",
         operation: "edit-config",
         req_data: "<config> <SMO xmlns=\"urn:rdns:com:itri:nr-smo:1.0\"> <ftpip>10.0.2.16</ftpip> <ftpid>k200</ftpid> <ftpkey>k200123</ftpkey> <ftppath>/home/k200/irm-itri/server/uploadFolder/ftpFolder/46a315326d5b4ac2a3a7</ftppath> <file-upload-interval>60</file-upload-interval> </SMO> </config>",
@@ -2803,7 +2784,6 @@ export class CommonService {
         logtime: "2023-10-31 17:10:23.979271"
       },
       {
-        NElogID: '5',
         userid: "itri_10.0.2.17",
         operation: "edit-config",
         req_data: "<config> <SMO xmlns=\"urn:rdns:com:itri:nr-smo:1.0\"> <ftpip>10.0.2.16</ftpip> <ftpid>k200</ftpid> <ftpkey>k200123</ftpkey> <ftppath>/home/k200/irm-itri/server/uploadFolder/ftpFolder/635778a42e854c17a4c2</ftppath> <file-upload-interval>60</file-upload-interval> </SMO> </config>",
@@ -2811,7 +2791,6 @@ export class CommonService {
         logtime: "2023-10-31 17:10:22.793374"
       },
       {
-        NElogID: '6',
         userid: "itri_10.0.2.17",
         operation: "edit-config",
         req_data: "<config> <SMO xmlns=\"urn:rdns:com:itri:nr-smo:1.0\"> <ftpip>10.0.2.16</ftpip> <ftpid>k200</ftpid> <ftpkey>k200123</ftpkey> <ftppath>/home/k200/irm-itri/server/uploadFolder/ftpFolder/614de0d30d1845129f02</ftppath> <file-upload-interval>60</file-upload-interval> </SMO> </config>",
@@ -2819,7 +2798,6 @@ export class CommonService {
         logtime: "2023-10-31 17:10:21.286927"
       },
       {
-        NElogID: '7',
         userid: "itri_10.0.2.17",
         operation: "edit-config",
         req_data: "<config><ME xmlns=\"urn:3gpp:tsg:sa5:nrm:ngran\"><GNBCUFunction><id>0</id><NRCellCU><id>1</id><vsDataContainer><id>0</id><vsData><![CDATA[ <gnbvs xmlns=\"urn:rdns:com:radisys:nr:gnb\"> <gnbCuConfig> <id>0</id> <gnbCellCuVsConfig> <id>0</id> <duId>1</duId> <nRpCI>1</nRpCI> <ueInactivityTimerSec>day30</ueInactivityTimerSec> <eutraConfig> <eutraNeighbourCell> <eutraCellIdentifier>2</eutraCellIdentifier> <MCC>466</MCC> <MNC>66</MNC> <enbIdType>MACRO_ENB_ID</enbIdType> <enbId>1</enbId> </eutraNeighbourCell> <eutraQoSConfig> <configIndex>1</configIndex> <qci>1</qci> <snSizeDL>12</snSizeDL> <snSizeUL>12</snSizeUL> <ulDataSplitThresholdInBytes>b100</ulDataSplitThresholdInBytes> <enableUlOutOfOrderDelivery>false</enableUlOutOfOrderDelivery> <rlcMode>RLC_UM</rlcMode> <rlcUmDir>RLC_UM_DIR_BIDIRECTIONAL</rlcUmDir> <reorderingTimerMs>500</reorderingTimerMs> </eutraQoSConfig> </eutraConfig> <nrConfig> <NRNeighbourCell> <nrCellIdentifier>000004108</nrCellIdentifier> <nrPci>100</nrPci> <MCC>466</MCC> <MNC>55</MNC> <nrModeTdd> <TDDInfo> <nrArfcn>0</nrArfcn> </TDDInfo> </nrModeTdd> <nrArfcn>4850</nrArfcn> <TAC>111111</TAC> </NRNeighbourCell> <NRNeighbourCell> <nrCellIdentifier>000050108</nrCellIdentifier> <nrPci>160</nrPci> <MCC>466</MCC> <MNC>55</MNC> <nrModeTdd> <TDDInfo> <nrArfcn>0</nrArfcn> </TDDInfo> </nrModeTdd> <nrArfcn>4850</nrArfcn> <TAC>111111</TAC> </NRNeighbourCell> </nrConfig> <ueCapabilityTriggerAfterSMCProc>true</ueCapabilityTriggerAfterSMCProc> </gnbCellCuVsConfig> </gnbCuConfig> </gnbvs> ]]></vsData></vsDataContainer></NRCellCU></GNBCUFunction></ME></config>",
@@ -2827,7 +2805,6 @@ export class CommonService {
         logtime: "2023-10-31 17:08:08.866697"
       },
       {
-        NElogID: '8',
         userid: "itri_10.0.2.17",
         operation: "get-config",
         req_data: "<filter><software-inventory xmlns=\"urn:itri-software-management\"><software-slot></software-slot></software-inventory></filter>",
@@ -2835,7 +2812,6 @@ export class CommonService {
         logtime: "2023-10-31 17:15:31.669459"
       },
       {
-        NElogID: '9',
         userid: "itri_10.0.2.17",
         operation: "get-config",
         req_data: "<filter><software-inventory xmlns=\"urn:itri-software-management\"><software-slot></software-slot></software-inventory></filter>",
@@ -2843,7 +2819,6 @@ export class CommonService {
         logtime: "2023-10-31 17:15:11.961997"
       },
       {
-        NElogID: '10',
         userid: "itri_10.0.2.17",
         operation: "get-config",
         req_data: "<ME xmlns=\"urn:3gpp:tsg:sa5:nrm:ngran\"></ME>",
@@ -2851,7 +2826,6 @@ export class CommonService {
         logtime: "2023-10-31 17:10:36.391256"
       },
       {
-        NElogID: '11',
         userid: "itri_10.0.2.17",
         operation: "get-config",
         req_data: "<filter><software-inventory xmlns=\"urn:itri-software-management\"><software-slot></software-slot></software-inventory></filter>",
@@ -2859,7 +2833,6 @@ export class CommonService {
         logtime: "2023-10-31 17:09:41.933556"
       },
       {
-        NElogID: '12',
         userid: "itri_10.0.2.17",
         operation: "edit-config",
         req_data: "<config><ME xmlns=\"urn:3gpp:tsg:sa5:nrm:ngran\" ><GNBDUFunction><id>0</id><NRCellDU><id>0</id><bWP>1</bWP></NRCellDU></GNBDUFunction></ME></config>",
@@ -2867,7 +2840,6 @@ export class CommonService {
         logtime: "2023-10-31 17:03:27.174804"
       },
       {
-        NElogID: '13',
         userid: "itri_10.0.2.17",
         operation: "edit-config",
         req_data: "<config><ME xmlns=\"urn:3gpp:tsg:sa5:nrm:ngran\" ><GNBDUFunction><id>0</id><NRCellDU><id>0</id><NRSectorCarrier>0</NRSectorCarrier></NRCellDU></GNBDUFunction></ME></config>",
@@ -2875,7 +2847,6 @@ export class CommonService {
         logtime: "2023-10-31 17:03:25.265801"
       },
       {
-        NElogID: '14',
         userid: "itri_10.0.2.17",
         operation: "edit-config",
         req_data: "<config><ME xmlns=\"urn:3gpp:tsg:sa5:nrm:ngran\" ><GNBCUFunction><id>0</id><NRCellCU><id>0</id><s-NSSAI>0</s-NSSAI></NRCellCU></GNBCUFunction></ME></config>",
@@ -2883,7 +2854,6 @@ export class CommonService {
         logtime: "2023-10-31 17:02:15.773772"
       },
       {
-        NElogID: '15',
         userid: "itri_10.0.2.17",
         operation: "get-config",
         req_data: "",
