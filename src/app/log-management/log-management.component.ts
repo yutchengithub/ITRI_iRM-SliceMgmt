@@ -381,13 +381,21 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     this.p = 1;  // 將頁數重置為 1
 
+    // 獲取當前日期或者一個預設的日期範圍
+    const now = new Date(); // 建立一個新的 Date 物件，代表當前時間
+    const defaultFromDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // 設定預設的起始日期為當前年月日
+    const defaultToDate = new Date(); // 設定預設的結束日期為當前日期
+
+
+    // 重置搜尋表單的條件，包括日期範圍
     this.searchForm.reset({
-      from: this.searchForm.get('from')?.value, 
-      to: this.searchForm.get('to')?.value,
+      from: defaultFromDate, 
+      to: defaultToDate,
       UserLogType: 'All',
       NELogType: 'All',
       keyword: ''
-    });  // 重置搜尋表單的條件 @11/13 Add by yuchen
+    }); // 重置搜尋表單的條件 @11/13 Add by yuchen
+
 
     // 重置搜尋狀態標記  @11/13 Add by yuchen
     this.isSearch_userLogs = false;
