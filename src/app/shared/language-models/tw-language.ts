@@ -14,7 +14,7 @@ export const TwLanguage = {
   'index.menu_fieldMgr':'場域管理',
   'index.menu_iRmSys':'Athena Orchestrator',
   'index.menu_gNB':'基站管理',
-  'index.menu_componentMgr':'Component Management',
+  'index.menu_componentMgr':'元件管理',
   'index.menu_faultMgr':'故障管理',
   'index.menu_performMgr':'效能管理',
   'index.menu_softwareMgr':'軟體管理',
@@ -145,6 +145,10 @@ export const TwLanguage = {
   'add.method':'選擇新增方式',
   'file.size':'檔案大小',
   'field_list':'場域列表',
+  'software_version':'軟體版本',
+  
+  // Component Management (元件管理)
+  'cm.name':'元件名稱',
   
   // Account Management (帳號管理)
   'user_account':'帳號',

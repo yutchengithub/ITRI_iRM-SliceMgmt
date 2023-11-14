@@ -145,6 +145,10 @@ export const Enlanguage = {
   'add.method':'Add Method',
   'file.size':'File Size',
   'field_list':'Field List',
+  'software_version':'Software Version',
+  
+  // Component Management (元件管理)
+  'cm.name':'Component Name',
 
   // Account Management
   'user_account':'User',

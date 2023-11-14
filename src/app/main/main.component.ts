@@ -17,7 +17,7 @@ export class MainComponent implements OnInit {
   title = 'Dashboard';
 
   // Add 'log-management' by yuchen @10/25
-  page: 'dashboard' | 'field-management' | 'nf-management' | 'fault-management' | 'performance-management' | 'software-management' | 'account-management' | 'log-management' = 'dashboard';
+  page: 'dashboard' | 'component-management' | 'field-management' | 'nf-management' | 'fault-management' | 'performance-management' | 'software-management' | 'account-management' | 'log-management' = 'dashboard';
   styles: style[] = [
     { displayName: 'Dark Style', value: 'black' },
     { displayName: 'Light Style', value: 'bright' }
@@ -26,6 +26,7 @@ export class MainComponent implements OnInit {
 
   pageRourter = {
     'dashboard': '/main/dashboard',
+    'component-management': '/main/component-mgr',
     'field-management': '/main/field-mgr',
     'nf-management': '/main/nf-mgr',
     'fault-management': '/main/fault-mgr/All/All',
@@ -66,6 +67,9 @@ export class MainComponent implements OnInit {
     if (routerUrl.indexOf('/main/dashboard') >= 0) {
       this.title = 'Dashboard';
       this.page = 'dashboard';
+    } else if (routerUrl.indexOf('/main/component-mgr') >= 0) {
+      this.title = 'Component Management';
+      this.page = 'component-management';
     } else if (routerUrl.indexOf('/main/field-mgr') >= 0) {
       this.title = 'O-Cloud List';
       this.page = 'field-management';

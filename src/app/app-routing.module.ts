@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';   // 主畫面
+import { ComponentManagementComponent } from './component-management/component-management.component';    // 元件管理
 import { FieldManagementComponent } from './field-management/field-management.component';    // O-Cloud管理
 import { OCloudInfoComponent } from './field-management/field-info/field-info.component';
 import { NfManagementComponent } from './nf-management/nf-management.component';      // NF管理
@@ -26,6 +27,13 @@ const routes: Routes = [
     path: 'main', component: MainComponent, canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
+      {
+        path: 'component-mgr',
+        children: [
+          { path: '', component: ComponentManagementComponent },
+          { path: 'info/:cloudId/:cloudName', component: ComponentManagementComponent }
+        ]
+      },
       {
         path: 'field-mgr',
         children: [

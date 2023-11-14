@@ -37,18 +37,13 @@ export interface Uploadinfos {
   uploadurl: string;
 }
 
-export interface FaultMessage {
-  uploadinfos: Uploadinfos[];
-}
-
 @Component({
-  selector: 'app-software-management',
-  templateUrl: './software-management.component.html',
-  styleUrls: ['./software-management.component.scss'],
+  selector: 'app-component-management',
+  templateUrl: './component-management.component.html',
+  styleUrls: ['./component-management.component.scss'],
 })
-export class SoftwareManagementComponent implements OnInit {
+export class ComponentManagementComponent implements OnInit {
   sessionId: string = '';
-  //softwareList: SoftwareList[] = [];
   softwareLists: SoftwareLists = {} as SoftwareLists;
   @ViewChild('createModal') createModal: any;
   @ViewChild('deleteModal') deleteModal: any;
