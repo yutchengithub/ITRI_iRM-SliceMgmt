@@ -149,6 +149,7 @@ export const TwLanguage = {
   
   // Component Management (元件管理)
   'cm.name':'元件名稱',
+  'cm.provision':'匯入元件參數',
   
   // Account Management (帳號管理)
   'user_account':'帳號',

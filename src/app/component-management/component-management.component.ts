@@ -10,16 +10,25 @@ import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
-export interface SoftwareList {
-  id: string;
-  firm: string;
-  model: string;
-  type: number;
-  version: string;
-  notes: string;
-  uploadTime: string;
-  fileName: string;
+export interface ComponentList {
+  components: Components[];
 }
+
+export interface Components {
+  id: string;
+  bsId: string;
+  bsName: string;
+  name: string;
+  ip: string;
+  port: string;
+  account: string;
+  key: string;
+  comtype: number;
+  firm: string;
+  modelname: string;
+  status: number;
+}
+
 
 export interface SoftwareLists {
   uploadinfos: Uploadinfos[];
@@ -45,6 +54,7 @@ export interface Uploadinfos {
 export class ComponentManagementComponent implements OnInit {
   sessionId: string = '';
   softwareLists: SoftwareLists = {} as SoftwareLists;
+  componentList: ComponentList = {} as ComponentList;
   @ViewChild('createModal') createModal: any;
   @ViewChild('deleteModal') deleteModal: any;
   @ViewChild('advancedModal') advancedModal: any;
@@ -52,11 +62,12 @@ export class ComponentManagementComponent implements OnInit {
   advancedForm!: FormGroup;
   afterAdvancedForm!: FormGroup;
   refreshTimeout!: any;
-  isSettingAdvanced = false;
+  isSettingAdvanced = true;
   createModalRef!: MatDialogRef<any>;
   deleteModalRef!: MatDialogRef<any>;
   createForm!: FormGroup;
   selectSoftware!: Uploadinfos;
+  selectComponent!: Components;
   nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
   file: any;
   typeMap: Map<number, string> = new Map();
@@ -95,10 +106,10 @@ export class ComponentManagementComponent implements OnInit {
   ngOnInit(): void {
     this.sessionId = this.commonService.getSessionId();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
-    this.getSoftwareList();
+    this.getComponentList();
   }
 
-  getSoftwareList() {
+  getComponentList() {
     const firm = this.searchForm.controls['firm'].value;
     const uploadtype = this.searchForm.controls['uploadtype'].value;
     const model = this.searchForm.controls['model'].value;
@@ -109,23 +120,24 @@ export class ComponentManagementComponent implements OnInit {
     clearTimeout(this.refreshTimeout);
     if (this.commonService.isLocal) {
       /* local file test */
-      this.softwareLists = this.commonService.softwareLists;
-      console.log(this.softwareLists);
-      this.softwareListDeal();
+      this.componentList = this.commonService.componentList;
+      console.log(this.componentList);
+      this.componentListDeal();
     } else {
-      this.commonService.queryUploadFileList().subscribe(
+      this.commonService.queryBsComponentList().subscribe(
         res => {
-          console.log('Get software list:');
+          console.log('getBsComponent List:');
           console.log(res);
-          this.softwareLists = res as SoftwareLists;
-          this.softwareListDeal();
+          const str = JSON.stringify(res);//convert array to string
+          this.componentList = JSON.parse(str);
+          this.componentListDeal();
         }
       );
     }
   }
 
-  softwareListDeal() {
-    this.totalItems = this.softwareLists.uploadinfos.length;
+  componentListDeal() {
+    this.totalItems = this.componentList.components.length;
   }
 
   ngOnDestroy() {
@@ -208,7 +220,7 @@ export class ComponentManagementComponent implements OnInit {
         }
       );
       this.createModalRef.close();
-      this.getSoftwareList();
+      this.getComponentList();
 
     } else {
       const body = this.createForm.value;
@@ -234,37 +246,37 @@ export class ComponentManagementComponent implements OnInit {
           this.http.post(uploadUrl, formData, options).subscribe(
             () => {
               this.createModalRef.close();
-              this.getSoftwareList();
+              this.getComponentList();
             }
           );
           this.createModalRef.close();
-          this.getSoftwareList();
+          this.getComponentList();
         }
       );
     }
   }
 
-  openDelectModal(softwareList: Uploadinfos) {
-    this.selectSoftware = softwareList;
+  openDelectModal(componentList: Components) {
+    this.selectComponent = componentList;
     this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
   }
 
   delete() {
     if (this.commonService.isLocal) {
       /* local file test */
-      for (let i = 0; i < this.commonService.softwareLists.uploadinfos.length; i++) {
-        if (this.selectSoftware.id === this.commonService.softwareLists.uploadinfos[i].id) {
-          this.commonService.softwareLists.uploadinfos.splice(i, 1);
+      for (let i = 0; i < this.commonService.componentList.components.length; i++) {
+        if (this.selectComponent.id === this.commonService.componentList.components[i].id) {
+          this.commonService.componentList.components.splice(i, 1);
           break;
         }
       }
       this.deleteModalRef.close();
-      this.getSoftwareList();
+      this.getComponentList();
     } else {
-      this.commonService.deleteSoftware(this.selectSoftware.id).subscribe(
+      this.commonService.deleteSoftware(this.selectComponent.id).subscribe(
         res => {
           this.deleteModalRef.close();
-          this.getSoftwareList();
+          this.getComponentList();
         }
       );
     }
@@ -340,7 +352,7 @@ export class ComponentManagementComponent implements OnInit {
       /* local file test */
       this.softwareLists = this.commonService.softwareLists;
       console.log(this.softwareLists);
-      this.softwareListDeal();
+      this.componentListDeal();
     } else {
       const firm = this.afterAdvancedForm.controls['firm'].value;
       const model = encodeURIComponent(this.afterAdvancedForm.controls['model'].value);
@@ -371,7 +383,7 @@ export class ComponentManagementComponent implements OnInit {
   }
 
   search() {
-    this.getSoftwareList();
+    this.getComponentList();
   }
 
   debug() {
@@ -389,8 +401,8 @@ export class ComponentManagementComponent implements OnInit {
     console.log(body);
   }
 
-  viewPage(softwareList: Uploadinfos) {
-    this.router.navigate(['/main/software-mgr/info', softwareList.id, softwareList.uploadinfo]);
+  viewPage(componentList: Components) {
+    this.router.navigate(['/main/software-mgr/info', componentList.id, componentList.bsId]);
   }
 
   clearSetting() {
@@ -398,6 +410,42 @@ export class ComponentManagementComponent implements OnInit {
     this.createSearchForm();
     this.createAdvancedForm();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
-    this.getSoftwareList();
+    this.getComponentList();
+  }
+
+  exportToCSV(dataType: string) {
+    let dataToExport: Components[] = [];
+    const from = this.commonService.dealPostDate(this.searchForm.get('from')?.value);
+    const to = this.commonService.dealPostDate(this.searchForm.get('to')?.value);
+    const formattedFromDate = from.split(' ')[0];
+    const formattedToDate = to.split(' ')[0];
+    if (this.commonService.isLocal) {
+      /* local file test */
+      dataToExport = this.commonService.componentList.components;
+    } else {//run iRM API
+      dataToExport = this.componentList.components;
+    }
+    const csvData = this.convertToCSV(dataToExport);
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const fileName = `filtered_component_list.csv`;
+
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  convertToCSV(data: any[]): string {
+    const header = Object.keys(data[0]).join(',');
+    const rows = data.map(row => {
+      return Object.values(row).map(value => {
+        const stringValue = typeof value === 'string' ? value : String(value);
+        const escapedStringValue = stringValue.replace(/"/g, '""');
+        return `"${escapedStringValue}"`;
+      }).join(',');
+    });
+    return [header, ...rows].join('\n');
   }
 }

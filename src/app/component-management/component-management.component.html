@@ -10,6 +10,7 @@
           <input type="text"formControlName="model">
       </span>
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+      <span tooltip="{{languageService.i18n['UserLog.ExportCSV']}}" class="material-icons" (click)="exportToCSV('componentList')">content_paste_go</span>
       <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span>
       <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSetting()">clear</span>
     </div>
@@ -19,29 +20,30 @@
   <table>
     <thead>
       <tr>
-        <th>{{languageService.i18n['manufacturer']}}</th>
-        <th>{{languageService.i18n['model']}}</th>
-        <th>{{languageService.i18n['type']}}</th>
-        <th>{{languageService.i18n['version']}}</th>
-        <th>{{languageService.i18n['notes']}}</th>
-        <th>{{languageService.i18n['upload_time']}}</th>
-        <th>{{languageService.i18n['fileName']}}</th>
+        <th>{{languageService.i18n['cm.name']}}</th>
+        <th>IP Address</th>
+        <th>Port</th>
+        <th>{{languageService.i18n['table.Status']}}</th>
         <th>{{languageService.i18n['index.view']}}</th>
+        <th>{{languageService.i18n['cm.provision']}}</th>
         <th>{{languageService.i18n['table.delete']}}</th>
       </tr>
     </thead>
     <tbody>
       <tr
-        *ngFor="let opt of softwareLists.uploadinfos | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-        <td>{{opt.firm}}</td>
-        <td>{{opt.modelname}}</td>
-        <td>{{typeText(opt.uploadtype)}}</td>
-        <td>{{opt.uploadversion}}</td>
-        <td>{{opt.description}}</td>
-        <td>{{opt.uploadtime}}</td>
-        <td>{{opt.uploadinfo}}</td>
+        *ngFor="let opt of componentList.components | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+        <td>{{opt.name}}</td>
+        <td>{{opt.ip}}</td>
+        <td>{{opt.port}}</td>
+        <td>
+          <label *ngIf="opt.status === 0" class="greenLight"></label>
+          <label *ngIf="opt.status === 1" class="redLight"></label>
+        </td>
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>
+        </td>
+        <td class="icon">
+          <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="openDelectModal(opt)">upload_file</mat-icon>
         </td>
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)">delete_forever</mat-icon>

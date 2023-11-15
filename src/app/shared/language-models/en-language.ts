@@ -149,6 +149,7 @@ export const Enlanguage = {
   
   // Component Management (元件管理)
   'cm.name':'Component Name',
+  'cm.provision':'Provision',
 
   // Account Management
   'user_account':'User',

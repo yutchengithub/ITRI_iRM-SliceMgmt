@@ -25,6 +25,7 @@ import { FormGroup } from '@angular/forms';
 import { AccountInfo } from '../account-management/account-info/account-info.component';
 import { UserLogsList } from '../log-management/log-management.component'; // Add by yutchen @10/27
 import { NELogsList } from '../log-management/log-management.component'; // Add by yutchen @10/27
+import { ComponentList } from '../component-management/component-management.component';
 
 
 export interface NowTime {
@@ -256,7 +257,6 @@ export class CommonService {
     return this.http.get(url);
   }
 
-  // softwareType: 0 = O-Cloud; 1= NF(CU); 2=NF(DU); 3=NF(CU+DU); All
   queryUploadFileList(): Observable<any> {
     const url = `${this.restPath}/queryUploadFileList/${this.getSessionId()}`;
     return this.http.get(url);
@@ -418,6 +418,11 @@ export class CommonService {
 
   querySoftwareAdvanceSearch(firm: string, model: string, filename: string, start: string, end: string, offset: number, limit: number): Observable<any> {
     const url = `${this.restPath}/querySWAdvanceSearch/${this.getSessionId()}/}?firm=${firm}&model=${model}&start=${start}&end=${end}&filename=${filename}&offset=${offset}&limit=${limit}`;
+    return this.http.get(url);
+  }
+  //Component Mgm API
+  queryBsComponentList(): Observable<any> {
+    const url = `${this.restPath}/queryBsComponentList/${this.getSessionId()}`;
     return this.http.get(url);
   }
 
@@ -2189,6 +2194,165 @@ export class CommonService {
       checksum:"6c4d426bcdb914708c9e7b8019116ddf",
       size:10485760
     };
+    //Component
+    componentList: ComponentList = 
+    {
+      components: [
+      {
+        "id": "0f03212c522b4c86abda",
+        "bsId": "8e427f7c5ff34326a380",
+        "bsName": "itri_10.0.2.10",
+        "name": "itri_10.0.2.10",
+        "ip": "10.0.2.10",
+        "port": "830",
+        "account": "k200",
+        "key": "k200123",
+        "comtype": 5,
+        "firm": "ITRI",
+        "modelname": "v2.0",
+        "status": 1
+      },
+      {
+        "id": "28a6c246a4ca425aa8dc",
+        "bsId": "1830b1015796405fb12e",
+        "bsName": "itri_10.0.2.11",
+        "name": "itri_10.0.2.11",
+        "ip": "10.0.2.11",
+        "port": "830",
+        "account": "k200",
+        "key": "k200123",
+        "comtype": 5,
+        "firm": "ITRI",
+        "modelname": "v2.0",
+        "status": 0
+      },
+      {
+        "id": "28a6c246a4ca425aa8dc",
+        "bsId": "1830b1015796405fb12e",
+        "bsName": "itri_10.0.2.12",
+        "name": "itri_10.0.2.12",
+        "ip": "10.0.2.12",
+        "port": "830",
+        "account": "k200",
+        "key": "k200123",
+        "comtype": 5,
+        "firm": "ITRI",
+        "modelname": "v2.0",
+        "status": 0
+      },
+      {
+        "id": "28a6c246a4ca425aa8dc",
+        "bsId": "1830b1015796405fb12e",
+        "bsName": "itri_10.0.2.13",
+        "name": "itri_10.0.2.13",
+        "ip": "10.0.2.13",
+        "port": "830",
+        "account": "k200",
+        "key": "k200123",
+        "comtype": 5,
+        "firm": "ITRI",
+        "modelname": "v2.0",
+        "status": 0
+      },
+      {
+        "id": "28a6c246a4ca425aa8dc",
+        "bsId": "1830b1015796405fb12e",
+        "bsName": "itri_10.0.2.14",
+        "name": "itri_10.0.2.14",
+        "ip": "10.0.2.14",
+        "port": "830",
+        "account": "k200",
+        "key": "k200123",
+        "comtype": 5,
+        "firm": "ITRI",
+        "modelname": "v2.0",
+        "status": 0
+      },
+      {
+        "id": "28a6c246a4ca425aa8dc",
+        "bsId": "1830b1015796405fb12e",
+        "bsName": "itri_10.0.2.15",
+        "name": "itri_10.0.2.15",
+        "ip": "10.0.2.15",
+        "port": "830",
+        "account": "k200",
+        "key": "k200123",
+        "comtype": 5,
+        "firm": "ITRI",
+        "modelname": "v2.0",
+        "status": 0
+      },
+      {
+        "id": "28a6c246a4ca425aa8dc",
+        "bsId": "1830b1015796405fb12e",
+        "bsName": "itri_10.0.2.16",
+        "name": "itri_10.0.2.16",
+        "ip": "10.0.2.16",
+        "port": "830",
+        "account": "k200",
+        "key": "k200123",
+        "comtype": 5,
+        "firm": "ITRI",
+        "modelname": "v2.0",
+        "status": 0
+      },
+      {
+        "id": "28a6c246a4ca425aa8dc",
+        "bsId": "1830b1015796405fb12e",
+        "bsName": "itri_10.0.2.16",
+        "name": "itri_10.0.2.17",
+        "ip": "10.0.2.17",
+        "port": "830",
+        "account": "k200",
+        "key": "k200123",
+        "comtype": 5,
+        "firm": "ITRI",
+        "modelname": "v2.0",
+        "status": 0
+      },
+      {
+        "id": "28a6c246a4ca425aa8dc",
+        "bsId": "1830b1015796405fb12e",
+        "bsName": "itri_10.0.2.18",
+        "name": "itri_10.0.2.18",
+        "ip": "10.0.2.18",
+        "port": "830",
+        "account": "k200",
+        "key": "k200123",
+        "comtype": 5,
+        "firm": "ITRI",
+        "modelname": "v2.0",
+        "status": 0
+      },
+      {
+        "id": "28a6c246a4ca425aa8dc",
+        "bsId": "1830b1015796405fb12e",
+        "bsName": "itri_10.0.2.19",
+        "name": "itri_10.0.2.19",
+        "ip": "10.0.2.19",
+        "port": "830",
+        "account": "k200",
+        "key": "k200123",
+        "comtype": 5,
+        "firm": "ITRI",
+        "modelname": "v2.0",
+        "status": 0
+      },
+      {
+        "id": "28a6c246a4ca425aa8dc",
+        "bsId": "1830b1015796405fb12e",
+        "bsName": "itri_10.0.2.20",
+        "name": "itri_10.0.2.20",
+        "ip": "10.0.2.20",
+        "port": "830",
+        "account": "k200",
+        "key": "k200123",
+        "comtype": 5,
+        "firm": "ITRI",
+        "modelname": "v2.0",
+        "status": 0
+      }
+    ]};
 
 
   nfList: Nf[] = [
