@@ -46,7 +46,7 @@ export class CommonService {
   options = { headers: new HttpHeaders({ 'Content-Type': 'multipart/form-data' }) };
   severitys: string[] = ['CRITICAL', 'MAJOR', 'MINOR', 'WARNING'];
 
-  // @11/01 add by yuchen "類別需再調查"
+  // For Log Management @11/01 Add 
   UserLogType: string[] = ['GET', 'POST', 'DELETE'];
   NELogType: string[] = ['get', 'get-config', 'edit-config'];
 
@@ -2803,7 +2803,7 @@ export class CommonService {
   UserLogsList: UserLogsList = {
   
     logNumber: 15,  // number
-    UserLogsinfo: [
+    loginfo: [
       {
         userid: "k200",   // string
         logtype: "POST",  // string
@@ -2916,7 +2916,7 @@ export class CommonService {
   NELogsList: NELogsList = {
     
     logNumber: 15,
-    NELogsinfo: [
+    loginfo: [
       {
         userid: "itri_10.0.2.17",             // string
         operation: "get-config",    // string
