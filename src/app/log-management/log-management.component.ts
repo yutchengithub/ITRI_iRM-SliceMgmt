@@ -208,8 +208,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     } else {
 
-      // 建立 API 的完整 URL，結合基礎路徑和當前會話的 sessionId
-      const apiEndpoint = `/irm/queryLogList/${this.sessionId}`;
+      // 建立 API 的完整 URL，結合基礎路徑和當前 Session 的 sessionId
+      const apiEndpoint = `${this.commonService.restPath}/queryLogList/${this.sessionId}`;
 
       // 從 searchForm 中取得篩選條件
       const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
@@ -299,7 +299,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       if (this.queryUserNetconfLog) this.queryUserNetconfLog.unsubscribe();
 
       // 建立 API 的完整 URL，結合基礎路徑和當前會話的 sessionId
-      const apiUrl = `/irm/queryUserNetconfLog/${this.sessionId}`;
+      const apiUrl = `${this.commonService.restPath}/queryUserNetconfLog/${this.sessionId}`;
 
       // 發起 HTTP GET 請求並指定預期的響應類型為 NELogsList
       this.queryUserNetconfLog = this.http.get<NELogsList>(apiUrl, {
@@ -430,7 +430,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     // 獲取當前日期或者一個預設的日期範圍
     const now = new Date(); // 建立一個新的 Date 物件，代表當前時間
-    const defaultFromDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // 設定預設的起始日期為當前年月日
+    const defaultFromDate = new Date(now.getFullYear(), 0, 1); // 設定預設的起始日期為當年的 1 月 1 日
     const defaultToDate = new Date(); // 設定預設的結束日期為當前日期
 
 

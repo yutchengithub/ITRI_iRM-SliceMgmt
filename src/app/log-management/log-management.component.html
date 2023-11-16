@@ -30,7 +30,7 @@
         <span><label>{{languageService.i18n['UserLog.logtype']}}</label>
           <select formControlName="UserLogType">
             <option value="All">All</option>
-            <option *ngFor="let userlogtype of UserLogTypes" [value]="userlogtype">{{commonService.textTransfer(userlogtype)}}</option>
+            <option *ngFor="let userlogtype of UserLogTypes" [value]="userlogtype">{{userlogtype}}</option>
           </select>
           <mat-error *ngIf="searchForm.controls['UserLogType'].invalid">Required</mat-error>
         </span>
@@ -42,7 +42,6 @@
         </span>
 
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_UserLogs()">search</span>
-        <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
         
         <!-- Button of Export User logs to CSV @1107 add by yuchen -->
         <span tooltip="{{languageService.i18n['UserLog.ExportCSV']}}" class="material-icons" (click)="exportToCSV('UserLogs')">content_paste_go</span>
@@ -102,7 +101,7 @@
         <span><label>{{languageService.i18n['NElog.operation']}}</label>
           <select formControlName="NELogType">
             <option value="All">All</option>
-            <option *ngFor="let nelogtype of NELogTypes" [value]="nelogtype">{{commonService.textTransfer(nelogtype)}}</option>
+            <option *ngFor="let nelogtype of NELogTypes" [value]="nelogtype">{{nelogtype}}</option>
           </select>
           <mat-error *ngIf="searchForm.controls['NELogType'].invalid">Required</mat-error>
         </span>
@@ -116,7 +115,7 @@
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_NELogs()">search</span>
         <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
 
-        <!-- Button of Export NE logs to CSV @1107 add by yuchen -->
+        <!-- Button of Export NE logs to CSV @11/07 add by yuchen -->
         <span tooltip="{{languageService.i18n['NElog.ExportCSV']}}" class="material-icons" (click)="exportToCSV('NELogs')">content_paste_go</span>
 
       </div>
