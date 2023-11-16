@@ -10,7 +10,7 @@
           <input type="text"formControlName="model">
       </span>
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-      <span tooltip="{{languageService.i18n['UserLog.ExportCSV']}}" class="material-icons" (click)="exportToCSV('componentList')">content_paste_go</span>
+      <span tooltip="{{languageService.i18n['ExportCSV']}}" class="material-icons" (click)="exportToCSV('componentList')">content_paste_go</span>
       <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span>
       <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSetting()">clear</span>
     </div>
@@ -43,124 +43,134 @@
           <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>
         </td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="openDelectModal(opt)">upload_file</mat-icon>
+          <mat-icon (click)="openProvisionModal(opt)">upload_file</mat-icon>
         </td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)">delete_forever</mat-icon>
+          <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDeleteModal(opt)">delete_forever</mat-icon>
         </td>
       </tr>
     </tbody>
   </table>
-
 </div>
-
 <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
   nextLabel="" id="display">
 </pagination-controls>
 
 
-<ng-template #createModal>
-  <h5>{{languageService.i18n['addSoftware']}}</h5>
-  <form [formGroup]="createForm">
-    <ul>
+<ng-template #createComponentModal>
+  <h5>{{languageService.i18n['cm.add']}}</h5>
+  <form [formGroup]="createForm" >
+    <ul class="addcomponent-ul-li-label">
       <li>
-        <label>{{languageService.i18n['firm']}}</label>
+        <label>{{languageService.i18n['cm.type']}}</label>
+        <span>
+          <select formControlName="comtype" class="{{formValidated&&createForm.controls['comtype'].invalid?'required':''}}">
+            <option value="" ></option>
+            <option *ngFor="let opt of comtype" [value]="opt.value">{{opt.displayName}}</option>
+          </select>
+          <mat-error *ngIf="formValidated&&createForm.controls['comtype'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['cm.ip']}}</label>
+        <span>
+          <input type="text" formControlName="ip" class="{{formValidated&&createForm.controls['ip'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['ip'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['cm.port']}}</label>
+        <span>
+          <input type="text" formControlName="port" class="{{formValidated&&createForm.controls['port'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['port'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['cm.mac']}}</label>
+        <span>
+          <input type="text" formControlName="mac" class="{{formValidated&&createForm.controls['mac'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['mac'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['cm.acc']}}</label>
+        <span>
+          <input type="text" formControlName="account" class="{{formValidated&&createForm.controls['account'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['account'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['cm.passw']}}</label>
+        <span>
+          <input type="text" formControlName="key" class="{{formValidated&&createForm.controls['key'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['key'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
+        <label>{{languageService.i18n['cm.manufacturer']}}</label>
         <span>
           <input type="text" formControlName="firm" class="{{formValidated&&createForm.controls['firm'].invalid?'required':''}}">
           <mat-error *ngIf="formValidated&&createForm.controls['firm'].invalid">Required</mat-error>
         </span>
       </li>
       <li>
-        <label>{{languageService.i18n['model']}}</label>
+        <label>{{languageService.i18n['cm.model']}}</label>
         <span>
-          <input type="text" formControlName="model" class="{{formValidated&&createForm.controls['model'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['model'].invalid">Required</mat-error>
+          <input type="text" formControlName="modelname" class="{{formValidated&&createForm.controls['modelname'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['modelname'].invalid">Required</mat-error>
         </span>
       </li>
-
-      <li>
-        <label>{{languageService.i18n['type']}}</label>
-        <span>
-          <select>
-            <option value="All">All</option>
-            <option *ngFor="let opt of uploadtypeList" [value]="opt.value">{{opt.displayName}}</option>
-          </select>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['version']}}</label>
-        <span>
-          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['add.method']}}</label>
-        <span>
-          <mat-button-toggle-group formControlName="method">
-            <mat-button-toggle value="upload">{{languageService.i18n['upload.file']}}</mat-button-toggle>
-            <mat-button-toggle value="url">{{languageService.i18n['url']}}</mat-button-toggle>
-          </mat-button-toggle-group>
-          <ng-template [ngIf]="createForm.controls['method'].value === 'upload'">
-            <div class="upload">
-              <input type="file" name="uploadedFile">
-              <div>
-                File Size:
-                <br/>
-                Checksum:
-              </div>
-            </div>
-          </ng-template>
-          <ng-template [ngIf]="createForm.controls['method'].value === 'url'">
-            <div class="url"><input type="text" placeholder="Url"></div>
-          </ng-template>
-        </span>
-      </li>
-        <li>
-        <label>{{languageService.i18n['notes']}}</label>
-        <span>
-          <textarea formControlName="notes"></textarea>
-        </span>
-      </li>
-
-      <li>
-        <label>{{languageService.i18n['ftp.account']}}</label>
-        <span>
-          <input type="text" formControlName="ftpaccount" class="{{formValidated&&createForm.controls['ftpaccount'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['ftpaccount'].invalid">Required</mat-error>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['ftp.password']}}</label>
-        <span>
-          <input type="text" formControlName="ftppassword" class="{{formValidated&&createForm.controls['ftppassword'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['ftppassword'].invalid">Required</mat-error>
-        </span>
-      </li>
-
     </ul>
     <div class="buttons">
       <button type="button" mat-dialog-close>Cancel</button>
       <button type="button" (click)="create()">OK</button>
-      <!-- <button (click)="debug()">debug</button> -->
     </div>
   </form>
 </ng-template>
 
 <ng-template #deleteModal>
-  <h5>{{languageService.i18n['delsoftware']}}
-  </h5>
-  <p>{{languageService.i18n['confirm_del_soft']}} – {{selectSoftware.uploadinfo}}</p>
+  <h5 *ngIf="selectComponent.status === 1">{{languageService.i18n['cm.delete']}}</h5>
+  <h5 *ngIf="selectComponent.status === 0"><mat-icon class="error-icon">warning</mat-icon>{{languageService.i18n['cm.error']}}</h5>
+  <p>
+    {{selectComponent.status === 1 ? languageService.i18n['cm.confirm_del'] : languageService.i18n['cm.unable_del']}}
+    – {{selectComponent.name}}
+  </p>
   <div class="buttons">
     <button type="button" mat-dialog-close>Cancel</button>
-    <button type="button" (click)="delete()">Delete</button>
+    <button *ngIf="selectComponent.status === 1" type="button" (click)="delete()">Delete</button>
   </div>
+</ng-template>
+
+
+<ng-template #provisionModal>
+<h5>{{languageService.i18n['cm.provision']}} - {{selectComponent.name}}</h5>
+  <form [formGroup]="provisionForm">
+    <ul>
+      <li>
+        <label>{{languageService.i18n['add.method']}}</label>
+        <span>
+          <div class="upload {{formValidated&&provisionForm.controls['fileName'].invalid?'required':''}}">
+            <span>{{languageService.i18n['upload']}}
+              <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".zip, .tar" #fileInput>
+            </span>
+            <label>{{provisionForm.controls['fileName'].value}}</label>
+            <mat-error *ngIf="formValidated&&provisionForm.controls['fileName'].invalid">is Required</mat-error>
+            <mat-error *ngIf="fileMsg">{{fileMsg}}</mat-error>
+          </div>
+        </span>
+      </li>
+    </ul>
+    <div class="buttons">
+      <button type="button" mat-dialog-close>Cancel</button>
+      <button type="button" >Confirm</button>
+    </div>
+  </form>
+
 </ng-template>
 
 <ng-template #advancedModal>
   <form [formGroup]="advancedForm">
     <h5>Software  {{languageService.i18n['performance_Advanced_Search']}}</h5>
-
       <ul>
       <li>
         <span>{{languageService.i18n['manufacturer']}}</span> <input type="text" formControlName="firm">
@@ -172,7 +182,7 @@
         <span>{{languageService.i18n['type']}}</span>
         <select formControlName="uploadtype">
           <option value="All">All</option>
-          <option *ngFor="let opt of uploadtypeList" [value]="opt.value">{{opt.displayName}}</option>
+          <option *ngFor="let opt of comtype" [value]="opt.value">{{opt.displayName}}</option>
         </select>
       </li>
       <li>

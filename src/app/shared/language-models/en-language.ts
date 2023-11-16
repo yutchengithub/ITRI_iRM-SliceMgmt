@@ -150,6 +150,20 @@ export const Enlanguage = {
   // Component Management (元件管理)
   'cm.name':'Component Name',
   'cm.provision':'Provision',
+  'ExportCSV':'Export Result.csv',
+  'cm.add':'Add Component',
+  'cm.type':'Component Type',
+  'cm.ip':'Component IP',
+  'cm.port':'Component Port',
+  'cm.mac':'Component MAC',
+  'cm.acc':'Component Account',
+  'cm.passw':'Component Password',
+  'cm.manufacturer':'Manufacturer',
+  'cm.model':'Model',
+  'cm.delete':'Delete Component',
+  'cm.confirm_del':'Confirm to Delete Component',
+  'cm.unable_del':'Can not delete the component which has been assigned to a certain gNB',
+  'cm.error':'ERROR',
 
   // Account Management
   'user_account':'User',

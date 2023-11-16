@@ -150,6 +150,20 @@ export const TwLanguage = {
   // Component Management (元件管理)
   'cm.name':'元件名稱',
   'cm.provision':'匯入元件參數',
+  'ExportCSV':'匯出過濾結果.csv', 
+  'cm.create':'新增元件',
+  'cm.type':'元件種類:',
+  'cm.ip':'元件IP位址',
+  'cm.port':'元件Port',
+  'cm.mac':'元件MAC位址',
+  'cm.acc':'元件管理帳號',
+  'cm.passw':'元件管理密碼',
+  'cm.manufacturer':'生產廠商',
+  'cm.model':'元件型號',
+  'cm.delete':'刪除此元件',
+  'cm.confirm_del':'確定要刪除此元件',
+  'cm.unable_del':'無法刪除已組站之元件，請先刪除所屬之基站',
+  'cm.error':'錯誤',
   
   // Account Management (帳號管理)
   'user_account':'帳號',

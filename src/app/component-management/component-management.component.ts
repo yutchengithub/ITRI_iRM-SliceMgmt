@@ -29,7 +29,6 @@ export interface Components {
   status: number;
 }
 
-
 export interface SoftwareLists {
   uploadinfos: Uploadinfos[];
 }
@@ -55,8 +54,9 @@ export class ComponentManagementComponent implements OnInit {
   sessionId: string = '';
   softwareLists: SoftwareLists = {} as SoftwareLists;
   componentList: ComponentList = {} as ComponentList;
-  @ViewChild('createModal') createModal: any;
+  @ViewChild('createComponentModal') createComponentModal: any;
   @ViewChild('deleteModal') deleteModal: any;
+  @ViewChild('provisionModal') provisionModal: any;
   @ViewChild('advancedModal') advancedModal: any;
   advancedModalRef!: MatDialogRef<any>;
   advancedForm!: FormGroup;
@@ -65,9 +65,12 @@ export class ComponentManagementComponent implements OnInit {
   isSettingAdvanced = true;
   createModalRef!: MatDialogRef<any>;
   deleteModalRef!: MatDialogRef<any>;
+  provisionModalRef!: MatDialogRef<any>;
   createForm!: FormGroup;
+  provisionForm!: FormGroup;
   selectSoftware!: Uploadinfos;
   selectComponent!: Components;
+  componentstatus: number=-1;
   nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
   file: any;
   typeMap: Map<number, string> = new Map();
@@ -83,10 +86,9 @@ export class ComponentManagementComponent implements OnInit {
   querySoftwareScpt!: Subscription;
   querySWAdvanceSearchScpt!: Subscription;
 
-  uploadtypeList: Item[] = [
-    { displayName: 'CU', value: '0' },
-    { displayName: `DU`, value: '1' },
-    { displayName: `CU+DU`, value: '2' },
+  comtype: Item[] = [
+    { displayName: 'CU', value: '1' },
+    { displayName: `DU`, value: '2' },
     { displayName: `CU+DU+RU`, value: '3' }
   ];
 
@@ -98,7 +100,7 @@ export class ComponentManagementComponent implements OnInit {
     private fb: FormBuilder,
     public languageService: LanguageService
   ) {
-    this.uploadtypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
+    this.comtype.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
     this.createSearchForm();
     this.createAdvancedForm();
   }
@@ -153,25 +155,24 @@ export class ComponentManagementComponent implements OnInit {
       'model': new FormControl(''),
       'uploadtype': new FormControl('All'),
       'version': new FormControl(''),
-      'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),
-      'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
       'fileName': new FormControl(''),
     });
   }
   openCreateModal() {
     this.formValidated = false;
     this.createForm = this.fb.group({
-      'firm': new FormControl(''),
-      'model': new FormControl(''),
-      'uploadtype': new FormControl('All'),
-      'version': new FormControl('', [Validators.required]),
-      'method': new FormControl('upload'),
-      'notes': new FormControl(''),
-      'ftpaccount': new FormControl(''),
-      'ftppassword': new FormControl(''),
+      'name': new FormControl('', [Validators.required]),
+      'ip': new FormControl('', [Validators.required]),
+      'mac': new FormControl('', [Validators.required]),
+      'comtype': new FormControl('', [Validators.required]),
+      'port': new FormControl('', [Validators.required]),
+      'account': new FormControl('', [Validators.required]),
+      'key': new FormControl('', [Validators.required]),
+      'firm': new FormControl('', [Validators.required]),
+      'modelname': new FormControl('', [Validators.required]),
       'sessionid': this.sessionId
     });
-    this.createModalRef = this.dialog.open(this.createModal, { id: 'createModal' });
+    this.createModalRef = this.dialog.open(this.createComponentModal, { id: 'createComponentModal' });
     this.createModalRef.afterClosed().subscribe(() => {
       this.fileMsg = '';
       this.formValidated = false;
@@ -192,13 +193,14 @@ export class ComponentManagementComponent implements OnInit {
     }
     if (passFile === null) {
       this.file = null;
-      this.createForm.controls['fileName'].setValue('');
+      this.provisionForm.controls['fileName'].setValue('');
     } else {
       this.file = files[0];
-      this.createForm.controls['fileName'].setValue(files[0].name);
+      this.provisionForm.controls['fileName'].setValue(files[0].name);
     }
     // console.log(files);
   }
+  
 
   create() {
     this.formValidated = true;
@@ -207,16 +209,20 @@ export class ComponentManagementComponent implements OnInit {
     }
     if (this.commonService.isLocal) {
       /* local file test */
-      this.commonService.softwareList.push(
+      this.commonService.componentList.components.push(
         {
-          id: "s0011009",
+          id: "0f03212c522b4c86abda",
+          bsId: "8e427f7c5ff34326a380",
+          bsName: "itri_10.0.2.10",
+          name: "itri_10.0.2.10",
+          ip: "10.0.2.10",
+          port: "830",
+          account: "k200",
+          key: "k200123",
+          comtype: 2,
           firm: "ITRI",
-          model: "Os_image_2.tar",
-          type: 0,
-          version: "1.0.0",
-          notes: "Os_image_2.tar",
-          uploadTime: "2023-07-01 20: 01: 30",
-          fileName: "fw-v1-0-0.zip"
+          modelname: "v2.0",
+          status: 1
         }
       );
       this.createModalRef.close();
@@ -228,27 +234,16 @@ export class ComponentManagementComponent implements OnInit {
         body['uploadtype'] = 1;
       } else if (this.createForm.controls['uploadtype'].value === 'DU') {
         body['uploadtype'] = 2;
-      } else if (this.createForm.controls['uploadtype'].value === 'CU+DU') {
+      } else if (this.createForm.controls['uploadtype'].value === 'CU+DU+RU') {
         body['uploadtype'] = 3;
       } else {
         body['uploadtype'] = 0;
       }
       body['sessionid'] = this.sessionId;
-      this.commonService.createSoftware(body).subscribe(
-        (res: any) => {
-          console.log('createSoftware:');
+      this.commonService.createBsComponent(body).subscribe(
+        res => {
+          console.log('createBsComponent:');
           console.log(res);
-          const softwareId = res['softwareId'];
-          const uploadUrl = `${this.commonService.restPath}/uploadSoftware/${this.sessionId}/${softwareId}`;
-          const options = this.commonService.options;
-          const formData = new FormData();
-          formData.append('file', this.file);
-          this.http.post(uploadUrl, formData, options).subscribe(
-            () => {
-              this.createModalRef.close();
-              this.getComponentList();
-            }
-          );
           this.createModalRef.close();
           this.getComponentList();
         }
@@ -256,9 +251,24 @@ export class ComponentManagementComponent implements OnInit {
     }
   }
 
-  openDelectModal(componentList: Components) {
+  openDeleteModal(componentList: Components) {
     this.selectComponent = componentList;
+    this.componentstatus = componentList.status;
+    console.log("test "+this.componentstatus);
     this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
+  }
+
+  openProvisionModal(componentList: Components) {
+    this.formValidated = false;
+    this.provisionForm = this.fb.group({
+      'fileName': new FormControl('', [Validators.required])
+    });
+    this.selectComponent = componentList;
+    this.provisionModalRef = this.dialog.open(this.provisionModal, { id: 'provisionModal' });
+    this.provisionModalRef.afterClosed().subscribe(() => {
+      this.fileMsg = '';
+      this.formValidated = false;
+    });
   }
 
   delete() {

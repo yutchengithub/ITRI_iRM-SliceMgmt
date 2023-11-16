@@ -425,6 +425,11 @@ export class CommonService {
     const url = `${this.restPath}/queryBsComponentList/${this.getSessionId()}`;
     return this.http.get(url);
   }
+  createBsComponent(body: any): Observable<any> {
+    const url = `${this.restPath}/createBsComponent/${this.getSessionId()}`;
+    const bodyStr = JSON.stringify(body);
+    return this.http.post(url, bodyStr);
+  }
 
   /* local file */
   systemSummary: SystemSummary = {
@@ -2202,7 +2207,7 @@ export class CommonService {
         "id": "0f03212c522b4c86abda",
         "bsId": "8e427f7c5ff34326a380",
         "bsName": "itri_10.0.2.10",
-        "name": "itri_10.0.2.10",
+        "name": "BSCOM0",
         "ip": "10.0.2.10",
         "port": "830",
         "account": "k200",
@@ -2216,7 +2221,7 @@ export class CommonService {
         "id": "28a6c246a4ca425aa8dc",
         "bsId": "1830b1015796405fb12e",
         "bsName": "itri_10.0.2.11",
-        "name": "itri_10.0.2.11",
+        "name": "BSCOM1",
         "ip": "10.0.2.11",
         "port": "830",
         "account": "k200",
@@ -2230,7 +2235,7 @@ export class CommonService {
         "id": "28a6c246a4ca425aa8dc",
         "bsId": "1830b1015796405fb12e",
         "bsName": "itri_10.0.2.12",
-        "name": "itri_10.0.2.12",
+        "name": "BSCOM2",
         "ip": "10.0.2.12",
         "port": "830",
         "account": "k200",
@@ -2244,7 +2249,7 @@ export class CommonService {
         "id": "28a6c246a4ca425aa8dc",
         "bsId": "1830b1015796405fb12e",
         "bsName": "itri_10.0.2.13",
-        "name": "itri_10.0.2.13",
+        "name": "BSCOM3",
         "ip": "10.0.2.13",
         "port": "830",
         "account": "k200",
@@ -2258,7 +2263,7 @@ export class CommonService {
         "id": "28a6c246a4ca425aa8dc",
         "bsId": "1830b1015796405fb12e",
         "bsName": "itri_10.0.2.14",
-        "name": "itri_10.0.2.14",
+        "name": "BSCOM4",
         "ip": "10.0.2.14",
         "port": "830",
         "account": "k200",
@@ -2272,7 +2277,7 @@ export class CommonService {
         "id": "28a6c246a4ca425aa8dc",
         "bsId": "1830b1015796405fb12e",
         "bsName": "itri_10.0.2.15",
-        "name": "itri_10.0.2.15",
+        "name": "BSCOM5",
         "ip": "10.0.2.15",
         "port": "830",
         "account": "k200",
@@ -2286,7 +2291,7 @@ export class CommonService {
         "id": "28a6c246a4ca425aa8dc",
         "bsId": "1830b1015796405fb12e",
         "bsName": "itri_10.0.2.16",
-        "name": "itri_10.0.2.16",
+        "name": "BSCOM6",
         "ip": "10.0.2.16",
         "port": "830",
         "account": "k200",
@@ -2300,7 +2305,7 @@ export class CommonService {
         "id": "28a6c246a4ca425aa8dc",
         "bsId": "1830b1015796405fb12e",
         "bsName": "itri_10.0.2.16",
-        "name": "itri_10.0.2.17",
+        "name": "BSCOM7",
         "ip": "10.0.2.17",
         "port": "830",
         "account": "k200",
@@ -2314,7 +2319,7 @@ export class CommonService {
         "id": "28a6c246a4ca425aa8dc",
         "bsId": "1830b1015796405fb12e",
         "bsName": "itri_10.0.2.18",
-        "name": "itri_10.0.2.18",
+        "name": "BSCOM8",
         "ip": "10.0.2.18",
         "port": "830",
         "account": "k200",
@@ -2328,7 +2333,7 @@ export class CommonService {
         "id": "28a6c246a4ca425aa8dc",
         "bsId": "1830b1015796405fb12e",
         "bsName": "itri_10.0.2.19",
-        "name": "itri_10.0.2.19",
+        "name": "BSCOM9",
         "ip": "10.0.2.19",
         "port": "830",
         "account": "k200",
@@ -2342,7 +2347,7 @@ export class CommonService {
         "id": "28a6c246a4ca425aa8dc",
         "bsId": "1830b1015796405fb12e",
         "bsName": "itri_10.0.2.20",
-        "name": "itri_10.0.2.20",
+        "name": "BSCOM10",
         "ip": "10.0.2.20",
         "port": "830",
         "account": "k200",
