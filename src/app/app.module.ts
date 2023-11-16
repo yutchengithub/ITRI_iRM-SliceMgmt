@@ -16,8 +16,7 @@ import { SoftwareManagementComponent } from './software-management/software-mana
 import { AccountManagementComponent } from './account-management/account-management.component';
 import { AccountInfoComponent } from './account-management/account-info/account-info.component';
 import { SoftwareInfoComponent } from './software-management/software-info/software-info.component';
-import { LogManagementComponent } from './log-management/log-management.component';   // add by yutchen @10/25
-// import { LogInfoComponent } from './log-management/log-info/log-info.component';   // add by yutchen @10/25
+import { LogManagementComponent } from './log-management/log-management.component';   // @10/25 Add by yuchen 
 import { MainComponent } from './main/main.component';
 import { DxCircularGaugeModule } from 'devextreme-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -35,6 +34,7 @@ import { CommonService } from './shared/common.service';
 import { AuthGuard } from './shared/guard/auth.guard';
 import { HttpErrorInterceptor } from './shared/http-error.interceptor';
 import { DatePickerFormatDirective } from './shared/directive/date-picker-format.directive';
+import { TruncatePipe } from './shared/pipes/truncate.pipe';  // @11/16 Add by yuchen 
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatMomentDateModule } from "@angular/material-moment-adapter";
 import { CalendarModule } from 'primeng/calendar';
@@ -64,8 +64,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     SoftwareInfoComponent,
     AccountManagementComponent,
     AccountInfoComponent,
-    LogManagementComponent,    // add by yutchen @10/25
-    //LogInfoComponent,        // add by yutchen @10/25
+    LogManagementComponent,    // @10/25 Add by yuchen 
+    TruncatePipe,              // @11/16 Add by yuchen 
     MainComponent,
     OCloudInfoComponent,
     DatePickerFormatDirective,

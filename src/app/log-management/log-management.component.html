@@ -139,11 +139,11 @@
           <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 NE log 的編號 @11/14 changed by yuchen-->
           <td>{{opt.userid}}</td>
           <td>{{opt.operation}}</td>
-          <td>
-            {{opt.req_data}}
+          <td class="truncate">
+            {{ opt.req_data | truncate:130 }}
           </td>
           <td>
-            {{opt.resp_data}}
+            {{ opt.resp_data | truncate:130 }}
           </td>          
           <td>{{opt.logtime}}</td>
           <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openNElogDetail(opt)">remove_red_eye</mat-icon></td>

@@ -69,15 +69,23 @@ table thead th, table tbody td {
 }
 
 table.neLog tbody td {
-  width: 6vw;
+  width: 12vw;
+}
+table.neLog tr td:nth-last-child(0),
+table.neLog tr td:nth-last-child(6) {
+
+  width: 5vw;
+
 }
 table.neLog tr td:nth-last-child(3),
 table.neLog tr td:nth-last-child(4) {
   text-align: left;
-  width: 28vw;
-  word-break: break-all;
+  width: 93vw;
+  //word-break: break-all;
+  //max-width: 530px;          // 限制最大寬度，視需要調整
 }
- 
+
+
 table tbody td.time {
   text-align: left;
 }
@@ -118,6 +126,12 @@ table.userLog td.logmsg {
 table.userLog td.logmsg {
   text-align: left;
 }
+
+// 對所有的表格單元格應用垂直居中對齊
+table tr td {
+  vertical-align: middle;
+}
+
 @media screen and (max-width:1920px) {
   .table table {
     max-height: 70vh;
