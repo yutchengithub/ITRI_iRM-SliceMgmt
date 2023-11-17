@@ -82,7 +82,7 @@ table.neLog tr td:nth-last-child(3),
 table.neLog tr td:nth-last-child(4) {
   text-align: left;
   width: 85vw;
-  //word-break: break-all;
+  word-break: break-all;
   //max-width: 530px;          // 限制最大寬度，視需要調整
 }
 

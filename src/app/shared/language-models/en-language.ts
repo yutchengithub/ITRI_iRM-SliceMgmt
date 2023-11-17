@@ -178,8 +178,8 @@ export const Enlanguage = {
   'LogLists': 'Log Lists',
   'UserLogs': 'User Logs',
   'NELogs': 'NE Logs',       // NE = Network Element
-  'Log.start':'StartTime',   // @11/01 add by yuchen
-  'Log.end':'EndTime',       // @11/01 add by yuchen
+  'Log.start':'Execution Time',   // @11/17 changed by yuchen
+  'Log.end':'～ ',                // @11/17 changed by yuchen
 
   'UserLog.No':'No.',
   'UserLog.userid':'User',
@@ -190,7 +190,7 @@ export const Enlanguage = {
   'UserLog.view':'View',
   'UserLog.total1':'Total',     // @11/01 add by yuchen
   'UserLog.total2':'User Logs', // @11/01 add by yuchen
-  'UserLog.logKeywordString':'Keywords',  // @11/13 add by yuchen
+  'UserLog.logKeywordString':'Action Executed',  // @11/17 changed by yuchen
   'UserLog.detail':'User Log Detail', // @11/03 add by yuchen
   'UserLog.detailclose':'Close',      // @11/03 add by yuchen
   'UserLog.ExportCSV':'Export User Logs to .csv', // @11/07 add by yuchen
@@ -204,7 +204,7 @@ export const Enlanguage = {
   'NElog.view':'View',
   'NElog.total1':'Total',    // @11/01 add by yuchen
   'NElog.total2':'NE Logs',  // @11/01 add by yuchen
-  'NElog.logKeywordString':'Keywords',  // @11/03 add by yuchen
+  'NElog.logKeywordString':'Request / Response Data',  // @11/17 changed by yuchen
   'NElog.detail':'NE Log Detail',        // @11/03 add by yuchen
   'NElog.detailclose':'Close',           // @11/03 add by yuchen
   'NElog.ExportCSV':'Export NE Logs to .csv',   // @11/07 add by yuchen
