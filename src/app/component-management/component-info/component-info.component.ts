@@ -99,7 +99,47 @@ export interface OcloudPerformance {
   storage: string;
   network: string;
 }
+//component Info
+export interface BsComponentInfo {
+  id: string;
+  name: string;
+  ip: string;
+  port: string;
+  account: string;
+  key: string;
+  comtype: number;
+  firm: string;
+  modelname: string;
+  status: number;
+  info: Info;
+  sm: {
+    softwareInventory: {
+      softwareSlot: SoftwareSlot[];
+    };
+  };
+}
 
+export interface Info {
+  data: string;
+}
+
+interface SoftwareSlot {
+  name: string;
+  status: string;
+  active?: string;
+  running?: string;
+  access?: string;
+  vendorCode?: string;
+  buildId?: string;
+  buildName?: string;
+  buildVersion?: string;
+  files?: {
+    name: string;
+    version: string;
+    localPath: string;
+    integrity: string;
+  };
+}
 
 @Component({
   selector: 'app-component-info',
@@ -113,6 +153,7 @@ export class ComponentInfoComponent implements OnInit {
   cloudName: string = '';
   newip: string = '';
   // utilizationPercent: number = 0;
+  bsComponentInfo: BsComponentInfo = {} as BsComponentInfo;
   ocloudInfo: OcloudInfo = {} as OcloudInfo;
   ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
   softwareList: SoftwareList[] = [];
@@ -156,20 +197,19 @@ export class ComponentInfoComponent implements OnInit {
       this.cloudId = params['cloudId'];
       this.cloudName = params['cloudName'];
       console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
-      this.getOcloudInfo();
+      this.getComponentInfo();
       this.getOcloudPerformance();
       this.getSoftwareList();
-      //this.getSystemSummary();
     });
   }
   ngOnDestroy() {
     clearTimeout(this.refreshTimeout);
   }
 
-  getOcloudInfo() {
+  getComponentInfo() {
     if (this.commonService.isLocal) {
       /* local file test */
-      //this.ocloudInfo = this.commonService.ocloudInfo;
+      this.bsComponentInfo = this.commonService.bsComponentInfo;
       this.ocloudInfoDeal();
     } else {
       this.commonService.queryOcloudInfo(this.cloudId).subscribe(
@@ -187,7 +227,7 @@ export class ComponentInfoComponent implements OnInit {
   nfRunRefresh() {
     clearTimeout(this.refreshTimeout);
     this.RunRefreshTimeout = window.setTimeout(() => this.getOcloudPerformance(), this.RunRefreshTime * 1000);
-    this.RunRefreshTimeout = window.setTimeout(() => this.getOcloudInfo(), this.RunRefreshTime * 1000);
+    this.RunRefreshTimeout = window.setTimeout(() => this.getComponentInfo(), this.RunRefreshTime * 1000);
   }
   getOcloudPerformance() {
     if (this.commonService.isLocal) {
@@ -369,9 +409,9 @@ export class ComponentInfoComponent implements OnInit {
         () => console.log('Update Successful.')
       );
       this.updateModalRef.close();
-      this.getOcloudInfo();
+      this.getComponentInfo();
     }
-    this.getOcloudInfo();
+    this.getComponentInfo();
   }
 
   updateNFSuccessful: boolean | null = null; 
@@ -404,7 +444,7 @@ export class ComponentInfoComponent implements OnInit {
         this.updateNFSuccessful = true;
         this.hideUpdateIcon();
         this.updateIPModalRef.close();
-        this.getOcloudInfo();
+        this.getComponentInfo();
       } else {
         // Form validation failed, set the error flag
         this.updateNFSuccessful = false;
@@ -412,7 +452,7 @@ export class ComponentInfoComponent implements OnInit {
         this.updateBasicError = true;
       }
     }
-    this.getOcloudInfo();
+    this.getComponentInfo();
   }
 
   veiw(opt: Nf) {

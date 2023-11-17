@@ -26,6 +26,7 @@ import { AccountInfo } from '../account-management/account-info/account-info.com
 import { UserLogsList } from '../log-management/log-management.component'; // Add by yutchen @10/27
 import { NELogsList } from '../log-management/log-management.component'; // Add by yutchen @10/27
 import { ComponentList } from '../component-management/component-management.component';
+import { BsComponentInfo } from '../component-management/component-info/component-info.component';
 
 
 export interface NowTime {
@@ -459,7 +460,7 @@ export class CommonService {
     fields: [
       {
         "id": "a542f7ab40a24ec48e84",
-        "name": "f1",
+        "name": "itri-field1",
         "phone": "0912345678",
         "fieldposition1": "[121.570381,25.033778]",
         "fieldposition2": "[121.560381,25.033778]",
@@ -499,7 +500,7 @@ export class CommonService {
       },
       {
         "id": "a542f7ab40a24ec48e84",
-        "name": "f2",
+        "name": "itri-field2",
         "phone": "0912345678",
         "fieldposition1": "[121.570381,25.033778]",
         "fieldposition2": "[121.560381,25.033778]",
@@ -539,7 +540,7 @@ export class CommonService {
       },
       {
         "id": "a542f7ab40a24ec48e84",
-        "name": "f3",
+        "name": "itri-field3",
         "phone": "0912345678",
         "fieldposition1": "[121.570381,25.033778]",
         "fieldposition2": "[121.560381,25.033778]",
@@ -2359,6 +2360,66 @@ export class CommonService {
       }
     ]};
 
+    bsComponentInfo: BsComponentInfo = 
+    {
+      id: "c534ac5c21b7480bae3e", 
+      name: "itri_10.0.2.24", 
+      ip: "10.0.2.24", 
+      port: "830", 
+      account: "k200", 
+      key: "k200123", 
+      comtype: 1, 
+      firm: "ITRI", 
+      modelname: "v2.0", 
+      status: 0,
+      info: {
+        data: "\n\n\t<netconf-server xmlns=\"urn:ietf:params:xml:ns:yang:ietf-netconf-server\">\n\t\t<listen>\n\t\t\t<endpoint>\n\t\t\t\t<name>default-ssh</name>\n\t\t\t\t<ssh>\n\t\t\t\t\t<tcp-server-parameters>\n\t\t\t\t\t\t<local-address>0.0.0.0</local-address>\n\t\t\t\t\t\t<keepalives>\n\t\t\t\t\t\t\t<idle-time>1</idle-time>\n\t\t\t\t\t\t\t<max-probes>10</max-probes>\n\t\t\t\t\t\t\t<probe-interval>5</probe-interval>\n\t\t\t\t\t\t</keepalives>\n\t\t\t\t\t</tcp-server-parameters>\n\t\t\t\t\t<ssh-server-parameters>\n\t\t\t\t\t\t<server-identity>\n\t\t\t\t\t\t\t<host-key>\n\t\t\t\t\t\t\t\t<name>default-key</name>\n\t\t\t\t\t\t\t\t<public-key>\n\t\t\t\t\t\t\t\t\t<keystore-reference>genkey</keystore-reference>\n\t\t\t\t\t\t\t\t</public-key>\n\t\t\t\t\t\t\t</host-key>\n\t\t\t\t\t\t</server-identity>\n\t\t\t\t\t\t<client-authentication>\n\t\t\t\t\t\t\t<supported-authentication-methods>\n\t\t\t\t\t\t\t\t<publickey/>\n\t\t\t\t\t\t\t\t<passsword/>\n\t\t\t\t\t\t\t\t<other>interactive</other>\n\t\t\t\t\t\t\t</supported-authentication-methods>\n\t\t\t\t\t\t\t<users/>\n\t\t\t\t\t\t</client-authentication>\n\t\t\t\t\t</ssh-server-parameters>\n\t\t\t\t</ssh>\n\t\t\t</endpoint>\n\t\t</listen>\n\t</netconf-server>"
+      },
+      sm: {
+        softwareInventory: {
+          softwareSlot: [
+            {
+              name: "slot-1",
+              status: "VALID",
+              active: "true",
+              running: "true",
+              access: "READ_ONLY",
+              vendorCode: "K2",
+              buildId: "b01",
+              buildName: "product-default",
+              buildVersion: "0.1.0",
+              files: {
+                name: "file-1",
+                version: "0.2.3",
+                localPath: "~/some_dir/",
+                integrity: "OK"
+              }
+            },
+            {
+              name: "slot-2",
+              status: "EMPTY",
+              active: "false",
+              running: "false",
+              access: "READ_WRITE"
+            },
+            {
+              name: "slot-3",
+              status: "EMPTY",
+              active: "false",
+              running: "false",
+              access: "READ_WRITE"
+            },
+            {
+              name: "slot-4",
+              status: "EMPTY",
+              active: "false",
+              running: "false",
+              access: "READ_WRITE"
+            }
+          ]
+        }
+      }
+    };
 
   nfList: Nf[] = [
     {

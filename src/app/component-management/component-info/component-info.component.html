@@ -49,25 +49,19 @@
   <div class="BOX col-md-3 basicInfo h30">
     <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
     <ul>
-      <li><label>{{languageService.i18n['table.header_name']}}</label><span>{{ocloudInfo.name}}</span></li>
-      <li><label>{{languageService.i18n['table.globalID']}}</label><span>{{ocloudInfo.id}}</span></li>
-      <li><label>{{languageService.i18n['ims.endpoint']}}</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-      <li><label>IP Address</label><span>{{ocloudInfo.ipAddress}}
-        <button (click)="openUpdateIPModel()">{{languageService.i18n['update']}}</button>
-        <mat-icon *ngIf="updateNFSuccessful=== true" class="green-icon"style="vertical-align: middle;">check_circle</mat-icon>
-      </span></li>
-      <li><label>{{languageService.i18n['description']}}</label><span>{{ocloudInfo.description}}</span></li>
-      <li><label>{{languageService.i18n['action']}}</label>
-        <span>
-        <label *ngIf="ocloudInfo.status === 'Running'" class="greenLight"></label>
-        <label *ngIf="ocloudInfo.status === 'Failed Deployment'" class="redLight"></label>
-        <label *ngIf="ocloudInfo.status !== 'Running' && ocloudInfo.status !== 'Failed Deployment'" class="grayLight">{{ ocloudInfo.status }}</label>
-        {{ocloudInfo.status}}
-      </span>
-      </li>
+      <li><label>{{languageService.i18n['cm.name']}}</label><span>{{bsComponentInfo.name}}</span></li>
+      <li><label>{{languageService.i18n['cm.type']}}</label><span>{{bsComponentInfo.id}}</span></li>
+      <li><label>{{languageService.i18n['cm.ip']}}</label><span>{{bsComponentInfo.ip}}</span></li>
+      <li><label>{{languageService.i18n['cm.port']}}</label><span>{{bsComponentInfo.port}}</span></li>
+      <li><label>{{languageService.i18n['cm.acc']}}</label><span>{{bsComponentInfo.account}}</span></li>
+      <li><label>{{languageService.i18n['cm.passw']}}</label><span>{{bsComponentInfo.key}}</span></li>
+      <li><label>{{languageService.i18n['cm.manufacturer']}}</label><span>{{bsComponentInfo.firm}}</span></li>
+      <li><label>{{languageService.i18n['cm.model']}}</label><span>{{bsComponentInfo.modelname}}</span></li>
+      <li><label>{{languageService.i18n['table.Status']}}</label><span>{{bsComponentInfo.status}}</span></li>
+      <li><label>{{languageService.i18n['software_version']}}</label><span>{{bsComponentInfo.port}}</span></li>
     </ul>
 
-    <label class="boxTitle">{{languageService.i18n['software.info']}}</label>
+    <!-- <label class="boxTitle">{{languageService.i18n['software.info']}}</label>
     <ul>
       <li>
         <label>{{languageService.i18n['version']}}</label>
@@ -75,7 +69,7 @@
           <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">{{languageService.i18n['update']}}</button>
         </span>
       </li>
-    </ul>
+    </ul> -->
   </div>
 
   <div class="BOX col-md-3 nf h30">
@@ -157,26 +151,6 @@
                       </tbody>
                     </table>
                   </ng-template>
-                  <!-- <a href="javascript:void(0)" (mouseover)="showTooltipCpu[i+'_'+j]=true"
-                    (mouseout)="showTooltipCpu[i+'_'+j]=false">{{node.cpu.length}}</a>
-                  <div *ngIf="showTooltipCpu[i+'_'+j]">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Product</th>
-                          <th>Capacity</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let cpu of node.cpu">
-                          <td>{{cpu.name}}</td>
-                          <td>{{cpu.product}}</td>
-                          <td>{{cpu.capacity}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div> -->
                 </td>
                 <td>{{node.memory.size}}</td>
                 <!-- Tooltip Cpu -->
@@ -198,25 +172,6 @@
                       </tbody>
                     </table>
                   </ng-template>
-                  <!-- <a href="javascript:void(0)" (mouseover)="showTooltipStorage[i+'_'+j]=true"
-                    (mouseout)="showTooltipStorage[i+'_'+j]=false">{{node.storage.total}}</a>
-                  <div *ngIf="showTooltipStorage[i+'_'+j]">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Size</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let item of node.storage.items">
-                          <td>{{item.name}}</td>
-                          <td>{{item.size}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div> -->
-
                 </td>
                 <!-- Tooltip Nic -->
                 <td class="Interface ResourceTooltip">
@@ -239,26 +194,6 @@
                       </tbody>
                     </table>
                   </ng-template>
-                  <!-- <a href="javascript:void(0)" (mouseover)="showTooltipNic[i+'_'+j]=true"
-                    (mouseout)="showTooltipNic[i+'_'+j]=false">{{node.nic.length}}</a>
-                  <div *ngIf="showTooltipNic[i+'_'+j]">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Product</th>
-                          <th>Capacity</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let nic of node.nic">
-                          <td>{{nic.name}}</td>
-                          <td>{{nic.product}}</td>
-                          <td>{{nic.capacity}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div> -->
                 </td>
               </tr>
             </tbody>
