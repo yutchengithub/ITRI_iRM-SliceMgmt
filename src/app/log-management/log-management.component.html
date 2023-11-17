@@ -140,10 +140,10 @@
           <td>{{opt.userid}}</td>
           <td>{{opt.operation}}</td>
           <td class="truncate">
-            {{ opt.req_data | truncate:130 }}
+            {{ opt.req_data | truncate:120 }}
           </td>
           <td>
-            {{ opt.resp_data | truncate:130 }}
+            {{ opt.resp_data | truncate:120 }}
           </td>          
           <td>{{opt.logtime}}</td>
           <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openNElogDetail(opt)">remove_red_eye</mat-icon></td>
