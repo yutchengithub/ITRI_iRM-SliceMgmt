@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ComponentManagementComponent } from './component-management/component-management.component';
+import { ComponentInfoComponent } from './component-management/component-info/component-info.component';
 import { LoginComponent } from './login/login.component';
 import { FieldManagementComponent } from './field-management/field-management.component';
 import { NfManagementComponent } from './nf-management/nf-management.component';
@@ -55,6 +56,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     AppComponent,
     DashboardComponent,
     ComponentManagementComponent,
+    ComponentInfoComponent,
     LoginComponent,
     FieldManagementComponent,
     NfManagementComponent,

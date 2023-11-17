@@ -322,8 +322,6 @@ export class ComponentManagementComponent implements OnInit {
     this.advancedForm.controls['firm'].setValue(this.searchForm.controls['firm'].value);
     this.advancedForm.controls['model'].setValue(this.searchForm.controls['model'].value);
     this.advancedForm.controls['uploadtype'].setValue(this.searchForm.controls['uploadtype'].value);
-    this.advancedForm.controls['from'].setValue(this.searchForm.controls['from'].value);
-    this.advancedForm.controls['to'].setValue(this.searchForm.controls['to'].value);
     this.advancedForm.controls['fileName'].setValue(this.searchForm.controls['fileName'].value);
     this.advancedModalRef = this.dialog.open(this.advancedModal, { id: 'faultAdvancedModal' });
     this.advancedModalRef.afterClosed().subscribe((result) => {
@@ -333,8 +331,6 @@ export class ComponentManagementComponent implements OnInit {
         this.searchForm.controls['firm'].setValue(this.advancedForm.controls['firm'].value);
         this.searchForm.controls['model'].setValue(this.advancedForm.controls['model'].value);
         this.searchForm.controls['uploadtype'].setValue(this.advancedForm.controls['uploadtype'].value);
-        this.searchForm.controls['from'].setValue(this.advancedForm.controls['from'].value);
-        this.searchForm.controls['to'].setValue(this.advancedForm.controls['to'].value);
         this.searchForm.controls['fileName'].setValue(this.advancedForm.controls['fileName'].value);
         this.afterAdvancedForm = _.cloneDeep(this.advancedForm);
         this.afterSearchForm = _.cloneDeep(this.advancedForm);
@@ -412,7 +408,7 @@ export class ComponentManagementComponent implements OnInit {
   }
 
   viewPage(componentList: Components) {
-    this.router.navigate(['/main/software-mgr/info', componentList.id, componentList.bsId]);
+    this.router.navigate(['/main/component-mgr/info', componentList.id, componentList.bsId]);
   }
 
   clearSetting() {

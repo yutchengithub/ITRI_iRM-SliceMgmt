@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SoftwareInfoComponent } from './component--info.component';
+import { ComponentInfoComponent } from './component-info.component';
 
 describe('componentInfoComponent', () => {
-  let component: SoftwareInfoComponent;
-  let fixture: ComponentFixture<SoftwareInfoComponent>;
+  let component: ComponentInfoComponent;
+  let fixture: ComponentFixture<ComponentInfoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SoftwareInfoComponent ]
+      declarations: [ ComponentInfoComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SoftwareInfoComponent);
+    fixture = TestBed.createComponent(ComponentInfoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

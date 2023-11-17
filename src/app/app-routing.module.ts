@@ -18,6 +18,7 @@ import { AuthGuard } from './shared/guard/auth.guard';
 import { SoftwareInfoComponent } from './software-management/software-info/software-info.component';
 import { AccountInfoComponent } from './account-management/account-info/account-info.component';
 import { LogManagementComponent } from './log-management/log-management.component';      // 日誌管理 add by yutchen @10/25
+import { ComponentInfoComponent } from './component-management/component-info/component-info.component';
 
 
 const routes: Routes = [
@@ -31,7 +32,7 @@ const routes: Routes = [
         path: 'component-mgr',
         children: [
           { path: '', component: ComponentManagementComponent },
-          { path: 'info/:cloudId/:cloudName', component: ComponentManagementComponent }
+          { path: 'info/:cloudId/:cloudName', component: ComponentInfoComponent }
         ]
       },
       {
