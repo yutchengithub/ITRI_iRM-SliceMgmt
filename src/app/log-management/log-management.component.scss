@@ -62,7 +62,7 @@ table thead th, table tbody td {
   text-align: center;
   padding: 8px;
   /* white-space: nowrap; */
-  /* width: 14.28%; */ // 平均分配列寬，有 7 個欄位: 100 % / 7 ≈ 14.28% 
+  // width: 14.28%; // 平均分配列寬，有 7 個欄位: 100 % / 7 ≈ 14.28% 
   vertical-align: top;
   //text-overflow: ellipsis;
   //overflow: hidden;
@@ -73,14 +73,15 @@ table.neLog tbody td {
 }
 table.neLog tr td:nth-last-child(0),
 table.neLog tr td:nth-last-child(6) {
-
   width: 5vw;
-
+}
+table.neLog tr td:nth-last-child(2) {
+  width: 9vw;
 }
 table.neLog tr td:nth-last-child(3),
 table.neLog tr td:nth-last-child(4) {
   text-align: left;
-  width: 93vw;
+  width: 80vw;
   //word-break: break-all;
   //max-width: 530px;          // 限制最大寬度，視需要調整
 }
