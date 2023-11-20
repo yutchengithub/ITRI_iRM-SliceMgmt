@@ -1,85 +1,14 @@
-.table table {
-  width: 97.5%;
-  margin: 0;
+
+.component tbody tr td {
+  width: 20.5vw;
+}
+.component thead tr th {
+  white-space: nowrap;
+}
+.component tbody tr td.icon {
+  width: 7.5em;
   text-align: center;
-  max-height: 70vh;
 }
-table tr td {
-  width: 15vw;
-}
-table tr td.icon {
-  width: 7vw;
-}
-.upload > span {
+input[type="file"] {
   outline: 0;
-  padding: 0.3em 2em;
-  border: 0;
-  margin: 0 0.5em 0 0;
-  vertical-align: middle;
-  font-size: 0.9em;
-  border-radius: 50em;
-  cursor: pointer;
-}
-.upload > span input {
-  position: absolute;
-  font-size: 50px;
-  right: 0;
-  top: 0;
-  width: 100%;
-  height: 27px;
-  opacity: 0;
-  cursor: pointer;
-  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);
-}
-.upload label {
-  word-wrap: break-word;
-  display: inline-block;
-  max-width: 75%;
-  line-height: 1;
-  vertical-align: middle;
-}
-span.upload {
-  width: 70%;
-}
-.nfType {
-  width: 70%;
-}
-.nfType span {
-  display: inline-flex;
-}
-.nfType .mat-button-toggle {
-  width: 11.05em;
-}
-select {
-  margin: 0 5px;
-}
-ul li select {
-  margin: 0;
-}
-.error-icon {
-  color: red;
-  background-color: transparent;
-  outline-color: black;
-  border-width: 1px !important;
-}
-
-@media screen and (max-width:1920px) {
-  .table table {
-    max-height: 72vh;
-  }
-}
-@media screen and (max-width:1920px) {
-  .table table {
-    max-height: 67vh;
-}
-}
-@media screen and (max-width:1366px) {
-
-  table tr td {
-    width: 13vw;
-}
-.table table {
-  width: 98.5%;
-  max-height: 60vh;
-}
 }

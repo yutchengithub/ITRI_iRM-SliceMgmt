@@ -82,13 +82,8 @@ button.modify {
   max-height: 42vh;
   font-size: 1em;
 }
-.faultMsg_detail li {
-  list-style: none;
-}
-.faultMsg_detail li span:first-child {
-  width: 8.5em;
-  text-align: right;
-}
+
+
 @media screen and (max-width:1920px) {
   .table table {
     max-height: 70vh;

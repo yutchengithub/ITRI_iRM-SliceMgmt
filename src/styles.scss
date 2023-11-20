@@ -152,13 +152,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1d8ee5', end
 
 }
 mat-dialog-container h5 + p {
-  text-align: center;
   font-size: 1.15em;
+  max-width: 90%;
+  text-align: center;
+  margin: auto!important;
+  display: block;
+  word-break: break-word!important;
 }
 mat-dialog-container ul {
   margin: 1% 6%;
 }
-mat-dialog-container ul li::marker,ul li::marker  {
+mat-dialog-container ul li::marker,
+ul li::marker  {
   list-style: disc outside;
   color: #436588;
 }
@@ -173,6 +178,9 @@ mat-dialog-container ul li > span {
 }
 mat-dialog-container ul li > label {
   min-width: 23%;
+}
+#itemDetail ul li > label {
+  min-width: 8.5em!important;
 }
 mat-dialog-container ul li > span {
   max-width: 70%;
@@ -926,7 +934,6 @@ ul.modify li {
 #nelogDetail ul li > span:first-child,
 #userlogDetail ul li > span:first-child {
   width: 7.3em;
-  text-align: right;
   margin: 0;
 }
 
@@ -953,11 +960,17 @@ input[type="file"] {
 }
 
 #nelogDetail {
-  max-width: 70em!important;
+  width: 70em!important;
 }
 #nelogDetail li > span:nth-child(2) {
   max-width: 85%;
   word-break: break-all;
+}
+#deleteModal h5 .mat-icon {
+  background-color: transparent;
+}
+#provisionModal label, #provisionModal span {
+  vertical-align: initial!important;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {

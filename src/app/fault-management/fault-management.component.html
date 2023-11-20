@@ -95,28 +95,28 @@ nextLabel="" id="fmList">
   </div>
   <ul *ngIf="type === 'add_situation'">
     <li>
-      <span>{{languageService.i18n['fm.field']}} </span><span>{{selectedMsg.fieldName}}</span>
+      <label>{{languageService.i18n['fm.field']}}: </label><span>{{selectedMsg.fieldName}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.gnb']}} </span><span>{{selectedMsg.bsName}}</span>
+      <label>{{languageService.i18n['fm.gnb']}}: </label><span>{{selectedMsg.bsName}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.component']}} </span><span>{{selectedMsg.compname}}</span>
+      <label>{{languageService.i18n['fm.component']}}: </label><span>{{selectedMsg.compname}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.eCause']}} </span><span>{{selectedMsg.probablecause}}</span>
+      <label>{{languageService.i18n['fm.eCause']}}: </label><span>{{selectedMsg.probablecause}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.severity']}} </span><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
+      <label>{{languageService.i18n['fm.severity']}}: </label><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.occurtime']}} </span><span>{{selectedMsg.timestamp}}</span>
+      <label>{{languageService.i18n['fm.occurtime']}}: </label><span>{{selectedMsg.timestamp}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.status']}} </span><span>{{selectedMsg.status}}</span>
+      <label>{{languageService.i18n['fm.status']}}: </label><span>{{selectedMsg.status}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.situation']}} </span><span>
+      <label>{{languageService.i18n['fm.situation']}}: </label><span>
         <label *ngIf="selectedMsg.processstatus === 0" class="greenLight"></label>
         <label *ngIf="selectedMsg.processstatus === 1" class="redLight"></label> {{selectedMsg.processresult}} 
       </span>
@@ -241,43 +241,43 @@ nextLabel="" id="fmList">
   <h5>{{languageService.i18n['fm.detail']}}</h5>
    <ul class="faultMsg_detail">
     <li>
-      <span>{{languageService.i18n['fm.field']}}: </span><span>{{selectedMsg.fieldName}}</span>
+      <label>{{languageService.i18n['fm.field']}}: </label><span>{{selectedMsg.fieldName}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.gnb']}}: </span><span>{{selectedMsg.bsName}}</span>
+      <label>{{languageService.i18n['fm.gnb']}}: </label><span>{{selectedMsg.bsName}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.component']}}: </span><span>{{selectedMsg.compname}}</span>
+      <label>{{languageService.i18n['fm.component']}}: </label><span>{{selectedMsg.compname}}</span>
     </li>    
     <li>
-      <span>{{languageService.i18n['fm.severity']}}: </span><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
+      <label>{{languageService.i18n['fm.severity']}}: </label><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.status']}}: </span><span>{{selectedMsg.status}}</span>
+      <label>{{languageService.i18n['fm.status']}}: </label><span>{{selectedMsg.status}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.occurtime']}}: </span><span>{{selectedMsg.timestamp}}</span>
+      <label>{{languageService.i18n['fm.occurtime']}}: </label><span>{{selectedMsg.timestamp}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.createtime']}}: </span><span>{{selectedMsg.createtime}}</span>
+      <label>{{languageService.i18n['fm.createtime']}}: </label><span>{{selectedMsg.createtime}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.updatetime']}}: </span><span>{{selectedMsg.updatetime}}</span>
+      <label>{{languageService.i18n['fm.updatetime']}}: </label><span>{{selectedMsg.updatetime}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.count']}}: </span><span>{{selectedMsg.count}}</span>
+      <label>{{languageService.i18n['fm.count']}}: </label><span>{{selectedMsg.count}}</span>
     </li>
   </ul>
   <br/>
   <ul class="faultMsg_detail">
     <li>
-      <span>{{languageService.i18n['fm.eType']}}: </span><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
+      <label>{{languageService.i18n['fm.eType']}}: </label><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.eCause']}}: </span><span>{{selectedMsg.probablecause}}</span>
+      <label>{{languageService.i18n['fm.eCause']}}: </label><span>{{selectedMsg.probablecause}}</span>
     </li>
     <li>
-      <span>{{languageService.i18n['fm.eDesc']}}: </span><span>{{selectedMsg.eDesc}}</span>
+      <label>{{languageService.i18n['fm.eDesc']}}: </label><span>{{selectedMsg.eDesc}}</span>
     </li>
   </ul>
 

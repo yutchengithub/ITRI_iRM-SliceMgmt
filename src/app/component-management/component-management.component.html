@@ -16,7 +16,7 @@
     </div>
   </form>
 
-<div class="table">
+<div class="table component">
   <table>
     <thead>
       <tr>
@@ -35,7 +35,7 @@
         <td>{{opt.name}}</td>
         <td>{{opt.ip}}</td>
         <td>{{opt.port}}</td>
-        <td>
+        <td class="icon">
           <label *ngIf="opt.status === 0" class="greenLight"></label>
           <label *ngIf="opt.status === 1" class="redLight"></label>
         </td>
@@ -153,7 +153,7 @@
             <span>{{languageService.i18n['upload']}}
               <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".zip, .tar" #fileInput>
             </span>
-            <label>{{provisionForm.controls['fileName'].value}}</label>
+            <div>{{provisionForm.controls['fileName'].value}}</div>
             <mat-error *ngIf="formValidated&&provisionForm.controls['fileName'].invalid">is Required</mat-error>
             <mat-error *ngIf="fileMsg">{{fileMsg}}</mat-error>
           </div>
