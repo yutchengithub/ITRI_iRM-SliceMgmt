@@ -132,6 +132,19 @@ export const Enlanguage = {
   'pending_error':'Pending', //Modify by Charles (Pending Error->Pending)
   'resolved':'Resolved',
   'no_results':'No results were found. Please verify your search terms and try again.',
+
+  //Dashboard
+  'num_fields':'Number of Field',
+  'num_gNBs':'Number of gNBs',
+  'num_UEs':'Number of UEs',
+  'coverage':'Coverage',
+  'critical_Alarm':'Critical Alarm',
+  'major_Alarm':'Major Alarm',
+  'minor_Alarm':'Minor Alarm',
+  'warning_Alarm':'Warning Alarm',
+  'dashboard.view':'View',
+  
+  //Software Management
   'firm':'Firm',
   'model':'Model',
   'manufacturer':'Manufacturer',
@@ -146,6 +159,7 @@ export const Enlanguage = {
   'file.size':'File Size',
   'field_list':'Field List',
   'software_version':'Software Version',
+  'time.end':'～ ',
   
   // Component Management (元件管理)
   'cm.name':'Component Name',

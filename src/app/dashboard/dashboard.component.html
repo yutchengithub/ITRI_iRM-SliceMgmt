@@ -2,21 +2,21 @@
   <div class="leftArea">
     <span>
       <img src="assets/img/fields.svg">
-      <label class="boxTitle">Number of Fields
+      <label class="boxTitle">{{languageService.i18n['num_fields']}}
         <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{field.fieldNum}}</span>
       </label>
     </span>
 
     <span>
       <img src="assets/img/gNB01.svg">
-      <label class="boxTitle">Number of gNBs
+      <label class="boxTitle">{{languageService.i18n['num_gNBs']}}
         <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{field.bsNum}}</span>
       </label>
     </span>
 
     <span>
       <img src="assets/img/ues.svg">
-      <label class="boxTitle">Number of UEs
+      <label class="boxTitle">{{languageService.i18n['num_UEs']}}
         <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{ueNum}}</span>
       </label>
     </span>
@@ -28,15 +28,15 @@
       <table>
         <thead>
           <tr>
-            <th>Field {{languageService.i18n['table.header_name']}}</th>
-            <th>Number of gNBs</th>
-            <th>Number of UEs</th>
-            <th>Coverage</th>
-            <th>Critical Alarm</th>
-            <th>Major Alarm</th>
-            <th>Minor Alarm</th>
-            <th>Warning  Alarm</th>
-            <th>View</th>
+            <th>{{languageService.i18n['fm.field']}}</th>
+            <th>{{languageService.i18n['num_gNBs']}}</th>
+            <th>{{languageService.i18n['num_UEs']}}</th>
+            <th>{{languageService.i18n['coverage']}}</th>
+            <th>{{languageService.i18n['critical_Alarm']}}</th>
+            <th>{{languageService.i18n['major_Alarm']}}</th>
+            <th>{{languageService.i18n['minor_Alarm']}}</th>
+            <th>{{languageService.i18n['warning_Alarm']}}</th>
+            <th>{{languageService.i18n['dashboard.view']}}</th>
           </tr>
         </thead>
         <tbody>

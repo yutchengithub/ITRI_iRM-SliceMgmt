@@ -3,10 +3,10 @@
 </h5>
   <form [formGroup]="searchForm">
     <div class="filter">
-      <span><label>Manufacturer</label>
+      <span><label>{{languageService.i18n['manufacturer']}}</label>
         <input type="text"formControlName="firm">
       </span>
-      <span><label>Model</label>
+      <span><label>{{languageService.i18n['model']}}</label>
           <input type="text"formControlName="model">
       </span>
       <span><label>{{languageService.i18n['type']}}</label>
@@ -15,8 +15,21 @@
           <option *ngFor="let opt of uploadtypeList" [value]="opt.value">{{opt.displayName}}</option>
         </select>
       </span>
+      <span><label>{{languageService.i18n['version']}}</label>
+        <input type="text"formControlName="version">
+      </span>
+      <span><label>{{languageService.i18n['upload_time']}}</label>
+        <span><p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar></span>
+      </span>
+      <span><label>{{languageService.i18n['time.end']}}</label>
+        <span><p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar></span>
+      </span>
+      <span><label>{{languageService.i18n['fileName']}}</label>
+        <input type="text"formControlName="fileName">
+      </span>
+    
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-      <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span>
+      <!-- <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
       <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSetting()">clear</span>
     </div>
   </form>
@@ -47,7 +60,7 @@
         <td>{{opt.uploadtime}}</td>
         <td>{{opt.uploadinfo}}</td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>
+          <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">remove_red_eye</mat-icon>
         </td>
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)">delete_forever</mat-icon>
@@ -68,7 +81,7 @@
   <form [formGroup]="createForm">
     <ul>
       <li>
-        <label>{{languageService.i18n['firm']}}</label>
+        <label>{{languageService.i18n['manufacturer']}}</label>
         <span>
           <input type="text" formControlName="firm" class="{{formValidated&&createForm.controls['firm'].invalid?'required':''}}">
           <mat-error *ngIf="formValidated&&createForm.controls['firm'].invalid">Required</mat-error>

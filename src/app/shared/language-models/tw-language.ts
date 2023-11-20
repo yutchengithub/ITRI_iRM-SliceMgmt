@@ -132,9 +132,22 @@ export const TwLanguage = {
   'pending_error':'待處理',
   'resolved':'已解決',
   'no_results':'未找到您想搜尋的相關數據。請嘗試修改搜尋關鍵字',
-  'firm':'Firm',
-  'model':'Model',
-  'manufacturer':'Manufacturer',
+
+  //Dashboard
+  'num_fields':'場域數量',
+  'num_gNBs':'基站數量',
+  'num_UEs':'使用者數量',
+  'coverage':'覆蓋率',
+  'critical_Alarm':'嚴重告警',
+  'major_Alarm':'主要告警',
+  'minor_Alarm':'次要告警',
+  'warning_Alarm':'警告告警',
+  'dashboard.view':'檢視',
+
+  //Software Management
+  'firm':'firm',
+  'model':'型號',
+  'manufacturer':'生產廠商',
   'notes':'備註',
   'upload_time':'上傳時間',
   'file.Url':'新增方式',
@@ -146,6 +159,7 @@ export const TwLanguage = {
   'file.size':'檔案大小',
   'field_list':'場域列表',
   'software_version':'軟體版本',
+  'time.end':'～ ',
   
   // Component Management (元件管理)
   'cm.name':'元件名稱',
