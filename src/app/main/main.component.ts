@@ -17,7 +17,8 @@ export class MainComponent implements OnInit {
   title = 'Dashboard';
 
   // Add 'log-management' by yuchen @10/25
-  page: 'dashboard' | 'component-management' | 'field-management' | 'nf-management' | 'fault-management' | 'performance-management' | 'software-management' | 'account-management' | 'log-management' = 'dashboard';
+  page: 'dashboard' | 'component-management' | 'field-management' | 'nf-management' | 'fault-management' | 'performance-management' | 'software-management' | 
+  'account-management' | 'schedule-management' /* @11/20 Add by yuchen */ | 'log-management'/* @10/25 Add by yuchen */ = 'dashboard';
   styles: style[] = [
     { displayName: 'Dark Style', value: 'black' },
     { displayName: 'Light Style', value: 'bright' }
@@ -33,7 +34,8 @@ export class MainComponent implements OnInit {
     'performance-management': '/main/performance-mgr',
     'software-management': '/main/software-mgr',
     'account-management': '/main/account-mgr',
-    'log-management': '/main/log-mgr' // Add by yuchen @10/25
+    'schedule-management': '/main/schedule-mgr',  // @11/20 Add by yuchen
+    'log-management': '/main/log-mgr'             // @10/25 Add by yuchen
   }
 
   constructor(private router: Router, private commonService: CommonService, public languageService: LanguageService) { }
@@ -41,10 +43,11 @@ export class MainComponent implements OnInit {
   ngOnInit(): void {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        // router更新menu foucs
+        // router 更新 menu foucs
         this.reloadTitle(event.url);
       }
     });
+
     // init menu foucs
     this.reloadTitle(this.router.url);
     // init style
@@ -88,7 +91,10 @@ export class MainComponent implements OnInit {
     } else if (routerUrl.indexOf('/main/account-mgr') >= 0) {
       this.title = 'Account Management';
       this.page = 'account-management';
-    } else if (routerUrl.indexOf('/main/log-mgr') >= 0) {   // Add by yuchen @10/25
+    } else if (routerUrl.indexOf('/main/schedule-mgr') >= 0) {   // @11/20 Add by yuchen
+      this.title = 'Schedule Management';
+      this.page = 'schedule-management';
+    } else if (routerUrl.indexOf('/main/log-mgr') >= 0) {        // @10/25 Add by yuchen
       this.title = 'Log Management';
       this.page = 'log-management';
     }
@@ -108,7 +114,7 @@ export class MainComponent implements OnInit {
   }
 
   renderStyle() {
-    // 儲存在sessionStorage
+    // 儲存在 sessionStorage
     window.sessionStorage.setItem('styleType', this.styleType);
     /**
      * 1.clear css

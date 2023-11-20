@@ -1,0 +1,14 @@
+
+.component tbody tr td {
+  width: 20.5vw;
+}
+.component thead tr th {
+  white-space: nowrap;
+}
+.component tbody tr td.icon {
+  width: 7.5em;
+  text-align: center;
+}
+input[type="file"] {
+  outline: 0;
+}
