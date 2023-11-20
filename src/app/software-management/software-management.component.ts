@@ -162,6 +162,7 @@ export class SoftwareManagementComponent implements OnInit {
       'notes': new FormControl(''),
       'ftpaccount': new FormControl(''),
       'ftppassword': new FormControl(''),
+      'fileName': new FormControl('', [Validators.required]),
       'sessionid': this.sessionId
     });
     this.createModalRef = this.dialog.open(this.createModal, { id: 'createModal' });

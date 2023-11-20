@@ -11,7 +11,6 @@
       </span>
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
       <span tooltip="{{languageService.i18n['ExportCSV']}}" class="material-icons" (click)="exportToCSV('componentList')">content_paste_go</span>
-      <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span>
       <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSetting()">clear</span>
     </div>
   </form>
@@ -166,42 +165,4 @@
     </div>
   </form>
 
-</ng-template>
-
-<ng-template #advancedModal>
-  <form [formGroup]="advancedForm">
-    <h5>Software  {{languageService.i18n['performance_Advanced_Search']}}</h5>
-      <ul>
-      <li>
-        <span>{{languageService.i18n['manufacturer']}}</span> <input type="text" formControlName="firm">
-      </li>
-      <li>
-        <span>{{languageService.i18n['model']}}</span> <input type="text" formControlName="model">
-      </li>
-      <li>
-        <span>{{languageService.i18n['type']}}</span>
-        <select formControlName="uploadtype">
-          <option value="All">All</option>
-          <option *ngFor="let opt of comtype" [value]="opt.value">{{opt.displayName}}</option>
-        </select>
-      </li>
-      <li>
-        <span>{{languageService.i18n['version']}}</span> <input type="text" formControlName="version">
-      </li>
-      <li>
-        <span>From:</span>
-        <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
-        <span>To:</span>
-        <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
-      </li>
-      <li>
-        <span>{{languageService.i18n['fileName']}}</span> <input type="text" formControlName="fileName">
-      </li>
-    </ul>
-
-    <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
-      <button type="button" mat-dialog-close="OK">Ok</button>
-    </div>
-  </form>
 </ng-template>

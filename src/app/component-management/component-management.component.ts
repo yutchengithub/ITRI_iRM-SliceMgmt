@@ -29,22 +29,6 @@ export interface Components {
   status: number;
 }
 
-export interface SoftwareLists {
-  uploadinfos: Uploadinfos[];
-}
-
-export interface Uploadinfos {
-  id: string;
-  firm: string;
-  modelname: string;
-  uploadtime: string;
-  uploadtype: number;
-  uploadversion: string;
-  description: string;
-  uploadinfo: string;
-  uploadurl: string;
-}
-
 @Component({
   selector: 'app-component-management',
   templateUrl: './component-management.component.html',
@@ -52,7 +36,6 @@ export interface Uploadinfos {
 })
 export class ComponentManagementComponent implements OnInit {
   sessionId: string = '';
-  softwareLists: SoftwareLists = {} as SoftwareLists;
   componentList: ComponentList = {} as ComponentList;
   @ViewChild('createComponentModal') createComponentModal: any;
   @ViewChild('deleteModal') deleteModal: any;
@@ -68,10 +51,8 @@ export class ComponentManagementComponent implements OnInit {
   provisionModalRef!: MatDialogRef<any>;
   createForm!: FormGroup;
   provisionForm!: FormGroup;
-  selectSoftware!: Uploadinfos;
   selectComponent!: Components;
   componentstatus: number=-1;
-  nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
   file: any;
   typeMap: Map<number, string> = new Map();
   p: number = 1;            // 當前頁數
@@ -102,7 +83,6 @@ export class ComponentManagementComponent implements OnInit {
   ) {
     this.comtype.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
     this.createSearchForm();
-    this.createAdvancedForm();
   }
 
   ngOnInit(): void {
@@ -306,80 +286,6 @@ export class ComponentManagementComponent implements OnInit {
     this.updateForm.controls['fileName'].updateValueAndValidity();
   }
 
-  createAdvancedForm() {
-    this.advancedForm = this.fb.group({
-      'firm': new FormControl(''),
-      'model': new FormControl(''),
-      'uploadtype': new FormControl(''),
-      'version': new FormControl(''),
-      'from': new FormControl(''),
-      'to': new FormControl(''),
-      'fileName': new FormControl('')
-    });
-  }
-  openAdvancedModal() {
-    const orgAdvancedForm = _.cloneDeep(this.advancedForm);
-    this.advancedForm.controls['firm'].setValue(this.searchForm.controls['firm'].value);
-    this.advancedForm.controls['model'].setValue(this.searchForm.controls['model'].value);
-    this.advancedForm.controls['uploadtype'].setValue(this.searchForm.controls['uploadtype'].value);
-    this.advancedForm.controls['fileName'].setValue(this.searchForm.controls['fileName'].value);
-    this.advancedModalRef = this.dialog.open(this.advancedModal, { id: 'faultAdvancedModal' });
-    this.advancedModalRef.afterClosed().subscribe((result) => {
-      if (result === 'OK') {
-        this.isSettingAdvanced = true;
-        this.isSearch = true;
-        this.searchForm.controls['firm'].setValue(this.advancedForm.controls['firm'].value);
-        this.searchForm.controls['model'].setValue(this.advancedForm.controls['model'].value);
-        this.searchForm.controls['uploadtype'].setValue(this.advancedForm.controls['uploadtype'].value);
-        this.searchForm.controls['fileName'].setValue(this.advancedForm.controls['fileName'].value);
-        this.afterAdvancedForm = _.cloneDeep(this.advancedForm);
-        this.afterSearchForm = _.cloneDeep(this.advancedForm);
-        this.p = 1;
-        this.getFMAdvanceSearch();
-      } else {
-        this.advancedForm = orgAdvancedForm;
-      }
-    });
-  }
-
-  getFMAdvanceSearch() {
-    const firm = this.afterAdvancedForm.controls['firm'].value;
-    const model = encodeURIComponent(this.afterAdvancedForm.controls['model'].value);
-    const uploadtype = this.afterAdvancedForm.controls['uploadtype'].value;
-    const start = this.commonService.dealPostDate(this.afterAdvancedForm.controls['from'].value);
-    const end = this.commonService.dealPostDate(this.afterAdvancedForm.controls['to'].value);
-    const fileName = this.afterAdvancedForm.controls['fileName'].value;
-    const offset = (this.p - 1) * this.pageSize;
-    console.log('getFMAdvanceSearch:');
-    console.log(`firm=${firm}, model=${model}, start=${start}, end=${end}, fileName=${fileName}, offset=${offset}`);
-    console.log(`uploadtype=${uploadtype}`);
-    clearTimeout(this.refreshTimeout);
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.softwareLists = this.commonService.softwareLists;
-      console.log(this.softwareLists);
-      this.componentListDeal();
-    } else {
-      const firm = this.afterAdvancedForm.controls['firm'].value;
-      const model = encodeURIComponent(this.afterAdvancedForm.controls['model'].value);
-      const fileName = this.afterAdvancedForm.controls['fileName'].value;
-      const uploadtype = this.afterAdvancedForm.controls['uploadtype'].value;
-      const start = this.commonService.dealPostDate(this.afterAdvancedForm.controls['from'].value);
-      const end = this.commonService.dealPostDate(this.afterAdvancedForm.controls['to'].value);
-      const offset = (this.p - 1) * this.pageSize;
-      const limit = 10;
-      if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
-      this.querySWAdvanceSearchScpt = this.commonService.querySoftwareAdvanceSearch(firm, model, fileName, start, end, offset, limit).subscribe(
-        res => {
-          console.log('getFMAdvanceSearch:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.softwareLists = JSON.parse(str);
-        }
-      );
-     }
-  }
-
   typeText(type: number): string {
     return this.typeMap.get(type) as string;
   }
@@ -414,7 +320,6 @@ export class ComponentManagementComponent implements OnInit {
   clearSetting() {
     this.isSearch = false;
     this.createSearchForm();
-    this.createAdvancedForm();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
     this.getComponentList();
   }

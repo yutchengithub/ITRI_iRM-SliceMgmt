@@ -119,13 +119,13 @@
             <mat-button-toggle value="url">{{languageService.i18n['url']}}</mat-button-toggle>
           </mat-button-toggle-group>
           <ng-template [ngIf]="createForm.controls['method'].value === 'upload'">
-            <div class="upload">
-              <input type="file" name="uploadedFile">
-              <div>
-                File Size:
-                <br/>
-                Checksum:
-              </div>
+            <div class="upload {{formValidated&&createForm.controls['fileName'].invalid?'required':''}}">
+              <span>{{languageService.i18n['upload']}}
+                <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".zip, .tar" #fileInput>
+              </span>
+              <div>{{createForm.controls['fileName'].value}}</div>
+              <mat-error *ngIf="formValidated&&createForm.controls['fileName'].invalid">is Required</mat-error>
+              <mat-error *ngIf="fileMsg">{{fileMsg}}</mat-error>
             </div>
           </ng-template>
           <ng-template [ngIf]="createForm.controls['method'].value === 'url'">

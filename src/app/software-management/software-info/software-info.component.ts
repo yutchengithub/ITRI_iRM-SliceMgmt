@@ -98,28 +98,20 @@ export class SoftwareInfoComponent implements OnInit {
     let passFile = null;
     const files = e.target.files;
     if ('0' in files) {
-      if (files[0].name.indexOf('.txt') >= 0) {
+      if (files[0].name.indexOf('.zip') >= 0 || files[0].name.indexOf('.tar') >= 0) {
         passFile = files[0];
       } else {
-        this.fileMsg = '格式只允許[file].txt';
+        this.fileMsg = '格式只允許[file].zip 和.tar';
       }
     }
     if (passFile === null) {
-      console.log('1');
       this.file = null;
-      this.createForm.controls['inputParams'].setValue('');
       this.createForm.controls['fileName'].setValue('');
     } else {
-      console.log('2');
       this.file = files[0];
       this.createForm.controls['fileName'].setValue(files[0].name);
-      var reader = new FileReader();
-      reader.readAsText(files[0], "UTF-8");
-      reader.onload = (evt: any) => {
-        console.log(evt.target.result);
-        this.createForm.controls['inputParams'].setValue(evt.target.result);
-      }
     }
+    // console.log(files);
   }
   
   getSoftwareInfo() {

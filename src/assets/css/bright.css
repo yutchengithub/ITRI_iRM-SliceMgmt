@@ -115,10 +115,10 @@ mat-dialog-container div.buttons button:hover {
 .ngx-pagination a:hover {
   background: #8fcbf3 !important;
 }
-/* .upload > span {
+.upload > span {
   color: #fff;
   background-color: #2672ba;
-  } */
+  }
 .dashboard .leftArea .nodes {
     background-color: #c2e7ff;
     opacity: 1;
