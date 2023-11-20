@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { MainComponent } from './main/main.component';
+
 import { DashboardComponent } from './dashboard/dashboard.component';   // 主畫面
 import { ComponentManagementComponent } from './component-management/component-management.component';    // 元件管理
 import { FieldManagementComponent } from './field-management/field-management.component';    // O-Cloud管理
@@ -13,11 +14,14 @@ import { PerformanceManagementComponent } from './performance-management/perform
 import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
 import { NfPerformanceInfoComponent } from './performance-management/nf-performance-info/nf-performance-info.component';
 import { SoftwareManagementComponent } from './software-management/software-management.component';      // 軟體管理
-import { AccountManagementComponent } from './account-management/account-management.component';      // 帳號管理
+import { AccountManagementComponent } from './account-management/account-management.component';         // 帳號管理
+import { ScheduleManagementComponent } from './schedule-management/schedule-management.component';      // 排程管理     @11/20 Add by yuchen
+import { LogManagementComponent } from './log-management/log-management.component';                     // 日誌管理     @10/25 Add by yuchen 
+
 import { AuthGuard } from './shared/guard/auth.guard';
 import { SoftwareInfoComponent } from './software-management/software-info/software-info.component';
 import { AccountInfoComponent } from './account-management/account-info/account-info.component';
-import { LogManagementComponent } from './log-management/log-management.component';      // 日誌管理 add by yutchen @10/25
+import { ScheduleInfoComponent } from './schedule-management/schedule-info/schedule-info.component';     // 排程管理資訊  @11/20 Add by yuchen 
 import { ComponentInfoComponent } from './component-management/component-info/component-info.component';
 
 
@@ -62,7 +66,14 @@ const routes: Routes = [
           { path: 'info/:cloudId/:cloudName', component: AccountInfoComponent }
         ]
       },
-      { // add by yutchen @10/25
+      { // @11/20 Add by yuchen
+        path: 'schedule-mgr',
+        children: [
+          { path: '', component: ScheduleManagementComponent },
+          { path: 'info/:cloudId/:cloudName', component: ScheduleInfoComponent }
+        ]
+      },
+      { // @10/25 Add by yuchen
         path: 'log-mgr', component: LogManagementComponent
         /*children: [
           { path: '', component: LogManagementComponent },

@@ -17,7 +17,9 @@ import { SoftwareManagementComponent } from './software-management/software-mana
 import { AccountManagementComponent } from './account-management/account-management.component';
 import { AccountInfoComponent } from './account-management/account-info/account-info.component';
 import { SoftwareInfoComponent } from './software-management/software-info/software-info.component';
-import { LogManagementComponent } from './log-management/log-management.component';   // @10/25 Add by yuchen 
+import { ScheduleManagementComponent } from './schedule-management/schedule-management.component';    // @11/20 Add by yuchen 
+import { ScheduleInfoComponent } from './schedule-management/schedule-info/schedule-info.component';  // @11/20 Add by yuchen 
+import { LogManagementComponent } from './log-management/log-management.component';                   // @10/25 Add by yuchen 
 import { MainComponent } from './main/main.component';
 import { DxCircularGaugeModule } from 'devextreme-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -66,8 +68,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     SoftwareInfoComponent,
     AccountManagementComponent,
     AccountInfoComponent,
-    LogManagementComponent,    // @10/25 Add by yuchen 
-    TruncatePipe,              // @11/16 Add by yuchen 
+    ScheduleManagementComponent,  // @11/20 Add by yuchen 
+    ScheduleInfoComponent,        // @11/20 Add by yuchen 
+    LogManagementComponent,       // @10/25 Add by yuchen 
+    TruncatePipe,                 // @11/16 Add by yuchen 
     MainComponent,
     OCloudInfoComponent,
     DatePickerFormatDirective,
