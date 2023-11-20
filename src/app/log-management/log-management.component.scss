@@ -28,6 +28,7 @@ input[name="processComment"] {
   width: 70%;
   padding: 2px 4px;
 }
+
 button.modify {
   background-color: #2879c5;
   border: 0;
@@ -111,11 +112,28 @@ table tbody td.time {
     border-left:0;
 }
 .filter input {
-  width: 15em!important;
+  width: 15em;
   border-radius: 3px;
   border: 0;
   line-height: 2.2;
 }
+
+.userid-input { // @11/20 Add by yuchen
+  width: 6em!important;
+  border-radius: 3px;
+  border: 0;
+  line-height: 2.2;
+  margin-right: 3px;
+}
+
+.userid-input-nelogs { // @11/20 Add by yuchen
+  width: 7em!important;
+  border-radius: 3px;
+  border: 0;
+  line-height: 2.2;
+  margin-right: 3px;
+}
+
 table.userLog th,
 table.userLog td {
   min-width: 5vw;

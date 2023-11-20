@@ -15,15 +15,20 @@
   <ul *ngIf="type === 'User_Logs'">
     <form [formGroup]="searchForm" style="padding-bottom: 10px;">
       <div class="filter">
-        
-        
+
+        <!-- userid Filter for User Logs @11/20 Add by yuchen -->
+        <span style="margin-left: 1px;">
+          <label style="margin-right: 5px !important">{{languageService.i18n['UserLog.userid']}}</label>
+          <input formControlName="UserID" class="userid-input">
+        </span>
+
         <span><label>{{languageService.i18n['Log.start']}}</label>
           <span>
             <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
           </span>
         </span>
         <span><label>{{languageService.i18n['Log.end']}}</label>
-          <span>
+          <span style="margin-left: 3px;">
             <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
           </span>
         </span>
@@ -35,15 +40,15 @@
           <mat-error *ngIf="searchForm.controls['UserLogType'].invalid">Required</mat-error>
         </span>
 
-        <!-- Keyword Filter for User Logs @11/13 add by yuchen -->
-        <span style="margin-left: 10px;">
+        <!-- Keywords Filter for User Logs @11/13 Add by yuchen -->
+        <span style="margin-left: 1px;">
           <label style="margin-right: 5px !important">{{languageService.i18n['UserLog.logKeywordString']}}</label>
-          <input style="width: 400px" formControlName="keyword">
+          <input formControlName="keyword">
         </span>
 
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_UserLogs()">search</span>
         
-        <!-- Button of Export User logs to CSV @1107 add by yuchen -->
+        <!-- Button of Export User logs to CSV @1107 Add by yuchen -->
         <span tooltip="{{languageService.i18n['UserLog.ExportCSV']}}" class="material-icons" (click)="exportToCSV('UserLogs')">content_paste_go</span>
         
       </div>
@@ -88,13 +93,20 @@
   <ul *ngIf="type === 'NE_Logs'">
     <form [formGroup]="searchForm" style="padding-bottom: 10px;">
       <div class="filter">
+
+        <!-- userid Filter for NE Logs @11/20 Add by yuchen -->
+        <span style="margin-left: 1px;">
+          <label style="margin-right: 5px !important">{{languageService.i18n['NElog.userid']}}</label>
+          <input formControlName="UserID" class="userid-input-nelogs">
+        </span>
+
         <span><label>{{languageService.i18n['Log.start']}}</label>
           <span>
             <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
           </span>
         </span>
         <span><label>{{languageService.i18n['Log.end']}}</label>
-          <span>
+          <span style="margin-left: 3px;">
             <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
           </span>
         </span>
@@ -107,9 +119,9 @@
         </span>
 
         <!-- Keyword Filter @11/03 add by yuchen -->
-        <span style="margin-left: 10px;">
+        <span style="margin-left: 1px;">
           <label style="margin-right: 5px !important">{{languageService.i18n['NElog.logKeywordString']}}</label>
-          <input style="width: 400px" formControlName="keyword">
+          <input formControlName = "keyword">
         </span>
 
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_NELogs()">search</span>

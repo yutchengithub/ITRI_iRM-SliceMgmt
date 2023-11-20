@@ -125,6 +125,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     console.log("getNowTime: ", nowTime)
 
     this.searchForm = this.fb.group({
+      'UserID': new FormControl(''), // @11/20 Add by yuchen
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)), 
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
       'UserLogType': new FormControl('All'),
@@ -208,10 +209,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     } else {
 
-      // 建立 API 的完整 URL，結合基礎路徑和當前 Session 的 sessionId
-      const apiEndpoint = `${this.commonService.restPath}/queryLogList/${this.sessionId}`;
-
       // 從 searchForm 中取得篩選條件
+      const userid = this.searchForm.get('UserID')?.value || '';  // 獲取 userid，如果不存在則為空字串 @11/20 Add by yuchen 
       const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
       const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
       const userLogType = this.searchForm.get('UserLogType')?.value;
@@ -226,11 +225,15 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       // Cancel any existing subscriptions 取消之前的 API 訂閱
       if (this.queryLogList) this.queryLogList.unsubscribe();
 
+      // 建立 API 的完整 URL，結合基礎路徑和當前 Session 的 sessionId
+      const apiEndpoint = `${this.commonService.restPath}/queryLogList/${this.sessionId}`;
+
       // 建立 HTTP 請求並指定預期的響應型態為 UserLogsList
       this.queryLogList = this.http.get<UserLogsList>(apiEndpoint, { 
 
         // 傳入查詢參數
         params: { 
+          userid: userid,           // 添加 userid 為查詢參數 @11/20 Add by yuchen
           start: start,             // 起始時間
           end: end,                 // 結束時間
           userLogType: userLogType, // User Log 類型
@@ -284,6 +287,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     } else {
 
       // 從 searchForm 中獲取篩選條件
+      const userid = this.searchForm.get('UserID')?.value || '';  // 獲取 userid，如果不存在則為空字串 @11/20 Add by yuchen
       const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
       const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
       const neLogType = this.searchForm.get('NELogType')?.value;
@@ -304,12 +308,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       // 發起 HTTP GET 請求並指定預期的響應類型為 NELogsList
       this.queryUserNetconfLog = this.http.get<NELogsList>(apiUrl, {
         params: {
-          start: start,               // 起始時間
-          end: end,                   // 結束時間
-          neLogType: neLogType,       // NE Log 類型
-          keyword: keyword,           // 關鍵字搜索
-          offset: offset,             // 分頁起點
-          limit: limit                // 每頁限制數量
+          userid: userid,         // 添加 userid 為查詢參數 @11/20 Add by yuchen
+          start: start,           // 起始時間
+          end: end,               // 結束時間
+          neLogType: neLogType,   // NE Log 類型
+          keyword: keyword,       // 關鍵字搜索
+          offset: offset,         // 分頁起點
+          limit: limit            // 每頁限制數量
         }
       }).subscribe(
         response => { // 成功的 callback
@@ -408,6 +413,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   createSearchForm() {
     const nowTime = this.commonService.getNowTime();
     this.searchForm = this.fb.group({
+      'UserID': new FormControl(''),          // 新增 userid 欄位 @11/20 Add by yuchen 
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)), 
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
       'UserLogType': new FormControl('All'),  // User Logs 類型欄位
@@ -436,6 +442,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     // 重置 searchForm 的條件，包括日期範圍 @11/13 Add by yuchen
     this.searchForm.reset({
+      UserID: '',           // 新增 UserID 欄位 @11/20 Add by yuchen 
       from: defaultFromDate, 
       to: defaultToDate,
       UserLogType: 'All',
@@ -480,6 +487,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
 
+    const userid = this.searchForm.get('UserID')?.value || '';      // 獲取 userid ，如果不存在則為空字串  @11/20 Add by yuchen
     const from = this.searchForm.get('from')?.value;
     const to = this.searchForm.get('to')?.value;
     const userLogType = this.searchForm.get('UserLogType')?.value;
@@ -497,17 +505,19 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     if (this.commonService.isLocal) {
 
       this.filtered_UserLogs = this.UserLogsList.loginfo.filter(log => {
-        const logDate = new Date(log.logtime);
-        const isAfterFrom = logDate >= new Date(formattedFrom);
-        const isBeforeTo = logDate <= new Date(formattedTo);
-        const isTypeMatch = userLogType === 'All' || log.logtype === userLogType;
 
-        // 新增關鍵字篩選判斷  @11/13 Add by yuchen
-        // 確認 log 中的請求資料或回應資料是否包含關鍵字，透過將字串轉換為小寫來實現不區分大小寫的比對  
-        const isKeywordMatch = !keyword || log.logmsg.toLowerCase().includes(keyword.toLowerCase());
+          const isUserIdMatch = !userid || log.userid.includes(userid); // 新增用戶 ID 篩選判斷  @11/20 Add by yuchen
+          const logDate = new Date(log.logtime);
+          const isAfterFrom = logDate >= new Date(formattedFrom);
+          const isBeforeTo = logDate <= new Date(formattedTo);
+          const isTypeMatch = userLogType === 'All' || log.logtype === userLogType;
+
+          // 新增關鍵字篩選判斷  @11/13 Add by yuchen
+          // 確認 log 中的請求資料或回應資料是否包含關鍵字，透過將字串轉換為小寫來實現不區分大小寫的比對  
+          const isKeywordMatch = !keyword || log.logmsg.toLowerCase().includes(keyword.toLowerCase());
 
 
-        return isAfterFrom && isBeforeTo && isTypeMatch && isKeywordMatch;
+          return isUserIdMatch && isAfterFrom && isBeforeTo && isTypeMatch && isKeywordMatch;      // @11/20 Add isUserIdMatch
       });
       this.isSearch_userLogs = true;  // Local Search 完畢，設置標記為 true
 
@@ -515,20 +525,20 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     } else {
 
-      // 假設您有一個從後端取得日誌的方法，這裡是使用 HTTP 客戶端調用 API 的偽代碼
-      const queryParams = { from: formattedFrom, to: formattedTo, userLogType, keyword };
-  
-      this.http.get<UserLogsList>('/api/userlogs', { params: queryParams }).subscribe(
-        data => {
-          this.UserLogsList  = data;
-          this.filtered_UserLogs  = data.loginfo; // 假定後端已經篩選了數據
-          this.totalItems = data.logNumber; // 更新總條目數量以供分頁
-          this.isSearch_userLogs  = true;   // 伺服器 Search 完畢，設置標記為 true
-        },
-        error => {
-          console.error('Error fetching filtered logs:', error);
-        }
-      );
+        // 假設您有一個從後端取得日誌的方法，這裡是使用 HTTP 客戶端調用 API 的偽代碼 ()
+        const queryParams = { userid, from: formattedFrom, to: formattedTo, userLogType, keyword }; // @11/20 Add userid
+    
+        this.http.get<UserLogsList>('/api/userlogs', { params: queryParams }).subscribe(
+          data => {
+            this.UserLogsList  = data;
+            this.filtered_UserLogs  = data.loginfo; // 假定後端已經篩選了數據
+            this.totalItems = data.logNumber; // 更新總條目數量以供分頁
+            this.isSearch_userLogs  = true;   // 伺服器 Search 完畢，設置標記為 true
+          },
+          error => {
+            console.error('Error fetching filtered logs:', error);
+          }
+        );
     }
   }
 
@@ -547,6 +557,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
 
+    const userid = this.searchForm.get('UserID')?.value || '';   // 獲取 userid ，如果不存在則為空字串  @11/20 Add by yuchen
     const from = this.searchForm.get('from')?.value;
     const to = this.searchForm.get('to')?.value;
     const neLogType = this.searchForm.get('NELogType')?.value;
@@ -564,19 +575,20 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     if (this.commonService.isLocal) {
 
       this.filtered_NELogs = this.NELogsList.loginfo.filter(log => {
-        const logDate = new Date(log.logtime);
-        const isAfterFrom = logDate >= new Date(formattedFrom);
-        const isBeforeTo = logDate <= new Date(formattedTo);
-        const isTypeMatch = neLogType === 'All' || log.operation === neLogType;
+        
+          const isUserIdMatch = !userid || log.userid.includes(userid); // 新增用戶 ID 篩選判斷  @11/20 Add by yuchen        
+          const logDate = new Date(log.logtime);
+          const isAfterFrom = logDate >= new Date(formattedFrom);
+          const isBeforeTo = logDate <= new Date(formattedTo);
+          const isTypeMatch = neLogType === 'All' || log.operation === neLogType;
 
-        // 確認 log 中的請求資料或回應資料是否包含關鍵字
-        // 透過將字串轉換為小寫來實現不區分大小寫的比對  
-        const isKeywordMatch = !keyword || 
-                       log.req_data.toLowerCase().includes(keyword.toLowerCase()) || 
-                       log.resp_data.toLowerCase().includes(keyword.toLowerCase());
+          // 確認 log 中的請求資料或回應資料是否包含關鍵字
+          // 透過將字串轉換為小寫來實現不區分大小寫的比對  
+          const isKeywordMatch = !keyword || 
+                        log.req_data.toLowerCase().includes(keyword.toLowerCase()) || 
+                        log.resp_data.toLowerCase().includes(keyword.toLowerCase());
 
-
-        return isAfterFrom && isBeforeTo && isTypeMatch && isKeywordMatch;
+          return isUserIdMatch && isAfterFrom && isBeforeTo && isTypeMatch && isKeywordMatch; // @11/20 Add isUserIdMatch
       });
       this.isSearch_neLogs = true;  // 本地 Search 完畢，設置標記為 true
 
@@ -584,20 +596,20 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     } else {
 
-      // 假設您有一個從後端取得日誌的方法，這裡是使用 HTTP 客戶端調用 API 的偽代碼
-      const queryParams = { from: formattedFrom, to: formattedTo, neLogType, keyword };
+        // 假設您有一個從後端取得日誌的方法，這裡是使用 HTTP 客戶端調用 API 的偽代碼
+        const queryParams = { userid, from: formattedFrom, to: formattedTo, neLogType, keyword }; // @11/20 Add userid
 
-      this.http.get<NELogsList>('/api/nElogs', { params: queryParams }).subscribe(
-        data => {
-          this.NELogsList = data;
-          this.filtered_NELogs = data.loginfo; // 假定後端已經篩選了數據
-          this.totalItems = data.logNumber; // 更新總條目數量以供分頁
-          this.isSearch_neLogs = true;  // 伺服器 Search 完畢，設置標記為 true
-        },
-        error => {
-          console.error('Error fetching filtered logs:', error);
-        }
-      );
+        this.http.get<NELogsList>('/api/nElogs', { params: queryParams }).subscribe(
+          data => {
+            this.NELogsList = data;
+            this.filtered_NELogs = data.loginfo; // 假定後端已經篩選了數據
+            this.totalItems = data.logNumber; // 更新總條目數量以供分頁
+            this.isSearch_neLogs = true;  // 伺服器 Search 完畢，設置標記為 true
+          },
+          error => {
+            console.error('Error fetching filtered logs:', error);
+          }
+        );
     }
   }
 
