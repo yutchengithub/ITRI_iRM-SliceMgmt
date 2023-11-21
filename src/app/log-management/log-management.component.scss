@@ -10,6 +10,11 @@ td label {
   width: initial;
 }
 
+table.userLog thead th {  // @11/21 Add by yuchen
+  vertical-align: middle; // 內容垂直置中
+  text-align: center;     // 內容水平置中
+}
+
 div.tab {
     display: block;
     text-align: center;
@@ -69,6 +74,10 @@ table thead th, table tbody td {
   //overflow: hidden;
 }
 
+table.neLog thead th {    // @11/21 Add by yuchen
+  vertical-align: middle; // 內容垂直置中
+  text-align: center;     // 內容水平置中
+}
 table.neLog tbody td {
   width: 12vw;
 }
