@@ -2,8 +2,6 @@
 
 <div class="table">
 
-  <h4>{{languageService.i18n['LogLists']}}</h4>
-
   <div class="logTab">
     <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
       <mat-button-toggle value="User_Logs">{{languageService.i18n['UserLogs']}}</mat-button-toggle>
@@ -83,9 +81,10 @@
       </tbody>
       </table>
       <!-- pagination @11/01 Add by yuchen --> 
-      <span class="total">{{languageService.i18n['UserLog.total1']}} {{userlogsToDisplay.length}} {{languageService.i18n['UserLog.total2']}}</span>
-      <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel="" 
-      nextLabel="" id="userlogsList"> 
+      <!-- <span class="total">{{languageService.i18n['UserLog.total1']}} {{userlogsToDisplay.length}} {{languageService.i18n['UserLog.total2']}}</span> -->
+      <!-- 使用 getTotalLogsText 函數來決定顯示 'User Log' 還是 'User Logs' @11/21 Add by yuchen -->
+      <span class="total">{{ getTotalLogsText('user') }}</span>
+      <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel="" nextLabel="" id="userlogsList"> 
       </pagination-controls>
   </ul>
 
@@ -167,7 +166,9 @@
     </table>
     
     <!-- pagination @10/31 changed by yuchen --> 
-    <span class="total">{{languageService.i18n['NElog.total1']}} {{neLogsToDisplay.length}} {{languageService.i18n['NElog.total2']}}</span>
+    <!--<span class="total">{{languageService.i18n['NElog.total1']}} {{neLogsToDisplay.length}} {{languageService.i18n['NElog.total2']}}</span>-->
+    <!-- 使用 getTotalLogsText 函數來決定顯示 'NE Log' 還是 'NE Logs' @11/21 Add by yuchen -->
+    <span class="total">{{ getTotalLogsText('ne') }}</span>
     <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination2" previousLabel="" 
     nextLabel="" id="nelogsList"> 
     </pagination-controls>

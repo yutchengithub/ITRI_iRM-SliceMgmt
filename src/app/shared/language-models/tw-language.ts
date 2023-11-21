@@ -3,11 +3,11 @@ export const TwLanguage = {
   'logon':'登入',
   'logon.welcome':'歡迎',
   'logon.field_mgr_system':'Athena Orchestrator',
-  'logon.user_logon':'用戶登入',
-  'logon.password_error':'用戶名或密碼輸入錯誤',
+  'logon.user_logon':'使用者登入',
+  'logon.password_error':'使用者名或密碼輸入錯誤',
   'logon.required_error':'請輸入帳號或密碼',
   'logon.401':'Session ID 已過期，請重新登錄',
-  'logon.403':'用戶名或密碼輸入錯誤',
+  'logon.403':'使用者名或密碼輸入錯誤',
   'logon.404':'此帳號不存在',
 
   'index.menu_dashboard':'主畫面',
@@ -190,36 +190,38 @@ export const TwLanguage = {
 
   // Log Management (日誌管理)  @10/31 add by yuchen
   'LogLists': '日誌列表',
-  'UserLogs': '用戶日誌',
+  'UserLogs': '使用者日誌',
   'NELogs': '網元日誌',     // NE = Network Element
   'Log.start':'執行時間',   // @11/17 changed by yuchen
   'Log.end':'～ ',         // @11/17 changed by yuchen
+  'Log.total':'總共',      // @11/21 add by yuchen
+
 
   'UserLog.No':'編號',
-  'UserLog.userid':'用戶',
+  'UserLog.userid':'使用者',
   'UserLog.logtype':'類型',
   'UserLog.loglevel':'層級',
   'UserLog.logmsg':'執行動作',
   'UserLog.logtime':'執行時間',
   'UserLog.view':'檢視',
-  'UserLog.total1':'總共有',                 // @11/01 add by yuchen
-  'UserLog.total2':'項用戶日誌訊息',          // @11/01 add by yuchen
-  'UserLog.logKeywordString':'執行動作',     // @11/17 changed by yuchen
-  'UserLog.detail':'用戶日誌詳細訊息',        // @11/03 add by yuchen
-  'UserLog.detailclose':'關閉',             // @11/03 add by yuchen
-  'UserLog.ExportCSV':'匯出用戶日誌為 .csv',  // @11/07 add by yuchen
+  'UserLog.single':'項使用者日誌訊息',          // @11/21 add by yuchen
+  'UserLog.total':'項使用者日誌訊息',           // @11/21 changed by yuchen
+  'UserLog.logKeywordString':'執行動作',       // @11/17 changed by yuchen
+  'UserLog.detail':'使用者日誌詳細訊息',         // @11/03 add by yuchen
+  'UserLog.detailclose':'關閉',                // @11/03 add by yuchen
+  'UserLog.ExportCSV':'匯出使用者日誌為 .csv',   // @11/07 add by yuchen
 
 
   'NElog.No':'編號',
-  'NElog.userid':'用戶',
+  'NElog.userid':'使用者',
   'NElog.operation':'類型',
   'NElog.req_data':'請求數據',
   'NElog.resp_data':'回應數據',
   'NElog.logtime':'執行時間',
   'NElog.view':'檢視',
-  'NElog.total1':'總共有',                    // @11/01 add by yuchen
-  'NElog.total2':'項網元日誌訊息',              // @11/01 add by yuchen
-  'NElog.logKeywordString':'請求 / 回應數據',  // @11/17 changed by yuchen
+  'NElog.single':'項網元日誌訊息',              // @11/21 add by yuchen
+  'NElog.total':'項網元日誌訊息',               // @11/21 changed by yuchen
+  'NElog.logKeywordString':'請求 / 回應數據',   // @11/17 changed by yuchen
   'NElog.detail':'網元日誌詳細訊息',            // @11/03 add by yuchen
   'NElog.detailclose':'關閉',                 // @11/03 add by yuchen
   'NElog.ExportCSV':'匯出網元日誌為 .csv',      // @11/07 add by yuchen

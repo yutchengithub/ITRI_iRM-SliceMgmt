@@ -477,6 +477,25 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     console.log('Log type displayed after tab switch:', this.type);
   }
 
+  // @11/21 Add by yuchen
+  // 該函數接受一個 log 矩陣和單數形式的 log 名稱，根據陣列長度返回單數或複數形式的文本。
+  getTotalLogsText(logType: 'user' | 'ne'): string {
+    
+    let totalLogs: number;
+    let logText: string;
+  
+    if (logType === 'user') {
+      totalLogs = this.userlogsToDisplay.length;
+      logText = totalLogs === 1 ? this.languageService.i18n['UserLog.single'] : this.languageService.i18n['UserLog.total'];
+    } else {
+      totalLogs = this.neLogsToDisplay.length;
+      logText = totalLogs === 1 ? this.languageService.i18n['NElog.single'] : this.languageService.i18n['NElog.total'];
+    }
+  
+    return `${this.languageService.i18n['Log.total']} ${totalLogs} ${logText}`;
+  }
+  
+
 
   /* ↓ For click "Search" ↓ */
 
