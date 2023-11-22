@@ -678,7 +678,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       // 為每條 User log 添加一個編號屬性 @11/22 Add 
       // 如 dataType 是 'UserLogs'，則將 userlogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
       dataToExport = this.userlogsToDisplay.map((log, index) => ({
-        no: (this.p - 1) * this.pageSize + index + 1, // 計算編號
+        "No.": (this.p - 1) * this.pageSize + index + 1, // 計算編號
         ...log
       }));
     } else if (dataType === 'NELogs') {
@@ -686,7 +686,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       // 為每條 NE log 添加一個編號屬性 @11/22 Add 
       // 如是 'NELogs'，則將 neLogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
       dataToExport = this.neLogsToDisplay.map((log, index) => ({
-        no: (this.p - 1) * this.pageSize + index + 1, // 計算編號
+        "No.": (this.p - 1) * this.pageSize + index + 1, // 計算編號
         ...log
       }));
     }
