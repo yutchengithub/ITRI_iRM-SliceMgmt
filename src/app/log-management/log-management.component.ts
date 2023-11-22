@@ -673,18 +673,23 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     const formattedFromDate = this.commonService.dealPostDate(this.searchForm.get('from')?.value).split(' ')[0]; // 取得日期部分(從)
     const formattedToDate = this.commonService.dealPostDate(this.searchForm.get('to')?.value).split(' ')[0];     // 取得日期部分(至)
 
-
     if (dataType === 'UserLogs') {
 
+      // 為每條 User log 添加一個編號屬性 @11/22 Add 
       // 如 dataType 是 'UserLogs'，則將 userlogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
-      dataToExport = this.userlogsToDisplay;  // @11/14 調整為輸出即時顯示於頁面上的 User Logs
-
+      dataToExport = this.userlogsToDisplay.map((log, index) => ({
+        no: (this.p - 1) * this.pageSize + index + 1, // 計算編號
+        ...log
+      }));
     } else if (dataType === 'NELogs') {
 
+      // 為每條 NE log 添加一個編號屬性 @11/22 Add 
       // 如是 'NELogs'，則將 neLogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
-      dataToExport = this.neLogsToDisplay;    // @11/14 調整為輸出即時顯示於頁面上的 NE Logs
+      dataToExport = this.neLogsToDisplay.map((log, index) => ({
+        no: (this.p - 1) * this.pageSize + index + 1, // 計算編號
+        ...log
+      }));
     }
-
   
     // 將資料轉換成 CSV 格式
     const csvData = this.convertToCSV(dataToExport);
