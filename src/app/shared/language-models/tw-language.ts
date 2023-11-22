@@ -203,6 +203,7 @@ export const TwLanguage = {
   'UserLog.loglevel':'層級',
   'UserLog.logmsg':'執行動作',
   'UserLog.logtime':'執行時間',
+  'NElog.comp_name':'網元名稱',               // @11/22 Add by yuchen
   'UserLog.view':'檢視',
   'UserLog.single':'項使用者日誌訊息',          // @11/21 add by yuchen
   'UserLog.total':'項使用者日誌訊息',           // @11/21 changed by yuchen

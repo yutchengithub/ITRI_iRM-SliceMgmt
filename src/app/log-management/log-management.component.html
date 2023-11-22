@@ -20,16 +20,6 @@
           <input formControlName="UserID" class="userid-input">
         </span>
 
-        <span><label>{{languageService.i18n['Log.start']}}</label>
-          <span>
-            <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
-          </span>
-        </span>
-        <span><label>{{languageService.i18n['Log.end']}}</label>
-          <span style="margin-left: 3px;">
-            <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
-          </span>
-        </span>
         <span><label>{{languageService.i18n['UserLog.logtype']}}</label>
           <select formControlName="UserLogType">
             <option value="All">All</option>
@@ -42,6 +32,17 @@
         <span style="margin-left: 1px;">
           <label style="margin-right: 5px !important">{{languageService.i18n['UserLog.logKeywordString']}}</label>
           <input formControlName="keyword">
+        </span>
+
+        <span><label>{{languageService.i18n['Log.start']}}</label>
+          <span>
+            <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+          </span>
+        </span>
+        <span><label>{{languageService.i18n['Log.end']}}</label>
+          <span style="margin-left: 3px;">
+            <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+          </span>
         </span>
 
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_UserLogs()">search</span>
@@ -96,8 +97,28 @@
         <!-- userid Filter for NE Logs @11/20 Add by yuchen -->
         <span style="margin-left: 1px;">
           <label style="margin-right: 5px !important">{{languageService.i18n['NElog.userid']}}</label>
-          <input formControlName="UserID" class="userid-input-nelogs">
+          <input formControlName="UserID" class="userid-input">
         </span>
+
+        <!-- NE Name Filter for NE Logs @11/22 Add by yuchen -->
+        <span style="margin-left: 1px;">
+          <label style="margin-right: 5px !important">{{languageService.i18n['NElog.comp_name']}}</label>
+          <input formControlName="neName" class="userid-input-neName">
+        </span>
+
+        <span><label>{{languageService.i18n['NElog.operation']}}</label>
+          <select formControlName="NELogType">
+            <option value="All">All</option>
+            <option *ngFor="let nelogtype of NELogTypes" [value]="nelogtype">{{nelogtype}}</option>
+          </select>
+          <mat-error *ngIf="searchForm.controls['NELogType'].invalid">Required</mat-error>
+        </span>
+
+       <!-- Keyword Filter @11/03 add by yuchen -->
+       <span style="margin-left: 1px;">
+        <label style="margin-right: 5px !important">{{languageService.i18n['NElog.logKeywordString']}}</label>
+        <input formControlName = "keyword">
+      </span>
 
         <span><label>{{languageService.i18n['Log.start']}}</label>
           <span>
@@ -108,19 +129,6 @@
           <span style="margin-left: 3px;">
             <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
           </span>
-        </span>
-        <span><label>{{languageService.i18n['NElog.operation']}}</label>
-          <select formControlName="NELogType">
-            <option value="All">All</option>
-            <option *ngFor="let nelogtype of NELogTypes" [value]="nelogtype">{{nelogtype}}</option>
-          </select>
-          <mat-error *ngIf="searchForm.controls['NELogType'].invalid">Required</mat-error>
-        </span>
-
-        <!-- Keyword Filter @11/03 add by yuchen -->
-        <span style="margin-left: 1px;">
-          <label style="margin-right: 5px !important">{{languageService.i18n['NElog.logKeywordString']}}</label>
-          <input formControlName = "keyword">
         </span>
 
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_NELogs()">search</span>
@@ -137,6 +145,7 @@
         <tr>
           <th>{{languageService.i18n['NElog.No']}}</th>
           <th>{{languageService.i18n['NElog.userid']}}</th>
+          <th>{{languageService.i18n['NElog.comp_name']}}</th>
           <th>{{languageService.i18n['NElog.operation']}}</th>
           <th>{{languageService.i18n['NElog.req_data']}}</th>
           <th>{{languageService.i18n['NElog.resp_data']}}</th>
@@ -149,6 +158,7 @@
            currentPage: p, totalItems: neLogsToDisplay.length, id: 'nelogsList' }; let i = index">
           <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 NE log 的編號 @11/14 changed by yuchen-->
           <td>{{opt.userid}}</td>
+          <td>{{opt.comp_name}}</td>
           <td>{{opt.operation}}</td>
           <td class="truncate">
             {{ opt.req_data | truncate:118 }}
@@ -209,6 +219,9 @@
     <li>
       <span>{{languageService.i18n['NElog.userid']}}: </span><span>{{neLogdetail.userid}}</span>
     </li>
+    <li> <!-- @11/14 Add by yuchen-->
+      <span>{{languageService.i18n['NElog.comp_name']}}: </span><span>{{neLogdetail.comp_name}}</span>
+    </li>
     <li>
       <span>{{languageService.i18n['NElog.operation']}}: </span><span>{{neLogdetail.operation}}</span>
     </li>
@@ -221,6 +234,7 @@
     <li>
       <span>{{languageService.i18n['NElog.logtime']}}: </span><span>{{neLogdetail.logtime}}</span>
     </li>
+
   </ul>
 
   <div class="buttons">

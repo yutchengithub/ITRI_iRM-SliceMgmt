@@ -217,11 +217,12 @@ export const Enlanguage = {
   'NElog.req_data':'Request Data',
   'NElog.resp_data':'Response Data',
   'NElog.logtime':'Execution Time',
+  'NElog.comp_name':'NE Name',   // @11/22 Add by yuchen
   'NElog.view':'View',
-  'NElog.single':'NE Log',   // @11/21 add by yuchen
-  'NElog.total':'NE Logs',   // @11/21 changedby yuchen
+  'NElog.single':'NE Log',       // @11/21 Add by yuchen
+  'NElog.total':'NE Logs',       // @11/21 changed by yuchen
   'NElog.logKeywordString':'Request / Response Data',  // @11/17 changed by yuchen
-  'NElog.detail':'NE Log Detail',        // @11/03 add by yuchen
-  'NElog.detailclose':'Close',           // @11/03 add by yuchen
-  'NElog.ExportCSV':'Export NE Logs to .csv',   // @11/07 add by yuchen
+  'NElog.detail':'NE Log Detail',        // @11/03 Add by yuchen
+  'NElog.detailclose':'Close',           // @11/03 Add by yuchen
+  'NElog.ExportCSV':'Export NE Logs to .csv',   // @11/07 Add by yuchen
 }

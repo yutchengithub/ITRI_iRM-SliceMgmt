@@ -31,7 +31,7 @@ export interface UserLogdetail {
   logmsg: string;
 }
 
-// add by yuchen @10/30
+// @10/30 Add by yuchen 
 export interface NELogsList { 
   logNumber: number;       
   loginfo: NELogsinfo[];             
@@ -44,6 +44,7 @@ export interface NELogsinfo {
   req_data: string;  
   resp_data: string;   
   logtime: string;    
+  comp_name: string;  // @11/22 Add by yuchen 
 }
 
 // For click View NE Log Detail Page @11/06 add by yuchen 
@@ -53,6 +54,7 @@ export interface NELogdetail {
   req_data: string;
   resp_data: string;
   logtime: string;
+  comp_name: string;  // @11/22 Add by yuchen 
 }
 
 @Component({
@@ -126,6 +128,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     this.searchForm = this.fb.group({
       'UserID': new FormControl(''), // @11/20 Add by yuchen
+      'neName': new FormControl(''), // @11/22 Add by yuchen
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)), 
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
       'UserLogType': new FormControl('All'),
@@ -287,7 +290,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     } else {
 
       // 從 searchForm 中獲取篩選條件
-      const userid = this.searchForm.get('UserID')?.value || '';  // 獲取 userid，如果不存在則為空字串 @11/20 Add by yuchen
+      const userid = this.searchForm.get('UserID')?.value || '';  // 獲取 userid，如不存在設為空字串 @11/20 Add by yuchen
+      const nEname = this.searchForm.get('neName')?.value || '';  // 獲取 nEname，如不存在設為空字串 @11/22 Add by yuchen
       const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
       const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
       const neLogType = this.searchForm.get('NELogType')?.value;
@@ -309,6 +313,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       this.queryUserNetconfLog = this.http.get<NELogsList>(apiUrl, {
         params: {
           userid: userid,         // 添加 userid 為查詢參數 @11/20 Add by yuchen
+          nEname: nEname,         // 添加 nEname 為查詢參數 @11/20 Add by yuchen
           start: start,           // 起始時間
           end: end,               // 結束時間
           neLogType: neLogType,   // NE Log 類型
@@ -388,7 +393,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       operation: NELogsinfo.operation,
       req_data: NELogsinfo.req_data,
       resp_data: NELogsinfo.resp_data,
-      logtime: NELogsinfo.logtime
+      logtime: NELogsinfo.logtime,
+      comp_name: NELogsinfo.comp_name  // @11/22 Add by yuchen 
     };
 
     // 隱藏 200 訊息
@@ -414,6 +420,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     const nowTime = this.commonService.getNowTime();
     this.searchForm = this.fb.group({
       'UserID': new FormControl(''),          // 新增 userid 欄位 @11/20 Add by yuchen 
+      'neName': new FormControl(''),          // 新增 neName 欄位 @11/22 Add by yuchen 
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)), 
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
       'UserLogType': new FormControl('All'),  // User Logs 類型欄位
@@ -443,6 +450,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     // 重置 searchForm 的條件，包括日期範圍 @11/13 Add by yuchen
     this.searchForm.reset({
       UserID: '',           // 新增 UserID 欄位 @11/20 Add by yuchen 
+      neName: '',           // 新增 neName 欄位 @11/22 Add by yuchen 
       from: defaultFromDate, 
       to: defaultToDate,
       UserLogType: 'All',
@@ -478,7 +486,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }
 
   // @11/21 Add by yuchen
-  // 該函數接受一個 log 矩陣和單數形式的 log 名稱，根據陣列長度返回單數或複數形式的文本。
+  // 該函數接受一個 log 矩陣和單數形式的 log 名稱，根據矩陣長度返回單數或複數形式的文本。
   getTotalLogsText(logType: 'user' | 'ne'): string {
     
     let totalLogs: number;
@@ -525,7 +533,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       this.filtered_UserLogs = this.UserLogsList.loginfo.filter(log => {
 
-          const isUserIdMatch = !userid || log.userid.includes(userid); // 新增用戶 ID 篩選判斷  @11/20 Add by yuchen
+          const isUserIdMatch = !userid || log.userid.includes(userid); // 獲取 userid ，如不存在設為空字串  @11/20 Add by yuchen
           const logDate = new Date(log.logtime);
           const isAfterFrom = logDate >= new Date(formattedFrom);
           const isBeforeTo = logDate <= new Date(formattedTo);
@@ -576,7 +584,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
 
-    const userid = this.searchForm.get('UserID')?.value || '';   // 獲取 userid ，如果不存在則為空字串  @11/20 Add by yuchen
+    const userid = this.searchForm.get('UserID')?.value || '';   // 獲取 userid ，如不存在設為空字串  @11/20 Add by yuchen
+    const nEname = this.searchForm.get('neName')?.value || '';   // 獲取 nEname，如不存在設為空字串 @11/22 Add by yuchen
     const from = this.searchForm.get('from')?.value;
     const to = this.searchForm.get('to')?.value;
     const neLogType = this.searchForm.get('NELogType')?.value;
@@ -595,7 +604,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       this.filtered_NELogs = this.NELogsList.loginfo.filter(log => {
         
-          const isUserIdMatch = !userid || log.userid.includes(userid); // 新增用戶 ID 篩選判斷  @11/20 Add by yuchen        
+          const isUserIdMatch = !userid || log.userid.includes(userid);    // 新增 userid 篩選判斷  @11/20 Add by yuchen  
+          const isnEnameMatch = !nEname || log.comp_name.includes(nEname); // 新增 nEname 篩選判斷  @11/22 Add by yuchen       
           const logDate = new Date(log.logtime);
           const isAfterFrom = logDate >= new Date(formattedFrom);
           const isBeforeTo = logDate <= new Date(formattedTo);
@@ -607,7 +617,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
                         log.req_data.toLowerCase().includes(keyword.toLowerCase()) || 
                         log.resp_data.toLowerCase().includes(keyword.toLowerCase());
 
-          return isUserIdMatch && isAfterFrom && isBeforeTo && isTypeMatch && isKeywordMatch; // @11/20 Add isUserIdMatch
+          // @11/20 Add isUserIdMatch | @11/22 Add isnEnameMatch
+          return isUserIdMatch && isnEnameMatch && isAfterFrom && isBeforeTo && isTypeMatch && isKeywordMatch; 
       });
       this.isSearch_neLogs = true;  // 本地 Search 完畢，設置標記為 true
 
@@ -621,7 +632,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         this.http.get<NELogsList>('/api/nElogs', { params: queryParams }).subscribe(
           data => {
             this.NELogsList = data;
-            this.filtered_NELogs = data.loginfo; // 假定後端已經篩選了數據
+            this.filtered_NELogs = data.loginfo; // 假設後端已經篩選了數據
             this.totalItems = data.logNumber; // 更新總條目數量以供分頁
             this.isSearch_neLogs = true;  // 伺服器 Search 完畢，設置標記為 true
           },
