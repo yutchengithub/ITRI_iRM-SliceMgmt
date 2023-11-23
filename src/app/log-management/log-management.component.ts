@@ -8,7 +8,9 @@ import { LanguageService } from '../shared/service/language.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
-//import * as CryptoJS from 'crypto-js';
+//import * as CryptoJS from 'crypto-js'; @11/23 Add by yuchen 
+import * as XLSX from 'xlsx';         // @11/23 Add by yuchen 
+//import { saveAs } from 'file-saver';  // @11/23 Add by yuchen 
 
 
 export interface UserLogsList {   // FaultMessage -> LogList @10/30 by yuchen
@@ -744,6 +746,64 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   
     // 將標頭行和所有數據行結合成一個 CSV 格式的字符串
     return [header, ...rows].join('\n');
+  }
+
+  exportToExcel(dataType: string) {
+    
+    // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsinfo 矩陣或是 NELogsinfo 矩陣
+    let dataToExport: UserLogsinfo[] | NELogsinfo[] = [];
+
+    // 依據使用者選擇的 dataType 確定是使用 UserLogType 還是 NELogType
+    // 從 searchForm 獲取使用者選擇的日誌類型，如無選擇則默認為 'All'
+    const logType = dataType === 'UserLogs' ? this.searchForm.get('UserLogType')?.value || 'All' 
+                                            : this.searchForm.get('NELogType')?.value || 'All';
+    
+    const formattedLogType = logType.replace(/\s+/g, '_'); // 將空白符號替換為下底線
+
+    // 從 searchForm 獲取日期範圍並格式化
+    const formattedFromDate = this.commonService.dealPostDate(this.searchForm.get('from')?.value).split(' ')[0]; // 取得日期部分(從)
+    const formattedToDate = this.commonService.dealPostDate(this.searchForm.get('to')?.value).split(' ')[0];     // 取得日期部分(至)
+
+    // 定義欄位順序
+    const fields = dataType === 'UserLogs' ? 
+    ['No.', 'userid', 'logtype', 'loglevel', 'logmsg', 'logtime'] :
+    ['No.', 'userid', 'comp_name', 'operation', 'req_data', 'resp_data', 'logtime'];
+
+
+    // 如果是 User Logs，則添加相應的數據和編號
+    if (dataType === 'UserLogs') {
+      dataToExport = this.userlogsToDisplay.map((log, index) => ({
+        "No.": (this.p - 1) * this.pageSize + index + 1,
+        ...log
+      }));
+    } else if (dataType === 'NELogs') {
+      // 如果是 NE Logs，則添加相應的數據和編號
+      dataToExport = this.neLogsToDisplay.map((log, index) => ({
+        "No.": (this.p - 1) * this.pageSize + index + 1,
+        ...log
+      }));
+    }
+
+    // 格式化數據以符合欄位順序
+    const formattedData = dataToExport.map(row => {
+      return fields.reduce((obj, field) => {
+        // 使用類型斷言將 row 視為具有任意鍵的對象
+        const record = row as Record<string, any>;
+        obj[field] = record[field];
+        return obj;
+      }, {} as Record<string, any>);
+    });
+
+    // 創建工作表
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+
+    // 創建工作簿並添加工作表
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Logs');
+
+    // 生成 Excel 檔案並保存
+    const fileName = `${dataType}_${formattedLogType}_${formattedFromDate}_to_${formattedToDate}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
   }
 
 }
