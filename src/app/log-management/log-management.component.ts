@@ -8,21 +8,24 @@ import { LanguageService } from '../shared/service/language.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
+import * as CryptoJS from 'crypto-js';
+
 
 export interface UserLogsList {   // FaultMessage -> LogList @10/30 by yuchen
   logNumber: number;              // totalMessageNumber -> logNumber @10/30 by yuchen
   loginfo: UserLogsinfo[];        // faultMessages & FaultMessages -> logs & Logs @10/30 by yuchen
 }
 
-export interface UserLogsinfo {   // FaultMessages -> loginfo @10/30 by yuchen
-  userid: string;    // add by yuchen @10/30
-  logtype: string;   // add by yuchen @10/30
-  loglevel: number;  // add by yuchen @10/30
-  logmsg: string;    // add by yuchen @10/30
-  logtime: string;   // add by yuchen @10/30  
+// @10/30 Add by yuchen 
+export interface UserLogsinfo { 
+  userid: string;    
+  logtype: string;
+  loglevel: number;
+  logmsg: string; 
+  logtime: string;  
 }
 
-/// For click View User Log Detail Page @11/06 add by yuchen 
+/// For click View User Log Detail Page @11/06 Add by yuchen 
 export interface UserLogdetail {
   userid: string;
   logtype: string;
@@ -37,7 +40,7 @@ export interface NELogsList {
   loginfo: NELogsinfo[];             
 }
 
-// add by yuchen @10/30
+// @10/30 Add by yuchen 
 export interface NELogsinfo { 
   userid: string;    
   operation: string;   
@@ -47,7 +50,7 @@ export interface NELogsinfo {
   comp_name: string;  // @11/22 Add by yuchen 
 }
 
-// For click View NE Log Detail Page @11/06 add by yuchen 
+// For click View NE Log Detail Page @11/06 Add by yuchen 
 export interface NELogdetail {
   userid: string;
   operation: string;
@@ -67,26 +70,26 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   
   UserLogsList: UserLogsList = {} as UserLogsList; 
   NELogsList: NELogsList = {} as NELogsList;
-  type: string = 'User_Logs';   // 預設選擇 "User Logs" @10/31 add  
-  //type: string = 'NE_Logs';   // 預設選擇 "NE Logs"   @11/01 add 
-  UserLogTypes: string[];       // @11/01 add 
-  NELogTypes: string[];         // @11/01 add 
+  type: string = 'User_Logs';   // 預設選擇 "User Logs" @10/31 Add  
+  //type: string = 'NE_Logs';   // 預設選擇 "NE Logs"   @11/01 Add 
+  UserLogTypes: string[];       // @11/01 Add 
+  NELogTypes: string[];         // @11/01 Add 
 
 
   // For click View Page
-  userLogdetail: UserLogdetail = {} as UserLogdetail; // 用於儲存選擇的 User Log 的詳細訊息 @11/06 add
-  neLogdetail: NELogdetail = {} as NELogdetail;       // 用於儲存選擇的 NE Log 的詳細訊息   @11/06 add
+  userLogdetail: UserLogdetail = {} as UserLogdetail; // 用於儲存選擇的 User Log 的詳細訊息 @11/06 Add
+  neLogdetail: NELogdetail = {} as NELogdetail;       // 用於儲存選擇的 NE Log 的詳細訊息   @11/06 Add
 
   /* 用於查找名為'userlogDetail'的 Component  <ng-template>，
-     用於定義 User Log 詳細訊息的彈出視窗內容。 @11/03 add */
+     用於定義 User Log 詳細訊息的彈出視窗內容。 @11/03 Add */
   @ViewChild('userlogDetail') userlogDetail: any;    
 
   /* 用於查找名為'nelogDetail'的 Component  (ng-template)，
-     通常用於定義 NE Log 訊息的彈出視窗內容。 @11/03 add */
+     通常用於定義 NE Log 訊息的彈出視窗內容。 @11/03 Add */
   @ViewChild('nelogDetail') nelogDetail: any;
 
-  UserlogDetailRef!: MatDialogRef<any>;   // 用於記錄 User Log 詳細資訊的對照視窗，以便在需要時操作和控制 User Log 詳細資訊的彈出視窗。 @11/06 add 
-  NElogDetailRef!: MatDialogRef<any>;     // 用於記錄 NE Log 詳細資訊的對照視窗，以便在需要時操作和控制 NE Log 詳細資訊的彈出視窗。     @11/06 add 
+  UserlogDetailRef!: MatDialogRef<any>;   // 用於記錄 User Log 詳細資訊的對照視窗，以便在需要時操作和控制 User Log 詳細資訊的彈出視窗。 @11/06 Add 
+  NElogDetailRef!: MatDialogRef<any>;     // 用於記錄 NE Log 詳細資訊的對照視窗，以便在需要時操作和控制 NE Log 詳細資訊的彈出視窗。     @11/06 Add 
   
 
   searchForm!: FormGroup;
@@ -136,8 +139,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     });
 
     this.createSearchForm();
-    this.UserLogTypes = this.commonService.UserLogType; // @11/01 add by yuchen
-    this.NELogTypes = this.commonService.NELogType;     // @11/01 add by yuchen
+    this.UserLogTypes = this.commonService.UserLogType; // @11/01 Add by yuchen
+    this.NELogTypes = this.commonService.NELogType;     // @11/01 Add by yuchen
   }
 
 
@@ -543,8 +546,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           // 確認 log 中的請求資料或回應資料是否包含關鍵字，透過將字串轉換為小寫來實現不區分大小寫的比對  
           const isKeywordMatch = !keyword || log.logmsg.toLowerCase().includes(keyword.toLowerCase());
 
-
-          return isUserIdMatch && isAfterFrom && isBeforeTo && isTypeMatch && isKeywordMatch;      // @11/20 Add isUserIdMatch
+          // @11/20 Add isUserIdMatch
+          return isUserIdMatch && isAfterFrom && isBeforeTo && isTypeMatch && isKeywordMatch;
       });
       this.isSearch_userLogs = true;  // Local Search 完畢，設置標記為 true
 
@@ -559,8 +562,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           data => {
             this.UserLogsList  = data;
             this.filtered_UserLogs  = data.loginfo; // 假定後端已經篩選了數據
-            this.totalItems = data.logNumber; // 更新總條目數量以供分頁
-            this.isSearch_userLogs  = true;   // 伺服器 Search 完畢，設置標記為 true
+            this.totalItems = data.logNumber;       // 更新總條目數量以供分頁
+            this.isSearch_userLogs  = true;         // 伺服器 Search 完畢，設置標記為 true
           },
           error => {
             console.error('Error fetching filtered logs:', error);
@@ -570,6 +573,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }
 
   get userlogsToDisplay(): UserLogsinfo[] {
+
     // 如 isSearch_userLogs 為 true，則表示已經進行了搜尋，應該顯示 filtered_UserLogs
     // 否則，顯示全部 UserLogsList.loginfo
     return this.isSearch_userLogs ? this.filtered_UserLogs : this.UserLogsList.loginfo;
@@ -633,8 +637,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           data => {
             this.NELogsList = data;
             this.filtered_NELogs = data.loginfo; // 假設後端已經篩選了數據
-            this.totalItems = data.logNumber; // 更新總條目數量以供分頁
-            this.isSearch_neLogs = true;  // 伺服器 Search 完畢，設置標記為 true
+            this.totalItems = data.logNumber;    // 更新總條目數量以供分頁
+            this.isSearch_neLogs = true;         // 伺服器 Search 完畢，設置標記為 true
           },
           error => {
             console.error('Error fetching filtered logs:', error);
@@ -654,16 +658,15 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
   
 
-  // @11/07 add by yuchen
+  // @11/07 Add by yuchen
   // 用於將指定 Log 匯出成 .csv 檔案  
-  // ## 還需要更動成依據 Filters 的設定去進行匯出，如只匯出指定時間段的資料 (未完成)
   exportToCSV(dataType: string) {
     
     // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsinfo 矩陣或是 NELogsinfo 矩陣
     let dataToExport: UserLogsinfo[] | NELogsinfo[] = [];
 
-    // 依據用戶選擇的 dataType 確定是使用 UserLogType 還是 NELogType
-    // 從 searchForm 獲取用戶選擇的日誌類型，如無選擇則默認為 'All'
+    // 依據使用者選擇的 dataType 確定是使用 UserLogType 還是 NELogType
+    // 從 searchForm 獲取使用者選擇的日誌類型，如無選擇則默認為 'All'
     const logType = dataType === 'UserLogs' ? this.searchForm.get('UserLogType')?.value || 'All' 
                                             : this.searchForm.get('NELogType')?.value || 'All';
     
@@ -713,29 +716,34 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }
   
 
-  // @11/07 add by yuchen 
-  // 用於將指定資料轉換成 .csv 格式 @11/13 updated
+  // @11/07 Add by yuchen 
+  // 用於將指定資料轉換成 .csv 格式 @11/23 updated
   convertToCSV(data: any[]): string {
 
-    // 創建 CSV 檔的標頭行
-    const header = Object.keys(data[0]).join(',');
+    // 定義 CSV 檔案中 UserLogs 每行數據的欄位順序
+    const userLogFields = ['No.', 'userid', 'logtype', 'loglevel', 'logmsg', 'logtime'];
+
+    // 定義 CSV 檔案中 NELogs 每行數據的欄位順序
+    const neLogFields = ['No.', 'userid', 'comp_name', 'operation', 'req_data', 'resp_data', 'logtime'];
   
+    // 選擇使用 UserLogs 或 NELogs 的欄位順序來創建標頭行
+    const header = data.some(log => 'comp_name' in log) ? neLogFields.join(',') : userLogFields.join(',');
+  
+    // 根據定義的欄位順序創建每條數據的 CSV 行
     const rows = data.map(row => {
-      return Object.values(row).map(value => {
-
-        // 將 value 轉換為字符串，處理特殊字符與換行符號
+      // 選擇使用 UserLogs 或 NELogs 的欄位順序來映射每條數據的值
+      const fields = 'comp_name' in row ? neLogFields : userLogFields;
+      const values = fields.map(field => {
+        const value = row[field];
         const stringValue = typeof value === 'string' ? value : String(value);
-
-        // 雙引號內的雙引號需要被轉義（即替換為兩個雙引號）
         const escapedStringValue = stringValue.replace(/"/g, '""');
-
-        // 如字串包含逗號、雙引號或換行符號，則需要將整個字串包在雙引號中
         return `"${escapedStringValue}"`;
-      }).join(',');
+      });
+      return values.join(',');
     });
   
-    // 將標頭行和所有數據行結合成一個 CSV 格式的字串
+    // 將標頭行和所有數據行結合成一個 CSV 格式的字符串
     return [header, ...rows].join('\n');
   }
-  
+
 }
