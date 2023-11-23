@@ -8,7 +8,7 @@ import { LanguageService } from '../shared/service/language.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
-import * as CryptoJS from 'crypto-js';
+//import * as CryptoJS from 'crypto-js';
 
 
 export interface UserLogsList {   // FaultMessage -> LogList @10/30 by yuchen
