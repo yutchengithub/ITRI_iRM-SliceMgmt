@@ -3,13 +3,16 @@
 <form [formGroup]="searchForm">
   <div class="filter">
     <span><label>{{languageService.i18n['fm.field']}}</label>
-      <input type="text" formControlName="cloudName">
+      <input type="text" formControlName="fieldName">
     </span>
     <span><label>{{languageService.i18n['fm.gnb']}}</label>
-      <input type="text" formControlName="nfName">
+      <input type="text" formControlName="gnbName">
     </span>
     <span><label>{{languageService.i18n['fm.component']}}</label>
-      <input type="text" formControlName="acknowledgeOwner">
+      <input type="text" formControlName="compName">
+    </span>
+    <span><label>{{languageService.i18n['fm.alarm']}}</label>
+      <input type="text" formControlName="alarmName">
     </span>
     <span><label>{{languageService.i18n['fm.severity']}}</label>
       <select formControlName="severity">
@@ -22,11 +25,15 @@
       <span>
         <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
       </span>    
-      <span><label> ～ </label>
+      <span><label>～</label>
         <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
       </span>
     </span>
+    <span><label>{{languageService.i18n['fm.owner']}}</label>
+      <input type="text" formControlName="ackOwner">
+    </span>
     <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+    <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search()">clear</span>
   </div>
 </form>
 
@@ -119,13 +126,6 @@ nextLabel="" id="fmList">
       </span>
     <p>
       <span>
-        <!-- <div class="vc-toggle-container">
-          <label class="vc-switch">
-            <input type="checkbox" class="vc-switch-input" [checked]="switchProcessStatus()" (change)="changeProcessSwitch()">
-            <span class="vc-switch-label" data-on="PENDING" data-off="RESOLVE"></span>
-            <span class="vc-handle"></span>
-          </label>
-        </div> -->
         <span class="switch">
           <mat-button-toggle-group name="isCleared" [(ngModel)]="modifySatus">
             <mat-button-toggle value="PENDING">{{languageService.i18n['fm.pending']}}</mat-button-toggle>
@@ -135,7 +135,7 @@ nextLabel="" id="fmList">
         <input type="text" name="processComment" [(ngModel)]="modifyMsg.processresult">
         <button class="modify" type="button" (click)="modify()">{{languageService.i18n['fm.add']}}</button>
 
-        <p *ngIf="show200Msg" style="color:#46c116"><span class="material-symbols-outlined">done</span>Modify successfully</p>
+        <p *ngIf="show200Msg" style="color:#46c116"><span class="material-symbols-outlined">done</span>{{languageService.i18n['fm.modifySuccess']}}</p>
         <p *ngIf="show500Msg" style="color:#ff469c"><span class="material-symbols-outlined">error</span>Fail modify Pending Status and Add CPU</p>
       </span>
     </li>
@@ -156,8 +156,8 @@ nextLabel="" id="fmList">
             </span>
 
           </th>
-          <th>Processing Status</th>
-          <th>Acknowledge Owner</th>
+          <th>{{languageService.i18n['fm.status']}}</th>
+          <th>{{languageService.i18n['fm.owner']}}</th>
         </tr>
       </thead>
       <tbody>
@@ -177,7 +177,7 @@ nextLabel="" id="fmList">
   </ng-template>
 
   <div class="buttons">
-    <button type="button" mat-dialog-close>Cancel</button>
+    <button type="button" mat-dialog-close>{{languageService.i18n['fm.close']}}</button>
   </div>
 </ng-template>
 
@@ -234,6 +234,6 @@ nextLabel="" id="fmList">
   </ul>
 
   <div class="buttons">
-    <button type="button" mat-dialog-close>{{languageService.i18n['cancel']}}</button>
+    <button type="button" mat-dialog-close>{{languageService.i18n['fm.close']}}</button>
   </div>
 </ng-template>

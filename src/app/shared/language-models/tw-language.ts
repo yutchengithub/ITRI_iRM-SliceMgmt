@@ -74,6 +74,8 @@ export const TwLanguage = {
   'fm.add':'新增',
   'fm.pending':'待處理',
   'fm.ended':'結束',
+  'fm.close':'關閉',
+  'fm.modifySuccess':'修改成功',
 
   // Performance Management (效能管理)
   'pm.field':'場域名稱',

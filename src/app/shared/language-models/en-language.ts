@@ -74,6 +74,8 @@ export const Enlanguage = {
   'fm.add':'Add',
   'fm.pending':'Pending',
   'fm.ended':'Ended',
+  'fm.close':'Close',
+  'fm.modifySuccess':'Modify successfully',
 
   // Performance Management
   'pm.field':'Field Name',
