@@ -419,39 +419,4 @@ export class ScheduleManagementComponent implements OnInit {
     this.getScheduleList();
   }
 
-  exportToCSV(dataType: string) {
-    let dataToExport: Components[] = [];
-    const from = this.commonService.dealPostDate(this.searchForm.get('from')?.value);
-    const to = this.commonService.dealPostDate(this.searchForm.get('to')?.value);
-    const formattedFromDate = from.split(' ')[0];
-    const formattedToDate = to.split(' ')[0];
-    if (this.commonService.isLocal) {
-      /* local file test */
-      dataToExport = this.commonService.componentList.components;
-    } else {//run iRM API
-      dataToExport = this.componentList.components;
-    }
-    const csvData = this.convertToCSV(dataToExport);
-    const blob = new Blob([csvData], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const fileName = `filtered_schedule_list.csv`;
-
-    a.download = fileName;
-    a.click();
-    window.URL.revokeObjectURL(url);
-  }
-
-  convertToCSV(data: any[]): string {
-    const header = Object.keys(data[0]).join(',');
-    const rows = data.map(row => {
-      return Object.values(row).map(value => {
-        const stringValue = typeof value === 'string' ? value : String(value);
-        const escapedStringValue = stringValue.replace(/"/g, '""');
-        return `"${escapedStringValue}"`;
-      }).join(',');
-    });
-    return [header, ...rows].join('\n');
-  }
 }

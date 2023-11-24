@@ -580,7 +580,14 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     // 否則，顯示全部 UserLogsList.loginfo
     return this.isSearch_userLogs ? this.filtered_UserLogs : this.UserLogsList.loginfo;
   }
-  
+
+  // 重置 NE Logs 搜尋  @11/24 Add by yuchen
+  clear_search_UserLogs() {
+    this.isSearch_userLogs = false;
+    this.createSearchForm();
+    this.afterSearchForm = _.cloneDeep(this.searchForm);
+    this.getUserLogsInfo();
+  }  
 
 
   // For search NE Logs  @11/13 Add by yuchen
@@ -656,12 +663,18 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     return this.isSearch_neLogs ? this.filtered_NELogs : this.NELogsList.loginfo;
   }
 
+  // 重置 NE Logs 搜尋  @11/24 Add by yuchen
+  clear_search_NELogs() {
+    this.isSearch_neLogs = false;
+    this.createSearchForm();
+    this.afterSearchForm = _.cloneDeep(this.searchForm);
+    this.getNELogsInfo();
+  }  
+
 /* ↑ For click "Search" ↑ */
 
-  
 
-  // @11/07 Add by yuchen
-  // 用於將指定 Log 匯出成 .csv 檔案  
+  // 用於將指定 Log 匯出成 .csv 檔案  @11/07 Add by yuchen
   exportToCSV(dataType: string) {
     
     // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsinfo 矩陣或是 NELogsinfo 矩陣

@@ -43,6 +43,8 @@ export const Enlanguage = {
   
   //Common Items
   'cancel':'Cancel',
+  'search':'Search',
+  'clear_search':'Search Reset', // @11/24 Add by yuchen
 
   // Fault Management
   'fm.start':'StartTime',
@@ -97,7 +99,6 @@ export const Enlanguage = {
   'updateSoftware':'Update this software',
   'nfRun':'NF running',
   'nfNotRun':'NF not running',
-  'search':'Search',
   'stopDE':'Stop deploy',
   'startDE':'Start deploy',
   'createNFcapacity':'Create a new NF capacity',
@@ -188,13 +189,30 @@ export const Enlanguage = {
   'delaccount':'Delete Account',
   'confirm_del_acc':'Confirm to Delete Account',
 
+  // Schedule Management @11/24 Add by yuchen
+  'sm.select_type':'Schedule Type',
+  'sm.select_field':'Field',
+  'sm.th_create':'Create Schedule',
+  'sm.th_time':'Schedule Time',
+  'sm.th_type':'Type',
+  'sm.th_state':'State',
+  'sm.th_download':'Download Report',
+  'sm.th_view':'View',
+  'sm.th_delete':'Delete',
+  'sm.smDownload':'Download report of this schedule',
+  'sm.view_detail':'View this schedule in detail',
+  'sm.delItem':'Delete this schedule',
+  'sm.fmReport':'Fault Management Report',
+  'sm.pmReport':'Performance Management Report',
+  'sm.sfUpdate':'Software update',
+
   // Log Management @10/31 add by yuchen
   'LogLists': 'Log Lists',
   'UserLogs': 'User Logs',
   'NELogs': 'NE Logs',            // NE = Network Element
-  'Log.start':'Execution Time',   // @11/17 changed by yuchen
-  'Log.end':'～ ',                // @11/17 changed by yuchen
-  'Log.total':'Total',            // @11/21 add by yuchen
+  'Log.start':'Execution Time',   // @11/17 Changed by yuchen
+  'Log.end':'～ ',                // @11/17 Changed by yuchen
+  'Log.total':'Total',            // @11/21 Add by yuchen
 
   'UserLog.No':'No.',
   'UserLog.userid':'User',
@@ -203,25 +221,25 @@ export const Enlanguage = {
   'UserLog.logmsg':'Action Executed',
   'UserLog.logtime':'Execution Time',
   'UserLog.view':'View',
-  'UserLog.single':'User Log',  // @11/21 add by yuchen
-  'UserLog.total':'User Logs',  // @11/21 changed by yuchen
+  'UserLog.single':'User Log',  // @11/21 Add by yuchen
+  'UserLog.total':'User Logs',  // @11/21 Changed by yuchen
   'UserLog.logKeywordString':'Action Executed',  // @11/17 changed by yuchen
-  'UserLog.detail':'User Log Detail', // @11/03 add by yuchen
-  'UserLog.detailclose':'Close',      // @11/03 add by yuchen
-  'UserLog.ExportCSV':'Export User Logs to .csv',    // @11/07 add by yuchen
+  'UserLog.detail':'User Log Detail', // @11/03 Add by yuchen
+  'UserLog.detailclose':'Close',      // @11/03 Add by yuchen
+  'UserLog.ExportCSV':'Export User Logs to .csv',    // @11/07 Add by yuchen
   'UserLog.ExportXLSX':'Export User Logs to .xlsx',  // @11/23 Add by yuchen
 
   'NElog.No':'No.',
   'NElog.userid':'User',
+  'NElog.comp_name':'NE Name',   // @11/22 Add by yuchen
   'NElog.operation':'Type',
   'NElog.req_data':'Request Data',
   'NElog.resp_data':'Response Data',
   'NElog.logtime':'Execution Time',
-  'NElog.comp_name':'NE Name',   // @11/22 Add by yuchen
   'NElog.view':'View',
   'NElog.single':'NE Log',       // @11/21 Add by yuchen
-  'NElog.total':'NE Logs',       // @11/21 changed by yuchen
-  'NElog.logKeywordString':'Request / Response Data',  // @11/17 changed by yuchen
+  'NElog.total':'NE Logs',       // @11/21 Changed by yuchen
+  'NElog.logKeywordString':'Request / Response Data',  // @11/17 Changed by yuchen
   'NElog.detail':'NE Log Detail',  // @11/03 Add by yuchen
   'NElog.detailclose':'Close',     // @11/03 Add by yuchen
   'NElog.ExportCSV':'Export NE Logs to .csv',   // @11/07 Add by yuchen

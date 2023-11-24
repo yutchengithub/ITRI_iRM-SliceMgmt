@@ -47,6 +47,9 @@
 
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_UserLogs()">search</span>
 
+        <!-- Button of clear_search @11/24 Add by yuchen -->
+        <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search_UserLogs()">clear</span>
+
         <!-- Button of Export User logs to XLSX @11/23 Add by yuchen -->
         <span tooltip="{{languageService.i18n['UserLog.ExportXLSX']}}" class="material-icons" (click)="exportToExcel('UserLogs')">assignment_returned</span>
         
@@ -137,6 +140,8 @@
         <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_NELogs()">search</span>
         <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
 
+        <!-- Button of clear_search @11/24 Add by yuchen -->
+        <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search_NELogs()">clear</span>
 
         <!-- Button of Export NE logs to XLSX @11/23 add by yuchen -->
         <span tooltip="{{languageService.i18n['NElog.ExportXLSX']}}" class="material-icons" (click)="exportToExcel('NELogs')">assignment_returned</span>

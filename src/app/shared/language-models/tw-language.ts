@@ -43,6 +43,8 @@ export const TwLanguage = {
   
   //Common Items (共用項目)
   'cancel':'取消',
+  'search':'搜尋',
+  'clear_search':'搜尋重置', // @11/24 Add by yuchen
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',
@@ -97,7 +99,6 @@ export const TwLanguage = {
   'updateSoftware':'更新此軟件',
   'nfRun':'NF 執行中',
   'nfNotRun':'NF 停止執行',
-  'search':'搜尋',
   'stopDE':'停止部署',
   'startDE':'開始部署',
   'createNFcapacity':'新增 NF Capacity',
@@ -188,6 +189,24 @@ export const TwLanguage = {
   'delaccount':'帳號刪除',
   'confirm_del_acc':'確定帳號刪除',
 
+  // Schedule Management (排程管理) @11/24 Add by yuchen
+  'sm.select_type':'排程類型',
+  'sm.select_field':'場域',
+  'sm.create_type':'排程類型',
+  'sm.th_create':'建立排程',
+  'sm.th_time':'排程時間',
+  'sm.th_type':'類型',
+  'sm.th_state':'狀態',
+  'sm.th_download':'報表下載',
+  'sm.th_view':'檢視',
+  'sm.th_delete':'刪除',
+  'sm.smDownload':'下載此排程報表',
+  'sm.view_detail':'詳細查看此排程',
+  'sm.delItem':'刪除此排程',
+  'sm.fmReport':'產出故障管理報表',
+  'sm.pmReport':'產出效能管理報表',
+  'sm.sfUpdate':'軟體更新',
+  
   // Log Management (日誌管理)  @10/31 add by yuchen
   'LogLists': '日誌列表',
   'UserLogs': '使用者日誌',
@@ -196,14 +215,12 @@ export const TwLanguage = {
   'Log.end':'～ ',         // @11/17 changed by yuchen
   'Log.total':'總共',      // @11/21 add by yuchen
 
-
   'UserLog.No':'編號',
   'UserLog.userid':'使用者',
   'UserLog.logtype':'類型',
   'UserLog.loglevel':'層級',
   'UserLog.logmsg':'執行動作',
   'UserLog.logtime':'執行時間',
-  'NElog.comp_name':'網元名稱',               // @11/22 Add by yuchen
   'UserLog.view':'檢視',
   'UserLog.single':'項使用者日誌訊息',          // @11/21 add by yuchen
   'UserLog.total':'項使用者日誌訊息',           // @11/21 changed by yuchen
@@ -215,6 +232,7 @@ export const TwLanguage = {
 
   'NElog.No':'編號',
   'NElog.userid':'使用者',
+  'NElog.comp_name':'網元名稱',               // @11/22 Add by yuchen
   'NElog.operation':'類型',
   'NElog.req_data':'請求數據',
   'NElog.resp_data':'回應數據',

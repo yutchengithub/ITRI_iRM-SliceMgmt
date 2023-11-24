@@ -1,14 +1,22 @@
 
-.component tbody tr td {
-  width: 20.5vw;
+table {
+  //width: 100%;
+  max-width: 97.65%;
+  table-layout: fixed; // 固定列寬
 }
-.component thead tr th {
-  white-space: nowrap;
+
+thead tr th,
+tbody tr td {
+  width:  250px;    // 將每個列的寬度設置為相等的百分比
+  text-align: center; // 所有內容都居中對齊
 }
-.component tbody tr td.icon {
+
+tbody td.icon {
+  //width: auto;
   width: 7.5em;
   text-align: center;
 }
+
 input[type="file"] {
   outline: 0;
 }

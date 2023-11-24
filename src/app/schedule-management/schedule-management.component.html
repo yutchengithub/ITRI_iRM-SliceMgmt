@@ -1,52 +1,46 @@
 <h5>{{languageService.i18n['index.menu_scheduleMgr']}}
-  <mat-icon tooltip="{{languageService.i18n['addSoftware']}}" (click)="openCreateModal()">add</mat-icon>
+  <mat-icon tooltip="{{languageService.i18n['sm.create']}}" (click)="openCreateModal()">add</mat-icon>
 </h5>
   <form [formGroup]="searchForm">
     <div class="filter">
-      <span><label>{{languageService.i18n['cm.name']}}</label>
+      <span><label>{{languageService.i18n['sm.th_state']}}</label>
         <input type="text"formControlName="firm">
       </span>
-      <span><label>{{languageService.i18n['software_version']}}</label>
-          <input type="text"formControlName="model">
-      </span>
+
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-      <span tooltip="{{languageService.i18n['ExportCSV']}}" class="material-icons" (click)="exportToCSV('scheduleList')">content_paste_go</span>
-      <span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span>
       <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSetting()">clear</span>
     </div>
   </form>
 
-<div class="table schedule">
+<div class="table">
   <table>
     <thead>
       <tr>
-        <th>{{languageService.i18n['cm.name']}}</th>
-        <th>IP Address</th>
-        <th>Port</th>
-        <th>{{languageService.i18n['table.Status']}}</th>
-        <th>{{languageService.i18n['index.view']}}</th>
-        <th>{{languageService.i18n['cm.provision']}}</th>
-        <th>{{languageService.i18n['table.delete']}}</th>
+        <th>{{languageService.i18n['sm.th_time']}}</th>
+        <th>{{languageService.i18n['sm.th_type']}}</th>
+        <th>{{languageService.i18n['sm.th_state']}}</th>
+        <th>{{languageService.i18n['sm.th_download']}}</th>
+        <th>{{languageService.i18n['sm.th_view']}}</th>
+        <th>{{languageService.i18n['sm.th_delete']}}</th>
       </tr>
     </thead>
     <tbody>
       <tr
         *ngFor="let opt of componentList.components | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-        <td>{{opt.name}}</td>
-        <td>{{opt.ip}}</td>
-        <td>{{opt.port}}</td>
+        <td>2023-11-25 03:00:00</td>
+        <td>{{languageService.i18n['sm.pmReport']}}</td>
         <td class="icon">
           <label *ngIf="opt.status === 0" class="greenLight"></label>
           <label *ngIf="opt.status === 1" class="redLight"></label>
         </td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">remove_red_eye</mat-icon>
+          <mat-icon tooltip="{{languageService.i18n['sm.smDownload']}}" (click)="openProvisionModal(opt)">download_for_offline</mat-icon>
         </td>
         <td class="icon">
-          <mat-icon (click)="openProvisionModal(opt)">upload_file</mat-icon>
+          <mat-icon tooltip="{{languageService.i18n['sm.view_detail']}}" (click)="viewPage(opt)">remove_red_eye</mat-icon>
         </td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDeleteModal(opt)">delete_forever</mat-icon>
+          <mat-icon tooltip="{{languageService.i18n['sm.delItem']}}" (click)="openDeleteModal(opt)">delete_forever</mat-icon>
         </td>
       </tr>
     </tbody>
@@ -58,11 +52,11 @@
 
 
 <ng-template #createScheduleModal>
-  <h5>{{languageService.i18n['cm.add']}}</h5>
+  <h5>{{languageService.i18n['sm.th_create']}}</h5>
   <form [formGroup]="createForm" >
     <ul class="addschedule-ul-li-label">
       <li>
-        <label>{{languageService.i18n['cm.type']}}</label>
+        <label>{{languageService.i18n['sm.select_type']}}</label>
         <span>
           <select formControlName="comtype" class="{{formValidated&&createForm.controls['comtype'].invalid?'required':''}}">
             <option value="" ></option>
@@ -72,58 +66,19 @@
         </span>
       </li>
       <li>
-        <label>{{languageService.i18n['cm.ip']}}</label>
+        <label>{{languageService.i18n['sm.select_field']}}</label>
         <span>
-          <input type="text" formControlName="ip" class="{{formValidated&&createForm.controls['ip'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['ip'].invalid">Required</mat-error>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['cm.port']}}</label>
-        <span>
-          <input type="text" formControlName="port" class="{{formValidated&&createForm.controls['port'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['port'].invalid">Required</mat-error>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['cm.mac']}}</label>
-        <span>
-          <input type="text" formControlName="mac" class="{{formValidated&&createForm.controls['mac'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['mac'].invalid">Required</mat-error>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['cm.acc']}}</label>
-        <span>
-          <input type="text" formControlName="account" class="{{formValidated&&createForm.controls['account'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['account'].invalid">Required</mat-error>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['cm.passw']}}</label>
-        <span>
-          <input type="text" formControlName="key" class="{{formValidated&&createForm.controls['key'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['key'].invalid">Required</mat-error>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['cm.manufacturer']}}</label>
-        <span>
-          <input type="text" formControlName="firm" class="{{formValidated&&createForm.controls['firm'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['firm'].invalid">Required</mat-error>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['cm.model']}}</label>
-        <span>
-          <input type="text" formControlName="modelname" class="{{formValidated&&createForm.controls['modelname'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['modelname'].invalid">Required</mat-error>
+          <select formControlName="comtype" class="{{formValidated&&createForm.controls['comtype'].invalid?'required':''}}">
+            <option value="" ></option>
+            <option *ngFor="let opt of comtype" [value]="opt.value">{{opt.displayName}}</option>
+          </select>
+          <mat-error *ngIf="formValidated&&createForm.controls['comtype'].invalid">Required</mat-error>
         </span>
       </li>
     </ul>
     <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
       <button type="button" (click)="create()">OK</button>
+      <button type="button" mat-dialog-close>Cancel</button>
     </div>
   </form>
 </ng-template>
