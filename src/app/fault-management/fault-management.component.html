@@ -18,18 +18,15 @@
       </select>
       <mat-error *ngIf="searchForm.controls['severity'].invalid">Required</mat-error>
     </span>
-    <span><label>{{languageService.i18n['fm.start']}}</label>
+    <span><label>{{languageService.i18n['fm.occurtime']}}</label>
       <span>
         <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
-      </span>
-    </span>
-    <span><label>{{languageService.i18n['fm.end']}}</label>
-      <span>
+      </span>    
+      <span><label> ～ </label>
         <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
       </span>
     </span>
     <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-    <!--<span tooltip="{{languageService.i18n['a_search']}}" class="material-symbols-outlined" (click)="openAdvancedModal()">settings</span> -->
   </div>
 </form>
 
@@ -64,7 +61,7 @@
         <td>{{opt.status}}</td>
         <!-- <td>{{opt.isCleared?'Cleared':'New'}}</td> -->
         <td>
-          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf="opt.processstatus === 0" class="greenLight"></label>
+          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf="opt.processstatus === 0" class="greenLight" (click)="openStatusModal(opt)"></label>
           <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf="opt.processstatus === 1" class="redLight" (click)="openStatusModal(opt)"></label>
           {{opt.processresult}}
         </td>
@@ -130,13 +127,12 @@ nextLabel="" id="fmList">
           </label>
         </div> -->
         <span class="switch">
-          <mat-button-toggle-group name="isCleared" [(ngModel)]="fmStatus.__processStatus">
+          <mat-button-toggle-group name="isCleared" [(ngModel)]="modifySatus">
             <mat-button-toggle value="PENDING">{{languageService.i18n['fm.pending']}}</mat-button-toggle>
             <mat-button-toggle value="RESOLVE">{{languageService.i18n['fm.ended']}}</mat-button-toggle>
           </mat-button-toggle-group>
         </span>
-        <!-- <input type="text" name="processComment" [(ngModel)]="fmStatus.processComment"> -->
-        <input type="text" name="processComment">
+        <input type="text" name="processComment" [(ngModel)]="modifyMsg.processresult">
         <button class="modify" type="button" (click)="modify()">{{languageService.i18n['fm.add']}}</button>
 
         <p *ngIf="show200Msg" style="color:#46c116"><span class="material-symbols-outlined">done</span>Modify successfully</p>
@@ -194,49 +190,6 @@ nextLabel="" id="fmList">
   </div>
 </ng-template>
 
-<ng-template #advancedModal>
-  <form [formGroup]="advancedForm">
-    <h5>Fault Message  {{languageService.i18n['performance_Advanced_Search']}}</h5>
-
-      <ul>
-      <li>
-        <span>Global ID:</span> <input type="text" formControlName="globalId">
-      </li>
-      <li>
-        <span>Field {{languageService.i18n['table.header_name']}}:</span> <input type="text" formControlName="cloudName">
-      </li>
-      <li>
-        <span>NF ID:</span> <input type="text" formControlName="nfId">
-      </li>
-      <li>
-        <span>NF {{languageService.i18n['table.header_name']}}:</span> <input type="text" formControlName="nfName">
-      </li>
-      <li>
-        <span>From:</span>
-        <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
-        <span class="widthInit">To:</span>
-        <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
-      </li>
-      <li>
-        <span>{{languageService.i18n['severity']}}</span>
-        <select formControlName="severity">
-          <option value="All">All</option>
-          <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
-        </select>
-      </li>
-      <li>
-        <span>Acknowledge Owner:</span> <input type="text" formControlName="acknowledgeOwner">
-      </li>
-    </ul>
-
-    <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
-      <button type="button" mat-dialog-close="OK">Ok</button>
-      <!-- <button type="button" (click)="debug()">debug</button> -->
-    </div>
-  </form>
-</ng-template>
-
 <ng-template #itemDetail>
   <h5>{{languageService.i18n['fm.detail']}}</h5>
    <ul class="faultMsg_detail">
@@ -268,7 +221,6 @@ nextLabel="" id="fmList">
       <label>{{languageService.i18n['fm.count']}}: </label><span>{{selectedMsg.count}}</span>
     </li>
   </ul>
-  <br/>
   <ul class="faultMsg_detail">
     <li>
       <label>{{languageService.i18n['fm.eType']}}: </label><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>

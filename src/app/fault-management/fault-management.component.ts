@@ -2,8 +2,6 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { CommonService } from '../shared/common.service';
-import { OCloudList } from '../field-management/field-management.component';
-import { Nf } from '../nf-management/nf-management.component';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { LanguageService } from '../shared/service/language.service';
@@ -23,9 +21,6 @@ export interface FaultMessages {
   compname: string;   // add by Charles
   count: number;  // add by Charles  
   timestamp: string;
-  cloudId: string;
-  nfId: string;
-  nfName: string;
   status: string; // add by Charles
   eventtype: string; //modify by Charles (severity -> eventtype)
   probablecause: string; // modify by Charles (context -> probablecause)
@@ -65,10 +60,10 @@ export interface FmStatusRecord {
 })
 export class FaultManagementComponent implements OnInit, OnDestroy {
   sessionId: string = '';
-  // ocloudList: OCloudList[] = [];
-  nfList: Nf[] = [];
   faultMessage: FaultMessage = {} as FaultMessage;
-  selectedMsg: FaultMessages= {} as FaultMessages;
+  selectedMsg: FaultMessages = {} as FaultMessages;
+  modifyMsg: FaultMessages = {} as FaultMessages;
+  modifySatus?: string;
   p: number = 1;            // 當前頁數
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
@@ -97,11 +92,6 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   record_pageSize: number = 5;
   record_totalItems: number = 0;
   timeSort: '' | 'asc' | 'desc' = '';
-  @ViewChild('advancedModal') advancedModal: any;
-  advancedModalRef!: MatDialogRef<any>;
-  advancedForm!: FormGroup;
-  isSettingAdvanced = false;
-  queryFMAdvanceSearchScpt!: Subscription;
 
   constructor(
     private http: HttpClient,
@@ -124,7 +114,6 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`))  // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
     });
     this.severitys = this.commonService.severitys;
-    this.createAdvancedForm();
   }
 
   ngOnInit(): void {
@@ -137,8 +126,6 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
         this.searchForm.controls['nfName'].setValue(params['nfName']);
       }
     });
-    // this.getOcloudList();
-    //this.getNfList();
     this.getFaultMessage();
   }
 
@@ -148,40 +135,6 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     if (this.queryFMstatusScpt) this.queryFMstatusScpt.unsubscribe();
     if (this.queryFMstatusrecordScpt) this.queryFMstatusrecordScpt.unsubscribe();
     if (this.queryFMProcessScpt) this.queryFMProcessScpt.unsubscribe();
-    if (this.queryFMAdvanceSearchScpt) this.queryFMAdvanceSearchScpt.unsubscribe();
-  }
-
-  // getOcloudList() {
-  //   if (this.commonService.isLocal) {
-  //     /* local file test */
-  //     this.ocloudList = this.commonService.ocloudList;
-
-  //   } else {
-  //     this.commonService.queryOcloudList().subscribe(
-  //       res => {
-  //         console.log('getOcloudList:');
-  //         console.log(res);
-  //         this.ocloudList = res as OCloudList[];
-  //       }
-  //     );
-  //   }
-  // }
-
-  getNfList() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.nfList = this.commonService.nfList;
-
-    } else {
-      const url = `${this.commonService.restPath}/queryNfList`;
-      this.http.get(url).subscribe(
-        res => {
-          console.log('getNfList:');
-          console.log(res);
-          this.nfList = res as Nf[];
-        }
-      );
-    }
   }
 
   getFaultMessage() {
@@ -221,11 +174,11 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.refreshTimeout = window.setTimeout(() => {
       if (this.p === 1) {
         console.log(`page[${this.p}] ===> refresh.`);
-        if (this.isSettingAdvanced) {
-          this.getFMAdvanceSearch();
-        } else {
+        // if (this.isSettingAdvanced) {
+        //   this.getFMAdvanceSearch();
+        // } else {
           this.getFaultMessage();
-        }
+        // }
 
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
@@ -311,14 +264,6 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  // switchProcessStatus(): boolean {
-  //   return this.fmStatus.isCleared;
-  // }
-
-  // changeProcessSwitch() {
-  //   this.fmStatus.isCleared = !this.fmStatus.isCleared;
-  // }
-
   getFMstatusrecord() {
     this.timeSort = '';
     return new Promise((resolve, reject) => {
@@ -393,8 +338,11 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     return new Promise((resolve, reject) => {
       if (this.commonService.isLocal) {
         /* local file test */
-        const num = Math.floor(Math.random() * 2); //回傳0或1
-        const status = (num === 0) ? 200 : 500;
+        // const num = Math.floor(Math.random() * 2); //回傳0或1
+        // const status = (num === 0) ? 200 : 500;
+        let status = 200;
+        this.selectedMsg.processresult =this.modifyMsg.processresult;
+        this.selectedMsg.processstatus = (this.modifySatus === 'PENDING') ? 0 : 1;
         resolve(status);
       } else {
         if (this.queryFMProcessScpt) this.queryFMProcessScpt.unsubscribe();
@@ -410,72 +358,4 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  createAdvancedForm() {
-    this.advancedForm = this.fb.group({
-      'globalId': new FormControl(''),
-      'fieldName': new FormControl(''),
-      'nfId': new FormControl(''),
-      'nfName': new FormControl(''),
-      'from': new FormControl(''),
-      'to': new FormControl(''),
-      'severity': new FormControl(''),
-      'acknowledgeOwner': new FormControl('')
-    });
-  }
-
-  openAdvancedModal() {
-    const orgAdvancedForm = _.cloneDeep(this.advancedForm);
-    this.advancedForm.controls['fieldName'].setValue(this.searchForm.controls['fieldName'].value);
-    this.advancedForm.controls['nfName'].setValue(this.searchForm.controls['nfName'].value);
-    this.advancedForm.controls['from'].setValue(this.searchForm.controls['from'].value);
-    this.advancedForm.controls['to'].setValue(this.searchForm.controls['to'].value);
-    this.advancedForm.controls['severity'].setValue(this.searchForm.controls['severity'].value);
-    this.advancedModalRef = this.dialog.open(this.advancedModal, { id: 'faultAdvancedModal' });
-    this.advancedModalRef.afterClosed().subscribe((result) => {
-      if (result === 'OK') {
-        this.isSettingAdvanced = true;
-        this.searchForm.controls['fieldName'].setValue(this.advancedForm.controls['fieldName'].value);
-        this.searchForm.controls['nfName'].setValue(this.advancedForm.controls['nfName'].value);
-        this.searchForm.controls['from'].setValue(this.advancedForm.controls['from'].value);
-        this.searchForm.controls['to'].setValue(this.advancedForm.controls['to'].value);
-        this.searchForm.controls['severity'].setValue(this.advancedForm.controls['severity'].value);
-        this.p = 1;
-        this.getFMAdvanceSearch();
-      } else {
-        this.advancedForm = orgAdvancedForm;
-      }
-    });
-  }
-
-  getFMAdvanceSearch() {
-    console.log('getFMAdvanceSearch:');
-    clearTimeout(this.refreshTimeout);
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.faultMessage = this.commonService.fmAdvanceSearch;
-      this.faultMessageDeal();
-    } else {
-      const globalId = this.advancedForm.controls['globalId'].value;
-      const fieldName = this.advancedForm.controls['fieldName'].value;
-      const nfId = this.advancedForm.controls['nfId'].value;
-      const nfName = this.advancedForm.controls['nfName'].value;
-      const acknowledgeOwner = this.advancedForm.controls['acknowledgeOwner'].value;
-      const severity = this.advancedForm.controls['severity'].value;
-      const start = this.commonService.dealPostDate(this.advancedForm.controls['from'].value);
-      const end = this.commonService.dealPostDate(this.advancedForm.controls['to'].value);
-      const offset = (this.p - 1) * this.pageSize;
-      const limit = 10;
-      if (this.queryFMAdvanceSearchScpt) this.queryFMAdvanceSearchScpt.unsubscribe();
-      this.queryFMAdvanceSearchScpt = this.commonService.queryFMAdvanceSearch(globalId, fieldName, nfId, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
-        res => {
-          console.log('getFMAdvanceSearch:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.faultMessage = JSON.parse(str);
-          this.faultMessage = res as FaultMessage;
-          this.faultMessageDeal();
-        }
-      );
-    }
-  }
 }
