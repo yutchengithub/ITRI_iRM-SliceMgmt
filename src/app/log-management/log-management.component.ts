@@ -673,93 +673,93 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
 /* ↑ For click "Search" ↑ */
 
-
-  // 用於將指定 Log 匯出成 .csv 檔案  @11/07 Add by yuchen
-  exportToCSV(dataType: string) {
+  // @11/24 not use
+  // // 用於將指定 Log 匯出成 .csv 檔案  @11/07 Add by yuchen 
+  // exportToCSV(dataType: string) {
     
-    // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsinfo 矩陣或是 NELogsinfo 矩陣
-    let dataToExport: UserLogsinfo[] | NELogsinfo[] = [];
+  //   // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsinfo 矩陣或是 NELogsinfo 矩陣
+  //   let dataToExport: UserLogsinfo[] | NELogsinfo[] = [];
 
-    // 依據使用者選擇的 dataType 確定是使用 UserLogType 還是 NELogType
-    // 從 searchForm 獲取使用者選擇的日誌類型，如無選擇則默認為 'All'
-    const logType = dataType === 'UserLogs' ? this.searchForm.get('UserLogType')?.value || 'All' 
-                                            : this.searchForm.get('NELogType')?.value || 'All';
+  //   // 依據使用者選擇的 dataType 確定是使用 UserLogType 還是 NELogType
+  //   // 從 searchForm 獲取使用者選擇的日誌類型，如無選擇則默認為 'All'
+  //   const logType = dataType === 'UserLogs' ? this.searchForm.get('UserLogType')?.value || 'All' 
+  //                                           : this.searchForm.get('NELogType')?.value || 'All';
     
-    const formattedLogType = logType.replace(/\s+/g, '_'); // 將空白符號替換為下底線
+  //   const formattedLogType = logType.replace(/\s+/g, '_'); // 將空白符號替換為下底線
 
-    // 從 searchForm 獲取日期範圍並格式化
-    const formattedFromDate = this.commonService.dealPostDate(this.searchForm.get('from')?.value).split(' ')[0]; // 取得日期部分(從)
-    const formattedToDate = this.commonService.dealPostDate(this.searchForm.get('to')?.value).split(' ')[0];     // 取得日期部分(至)
+  //   // 從 searchForm 獲取日期範圍並格式化
+  //   const formattedFromDate = this.commonService.dealPostDate(this.searchForm.get('from')?.value).split(' ')[0]; // 取得日期部分(從)
+  //   const formattedToDate = this.commonService.dealPostDate(this.searchForm.get('to')?.value).split(' ')[0];     // 取得日期部分(至)
 
-    if (dataType === 'UserLogs') {
+  //   if (dataType === 'UserLogs') {
 
-      // 為每條 User log 添加一個編號屬性 @11/22 Add 
-      // 如 dataType 是 'UserLogs'，則將 userlogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
-      dataToExport = this.userlogsToDisplay.map((log, index) => ({
-        "No.": (this.p - 1) * this.pageSize + index + 1, // 計算編號
-        ...log
-      }));
-    } else if (dataType === 'NELogs') {
+  //     // 為每條 User log 添加一個編號屬性 @11/22 Add 
+  //     // 如 dataType 是 'UserLogs'，則將 userlogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
+  //     dataToExport = this.userlogsToDisplay.map((log, index) => ({
+  //       "No.": (this.p - 1) * this.pageSize + index + 1, // 計算編號
+  //       ...log
+  //     }));
+  //   } else if (dataType === 'NELogs') {
 
-      // 為每條 NE log 添加一個編號屬性 @11/22 Add 
-      // 如是 'NELogs'，則將 neLogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
-      dataToExport = this.neLogsToDisplay.map((log, index) => ({
-        "No.": (this.p - 1) * this.pageSize + index + 1, // 計算編號
-        ...log
-      }));
-    }
+  //     // 為每條 NE log 添加一個編號屬性 @11/22 Add 
+  //     // 如是 'NELogs'，則將 neLogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
+  //     dataToExport = this.neLogsToDisplay.map((log, index) => ({
+  //       "No.": (this.p - 1) * this.pageSize + index + 1, // 計算編號
+  //       ...log
+  //     }));
+  //   }
   
-    // 將資料轉換成 CSV 格式
-    const csvData = this.convertToCSV(dataToExport);
+  //   // 將資料轉換成 CSV 格式
+  //   const csvData = this.convertToCSV(dataToExport);
     
-    // 創建一個 Blob，用於儲存 CSV 資料
-    const blob = new Blob([csvData], { type: 'text/csv' });
+  //   // 創建一個 Blob，用於儲存 CSV 資料
+  //   const blob = new Blob([csvData], { type: 'text/csv' });
     
-    // 創建一個 URL 以便下載 CSV 檔案
-    const url = window.URL.createObjectURL(blob); // 創建 URL 物件，以供下載或顯示資源
-    const a = document.createElement('a');        // 創建一個新的超鏈結元素
-    a.href = url;                                 // 設定超鏈結的 URL
+  //   // 創建一個 URL 以便下載 CSV 檔案
+  //   const url = window.URL.createObjectURL(blob); // 創建 URL 物件，以供下載或顯示資源
+  //   const a = document.createElement('a');        // 創建一個新的超鏈結元素
+  //   a.href = url;                                 // 設定超鏈結的 URL
 
-    // 根據 dataType 、日期範圍和 log 類型設定下載的檔名  @11/14 changed by yuchen
-    const fileName = `${dataType}_${formattedLogType}_${formattedFromDate}_to_${formattedToDate}.csv`;
+  //   // 根據 dataType 、日期範圍和 log 類型設定下載的檔名  @11/14 changed by yuchen
+  //   const fileName = `${dataType}_${formattedLogType}_${formattedFromDate}_to_${formattedToDate}.csv`;
 
-    a.download = fileName;
+  //   a.download = fileName;
 
-    // 觸發點擊事件以下載檔案
-    a.click();
-    window.URL.revokeObjectURL(url); // 釋放 URL 物件，以回收資源和釋放記憶體
-  }
+  //   // 觸發點擊事件以下載檔案
+  //   a.click();
+  //   window.URL.revokeObjectURL(url); // 釋放 URL 物件，以回收資源和釋放記憶體
+  // }
   
 
-  // @11/07 Add by yuchen 
-  // 用於將指定資料轉換成 .csv 格式 @11/23 updated
-  convertToCSV(data: any[]): string {
+  // // @11/07 Add by yuchen 
+  // // 用於將指定資料轉換成 .csv 格式 @11/23 updated
+  // convertToCSV(data: any[]): string {
 
-    // 定義 CSV 檔案中 UserLogs 每行數據的欄位順序
-    const userLogFields = ['No.', 'userid', 'logtype', 'loglevel', 'logmsg', 'logtime'];
+  //   // 定義 CSV 檔案中 UserLogs 每行數據的欄位順序
+  //   const userLogFields = ['No.', 'userid', 'logtype', 'loglevel', 'logmsg', 'logtime'];
 
-    // 定義 CSV 檔案中 NELogs 每行數據的欄位順序
-    const neLogFields = ['No.', 'userid', 'comp_name', 'operation', 'req_data', 'resp_data', 'logtime'];
+  //   // 定義 CSV 檔案中 NELogs 每行數據的欄位順序
+  //   const neLogFields = ['No.', 'userid', 'comp_name', 'operation', 'req_data', 'resp_data', 'logtime'];
   
-    // 選擇使用 UserLogs 或 NELogs 的欄位順序來創建標頭行
-    const header = data.some(log => 'comp_name' in log) ? neLogFields.join(',') : userLogFields.join(',');
+  //   // 選擇使用 UserLogs 或 NELogs 的欄位順序來創建標頭行
+  //   const header = data.some(log => 'comp_name' in log) ? neLogFields.join(',') : userLogFields.join(',');
   
-    // 根據定義的欄位順序創建每條數據的 CSV 行
-    const rows = data.map(row => {
-      // 選擇使用 UserLogs 或 NELogs 的欄位順序來映射每條數據的值
-      const fields = 'comp_name' in row ? neLogFields : userLogFields;
-      const values = fields.map(field => {
-        const value = row[field];
-        const stringValue = typeof value === 'string' ? value : String(value);
-        const escapedStringValue = stringValue.replace(/"/g, '""');
-        return `"${escapedStringValue}"`;
-      });
-      return values.join(',');
-    });
+  //   // 根據定義的欄位順序創建每條數據的 CSV 行
+  //   const rows = data.map(row => {
+  //     // 選擇使用 UserLogs 或 NELogs 的欄位順序來映射每條數據的值
+  //     const fields = 'comp_name' in row ? neLogFields : userLogFields;
+  //     const values = fields.map(field => {
+  //       const value = row[field];
+  //       const stringValue = typeof value === 'string' ? value : String(value);
+  //       const escapedStringValue = stringValue.replace(/"/g, '""');
+  //       return `"${escapedStringValue}"`;
+  //     });
+  //     return values.join(',');
+  //   });
   
-    // 將標頭行和所有數據行結合成一個 CSV 格式的字符串
-    return [header, ...rows].join('\n');
-  }
+  //   // 將標頭行和所有數據行結合成一個 CSV 格式的字符串
+  //   return [header, ...rows].join('\n');
+  // }
 
   exportToExcel(dataType: string) {
     
