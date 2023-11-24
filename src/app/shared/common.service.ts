@@ -1353,7 +1353,7 @@ export class CommonService {
       }
     ]
   };
-  
+
   performanceList: PerformanceList[] = [
     {
       id: "12345678-ABCD-1000-A000-00000001",
@@ -2231,12 +2231,6 @@ export class CommonService {
       processStatus: 1,
       processComment: "cpu lack of cores",
       acknowledgeOwner: "Edith"
-    },
-    {
-      timestamp: "2022/07/06 20: 01: 30",
-      processStatus: 0,
-      processComment: "added cpu cores",
-      acknowledgeOwner: "Sam"
     },
     {
       timestamp: "2022/07/02 20: 01: 30",

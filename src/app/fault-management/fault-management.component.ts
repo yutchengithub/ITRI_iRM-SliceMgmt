@@ -102,14 +102,16 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
   ) {
     const nowTime = this.commonService.getNowTime();
-    // console.log(nowTime)
-    // 格式驗證需要處理?
+    // // console.log(nowTime)
+    // // 格式驗證需要處理?
 
     this.searchForm = this.fb.group({
       'fieldName': new FormControl(''),
-      'nfName': new FormControl(''),
-      'acknowledgeOwner': new FormControl(''),
+      'gnbName': new FormControl(''),
+      'compName': new FormControl(''),
+      'alarmName': new FormControl(''),
       'severity': new FormControl('All'),
+      'ackOwner': new FormControl(''),
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),   // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`))  // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
     });
@@ -137,6 +139,21 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     if (this.queryFMProcessScpt) this.queryFMProcessScpt.unsubscribe();
   }
 
+  // 建立搜尋表單
+  createSearchForm() {
+    const nowTime = this.commonService.getNowTime();
+    this.searchForm = this.fb.group({
+      'fieldName': new FormControl(''),
+      'gnbName': new FormControl(''),
+      'compName': new FormControl(''),
+      'alarmName': new FormControl(''),
+      'severity': new FormControl('All'),
+      'ackOwner': new FormControl(''),
+      'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),   // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
+      'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`))  // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
+    });
+  }
+  
   getFaultMessage() {
     console.log('getFaultMessage:');
     clearTimeout(this.refreshTimeout);
@@ -197,6 +214,10 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     // this.getFaultMessage();
   }
 
+  clear_search() {
+    this.createSearchForm();
+  }  
+
   openStatusModal(faultMessages: FaultMessages) {
     //if (faultMessages.processstatus === 1) {
     // this.fmStatus = {} as FmStatus;
@@ -205,6 +226,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     // this.show200Msg = false;
     // this.show500Msg = false;
     this.selectedMsg = faultMessages;
+
     this.getFMstatus().then((value) => {
       this.statusModalRef = this.dialog.open(this.statusModal, { id: 'statusModal' });
       this.statusModalRef.afterClosed().subscribe(() => {
@@ -237,9 +259,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   }
 
   openItemDetail(faultMessages: FaultMessages) {
-    // this.fmStatus = {} as FmStatus;
     this.selectFaultId = faultMessages.faultId;
-    // this.type = 'processing_status';
     // this.show200Msg = false;
     // this.show500Msg = false;
     this.selectedMsg = faultMessages;
@@ -252,7 +272,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   }
 
   fMstatusDeal() {
-    this.fmStatus.__processStatus = 'PENDING';
+    this.modifySatus = 'RESOLVE';
   }
 
   changeType(e: MatButtonToggleChange) {
@@ -324,7 +344,9 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
           if (status === 200) {
             this.show200Msg = true;
             this.getFaultMessage();
-            this.show200MsgTimeout = window.setTimeout(() => this.show200Msg = false, 10 * 1000);
+            this.modifyMsg.processresult = "";
+            //close message display after 1 sec
+            this.show200MsgTimeout = window.setTimeout(() => this.show200Msg = false, 1 * 1000);
           } else {
             this.show500Msg = true;
           }
@@ -341,12 +363,12 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
         // const num = Math.floor(Math.random() * 2); //回傳0或1
         // const status = (num === 0) ? 200 : 500;
         let status = 200;
-        this.selectedMsg.processresult =this.modifyMsg.processresult;
-        this.selectedMsg.processstatus = (this.modifySatus === 'PENDING') ? 0 : 1;
+        this.selectedMsg.processresult = this.modifyMsg.processresult;
+        this.selectedMsg.processstatus = (this.modifySatus == 'PENDING') ? 1 : 0;
         resolve(status);
       } else {
         if (this.queryFMProcessScpt) this.queryFMProcessScpt.unsubscribe();
-        const processStatus = (this.fmStatus.__processStatus === 'PENDING') ? 0 : 1;
+        const processStatus = (this.fmStatus.__processStatus === 'PENDING') ? 1 : 0;
         this.queryFMstatusrecordScpt = this.commonService.queryFMProcess(this.selectFaultId, processStatus, this.fmStatus.processComment, this.fmStatus.acknowledgeOwner).subscribe(
           (res: HttpResponse<any>) => {
             console.log('queryFMProcess:');
