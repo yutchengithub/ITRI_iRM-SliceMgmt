@@ -432,6 +432,41 @@ export class CommonService {
     return this.http.post(url, bodyStr);
   }
 
+
+  // Schedule  Management API  @11/24 Add by yuchen
+  createJobTicket(body: any): Observable<any> {        // 建立 Schedule 用
+    const url = `${this.restPath}/createJobTicket/${this.getSessionId()}`;
+    const bodyStr = JSON.stringify(body);
+    return this.http.post(url, bodyStr);
+  }
+  removeJobTicket(jobId: string): Observable<any> {    // 移除現有 Schedule 用
+    const url = `${this.restPath}/removeJobTicket/${this.getSessionId()}/${jobId}`;
+    return this.http.delete(url);
+  }
+  queryJobTicketInfo(jobId: string): Observable<any> { // 取得現有 Schedule 資訊用
+    const url = `${this.restPath}/queryJobTicketInfo/${this.getSessionId()}/${jobId}`;
+    return this.http.get(url);
+  }
+  getReportFile(jobticketId: string): Observable<any> { // 下載 Schedule 報表用
+    const url = `${this.restPath}/getReportFile/${this.getSessionId()}/${jobticketId}`;
+    return this.http.get(url);
+  }
+  queryJobTicketList(): Observable<any> {               // 取得現有的 Schedule List 用
+    const url = `${this.restPath}/queryJobTicketList/${this.getSessionId()}`;
+    return this.http.get(url);
+  }
+
+  // Log Management API  @11/24 Add by yuchen
+  queryLogList(): Observable<any> {           // 取得 User Logs List 用
+    const url = `${this.restPath}/queryLogList/${this.getSessionId()}`;
+    return this.http.get(url);
+  }
+  queryUserNetconfLog(): Observable<any> {    // 取得 NE Logs List 用
+    const url = `${this.restPath}/queryUserNetconfLog/${this.getSessionId()}`;
+    return this.http.get(url);
+  }
+
+
   /* local file */
   systemSummary: SystemSummary = {
     ocloudCount: 2,
