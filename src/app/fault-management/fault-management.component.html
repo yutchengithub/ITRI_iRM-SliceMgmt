@@ -21,6 +21,21 @@
       </select>
       <mat-error *ngIf="searchForm.controls['severity'].invalid">Required</mat-error>
     </span>
+    <span><label>{{languageService.i18n['fm.status']}}</label>
+      <select formControlName="status">
+        <option value="All">All</option>
+        <option *ngFor="let status of statusTypes" [value]="status">{{commonService.textTransfer(status)}}</option>
+      </select>
+      <mat-error *ngIf="searchForm.controls['status'].invalid">Required</mat-error>
+    </span>
+    <span><label>{{languageService.i18n['fm.situation']}}</label>
+      <select formControlName="situation">
+        <option value="All">All</option>
+        <option *ngFor="let situation of situations" [value]="situation">{{commonService.textTransfer(situation)}}</option>
+      </select>
+      <mat-error *ngIf="searchForm.controls['situation'].invalid">Required</mat-error>
+    </span>
+
     <span><label>{{languageService.i18n['fm.occurtime']}}</label>
       <span>
         <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
@@ -56,8 +71,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let opt of faultMessage.faultMessages | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fmList' }">
-        <td>{{opt.faultId}}</td>
+      <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: msgToDisplay.length, id: 'fmList' }; let i = index" >
+        <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
         <td>{{opt.fieldName}}</td>
         <td>{{opt.bsName}}</td>
         <td>{{opt.compname}}</td>
@@ -66,7 +81,6 @@
         <td>{{opt.count}}</td>
         <td>{{opt.timestamp}}</td>
         <td>{{opt.status}}</td>
-        <!-- <td>{{opt.isCleared?'Cleared':'New'}}</td> -->
         <td>
           <label tooltip="{{languageService.i18n['resolved']}}" *ngIf="opt.processstatus === 0" class="greenLight" (click)="openStatusModal(opt)"></label>
           <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf="opt.processstatus === 1" class="redLight" (click)="openStatusModal(opt)"></label>
@@ -75,14 +89,14 @@
         <td>{{opt.acknowledgeOwner}}</td>
         <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openItemDetail(opt)">remove_red_eye</mat-icon></td>
       </tr>
-      <tr class="notFind" *ngIf="faultMessage.totalMessageNumber === 0">
+      <tr class="notFind" *ngIf="msgToDisplay.length === 0">
         <td colspan="7">{{languageService.i18n['no_results']}}</td>
       </tr>
     </tbody>
   </table>
   
   <!-- pagination -->    
-  <span class="total">{{languageService.i18n['fm.total1']}} {{faultMessage.totalMessageNumber}} {{languageService.i18n['fm.total2']}}</span>
+  <span class="total">{{languageService.i18n['fm.total1']}} {{msgToDisplay.length}} {{languageService.i18n['fm.total2']}}</span>
   <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
 nextLabel="" id="fmList">
   </pagination-controls>
@@ -147,6 +161,7 @@ nextLabel="" id="fmList">
     <table>
       <thead>
         <tr>
+          <th>{{languageService.i18n['fm.no']}}</th>
           <th (click)="doSortTime()">{{languageService.i18n['time']}}
             <span class="material-symbols-outlined" *ngIf="timeSort === 'asc'">
               arrow_downward
@@ -154,14 +169,14 @@ nextLabel="" id="fmList">
             <span class="material-symbols-outlined" *ngIf="timeSort === 'desc'">
               arrow_upward
             </span>
-
           </th>
-          <th>{{languageService.i18n['fm.status']}}</th>
+          <th>{{languageService.i18n['fm.situation']}}</th>
           <th>{{languageService.i18n['fm.owner']}}</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let opt of fmStatusRecordList| paginate: { itemsPerPage: record_pageSize, currentPage: record_p, totalItems: record_totalItems, id: 'record' } ">
+          <tr *ngFor="let opt of showHistories| paginate: { itemsPerPage: record_pageSize, currentPage: record_p, totalItems: record_totalItems, id: 'record' }; let i = index ">
+          <td>{{ (record_p - 1) * record_pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
           <td>{{opt.timestamp}}</td>
           <td>
             <label *ngIf="opt.processStatus === 0" class="greenLight"></label>
@@ -185,8 +200,8 @@ nextLabel="" id="fmList">
   <h5>{{languageService.i18n['modify_faultMsg_status']}}</h5>
   <p>{{languageService.i18n['confirm_modify']}} ?</p>
   <div class="buttons">
-    <button type="button" mat-dialog-close>Cancel</button>
-    <button type="button" mat-dialog-close="OK">OK</button>
+    <button type="button" mat-dialog-close>{{languageService.i18n['cancel']}}</button>
+    <button type="button" mat-dialog-close="OK">{{languageService.i18n['ok']}}</button>
   </div>
 </ng-template>
 

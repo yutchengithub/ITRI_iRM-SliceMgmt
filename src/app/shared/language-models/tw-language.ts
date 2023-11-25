@@ -42,6 +42,7 @@ export const TwLanguage = {
   'table.delete':'刪除',
   
   //Common Items (共用項目)
+  'ok':'確定',
   'cancel':'取消',
   'search':'搜尋',
   'clear_search':'搜尋重置', // @11/24 Add by yuchen

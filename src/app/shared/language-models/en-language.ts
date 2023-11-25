@@ -42,6 +42,7 @@ export const Enlanguage = {
   'table.delete':'Delete',
   
   //Common Items
+  'ok':'OK',
   'cancel':'Cancel',
   'search':'Search',
   'clear_search':'Search Reset', // @11/24 Add by yuchen
@@ -133,7 +134,7 @@ export const Enlanguage = {
   'modify_faultMsg_status':'Modify Fault Message Status',
   'confirm_modify':'Confirm to modify',
   'pending_error':'Pending', //Modify by Charles (Pending Error->Pending)
-  'resolved':'Resolved',
+  'resolved':'Ended', //Modify by Charles (Resolved->Ended)
   'no_results':'No results were found. Please verify your search terms and try again.',
 
   //Dashboard

@@ -6,7 +6,7 @@ import { FieldSummary } from '../dashboard/dashboard.component';
 import { FieldList } from '../dashboard/dashboard.component';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { OcloudInfo, OcloudPerformance } from '../field-management/field-info/field-info.component';
-import { FaultMessage, FaultMessages, FmStatus, FmStatusRecord } from '../fault-management/fault-management.component';
+import { FmsgList, FaultMessages, FmStatus } from '../fault-management/fault-management.component';
 import * as _ from 'lodash';
 import { PerformanceList } from '../performance-management/o-cloud-performance/o-cloud-performance.component';
 import { SoftwareList } from '../software-management/software-management.component';
@@ -46,6 +46,8 @@ export class CommonService {
   restPath!: string;
   options = { headers: new HttpHeaders({ 'Content-Type': 'multipart/form-data' }) };
   severitys: string[] = ['CRITICAL', 'MAJOR', 'MINOR', 'WARNING'];
+  statusTypes: string[] = ['New', 'Cleared'];
+  situations: string[] = ['Pending', 'Ended'];
 
   // For Log Management @11/01 Add 
   UserLogType: string[] = ['GET', 'POST', 'DELETE'];
@@ -1167,15 +1169,14 @@ export class CommonService {
     network: "0.123 KBps"
   }
 
-  faultMessage: FaultMessage = {
+  fmsgList: FmsgList = {
     totalMessageNumber: 12,
     faultMessages: [
       {
-        faultId: '1',
         fieldName: "field01",
         bsName: "BS_01",
         compname: "itri_10.0.2.7",        
-        timestamp: "2022-02-21T09:28:01Z",
+        timestamp: "2022-02-21 09:28:01",
         count: 2,
         eventtype: "CRITICAL",
         probablecause: "主機錯誤",
@@ -1184,16 +1185,23 @@ export class CommonService {
         processresult: "",
         status: "Cleared",
         acknowledgeOwner: "Sam",
-        createtime: "2022-02-21T09:28:00Z",
-        updatetime: "2022-02-21T09:28:02Z",
-        eDesc: "No external sync source"
+        createtime: "2022-02-21 09:28:00",
+        updatetime: "2022-02-21 09:28:02",
+        eDesc: "No external sync source",
+        histories: [
+          {
+            timestamp: "2022-02-21 09:28:01",
+            processStatus: 0,
+            processComment: "",
+            acknowledgeOwner: "Sam"
+          }
+        ]
       },
       {
-        faultId: '2',
         fieldName: "field01",
         bsName: "BS_02",
         compname: "itri_10.0.2.5",        
-        timestamp: "2023-05-20T10:23:01Z",
+        timestamp: "2023-05-20 10:23:01",
         count: 1,
         eventtype: "MAJOR",
         probablecause: "主機連線失敗",
@@ -1202,16 +1210,23 @@ export class CommonService {
         processresult: "By sswu",
         status: "New",
         acknowledgeOwner: "Sam",
-        createtime: "2023-05-20T10:23:00Z",
-        updatetime: "2023-05-20T10:23:02Z",
-        eDesc: "Configuration file corrupted conflicting"
+        createtime: "2023-05-20 10:23:00",
+        updatetime: "2023-05-20 10:23:02",
+        eDesc: "Configuration file corrupted conflicting",
+        histories: [
+          {
+            timestamp: "2023-05-20 10:23:01",
+            processStatus: 1,
+            processComment: "By sswu",
+            acknowledgeOwner: "Sam"
+          }
+        ]
       },
       {
-        faultId: '3',
         fieldName: "field02",
         bsName: "BS_05",
         compname: "itri_10.0.2.15",        
-        timestamp: "2023-07-23T08:23:01Z",
+        timestamp: "2023-07-23 08:23:01",
         count: 1,
         eventtype: "MINOR",
         probablecause: "無法連線到儲存空間",
@@ -1220,16 +1235,23 @@ export class CommonService {
         processresult: "IO Changed",
         status: "Cleared",
         acknowledgeOwner: "Charles",
-        createtime: "2023-07-23T08:23:00Z",
-        updatetime: "2023-07-23T08:23:02Z",
-        eDesc: "Ambient temperature violation"
+        createtime: "2023-07-23 08:23:00",
+        updatetime: "2023-07-23 08:23:02",
+        eDesc: "Ambient temperature violation",
+        histories: [
+          {
+            timestamp: "2023-07-23 08:23:01",
+            processStatus: 1,
+            processComment: "IO Changed",
+            acknowledgeOwner: "Charles"
+          }
+        ]
       },
       {
-        faultId: '4',
         fieldName: "field01",
         bsName: "BS_01",
         compname: "itri_10.0.2.7",        
-        timestamp: "2020-11-23T15:12:10Z",
+        timestamp: "2020-11-23 15:12:10",
         count: 3,
         eventtype: "WARNING",
         probablecause: "結束待命錯誤",
@@ -1238,16 +1260,23 @@ export class CommonService {
         processresult: "",
         status: "Cleared",
         acknowledgeOwner: "Kevin",
-        createtime: "2020-11-23T15:12:00Z",
-        updatetime: "2020-11-23T15:12:20Z",
-        eDesc: "WARNING Fault Message"
+        createtime: "2020-11-23 15:12:00",
+        updatetime: "2020-11-23 15:12:20",
+        eDesc: "WARNING Fault Message",
+        histories: [
+          {
+            timestamp: "2020-11-23 15:12:10",
+            processStatus: 0,
+            processComment: "",
+            acknowledgeOwner: "Kevin"
+          }
+        ]
       },
       {
-        faultId: '5',
         fieldName: "field01",
         bsName: "BS_02",
         compname: "itri_10.0.2.7",        
-        timestamp: "2021-05-21T18:12:10Z",
+        timestamp: "2021-05-21 18:12:10",
         count: 3,
         eventtype: "CRITICAL",
         probablecause: "授權錯誤",
@@ -1256,16 +1285,23 @@ export class CommonService {
         processresult: "",
         status: "Cleared",
         acknowledgeOwner: "Kevin",
-        createtime: "2021-05-21T18:12:00Z",
-        updatetime: "2021-05-21T18:12:20Z",
-        eDesc: "No external sync source"
+        createtime: "2021-05-21 18:12:00",
+        updatetime: "2021-05-21 18:12:20",
+        eDesc: "No external sync source",
+        histories: [
+          {
+            timestamp: "2021-05-21 18:12:10",
+            processStatus: 0,
+            processComment: "",
+            acknowledgeOwner: "Kevin"
+          }
+        ]
       },
       {
-        faultId: '6',
         fieldName: "field02",
         bsName: "BS_04",
         compname: "itri_10.0.2.5",        
-        timestamp: "2023-08-11T18:15:01Z",
+        timestamp: "2023-08-11 18:15:01",
         count: 1,
         eventtype: "MAJOR",
         probablecause: "主機 CPU 使用量",
@@ -1274,16 +1310,23 @@ export class CommonService {
         processresult: "By sswu",
         status: "New",
         acknowledgeOwner: "Sam",
-        createtime: "2023-08-11T18:15:00Z",
-        updatetime: "2023-08-11T18:15:02Z",
-        eDesc: "Configuration file corrupted conflicting"
+        createtime: "2023-08-11 18:15:00",
+        updatetime: "2023-08-11 18:15:02",
+        eDesc: "Configuration file corrupted conflicting",
+        histories: [
+          {
+            timestamp: "2023-08-11 18:15:01",
+            processStatus: 1,
+            processComment: "By sswu",
+            acknowledgeOwner: "Sam"
+          }
+        ]
       },
       {
-        faultId: '7',
         fieldName: "field02",
         bsName: "BS_03",
         compname: "itri_10.0.2.8",        
-        timestamp: "2023-08-11T17:22:01Z",
+        timestamp: "2023-08-11 17:22:01",
         count: 2,
         eventtype: "MINOR",
         probablecause: "網路連線中斷",
@@ -1292,16 +1335,23 @@ export class CommonService {
         processresult: "IO Changed",
         status: "New",
         acknowledgeOwner: "Sam",
-        createtime: "2023-08-11T17:22:00Z",
-        updatetime: "2023-08-11T17:22:02Z",
-        eDesc: "Ambient temperature violation"
+        createtime: "2023-08-11 17:22:00",
+        updatetime: "2023-08-11 17:22:02",
+        eDesc: "Ambient temperature violation",
+        histories: [
+          {
+            timestamp: "2023-08-11 17:22:01",
+            processStatus: 1,
+            processComment: "IO Changed",
+            acknowledgeOwner: "Sam"
+          }
+        ]
       },
       {
-        faultId: '8',
         fieldName: "field03",
         bsName: "BS_09",
         compname: "itri_10.0.2.4",        
-        timestamp: "2023-08-17T18:23:01Z",
+        timestamp: "2023-08-17 18:23:01",
         count: 2,
         eventtype: "WARNING",
         probablecause: "網路上行冗餘遺失",
@@ -1310,16 +1360,23 @@ export class CommonService {
         processresult: "",
         status: "Cleared",
         acknowledgeOwner: "Kevin",
-        createtime: "2023-08-17T18:23:00Z",
-        updatetime: "2023-08-17T18:23:02Z",
-        eDesc: "WARNING Fault Message"
+        createtime: "2023-08-17 18:23:00",
+        updatetime: "2023-08-17 18:23:02",
+        eDesc: "WARNING Fault Message",
+        histories: [
+          {
+            timestamp: "2023-08-17 18:23:01",
+            processStatus: 0,
+            processComment: "",
+            acknowledgeOwner: "Kevin"
+          }
+        ]
       },
       {
-        faultId: '9',
         fieldName: "field03",
         bsName: "BS_07",
         compname: "itri_10.0.2.6",        
-        timestamp: "2020-11-15T20:48:01Z",
+        timestamp: "2020-11-15 20:48:01",
         count: 3,
         eventtype: "CRITICAL",
         probablecause: "網路上行冗餘已降級",
@@ -1328,16 +1385,23 @@ export class CommonService {
         processresult: "",
         status: "Cleared",
         acknowledgeOwner: "Charles",
-        createtime: "2020-11-15T20:48:00Z",
-        updatetime: "2020-11-15T20:48:02Z",
-        eDesc: "No external sync source"
+        createtime: "2020-11-15 20:48:00",
+        updatetime: "2020-11-15 20:48:02",
+        eDesc: "No external sync source",
+        histories: [
+          {
+            timestamp: "2020-11-15 20:48:01",
+            processStatus: 0,
+            processComment: "",
+            acknowledgeOwner: "Charles"
+          }
+        ]
       },
       {
-        faultId: '10',
         fieldName: "field01",
         bsName: "BS_02",
         compname: "itri_10.0.2.2",        
-        timestamp: "2023-05-17T13:27:01Z",
+        timestamp: "2023-05-17 13:27:01",
         count: 1,
         eventtype: "MAJOR",
         probablecause: "主機錯誤",
@@ -1346,16 +1410,23 @@ export class CommonService {
         processresult: "By sswu",
         status: "New",
         acknowledgeOwner: "Sam",
-        createtime: "2023-08-11T18:15:00Z",
-        updatetime: "2023-08-11T18:15:02Z",
-        eDesc: "Configuration file corrupted conflicting"
+        createtime: "2023-08-11 18:15:00",
+        updatetime: "2023-08-11 18:15:02",
+        eDesc: "Configuration file corrupted conflicting",
+        histories: [
+          {
+            timestamp: "2023-05-17 13:27:01",
+            processStatus: 1,
+            processComment: "By sswu",
+            acknowledgeOwner: "Sam"
+          }
+        ]
       },
       {
-        faultId: '11',
         fieldName: "field02",
         bsName: "BS_05",
         compname: "itri_10.0.3.6",        
-        timestamp: "2023-06-14T18:08:10Z",
+        timestamp: "2023-06-14 18:08:10",
         count: 1,
         eventtype: "MAJOR",
         probablecause: "主機錯誤",
@@ -1364,16 +1435,23 @@ export class CommonService {
         processresult: "By sswu",
         status: "New",
         acknowledgeOwner: "Charles",
-        createtime: "2023-06-14T18:08:00Z",
-        updatetime: "2023-06-14T18:08:20Z",
-        eDesc: "Configuration file corrupted conflicting"
+        createtime: "2023-06-14 18:08:00",
+        updatetime: "2023-06-14 18:08:20",
+        eDesc: "Configuration file corrupted conflicting",
+        histories: [
+          {
+            timestamp: "2023-06-14 18:08:10",
+            processStatus: 1,
+            processComment: "By sswu",
+            acknowledgeOwner: "Charles"
+          }
+        ]
       },
       {
-        faultId: '12',
         fieldName: "field03",
         bsName: "BS_08",
         compname: "itri_10.0.2.8",        
-        timestamp: "2023-03-19T09:16:21Z",
+        timestamp: "2023-03-19 09:16:21",
         count: 3,
         eventtype: "MAJOR",
         probablecause: "主機錯誤",
@@ -1382,9 +1460,17 @@ export class CommonService {
         processresult: "By sswu",
         status: "New",
         acknowledgeOwner: "Kevin",
-        createtime: "2023-03-19T09:16:20Z",
-        updatetime: "2023-03-19T09:16:22Z",
-        eDesc: "Configuration file corrupted conflicting"
+        createtime: "2023-03-19 09:16:20",
+        updatetime: "2023-03-19 09:16:22",
+        eDesc: "Configuration file corrupted conflicting",
+        histories: [
+          {
+            timestamp: "2022-02-21 09:28:01",
+            processStatus: 1,
+            processComment: "By sswu",
+            acknowledgeOwner: "Kevin"
+          }
+        ]
       }
     ]
   };
@@ -2259,39 +2345,6 @@ export class CommonService {
     processComment: "cpu lack of cores",
     acknowledgeOwner: "Sam"
   }
-
-  fmStatusRecordList: FmStatusRecord[] = [
-    {
-      timestamp: "2022/07/01 20: 01: 30",
-      processStatus: 1,
-      processComment: "cpu lack of cores",
-      acknowledgeOwner: "Edith"
-    },
-    {
-      timestamp: "2022/07/02 20: 01: 30",
-      processStatus: 0,
-      processComment: "added cpu cores",
-      acknowledgeOwner: "Sam"
-    },
-    {
-      timestamp: "2022/07/03 20: 01: 30",
-      processStatus: 1,
-      processComment: "cpu lack of cores",
-      acknowledgeOwner: "Edith"
-    },
-    {
-      timestamp: "2022/07/04 20: 01: 30",
-      processStatus: 0,
-      processComment: "added cpu cores",
-      acknowledgeOwner: "Sam"
-    },
-    {
-      timestamp: "2022/07/05 20: 01: 30",
-      processStatus: 1,
-      processComment: "cpu lack of cores",
-      acknowledgeOwner: "Edith"
-    }
-  ];
 
   // User logs files @10/27 add by yutchen
   UserLogsList: UserLogsList = {
