@@ -34,14 +34,15 @@
           <input formControlName="keyword">
         </span>
 
+        <!-- User Logs 的日期選擇器 -->
         <span><label>{{languageService.i18n['Log.start']}}</label>
           <span>
-            <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+            <p-calendar formControlName="from" [showTime]="true" inputId="userLogStartTime" dateFormat="yy-mm-dd"></p-calendar>
           </span>
         </span>
         <span><label>{{languageService.i18n['Log.end']}}</label>
           <span style="margin-left: 3px;">
-            <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+            <p-calendar formControlName="to" [showTime]="true" inputId="userLogEndTime" dateFormat="yy-mm-dd"></p-calendar>
           </span>
         </span>
 
@@ -72,8 +73,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let opt of userlogsToDisplay | paginate: { itemsPerPage: pageSize,
-           currentPage: p, totalItems: userlogsToDisplay.length, id: 'userlogsList' }; let i = index">
+        <tr *ngFor="let opt of userLogsToDisplay | paginate: { itemsPerPage: pageSize,
+           currentPage: p, totalItems: userLogsToDisplay.length, id: 'userlogsList' }; let i = index">
           <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 User log 的編號 @11/14 changed by yuchen-->
           <td>{{ opt.userid }}</td>
           <td>{{ opt.logtype }}</td>
@@ -82,13 +83,13 @@
           <td>{{ opt.logtime }}</td>
           <td><mat-icon tooltip="{{ languageService.i18n['view_detail'] }}" (click)="openUserlogDetail(opt)">remove_red_eye</mat-icon></td>
         </tr>        
-        <tr class="notFind" *ngIf="userlogsToDisplay.length === 0">
+        <tr class="notFind" *ngIf="userLogsToDisplay.length === 0">
           <td colspan="7">{{languageService.i18n['no_results']}}</td>
         </tr> 
       </tbody>
       </table>
       <!-- pagination @11/01 Add by yuchen --> 
-      <!-- <span class="total">{{languageService.i18n['UserLog.total1']}} {{userlogsToDisplay.length}} {{languageService.i18n['UserLog.total2']}}</span> -->
+      <!-- <span class="total">{{languageService.i18n['UserLog.total1']}} {{userLogsToDisplay.length}} {{languageService.i18n['UserLog.total2']}}</span> -->
       <!-- 使用 getTotalLogsText 函數來決定顯示 'User Log' 還是 'User Logs' @11/21 Add by yuchen -->
       <span class="total">{{ getTotalLogsText('user') }}</span>
       <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel="" nextLabel="" id="userlogsList"> 
@@ -120,20 +121,21 @@
           <mat-error *ngIf="searchForm.controls['NELogType'].invalid">Required</mat-error>
         </span>
 
-       <!-- Keyword Filter @11/03 add by yuchen -->
-       <span style="margin-left: 1px;">
-        <label style="margin-right: 5px !important">{{languageService.i18n['NElog.logKeywordString']}}</label>
-        <input formControlName = "keyword">
-      </span>
+        <!-- Keyword Filter @11/03 add by yuchen -->
+        <span style="margin-left: 1px;">
+          <label style="margin-right: 5px !important">{{languageService.i18n['NElog.logKeywordString']}}</label>
+          <input formControlName = "keyword">
+        </span>
 
+        <!-- NE Logs 的日期選擇器 -->
         <span><label>{{languageService.i18n['Log.start']}}</label>
           <span>
-            <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+            <p-calendar formControlName="from" [showTime]="true" inputId="neLogStartTime" dateFormat="yy-mm-dd"></p-calendar>
           </span>
         </span>
         <span><label>{{languageService.i18n['Log.end']}}</label>
           <span style="margin-left: 3px;">
-            <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+            <p-calendar formControlName="to" [showTime]="true" inputId="neLogEndTime" dateFormat="yy-mm-dd"></p-calendar>
           </span>
         </span>
 

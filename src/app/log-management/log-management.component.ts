@@ -178,9 +178,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   
     // 根據 Component 的類型 ( User Logs 或 NE Logs )，載入相應的 Log 資訊
     if (this.type === 'User_Logs') {
+      //this.userLogsToDisplay;
       this.getUserLogsInfo(); // 預設初始化時取得 User Logs 資訊
+      //this.totalItems = this.userLogsToDisplay.length;
     } else {
+      //this.neLogsToDisplay;
       this.getNELogsInfo();   // 預設初始化時取得 NE Logs 資訊
+      //this.totalItems = this.neLogsToDisplay.length;
     }
   }
 
@@ -197,7 +201,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     if (this.queryUserNetconfLog) this.queryUserNetconfLog.unsubscribe();
   }
 
-
+/*
   // Get User Logs @10/31 Add
   getUserLogsInfo() {
 
@@ -262,7 +266,43 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       );
     }
   }
+*/
 
+  // 直接寫入已許可 Session ID (先直接透過舊版iRM取得) 進行測試之版本 @11/27 Add for testing User Logs with fixed session ID
+  getUserLogsInfo() {
+    console.log('getUserLogsInfo() - Start');
+  
+    // 清除可能存在的定時器
+    clearTimeout(this.refreshTimeout);
+    
+    // 定義固定的 URL 和參數
+    const fixedUrl = 'http://140.96.102.173/irm/queryLogList/irm_session_57bbfba9';
+    const params = {
+      //userid: 'k200',
+      //userLogType: 'POST',
+      start: '2023-10-27',
+      end: '2023-11-27',
+      offset: '0',
+      limit: '6500'
+    };
+  
+    // 發送 HTTP GET 請求
+    this.http.get<UserLogsList>(fixedUrl, { params }).subscribe({
+      next: (res) => {
+        console.log('getUserLogsInfo:', res);
+        this.UserLogsList = res;  
+        this.UserloginfoDeal();
+      },
+      error: (error) => {
+        console.error('Error fetching user logs:', error);
+      },
+      complete: () => {
+        console.log('Completed fetching user logs');
+      }
+    });
+    
+  }
+  
   UserloginfoDeal() {
     // this.p = 1;
     this.totalItems = this.UserLogsList.logNumber;
@@ -278,7 +318,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     }, 100); // timeout: 100 ms
   }
 
-
+  
+/*
   // Get NE Logs @11/01 Add
   getNELogsInfo() {
     console.log('getNELogsInfo() - Start');
@@ -338,6 +379,42 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         }
       );
     }
+  }
+  */
+
+
+  // Get NE Logs @11/27 Add for testing NE Logs with fixed session ID
+  getNELogsInfo() {
+    console.log('getNELogsInfo() - Start');
+
+    // 清除可能存在的定時器
+    clearTimeout(this.refreshTimeout);
+
+    // 定義固定的 URL 和參數
+    const fixedUrl = 'http://140.96.102.173/irm/queryUserNetconfLog/irm_session_57bbfba9';
+    const params = {
+      //userid: 'k200',
+      //nEname: 'NE1',
+      start: '2023-10-27',
+      end: '2023-11-27',
+      offset: '0',
+      limit: '6500'
+    };
+
+    // 發送 HTTP GET 請求
+    this.http.get<NELogsList>(fixedUrl, { params }).subscribe({
+      next: (res) => {
+        console.log('getNELogsInfo:', res);
+        this.NELogsList = res;
+        this.NEloginfoDeal();
+      },
+      error: (error) => {
+        console.error('Error fetching NE logs:', error);
+      },
+      complete: () => {
+        console.log('Completed fetching NE logs');
+      }
+    });
   }
 
   NEloginfoDeal() {
@@ -498,7 +575,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     let logText: string;
   
     if (logType === 'user') {
-      totalLogs = this.userlogsToDisplay.length;
+      totalLogs = this.userLogsToDisplay.length;
       logText = totalLogs === 1 ? this.languageService.i18n['UserLog.single'] : this.languageService.i18n['UserLog.total'];
     } else {
       totalLogs = this.neLogsToDisplay.length;
@@ -508,7 +585,6 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     return `${this.languageService.i18n['Log.total']} ${totalLogs} ${logText}`;
   }
   
-
 
   /* ↓ For click "Search" ↓ */
 
@@ -574,12 +650,24 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  get userlogsToDisplay(): UserLogsinfo[] {
+/*
+  get userLogsToDisplay(): UserLogsinfo[] {
 
     // 如 isSearch_userLogs 為 true，則表示已經進行了搜尋，應該顯示 filtered_UserLogs
     // 否則，顯示全部 UserLogsList.loginfo
     return this.isSearch_userLogs ? this.filtered_UserLogs : this.UserLogsList.loginfo;
   }
+*/
+
+  // 用於顯示的 User Logs 數據  @11/27 Changed by yuchen
+  get userLogsToDisplay(): UserLogsinfo[] {
+    // 檢查 this.UserLogsList 是否存在，以及 this.UserLogsList.loginfo 是否為非空數組
+    if (this.UserLogsList && Array.isArray(this.UserLogsList.loginfo)) {
+      return this.isSearch_userLogs ? this.filtered_UserLogs : this.UserLogsList.loginfo;
+    }
+    return []; // 如果數據還沒有載入，則返回一個空數組
+  }
+  
 
   // 重置 NE Logs 搜尋  @11/24 Add by yuchen
   clear_search_UserLogs() {
@@ -588,7 +676,6 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.afterSearchForm = _.cloneDeep(this.searchForm);
     this.getUserLogsInfo();
   }  
-
 
   // For search NE Logs  @11/13 Add by yuchen
   filtered_NELogs: NELogsinfo[] = [];
@@ -656,12 +743,24 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     }
   }
 
+/*
   // 用於顯示的 NE Logs 數據  @11/13 Add by yuchen
   get neLogsToDisplay(): NELogsinfo[] {
     // 如果 isSearch_neLogs 為 true，則表示已經進行了搜尋，應該顯示 filtered_NELogs
     // 否則，顯示全部 NELogsList.loginfo
     return this.isSearch_neLogs ? this.filtered_NELogs : this.NELogsList.loginfo;
   }
+*/
+
+  // 用於顯示的 NE Logs 數據  @11/27 Changed by yuchen
+  get neLogsToDisplay(): NELogsinfo[] {
+    // 確保 NELogsList 和 NELogsList.loginfo 存在
+    if (this.NELogsList && Array.isArray(this.NELogsList.loginfo)) {
+      return this.isSearch_neLogs ? this.filtered_NELogs : this.NELogsList.loginfo;
+    }
+    return []; // 如果數據還沒有載入，則返回一個空數組
+  }
+
 
   // 重置 NE Logs 搜尋  @11/24 Add by yuchen
   clear_search_NELogs() {
@@ -694,8 +793,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   //   if (dataType === 'UserLogs') {
 
   //     // 為每條 User log 添加一個編號屬性 @11/22 Add 
-  //     // 如 dataType 是 'UserLogs'，則將 userlogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
-  //     dataToExport = this.userlogsToDisplay.map((log, index) => ({
+  //     // 如 dataType 是 'UserLogs'，則將 userLogsToDisplay (即當下顯示於頁面上有的數據) 的資料設定為 dataToExport
+  //     dataToExport = this.userLogsToDisplay.map((log, index) => ({
   //       "No.": (this.p - 1) * this.pageSize + index + 1, // 計算編號
   //       ...log
   //     }));
@@ -785,7 +884,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     // 如果是 User Logs，則添加相應的數據和編號
     if (dataType === 'UserLogs') {
-      dataToExport = this.userlogsToDisplay.map((log, index) => ({
+      dataToExport = this.userLogsToDisplay.map((log, index) => ({
         "No.": (this.p - 1) * this.pageSize + index + 1,
         ...log
       }));
