@@ -276,14 +276,14 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     clearTimeout(this.refreshTimeout);
     
     // 定義固定的 URL 和參數
-    const fixedUrl = 'http://140.96.102.173/irm/queryLogList/irm_session_57bbfba9';
+    const fixedUrl = 'http://140.96.102.173/irm/queryLogList/irm_session_5f8ac361';
     const params = {
       //userid: 'k200',
       //userLogType: 'POST',
       start: '2023-10-27',
-      end: '2023-11-27',
+      end: '2023-11-28',
       offset: '0',
-      limit: '6500'
+      limit: '20000'
     };
   
     // 發送 HTTP GET 請求
@@ -391,14 +391,14 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     clearTimeout(this.refreshTimeout);
 
     // 定義固定的 URL 和參數
-    const fixedUrl = 'http://140.96.102.173/irm/queryUserNetconfLog/irm_session_57bbfba9';
+    const fixedUrl = 'http://140.96.102.173/irm/queryUserNetconfLog/irm_session_5f8ac361';
     const params = {
       //userid: 'k200',
       //nEname: 'NE1',
       start: '2023-10-27',
-      end: '2023-11-27',
+      end: '2023-11-28',
       offset: '0',
-      limit: '6500'
+      limit: '20000'
     };
 
     // 發送 HTTP GET 請求
