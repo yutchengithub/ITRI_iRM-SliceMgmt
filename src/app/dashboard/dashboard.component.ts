@@ -122,7 +122,7 @@ export class DashboardComponent implements OnInit {
     this.getfieldSummaryInfo();
     this.getfieldListInfo();
     // Ocloud Summary
-    this.getOcloudSummary();
+    //this.getOcloudSummary();
   }
 
   getSystemSummary() {
@@ -204,30 +204,30 @@ export class DashboardComponent implements OnInit {
     //   }
   }
 
-  getOcloudSummary() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.ocloudSummary = this.commonService.ocloudSummary;
-      this.ocloudSummaryDeal();
-    } else {
-      const url = `${this.commonService.restPath}/queryOcloudSummary/${this.sessionId}`;
-      this.http.get(url).subscribe(
-        res => {
-          console.log('getOcloudSummary:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.ocloudSummary = JSON.parse(str);
-          this.ocloudSummaryDeal();
-        }
-      );
-    }
-  }
+  // getOcloudSummary() {
+  //   if (this.commonService.isLocal) {
+  //     /* local file test */
+  //     this.ocloudSummary = this.commonService.ocloudSummary;
+  //     this.ocloudSummaryDeal();
+  //   } else {
+  //     const url = `${this.commonService.restPath}/queryOcloudSummary/${this.sessionId}`;
+  //     this.http.get(url).subscribe(
+  //       res => {
+  //         console.log('getOcloudSummary:');
+  //         console.log(res);
+  //         const str = JSON.stringify(res);//convert array to string
+  //         this.ocloudSummary = JSON.parse(str);
+  //         this.ocloudSummaryDeal();
+  //       }
+  //     );
+  //   }
+  // }
 
-  ocloudSummaryDeal() {
-    this.ocloudSummary.forEach((row) => {
-      row.ocloudSummary = row;
-    });
-  }
+  // ocloudSummaryDeal() {
+  //   this.ocloudSummary.forEach((row) => {
+  //     row.ocloudSummary = row;
+  //   });
+  // }
 
   view(fields: Fields) {
     //console.log(ocloudSummary);

@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    /* default語系 */
+    // 語系預設
     if (navigator.language === 'zh-TW') {
       this.languageService.language = 'TW';
     } else {
@@ -41,40 +41,48 @@ export class LoginComponent implements OnInit {
     this.errorPorperty = '';
     window.sessionStorage.removeItem('401_error');
     if (this.userId === '' || this.password === '') {
-      this.showErrMssage('logon.required_error');
+      this.showErrMssage('logon.required_error');     // 顯示"請輸入帳密"訊息
       return;
     }
 
     if (this.commonService.isLocal) {
 
       if (this.userId.toLowerCase() === 'admin' && this.password.toLowerCase() === 'admin') {
-        this.commonService.setSessionId('sessionId_test_0800');
+
+        this.commonService.setSessionId('sessionId_test_0800'); // 預設的 local Session ID ( 無任何作用 )
         this.router.navigate(['/main/dashboard']);
       } else {
-        this.showErrMssage('logon.password_error');
+        this.showErrMssage(this.languageService.i18n['logon.password_error']);  // 顯示"輸入帳密錯誤"訊息
       }
 
     } else {
-      const url = `${this.commonService.restPath}/loginpage`;
+
+      //const url = `${this.commonService.restPath}/loginpage`;
+      const url = `${this.commonService.restPath}/login`;   // 後端 router 為 '/login' @11/28 add by yuchen
       const body = {
         id: this.userId,
         key: this.password
       };
-      this.http.post(url, JSON.stringify(body)).subscribe(
-        (res: any) => {
-          // if (res !== 'userID or password invalid') {
-          //   this.router.navigate(['/main/dashboard']);
-          // } else {
-          //   this.errMsg = this.languageService.i18n['logon.password_error'];;
-          // }
 
-          this.commonService.setSessionId(res['sessionId']);  // 儲存 sessiondId
-          this.router.navigate(['/main/dashboard']);    // 導向主頁
-
-        }, (err: ResponseMessage) => {
+      // 調整為 RxJS 新版本 ( Observer ) 語法 @11/28 changed by yuchen
+      this.http.post(url, JSON.stringify(body)).subscribe({
+        next: (res: any) => {
+          if (res !== 'userID or password invalid') {
+            this.commonService.setSessionId(res['session']); // 儲存 sessionId @11/28 sessionId -> session 以符合後端 API 的 Response
+            console.log(res['session']);
+            this.router.navigate(['/main/dashboard']);       // 導向主頁
+          } else {
+            this.showErrMssage(this.languageService.i18n['logon.password_error']);  // 顯示"輸入帳密錯誤"訊息
+          }
+         // this.router.navigate(['/main/dashboard']);       // 導向主頁
+        },
+        error: (err: ResponseMessage) => {
           this.showErrMssage(err.respMsg as string);
+        },
+        complete: () => {
+          console.log('Login request completed');
         }
-      );
+      });
     }
   }
 

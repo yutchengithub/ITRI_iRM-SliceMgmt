@@ -4,7 +4,7 @@ import { SystemSummary } from '../dashboard/dashboard.component';
 import { OcloudSummary } from '../dashboard/dashboard.component';
 import { FieldSummary } from '../dashboard/dashboard.component';
 import { FieldList } from '../dashboard/dashboard.component';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpClient, HttpParams  } from '@angular/common/http';
 import { OcloudInfo, OcloudPerformance } from '../field-management/field-info/field-info.component';
 import { FmsgList, FaultMessages, FmStatus } from '../fault-management/fault-management.component';
 import * as _ from 'lodash';
@@ -82,20 +82,40 @@ export class CommonService {
       this.typeMapDisplayName.set(row.value, row.displayName);
     });
   }
-
+  
+/*
   loadConfig(): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.http.get('./assets/config/connection.json').subscribe(
         (res: any) => {
-          this.isLocal = true;
-          this.restPath = 'http://140.96.102.202:8080/o2_smo/webresources/ocloud';
+          this.isLocal = false;
+          //this.restPath = 'http://140.96.102.202:8080/o2_smo/webresources/ocloud';
+          this.restPath = 'http://140.96.102.173:8080/irm';
           // this.isLocal = res['local'];
           //this.restPath = res['url'] + ':' + res['port'] + res['root'];
           resolve(true);
         });
     });
   }
+*/
 
+  // 調整為 RxJS 新版本( Observer object )語法 @11/28 changed by yuchen
+  loadConfig(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.http.get('./assets/config/connection.json').subscribe({
+        next: (res: any) => {
+          this.isLocal = res['local'];
+          this.restPath = res['url'] + ':' + res['port'] + res['root'];
+          resolve(true);
+        },
+        error: (error) => {
+          console.error('Could not load config', error);
+          reject(error);
+        }
+      });
+    });
+  }
+  
   setSessionId(sessionId: string) {
     window.sessionStorage.setItem('sessionId', sessionId);
   }
@@ -202,11 +222,11 @@ export class CommonService {
   }
 
   /* API */
-  // loginpage(body: {}): Observable<any> {
-  //   const url = `${this.restPath}/loginpage`;
-  //   const bodyStr = JSON.stringify(body);
-  //   return this.http.post(url, bodyStr);
-  // }
+//  loginpage(body: {}): Observable<any> {
+//    const url = `${this.restPath}/ `;
+//    const bodyStr = JSON.stringify(body);
+//    return this.http.post(url, bodyStr);
+//   }
 
   queryOcloudList(): Observable<any> {
     const url = `${this.restPath}/queryOcloudList/${this.getSessionId()}`;
@@ -459,10 +479,30 @@ export class CommonService {
   }
 
   // Log Management API  @11/24 Add by yuchen
-  queryLogList(): Observable<any> {           // 取得 User Logs List 用
+  /*queryLogList(): Observable<any> {           // 取得 User Logs List 用
     const url = `${this.restPath}/queryLogList/${this.getSessionId()}`;
     return this.http.get(url);
+  }*/
+  // 添加了新的參數以支援查詢
+  queryLogList(userid: string, start: string, end: string, logtype: string, keyword: string, offset: number, limit: number): Observable<any> {
+    const params = new HttpParams()
+      .set('userid', userid)
+      .set('start', start)
+      .set('end', end)
+      .set('logtype', logtype)
+      .set('keyword', keyword)
+      .set('offset', offset.toString())
+      .set('limit', limit.toString());
+    
+    const url = `${this.restPath}/queryLogList/${this.getSessionId()}`;
+    return this.http.get(url, { params });
   }
+
+  // 添加參數到 queryLogList 方法
+ /* queryLogList(params: any): Observable<any> {           // 取得 User Logs List 用
+    const url = `${this.restPath}/queryLogList/${this.getSessionId()}`;
+    return this.http.get(url, { params: params });
+  }*/
   queryUserNetconfLog(): Observable<any> {    // 取得 NE Logs List 用
     const url = `${this.restPath}/queryUserNetconfLog/${this.getSessionId()}`;
     return this.http.get(url);

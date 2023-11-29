@@ -160,6 +160,12 @@ table tr td {
   vertical-align: middle;
 }
 
+// @11/28 Add by yuchen
+#nelogDetail mat-dialog-container {
+  max-height: calc(100vh - 150px); // 設定最大高度
+  overflow-y: auto;                // 內容超過最大高度時顯示滾動條
+}
+
 @media screen and (max-width:1920px) {
   .table table {
     max-height: 70vh;
