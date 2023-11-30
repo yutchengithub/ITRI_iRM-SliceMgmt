@@ -10,10 +10,10 @@ export const Enlanguage = {
   'logon.403':'Username or password Eentered Incorrectly',
   'logon.404':'This account does not exist',
 
-  // 選單標題
+  // Menu Title
+  'index.menu_iRmSys':'Athena Orchestrator',
   'index.menu_dashboard':'Dashboard',
   'index.menu_fieldMgr':'Field Management',
-  'index.menu_iRmSys':'Athena Orchestrator',
   'index.menu_gNB':'gNB Management',
   'index.menu_componentMgr':'Component Management',
   'index.menu_faultMgr':'Fault Management',
@@ -36,19 +36,27 @@ export const Enlanguage = {
   'table.header_dmsCount':'DMS Counts',
   'table.header_nfCount':'NF Counts',
   'table.header_faultCount':'Fault Counts',
-  'field.list':'Field List',
   'table.globalID':'Global ID',
   'table.Status':'Status',
   'table.performance':'Performance',
   'table.delete':'Delete',
   
-  //Common Items
+  // Common Items
   'ok':'OK',
   'cancel':'Cancel',
   'search':'Search',
   'clear_search':'Search Reset', // @11/24 Add by yuchen
 
-  // Field Management @11/30 Add by yuchen
+  // Field Management (場域管理) @11/30 Add by yuchen
+  'field.list':'Field List',
+  'field.name':'Field Name',
+  'field.bsNum':'Number of gNBs',
+  'field.view':'View',
+  'field.alarm':'Field Alarm',
+  'field.snapshot':'Snapshot',
+  'field.delTitle':'Delete',
+  'field.delItem':'Delete this field',
+  'field.add':'Add Field',
 
   // Fault Management
   'fm.start':'StartTime',

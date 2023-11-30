@@ -16,7 +16,6 @@ export interface style {
 export class MainComponent implements OnInit {
   title = 'Dashboard';
 
-  // Add 'log-management' by yuchen @10/25
   page: 'dashboard' | 'component-management' | 'field-management' | 'nf-management' | 'fault-management' | 'performance-management' | 'software-management' | 
   'account-management' | 'schedule-management' /* @11/20 Add by yuchen */ | 'log-management'/* @10/25 Add by yuchen */ = 'dashboard';
   styles: style[] = [
@@ -70,12 +69,12 @@ export class MainComponent implements OnInit {
     if (routerUrl.indexOf('/main/dashboard') >= 0) {
       this.title = 'Dashboard';
       this.page = 'dashboard';
+    } else if (routerUrl.indexOf('/main/field-mgr') >= 0) {
+      this.title = 'Field Management';
+      this.page = 'field-management';
     } else if (routerUrl.indexOf('/main/component-mgr') >= 0) {
       this.title = 'Component Management';
       this.page = 'component-management';
-    } else if (routerUrl.indexOf('/main/field-mgr') >= 0) {
-      this.title = 'O-Cloud List';
-      this.page = 'field-management';
     } else if (routerUrl.indexOf('/main/nf-mgr') >= 0) {
       this.title = 'NF List';
       this.page = 'nf-management';
@@ -98,7 +97,6 @@ export class MainComponent implements OnInit {
       this.title = 'Log Management';
       this.page = 'log-management';
     }
-    
   }
 
   logout() {
@@ -114,6 +112,7 @@ export class MainComponent implements OnInit {
   }
 
   renderStyle() {
+
     // 儲存在 sessionStorage
     window.sessionStorage.setItem('styleType', this.styleType);
     /**

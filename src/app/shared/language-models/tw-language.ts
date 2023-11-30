@@ -11,9 +11,9 @@ export const TwLanguage = {
   'logon.404':'此帳號不存在',
 
   // 選單標題
+  'index.menu_iRmSys':'Athena Orchestrator',
   'index.menu_dashboard':'主畫面',
   'index.menu_fieldMgr':'場域管理',
-  'index.menu_iRmSys':'Athena Orchestrator',
   'index.menu_gNB':'基站管理',
   'index.menu_componentMgr':'元件管理',
   'index.menu_faultMgr':'故障管理',
@@ -36,7 +36,6 @@ export const TwLanguage = {
   'table.header_dmsCount':'DMS 數量',
   'table.header_nfCount':'NF 數量',
   'table.header_faultCount':'故障數量',
-  'field.list':'場域列表',
   'table.globalID':'Global ID',
   'table.Status':'部署情況',
   'table.performance':'部署狀態',
@@ -49,8 +48,15 @@ export const TwLanguage = {
   'clear_search':'搜尋重置', // @11/24 Add by yuchen
 
   // Field Management (場域管理) @11/30 Add by yuchen
-  
-
+  'field.list':'場域列表',
+  'field.name':'場域名稱',
+  'field.bsNum':'基站數量',
+  'field.alarm':'場域告警',
+  'field.view':'檢視',
+  'field.snapshot':'快照',
+  'field.delTitle':'刪除',
+  'field.delItem':'刪除此場域',
+  'field.add':'新增場域',
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',

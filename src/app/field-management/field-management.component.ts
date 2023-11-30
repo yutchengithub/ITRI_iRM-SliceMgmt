@@ -1,11 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+//import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, TemplateRef, ViewChild, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import * as _ from 'lodash';
 import { CommonService } from '../shared/common.service';
-import { MatRadioChange } from '@angular/material/radio';
+import { Subscription } from 'rxjs';
+//import { MatRadioChange } from '@angular/material/radio';
 import { LanguageService } from '../shared/service/language.service';
 
 export interface OCloudList {
@@ -17,33 +19,97 @@ export interface OCloudList {
   deployStatus: string;
 }
 
+// @11/30 Add by yuchen 
+export interface FieldList {
+  fields: Fields[];
+}
+
+// @11/30 Add by yuchen 
+export interface Fields {
+  id: string;
+  name: string;
+  phone: string;
+  fieldposition1: string;
+  fieldposition2: string;
+  fieldposition3: string;
+  fieldposition4: string;
+  bsinfo: Bsinfo[];
+  bsNum: number;
+  ueNum: string;
+  coverage: string;
+  accessibility: string;
+  availability: string;
+  mobility: string;
+  retainability: string;
+  energy: string;
+  integrity: Integrity;
+  utilization: Utilization;
+  alarmCriticalNum: number;
+  alarmMajorNum: number;
+  alarmMinorNum: number;
+  alarmWarningNum: number;
+}
+
+// @11/30 Add by yuchen 
+export interface Bsinfo {
+  id: string;
+  name: string;
+}
+
+// @11/30 Add by yuchen 
+export interface Integrity {
+  downlinkDelay: string;
+  uplinkDelay: string;
+  downlinkThrouthput: string;
+  uplinkThrouthput: string;
+}
+
+// @11/30 Add by yuchen 
+export interface Utilization {
+  pdu: string;
+  resourceProcess: string;
+  resourceMemory: string;
+  resourceDisk: string;
+  maxPdu: string;
+}
+
 @Component({
   selector: 'app-field-management',
   templateUrl: './field-management.component.html',
   styleUrls: ['./field-management.component.scss']
 })
+
 export class FieldManagementComponent implements OnInit, OnDestroy {
-  sessionId: string = '';
+
+  fieldList: FieldList = {} as FieldList; // @11/30 Add by yuchen
+  ueNum: string = '0';                    // @11/30 Add by yuchen
+  selectField!: Fields;                   // @11/30 Add by yuchen
+
   @ViewChild('createModal') createModal: any;
   @ViewChild('deleteModal') deleteModal: any;
   createModalRef!: MatDialogRef<any>;
   deleteModalRef!: MatDialogRef<any>;
+
   refreshTimeout!: any;
   refreshTime: number = 5;
-  ocloudList: OCloudList[] = [];
+
   createForm!: FormGroup;
   levelMap: Map<string, number> = new Map();
-  selectOcloud!: OCloudList;
+
   p: number = 1;            // 當前頁數
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
+  nullList: string[] = [];  // 給頁籤套件使用
   formValidated = false;
+  
+  // queryFieldList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
+  queryFieldList!: Subscription;  // @11/30 Add by yuchen
 
   constructor(
     private dialog: MatDialog,
     private router: Router,
     private commonService: CommonService,
-    private http: HttpClient,
+    //private http: HttpClient,
     private fb: FormBuilder,
     public languageService: LanguageService
   ) {
@@ -59,41 +125,104 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.levelMap.set('Failed Deployment', 10);
   }
 
+  sessionId: string = ''; // 宣告 sessionId 屬於字串型態
+  /**
+   * 當 Component 初始化完成後執行的 Lifecycle Hook。
+   * 主要用於設定 Component 的初始狀態，包括預設的 Log 類型、sessionId、以及設定路由參數相關的應對處理。
+   */
   ngOnInit(): void {
     this.sessionId = this.commonService.getSessionId();
-    this.getOcloudList();
+    // Field Summary
+    this.getFieldsInfo();
   }
 
+  // 銷毀 Component 時的清理工作
   ngOnDestroy() {
     clearTimeout(this.refreshTimeout);
+
+    // 如存在對 FieldSummaryInfo 的 API 請求訂閱，則取消訂閱以避免內存洩漏
+    if (this.queryFieldList) this.queryFieldList.unsubscribe();
   }
 
-  getOcloudList() {
+  // @11/30 Add by yuchen
+  getFieldsInfo() {
+    console.log('getFieldsInfo() - Start');
     clearTimeout(this.refreshTimeout);
-    // this.p = 1;
+  
     if (this.commonService.isLocal) {
-      /* local file test */
-      this.ocloudList = this.commonService.ocloudList;
-      this.ocloudListDeal();
+
+      // 本地模式使用本地數據
+      this.fieldList = this.commonService.fieldList;	
+      this.FieldsinfoDeal();
 
     } else {
-      this.commonService.queryOcloudList().subscribe(
-        res => {
-          console.log('getOcloudList:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.ocloudList = JSON.parse(str);
-          //this.ocloudList = res as OCloudList[];
-          this.ocloudListDeal();
+
+      // 使用 commonService 中的 queryFieldList() 發起 HTTP GET 請求
+      this.commonService.queryFieldList().subscribe({
+        next: (res) => {
+          console.log('getFieldsInfo:', res);
+          this.fieldList = res;
+          this.FieldsinfoDeal();
+        },
+        error: (error) => {
+          console.error('Error fetching field info:', error);
+        },
+        complete: () => {
+          console.log('Field info fetch completed');
         }
-      );
+      });
     }
   }
 
-  ocloudListDeal() {
-    this.totalItems = this.ocloudList.length;
-    // refresh
-    this.refreshTimeout = window.setTimeout(() => this.getOcloudList(), this.refreshTime * 1000);
+  // @11/30 Add by yuchen
+  FieldsinfoDeal() {
+
+    // 輸出檢查點
+    console.log('Field list length:', this.fieldList.fields?.length);
+
+    // 計算 fields 數組中元素的數量，即場域的總數
+    //this.totalItems = this.fieldList.fields.length;
+    this.totalItems = this.fieldList.fields?.length || 0;  // 使用可選鏈和空值合併運算符來避免 undefined 或 null
+    console.log('Total items:', this.totalItems);
+    
+    // 定義一個空陣列，長度等於場域的總數
+    this.nullList = new Array(this.totalItems);
+  
+    // 使用 setTimeout 設定一個定時刷新
+    this.refreshTimeout = window.setTimeout(() => {
+      if (this.p === 1) {
+        console.log(`page[${this.p}] ===> refresh.`);
+        this.getFieldsInfo();  // 取得場域訊息函數
+      } else {
+        console.log(`page[${this.p}] ===> no refresh.`);
+      }
+    }, 100); // timeout: 100 ms
+  }
+  
+  // @11/30 Add by yuchen
+  viewFieldDetail(fields: Fields) {
+    this.router.navigate(['/main/field-mgr/info', fields.id]);
+  }
+  
+  // @11/30 Add by yuchen
+  viewFieldAlarm(fields: Fields) {
+    this.router.navigate(['/main/fault-mgr', fields.id]);
+  }
+
+  // @11/30 Add by yuchen
+  openDeleteField(fields: Fields) {
+    this.selectField = fields;
+    console.log("Deleted field name: ", this.selectField.name);
+    this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
+  }
+
+  // @11/30 Add by yuchen
+  openSnapshot(fields: Fields){
+    this.selectField = fields;
+  }
+
+  pageChanged(page: number) {
+    this.p = page;
   }
 
   openCreateModal() {
@@ -151,7 +280,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
         deployStatus: 'Deploy MaaS'
       })
       this.createModalRef.close();
-      this.getOcloudList();
+      // this.getOcloudList();
 
     } else {
       const body: any = {
@@ -171,42 +300,38 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           console.log('createOcloud:');
           console.log(res);
           this.createModalRef.close();
-          this.getOcloudList();
+          // this.getOcloudList();
         }
       );
     }
   }
 
-  openDelectModal(oCloudList: OCloudList) {
-    this.selectOcloud = oCloudList;
-    this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
-  }
+  // openDelectModal(oCloudList: OCloudList) {
+  //   // this.selectOcloud = oCloudList;
+  //   this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
+  // }
 
   delete() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      for (let i = 0; i < this.commonService.ocloudList.length; i++) {
-        if (this.selectOcloud.id === this.commonService.ocloudList[i].id) {
-          this.commonService.ocloudList.splice(i, 1);
-          break;
-        }
-      }
-      this.deleteModalRef.close();
-      this.getOcloudList();
-    } else {
-      this.commonService.deleteOcloud(this.selectOcloud.id).subscribe(
-        res => {
-          console.log('deleteOcloud:');
-          console.log(this.selectOcloud.id);
-          this.deleteModalRef.close();
-          this.getOcloudList();
-        }
-      );
-    }
-  }
-
-  viewPage(oCloudList: OCloudList) {
-    this.router.navigate(['/main/field-mgr/info', oCloudList.id, oCloudList.name]);
+    // if (this.commonService.isLocal) {
+    //   /* local file test */
+    //   for (let i = 0; i < this.commonService.ocloudList.length; i++) {
+    //     if (this.selectOcloud.id === this.commonService.ocloudList[i].id) {
+    //       this.commonService.ocloudList.splice(i, 1);
+    //       break;
+    //     }
+    //   }
+    //   this.deleteModalRef.close();
+    //   this.getOcloudList();
+    // } else {
+    //   this.commonService.deleteOcloud(this.selectOcloud.id).subscribe(
+    //     res => {
+    //       console.log('deleteOcloud:');
+    //       console.log(this.selectOcloud.id);
+    //       this.deleteModalRef.close();
+    //       this.getOcloudList();
+    //     }
+    //   );
+    // }
   }
 
   // levelValue(deployStatus: any): string {
@@ -214,7 +339,4 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   //   return ((level / 9) * 100).toString();
   // }
 
-  pageChanged(page: number) {
-    this.p = page;
-  }
 }

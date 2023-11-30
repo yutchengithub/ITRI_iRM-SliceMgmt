@@ -1,38 +1,37 @@
+
 .table table {
-  width: 98%;
-  margin: 0;
-  text-align: center;
-  max-height: 78vh;
-}
-table tr td {
-  width: 7vw;
+  max-width: 97.65%;
+  //table-layout: fixed;     // 固定列寬
+  text-align: center;        // 內容水平居中
+  border-collapse: collapse; // 移除單元格間的間距
 }
 
-table tr td:nth-child(2){
-  width: 40vw;
-  text-align: left;
+.table th, 
+.table td {
+  vertical-align: middle; // 內容垂直居中
+  text-align: center;     // 內容水平居中
 }
-table tr td:nth-child(3){
-  width: 20vw;
-  text-align: left;
+
+.table th:first-child,
+.table td:first-child {
+  width: 500px; // 內容寬度
 }
-/*.deployStatus {
-  display: block;
-  margin: 0.3em auto;
-  font-size: 0.8em;
+
+.table th,
+.table td {
+  width: calc(100% / 6); // 將表格分為6等份，如果列數不同，請調整分母
+}
+
+// 針對圖示的特定調整
+.table mat-icon {
+  width: 7.5em;
   text-align: center;
-}*/
-td.action {
-  width: 3vw!important;
 }
+
+// 針對較小的螢幕尺寸進行響應式布局調整
 @media screen and (max-width:1366px) {
-  table tr td {
-    width: 8vw;
-  }
-  td.action {
-    width: 4vw !important;
-  }
-  table tr td {
-    width: 9vw;
+  .table th, 
+  .table td {
+    padding: 10px; // 在小屏幕上增加一些內邊距以便於閱讀
   }
 }

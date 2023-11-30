@@ -13,7 +13,7 @@ import { SoftwareList } from '../software-management/software-management.compone
 import { SoftwareLists} from '../software-management/software-management.component';
 import { AccountLists} from '../account-management/account-management.component';
 import { SoftwareInfo } from '../software-management/software-info/software-info.component';
-import { MainComponent } from '../main/main.component';
+//import { MainComponent } from '../main/main.component';
 import { Nf, OcloudDmsList } from '../nf-management/nf-management.component';
 import { OcloudCpuLoading, OcloudCpuUsage, OcloudDiskRate, OcloudDiskUsage, OcloudInterfaceUsage, OcloudMemoryUsage, OcloudNetworkThroughput, OcloudPower, OverviewKpi } from '../performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
 import { Observable } from 'rxjs';
@@ -443,6 +443,7 @@ export class CommonService {
     const url = `${this.restPath}/querySWAdvanceSearch/${this.getSessionId()}/}?firm=${firm}&model=${model}&start=${start}&end=${end}&filename=${filename}&offset=${offset}&limit=${limit}`;
     return this.http.get(url);
   }
+
   //Component Mgm API
   queryBsComponentList(): Observable<any> {
     const url = `${this.restPath}/queryBsComponentList/${this.getSessionId()}`;
@@ -454,6 +455,16 @@ export class CommonService {
     return this.http.post(url, bodyStr);
   }
 
+
+  // Field Management API  @11/30 Add by yuchen
+  queryFieldList(): Observable<any> {
+    
+    // 構建 API URL
+    const apiUrl = `${this.restPath}/queryFieldList/${this.getSessionId()}`;
+  
+    // 發起 HTTP GET 請求
+    return this.http.get(apiUrl);
+  }
 
   // Schedule  Management API  @11/24 Add by yuchen
   createJobTicket(body: any): Observable<any> {        // 建立 Schedule 用
@@ -478,34 +489,14 @@ export class CommonService {
     return this.http.get(url);
   }
 
-  // Log Management API  @11/24 Add by yuchen
-  /*queryLogList(): Observable<any> {           // 取得 User Logs List 用
+  // Log Management API  @11/30 Update by yuchen
+  queryLogList(params?: any): Observable<any> {
     const url = `${this.restPath}/queryLogList/${this.getSessionId()}`;
-    return this.http.get(url);
-  }*/
-  // 添加了新的參數以支援查詢
-  queryLogList(userid: string, start: string, end: string, logtype: string, keyword: string, offset: number, limit: number): Observable<any> {
-    const params = new HttpParams()
-      .set('userid', userid)
-      .set('start', start)
-      .set('end', end)
-      .set('logtype', logtype)
-      .set('keyword', keyword)
-      .set('offset', offset.toString())
-      .set('limit', limit.toString());
-    
-    const url = `${this.restPath}/queryLogList/${this.getSessionId()}`;
-    return this.http.get(url, { params });
+    return this.http.get(url, { params });  // 將參數物件傳遞給 HTTP GET 請求
   }
-
-  // 添加參數到 queryLogList 方法
- /* queryLogList(params: any): Observable<any> {           // 取得 User Logs List 用
-    const url = `${this.restPath}/queryLogList/${this.getSessionId()}`;
-    return this.http.get(url, { params: params });
-  }*/
-  queryUserNetconfLog(): Observable<any> {    // 取得 NE Logs List 用
+  queryUserNetconfLog(params?: any): Observable<any> { 
     const url = `${this.restPath}/queryUserNetconfLog/${this.getSessionId()}`;
-    return this.http.get(url);
+    return this.http.get(url, { params });  // 將參數物件傳遞給 HTTP GET 請求
   }
 
 

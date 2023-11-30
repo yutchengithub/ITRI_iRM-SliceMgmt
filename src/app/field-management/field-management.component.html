@@ -1,53 +1,38 @@
-<h5>{{languageService.i18n['field.list']}}
-  <mat-icon tooltip="{{languageService.i18n['createNF']}}" (click)="openCreateModal()">add</mat-icon>
+<h5>{{languageService.i18n['index.menu_fieldMgr']}}
+  <mat-icon tooltip="{{languageService.i18n['field.add']}}" (click)="openCreateModal()">add</mat-icon>
 </h5>
 <div class="table">
   <table>
     <thead>
       <tr>
-        <th>{{languageService.i18n['table.header_name']}}</th>
-        <th>{{languageService.i18n['table.globalID']}}</th>
-        <th>{{languageService.i18n['table.Status']}}</th>
-        <th>{{languageService.i18n['table.header_nfCount']}}</th>
-        <th>{{languageService.i18n['table.header_dmsCount']}}</th>
-        <!-- <th>{{languageService.i18n['table.performance']}}</th> -->
-        <th colspan="2">{{languageService.i18n['action']}}</th>
-        <!-- <th>{{languageService.i18n['table.delete']}}</th> -->
-      </tr>
+        <th>{{languageService.i18n['field.name']}}</th>
+        <th>{{languageService.i18n['field.bsNum']}}</th>
+        <th>{{languageService.i18n['field.view']}}</th>
+        <th>{{languageService.i18n['field.alarm']}}</th>
+        <th>{{languageService.i18n['field.snapshot']}}</th>
+        <th>{{languageService.i18n['field.delTitle']}}</th>
     </thead>
     <tbody>
-      <tr *ngFor="let opt of ocloudList | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-        <td>{{opt.name}}</td>
-        <td>{{opt.id}}</td>
-        <td>
-          <!-- <ng-template [ngIf]="opt.deployStatus !== 'Deployment Finished'">
-            <mat-progress-bar mode="determinate" value="{{levelValue(opt.deployStatus)}}"></mat-progress-bar>
-          </ng-template> -->
-          <div class="deployStatus" [ngSwitch]="opt.deployStatus">
-              <span *ngSwitchCase="'Running'" class="greenLight"></span>
-              <span *ngSwitchCase="'Failed Deployment'" class="redLight"></span>
-              <span *ngSwitchDefault class="grayLight"></span>
-              {{opt.deployStatus}}
-          </div>
-        </td>
-        <td>{{opt.nfCount}}</td>
-        <td>{{opt.dmsCount}}</td>
-        <!-- <td>
-          <label *ngIf="opt.deployStatus === 'Deployment Finished'" class="greenLight"></label>
-        </td> -->
-        <td class="action">
-          <mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="viewPage(opt)">search</mat-icon>
-        </td>
-        <td class="action">
-          <mat-icon tooltip="{{languageService.i18n['delItem']}}" *ngIf="opt.deployStatus !== 'Deployment Finisheds'" (click)="openDelectModal(opt)">delete_forever
-          </mat-icon>
-        </td>
-      </tr>
+        <tr *ngFor="let opt of fieldList.fields | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fieldsListDisplay' };">
+          <td>{{opt.name}}</td>
+          <td>{{opt.bsNum}}</td>
+          <td>
+            <mat-icon tooltip="{{ languageService.i18n['field.view'] }}" (click)="viewFieldDetail(opt)">remove_red_eye</mat-icon>
+          </td>
+          <td>
+            <mat-icon tooltip="{{languageService.i18n['field.alarm']}}" (click)="viewFieldAlarm(opt)">warning</mat-icon>
+          </td>
+          <td>
+            <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openSnapshot(opt)">camera_alt</mat-icon>
+          </td>
+          <td>
+            <mat-icon tooltip="{{languageService.i18n['field.delItem']}}" (click)="openDeleteField(opt)">delete_forever</mat-icon>
+          </td>
+        </tr>
     </tbody>
   </table>
 </div>
-<pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
-  nextLabel="" id="display">
+<pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel="" nextLabel="" id="fieldsListDisplay">
 </pagination-controls>
 
 
@@ -121,7 +106,7 @@
 <ng-template #deleteModal>
   <h5>{{languageService.i18n['table.delete']}} Field
   </h5>
-  <p>{{languageService.i18n['confirm_del_field']}} - {{selectOcloud.name}} ?</p>
+  <p>{{languageService.i18n['confirm_del_field']}} - {{selectField.name}} ?</p>
   <div class="buttons">
     <button type="button" mat-dialog-close>Cancel</button>
     <button type="button" (click)="delete()">Delete</button>
