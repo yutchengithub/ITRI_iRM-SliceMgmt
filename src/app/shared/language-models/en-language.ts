@@ -8,8 +8,9 @@ export const Enlanguage = {
   'logon.required_error':'Please Enter Account or Password',
   'logon.401':'Session ID has expired, please log in again',
   'logon.403':'Username or password Eentered Incorrectly',
-
   'logon.404':'This account does not exist',
+
+  // 選單標題
   'index.menu_dashboard':'Dashboard',
   'index.menu_fieldMgr':'Field Management',
   'index.menu_iRmSys':'Athena Orchestrator',
@@ -46,6 +47,8 @@ export const Enlanguage = {
   'cancel':'Cancel',
   'search':'Search',
   'clear_search':'Search Reset', // @11/24 Add by yuchen
+
+  // Field Management @11/30 Add by yuchen
 
   // Fault Management
   'fm.start':'StartTime',
@@ -137,7 +140,7 @@ export const Enlanguage = {
   'resolved':'Ended', //Modify by Charles (Resolved->Ended)
   'no_results':'No results were found. Please verify your search terms and try again.',
 
-  //Dashboard
+  // Dashboard
   'num_fields':'Number of Field',
   'num_gNBs':'Number of gNBs',
   'num_UEs':'Number of UEs',
@@ -148,7 +151,7 @@ export const Enlanguage = {
   'warning_Alarm':'Warning Alarm',
   'dashboard.view':'View',
   
-  //Software Management
+  // Software Management
   'firm':'Firm',
   'model':'Model',
   'manufacturer':'Manufacturer',

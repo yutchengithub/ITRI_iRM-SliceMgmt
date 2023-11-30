@@ -6,7 +6,7 @@ import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';   // 主畫面
 import { ComponentManagementComponent } from './component-management/component-management.component';    // 元件管理
 import { FieldManagementComponent } from './field-management/field-management.component';    // O-Cloud管理
-import { OCloudInfoComponent } from './field-management/field-info/field-info.component';
+import { FieldInfoComponent } from './field-management/field-info/field-info.component';
 import { NfManagementComponent } from './nf-management/nf-management.component';      // NF管理
 import { NfInfoComponent } from './nf-management/nf-info/nf-info.component';
 import { FaultManagementComponent } from './fault-management/fault-management.component';   // 故障管理
@@ -32,18 +32,18 @@ const routes: Routes = [
     path: 'main', component: MainComponent, canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
+      { // @11/30 Update by yuchen
+        path: 'field-mgr',
+        children: [
+          { path: '', component: FieldManagementComponent },
+          { path: 'info/:cloudId/:cloudName', component: FieldInfoComponent }
+        ]
+      },
       {
         path: 'component-mgr',
         children: [
           { path: '', component: ComponentManagementComponent },
           { path: 'info/:cloudId/:cloudName', component: ComponentInfoComponent }
-        ]
-      },
-      {
-        path: 'field-mgr',
-        children: [
-          { path: '', component: FieldManagementComponent },
-          { path: 'info/:cloudId/:cloudName', component: OCloudInfoComponent }
         ]
       },
       {

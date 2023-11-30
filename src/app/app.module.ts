@@ -10,6 +10,7 @@ import { ComponentManagementComponent } from './component-management/component-m
 import { ComponentInfoComponent } from './component-management/component-info/component-info.component';
 import { LoginComponent } from './login/login.component';
 import { FieldManagementComponent } from './field-management/field-management.component';
+import { FieldInfoComponent } from './field-management/field-info/field-info.component';
 import { NfManagementComponent } from './nf-management/nf-management.component';
 import { FaultManagementComponent } from './fault-management/fault-management.component';
 import { PerformanceManagementComponent } from './performance-management/performance-management.component';
@@ -28,7 +29,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { OCloudInfoComponent } from './field-management/field-info/field-info.component';
+
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
@@ -52,7 +53,6 @@ import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud
 import { LanguageService } from './shared/service/language.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -61,6 +61,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     ComponentInfoComponent,
     LoginComponent,
     FieldManagementComponent,
+    FieldInfoComponent,           // @11/30 Add by yuchen
     NfManagementComponent,
     FaultManagementComponent,
     PerformanceManagementComponent,
@@ -73,7 +74,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     LogManagementComponent,       // @10/25 Add by yuchen 
     TruncatePipe,                 // @11/16 Add by yuchen 
     MainComponent,
-    OCloudInfoComponent,
     DatePickerFormatDirective,
     NfInfoComponent,
     OCloudPerformanceComponent,

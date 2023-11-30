@@ -103,7 +103,7 @@ export interface OcloudPerformance {
   styleUrls: ['./field-info.component.scss']
 })
 
-export class OCloudInfoComponent implements OnInit {
+export class FieldInfoComponent implements OnInit {
   sessionId: string = '';
   cloudId: string = '';
   cloudName: string = '';

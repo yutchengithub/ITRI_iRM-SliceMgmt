@@ -29,8 +29,8 @@
     <div class="menu">
       <ul>
         <li (click)="changePage(pageRourter['dashboard'])" class="{{page === 'dashboard'?'active':''}}" tooltip="{{languageService.i18n['index.menu_dashboard']}}"><mat-icon>dashboard</mat-icon><label>{{languageService.i18n['index.menu_dashboard']}}</label></li>
+        <li (click)="changePage(pageRourter['field-management'])" class="{{page === 'field-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_fieldMgr']}}"><mat-icon>map</mat-icon><label>{{languageService.i18n['index.menu_fieldMgr']}}</label></li> <!-- @11/30 Update by yuchen -->
         <li (click)="changePage(pageRourter['component-management'])" class="{{page === 'component-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_componentMgr']}}"><mat-icon>view_in_ar</mat-icon><label>{{languageService.i18n['index.menu_componentMgr']}}</label></li>
-        <!-- <li (click)="changePage(pageRourter['field-management'])" class="{{page === 'field-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_performMgr']}}"><mat-icon>trending_up</mat-icon><label>field</label></li> -->
         <li (click)="changePage(pageRourter['fault-management'])" class="{{page === 'fault-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_faultMgr']}}"><mat-icon>warning</mat-icon><label>{{languageService.i18n['index.menu_faultMgr']}}</label></li>
         <li (click)="changePage(pageRourter['performance-management'])" class="{{page === 'performance-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_performMgr']}}"><mat-icon>trending_up</mat-icon><label>{{languageService.i18n['index.menu_performMgr']}}</label></li>
         <li (click)="changePage(pageRourter['software-management'])" class="{{page === 'software-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_softwareMgr']}}"><mat-icon>display_settings</mat-icon><label>{{languageService.i18n['index.menu_softwareMgr']}}</label></li>
@@ -43,8 +43,8 @@
   <div class="menu">
     <ul>
       <li (click)="changePage(pageRourter['dashboard'])" class="{{page === 'dashboard'?'active':''}}" ><mat-icon>dashboard</mat-icon><label>{{languageService.i18n['index.menu_dashboard']}}</label></li>
+      <li (click)="changePage(pageRourter['field-management'])" class="{{page === 'field-management'?'active':''}}"><mat-icon>map</mat-icon><label>{{languageService.i18n['index.menu_fieldMgr']}}</label></li> <!-- @11/30 Update by yuchen -->
       <li (click)="changePage(pageRourter['component-management'])" class="{{page === 'component-management'?'active':''}}"><mat-icon>view_in_ar</mat-icon><label>{{languageService.i18n['index.menu_componentMgr']}}</label></li>
-      <!-- <li (click)="changePage(pageRourter['field-management'])" class="{{page === 'field-management'?'active':''}}" ><mat-icon>trending_up</mat-icon><label>field</label></li> -->
       <li (click)="changePage(pageRourter['fault-management'])" class="{{page === 'fault-management'?'active':''}}" ><mat-icon>warning</mat-icon><label>{{languageService.i18n['index.menu_faultMgr']}}</label></li>
       <li (click)="changePage(pageRourter['performance-management'])" class="{{page === 'performance-management'?'active':''}}" ><mat-icon>trending_up</mat-icon><label>{{languageService.i18n['index.menu_performMgr']}}</label></li>
       <li (click)="changePage(pageRourter['software-management'])" class="{{page === 'software-management'?'active':''}}"><mat-icon>display_settings</mat-icon><label>{{languageService.i18n['index.menu_softwareMgr']}}</label></li>

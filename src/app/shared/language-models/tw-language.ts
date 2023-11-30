@@ -10,6 +10,7 @@ export const TwLanguage = {
   'logon.403':'使用者名或密碼輸入錯誤',
   'logon.404':'此帳號不存在',
 
+  // 選單標題
   'index.menu_dashboard':'主畫面',
   'index.menu_fieldMgr':'場域管理',
   'index.menu_iRmSys':'Athena Orchestrator',
@@ -46,6 +47,10 @@ export const TwLanguage = {
   'cancel':'取消',
   'search':'搜尋',
   'clear_search':'搜尋重置', // @11/24 Add by yuchen
+
+  // Field Management (場域管理) @11/30 Add by yuchen
+  
+
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',
