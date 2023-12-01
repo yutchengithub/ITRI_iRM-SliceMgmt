@@ -204,9 +204,11 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.router.navigate(['/main/field-mgr/info', fields.id]);
   }
   
-  // @11/30 Add by yuchen
+  // @12/01 Update by yuchen
   viewFieldAlarm(fields: Fields) {
-    this.router.navigate(['/main/fault-mgr', fields.id]);
+    this.selectField = fields;
+    console.log("Selected alarm field name: ", this.selectField.name);
+    this.router.navigate(['/main/fault-mgr', this.selectField.name, 'All']);
   }
 
   // @11/30 Add by yuchen
