@@ -37,9 +37,6 @@ export interface Uploadinfos {
   uploadurl: string;
 }
 
-export interface FaultMessage {
-  uploadinfos: Uploadinfos[];
-}
 
 @Component({
   selector: 'app-software-management',
@@ -62,7 +59,6 @@ export class SoftwareManagementComponent implements OnInit {
   deleteModalRef!: MatDialogRef<any>;
   createForm!: FormGroup;
   selectSoftware!: Uploadinfos;
-  nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
   file: any;
   typeMap: Map<number, string> = new Map();
   p: number = 1;            // 當前頁數
@@ -76,11 +72,12 @@ export class SoftwareManagementComponent implements OnInit {
   isSearch: boolean = false;
   querySoftwareScpt!: Subscription;
   querySWAdvanceSearchScpt!: Subscription;
+  filteredSwList: Uploadinfos[] = [];
 
   uploadtypeList: Item[] = [
     { displayName: 'CU', value: '0' },
     { displayName: `DU`, value: '1' },
-    { displayName: `CU+DU`, value: '2' },
+    { displayName: `RU`, value: '2' },
     { displayName: `CU+DU+RU`, value: '3' }
   ];
 
@@ -93,11 +90,11 @@ export class SoftwareManagementComponent implements OnInit {
     public languageService: LanguageService
   ) {
     this.uploadtypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
-    this.createSearchForm();
-    this.createAdvancedForm();
+    this.uploadtypeList = this.commonService.nfTypeList;
   }
 
   ngOnInit(): void {
+    this.createSearchForm();
     this.sessionId = this.commonService.getSessionId();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
     this.getSoftwareList();
@@ -128,7 +125,10 @@ export class SoftwareManagementComponent implements OnInit {
       );
     }
   }
-
+  get msgToDisplay(): Uploadinfos[] {
+    // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
+    return this.isSearch ? this.filteredSwList : this.softwareLists.uploadinfos;
+  }
   softwareListDeal() {
     this.totalItems = this.softwareLists.uploadinfos.length;
   }
@@ -145,11 +145,12 @@ export class SoftwareManagementComponent implements OnInit {
       'firm': new FormControl(''),
       'model': new FormControl(''),
       'uploadtype': new FormControl('All'),
-      'version': new FormControl(''),
+      'uploadversion': new FormControl(''),
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`)),
       'fileName': new FormControl(''),
     });
+    this.uploadtypeList = this.commonService.nfTypeList;
   }
   openCreateModal() {
     this.formValidated = false;
@@ -157,7 +158,7 @@ export class SoftwareManagementComponent implements OnInit {
       'firm': new FormControl(''),
       'model': new FormControl(''),
       'uploadtype': new FormControl('All'),
-      'version': new FormControl('', [Validators.required]),
+      'uploadversion': new FormControl('', [Validators.required]),
       'method': new FormControl('upload'),
       'notes': new FormControl(''),
       'ftpaccount': new FormControl(''),
@@ -290,45 +291,45 @@ export class SoftwareManagementComponent implements OnInit {
     this.updateForm.controls['fileName'].updateValueAndValidity();
   }
 
-  createAdvancedForm() {
-    this.advancedForm = this.fb.group({
-      'firm': new FormControl(''),
-      'model': new FormControl(''),
-      'uploadtype': new FormControl(''),
-      'version': new FormControl(''),
-      'from': new FormControl(''),
-      'to': new FormControl(''),
-      'fileName': new FormControl('')
-    });
-  }
-  openAdvancedModal() {
-    const orgAdvancedForm = _.cloneDeep(this.advancedForm);
-    this.advancedForm.controls['firm'].setValue(this.searchForm.controls['firm'].value);
-    this.advancedForm.controls['model'].setValue(this.searchForm.controls['model'].value);
-    this.advancedForm.controls['uploadtype'].setValue(this.searchForm.controls['uploadtype'].value);
-    this.advancedForm.controls['from'].setValue(this.searchForm.controls['from'].value);
-    this.advancedForm.controls['to'].setValue(this.searchForm.controls['to'].value);
-    this.advancedForm.controls['fileName'].setValue(this.searchForm.controls['fileName'].value);
-    this.advancedModalRef = this.dialog.open(this.advancedModal, { id: 'faultAdvancedModal' });
-    this.advancedModalRef.afterClosed().subscribe((result) => {
-      if (result === 'OK') {
-        this.isSettingAdvanced = true;
-        this.isSearch = true;
-        this.searchForm.controls['firm'].setValue(this.advancedForm.controls['firm'].value);
-        this.searchForm.controls['model'].setValue(this.advancedForm.controls['model'].value);
-        this.searchForm.controls['uploadtype'].setValue(this.advancedForm.controls['uploadtype'].value);
-        this.searchForm.controls['from'].setValue(this.advancedForm.controls['from'].value);
-        this.searchForm.controls['to'].setValue(this.advancedForm.controls['to'].value);
-        this.searchForm.controls['fileName'].setValue(this.advancedForm.controls['fileName'].value);
-        this.afterAdvancedForm = _.cloneDeep(this.advancedForm);
-        this.afterSearchForm = _.cloneDeep(this.advancedForm);
-        this.p = 1;
-        this.getFMAdvanceSearch();
-      } else {
-        this.advancedForm = orgAdvancedForm;
-      }
-    });
-  }
+  // createAdvancedForm() {
+  //   this.advancedForm = this.fb.group({
+  //     'firm': new FormControl(''),
+  //     'model': new FormControl(''),
+  //     'uploadtype': new FormControl(''),
+  //     'version': new FormControl(''),
+  //     'from': new FormControl(''),
+  //     'to': new FormControl(''),
+  //     'fileName': new FormControl('')
+  //   });
+  // }
+  // openAdvancedModal() {
+  //   const orgAdvancedForm = _.cloneDeep(this.advancedForm);
+  //   this.advancedForm.controls['firm'].setValue(this.searchForm.controls['firm'].value);
+  //   this.advancedForm.controls['model'].setValue(this.searchForm.controls['model'].value);
+  //   this.advancedForm.controls['uploadtype'].setValue(this.searchForm.controls['uploadtype']?.value);
+  //   this.advancedForm.controls['from'].setValue(this.searchForm.controls['from'].value);
+  //   this.advancedForm.controls['to'].setValue(this.searchForm.controls['to'].value);
+  //   this.advancedForm.controls['fileName'].setValue(this.searchForm.controls['fileName'].value);
+  //   this.advancedModalRef = this.dialog.open(this.advancedModal, { id: 'faultAdvancedModal' });
+  //   this.advancedModalRef.afterClosed().subscribe((result) => {
+  //     if (result === 'OK') {
+  //       this.isSettingAdvanced = true;
+  //       this.isSearch = true;
+  //       this.searchForm.controls['firm'].setValue(this.advancedForm.controls['firm'].value);
+  //       this.searchForm.controls['model'].setValue(this.advancedForm.controls['model'].value);
+  //       this.searchForm.controls['uploadtype'].setValue(this.advancedForm.controls['uploadtype']?.value);
+  //       this.searchForm.controls['from'].setValue(this.advancedForm.controls['from'].value);
+  //       this.searchForm.controls['to'].setValue(this.advancedForm.controls['to'].value);
+  //       this.searchForm.controls['fileName'].setValue(this.advancedForm.controls['fileName'].value);
+  //       this.afterAdvancedForm = _.cloneDeep(this.advancedForm);
+  //       this.afterSearchForm = _.cloneDeep(this.advancedForm);
+  //       this.p = 1;
+  //       this.getFMAdvanceSearch();
+  //     } else {
+  //       this.advancedForm = orgAdvancedForm;
+  //     }
+  //   });
+  // }
 
   getFMAdvanceSearch() {
     const firm = this.afterAdvancedForm.controls['firm'].value;
@@ -377,9 +378,45 @@ export class SoftwareManagementComponent implements OnInit {
   }
 
   search() {
-    this.getSoftwareList();
+    const firm = this.searchForm.get('firm')?.value || '';
+    const model = this.searchForm.get('model')?.value || '';
+    const uploadtype = this.searchForm.get('uploadtype')?.value || '';
+    const uploadversion = this.searchForm.get('uploadversion')?.value || '';
+    const start = this.searchForm.get('from')?.value;
+    const end = this.searchForm.get('to')?.value;
+    const numericUploadtype: number = parseInt(uploadtype, 10);  
+
+    // 格式化日期為所需的格式
+    const formattedFrom = this.commonService.dealPostDate(start);
+    const formattedTo = this.commonService.dealPostDate(end);
+
+    // 清除以前的搜尋結果
+    this.filteredSwList = [];
+    this.isSearch = false;
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.filteredSwList = this.softwareLists.uploadinfos.filter(msg => {
+        const isFirm = !firm || msg.firm.includes(firm);
+        const isModel = !model || msg.modelname.includes(model);
+        const isUploadtype = uploadtype === 'All' || msg.uploadtype === numericUploadtype;
+        const isUploadversion = !uploadversion || msg.uploadversion.includes(uploadversion);
+        const msgDate = new Date(msg.uploadtime);
+        const isAfterFrom = msgDate >= new Date(formattedFrom);
+        const isBeforeTo = msgDate <= new Date(formattedTo);
+        console.log(firm+" "+model+" "+uploadtype+" "+uploadversion+" "+formattedFrom+" "+formattedTo);
+        console.log(isFirm+" "+isModel+" "+isUploadtype+" "+isUploadversion+" "+isAfterFrom+" "+isBeforeTo);
+        return isFirm && isModel && isUploadtype && isUploadversion && isAfterFrom && isBeforeTo;
+      });
+      this.isSearch = true; // Local Search 完畢，設置標記為 true
+    } else {
+
+    }
   }
 
+  clear_search() {
+    this.createSearchForm();
+    this.isSearch = false;
+  }  
   debug() {
     const body = this.createForm.value;
     if (this.createForm.controls['uploadtype'].value === 'CU') {
@@ -402,7 +439,7 @@ export class SoftwareManagementComponent implements OnInit {
   clearSetting() {
     this.isSearch = false;
     this.createSearchForm();
-    this.createAdvancedForm();
+    //this.createAdvancedForm();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
     this.getSoftwareList();
   }

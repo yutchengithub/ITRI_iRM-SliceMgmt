@@ -53,6 +53,14 @@ export class CommonService {
   UserLogType: string[] = ['GET', 'POST', 'DELETE'];
   NELogType: string[] = ['get', 'get-config', 'edit-config'];
 
+  //Software Management
+  nfTypeList: Item[] = [
+    { displayName: 'CU', value: '0' },
+    { displayName: `DU`, value: '1' },
+    { displayName: `RU`, value: '2' },
+    { displayName: `CU+DU+RU`, value: '3' }
+  ];
+
   scaleFontSize: number = 20;
   rangeWidth: number = 10;
   statusList: Item[] = [
