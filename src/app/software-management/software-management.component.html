@@ -16,7 +16,7 @@
         </select>
       </span>
       <span><label>{{languageService.i18n['version']}}</label>
-        <input type="text"formControlName="version">
+        <input type="text"formControlName="uploadversion">
       </span>
       <span><label>{{languageService.i18n['upload_time']}}</label>
         <span><p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar></span>
@@ -51,7 +51,7 @@
     </thead>
     <tbody>
       <tr
-        *ngFor="let opt of softwareLists.uploadinfos | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+        *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
         <td>{{opt.firm}}</td>
         <td>{{opt.modelname}}</td>
         <td>{{typeText(opt.uploadtype)}}</td>
