@@ -972,6 +972,36 @@ input[type="file"] {
 #provisionModal label, #provisionModal span {
   vertical-align: initial!important;
 }
+
+.filterBY {
+  display: block;
+  padding: 1em 2em;
+  color: #c0d6f2;
+}
+.filterBY .material-symbols-outlined {
+vertical-align: bottom;
+display: inline-block;
+font-size: 20px;
+margin: 0 3px 0 0;
+}
+.filterBY .material-symbols-outlined ~ span {
+border: 1px solid #ffffff;
+background-color: #c4e4fa;
+color: #066abf;
+padding: 0.35em;
+font-size: 1.05em;
+border-radius: 4px;
+cursor: pointer;
+margin: 0 0.5em 0 0;
+}
+.filterBY .material-symbols-outlined ~ span:hover {
+filter: brightness(1.05);
+transition: all .25s;
+}
+.filterBY .material-symbols-outlined ~ span label {
+cursor: pointer;
+}
+
 @media screen and (max-width:1920px) {
  /*  .table table {
       font-size: 1em;

@@ -555,6 +555,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.filtered_UserLogs = [];
     this.isSearch_userLogs = false;
 
+    this.afterSearchForm = _.cloneDeep(this.searchForm); // @12/01 Add by yuchen
+
     // 如果是在 Local 環境測試
     if (this.commonService.isLocal) {
 

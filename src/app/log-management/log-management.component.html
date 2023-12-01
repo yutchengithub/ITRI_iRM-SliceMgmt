@@ -56,7 +56,26 @@
         
         <!-- Button of Export User logs to CSV @11/07 Add by yuchen @11/24 not use -->
         <!-- <span tooltip="{{languageService.i18n['UserLog.ExportCSV']}}" class="material-icons" (click)="exportToCSV('UserLogs')">content_paste_go</span> -->
-        
+      </div>
+
+      <!-- Search Criteria Summary @12/01 Add by yuchen -->
+      <div *ngIf="isSearch_userLogs" class="filterBY">
+        <span class="material-symbols-outlined">info</span>Filter By
+        <span *ngIf="afterSearchForm.controls['UserID'].value">
+          <label>User:</label>{{ afterSearchForm.controls['UserID'].value }}
+        </span>
+        <span *ngIf="afterSearchForm.controls['UserLogType'].value !== 'All'">
+          <label>Type:</label>{{ afterSearchForm.controls['UserLogType'].value }}
+        </span>
+        <span *ngIf="afterSearchForm.controls['keyword'].value">
+          <label>Keyword:</label>{{ afterSearchForm.controls['keyword'].value }}
+        </span>
+        <span *ngIf="afterSearchForm.controls['from'].value">
+          <label>From:</label>{{ commonService.dealPostDate(afterSearchForm.controls['from'].value) }}
+        </span>
+        <span *ngIf="afterSearchForm.controls['to'].value">
+          <label>To:</label>{{ commonService.dealPostDate(afterSearchForm.controls['to'].value) }}
+        </span>
       </div>
     </form>
 
