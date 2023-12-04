@@ -3,48 +3,8 @@
     <button (click)="back()">
       <span class="material-icons">arrow_back</span>Back
     </button>
-    O-Cloud {{languageService.i18n['information']}} – {{ocloudInfo.name}}
+    {{languageService.i18n['cm.info']}} – {{bsComponentInfo.name}}
   </h5>
-
-
-  <div class="BOX col-md-4 cpu">
-    <label class="boxTitle">{{languageService.i18n['index.resourceMsg']}}
-      <a href="javascript:void(0)" (click)="goPerformanceMgr()">
-       {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
-      </a>
-    </label>
-    <div>
-      <span>
-        <img src="assets/img/cpu.png">
-        <div><label>{{languageService.i18n['index.cpuLoading']}}</label><br>{{ocloudPerformance.cpu}}</div>
-      </span>
-      <span>
-        <img src="assets/img/database.png">
-        <div><label>{{languageService.i18n['index.diskUsage']}}</label><br>{{ocloudPerformance.storage}}</div>
-      </span>
-      <span>
-        <img src="assets/img/memory.png">
-        <div><label>{{languageService.i18n['index.memoryUsage']}}</label><br><!--span class="bold"-->{{ocloudPerformance.memory}}<!--/span--></div>
-      </span>
-      <span>
-        <img src="assets/img/network.png">
-        <div><label>{{languageService.i18n['index.networkThroughput']}}</label><br>{{ocloudPerformance.network}}</div>
-      </span>
-    </div>
-
-  </div>
-
-  <div class="BOX col-md-4 center Fault ">
-    <label class="boxTitle">{{languageService.i18n['index.faultMsg']}}
-      <a href="javascript:void(0)" (click)="goFaultMgr()">
-       {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
-      </a>
-    </label>
-    <span class="percent {{severityText(severity)}}" *ngFor="let severity of severitys;let i=index">
-      {{severityText(severity)}}<br>{{severityCount(severity)}}
-
-    </span>
-  </div>
 
   <div class="BOX col-md-3 basicInfo h30">
     <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
@@ -60,48 +20,69 @@
       <li><label>{{languageService.i18n['table.Status']}}</label><span>{{bsComponentInfo.status}}</span></li>
       <li><label>{{languageService.i18n['software_version']}}</label><span>{{bsComponentInfo.port}}</span></li>
     </ul>
-
-    <!-- <label class="boxTitle">{{languageService.i18n['software.info']}}</label>
-    <ul>
-      <li>
-        <label>{{languageService.i18n['version']}}</label>
-        <span>{{ocloudInfo.softwareVersion}}
-          <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">{{languageService.i18n['update']}}</button>
-        </span>
-      </li>
-    </ul> -->
   </div>
 
-  <div class="BOX col-md-3 nf h30">
-    <label class="boxTitle">{{languageService.i18n['nf.list']}}</label>
+  <div class="BOX col-md-4 center Fault  h30">
+    <label class="boxTitle">{{languageService.i18n['index.faultMsg']}}
+      <a href="javascript:void(0)" (click)="goFaultMgr()">
+       {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
+      </a>
+    </label>
+    <div class="table">
+      <table>
+        <thead>
+          <tr>
+            <th>{{languageService.i18n['fm.no']}}</th>
+            <th>{{languageService.i18n['fm.field']}}</th>
+            <th>{{languageService.i18n['fm.gnb']}}</th>
+            <th>{{languageService.i18n['fm.component']}}</th>
+            <th>{{languageService.i18n['fm.alarm']}}</th>
+            <th>{{languageService.i18n['fm.severity']}}</th>
+            <th>{{languageService.i18n['fm.occurtime']}}</th>
+            <th>{{languageService.i18n['fm.status']}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{bsComponentInfo.name}}</td>
+            <td>{{bsComponentInfo.firm}}</td>
+            <td>{{bsComponentInfo.modelname}}</td>
+            <td>{{bsComponentInfo.comtype}}</td>
+            <td>{{componentInfosw.uploadinfos[0]?.uploadversion}}</td>
+            <td>{{bsComponentInfo.comtype}}</td>
+            <td>{{componentInfosw.uploadinfos[0]?.uploadtime}}</td>
+            <td>{{bsComponentInfo.comtype}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="BOX col-md-4 nf h30">
+    <label class="boxTitle">{{languageService.i18n['software.info']}} – {{bsComponentInfo.firm}} – {{bsComponentInfo.modelname}}</label>
     <div class="table">
       <table>
         <thead>
           <tr>
             <th>{{languageService.i18n['table.header_name']}}</th>
-            <th>DMS</th>
-            <th>{{languageService.i18n['table.Status']}}</th>
-            <th>{{languageService.i18n['index.view']}}</th>
+            <th>{{languageService.i18n['manufacturer']}}</th>
+            <th>{{languageService.i18n['model']}}</th>
+            <th>{{languageService.i18n['type']}}</th>
+            <th>{{languageService.i18n['version']}}</th>
+            <th>{{languageService.i18n['upload_time']}}</th>
+            <th>{{languageService.i18n['cm.apply']}}</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let opt of ocloudInfo.nf">
-            <td>{{opt.name}}</td>
-            <td>{{opt.dmsName}}</td>
+          <tr>
+            <td>{{bsComponentInfo.name}}</td>
+            <td>{{bsComponentInfo.firm}}</td>
+            <td>{{bsComponentInfo.modelname}}</td>
+            <td>{{bsComponentInfo.comtype}}</td>
+            <td>{{componentInfosw.uploadinfos[0]?.uploadversion}}</td>
+            <td>{{componentInfosw.uploadinfos[0]?.uploadtime}}</td>
             <td>
-              <label tooltip="{{languageService.i18n['nfRun']}}" *ngIf="opt.status === 0" class="greenLight"></label>
-              <label tooltip="{{languageService.i18n['nfRun']}}" *ngIf="opt.status === 1" class="blueLight"></label>
-              <label tooltip="{{languageService.i18n['nfNotRun']}}" *ngIf="opt.status === 2" class="redLight"></label>
-              <label tooltip="{{languageService.i18n['nfNotRun']}}" *ngIf="opt.status === 3" class="grayLight"></label>
-              <ng-container *ngIf="opt.status !== 2; else ifAction">
-                {{commonService.details(opt.status)}}
-              </ng-container>
-              <ng-template #ifAction>
-                {{opt.actionstatus}}
-              </ng-template>
-            </td>
-            <td (click)="goNFMgr(opt)">
-              <mat-icon tooltip="{{languageService.i18n['view_detail']}}">search</mat-icon>
+              <mat-icon tooltip="{{languageService.i18n['view_detail']}}">cloud_download</mat-icon>
             </td>
           </tr>
         </tbody>
@@ -109,97 +90,29 @@
     </div>
   </div>
 
-  <div class="BOX col-md-3 h30">
-    <label class="boxTitle">Resource Pools</label>
-    <div>
-      <div *ngFor="let resourcepool of ocloudInfo.resourcepool;let i=index">
-        <div class="table">
-          <div class="opt" (click)="resourcepool.active = !resourcepool.active" class="{{resourcepool.active?'active':''}}">{{resourcepool.poolName}}
-            <span class="material-icons">expand_less</span>
-          </div>
-          <table *ngIf="resourcepool.active">
-            <thead>
-              <tr>
-                <th>Node</th>
-                <th>CPU</th>
-                <th>Memory</th>
-                <th>Storage</th>
-                <th>Interface</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let node of resourcepool.node;let j=index">
-                <td>{{node.nodeName}}</td>
-                <!-- Tooltip Cpu -->
-                <td class="ResourceTooltip">
-                  <a href="javascript:void(0)" [tooltip]="$any(cpuContent)" [options]="$any(tooltipOptions)" contentType="template">{{node.cpu.length}}</a>
-                  <ng-template #cpuContent>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>{{languageService.i18n['table.header_name']}}</th>
-                          <th>Product</th>
-                          <th>Capacity</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let cpu of node.cpu">
-                          <td>{{cpu.name}}</td>
-                          <td>{{cpu.product}}</td>
-                          <td>{{cpu.capacity}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </ng-template>
-                </td>
-                <td>{{node.memory.size}}</td>
-                <!-- Tooltip Cpu -->
-                <td class="ResourceTooltip">
-                  <a href="javascript:void(0)" [tooltip]="$any(storageContent)" [options]="$any(tooltipOptions)" contentType="template">{{node.storage.total}}</a>
-                  <ng-template #storageContent>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>{{languageService.i18n['table.header_name']}}</th>
-                          <th>Size</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let item of node.storage.items">
-                          <td>{{item.name}}</td>
-                          <td>{{item.size}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </ng-template>
-                </td>
-                <!-- Tooltip Nic -->
-                <td class="Interface ResourceTooltip">
-                  <a href="javascript:void(0)" [tooltip]="$any(nicContent)" [options]="$any(tooltipOptions)" contentType="template">{{node.nic.length}}</a>
-                  <ng-template #nicContent>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Product</th>
-                          <th>Capacity</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let nic of node.nic">
-                          <td>{{nic.name}}</td>
-                          <td>{{nic.product}}</td>
-                          <td>{{nic.capacity}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </ng-template>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+  <div class="BOX col-md-4 h30">
+    <label class="boxTitle">Datastore</label>
+  </div>
+
+  <div class="BOX col-md-4 h30">
+    <label class="boxTitle">{{languageService.i18n['cm.file']}}</label>
+    <div class="table">
+      <table>
+        <thead>
+          <tr>
+            <th>{{languageService.i18n['fileName']}}</th>
+            <th>{{languageService.i18n['cm.path']}}</th>
+            <th>{{languageService.i18n['cm.download']}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{bsComponentInfo.name}}</td>
+            <td>{{bsComponentInfo.firm}}</td>
+            <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}">download_for_offline</mat-icon></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 

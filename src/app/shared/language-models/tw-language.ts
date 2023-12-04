@@ -193,7 +193,12 @@ export const TwLanguage = {
   'cm.confirm_del':'確定要刪除此元件',
   'cm.unable_del':'無法刪除已組站之元件，請先刪除所屬之基站',
   'cm.error':'錯誤',
-  
+  'cm.info':'元件資訊',
+  'cm.apply':'套用',
+  'cm.file':'檔案管理',
+  'cm.path':'路徑',
+  'cm.download':'下載',
+
   // Account Management (帳號管理)
   'user_account':'帳號',
   'key_account':'密碼',

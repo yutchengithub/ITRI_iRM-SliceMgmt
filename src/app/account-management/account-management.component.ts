@@ -10,33 +10,6 @@ import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 
-export interface SoftwareList {
-  id: string;
-  firm: string;
-  model: string;
-  type: number;
-  version: string;
-  notes: string;
-  uploadTime: string;
-  fileName: string;
-}
-
-export interface SoftwareLists {
-  uploadinfos: Uploadinfos[];
-}
-
-export interface Uploadinfos {
-  id: string;
-  firm: string;
-  modelname: string;
-  uploadtime: string;
-  uploadtype: number;
-  uploadversion: string;
-  description: string;
-  uploadinfo: string;
-  uploadurl: string;
-}
-
 export interface AccountLists {
   users: Users[];
 }
@@ -60,8 +33,6 @@ export interface CreateUsers {
 })
 export class AccountManagementComponent implements OnInit {
   sessionId: string = '';
-  softwareList: SoftwareList[] = [];
-  softwareLists: SoftwareLists = {} as SoftwareLists;
   accountLists: AccountLists = {} as AccountLists;
   accountInfo: CreateUsers = {} as CreateUsers;
   @ViewChild('createModal') createModal: any;
@@ -73,7 +44,6 @@ export class AccountManagementComponent implements OnInit {
   createModalRef!: MatDialogRef<any>;
   deleteModalRef!: MatDialogRef<any>;
   createForm!: FormGroup;
-  selectSoftware!: Uploadinfos;
   selectUser!: Users;
   file: any;
   typeMap: Map<number, string> = new Map();
@@ -143,7 +113,7 @@ export class AccountManagementComponent implements OnInit {
         res => {
           console.log('Get software list:');
           console.log(res);
-          this.softwareList = res as SoftwareList[];
+          this.accountLists = res as AccountLists;
           this.softwareListDeal();
         }
       );
@@ -151,7 +121,7 @@ export class AccountManagementComponent implements OnInit {
   }
 
   softwareListDeal() {
-    this.totalItems = this.softwareList.length;
+    this.totalItems = this.accountLists.users.length;
   }
 
   openCreateModal() {
@@ -258,16 +228,16 @@ export class AccountManagementComponent implements OnInit {
   delete() {
     if (this.commonService.isLocal) {
       /* local file test */
-      for (let i = 0; i < this.commonService.softwareList.length; i++) {
-        if (this.selectSoftware.id === this.commonService.softwareList[i].id) {
-          this.commonService.softwareList.splice(i, 1);
+      for (let i = 0; i < this.commonService.accountLists.users.length; i++) {
+        if (this.selectUser.id === this.commonService.accountLists.users[i].id) {
+          this.commonService.accountLists.users.splice(i, 1);
           break;
         }
       }
       this.deleteModalRef.close();
       this.getAccountList();
     } else {
-      this.commonService.deleteSoftware(this.selectSoftware.id).subscribe(
+      this.commonService.deleteSoftware(this.selectUser.id).subscribe(
         res => {
           this.deleteModalRef.close();
           this.getAccountList();

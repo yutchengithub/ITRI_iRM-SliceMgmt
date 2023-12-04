@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from './../../shared/common.service';
 import { SoftwareList } from './../../software-management/software-management.component';
+import { SoftwareLists } from './../../software-management/software-management.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
@@ -118,6 +119,21 @@ export interface BsComponentInfo {
     };
   };
 }
+export interface Uploadinfos {
+  id: string;
+  firm: string;
+  modelname: string;
+  uploadtime: string;
+  uploadtype: number;
+  uploadversion: string;
+  description: string;
+  uploadinfo: string;
+  uploadurl: string;
+}
+
+export interface ComponentInfosw{
+  uploadinfos: Uploadinfos[];
+}
 
 export interface Info {
   data: string;
@@ -140,7 +156,6 @@ interface SoftwareSlot {
     integrity: string;
   };
 }
-
 @Component({
   selector: 'app-component-info',
   templateUrl: './component-info.component.html',
@@ -154,9 +169,11 @@ export class ComponentInfoComponent implements OnInit {
   newip: string = '';
   // utilizationPercent: number = 0;
   bsComponentInfo: BsComponentInfo = {} as BsComponentInfo;
+  uploadinfos: Uploadinfos[] = [];
   ocloudInfo: OcloudInfo = {} as OcloudInfo;
   ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
   softwareList: SoftwareList[] = [];
+  componentInfosw: ComponentInfosw = {} as ComponentInfosw;
   systemSummary: SystemSummary = {} as SystemSummary;;
   fileNameMapSoftware: Map<string, SoftwareList> = new Map();
   faultColors: string[] = ['#FF0000', '#FFA042', '	#FFFF37', '#00FFFF'];
@@ -198,8 +215,9 @@ export class ComponentInfoComponent implements OnInit {
       this.cloudName = params['cloudName'];
       console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
       this.getComponentInfo();
-      this.getOcloudPerformance();
       this.getSoftwareList();
+      this.getOcloudPerformance();
+      
     });
   }
   ngOnDestroy() {
@@ -224,6 +242,7 @@ export class ComponentInfoComponent implements OnInit {
       );
     }
   }
+  
   nfRunRefresh() {
     clearTimeout(this.refreshTimeout);
     this.RunRefreshTimeout = window.setTimeout(() => this.getOcloudPerformance(), this.RunRefreshTime * 1000);
@@ -248,21 +267,18 @@ export class ComponentInfoComponent implements OnInit {
   }
 
   getSoftwareList() {
-    let type = '0'
+    clearTimeout(this.refreshTimeout);
     if (this.commonService.isLocal) {
       /* local file test */
-      this.softwareList = this.commonService.softwareList;
-      this.softwareDeal();
+      this.componentInfosw.uploadinfos = this.commonService.componentInfosw.uploadinfos;
+      //this.softwareListDeal();
     } else {
-      if (this.cloudName === 'Wind River' || this.cloudName === 'windriver'){
-        type = '-3';
-      }
-      this.commonService.querySoftwareList('', type, '').subscribe(
+      this.commonService.queryUploadFileList().subscribe(
         res => {
-          console.log('getSoftwareList:');
+          console.log('Get software list:');
           console.log(res);
-          this.softwareList = res as SoftwareList[];
-          this.softwareDeal();
+          //this.softwareLists = res as SoftwareLists;
+          //this.softwareListDeal();
         }
       );
     }
@@ -274,21 +290,6 @@ export class ComponentInfoComponent implements OnInit {
       this.fileNameMapSoftware.set(row.fileName, row);
     });
   }
-
-  // getSystemSummary() {
-  //   if (this.commonService.isLocal) {
-  //     /* local file test */
-  //     this.systemSummary = this.commonService.systemSummary;
-  //   } else {
-  //     this.commonService.querySystemSummary().subscribe(
-  //       res => {
-  //         console.log('getSoftwareList:');
-  //         console.log(res);
-  //         this.systemSummary = res as SystemSummary;
-  //       }
-  //     );
-  //   }
-  // }
 
   softwareVersion(): string {
     const fileName = this.updateForm.controls['fileName'].value;

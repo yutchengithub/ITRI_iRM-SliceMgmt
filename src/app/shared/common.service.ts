@@ -27,6 +27,7 @@ import { UserLogsList } from '../log-management/log-management.component'; // Ad
 import { NELogsList } from '../log-management/log-management.component'; // Add by yutchen @10/27
 import { ComponentList } from '../component-management/component-management.component';
 import { BsComponentInfo } from '../component-management/component-info/component-info.component';
+import { ComponentInfosw } from '../component-management/component-info/component-info.component';
 
 
 export interface NowTime {
@@ -1760,7 +1761,7 @@ export class CommonService {
       size:10485760
     };
     //Component
-    componentList: ComponentList = 
+    componentList: ComponentList =
     {
       components: [
       {
@@ -1919,8 +1920,7 @@ export class CommonService {
       }
     ]};
 
-    bsComponentInfo: BsComponentInfo = 
-    {
+    bsComponentInfo: BsComponentInfo = {
       id: "c534ac5c21b7480bae3e", 
       name: "itri_10.0.2.24", 
       ip: "10.0.2.24", 
@@ -1929,7 +1929,7 @@ export class CommonService {
       key: "k200123", 
       comtype: 1, 
       firm: "ITRI", 
-      modelname: "v2.0", 
+      modelname: "A001", 
       status: 0,
       info: {
         data: "\n\n\t<netconf-server xmlns=\"urn:ietf:params:xml:ns:yang:ietf-netconf-server\">\n\t\t<listen>\n\t\t\t<endpoint>\n\t\t\t\t<name>default-ssh</name>\n\t\t\t\t<ssh>\n\t\t\t\t\t<tcp-server-parameters>\n\t\t\t\t\t\t<local-address>0.0.0.0</local-address>\n\t\t\t\t\t\t<keepalives>\n\t\t\t\t\t\t\t<idle-time>1</idle-time>\n\t\t\t\t\t\t\t<max-probes>10</max-probes>\n\t\t\t\t\t\t\t<probe-interval>5</probe-interval>\n\t\t\t\t\t\t</keepalives>\n\t\t\t\t\t</tcp-server-parameters>\n\t\t\t\t\t<ssh-server-parameters>\n\t\t\t\t\t\t<server-identity>\n\t\t\t\t\t\t\t<host-key>\n\t\t\t\t\t\t\t\t<name>default-key</name>\n\t\t\t\t\t\t\t\t<public-key>\n\t\t\t\t\t\t\t\t\t<keystore-reference>genkey</keystore-reference>\n\t\t\t\t\t\t\t\t</public-key>\n\t\t\t\t\t\t\t</host-key>\n\t\t\t\t\t\t</server-identity>\n\t\t\t\t\t\t<client-authentication>\n\t\t\t\t\t\t\t<supported-authentication-methods>\n\t\t\t\t\t\t\t\t<publickey/>\n\t\t\t\t\t\t\t\t<passsword/>\n\t\t\t\t\t\t\t\t<other>interactive</other>\n\t\t\t\t\t\t\t</supported-authentication-methods>\n\t\t\t\t\t\t\t<users/>\n\t\t\t\t\t\t</client-authentication>\n\t\t\t\t\t</ssh-server-parameters>\n\t\t\t\t</ssh>\n\t\t\t</endpoint>\n\t\t</listen>\n\t</netconf-server>"
@@ -1979,6 +1979,22 @@ export class CommonService {
         }
       }
     };
+
+    componentInfosw: ComponentInfosw = {
+      uploadinfos: [
+        {
+          id: "ff7c19b6c9384fba9e2d",
+          firm: "ITRI",
+          modelname: "A001",
+          uploadtime: "2023-10-26 10:31:31",
+          uploadtype: 1,
+          uploadversion: "1.0.0",
+          description: "test123",
+          uploadinfo: "fw-v1-0-0.zip",
+          uploadurl: "drive:C"
+        }
+      ]
+    }
 
   nfList: Nf[] = [
     {

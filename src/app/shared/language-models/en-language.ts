@@ -193,6 +193,11 @@ export const Enlanguage = {
   'cm.confirm_del':'Confirm to Delete Component',
   'cm.unable_del':'Can not delete the component which has been assigned to a certain gNB',
   'cm.error':'ERROR',
+  'cm.info':'Component Detail Information',
+  'cm.apply':'Apply',
+  'cm.file':'File Management',
+  'cm.path':'Path',
+  'cm.download':'Download',
 
   // Account Management
   'user_account':'User',
