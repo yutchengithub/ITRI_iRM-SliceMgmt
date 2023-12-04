@@ -11,11 +11,12 @@ import * as _ from 'lodash';
 //import * as CryptoJS from 'crypto-js'; @11/23 Add by yuchen 
 import * as XLSX from 'xlsx';         // @11/23 Add by yuchen 
 //import { saveAs } from 'file-saver';  // @11/23 Add by yuchen 
+import { ChangeDetectorRef } from '@angular/core';  // @12/04 Add by yuchen 
 
-
-export interface UserLogsList {   // FaultMessage -> LogList @10/30 by yuchen
-  logNumber: number;              // totalMessageNumber -> logNumber @10/30 by yuchen
-  loginfo: UserLogsinfo[];        // faultMessages & FaultMessages -> logs & Logs @10/30 by yuchen
+// @10/30 Add by yuchen
+export interface UserLogsList {   
+  logNumber: number; 
+  loginfo: UserLogsinfo[];
 }
 
 // @10/30 Add by yuchen 
@@ -62,10 +63,11 @@ export interface NELogdetail {
   comp_name: string;  // @11/22 Add by yuchen 
 }
 
+// @10/30 changed by yuchen
 @Component({
-  selector: 'app-log-management',                 // fault -> log @10/30 by yuchen
-  templateUrl: './log-management.component.html', // fault -> log @10/30 by yuchen
-  styleUrls: ['./log-management.component.scss']  // fault -> log @10/30 by yuchen
+  selector: 'app-log-management',                 
+  templateUrl: './log-management.component.html', 
+  styleUrls: ['./log-management.component.scss']  
 })
 
 export class LogManagementComponent implements OnInit, OnDestroy { 
@@ -125,10 +127,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     public languageService: LanguageService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+   // private cdr: ChangeDetectorRef, // @12/04 Add
 
   ) {
+
     // @11/28 Updated - 調整為格式化當前時間往回推一個月的時間
+
     // 取得現在時間
     const nowTime = this.commonService.getNowTime();
     console.log("getNowTime: ", nowTime);
@@ -149,11 +154,11 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     // 使用這些格式化後的值來更新 searchForm 控件的值
     this.searchForm = this.fb.group({
       'UserID': new FormControl(''),
-      'neName': new FormControl(''),
+      'neName': new FormControl(''), // Only for NE Logs
       'from': new FormControl(`${oneMonthAgoDate.getFullYear()}-${formattedMonth}-${formattedDay} ${formattedHour}:${formattedMinute}`), 
       'to': new FormControl(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`),
-      'UserLogType': new FormControl('All'),
-      'NELogType': new FormControl('All'),
+      'UserLogType': new FormControl('All'), // Only for User Logs
+      'NELogType': new FormControl('All'),   // Only for NE Logs
     });
     
     this.createSearchForm();
@@ -167,7 +172,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
    * 當 Component 初始化完成後執行的 Lifecycle Hook。
    * 主要用於設定 Component 的初始狀態，包括預設的 Log 類型、sessionId、以及設定路由參數相關的應對處理。
    */
-  ngOnInit(): void {
+  ngOnInit(){
 
     // 設定預設的 Log 類型，用於 Component 初次載入時顯示相應的 Log Lists
     this.type = 'User_Logs';
@@ -197,11 +202,17 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       //this.userLogsToDisplay;
       this.getUserLogsInfo(); // 預設初始化時取得 User Logs 資訊
       //this.totalItems = this.userLogsToDisplay.length;
+
+      // 數據加載完畢後執行搜尋以更新視圖 @12/04 Add
+      //this.search_UserLogs();
     } else {
       //this.neLogsToDisplay;
       this.getNELogsInfo();   // 預設初始化時取得 NE Logs 資訊
       //this.totalItems = this.neLogsToDisplay.length;
     }
+
+    // 執行一次預設搜尋 @12/04 Add
+    //this.search_UserLogs();
   }
 
   // 銷毀 Component 時的清理工作
@@ -217,7 +228,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     if (this.queryUserNetconfLog) this.queryUserNetconfLog.unsubscribe();
   }
 
-  // Get User Logs @11/30 Updated
+  // Get User Logs @12/04 Updated
   getUserLogsInfo() {
     console.log('getUserLogsInfo() - Start');
     clearTimeout(this.refreshTimeout);
@@ -227,6 +238,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       // 本地模式使用本地數據
       this.UserLogsList = this.commonService.UserLogsList;
       this.UserloginfoDeal();
+      this.search_UserLogs(); // 數據是本地的，可以立即搜索  @12/04 add
 
     } else {
 
@@ -252,6 +264,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
             console.log('getUserLogsInfo:', res);
             this.UserLogsList = res;  // 直接賦值響應至 UserLogsList
             this.UserloginfoDeal();   // 調用處理 User Log 訊息的函數
+
+            this.search_UserLogs();   // 等待數據加載完成後執行搜尋 @12/04 Add
           },
           error: (error) => {  // 錯誤的 callback
             console.error('Error fetching user logs:', error); // 顯示錯誤訊息
@@ -271,7 +285,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.refreshTimeout = window.setTimeout(() => {
       if (this.p === 1) {
         console.log(`page[${this.p}] ===> refresh.`);
-        this.getUserLogsInfo();
+        //this.getUserLogsInfo();
 
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
@@ -292,6 +306,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       // 本地測試，直接使用本地存儲的 NE Log 數據
       this.NELogsList = this.commonService.NELogsList;
       this.NEloginfoDeal();
+      this.search_NELogs(); // 數據是本地的，可以立即搜尋  @12/04 add
 
     } else {
 
@@ -318,6 +333,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           console.log('getNELogsInfo:', response);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
           this.NELogsList = response; // 直接賦值響應至 NELogsList
           this.NEloginfoDeal();       // 調用處理 NE Log 訊息的函數
+
+          this.search_NELogs();       // 等待數據加載完成後執行搜尋 @12/04 Add
         },
         error: (error) => {   // 錯誤的 callback
           console.error('Error fetching NE logs:', error); // 顯示錯誤訊息
@@ -337,7 +354,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       if (this.p === 1) {
         
         console.log('page[${this.p}] ===> refresh.');
-        this.getNELogsInfo();
+        //this.getNELogsInfo();
 
       } else {
         console.log('page[${this.p}] ===> no refresh.');
@@ -534,10 +551,19 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
   /* ↓ For click "Search" ↓ */
 
-  // For search User Logs
+  // For search User Logs @12/04 Updated by yuchen
   filtered_UserLogs: UserLogsinfo[] = [];
   isSearch_userLogs: boolean = false;
   search_UserLogs() {
+
+    // UserLogsList 是否已加載 @12/04 Add
+    if (!this.UserLogsList || !this.UserLogsList.loginfo) {
+      console.error('UserLogsList.loginfo is not loaded yet.');
+      return;
+    }
+  
+    // 更新顯示的搜尋條件 @12/04 Add
+    this.afterSearchForm = this.searchForm.value;
 
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
 
@@ -599,7 +625,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     });
     this.isSearch_userLogs = true;  // Search 完畢，設置標記為 true
 
+    // 檢查搜尋狀態 @12/04 Add by yuchen
+    console.log('Is search for User Logs active:', this.isSearch_userLogs);
+
     this.totalItems = this.filtered_UserLogs.length; // 確保更新 totalItems 以反映搜尋結果的數量
+
+     // 檢查搜尋表單的值 @12/04 Add by yuchen
+     console.log('Search criteria for User Logs:', this.afterSearchForm.value);
 
       /* 呼叫後端 API 先篩選的作法（目前會失敗）@11/29
 
@@ -662,10 +694,19 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.getUserLogsInfo();
   }  
 
-  // For search NE Logs  @11/13 Add by yuchen
+  // For search NE Logs @12/04 Updated by yuchen
   filtered_NELogs: NELogsinfo[] = [];
   isSearch_neLogs: boolean = false;
   search_NELogs() {
+
+    // NELogsList 是否已加載 @12/04 Add
+    if (!this.NELogsList || !this.NELogsList.loginfo) {
+      console.error('NELogsList.loginfo is not loaded yet.');
+      return;
+    }
+
+    // 更新顯示的搜尋條件 @12/04 Add
+    this.afterSearchForm = this.searchForm.value;
 
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
 
@@ -683,6 +724,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     // 清除以前的搜尋結果
     this.filtered_NELogs = [];
     this.isSearch_neLogs = false;
+
+    this.afterSearchForm = _.cloneDeep(this.searchForm); // @12/04 Add by yuchen
 
     // 如果是在本地環境測試
     if (this.commonService.isLocal) {
@@ -732,7 +775,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     });
     this.isSearch_neLogs = true;  // Search 完畢，標記設置為 true
 
+    // 檢查搜尋狀態 @12/04 Add by yuchen
+    console.log('Is search for NE Logs active:', this.isSearch_neLogs);
+
     this.totalItems = this.filtered_NELogs.length; // 確保更新 totalItems 以反映搜尋結果的數量
+
+    // 檢查搜尋表單的值 @12/04 Add by yuchen
+    console.log('Search criteria for NE Logs:', this.afterSearchForm.value);
 
     /* 呼叫後端 API 先篩選的作法（目前會失敗）@11/29
       // 從表單中獲取查詢參數

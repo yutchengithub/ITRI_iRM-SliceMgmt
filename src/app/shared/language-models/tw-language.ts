@@ -45,7 +45,8 @@ export const TwLanguage = {
   'ok':'確定',
   'cancel':'取消',
   'search':'搜尋',
-  'clear_search':'搜尋重置', // @11/24 Add by yuchen
+  'search_criteria':'篩選條件',  // @12/04 Add by yuchen
+  'clear_search':'搜尋重置',      // @11/24 Add by yuchen
 
   // Field Management (場域管理) @11/30 Add by yuchen
   'field.list':'場域列表',
@@ -198,7 +199,7 @@ export const TwLanguage = {
   'cm.file':'檔案管理',
   'cm.path':'路徑',
   'cm.download':'下載',
-
+  
   // Account Management (帳號管理)
   'user_account':'帳號',
   'key_account':'密碼',
@@ -231,7 +232,7 @@ export const TwLanguage = {
   'UserLogs': '使用者日誌',
   'NELogs': '網元日誌',     // NE = Network Element
   'Log.start':'執行時間',   // @11/17 changed by yuchen
-  'Log.end':'～ ',         // @11/17 changed by yuchen
+  'Log.end':'～',          // @12/04 changed by yuchen
   'Log.total':'總共',      // @11/21 add by yuchen
 
   'UserLog.No':'編號',

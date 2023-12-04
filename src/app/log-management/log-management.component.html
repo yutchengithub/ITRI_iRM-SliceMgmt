@@ -35,12 +35,12 @@
         </span>
 
         <!-- User Logs 的日期選擇器 -->
-        <span><label>{{languageService.i18n['Log.start']}}</label>
+        <span><label>{{languageService.i18n['Log.start']}}&nbsp;</label>
           <span>
             <p-calendar formControlName="from" [showTime]="true" inputId="userLogStartTime" dateFormat="yy-mm-dd"></p-calendar>
           </span>
         </span>
-        <span><label>{{languageService.i18n['Log.end']}}</label>
+        <span><label>{{languageService.i18n['Log.end']}}&nbsp;</label>
           <span style="margin-left: 3px;">
             <p-calendar formControlName="to" [showTime]="true" inputId="userLogEndTime" dateFormat="yy-mm-dd"></p-calendar>
           </span>
@@ -58,26 +58,27 @@
         <!-- <span tooltip="{{languageService.i18n['UserLog.ExportCSV']}}" class="material-icons" (click)="exportToCSV('UserLogs')">content_paste_go</span> -->
       </div>
 
-      <!-- Search Criteria Summary @12/01 Add by yuchen -->
+      
+      <!-- Search Criteria Summary of User Logs @12/04 Update by yuchen - added &nbsp;(non-breaking space HTML entity) -->
       <div *ngIf="isSearch_userLogs" class="filterBY">
-        <span class="material-symbols-outlined">info</span>Filter By
+        <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
         <span *ngIf="afterSearchForm.controls['UserID'].value">
-          <label>User:</label>{{ afterSearchForm.controls['UserID'].value }}
+          <label>{{ languageService.i18n['UserLog.userid'] }}:&nbsp;</label>{{ afterSearchForm.controls['UserID'].value }}
         </span>
-        <span *ngIf="afterSearchForm.controls['UserLogType'].value !== 'All'">
-          <label>Type:</label>{{ afterSearchForm.controls['UserLogType'].value }}
+        <span *ngIf="afterSearchForm.controls['UserLogType'].value">
+          <label>{{ languageService.i18n['UserLog.logtype'] }}:&nbsp;</label>{{ afterSearchForm.controls['UserLogType'].value }}
         </span>
         <span *ngIf="afterSearchForm.controls['keyword'].value">
-          <label>Keyword:</label>{{ afterSearchForm.controls['keyword'].value }}
+          <label>{{ languageService.i18n['UserLog.logKeywordString'] }}:&nbsp;</label>{{ afterSearchForm.controls['keyword'].value }}
         </span>
-        <span *ngIf="afterSearchForm.controls['from'].value">
-          <label>From:</label>{{ commonService.dealPostDate(afterSearchForm.controls['from'].value) }}
-        </span>
-        <span *ngIf="afterSearchForm.controls['to'].value">
-          <label>To:</label>{{ commonService.dealPostDate(afterSearchForm.controls['to'].value) }}
+        <span *ngIf="afterSearchForm.controls['from'].value || afterSearchForm.controls['to'].value">
+          <label>{{ languageService.i18n['UserLog.logtime'] }}:&nbsp;</label>
+          {{ afterSearchForm.controls['from'].value ? (commonService.dealPostDate(afterSearchForm.controls['from'].value) + ' ~ ') : '' }}
+          {{ afterSearchForm.controls['to'].value ? commonService.dealPostDate(afterSearchForm.controls['to'].value) : '' }}
         </span>
       </div>
     </form>
+
 
     <table class="userLog">
       <thead>
@@ -171,6 +172,29 @@
         <!-- <span tooltip="{{languageService.i18n['NElog.ExportCSV']}}" class="material-icons" (click)="exportToCSV('NELogs')">content_paste_go</span> -->
 
       </div>
+
+      <!-- Search Criteria Summary of NE Logs @12/04 Add by yuchen  -->
+      <div *ngIf="isSearch_neLogs" class="filterBY">
+        <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
+        <span *ngIf="afterSearchForm.controls['UserID'].value">
+          <label>{{ languageService.i18n['NElog.userid'] }}:&nbsp;</label>{{ afterSearchForm.controls['UserID'].value }}
+        </span>
+        <span *ngIf="afterSearchForm.controls['neName'].value">
+          <label>{{ languageService.i18n['NElog.comp_name'] }}:&nbsp;</label>{{ afterSearchForm.controls['neName'].value }}
+        </span>
+        <span *ngIf="afterSearchForm.controls['NELogType'].value">
+          <label>{{ languageService.i18n['NElog.operation'] }}:&nbsp;</label>{{ afterSearchForm.controls['NELogType'].value }}
+        </span>
+        <span *ngIf="afterSearchForm.controls['keyword'].value">
+          <label>{{ languageService.i18n['NElog.logKeywordString'] }}:&nbsp;</label>{{ afterSearchForm.controls['keyword'].value }}
+        </span>
+        <span *ngIf="afterSearchForm.controls['from'].value || afterSearchForm.controls['to'].value">
+          <label>{{ languageService.i18n['NElog.logtime'] }}:&nbsp;</label>
+          {{ afterSearchForm.controls['from'].value ? (commonService.dealPostDate(afterSearchForm.controls['from'].value) + ' ~ ') : '' }}
+          {{ afterSearchForm.controls['to'].value ? commonService.dealPostDate(afterSearchForm.controls['to'].value) : '' }}
+        </span>
+      </div>
+
     </form>
 
     <table class="neLog">

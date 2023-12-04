@@ -45,7 +45,8 @@ export const Enlanguage = {
   'ok':'OK',
   'cancel':'Cancel',
   'search':'Search',
-  'clear_search':'Search Reset', // @11/24 Add by yuchen
+  'search_criteria':'Filter By',   // @12/04 Add by yuchen
+  'clear_search':'Search Reset',  // @11/24 Add by yuchen
 
   // Field Management (場域管理) @11/30 Add by yuchen
   'field.list':'Field List',
@@ -230,7 +231,7 @@ export const Enlanguage = {
   'UserLogs': 'User Logs',
   'NELogs': 'NE Logs',            // NE = Network Element
   'Log.start':'Execution Time',   // @11/17 Changed by yuchen
-  'Log.end':'～ ',                // @11/17 Changed by yuchen
+  'Log.end':'～',                  // @12/04 Changed by yuchen
   'Log.total':'Total',            // @11/21 Add by yuchen
 
   'UserLog.No':'No.',
