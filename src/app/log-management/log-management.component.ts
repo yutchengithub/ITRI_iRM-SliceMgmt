@@ -285,7 +285,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.refreshTimeout = window.setTimeout(() => {
       if (this.p === 1) {
         console.log(`page[${this.p}] ===> refresh.`);
-        //this.getUserLogsInfo();
+       // this.getUserLogsInfo();
 
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
@@ -353,11 +353,11 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.refreshTimeout = window.setTimeout(() => {
       if (this.p === 1) {
         
-        console.log('page[${this.p}] ===> refresh.');
+        console.log(`page[${this.p}] ===> refresh.`);
         //this.getNELogsInfo();
 
       } else {
-        console.log('page[${this.p}] ===> no refresh.');
+        console.log(`page[${this.p}] ===> no refresh.`);
       }
     }, 100); // timeout 100ms
   }
@@ -469,8 +469,9 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   // 用於點擊對應 Button 時進行頁面切換
   pageChanged(page: number) {
     this.p = page;
-    this.getUserLogsInfo(); // 
-    this.getNELogsInfo();   // 
+    console.log(`The change page is:`, this.p);
+    //this.getUserLogsInfo(); // 
+    //this.getNELogsInfo();   // 
   }
 
   // 用於點擊至對應的 Button 時，進行頁面的切換 
