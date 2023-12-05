@@ -463,6 +463,10 @@ export class CommonService {
     const bodyStr = JSON.stringify(body);
     return this.http.post(url, bodyStr);
   }
+  queryBsComponentInfo(comId: string): Observable<any> {
+    const url = `${this.restPath}/queryBsComponentInfo/${this.getSessionId()}/${comId}`;
+    return this.http.get(url);
+  }
 
 
   // Field Management API  @11/30 Add by yuchen

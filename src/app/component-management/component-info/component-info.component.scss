@@ -1,4 +1,9 @@
-
+.filter{
+  padding: 8px 0 6px 2%;
+  width: 90%;
+  border-radius: 5px;
+  height: 10%;
+}
 svg {
   position: relative;
   width: 150px;
@@ -102,7 +107,7 @@ svg circle {
   margin: 0 0 0 .3em;
 }
 .boxTitle + div {
-  height: 90%;
+  //height: 21%;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -183,7 +188,7 @@ svg circle {
   transform: translateX( 6px) translateY(-47px) scale(0.75);
 }
 .Fault, .cpu {
-  height: 20em;
+  height: 42em;
 }
 .basicInfo ul {
   margin: 0 0 1em 0;

@@ -10,7 +10,7 @@
     <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
     <ul>
       <li><label>{{languageService.i18n['cm.name']}}</label><span>{{bsComponentInfo.name}}</span></li>
-      <li><label>{{languageService.i18n['cm.type']}}</label><span>{{bsComponentInfo.id}}</span></li>
+      <li><label>{{languageService.i18n['cm.type']}}</label><span>{{bsComponentInfo.comtype}}</span></li>
       <li><label>{{languageService.i18n['cm.ip']}}</label><span>{{bsComponentInfo.ip}}</span></li>
       <li><label>{{languageService.i18n['cm.port']}}</label><span>{{bsComponentInfo.port}}</span></li>
       <li><label>{{languageService.i18n['cm.acc']}}</label><span>{{bsComponentInfo.account}}</span></li>
@@ -22,12 +22,31 @@
     </ul>
   </div>
 
-  <div class="BOX col-md-4 center Fault  h30">
+  <div class="BOX col-md-4 center Fault">
     <label class="boxTitle">{{languageService.i18n['index.faultMsg']}}
       <a href="javascript:void(0)" (click)="goFaultMgr()">
        {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
       </a>
     </label>
+    <form [formGroup]="searchForm">
+    <div class="filter">
+      <span><label>{{languageService.i18n['fm.severity']}}</label>
+        <select formControlName="severity">
+          <option value="All">All</option>
+          <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
+        </select>
+        <!-- <mat-error *ngIf="searchForm.controls['severity'].invalid">Required</mat-error> -->
+      </span>
+      <span><label>{{languageService.i18n['fm.occurtime']}}</label>
+        <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+      </span>
+      <span><label>~</label>
+        <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+      </span>
+      <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+      <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search()">clear</span>
+    </div>
+  </form>
     <div class="table">
       <table>
         <thead>
@@ -43,18 +62,23 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>{{bsComponentInfo.name}}</td>
-            <td>{{bsComponentInfo.firm}}</td>
-            <td>{{bsComponentInfo.modelname}}</td>
-            <td>{{bsComponentInfo.comtype}}</td>
-            <td>{{componentInfosw.uploadinfos[0]?.uploadversion}}</td>
-            <td>{{bsComponentInfo.comtype}}</td>
-            <td>{{componentInfosw.uploadinfos[0]?.uploadtime}}</td>
-            <td>{{bsComponentInfo.comtype}}</td>
+          <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: msgToDisplay.length, id: 'fmList' }; let i = index" >
+            <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
+            <td>{{opt.fieldName}}</td>
+            <td>{{opt.bsName}}</td>
+            <td>{{opt.compname}}</td>
+            <td>{{opt.probablecause}}</td>
+            <td>{{opt.eventtype}}</td>
+            <td>{{opt.timestamp}}</td>
+            <td>{{opt.status}}</td>
           </tr>
         </tbody>
       </table>
+      <!-- pagination -->    
+      <span class="total">{{languageService.i18n['fm.total1']}} {{msgToDisplay.length}} {{languageService.i18n['fm.total2']}}</span>
+      <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
+nextLabel="" id="fmList">
+  </pagination-controls>
     </div>
   </div>
 
@@ -118,64 +142,3 @@
 
 </div>
 
-
-
-
-<ng-template #updateModal>
-  <h5>{{languageService.i18n['software_update']}}</h5>
-  <form [formGroup]="updateForm">
-    <ul>
-      <li>
-        <label>Current Version</label>
-        <span>{{ocloudInfo.softwareVersion}}</span>
-      </li>
-      <li>
-        <label>Update Software</label>
-        <span class="SoftwareUpdate">
-          <mat-button-toggle-group formControlName="type" (change)="changeType($event)">
-            <mat-button-toggle value="imageUrl">Image URL</mat-button-toggle>
-            <mat-button-toggle value="existedFile">Existed File</mat-button-toggle>
-          </mat-button-toggle-group>
-
-          <div *ngIf="updateForm.controls['type'].value === 'imageUrl'">
-            <input type="text" formControlName="imageUrl" placeholder="Image URL" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-            <mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
-          </div>
-          <div *ngIf="updateForm.controls['type'].value === 'existedFile'">
-            <select formControlName="fileName" class="{{formValidated&&updateForm.controls['fileName'].invalid?'required':''}}">
-              <option *ngFor="let opt of softwareList" [value]="opt.fileName">{{opt.fileName}}</option>
-            </select>
-            <mat-error *ngIf="formValidated&&updateForm.controls['fileName'].invalid">Required</mat-error>
-            <div class="UV" *ngIf="updateForm.controls['type'].value === 'existedFile'">
-              Update Version : {{softwareVersion()}}
-            </div>
-          </div>
-        </span>
-      </li>
-    </ul>
-    <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
-      <button type="button" (click)="update()">OK</button>
-    </div>
-  </form>
-</ng-template>
-
-<ng-template #updateIPModal>
-  <h5>Update IP Address</h5>
-  <form [formGroup]="updateForm">
-    <ul>
-      <li>
-        <label>New IP Address</label>
-        <input type="text" formControlName="newip" class="update-ip" [ngModel]="ocloudInfo.ipAddress">
-        <div class="error-container" *ngIf="updateBasicError">
-          <mat-icon class="error-icon">warning</mat-icon>
-          Invalid IP, Please try again.
-        </div>
-      </li>
-    </ul>
-    <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
-      <button type="button" (click)="updateIPAddress()">OK</button>
-    </div>
-  </form>
-</ng-template>

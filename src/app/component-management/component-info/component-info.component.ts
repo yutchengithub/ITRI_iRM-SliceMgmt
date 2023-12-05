@@ -9,97 +9,10 @@ import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
+import { FmsgList } from './../../fault-management/fault-management.component';
+import { FaultMessages } from './../../fault-management/fault-management.component';
+import { Subscription } from 'rxjs';
 
-export interface OcloudInfo {
-  id: string;
-  name: string;
-  imsEndpoint: string;
-  ipAddress: string;
-  description: string;
-  status: string;
-  softwareVersion: string;
-  callbackUri: string;
-  dms: Dms[];
-  nf: Nf[];
-  fault: Fault;
-  resourcepool: Resourcepool[];
-}
-
-export interface Dms {
-  id: string;
-  name: string;
-  dmsEndpoint: string;
-}
-
-export interface Nf {
-  id: string;
-  name: string;
-  dmsName: string;
-  status: number;
-  actionstatus: string;
-}
-
-export interface Fault {
-  critical: number;
-  major: number;
-  minor: number;
-  warning: number;
-}
-
-export interface Resourcepool {
-  poolId: string;
-  poolName: string;
-  active?: boolean;
-  node: Node[];
-}
-
-export interface Node {
-  nodeId: string;
-  nodeName: string;
-  cpu: Cpu[];
-  memory: Memory,
-  nic: Nic[];
-  storage: Storage;
-}
-
-export interface Cpu {
-  id: string;
-  name: string;
-  product: string;
-  capacity: string;
-}
-
-export interface Nic {
-  id: string;
-  name: string;
-  product: string;
-  capacity: string;
-}
-
-export interface Memory {
-  name: string;
-  size: string;
-}
-
-export interface Storage {
-  total: string;
-  items: Items[];
-}
-
-export interface Items {
-  id: string;
-  name: string;
-  size: string;
-}
-
-export interface OcloudPerformance {
-  // totalCpu: number;
-  // usedCpu: number;
-  cpu: string;
-  memory: string;
-  storage: string;
-  network: string;
-}
 //component Info
 export interface BsComponentInfo {
   id: string;
@@ -167,11 +80,10 @@ export class ComponentInfoComponent implements OnInit {
   cloudId: string = '';
   cloudName: string = '';
   newip: string = '';
+  comId: string = '';
   // utilizationPercent: number = 0;
   bsComponentInfo: BsComponentInfo = {} as BsComponentInfo;
   uploadinfos: Uploadinfos[] = [];
-  ocloudInfo: OcloudInfo = {} as OcloudInfo;
-  ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
   softwareList: SoftwareList[] = [];
   componentInfosw: ComponentInfosw = {} as ComponentInfosw;
   systemSummary: SystemSummary = {} as SystemSummary;;
@@ -183,6 +95,7 @@ export class ComponentInfoComponent implements OnInit {
   RunRefreshTimeout!: any;
   RunRefreshTime: number = 3;
   refreshTimeout!: any;
+  ListRefreshTime: number = 5;
   @ViewChild('updateModal') updateModal: any;
   @ViewChild('updateIPModal') updateIPModal: any;
   updateModalRef!: MatDialogRef<any>;
@@ -191,6 +104,16 @@ export class ComponentInfoComponent implements OnInit {
   formValidated = false;
   /* CRITICAL,MAJOR,MINOR,WARNING */
   severitys: string[];
+  fmsgList: FmsgList = {} as FmsgList;
+  searchForm!: FormGroup;
+  p: number = 1;            // 當前頁數
+  pageSize: number = 5;    // 每頁幾筆
+  totalItems: number = 0;   // 總筆數
+  queryFaultMessageScpt!: Subscription;
+  nullList: string[] = [];  // 給頁籤套件使用
+  timeSort: '' | 'asc' | 'desc' = '';
+  isSearch: boolean = false;
+  filteredFmList: FaultMessages[] = [];
 
   tooltipOptions = {
     theme: 'light',     // 'dark' | 'light'
@@ -209,14 +132,14 @@ export class ComponentInfoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.createSearchForm();
     this.sessionId = this.commonService.getSessionId();
     this.route.params.subscribe((params) => {
-      this.cloudId = params['cloudId'];
-      this.cloudName = params['cloudName'];
-      console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
+      this.comId = params['id'];
+      //console.log('id=' + this.comId);
       this.getComponentInfo();
       this.getSoftwareList();
-      this.getOcloudPerformance();
+      this.getFaultMessage();
       
     });
   }
@@ -228,42 +151,138 @@ export class ComponentInfoComponent implements OnInit {
     if (this.commonService.isLocal) {
       /* local file test */
       this.bsComponentInfo = this.commonService.bsComponentInfo;
-      this.ocloudInfoDeal();
     } else {
-      this.commonService.queryOcloudInfo(this.cloudId).subscribe(
+      this.commonService.queryBsComponentInfo(this.comId).subscribe(
         res => {
           console.log('getOcloudInfo:');
           console.log(res);
           const str = JSON.stringify(res);//convert array to string
-          this.ocloudInfo = JSON.parse(str);
-          this.ocloudInfo = res as OcloudInfo;
-          this.ocloudInfoDeal();
+          this.bsComponentInfo = JSON.parse(str);
+          this.bsComponentInfo = res as BsComponentInfo;
         }
       );
     }
+  }
+
+   // 建立搜尋表單
+   createSearchForm() {
+    const nowTime = this.commonService.getNowTime();
+    // // // console.log(nowTime)
+    // // // 格式驗證需要處理?
+
+    this.searchForm = this.fb.group({
+      'fieldName': new FormControl(''),
+      'gnbName': new FormControl(''),
+      'compName': new FormControl(''),
+      'alarmName': new FormControl(''),
+      'severity': new FormControl('All'),
+      'status': new FormControl('All'),
+      'situation': new FormControl('All'),
+      'ackOwner': new FormControl(''),
+      'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),   // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
+      'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`))  // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
+    });
+    this.severitys = this.commonService.severitys;
+  }
+
+  getFaultMessage() {
+    //console.log('getFaultMessage:');
+    clearTimeout(this.refreshTimeout);
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.fmsgList = this.commonService.fmsgList;
+      console.log(this.fmsgList);
+      this.faultMessageDeal();
+    } else {
+      const emptyvalue = '';
+      const severity = this.searchForm.controls['severity'].value;
+      // const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
+      // const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
+      const offset = (this.p - 1) * this.pageSize;
+      const limit = 10;
+      if (this.queryFaultMessageScpt) this.queryFaultMessageScpt.unsubscribe();
+      this.queryFaultMessageScpt = this.commonService.queryFaultMessage(emptyvalue, emptyvalue, emptyvalue, severity, '', '', offset, limit).subscribe(
+        res => {
+          console.log('getFaultMessage:');
+          console.log(res);
+          const str = JSON.stringify(res);//convert array to string
+          this.fmsgList = JSON.parse(str);
+          this.fmsgList = res as FmsgList;
+          this.faultMessageDeal();
+        }
+      );
+    }
+  }
+  faultMessageDeal() {
+    //this.p = 1;
+    this.totalItems = this.fmsgList.faultMessages.length;
+    this.nullList = new Array(this.totalItems);
+    //this.refreshTimeout = window.setTimeout(() => this.getFaultMessage(), this.ListRefreshTime * 1000);
+    this.refreshTimeout = window.setTimeout(() => {
+      if (this.p === 1) {
+        //console.log(`page[${this.p}] ===> refresh.`);
+        // if (this.isSettingAdvanced) {
+        //   this.getFMAdvanceSearch();
+        // } else {
+          this.getFaultMessage();
+        // }
+
+      } else {
+        console.log(`page[${this.p}] ===> no refresh.`);
+      }
+    }, this.ListRefreshTime * 1000); //timeout 1000ms
+  }
+
+  search() {
+    this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
+    const comp_name = this.searchForm.get('compName')?.value || '';
+    const severity_lv = this.searchForm.get('severity')?.value;
+    const from = this.searchForm.get('from')?.value;
+    const to = this.searchForm.get('to')?.value;
+    // 格式化日期為所需的格式
+    const formattedFrom = this.commonService.dealPostDate(from);
+    const formattedTo = this.commonService.dealPostDate(to);
+
+    // 清除以前的搜尋結果
+    this.filteredFmList = [];
+    this.isSearch = false;
+
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.filteredFmList = this.fmsgList.faultMessages.filter(msg => {
+        const isCompMatch = !comp_name || msg.compname.includes(comp_name);
+        const isSeverityMatch = severity_lv === 'All' || msg.eventtype === severity_lv;
+        const msgDate = new Date(msg.timestamp);
+        const isAfterFrom = msgDate >= new Date(formattedFrom);
+        const isBeforeTo = msgDate <= new Date(formattedTo);
+
+        return isCompMatch && isSeverityMatch && isAfterFrom && isBeforeTo;
+      });
+      this.isSearch = true; // Local Search 完畢，設置標記為 true
+      this.totalItems = this.filteredFmList.length; // 確保更新 totalItems 以反映搜尋結果的數量
+    } else {
+
+    }
+  }
+
+  clear_search() {
+    this.createSearchForm();
+    this.isSearch = false;
+  }  
+  get msgToDisplay(): FaultMessages[] {
+    // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
+    // 否則，顯示全部 this.fmsgList.faultMessages
+    return this.isSearch ? this.filteredFmList : this.fmsgList.faultMessages;
+  }
+
+  pageChanged(page: number) {
+    this.p = page;
+    this.getFaultMessage();
   }
   
   nfRunRefresh() {
     clearTimeout(this.refreshTimeout);
-    this.RunRefreshTimeout = window.setTimeout(() => this.getOcloudPerformance(), this.RunRefreshTime * 1000);
     this.RunRefreshTimeout = window.setTimeout(() => this.getComponentInfo(), this.RunRefreshTime * 1000);
-  }
-  getOcloudPerformance() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.ocloudPerformance = this.commonService.ocloudPerformance;
-      this.ocloudPerformanceDeal();
-    } else {
-      clearTimeout(this.refreshTimeout);
-      this.commonService.queryOcloudPerformance(this.cloudId).subscribe(
-        res => {
-          console.log('getOcloudPerformance:');
-          console.log(res);
-          this.ocloudPerformance = res as OcloudPerformance;
-          this.ocloudPerformanceDeal();
-        }
-      );
-    }
   }
 
   getSoftwareList() {
@@ -301,39 +320,8 @@ export class ComponentInfoComponent implements OnInit {
     }
   }
 
-  ocloudInfoDeal() {
-    if (this.ocloudInfo.resourcepool && this.ocloudInfo.resourcepool.length > 0) {
-      this.ocloudInfo.resourcepool[0].active = true;
-    }
-  }
-
-  ocloudPerformanceDeal() {
-    // this.utilizationPercent = Math.floor((Number(this.ocloudPerformance.usedCpu) / Number(this.ocloudPerformance.totalCpu)) * 100);
-    if (this.ocloudPerformance.cpu != 'N/A' || this.ocloudPerformance.storage != 'N/A' ||
-      this.ocloudPerformance.memory != 'N/A' || this.ocloudPerformance.network != 'N/A') {
-      this.ocloudPerformance.cpu += ' %';
-      this.ocloudPerformance.memory += ' GB';
-      this.ocloudPerformance.storage += ' MB';
-      this.ocloudPerformance.network += ' Kbps';
-    }
-  }
-
   severityText(severity: string): string {
     return this.commonService.severityText(severity);
-  }
-
-  severityCount(severity: string): number {
-    if (severity.toUpperCase() === this.severitys[0]) {
-      return this.ocloudInfo.fault.critical;
-    } else if (severity.toUpperCase() === this.severitys[1]) {
-      return this.ocloudInfo.fault.major;
-    } else if (severity.toUpperCase() === this.severitys[2]) {
-      return this.ocloudInfo.fault.minor;
-    } else if (severity.toUpperCase() === this.severitys[3]) {
-      return this.ocloudInfo.fault.warning;
-    } else {
-      return 0;
-    }
   }
 
   back() {
@@ -385,89 +373,12 @@ export class ComponentInfoComponent implements OnInit {
     this.updateForm.controls['fileName'].updateValueAndValidity();
   }
 
-  update() {
-    this.formValidated = true;
-    if (!this.updateForm.valid) {
-      return;
-    }
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.updateModalRef.close();
-    } else {
-      const body: any = {
-        ocloud: this.ocloudInfo.id,
-        currentVersion: this.ocloudInfo.softwareVersion,
-        sessionid: this.sessionId
-      };
-      if (this.updateForm.controls['type'].value === 'imageUrl') {
-        const imageUrlSplit = this.updateForm.controls['imageUrl'].value.split('/');
-        body['fileName'] = imageUrlSplit[imageUrlSplit.length - 1];
-      } else {
-        body['fileName'] = this.updateForm.controls['fileName'].value;
-        body['version'] = this.softwareVersion();
-      }
-      this.commonService.applyOcloudSoftware(body).subscribe(
-        () => console.log('Update Successful.')
-      );
-      this.updateModalRef.close();
-      this.getComponentInfo();
-    }
-    this.getComponentInfo();
-  }
 
   updateNFSuccessful: boolean | null = null; 
   hideUpdateIcon() {
     setTimeout(() => {
       this.updateNFSuccessful = null;
     }, 3000);
-  }
-  updateIPAddress() {
-    this.updateBasicError = false; // Reset the error state
-    const newIPControl = this.updateForm.get('newip');
-    if (newIPControl) {
-      this.newip = newIPControl.value;
-    }
-    const ipPattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)$/;
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.updateIPModalRef.close();
-    } else {
-      const isIPValid = ipPattern.test(this.newip);
-      if (isIPValid) {
-        // Valid IP and non-empty port, proceed with the update
-        const body: any = {
-          ocloud: this.ocloudInfo.id,
-          ip: this.newip,
-        };
-        // this.commonService.queryOCInfoUpdate(body).subscribe(
-        //   () => console.log('Update Successful.')  
-        // );
-        this.updateNFSuccessful = true;
-        this.hideUpdateIcon();
-        this.updateIPModalRef.close();
-        this.getComponentInfo();
-      } else {
-        // Form validation failed, set the error flag
-        this.updateNFSuccessful = false;
-        this.hideUpdateIcon();
-        this.updateBasicError = true;
-      }
-    }
-    this.getComponentInfo();
-  }
-
-  veiw(opt: Nf) {
-    const url = '/main/nf-mgr';
-    this.router.navigate([url]);
-  }
-
-  goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr', 'ocloud', this.ocloudInfo.id, 'All']);
-  }
-
-  goNFMgr(opt: Nf) {
-    const nfId = opt.id;
-    this.router.navigate(['/main/nf-mgr', nfId]);
   }
 
 }
