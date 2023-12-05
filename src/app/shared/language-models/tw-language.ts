@@ -58,6 +58,7 @@ export const TwLanguage = {
   'field.delTitle':'刪除',
   'field.delItem':'刪除此場域',
   'field.add':'新增場域',
+  'field.info':'場域詳細資訊',
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',

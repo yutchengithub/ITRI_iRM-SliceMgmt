@@ -73,6 +73,7 @@ export interface Utilization {
   maxPdu: string;
 }
 
+
 @Component({
   selector: 'app-field-management',
   templateUrl: './field-management.component.html',
@@ -133,7 +134,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.sessionId = this.commonService.getSessionId();
     // Field Summary
-    this.getFieldsInfo();
+    this.getQueryFieldList();
   }
 
   // 銷毀 Component 時的清理工作
@@ -145,24 +146,24 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   }
 
   // @11/30 Add by yuchen
-  getFieldsInfo() {
-    console.log('getFieldsInfo() - Start');
+  getQueryFieldList() {
+    console.log('getQueryFieldList() - Start');
     clearTimeout(this.refreshTimeout);
   
     if (this.commonService.isLocal) {
 
       // 本地模式使用本地數據
       this.fieldList = this.commonService.fieldList;	
-      this.FieldsinfoDeal();
+      this.FieldListDeal();
 
     } else {
 
       // 使用 commonService 中的 queryFieldList() 發起 HTTP GET 請求
       this.commonService.queryFieldList().subscribe({
         next: (res) => {
-          console.log('getFieldsInfo:', res);
+          console.log('getQueryFieldList:', res);
           this.fieldList = res;
-          this.FieldsinfoDeal();
+          this.FieldListDeal();
         },
         error: (error) => {
           console.error('Error fetching field info:', error);
@@ -175,7 +176,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   }
 
   // @11/30 Add by yuchen
-  FieldsinfoDeal() {
+  FieldListDeal() {
 
     // 輸出檢查點
     console.log('Field list length:', this.fieldList.fields?.length);
@@ -192,17 +193,20 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.refreshTimeout = window.setTimeout(() => {
       if (this.p === 1) {
         console.log(`page[${this.p}] ===> refresh.`);
-        this.getFieldsInfo();  // 取得場域訊息函數
+        //this.getQueryFieldList();  // 取得場域訊息函數
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
       }
     }, 100); // timeout: 100 ms
   }
   
-  // @11/30 Add by yuchen
+  // @12/05 Update by yuchen
   viewFieldDetail(fields: Fields) {
-    this.router.navigate(['/main/field-mgr/info', fields.id]);
+    this.selectField = fields;
+    console.log("View Detail of the field id:", this.selectField.id, "and the field name: ", this.selectField.name);
+    this.router.navigate(['/main/field-mgr/info', this.selectField.id, this.selectField.name]);
   }
+  
   
   // @12/01 Update by yuchen
   viewFieldAlarm(fields: Fields) {

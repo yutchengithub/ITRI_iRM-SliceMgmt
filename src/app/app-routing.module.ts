@@ -36,7 +36,8 @@ const routes: Routes = [
         path: 'field-mgr',
         children: [
           { path: '', component: FieldManagementComponent },
-          { path: 'info/:cloudId/:cloudName', component: FieldInfoComponent }
+          //{ path: 'info/:cloudId/:cloudName', component: FieldInfoComponent },
+          { path: 'info/:id/:name', component: FieldInfoComponent }
         ]
       },
       {

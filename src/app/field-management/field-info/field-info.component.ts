@@ -97,6 +97,84 @@ export interface OcloudPerformance {
 }
 
 
+// @12/05 Add by yuchen
+// 代表場域資訊列表
+export interface FieldInfoList {
+  fields: Field[];
+}
+
+// @12/05 Add by yuchen
+// 描述單一場域的詳細資訊
+export interface Field {
+  id: string;
+  name: string;
+  phone: string;
+  fieldposition1: string;
+  fieldposition2: string;
+  fieldposition3: string;
+  fieldposition4: string;
+  bsinfo: BsInfo[];
+  bsNum: number;
+  ueNum: string;
+  coverage: string;
+  accessibility: string;
+  availability: string;
+  mobility: string;
+  retainability: string;
+  energy: string;
+  integrity: Integrity;
+  utilization: Utilization;
+  alarmCriticalNum: number;
+  alarmMajorNum: number;
+  alarmMinorNum: number;
+  alarmWarningNum: number;
+}
+
+// @12/05 Add by yuchen
+// 描述 BS 的資訊
+export interface BsInfo {
+  id: string;
+  name: string;
+  accessibility: string | null;
+  mobility: string | null;
+  retainability: string | null;
+  energy: string | null;
+  integrity: Integrity;
+  utilization: Utilization;
+  cellInfo?: CellInfo[];
+}
+
+// @12/05 Add by yuchen
+// 描述單一 BS 之 Cell 的資訊
+export interface CellInfo {
+  nci: string;
+  accessibility: string;
+  mobility: string;
+  retainability: string;
+  energy: string;
+  integrity: Integrity;
+  utilization: Utilization;
+}
+
+// @12/05 Add by yuchen
+// 描述網路整體完整性的資訊
+export interface Integrity {
+  downlinkDelay: string | null;
+  uplinkDelay: string | null;
+  downlinkThrouthput: string | null;
+  uplinkThrouthput: string | null;
+}
+
+// @12/05 Add by yuchen
+// 描述網路使用情況的資訊
+export interface Utilization {
+  pdu: string | null;
+  resourceProcess: string | null;
+  resourceMemory: string | null;
+  resourceDisk: string | null;
+  maxPdu: string | null;
+}
+
 @Component({
   selector: 'app-field-info',
   templateUrl: './field-info.component.html',
@@ -108,6 +186,19 @@ export class FieldInfoComponent implements OnInit {
   cloudId: string = '';
   cloudName: string = '';
   // utilizationPercent: number = 0;
+
+  fieldInfoList: FieldInfoList = {} as FieldInfoList; // @12/05 Add by yuchen
+  fieldId: string = '';   // @12/05 Add by yuchen
+  fieldName: string = ''; // @12/05 Add by yuchen
+
+  refreshTimeout!: any;
+  refreshTime: number = 5;
+
+  p: number = 1;            // 當前頁數
+  pageSize: number = 10;    // 每頁幾筆
+  totalItems: number = 0;   // 總筆數
+  nullList: string[] = [];  // 給頁籤套件使用
+
   ocloudInfo: OcloudInfo = {} as OcloudInfo;
   ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
   softwareList: SoftwareList[] = [];
@@ -140,9 +231,14 @@ export class FieldInfoComponent implements OnInit {
     this.severitys = this.commonService.severitys;
   }
 
-  ngOnInit(): void {
+  ngOnInit(){
     this.sessionId = this.commonService.getSessionId();
     this.route.params.subscribe((params) => {
+      this.fieldId = params['id'];  
+      this.fieldName = params['name']; 
+      console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
+      this.getQueryFieldInfo();
+  
       this.cloudId = params['cloudId'];
       this.cloudName = params['cloudName'];
       console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
@@ -153,14 +249,71 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
+  // @12/05 Add by yuchen
+  getQueryFieldInfo() {
+      console.log('QueryFieldInfo() - Start');
+      clearTimeout(this.refreshTimeout);
+    
+      if (this.commonService.isLocal) {
+
+        // local files test
+        this.fieldInfoList = this.commonService.fieldInfoList;
+        this.fieldInfoDeal();
+
+      } else {
+
+        // 使用 commonService 中的 queryFieldInfo() 發起 HTTP GET 請求
+        this.commonService.queryFieldInfo(this.fieldId).subscribe({
+          next: (res) => {
+            console.log('API Response:', res);
+            console.log('Get queryFieldInfo from API: ', res,'\nfieldId: '+ res.id +', fieldName: '+res.name);
+            this.fieldInfoList = { fields: res };
+            console.log('0.Field info list:', this.fieldInfoList.fields);
+            this.fieldInfoDeal();
+          },
+          error: (error) => {
+            console.error('Error fetching field info:', error);
+          },
+          complete: () => {
+            console.log('Field info fetch completed');
+          }
+        });
+      }
+    }
+
+    // @11/30 Add by yuchen
+    fieldInfoDeal() {
+      // 輸出檢查點
+      console.log('fieldInfoDeal() - Start');
+      console.log('Before field info log');
+      console.log('Field info list:', this.fieldInfoList.fields);
+      console.log('Field info properties count:', this.fieldInfoList.fields ? Object.keys(this.fieldInfoList.fields).length : 'fields is undefined or null');
+      console.log('After field info log');
+
+      
+      // 定義一個空陣列，長度等於場域的總數
+      this.nullList = new Array(this.totalItems);
+    
+      // 如果需要，可以使用 setTimeout 設定一個定時刷新
+      this.refreshTimeout = window.setTimeout(() => {
+        if (this.p === 1) {
+          console.log(`page[${this.p}] ===> refresh.`);
+          //this.getQueryFieldInfo();  // 刷新場域資訊函數
+        } else {
+          console.log(`page[${this.p}] ===> no refresh.`);
+        }
+      }, 100); // timeout: 100 ms
+    }
+
+
   getOcloudInfo() {
     if (this.commonService.isLocal) {
       /* local file test */
       this.ocloudInfo = this.commonService.ocloudInfo;
       this.ocloudInfoDeal();
-    } else {
+    } else { 
       this.commonService.queryOcloudInfo(this.cloudId).subscribe(
-        res => {
+        res => { 
           console.log('getOcloudInfo:');
           console.log(res);
           const str = JSON.stringify(res);//convert array to string

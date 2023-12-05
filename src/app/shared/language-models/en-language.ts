@@ -58,6 +58,7 @@ export const Enlanguage = {
   'field.delTitle':'Delete',
   'field.delItem':'Delete this field',
   'field.add':'Add Field',
+  'field.info':'Field Detailed Information',
 
   // Fault Management
   'fm.start':'StartTime',
