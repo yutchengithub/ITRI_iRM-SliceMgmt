@@ -491,7 +491,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   // 用於點擊對應之頁數 Button 時進行頁面切換
   pageChanged(page: number) {
     this.p = page;
-    console.log(`The log type:`, this.type + `,\nThe change page number:`, this.p);
+    console.log(`Current log type: ${this.type}, Page: ${this.p}`);
 
     // @12/06 add by yuchen
     // 如點擊頁數為 1 ，即刷新對應之 Logs 數據
@@ -559,8 +559,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     // 更新當前類型，以便知道哪個 Log 類型被選中
     // Set the log type to display after tab switch
     this.type = e.value;
-    console.log('頁面切換後，顯示的 Log 類型:', this.type);
-    console.log('Log type displayed after tab switch:', this.type);
+    console.log('頁面切換後，顯示的 Log 類型:', this.type+
+    '\nLog type displayed after tab switch:', this.type);
   }
 
   // @11/21 Add by yuchen
