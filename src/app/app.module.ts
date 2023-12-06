@@ -24,7 +24,10 @@ import { LogManagementComponent } from './log-management/log-management.componen
 import { MainComponent } from './main/main.component';
 import { DxCircularGaugeModule } from 'devextreme-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatIconModule } from '@angular/material/icon';
+
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon'; // @12/06 Add MatIconRegistry by yuchen 
+import { DomSanitizer } from '@angular/platform-browser';                // @12/06 Add by yuchen
+
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -52,6 +55,9 @@ import { NfPerformanceInfoComponent } from './performance-management/nf-performa
 import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
 import { LanguageService } from './shared/service/language.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
+
+
 
 @NgModule({
   declarations: [
@@ -126,4 +132,26 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule { 
+
+// 在 Angular 服務中註冊自定義圖標 @12/06 Add by yuchen
+constructor(
+  private matIconRegistry: MatIconRegistry, // 注入 Material 圖標註冊服務
+  private domSanitizer: DomSanitizer        // 使用 DomSanitizer ( DOM 淨化服務 ) 確保自定義 SVG 圖標的 URL 安全，預防 XSS 攻擊
+
+) {
+
+  // 添加自定義圖標 'export_to_xlsx'，並設置其路徑
+  this.matIconRegistry.addSvgIcon(
+    'export_to_xlsx', 
+    this.domSanitizer.bypassSecurityTrustResourceUrl('assets/img/xlsx.svg')
+  );
+
+  // 添加自定義圖標 'export_to_csv'，並設置其路徑
+  this.matIconRegistry.addSvgIcon(
+    'export_to_csv', 
+    this.domSanitizer.bypassSecurityTrustResourceUrl('assets/img/csv.svg')
+  );
+}
+
+}

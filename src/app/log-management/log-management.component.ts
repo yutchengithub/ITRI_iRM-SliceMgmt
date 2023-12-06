@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 //import * as CryptoJS from 'crypto-js'; @11/23 Add by yuchen 
 import * as XLSX from 'xlsx';         // @11/23 Add by yuchen 
 //import { saveAs } from 'file-saver';  // @11/23 Add by yuchen 
-import { ChangeDetectorRef } from '@angular/core';  // @12/04 Add by yuchen 
+
 
 // @10/30 Add by yuchen
 export interface UserLogsList {   
@@ -127,8 +127,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     public languageService: LanguageService,
-    private dialog: MatDialog,
-   // private cdr: ChangeDetectorRef, // @12/04 Add
+    private dialog: MatDialog
 
   ) {
 
