@@ -228,18 +228,27 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     if (this.queryUserNetconfLog) this.queryUserNetconfLog.unsubscribe();
   }
 
-  // Get User Logs @12/04 Updated
+  
+  // Get User Logs @12/06 Updated by yuchen
+  UserLogs_getNum = 0; // 用於記錄取得 User Logs 資訊之次數
   getUserLogsInfo() {
     console.log('getUserLogsInfo() - Start');
+
+    this.UserLogs_getNum++;
+    console.log('UserLogs_getNum:', this.UserLogs_getNum);
+
     clearTimeout(this.refreshTimeout);
 
     if (this.commonService.isLocal) {
 
-      // 本地模式使用本地數據
+      // Local Test
       this.UserLogsList = this.commonService.UserLogsList;
       this.UserloginfoDeal();
-      this.search_UserLogs(); // 數據是本地的，可以立即搜索  @12/04 add
 
+      // 只有在第一頁時才執行搜尋 @12/06 Add
+      if (this.p === 1) {   
+        this.search_UserLogs(); 
+      }
     } else {
 
         // 取消之前的 API 訂閱
@@ -265,7 +274,10 @@ export class LogManagementComponent implements OnInit, OnDestroy {
             this.UserLogsList = res;  // 直接賦值響應至 UserLogsList
             this.UserloginfoDeal();   // 調用處理 User Log 訊息的函數
 
-            this.search_UserLogs();   // 等待數據加載完成後執行搜尋 @12/04 Add
+            // 只有在第一頁時才執行搜尋 @12/06 Add
+            if (this.p === 1) {   
+              this.search_UserLogs(); 
+            }
           },
           error: (error) => {  // 錯誤的 callback
             console.error('Error fetching user logs:', error); // 顯示錯誤訊息
@@ -285,7 +297,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.refreshTimeout = window.setTimeout(() => {
       if (this.p === 1) {
         console.log(`page[${this.p}] ===> refresh.`);
-       // this.getUserLogsInfo();
+        this.getUserLogsInfo();
 
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
@@ -293,21 +305,28 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     }, 100); // timeout: 100 ms
   }
 
-
-  // Get NE Logs @11/30 Updated
+  
+  // Get NE Logs @12/06 Updated by yuchen
+  NELogs_getNum = 0; // 用於記錄取得 NE Logs 資訊之次數
   getNELogsInfo() {
     console.log('getNELogsInfo() - Start');
+    
+    this.NELogs_getNum++;
+    console.log('NELogs_getNum:', this.NELogs_getNum);
 
     // 清除之前設置的定時器以避免重複執行
     clearTimeout(this.refreshTimeout);
 
     if (this.commonService.isLocal) {
 
-      // 本地測試，直接使用本地存儲的 NE Log 數據
+      // Local Test
       this.NELogsList = this.commonService.NELogsList;
       this.NEloginfoDeal();
-      this.search_NELogs(); // 數據是本地的，可以立即搜尋  @12/04 add
 
+      // 只有在第一頁時才執行搜尋 @12/06 Add
+      if (this.p === 1) {   
+        this.search_NELogs(); 
+      }
     } else {
 
       // 取消之前的任何 API 訂閱
@@ -322,8 +341,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         end: this.commonService.dealPostDate(this.searchForm.controls['to'].value),        // 取得結束日期
         neLogType: this.searchForm.get('NELogType')?.value,     // 取得 NE Log 類型
         keyword: this.searchForm.get('keyword')?.value || '',   // 取得想搜尋的關鍵字
-        offset: (this.p - 1) * this.pageSize, // 計算分頁的 offset，以便從正確的記錄開始獲取 Log
-        limit: 20000                          // 設定顯示的 Log 數量限制
+        offset: (this.p - 1) * this.pageSize,                   // 計算分頁的 offset，以便從正確的記錄開始獲取 Log
+        limit: 20000                                            // 設定顯示的 Log 數量限制
       };
 
       // @11/30 Add by yuchen
@@ -334,13 +353,16 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           this.NELogsList = response; // 直接賦值響應至 NELogsList
           this.NEloginfoDeal();       // 調用處理 NE Log 訊息的函數
 
-          this.search_NELogs();       // 等待數據加載完成後執行搜尋 @12/04 Add
+          // 只有在第一頁時才執行搜尋 @12/06 Add
+          if (this.p === 1) {   
+            this.search_NELogs(); 
+          }
         },
         error: (error) => {   // 錯誤的 callback
           console.error('Error fetching NE logs:', error); // 顯示錯誤訊息
         },
         complete: () => {     // 完成的 callback
-          console.log('NE logs fetch completed');   // 顯示完成訊息
+          console.log('NE logs fetch completed');          // 顯示完成訊息
         }
       });
     }
@@ -354,7 +376,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       if (this.p === 1) {
         
         console.log(`page[${this.p}] ===> refresh.`);
-        //this.getNELogsInfo();
+        this.getNELogsInfo();
 
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
@@ -466,12 +488,22 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }
 
 
-  // 用於點擊對應 Button 時進行頁面切換
+  // 用於點擊對應之頁數 Button 時進行頁面切換
   pageChanged(page: number) {
     this.p = page;
-    console.log(`The change page is:`, this.p);
-    //this.getUserLogsInfo(); // 
-    //this.getNELogsInfo();   // 
+    console.log(`The log type:`, this.type + `,\nThe change page number:`, this.p);
+
+    // @12/06 add by yuchen
+    // 如點擊頁數為 1 ，即刷新對應之 Logs 數據
+    if(this.p === 1){
+
+      if (this.type === 'User_Logs') { // 如為 User Logs 頁面
+        this.getUserLogsInfo();
+
+      } else if (this.type === 'NE_Logs') { // 如為 NE Logs 頁面
+        this.getNELogsInfo();
+      }
+    }
   }
 
   // 用於點擊至對應的 Button 時，進行頁面的切換 
