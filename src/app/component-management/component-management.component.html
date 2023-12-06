@@ -10,7 +10,10 @@
           <input type="text"formControlName="model">
       </span>
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-      <span tooltip="{{languageService.i18n['ExportCSV']}}" class="material-icons" (click)="exportToCSV('componentList')">content_paste_go</span>
+      <!-- <span tooltip="{{languageService.i18n['ExportCSV']}}" class="material-icons" (click)="exportToCSV('componentList')">content_paste_go</span> -->
+      <span tooltip="{{languageService.i18n['ExportCSV']}}" class="material-icons" (click)="exportToCSV('componentList')">
+        <mat-icon svgIcon="export_to_csv"></mat-icon>
+      </span>
       <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSetting()">clear</span>
     </div>
   </form>
