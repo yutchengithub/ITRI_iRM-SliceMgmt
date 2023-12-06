@@ -491,7 +491,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   // 用於點擊對應之頁數 Button 時進行頁面切換
   pageChanged(page: number) {
     this.p = page;
-    console.log(`Current log type: ${this.type}, Page: ${this.p}`);
+    console.log(`Current log type:`, this.type+`, Page:`, this.p);
 
     // @12/06 add by yuchen
     // 如點擊頁數為 1 ，即刷新對應之 Logs 數據
