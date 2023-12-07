@@ -96,16 +96,9 @@ export interface OcloudPerformance {
   network: string;
 }
 
-
-// @12/05 Add by yuchen
-// 代表場域資訊列表
-export interface FieldInfoList {
-  fields: Field[];
-}
-
 // @12/05 Add by yuchen
 // 描述單一場域的詳細資訊
-export interface Field {
+export interface FieldInfo {
   id: string;
   name: string;
   phone: string;
@@ -187,7 +180,7 @@ export class FieldInfoComponent implements OnInit {
   cloudName: string = '';
   // utilizationPercent: number = 0;
 
-  fieldInfoList: FieldInfoList = {} as FieldInfoList; // @12/05 Add by yuchen
+  fieldInfo: FieldInfo = {} as FieldInfo; // @12/05 Add by yuchen
   fieldId: string = '';   // @12/05 Add by yuchen
   fieldName: string = ''; // @12/05 Add by yuchen
 
@@ -212,6 +205,7 @@ export class FieldInfoComponent implements OnInit {
   updateModalRef!: MatDialogRef<any>;
   updateForm!: FormGroup;
   formValidated = false;
+
   /* CRITICAL,MAJOR,MINOR,WARNING */
   severitys: string[];
 
@@ -257,7 +251,7 @@ export class FieldInfoComponent implements OnInit {
       if (this.commonService.isLocal) {
 
         // local files test
-        this.fieldInfoList = this.commonService.fieldInfoList;
+        this.fieldInfo = this.commonService.fieldInfo;
         this.fieldInfoDeal();
 
       } else {
@@ -265,10 +259,9 @@ export class FieldInfoComponent implements OnInit {
         // 使用 commonService 中的 queryFieldInfo() 發起 HTTP GET 請求
         this.commonService.queryFieldInfo(this.fieldId).subscribe({
           next: (res) => {
-            console.log('API Response:', res);
             console.log('Get queryFieldInfo from API: ', res,'\nfieldId: '+ res.id +', fieldName: '+res.name);
-            this.fieldInfoList = { fields: res };
-            console.log('0.Field info list:', this.fieldInfoList.fields);
+            this.fieldInfo = res ;
+            console.log('The Field info:', this.fieldInfo);
             this.fieldInfoDeal();
           },
           error: (error) => {
@@ -285,9 +278,8 @@ export class FieldInfoComponent implements OnInit {
     fieldInfoDeal() {
       // 輸出檢查點
       console.log('fieldInfoDeal() - Start');
-      console.log('Before field info log');
-      console.log('Field info list:', this.fieldInfoList.fields);
-      console.log('Field info properties count:', this.fieldInfoList.fields ? Object.keys(this.fieldInfoList.fields).length : 'fields is undefined or null');
+      console.log('The field info:', this.fieldInfo);
+      console.log('The field info properties count:', this.fieldInfo ? Object.keys(this.fieldInfo).length : 'FieldInfo is undefined or null');
       console.log('After field info log');
 
       
@@ -304,6 +296,33 @@ export class FieldInfoComponent implements OnInit {
         }
       }, 100); // timeout: 100 ms
     }
+
+
+  // 設定告警種類文字 @12/07 Update by yuchen
+  severityText(severity: string): string {
+    console.log("severity:", severity);
+    return this.commonService.severityText(severity);
+  }
+
+  // 設定場域對應的告警種類數量 @12/07 Update by yuchen
+  severityCount(severity: string): number {
+  
+    if (!this.fieldInfo) {
+      return 0; // 確保 fieldInfo 已被賦值且不為空
+    }
+  
+    if (severity.toUpperCase() === 'CRITICAL') {
+      return this.fieldInfo.alarmCriticalNum;
+    } else if (severity.toUpperCase() === 'MAJOR') {
+      return this.fieldInfo.alarmMajorNum;
+    } else if (severity.toUpperCase() === 'MINOR') {
+      return this.fieldInfo.alarmMinorNum;
+    } else if (severity.toUpperCase() === 'WARNING') {
+      return this.fieldInfo.alarmWarningNum;
+    } else {
+      return 0;
+    }
+  }
 
 
   getOcloudInfo() {
@@ -408,31 +427,14 @@ export class FieldInfoComponent implements OnInit {
     // }
   }
 
-  severityText(severity: string): string {
-    return this.commonService.severityText(severity);
-  }
-
-  severityCount(severity: string): number {
-    if (severity.toUpperCase() === this.severitys[0]) {
-      return this.ocloudInfo.fault.critical;
-    } else if (severity.toUpperCase() === this.severitys[1]) {
-      return this.ocloudInfo.fault.major;
-    } else if (severity.toUpperCase() === this.severitys[2]) {
-      return this.ocloudInfo.fault.minor;
-    } else if (severity.toUpperCase() === this.severitys[3]) {
-      return this.ocloudInfo.fault.warning;
-    } else {
-      return 0;
-    }
-  }
-
+  // 返回 Field Mnagement 主頁
   back() {
     this.router.navigate(['/main/field-mgr']);
   }
 
-
+  // 往 Fault Mnagement @12/07 Update
   goFaultMgr() {
-    this.router.navigate(['/main/fault-mgr', this.cloudName, 'All']);
+    this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
   }
 
   openUpdateModel() {

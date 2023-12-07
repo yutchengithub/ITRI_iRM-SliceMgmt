@@ -4,7 +4,7 @@ import { SystemSummary } from '../dashboard/dashboard.component';
 import { OcloudSummary } from '../dashboard/dashboard.component';
 import { FieldSummary } from '../dashboard/dashboard.component';
 import { FieldList } from '../dashboard/dashboard.component';
-import { FieldInfoList } from '../field-management/field-info/field-info.component'; // @12/05 Add by yuchen
+import { FieldInfo } from '../field-management/field-info/field-info.component'; // @12/05 Add by yuchen
 import { HttpHeaders, HttpClient, HttpParams  } from '@angular/common/http';
 import { OcloudInfo, OcloudPerformance } from '../field-management/field-info/field-info.component';
 import { FmsgList, FaultMessages, FmStatus } from '../fault-management/fault-management.component';
@@ -213,6 +213,27 @@ export class CommonService {
       return '';
     }
   }
+
+  IRM_severityText(severity: string): string {
+    // 將傳入的 severity 字串轉換成大寫，並檢查是否等於 'CRITICAL'
+    if (severity.toUpperCase() === 'alarmCriticalNum') {
+      // 如果是 'alarmCriticalNum'，則返回字串 'Critical'
+      return 'Critical';
+    } else if (severity.toUpperCase() === 'alarmMajorNum') {
+      // 如果 severity 為 'alarmMajorNum'，則返回字串 'Major'
+      return 'Major';
+    } else if (severity.toUpperCase() === 'alarmMinorNum') {
+      // 如果 severity 為 'alarmMinorNum'，則返回字串 'Minor'
+      return 'Minor';
+    } else if (severity.toUpperCase() === 'alarmWarningNum') {
+      // 如果 severity 為 'alarmWarningNum'，則返回字串 'Warning'
+      return 'Warning';
+    } else {
+      // 如果 severity 不是上述任何一個值，則返回空字串
+      return '';
+    }
+  }
+
 
   details(status: number): string {
     return this.statusMapDisplayName.get(status.toString()) as string;
@@ -547,9 +568,9 @@ export class CommonService {
     ]
   };
 
-  fieldInfoList: FieldInfoList = { // @12/05 Add by yuchen
-    fields: [
-      {
+  // @12/07 Update by yuchen
+  fieldInfo: FieldInfo = {
+
         "id": "b3035b3edf9f4b3e8bee",
         "name": "ITRI",
         "phone": "0911000111",
@@ -668,8 +689,6 @@ export class CommonService {
         "alarmMajorNum": 294448,
         "alarmMinorNum": 740791,
         "alarmWarningNum": 0
-      }
-    ]
   }
 
 

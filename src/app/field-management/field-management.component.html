@@ -97,8 +97,8 @@
       </li>
     </ul>
     <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
       <button type="button" (click)="create()">OK</button>
+      <button type="button" mat-dialog-close>Cancel</button>
     </div>
   </form>
 </ng-template>
@@ -108,7 +108,7 @@
   </h5>
   <p>{{languageService.i18n['confirm_del_field']}} - {{selectField.name}} ?</p>
   <div class="buttons">
-    <button type="button" mat-dialog-close>Cancel</button>
     <button type="button" (click)="delete()">Delete</button>
+    <button type="button" mat-dialog-close>Cancel</button>
   </div>
 </ng-template>
