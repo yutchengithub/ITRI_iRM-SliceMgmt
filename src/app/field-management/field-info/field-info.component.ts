@@ -300,6 +300,12 @@ export class FieldInfoComponent implements OnInit {
 
   // 設定告警種類文字 @12/07 Update by yuchen
   severityText(severity: string): string {
+    const severityKey = `field.${severity.toLowerCase()}Fault`;
+    return this.languageService.i18n[severityKey];
+  }
+
+  // 設定告警種類給 CSS 選擇器用文字 @12/07 Add by yuchen
+  severityText_forCSS(severity: string): string {
     console.log("severity:", severity);
     return this.commonService.severityText(severity);
   }
@@ -500,7 +506,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
   goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr', 'ocloud', this.ocloudInfo.id, 'All']);
+    this.router.navigate(['/main/performance-mgr', this.fieldName]);
   }
 
 

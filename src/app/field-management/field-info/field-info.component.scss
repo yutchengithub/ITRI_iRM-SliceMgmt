@@ -365,16 +365,19 @@ svg circle {
 }
 }
 
+// @12/07 Add by yuchen
 .mapWindow {
   height: 65em;
-  width: 68em;
+  width: 68.5em;
 }
 
+// @12/07 Add by yuchen
 .faultWindow {
   height: 18em;
   width: 44em;
 }
 
+// @12/07 Add by yuchen
 .performanceWindow {
   height: 18em;
   width: 44em;
@@ -383,6 +386,7 @@ svg circle {
   left: 969px;
 }
 
+// @12/07 Add by yuchen
 .bsWindow {
   height: 27em;
   width: 44em;
@@ -392,10 +396,19 @@ svg circle {
   overflow-y: auto; 
 }
 
+// @12/07 Add by yuchen
+.button-modifyConfiguraion {
+  display: block;
+  justify-content: center;
+  align-items: center;
+  height: 10%; 
+  margin: -5px auto 10px;;
+}
+
 @media screen and (max-width:1366px) {
   .BOX {
     height: 11em;
-}
+  }
   .h30 {
     height: 100em;
     width: 100em;

@@ -3,83 +3,85 @@
     <button (click)="back()">
       <span class="material-icons">arrow_back</span>Back
     </button>
-    {{fieldName}} – {{languageService.i18n['field.info']}}
+    {{languageService.i18n['field.info']}} – {{fieldName}}
   </h5>
 
-  <div class="BOX mapWindow">
-    <label class="boxTitle">Field Map</label>
 
-    
+  <!-- Field Map (場域地圖) -->
+  <div class="BOX mapWindow">
+    <label class="boxTitle">{{ languageService.i18n['field.Map'] }}</label>
+
   </div>
 
+
+  <!-- Field Alarms Information (場域告警資訊) -->
   <div class="BOX col-md-4 center faultWindow">
-    <label class="boxTitle">{{ languageService.i18n['field.alarm'] }}
+    <label class="boxTitle">{{ languageService.i18n['field.faultInfo'] }}
       <a href="javascript:void(0)" (click)="goFaultMgr()">
-        {{ languageService.i18n['index.viewMore'] }}<span class="material-icons">more_horiz</span>
+        <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span>
       </a>
     </label>
-    <div class="percent {{severityText(severity)}}   Fault" *ngFor="let severity of severitys; let i = index" >
+    <div class="percent {{severityText_forCSS(severity)}} Fault" *ngFor="let severity of severitys; let i = index" >
       {{ severityText(severity) }}<br>{{ severityCount(severity) }}
     </div>
   </div>
+  
 
+  <!-- Field Performance Information (場域效能資訊) -->
   <div class="BOX cpu performanceWindow">
-    <label class="boxTitle">場域效能
+    <label class="boxTitle">{{languageService.i18n['field.performanceInfo']}}
       <a href="javascript:void(0)" (click)="goPerformanceMgr()">
-       {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
+        <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span>
       </a>
     </label>
     <div>
       <span>
-        <img src="assets/img/cpu.png">
-        <div><label>{{languageService.i18n['index.cpuLoading']}}</label>{{ocloudPerformance.cpu}}</div>
-      </span>
-      <span>
-        <img src="assets/img/database.png">
-        <div><label>{{languageService.i18n['index.diskUsage']}}</label>{{ocloudPerformance.storage}}</div>
+
+        <div><label>{{languageService.i18n['field.handoverRate']}}</label>{{ocloudPerformance.cpu}}</div>
       </span>
       <span>
         
-        <div><label>{{languageService.i18n['index.memoryUsage']}}</label><!--span class="bold"-->{{ocloudPerformance.memory}}<!--/span--></div>
+        <div><label>{{languageService.i18n['field.accessRate']}}</label>{{ocloudPerformance.storage}}</div>
       </span>
       <span>
         
-        <div><label>{{languageService.i18n['index.networkThroughput']}}</label>{{ocloudPerformance.network}}</div>
+        <div><label>{{languageService.i18n['field.CPU_Utilization']}}</label><!--span class="bold"-->{{ocloudPerformance.memory}}<!--/span--></div>
+      </span>
+      <span>
+        
+        <div><label>{{languageService.i18n['field.Memory_Utilization']}}</label>{{ocloudPerformance.network}}</div>
       </span>
     </div>
 
   </div>
 
-
   
-
+  <!-- gNB Detailed Information (基站資訊) -->
   <div class="BOX col-md-3 basicInfo bsWindow">
-    <label class="boxTitle">基站資訊</label>
+    <label class="boxTitle">{{languageService.i18n['field.bsInfo']}}</label>
     <ul>
-      <li><label>基站名稱</label><span>{{ocloudInfo.name}}</span></li>
-      <li><label>基站類型</label><span>{{ocloudInfo.id}}</span></li>
+      <li><label>{{languageService.i18n['field.gNBname']}}</label><span>{{ocloudInfo.name}}</span></li>
+      <li><label>{{languageService.i18n['field.gNBtype']}}</label><span>{{ocloudInfo.id}}</span></li>
       <li><label>NCI</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
       <li><label>PCI</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
       <li><label>PLMN ID</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
       <li><label>Tx Power (dBm)</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
       <li><label>NR-ARFCN-UL</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
       <li><label>NR-ARFCN-DL</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-      <li><label>經度</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-      <li><label>緯度</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+      <li><label>{{languageService.i18n['field.Longitude']}}</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+      <li><label>{{languageService.i18n['field.Latitude']}}</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
     </ul>
-    <span>{{ocloudInfo.softwareVersion}}
-      <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">修改設定</button>
+    <span>
+      <button class="button-modifyConfiguraion" tooltip="{{languageService.i18n['field.modifyConfiguraion']}}" (click)="openUpdateModel()">{{languageService.i18n['field.modifyConfiguraion']}}</button>
     </span>
 
-    <label class="boxTitle">鄰近基站列表</label>
+    <label class="boxTitle">{{languageService.i18n['field.neighboringBSList']}}</label>
     <ul>
       <li><label>PLMN ID</label><span>{{ocloudInfo.name}}</span></li>
       <li><label>NCI</label><span>{{ocloudInfo.id}}</span></li>
       <li><label>PCI</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
     </ul>
   </div>
-
-  
 
 </div>
 
