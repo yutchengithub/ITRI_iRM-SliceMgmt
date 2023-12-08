@@ -297,6 +297,13 @@ export class FieldInfoComponent implements OnInit {
       }, 100); // timeout: 100 ms
     }
 
+  // @12/08 Add
+  currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何colorbar
+  
+  toggleColorbar(type: 'RSRP' | 'SINR') { // @12/08 Add
+    this.currentColorbar = this.currentColorbar === type ? null : type;
+  }
+  
 
   // 設定告警種類文字 @12/07 Update by yuchen
   severityText(severity: string): string {

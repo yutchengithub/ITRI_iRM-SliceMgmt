@@ -67,6 +67,10 @@ svg circle {
   font-size: 20px;
   margin:0.1em 0.3em .1em 0;
 }
+.ocloudInfo{
+  max-height: calc(450vh - 250px); 
+  overflow-y: auto;
+}
 .boxTitle {
   display: block;
   font-size: 2em;
@@ -95,6 +99,36 @@ svg circle {
   fill: #fff!important;
 }
 
+// @12/08 Add by yuchen
+.boxTitleRightAligned {
+  display: flex; /* 使用 flex 布局 */
+  justify-content: space-between; /* 兩端對齊，子元素之間間隔相等 */
+  align-items: center; /* 子元素垂直居中 */
+  font-size: 2em; /* 或根據您的需求進行調整 */
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  text-align: left; /* 文字對齊設定為左對齊 */
+}
+
+// @12/08 Add by yuchen
+/* 新增或修改的 CSS */
+.boxTitleRightAligned {
+  justify-content: center; /* 讓內部元素整體居中對齊 */
+}
+
+.boxTitleRightAligned .title-container {
+  flex-grow: 1; /* 讓標題容器增長佔據空間，以保持標題置中 */
+  text-align: center; /* 確保標題文字居中 */
+}
+
+.boxTitleRightAligned .button-container {
+  display: flex;
+  justify-content: flex-end; /* 讓按鈕容器內的元素靠右對齊 */
+  flex-grow: 0; /* 防止按鈕容器增長，使其僅佔需要的空間 */
+}
+
+
 .BOX {
   position: relative;
   display: inline-block;
@@ -108,7 +142,7 @@ svg circle {
   width:31.55%;
 }
 .col-md-4 {
-  width: 48%;
+  width: 38.5%;
 }
 .col-md-8 {
   width:45.7%;
@@ -213,6 +247,71 @@ svg circle {
   overflow-x: auto;
   overflow-y: hidden;
 }
+
+// @12/08 Add by yuchen
+table{
+  margin-left: auto;
+  margin-right: auto; // 使表格在其容器內居中
+}
+
+#ColorBar img {
+  max-width: 56%;  // 確保圖片的寬度永遠不會超過其容器
+  height: auto;    // 高度設定為自動，以維持長寬比
+  position: relative;
+  left: 30px;
+}
+
+.colorbar-title {
+  font-weight: bolder;
+  color: rgb(188, 211, 233); // 設定字體顏色
+  font-size: 27.5px;
+  position: relative;
+  left: 8.5px;
+  bottom: 5px;
+}
+
+#ColorBar .RSRP_values {
+  //text-align: center; // 確保數據在其容器中居中對齊
+  //margin-top: 0px;  // 在colorbar和數據之間提供一些空間
+  color: rgb(188, 211, 233); // 設定字體顏色
+  font-size: 21.5px;    // 設定字體大小
+  font-family: Arial, sans-serif; // 設定字體
+  padding: 20px 10;     // 上下填充
+  //background-color: rgba(0, 0, 0, 0.5); // 半透明的背景
+  // border-radius: 5px;                  // 圓角邊框
+  display: block; // 使 div 作為塊級元素顯示
+  width: auto;    // 根據內容自動調整寬度 
+  position: relative;
+  left: 11px;
+  top: 2.5px;
+}
+
+#ColorBar .RSRP_values span {
+  margin-right: 140px;     // 在值之間添加空間
+  display: inline-block;  // 使span行內顯示
+}
+
+#ColorBar .SINR_values {
+  //text-align: center; // 確保數據在其容器中居中對齊
+  //margin-top: 0px;    // 在colorbar和數據之間提供一些空間
+  color: rgb(188, 211, 233); // 設定字體顏色
+  font-size: 21.5px;           // 設定字體大小
+  font-family: Arial, sans-serif; // 設定字體
+  padding: 20px 10;     // 上下填充
+  //background-color: rgba(0, 0, 0, 0.5); // 可半透明的背景
+  // border-radius: 5px;                  // 圓角邊框
+  display: block;  // 使 div 作為塊級元素顯示
+  width: auto;     // 根據內容自動調整寬度 
+  position: relative;
+  left: 15px;
+  top: 2.5px;
+}
+
+#ColorBar .SINR_values span {
+  margin-right: 203px;     // 在值之間添加空間
+  display: inline-block;   // 使 span 行內顯示
+}
+
 .greenLight {
   display: inline-block;
   width: 1em;
@@ -369,30 +468,34 @@ svg circle {
 .mapWindow {
   height: 55em;
   width: 68.5em;
+  // position: fixed;
 }
 
 // @12/07 Add by yuchen
 .faultWindow {
   height: 18em;
   width: 44em;
+  position: fixed;
+  top: 121.5px;
+  left: 1273px;
 }
 
 // @12/07 Add by yuchen
 .performanceWindow {
   height: 18em;
   width: 44em;
-  position: relative;
-  bottom: 525px;
-  left: 975px;
+  position: fixed;
+  top: 380px;
+  left: 1273px;
 }
 
 // @12/07 Add by yuchen
 .bsWindow {
   height: 27em;
   width: 44em;
-  position: relative;
-  bottom: 264px;
-  left: 344px;
+  position: fixed;
+  top: 638.5px;
+  left: 1273px;
   overflow-y: auto; 
 }
 
@@ -402,7 +505,7 @@ svg circle {
   justify-content: center;
   align-items: center;
   height: 10%; 
-  margin: -5px auto 10px;;
+  margin: -5px auto 20px;;
 }
 
 @media screen and (max-width:1366px) {

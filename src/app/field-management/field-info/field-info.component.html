@@ -8,14 +8,62 @@
 
 
   <!-- Field Map (場域地圖) -->
+  <!-- <div class="BOX mapWindow">
+    <label class="boxTitle">{{ languageService.i18n['field.Map'] }}
+      <a href="javascript:void(0)" (click)="goFaultMgr()">
+        <span class="material-icons" tooltip="{{languageService.i18n['field.MapOption']}}">more_horiz</span>
+      </a>
+    </label>
+
+  </div> -->
   <div class="BOX mapWindow">
-    <label class="boxTitle">{{ languageService.i18n['field.Map'] }}</label>
+    <label class="boxTitle boxTitleRightAligned">
+      <span class="title-container">{{ languageService.i18n['field.Map'] }}</span>
+      <div class="button-container">
+        <button>{{ languageService.i18n['field.image'] }}</button>
+        <button>NR</button>
+        <button (click)="toggleColorbar('RSRP')">{{ languageService.i18n['field.rsrpMap'] }}</button>
+        <button (click)="toggleColorbar('SINR')">{{ languageService.i18n['field.sinrMap'] }}</button>
+        <span class="material-icons" tooltip="{{ languageService.i18n['field.MapOption'] }}">more_horiz</span>
+      </div>
+    </label>
 
   </div>
-
+  <div id="ColorBar" style="margin-top: -10px; ">
+    <ul *ngIf="currentColorbar === 'RSRP'">
+      <span class="colorbar-title">RSRP</span>
+      <div>
+        <img src="assets/img/rsrp_colorbar.png">
+        <!-- RSRP 數值條 -->
+        <div class="RSRP_values">
+          <span>-130</span>
+          <span>-120</span>
+          <span>-110</span>
+          <span>-100</span>
+          <span>-90</span>
+          <span>-80</span>
+        </div>
+      </div>
+    </ul>
+    <ul *ngIf="currentColorbar === 'SINR'">
+      <span class="colorbar-title">SINR</span>
+      <div>
+        <img src="assets/img/rsrp_colorbar.png">
+        <!-- SINR 數值條 -->
+        <div class="SINR_values">
+          <span>-10</span>
+          <span>0</span>
+          <span>10</span>
+          <span>20</span>
+          <span>30</span>
+        </div>
+      </div>
+    </ul>
+  </div>
+  
 
   <!-- Field Alarms Information (場域告警資訊) -->
-  <div class="BOX col-md-4 center faultWindow">
+  <div class="BOX center faultWindow">
     <label class="boxTitle">{{ languageService.i18n['field.faultInfo'] }}
       <a href="javascript:void(0)" (click)="goFaultMgr()">
         <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span>
@@ -75,14 +123,38 @@
       <button class="button-modifyConfiguraion" tooltip="{{languageService.i18n['field.modifyConfiguraion']}}" (click)="openUpdateModel()">{{languageService.i18n['field.modifyConfiguraion']}}</button>
     </span>
 
-    <label class="boxTitle">{{languageService.i18n['field.neighboringBSList']}}</label>
-    <ul>
-      <li><label>PLMN ID</label><span>{{ocloudInfo.name}}</span></li>
-      <li><label>NCI</label><span>{{ocloudInfo.id}}</span></li>
-      <li><label>PCI</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-    </ul>
-  </div>
-
+    <div>
+      <label class="boxTitle">{{languageService.i18n['field.neighboringBSList']}}</label>
+        <!-- @12/08 Add by yuchen -->
+        <div class="table ">
+          <table>
+            <thead>
+              <tr>
+                <th>PLMN ID</th>
+                <th>NCI</th>
+                <th>PCI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- <tr /**ngFor="let opt of msgToDisplay" >
+                <td>{{opt.fieldName}}</td>
+                <td>{{opt.bsName}}</td>
+                <td>{{opt.compname}}</td>
+              </tr> -->
+              <tr>
+                <td>46655</td>
+                <td>000004108</td>
+                <td>100</td>
+              </tr>
+              <tr>
+                <td>46655</td>
+                <td>000050109</td>
+                <td>101</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 </div>
 
 
