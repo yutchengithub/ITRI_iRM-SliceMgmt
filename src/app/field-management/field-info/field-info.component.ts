@@ -206,12 +206,20 @@ export class FieldInfoComponent implements OnInit {
   updateForm!: FormGroup;
   formValidated = false;
 
-  /* CRITICAL,MAJOR,MINOR,WARNING */
+  // For Fault Alarms: CRITICAL, MAJOR, MINOR, WARNING
   severitys: string[];
 
   tooltipOptions = {
     theme: 'light',     // 'dark' | 'light'
     hideDelay: 250
+  };
+
+  // For import Google Maps @12/10 Add by yuchen
+  center: google.maps.LatLngLiteral = {lat: 24, lng: 121};
+  zoom = 8;
+  mapOptions: google.maps.MapOptions = {
+    mapTypeId: 'roadmap',
+    // ... 更多的選項
   };
 
   constructor(

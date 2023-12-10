@@ -1,3 +1,4 @@
+
 <div class="ocloudInfo">
   <h5>
     <button (click)="back()">
@@ -16,149 +17,152 @@
     </label>
 
   </div> -->
-  <div class="BOX mapWindow">
-    <label class="boxTitle boxTitleRightAligned">
-      <span class="title-container">{{ languageService.i18n['field.Map'] }}</span>
-      <div class="button-container">
-        <button>{{ languageService.i18n['field.image'] }}</button>
-        <button>NR</button>
-        <button (click)="toggleColorbar('RSRP')">{{ languageService.i18n['field.rsrpMap'] }}</button>
-        <button (click)="toggleColorbar('SINR')">{{ languageService.i18n['field.sinrMap'] }}</button>
-        <span class="material-icons" tooltip="{{ languageService.i18n['field.MapOption'] }}">more_horiz</span>
-      </div>
-    </label>
-
-  </div>
-  <div id="ColorBar" style="margin-top: -10px; ">
-    <ul *ngIf="currentColorbar === 'RSRP'">
-      <span class="colorbar-title">RSRP</span>
-      <div>
-        <img src="assets/img/rsrp_colorbar.png">
-        <!-- RSRP 數值條 -->
-        <div class="RSRP_values">
-          <span>-130</span>
-          <span>-120</span>
-          <span>-110</span>
-          <span>-100</span>
-          <span>-90</span>
-          <span>-80</span>
-        </div>
-      </div>
-    </ul>
-    <ul *ngIf="currentColorbar === 'SINR'">
-      <span class="colorbar-title">SINR</span>
-      <div>
-        <img src="assets/img/rsrp_colorbar.png">
-        <!-- SINR 數值條 -->
-        <div class="SINR_values">
-          <span>-10</span>
-          <span>0</span>
-          <span>10</span>
-          <span>20</span>
-          <span>30</span>
-        </div>
-      </div>
-    </ul>
-  </div>
   
+  <div>
+    <div class="BOX mapWindow">
+      <label class="boxTitle boxTitleRightAligned">
+        <span class="title-container">{{ languageService.i18n['field.Map'] }}</span>
+        <div class="button-container">
+          <button>{{ languageService.i18n['field.image'] }}</button>
+          <button>NR</button>
+          <button (click)="toggleColorbar('RSRP')">{{ languageService.i18n['field.rsrpMap'] }}</button>
+          <button (click)="toggleColorbar('SINR')">{{ languageService.i18n['field.sinrMap'] }}</button>
+          <span class="material-icons" tooltip="{{ languageService.i18n['field.MapOption'] }}">more_horiz</span>
+        </div>
+      </label>
+      <google-map width="915px" height="715px"
+        [center]="center"
+        [zoom]="zoom"
+        [options]="mapOptions">
+      </google-map>
 
-  <!-- Field Alarms Information (場域告警資訊) -->
-  <div class="BOX center faultWindow">
-    <label class="boxTitle">{{ languageService.i18n['field.faultInfo'] }}
-      <a href="javascript:void(0)" (click)="goFaultMgr()">
-        <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span>
-      </a>
-    </label>
-    <div class="percent {{severityText_forCSS(severity)}} Fault" *ngFor="let severity of severitys; let i = index" >
-      {{ severityText(severity) }}<br>{{ severityCount(severity) }}
+    </div>
+    <div id="ColorBar" style="margin-top: -10px; ">
+      <ul *ngIf="currentColorbar === 'RSRP'">
+        <span class="colorbar-title">RSRP</span>
+        <div>
+          <img src="assets/img/rsrp_colorbar.png">
+          <!-- RSRP 數值條 -->
+          <div class="RSRP_values">
+            <span>-130</span>
+            <span>-120</span>
+            <span>-110</span>
+            <span>-100</span>
+            <span>-90</span>
+            <span>-80</span>
+          </div>
+        </div>
+      </ul>
+      <ul *ngIf="currentColorbar === 'SINR'">
+        <span class="colorbar-title">SINR</span>
+        <div>
+          <img src="assets/img/rsrp_colorbar.png">
+          <!-- SINR 數值條 -->
+          <div class="SINR_values">
+            <span>-10</span>
+            <span>0</span>
+            <span>10</span>
+            <span>20</span>
+            <span>30</span>
+          </div>
+        </div>
+      </ul>
     </div>
   </div>
-  
 
-  <!-- Field Performance Information (場域效能資訊) -->
-  <div class="BOX cpu performanceWindow">
-    <label class="boxTitle">{{languageService.i18n['field.performanceInfo']}}
-      <a href="javascript:void(0)" (click)="goPerformanceMgr()">
-        <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span>
-      </a>
-    </label>
-    <div>
-      <span>
-
-        <div><label>{{languageService.i18n['field.handoverRate']}}</label>{{ocloudPerformance.cpu}}</div>
-      </span>
-      <span>
-        
-        <div><label>{{languageService.i18n['field.accessRate']}}</label>{{ocloudPerformance.storage}}</div>
-      </span>
-      <span>
-        
-        <div><label>{{languageService.i18n['field.CPU_Utilization']}}</label><!--span class="bold"-->{{ocloudPerformance.memory}}<!--/span--></div>
-      </span>
-      <span>
-        
-        <div><label>{{languageService.i18n['field.Memory_Utilization']}}</label>{{ocloudPerformance.network}}</div>
-      </span>
+  <div>
+    <!-- Field Alarms Information (場域告警資訊) -->
+    <div class="BOX col-md-4 center">
+      <label class="boxTitle">{{ languageService.i18n['field.faultInfo'] }}
+        <a href="javascript:void(0)" (click)="goFaultMgr()">
+          <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span>
+        </a>
+      </label>
+      <div class="percent {{severityText_forCSS(severity)}} Fault" *ngFor="let severity of severitys; let i = index" >
+        {{ severityText(severity) }}<br>{{ severityCount(severity) }}
+      </div>
+    </div>
+    
+    <!-- Field Performance Information (場域效能資訊) -->
+    <div class="BOX cpu performanceWindow">
+      <label class="boxTitle">{{languageService.i18n['field.performanceInfo']}}
+        <a href="javascript:void(0)" (click)="goPerformanceMgr()">
+          <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span>
+        </a>
+      </label>
+      <div>
+        <span>
+          <!-- @12/10 update to get fieldInfo.coverage -->
+          <div><label>{{ languageService.i18n['field.handoverRate'] }}</label>{{ fieldInfo.coverage | number:'1.0-0' }}%</div>
+        </span>
+        <span>
+          <!-- @12/10 update to get fieldInfo.accessibility -->
+          <div><label>{{ languageService.i18n['field.accessRate'] }}</label>{{ fieldInfo.accessibility | number:'1.0-0' }}%</div>
+        </span>
+        <span>
+          <!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
+          <div><label>{{ languageService.i18n['field.CPU_Utilization'] }}</label>{{ fieldInfo.utilization.resourceProcess | number:'1.0-0' }}%</div>
+        </span>
+        <span>
+          <!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
+          <div><label>{{ languageService.i18n['field.Memory_Utilization'] }}</label>{{ fieldInfo.utilization.resourceMemory | number:'1.0-0' }}%</div>
+        </span>
+      </div>
     </div>
 
-  </div>
+    <!-- gNB Detailed Information (基站資訊) -->
+    <div class="BOX col-md-3 basicInfo bsWindow">
+      <label class="boxTitle">{{languageService.i18n['field.bsInfo']}}</label>
+      <ul>
+        <li><label>{{languageService.i18n['field.gNBname']}}</label><span>{{ocloudInfo.name}}</span></li>
+        <li><label>{{languageService.i18n['field.gNBtype']}}</label><span>{{ocloudInfo.id}}</span></li>
+        <li><label>NCI</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+        <li><label>PCI</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+        <li><label>PLMN ID</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+        <li><label>Tx Power (dBm)</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+        <li><label>NR-ARFCN-UL</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+        <li><label>NR-ARFCN-DL</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+        <li><label>{{languageService.i18n['field.Longitude']}}</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+        <li><label>{{languageService.i18n['field.Latitude']}}</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+      </ul>
+      <span>
+        <button class="button-modifyConfiguraion" tooltip="{{languageService.i18n['field.modifyConfiguraion']}}" (click)="openUpdateModel()">{{languageService.i18n['field.modifyConfiguraion']}}</button>
+      </span>
 
-  
-  <!-- gNB Detailed Information (基站資訊) -->
-  <div class="BOX col-md-3 basicInfo bsWindow">
-    <label class="boxTitle">{{languageService.i18n['field.bsInfo']}}</label>
-    <ul>
-      <li><label>{{languageService.i18n['field.gNBname']}}</label><span>{{ocloudInfo.name}}</span></li>
-      <li><label>{{languageService.i18n['field.gNBtype']}}</label><span>{{ocloudInfo.id}}</span></li>
-      <li><label>NCI</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-      <li><label>PCI</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-      <li><label>PLMN ID</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-      <li><label>Tx Power (dBm)</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-      <li><label>NR-ARFCN-UL</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-      <li><label>NR-ARFCN-DL</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-      <li><label>{{languageService.i18n['field.Longitude']}}</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-      <li><label>{{languageService.i18n['field.Latitude']}}</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-    </ul>
-    <span>
-      <button class="button-modifyConfiguraion" tooltip="{{languageService.i18n['field.modifyConfiguraion']}}" (click)="openUpdateModel()">{{languageService.i18n['field.modifyConfiguraion']}}</button>
-    </span>
-
-    <div>
-      <label class="boxTitle">{{languageService.i18n['field.neighboringBSList']}}</label>
-        <!-- @12/08 Add by yuchen -->
-        <div class="table ">
-          <table>
-            <thead>
-              <tr>
-                <th>PLMN ID</th>
-                <th>NCI</th>
-                <th>PCI</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- <tr /**ngFor="let opt of msgToDisplay" >
-                <td>{{opt.fieldName}}</td>
-                <td>{{opt.bsName}}</td>
-                <td>{{opt.compname}}</td>
-              </tr> -->
-              <tr>
-                <td>46655</td>
-                <td>000004108</td>
-                <td>100</td>
-              </tr>
-              <tr>
-                <td>46655</td>
-                <td>000050109</td>
-                <td>101</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div>
+        <label class="boxTitle">{{languageService.i18n['field.neighboringBSList']}}</label>
+          <!-- @12/08 Add by yuchen -->
+          <div class="table ">
+            <table>
+              <thead>
+                <tr>
+                  <th>PLMN ID</th>
+                  <th>NCI</th>
+                  <th>PCI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- <tr /**ngFor="let opt of msgToDisplay" >
+                  <td>{{opt.fieldName}}</td>
+                  <td>{{opt.bsName}}</td>
+                  <td>{{opt.compname}}</td>
+                </tr> -->
+                <tr>
+                  <td>46655</td>
+                  <td>000004108</td>
+                  <td>100</td>
+                </tr>
+                <tr>
+                  <td>46655</td>
+                  <td>000050109</td>
+                  <td>101</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
       </div>
+  </div>
 </div>
-
-
-
 
 <ng-template #updateModal>
   <h5>{{languageService.i18n['software_update']}}</h5>

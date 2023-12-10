@@ -56,7 +56,7 @@ import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud
 import { LanguageService } from './shared/service/language.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-
+import { GoogleMapsModule } from '@angular/google-maps';  // @12/10 Add by yuchen for googlemaps
 
 
 @NgModule({
@@ -110,7 +110,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     TooltipModule,
     TabViewModule,
     ChartModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    GoogleMapsModule,     // @12/10 Add by yuchen 
   ],
   providers: [
     AuthGuard,

@@ -1,16 +1,17 @@
 {
-  "name": "o2portal",
+  "name": "o1portal",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --port 4200",
-    "build": "ng build --base-href /O2portal/",
+    "build": "ng build --base-href /O1portal/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "deploy": "npx ngh"
   },
   "private": true,
   "dependencies": {
+    "@angular/google-maps": "^13.2.0",
     "@angular/animations": "~13.2.0",
     "@angular/cdk": "^13.3.9",
     "@angular/common": "~13.2.0",
@@ -22,8 +23,8 @@
     "@angular/platform-browser": "~13.2.0",
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
-    "chart.js": "^3.7.1",
     "angular-cli-ghpages": "^1.0.3",
+    "chart.js": "^3.7.1",
     "devextreme": "22.1.3",
     "devextreme-angular": "22.1.3",
     "lodash": "^4.17.21",
@@ -40,6 +41,7 @@
     "@angular-devkit/build-angular": "^13.3.10",
     "@angular/cli": "~13.2.5",
     "@angular/compiler-cli": "~13.2.0",
+    "@types/googlemaps": "^3.43.3",
     "@types/jasmine": "~3.10.0",
     "@types/lodash": "^4.14.182",
     "@types/node": "^12.11.1",
@@ -49,6 +51,7 @@
     "karma-coverage": "~2.1.0",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
-    "typescript": "~4.5.2"
+    "typescript": "~4.5.2",
+    "xlsx": "^0.18.5"
   }
 }
