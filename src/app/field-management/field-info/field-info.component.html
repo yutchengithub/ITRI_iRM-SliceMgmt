@@ -84,29 +84,53 @@
     </div>
     
     <!-- Field Performance Information (場域效能資訊) -->
-    <div class="BOX cpu performanceWindow">
+    <div class="BOX performanceWindow cpu">
       <label class="boxTitle">{{languageService.i18n['field.performanceInfo']}}
         <a href="javascript:void(0)" (click)="goPerformanceMgr()">
           <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span>
         </a>
       </label>
-      <div>
-        <span>
-          <!-- @12/10 update to get fieldInfo.coverage -->
-          <div><label>{{ languageService.i18n['field.handoverRate'] }}</label>{{ fieldInfo.coverage | number:'1.0-0' }}%</div>
-        </span>
-        <span>
+      <div class="performance_percent">
+        <div class="item">
+          <!-- @12/10 update to get fieldInfo.handoverRate -->
+          <div class="label-container">
+            <label>{{ languageService.i18n['field.handoverRate'] }}</label>
+          </div>
+          <circle-progress
+            [percent]="coverageAsNumber"
+            [subtitle]="coverageAsNumber + '%'"
+          ></circle-progress>
+        </div>
+        <div class="item">
           <!-- @12/10 update to get fieldInfo.accessibility -->
-          <div><label>{{ languageService.i18n['field.accessRate'] }}</label>{{ fieldInfo.accessibility | number:'1.0-0' }}%</div>
-        </span>
-        <span>
+          <div class="label-container">
+            <label>{{ languageService.i18n['field.accessRate'] }}</label>
+          </div>
+          <circle-progress
+            [percent]="accessibilityAsNumber"
+            [subtitle]="accessibilityAsNumber + '%'"
+          ></circle-progress>
+        </div>
+        <div class="item">
           <!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
-          <div><label>{{ languageService.i18n['field.CPU_Utilization'] }}</label>{{ fieldInfo.utilization.resourceProcess | number:'1.0-0' }}%</div>
-        </span>
-        <span>
+          <div class="label-container">
+            <label>{{ languageService.i18n['field.CPU_Utilization'] }}</label>
+          </div>
+          <circle-progress
+            [percent]="resourceProcessAsNumber"
+            [subtitle]="resourceProcessAsNumber + '%'"
+          ></circle-progress>
+        </div>
+        <div class="item">
           <!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
-          <div><label>{{ languageService.i18n['field.Memory_Utilization'] }}</label>{{ fieldInfo.utilization.resourceMemory | number:'1.0-0' }}%</div>
-        </span>
+          <div class="label-container">
+            <label>{{ languageService.i18n['field.Memory_Utilization'] }}</label>
+          </div>
+          <circle-progress
+            [percent]="resourceMemoryAsNumber"
+            [subtitle]="resourceMemoryAsNumber + '%'"
+          ></circle-progress>
+        </div>
       </div>
     </div>
 

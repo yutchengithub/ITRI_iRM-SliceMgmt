@@ -162,8 +162,8 @@ export interface Integrity {
 // 描述網路使用情況的資訊
 export interface Utilization {
   pdu: string | null;
-  resourceProcess: string | null;
-  resourceMemory: string | null;
+  resourceProcess: string;
+  resourceMemory: string;
   resourceDisk: string | null;
   maxPdu: string | null;
 }
@@ -253,60 +253,81 @@ export class FieldInfoComponent implements OnInit {
 
   // @12/05 Add by yuchen
   getQueryFieldInfo() {
-      console.log('QueryFieldInfo() - Start');
-      clearTimeout(this.refreshTimeout);
-    
-      if (this.commonService.isLocal) {
+    console.log('QueryFieldInfo() - Start');
+    clearTimeout(this.refreshTimeout);
+  
+    if (this.commonService.isLocal) {
 
-        // local files test
-        this.fieldInfo = this.commonService.fieldInfo;
-        this.fieldInfoDeal();
+      // local files test
+      this.fieldInfo = this.commonService.fieldInfo;
+      this.fieldInfoDeal();
 
-      } else {
+    } else {
 
-        // 使用 commonService 中的 queryFieldInfo() 發起 HTTP GET 請求
-        this.commonService.queryFieldInfo(this.fieldId).subscribe({
-          next: (res) => {
-            console.log('Get queryFieldInfo from API: ', res,'\nfieldId: '+ res.id +', fieldName: '+res.name);
-            this.fieldInfo = res ;
-            console.log('The Field info:', this.fieldInfo);
-            this.fieldInfoDeal();
-          },
-          error: (error) => {
-            console.error('Error fetching field info:', error);
-          },
-          complete: () => {
-            console.log('Field info fetch completed');
-          }
-        });
-      }
-    }
-
-    // @11/30 Add by yuchen
-    fieldInfoDeal() {
-      // 輸出檢查點
-      console.log('fieldInfoDeal() - Start');
-      console.log('The field info:', this.fieldInfo);
-      console.log('The field info properties count:', this.fieldInfo ? Object.keys(this.fieldInfo).length : 'FieldInfo is undefined or null');
-      console.log('After field info log');
-
-      
-      // 定義一個空陣列，長度等於場域的總數
-      this.nullList = new Array(this.totalItems);
-    
-      // 如果需要，可以使用 setTimeout 設定一個定時刷新
-      this.refreshTimeout = window.setTimeout(() => {
-        if (this.p === 1) {
-          console.log(`page[${this.p}] ===> refresh.`);
-          //this.getQueryFieldInfo();  // 刷新場域資訊函數
-        } else {
-          console.log(`page[${this.p}] ===> no refresh.`);
+      // 使用 commonService 中的 queryFieldInfo() 發起 HTTP GET 請求
+      this.commonService.queryFieldInfo(this.fieldId).subscribe({
+        next: (res) => {
+          console.log('Get queryFieldInfo from API: ', res,'\nfieldId: '+ res.id +', fieldName: '+res.name);
+          this.fieldInfo = res ;
+          console.log('The Field info:', this.fieldInfo);
+          this.fieldInfoDeal();
+        },
+        error: (error) => {
+          console.error('Error fetching field info:', error);
+        },
+        complete: () => {
+          console.log('Field info fetch completed');
         }
-      }, 100); // timeout: 100 ms
+      });
     }
+  }
+
+  // @11/30 Add by yuchen
+  fieldInfoDeal() {
+    // 輸出檢查點
+    console.log('fieldInfoDeal() - Start');
+    console.log('The field info:', this.fieldInfo);
+    console.log('The field info properties count:', this.fieldInfo ? Object.keys(this.fieldInfo).length : 'FieldInfo is undefined or null');
+    console.log('After field info log');
+
+    
+    // 定義一個空陣列，長度等於場域的總數
+    this.nullList = new Array(this.totalItems);
+  
+    // 如果需要，可以使用 setTimeout 設定一個定時刷新
+    this.refreshTimeout = window.setTimeout(() => {
+      if (this.p === 1) {
+        console.log(`page[${this.p}] ===> refresh.`);
+        //this.getQueryFieldInfo();  // 刷新場域資訊函數
+      } else {
+        console.log(`page[${this.p}] ===> no refresh.`);
+      }
+    }, 100); // timeout: 100 ms
+  }
+
+  // string -> number @12/11 Add by yuchen 
+  // coverage - 換手成功率
+  get coverageAsNumber(): number {
+    return parseFloat(this.fieldInfo.coverage);
+  }
+ 
+  // accessibility - 接入成功率
+  get accessibilityAsNumber(): number {
+    return parseFloat(this.fieldInfo.accessibility);
+  }
+
+  // resourceProcess - CPU 使用率
+  get resourceProcessAsNumber(): number {
+    return parseFloat(this.fieldInfo.utilization.resourceProcess);
+  }
+
+  // resourceMemory - Memory 使用率
+  get resourceMemoryAsNumber(): number {
+    return parseFloat(this.fieldInfo.utilization.resourceMemory);
+  }
 
   // @12/08 Add
-  currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何colorbar
+  currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何 colorbar
   
   toggleColorbar(type: 'RSRP' | 'SINR') { // @12/08 Add
     this.currentColorbar = this.currentColorbar === type ? null : type;

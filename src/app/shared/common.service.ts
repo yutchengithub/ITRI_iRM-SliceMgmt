@@ -615,8 +615,8 @@ export class CommonService {
             },
             "utilization": {
               "pdu": null,
-              "resourceProcess": null,
-              "resourceMemory": null,
+              "resourceProcess": "20",
+              "resourceMemory": "11",
               "resourceDisk": null,
               "maxPdu": null
             },

@@ -58,6 +58,8 @@ svg circle {
   position: relative;
   top: -38px;
 }
+
+
 .ocloudInfo h5 button {
   background: transparent;
   border-radius: 50em;
@@ -160,7 +162,7 @@ svg circle {
   width:45.7%;
 }
 .cpu > div {
-  width: 100%;
+  width: 60%;
   margin: auto;
   overflow: initial;
 }
@@ -171,15 +173,16 @@ svg circle {
 }
 .cpu span {
   display: inline-block;
-  width: 47%;
-  margin: 3% 0 3% 3%;
-  font-size: 1.35em;
+  width: 35%;
+  margin: 3% 0 3% 1%;
+  font-size: 0.85em;
   font-family: sans-serif;
 }
 .cpu span label {
   display: inline-block;
-  margin: 0 .5em 0 0;
-  font-weight: normal;
+  margin: 0 .9em 0 0;
+  font-weight: bolder;
+  //color: #eee;
 }
 .cpu span img {
   margin: 0 0.8em 0 0;
@@ -194,8 +197,10 @@ svg circle {
   vertical-align: middle;
   font-size: 1.1em;
   font-weight: bold;
-  width: 75%;
+  width: 85%;
 }
+
+
 .bigValue {
   font-size: 3em;
   font-weight: bold;
@@ -546,6 +551,41 @@ span.button-modifyConfiguraion {
   position: fixed;
   top: 377px;
   left: 1270px;
+}
+
+// @12/11 Add by yuchen
+.performance_percent {
+  display: flex;
+  flex-direction: row; /* 水平排列 */
+  justify-content: center; /* 在項目之間提供均勻的空間 */
+  //align-items: center; /* 垂直居中對齊項目 */
+  flex-wrap: nowrap; /* 防止元素換行 */
+  padding-top: 20px;
+}
+
+// @12/11 Add by yuchen
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  //flex: 50; /* 給予每個項目相等的空間 */
+  margin: 0 10px;   // 增加左右邊距，數值根據需要調整
+}
+
+// @12/11 Add by yuchen
+.label-container {
+  margin-bottom: 5px; /* 調整為所需的間距 */
+  white-space: nowrap; /* 防止標籤換行 */
+  text-align: center;
+  overflow: hidden; /* 超出容器的文本將被隱藏 */
+  text-overflow: ellipsis; /* 超出部分顯示省略符號 */
+  font-size: 1.05em; /* 根據需要調整字體大小 */
+  font-family: 'Arial', sans-serif; 
+}
+
+// @12/11 Add by yuchen
+circle-progress {
+  margin-top: 2px; /* 增加進度圈與下方元素之間的上邊距 */
 }
 
 // @12/07 Add by yuchen
