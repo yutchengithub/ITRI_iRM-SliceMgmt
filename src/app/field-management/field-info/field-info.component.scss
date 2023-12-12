@@ -21,7 +21,7 @@ svg circle {
   position: relative;
   width: 5.5em;
   height: 5.5em!important;
-  padding: 3% 0 0;
+  padding: 4.5% 0 0;
   font-size: 135%;
   font-weight: bold;
   font-family: Microsoft JhengHei;
@@ -52,13 +52,19 @@ svg circle {
   font-size: 40px;
   transition: 0.5s;
 }
+
 // @12/10 add by yuchen
 // 指定所有:nth-child的數字大於或等於 3 的 .percent 元素位置高度
 .percent:nth-child(n+3) { 
   position: relative;
-  top: -38px;
+  top: -35px;
 }
 
+// @12/12 add by yuchen for "Critical"
+.percent:nth-child(2) { 
+  position: relative;
+  top: -5px;
+}
 
 .ocloudInfo h5 button {
   background: transparent;
@@ -271,61 +277,59 @@ table{
   margin-right: auto; // 使表格在其容器內居中
 }
 
+// @12/12 Update by yuchen
 #ColorBar img {
-  max-width: 56%;  // 確保圖片的寬度永遠不會超過其容器
+  max-width: 52.5%;  // 確保圖片的寬度永遠不會超過其容器
   height: auto;    // 高度設定為自動，以維持長寬比
   position: relative;
-  left: 30px;
+  left: 25px;
 }
 
+// @12/12 Update by yuchen
 .colorbar-title {
   font-weight: bolder;
   color: rgb(188, 211, 233); // 設定字體顏色
   font-size: 27.5px;
   position: relative;
   left: 8.5px;
-  bottom: 5px;
+  bottom: 7.5px;
 }
 
+// @12/12 Update by yuchen
 #ColorBar .RSRP_values {
-  //text-align: center; // 確保數據在其容器中居中對齊
-  //margin-top: 0px;  // 在colorbar和數據之間提供一些空間
   color: rgb(188, 211, 233); // 設定字體顏色
   font-size: 21.5px;    // 設定字體大小
   font-family: Arial, sans-serif; // 設定字體
   padding: 20px 10;     // 上下填充
-  //background-color: rgba(0, 0, 0, 0.5); // 半透明的背景
-  // border-radius: 5px;                  // 圓角邊框
   display: block; // 使 div 作為塊級元素顯示
   width: auto;    // 根據內容自動調整寬度 
   position: relative;
-  left: 11px;
+  left: 73.5px;
   top: 2.5px;
 }
 
+// @12/12 Update by yuchen
 #ColorBar .RSRP_values span {
-  margin-right: 140px;     // 在值之間添加空間
-  display: inline-block;  // 使span行內顯示
+  margin-right: 128.5px;     // 在值之間添加空間
+  display: inline-block;     // 使 span 行內顯示
 }
 
+// @12/12 Update by yuchen
 #ColorBar .SINR_values {
-  //text-align: center; // 確保數據在其容器中居中對齊
-  //margin-top: 0px;    // 在colorbar和數據之間提供一些空間
-  color: rgb(188, 211, 233); // 設定字體顏色
-  font-size: 21.5px;           // 設定字體大小
+  color: rgb(188, 211, 233);    // 設定字體顏色
+  font-size: 21.5px;              // 設定字體大小
   font-family: Arial, sans-serif; // 設定字體
-  padding: 20px 10;     // 上下填充
-  //background-color: rgba(0, 0, 0, 0.5); // 可半透明的背景
-  // border-radius: 5px;                  // 圓角邊框
-  display: block;  // 使 div 作為塊級元素顯示
-  width: auto;     // 根據內容自動調整寬度 
+  padding: 20px 10;  // 上下填充
+  display: block;    // 使 div 作為塊級元素顯示
+  width: auto;       // 根據內容自動調整寬度 
   position: relative;
-  left: 15px;
+  left: 73.5px;
   top: 2.5px;
 }
 
+// @12/12 Update by yuchen
 #ColorBar .SINR_values span {
-  margin-right: 203px;     // 在值之間添加空間
+  margin-right: 189.5px;   // 在值之間添加空間
   display: inline-block;   // 使 span 行內顯示
 }
 
@@ -481,9 +485,9 @@ table{
 }
 }
 
-// @12/07 Add by yuchen
+// @12/12 Update by yuchen
 .mapWindow {
-  height: 55em;
+  height: 58em;
   width: 68.5em;
   // position: fixed;
 }
@@ -498,7 +502,6 @@ google-map {
   left: 2px;
 }
 
-/* CSS 調整 */
 .button-modifyConfiguraion > span {
   /* 樣式與 .upload > span 相同 */
   outline: 0;
@@ -532,7 +535,7 @@ google-map {
 span.button-modifyConfiguraion {
   /* 與 span.upload 相同的樣式 */
   width: 70%;
-}S
+}
 
 
 // @12/07 Add by yuchen
@@ -560,7 +563,7 @@ span.button-modifyConfiguraion {
   justify-content: center; /* 在項目之間提供均勻的空間 */
   //align-items: center; /* 垂直居中對齊項目 */
   flex-wrap: nowrap; /* 防止元素換行 */
-  padding-top: 20px;
+  padding-top: 25px;
 }
 
 // @12/11 Add by yuchen
@@ -569,7 +572,7 @@ span.button-modifyConfiguraion {
   flex-direction: column;
   align-items: center;
   //flex: 50; /* 給予每個項目相等的空間 */
-  margin: 0 10px;   // 增加左右邊距，數值根據需要調整
+  margin: 0 9px;   // 增加左右邊距，數值根據需要調整
 }
 
 // @12/11 Add by yuchen
@@ -581,6 +584,8 @@ span.button-modifyConfiguraion {
   text-overflow: ellipsis; /* 超出部分顯示省略符號 */
   font-size: 1.05em; /* 根據需要調整字體大小 */
   font-family: 'Arial', sans-serif; 
+  position: relative;
+  left: -1px;
 }
 
 // @12/11 Add by yuchen

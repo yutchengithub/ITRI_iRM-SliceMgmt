@@ -116,12 +116,12 @@ import { NgCircleProgressModule } from 'ng-circle-progress';  // @12/11 Add by y
     GoogleMapsModule,                 // @12/10 Add by yuchen for googlemaps
     NgCircleProgressModule.forRoot({  // @12/11 Add by yuchen for 圓形進度條
       maxPercent: 100,
-      radius: 38,                  // 圓的半徑，單位:像素(px)。這會影響到圓形進度條的大小。
+      radius: 45,                  // 圓的半徑，單位:像素(px)。這會影響到圓形進度條的大小。
       outerStrokeWidth: 8,         // 圓形進度條外圈的線條寬度，單位:像素(px)。
       space: -8,
       innerStrokeWidth: 8,         // 圓形進度條內圈的線條寬度，單位:像素(px)。
-      outerStrokeColor: "#47a0ff", // 定義圓形進度條外圈線條的顏色，可是任何合法的 CSS 顏色值。
-      innerStrokeColor: "#99c7f5", // 定義圓形進度條內圈線條的顏色，可是任何合法的 CSS 顏色值。
+      outerStrokeColor: "#39b3fe", // 定義圓形進度條外圈線條的顏色，可是任何合法的 CSS 顏色值。
+      innerStrokeColor: "#b6d8fb", // 定義圓形進度條內圈線條的顏色，可是任何合法的 CSS 顏色值。
       animationDuration: 300,      // 定義動畫從 0% 到指定百分比的過渡時間，單位: 毫秒(ms)。
       titleColor: '#a3bfff',
       unitsColor: '#a3bfff',

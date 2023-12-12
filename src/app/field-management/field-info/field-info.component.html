@@ -30,17 +30,17 @@
           <span class="material-icons" tooltip="{{ languageService.i18n['field.MapOption'] }}">more_horiz</span>
         </div>
       </label>
-      <google-map width="915px" height="715px"
+      <google-map width="915px" height="748px"
         [center]="center"
         [zoom]="zoom"
         [options]="mapOptions">
       </google-map>
-
     </div>
     <div id="ColorBar" style="margin-top: -10px; ">
       <ul *ngIf="currentColorbar === 'RSRP'">
-        <span class="colorbar-title">RSRP</span>
+        
         <div>
+          <span class="colorbar-title">RSRP</span>
           <img src="assets/img/rsrp_colorbar.png">
           <!-- RSRP 數值條 -->
           <div class="RSRP_values">
@@ -54,8 +54,8 @@
         </div>
       </ul>
       <ul *ngIf="currentColorbar === 'SINR'">
-        <span class="colorbar-title">SINR</span>
         <div>
+          <span class="colorbar-title">SINR</span>
           <img src="assets/img/rsrp_colorbar.png">
           <!-- SINR 數值條 -->
           <div class="SINR_values">
