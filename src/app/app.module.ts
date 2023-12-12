@@ -175,6 +175,12 @@ export class AppModule {
       'export_to_csv', 
       this.domSanitizer.bypassSecurityTrustResourceUrl('assets/img/csv.svg')
     );
+
+    // 添加自定義圖標 'BaseStation'，並設置其路徑 @12/12 Add
+    this.matIconRegistry.addSvgIcon(
+      'BaseStation', 
+      this.domSanitizer.bypassSecurityTrustResourceUrl('assets/img/base-station-signal.svg')
+    );
   }
 
 }

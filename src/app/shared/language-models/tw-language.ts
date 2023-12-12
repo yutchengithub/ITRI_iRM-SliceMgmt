@@ -81,6 +81,16 @@ export const TwLanguage = {
   'field.Latitude':'緯度',
   'field.modifyConfiguration':'修改配置',
   'field.neighboringBSList':'鄰近基站列表',
+  'field.config':'場域配置',              // @12/12 Add
+  'field.configPMset':'效能管理參數設定',  // @12/12 Add 
+  'field.report':'場域報表',              // @12/12 Add
+  'field.reportPM':'場域效能 (PM)',       // @12/12 Add
+  'field.reportFM':'告警資訊 (FM)',       // @12/12 Add
+  'field.optim':'場域優化',               // @12/12 Add
+  'field.optimSON':'執行 SON rApps',     // @12/12 Add
+  'field.bsList':'基站列表',              // @12/12 Add
+  'field.mapModel':'地圖模式',            // @12/12 Add
+  
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',

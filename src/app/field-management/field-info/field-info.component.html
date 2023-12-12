@@ -14,7 +14,53 @@
 					<button>{{ languageService.i18n['field.image'] }}</button>
 					<button>NR</button>
 					<button (click)="toggleColorbar('RSRP')">{{ languageService.i18n['field.rsrpMap'] }}</button>
-					<button (click)="toggleColorbar('SINR')">{{ languageService.i18n['field.sinrMap'] }}</button> <span class="material-icons" tooltip="{{ languageService.i18n['field.MapOption'] }}">more_horiz</span> </div>
+					<button (click)="toggleColorbar('SINR')">{{ languageService.i18n['field.sinrMap'] }}</button> 
+					<!-- @12/12 Add button with a menu -->
+					<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="icon-button with a menu" tooltip="{{ languageService.i18n['field.MapOption'] }}" >
+						<mat-icon>more_horiz</mat-icon>
+					  </button>
+					  <mat-menu #menu="matMenu">
+						<!-- Field Configuration -->
+						<button mat-menu-item disabled >
+							<mat-icon>build_circle</mat-icon>
+							<span>{{ languageService.i18n['field.config'] }}</span>
+						</button>
+						<button mat-menu-item>
+							<mat-icon></mat-icon>
+							<span>{{ languageService.i18n['field.config'] }}</span>
+						</button>
+						<button mat-menu-item>
+							<mat-icon></mat-icon>
+							<span>{{ languageService.i18n['field.configPMset'] }}</span>
+						</button>
+						<!-- Field Reports -->
+						<button mat-menu-item disabled>
+						  <mat-icon>report</mat-icon>
+						  <span>{{ languageService.i18n['field.report'] }}</span>
+						</button>
+						<button mat-menu-item>
+							<mat-icon></mat-icon>
+							<span>{{ languageService.i18n['field.reportPM'] }}</span>
+						</button>
+						<button mat-menu-item>
+							<mat-icon></mat-icon>
+							<span>{{ languageService.i18n['field.reportFM'] }}</span>
+						</button>
+						<!-- Field Optimization -->
+						<button mat-menu-item disabled>
+						  <mat-icon>settings_suggest</mat-icon>
+						  <span>{{ languageService.i18n['field.optim'] }}</span>
+						</button>
+						<button mat-menu-item>
+							<mat-icon></mat-icon>
+							<span>{{ languageService.i18n['field.optimSON'] }}</span>
+						</button>
+						<!-- <button mat-menu-item>
+						  <mat-icon svgIcon="BaseStation" class="svg-icon_BS" ></mat-icon>
+						  <span>{{ languageService.i18n['field.bsList'] }}</span>
+						</button> -->
+					  </mat-menu>
+				</div>
 			</label>
 			<google-map width="915px" height="748px" [center]="center" [zoom]="zoom" [options]="mapOptions"> </google-map>
 		</div>

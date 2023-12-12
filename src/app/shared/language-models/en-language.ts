@@ -81,6 +81,15 @@ export const Enlanguage = {
   'field.Latitude':'Latitude',
   'field.modifyConfiguration':'Modify Configuration',
   'field.neighboringBSList':'Neighboring gNB List',
+  'field.config':'Field Configuration',        // @12/12 Add
+  'field.configPMset':'PM Parameter Setting',  // @12/12 Add
+  'field.report':'Field Reports',              // @12/12 Add
+  'field.reportPM':'Performance (PM)',         // @12/12 Add
+  'field.reportFM':'Alarms (FM)',              // @12/12 Add
+  'field.optim':'Field Optimization',          // @12/12 Add
+  'field.optimSON':'SON Calculation',          // @12/12 Add
+  'field.bsList':'gNB List',                   // @12/12 Add
+  'field.mapModel':'Map Mode',                 // @12/12 Add
 
   // Fault Management
   'fm.start':'StartTime',

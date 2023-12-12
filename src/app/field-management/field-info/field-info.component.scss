@@ -15,6 +15,15 @@ svg circle {
   transform: translate(5px, 5px);
 }
 
+// @12/12 Add by yuchen for BS icon
+.svg-icon_BS {
+  width: 1.7em;
+  height: 1.7em;
+  position: relative;
+  right: 1px;
+  bottom: 4px;
+}
+
 .center {
   text-align: center;
 }
