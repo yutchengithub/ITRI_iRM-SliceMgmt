@@ -1,10 +1,10 @@
-
 svg {
   position: relative;
   width: 150px;
   height: 150px;
   z-index: 1000;
 }
+
 svg circle {
   width: 100%;
   height: 100%;
@@ -14,13 +14,15 @@ svg circle {
   stroke-linecap: round;
   transform: translate(5px, 5px);
 }
+
 .center {
   text-align: center;
 }
+
 .percent {
   position: relative;
   width: 5.5em;
-  height: 5.5em!important;
+  height: 5.5em !important;
   padding: 4.5% 0 0;
   font-size: 135%;
   font-weight: bold;
@@ -46,6 +48,7 @@ svg circle {
   font-size: 1.5em;
   color: #eee;
 }
+
 .percent .number h2 {
   color: #777;
   font-weight: 700;
@@ -55,13 +58,13 @@ svg circle {
 
 // @12/10 add by yuchen
 // 指定所有:nth-child的數字大於或等於 3 的 .percent 元素位置高度
-.percent:nth-child(n+3) { 
+.percent:nth-child(n + 3) {
   position: relative;
   top: -35px;
 }
 
 // @12/12 add by yuchen for "Critical"
-.percent:nth-child(2) { 
+.percent:nth-child(2) {
   position: relative;
   top: -5px;
 }
@@ -70,21 +73,24 @@ svg circle {
   background: transparent;
   border-radius: 50em;
   cursor: pointer;
-  font-size: .8em;
-  padding: 0.1em 1em .1em .7em;
+  font-size: 0.8em;
+  padding: 0.1em 1em 0.1em 0.7em;
   vertical-align: middle;
   margin: 0 0.5em 0 0;
 }
+
 .ocloudInfo h5 button .material-icons {
   vertical-align: middle;
   font-size: 20px;
-  margin:0.1em 0.3em .1em 0;
+  margin: 0.1em 0.3em 0.1em 0;
 }
-.ocloudInfo{
-  max-height: calc(450vh - 250px);; 
+
+.ocloudInfo {
+  max-height: calc(450vh - 250px);
   //overflow-y: auto;
   //overflow-x: auto;
 }
+
 .boxTitle {
   display: block;
   font-size: 2em;
@@ -93,70 +99,83 @@ svg circle {
   text-align: center;
   padding: 0;
 }
+
 .boxTitle a {
-    font-size: .8em;
-    position: absolute;
-    right: 1em;
-    top:.3em;
+  font-size: 0.8em;
+  position: absolute;
+  right: 1em;
+  top: 0.3em;
 }
+
 .boxTitle a .material-icons {
   vertical-align: middle;
-  font-size: .9em;
-  margin: 0 0 0 .3em;
+  font-size: 0.9em;
+  margin: 0 0 0 0.3em;
 }
+
 .boxTitle + div {
   height: 90%;
   overflow-x: hidden;
   overflow-y: auto;
 }
+
 :host ::ng-deep .dxg-title text {
-  fill: #fff!important;
+  fill: #fff !important;
 }
 
 // @12/08 Add by yuchen
 .boxTitleRightAligned {
-  display: flex; /* 使用 flex 布局 */
-  justify-content: space-between; /* 兩端對齊，子元素之間間隔相等 */
-  align-items: center; /* 子元素垂直居中 */
-  font-size: 2em; /* 或根據您的需求進行調整 */
+  display: flex;
+  /* 使用 flex 布局 */
+  justify-content: space-between;
+  /* 兩端對齊，子元素之間間隔相等 */
+  align-items: center;
+  /* 子元素垂直居中 */
+  font-size: 2em;
+  /* 或根據您的需求進行調整 */
   line-height: 1.6;
   margin: 0;
   padding: 0;
-  text-align: left; /* 文字對齊設定為左對齊 */
+  text-align: left;
+  /* 文字對齊設定為左對齊 */
 }
 
 // @12/08 Add by yuchen
 /* 新增或修改的 CSS */
 .boxTitleRightAligned {
-  justify-content: center; /* 讓內部元素整體居中對齊 */
+  justify-content: center;
+  /* 讓內部元素整體居中對齊 */
 }
 
 .boxTitleRightAligned .title-container {
-  flex-grow: 1; /* 讓標題容器增長佔據空間，以保持標題置中 */
-  text-align: center; /* 確保標題文字居中 */
+  flex-grow: 1;
+  /* 讓標題容器增長佔據空間，以保持標題置中 */
+  text-align: center;
+  /* 確保標題文字居中 */
 }
 
 .boxTitleRightAligned .button-container {
   display: flex;
-  justify-content: flex-end; /* 讓按鈕容器內的元素靠右對齊 */
-  flex-grow: 0; /* 防止按鈕容器增長，使其僅佔需要的空間 */
+  justify-content: flex-end;
+  /* 讓按鈕容器內的元素靠右對齊 */
+  flex-grow: 0;
+  /* 防止按鈕容器增長，使其僅佔需要的空間 */
 }
-
 
 .BOX {
   position: relative;
   display: inline-block;
-  padding:0 1.5em 1.5em;
+  padding: 0 1.5em 1.5em;
   vertical-align: top;
   margin: 0 1% 1% 0;
   border-radius: 10px;
   opacity: 1;
 }
 
-
 .col-md-3 {
-  width:32%;
+  width: 32%;
 }
+
 .col-md-4 {
   height: 18em;
   width: 32%;
@@ -164,19 +183,23 @@ svg circle {
   top: 121.5px;
   left: 1270px;
 }
+
 .col-md-8 {
-  width:45.7%;
+  width: 45.7%;
 }
+
 .cpu > div {
   width: 60%;
   margin: auto;
   overflow: initial;
 }
+
 .cpu .bold {
   font-size: 1.2em;
   font-weight: bold;
   color: #f5e388;
 }
+
 .cpu span {
   display: inline-block;
   width: 35%;
@@ -184,12 +207,14 @@ svg circle {
   font-size: 0.85em;
   font-family: sans-serif;
 }
+
 .cpu span label {
   display: inline-block;
-  margin: 0 .9em 0 0;
+  margin: 0 0.9em 0 0;
   font-weight: bolder;
   //color: #eee;
 }
+
 .cpu span img {
   margin: 0 0.8em 0 0;
   height: auto;
@@ -197,6 +222,7 @@ svg circle {
   display: inline-block;
   width: 3em;
 }
+
 .cpu span div {
   display: inline-block;
   margin: 0;
@@ -205,7 +231,6 @@ svg circle {
   font-weight: bold;
   width: 85%;
 }
-
 
 .bigValue {
   font-size: 3em;
@@ -217,41 +242,50 @@ svg circle {
   vertical-align: top;
   margin: 0 0 0 1.5em;
 }
+
 :host ::ng-deep .dxg-title text {
-  fill: #eee!important;
+  fill: #eee !important;
 }
+
 :host ::ng-deep #gauge svg.dxg-circular-gauge {
   display: block;
-  transform: translateX( 6px) translateY(-47px) scale(0.75);
+  transform: translateX(6px) translateY(-47px) scale(0.75);
 }
-.Fault, .cpu {
+
+.Fault,
+.cpu {
   height: 20em;
 }
+
 .basicInfo ul {
   margin: 0 0 1em 0;
-  font-size: .9em;
+  font-size: 0.9em;
 }
+
 .basicInfo ul li {
   font-size: 1.35em;
   margin: 0 0 0 1.5em;
 }
+
 .basicInfo ul li label {
   display: inline-block;
-  margin:  0;
+  margin: 0;
   width: 28%;
+}
 
-}
 .basicInfo ul li label::after {
-  content: ':';
+  content: ":";
   display: inline-block;
-  margin: 0 .3em;
+  margin: 0 0.3em;
 }
+
 .basicInfo ul li span {
   display: inline-block;
   width: 70%;
   word-break: break-all;
   vertical-align: top;
 }
+
 .basicInfo ul li span button {
   background: transparent;
   background-color: #1d61a1;
@@ -265,6 +299,7 @@ svg circle {
   border-radius: 50em;
   cursor: pointer;
 }
+
 .BOX table {
   max-height: 25em;
   overflow-x: auto;
@@ -272,15 +307,15 @@ svg circle {
 }
 
 // @12/08 Add by yuchen
-table{
+table {
   margin-left: auto;
   margin-right: auto; // 使表格在其容器內居中
 }
 
 // @12/12 Update by yuchen
 #ColorBar img {
-  max-width: 52.5%;  // 確保圖片的寬度永遠不會超過其容器
-  height: auto;    // 高度設定為自動，以維持長寬比
+  max-width: 52.5%; // 確保圖片的寬度永遠不會超過其容器
+  height: auto; // 高度設定為自動，以維持長寬比
   position: relative;
   left: 25px;
 }
@@ -298,11 +333,11 @@ table{
 // @12/12 Update by yuchen
 #ColorBar .RSRP_values {
   color: rgb(188, 211, 233); // 設定字體顏色
-  font-size: 21.5px;    // 設定字體大小
+  font-size: 21.5px; // 設定字體大小
   font-family: Arial, sans-serif; // 設定字體
-  padding: 20px 10;     // 上下填充
+  padding: 20px 10; // 上下填充
   display: block; // 使 div 作為塊級元素顯示
-  width: auto;    // 根據內容自動調整寬度 
+  width: auto; // 根據內容自動調整寬度
   position: relative;
   left: 73.5px;
   top: 2.5px;
@@ -310,18 +345,18 @@ table{
 
 // @12/12 Update by yuchen
 #ColorBar .RSRP_values span {
-  margin-right: 128.5px;     // 在值之間添加空間
-  display: inline-block;     // 使 span 行內顯示
+  margin-right: 128.5px; // 在值之間添加空間
+  display: inline-block; // 使 span 行內顯示
 }
 
 // @12/12 Update by yuchen
 #ColorBar .SINR_values {
-  color: rgb(188, 211, 233);    // 設定字體顏色
-  font-size: 21.5px;              // 設定字體大小
+  color: rgb(188, 211, 233); // 設定字體顏色
+  font-size: 21.5px; // 設定字體大小
   font-family: Arial, sans-serif; // 設定字體
-  padding: 20px 10;  // 上下填充
-  display: block;    // 使 div 作為塊級元素顯示
-  width: auto;       // 根據內容自動調整寬度 
+  padding: 20px 10; // 上下填充
+  display: block; // 使 div 作為塊級元素顯示
+  width: auto; // 根據內容自動調整寬度
   position: relative;
   left: 73.5px;
   top: 2.5px;
@@ -329,8 +364,8 @@ table{
 
 // @12/12 Update by yuchen
 #ColorBar .SINR_values span {
-  margin-right: 189.5px;   // 在值之間添加空間
-  display: inline-block;   // 使 span 行內顯示
+  margin-right: 189.5px; // 在值之間添加空間
+  display: inline-block; // 使 span 行內顯示
 }
 
 .greenLight {
@@ -340,9 +375,11 @@ table{
   border-radius: 50em;
   background-color: #89d135;
 }
+
 .redLight {
   display: inline-block;
 }
+
 .grayLight {
   display: inline-block;
   width: 1em;
@@ -354,6 +391,7 @@ table{
 .h30 {
   height: 33em;
 }
+
 .opt {
   color: #67a0c9;
   font-size: 1.1em;
@@ -363,80 +401,98 @@ table{
   margin: 0 0 0 1.5em;
   text-decoration: underline;
 }
+
 .opt .material-icons {
   vertical-align: middle;
 }
+
 .opt.active .material-icons {
   transform: rotate(180deg);
 }
+
 .opt + table thead tr th:nth-child(1),
 .opt + table tbody tr th:nth-child(1) {
   width: 30%;
 }
+
 .opt + table thead tr th:nth-child(2),
 .opt + table tbody tr th:nth-child(2) {
   width: 10%;
 }
+
 .ResourceTooltip {
   position: relative;
 }
+
 .ResourceTooltip a {
-  padding: .5em;
+  padding: 0.5em;
 }
+
 .ResourceTooltip > div {
   position: absolute;
   top: 2em;
   left: -50%;
   background-color: #99caec;
   border-radius: 4px;
-  padding: .3em;
+  padding: 0.3em;
   z-index: 99999;
 }
+
 .Interface.ResourceTooltip > div {
   left: -300%;
 }
+
 .ResourceTooltip > div table {
-  font-size:.7em;
+  font-size: 0.7em;
 }
+
 .ResourceTooltip > div table th,
 .ResourceTooltip > div table td {
-  padding: .5em 1em;
+  padding: 0.5em 1em;
   color: #333;
   background-color: transparent;
   text-align: left;
 }
+
 .ResourceTooltip > div table th {
   background-color: #192c53;
   color: #fff;
 }
+
 .ResourceTooltip > div table td {
   border: 1px solid #223b50;
   background-color: #fff;
-  padding: .1em;
+  padding: 0.1em;
   line-height: 1.35;
 }
 
 .Critical {
-  border-color: #FF0000;
+  border-color: #ff0000;
 }
+
 .Major {
-  border-color: #FFA042;
+  border-color: #ffa042;
 }
+
 .Minor {
-  border-color: #FFFF37;
+  border-color: #ffff37;
 }
+
 .Warning {
-  border-color: #00FFFF;
+  border-color: #00ffff;
 }
+
 .BOX.col-md-3 .table td {
   width: 15%;
   line-height: 1.35;
   text-align: center;
 }
+
 .BOX.col-md-3.nf .table td {
   width: 20%;
   text-align: center;
 }
+
 .BOX.col-md-3.nf .table td:nth-child(2),
 .BOX.col-md-3.nf .table td:nth-child(3) {
   width: 30%;
@@ -445,44 +501,55 @@ table{
 .BOX.col-md-3.nf .table td:nth-child(3) {
   text-align: left;
 }
+
 .table table {
   display: table;
 }
+
 .SoftwareUpdate .mat-button-toggle {
   width: 10.55em;
 }
+
 .softwareVersion {
-  margin: 0.2em .8em!important;
+  margin: 0.2em 0.8em !important;
 }
+
 .UV {
-  margin: 0.2em 0 0 .7em!important;
+  margin: 0.2em 0 0 0.7em !important;
 }
-@media screen and (max-width:1680px) {
+
+@media screen and (max-width: 1680px) {
   .h30 {
     height: 24em;
+  }
 }
-}
-@media only screen and (max-width:1600px) {
-  .percent{
+
+@media only screen and (max-width: 1600px) {
+  .percent {
     margin: 1.5em 0.5em;
   }
+
   .BOX {
     padding: 0 1em 1.5em;
     height: 17em;
   }
+
   .boxTitle {
     font-size: 1.8em;
     line-height: 1.5;
-}
-.basicInfo ul {
-  font-size: .9em;
-}
-.h30 {
-  height: 24em;
-}
-.cpu span img {
-  width: 2em;
-}
+  }
+
+  .basicInfo ul {
+    font-size: 0.9em;
+  }
+
+  .h30 {
+    height: 24em;
+  }
+
+  .cpu span img {
+    width: 2em;
+  }
 }
 
 // @12/12 Update by yuchen
@@ -494,49 +561,13 @@ table{
 
 // @12/10 Add by yuchen
 google-map {
-  height: 100%;  // 高度
-  width: 100%;   // 寬度
-  
+  height: 100%; // 高度
+  width: 100%; // 寬度
+
   position: relative;
   top: 3px;
   left: 2px;
 }
-
-.button-modifyConfiguraion > span {
-  /* 樣式與 .upload > span 相同 */
-  outline: 0;
-  padding: 0.3em 2em;
-  border: 0;
-  margin: 0 0.5em 0 0;
-  vertical-align: middle;
-  font-size: 0.9em;
-  border-radius: 50em;
-  cursor: pointer;
-}
-.button-modifyConfiguraion > span input {
-  /* 如果不需要隱藏，則此規則可能不適用 */
-  position: absolute;
-  font-size: 50px;
-  right: 0;
-  top: 0;
-  width: 100%;
-  height: 27px;
-  opacity: 0;
-  cursor: pointer;
-}
-.button-modifyConfiguraion label {
-  /* 與 .upload label 相同的樣式 */
-  word-wrap: break-word;
-  display: inline-block;
-  max-width: 75%;
-  line-height: 1;
-  vertical-align: middle;
-}
-span.button-modifyConfiguraion {
-  /* 與 span.upload 相同的樣式 */
-  width: 70%;
-}
-
 
 // @12/07 Add by yuchen
 .faultWindow {
@@ -559,10 +590,13 @@ span.button-modifyConfiguraion {
 // @12/11 Add by yuchen
 .performance_percent {
   display: flex;
-  flex-direction: row; /* 水平排列 */
-  justify-content: center; /* 在項目之間提供均勻的空間 */
+  flex-direction: row;
+  /* 水平排列 */
+  justify-content: center;
+  /* 在項目之間提供均勻的空間 */
   //align-items: center; /* 垂直居中對齊項目 */
-  flex-wrap: nowrap; /* 防止元素換行 */
+  flex-wrap: nowrap;
+  /* 防止元素換行 */
   padding-top: 25px;
 }
 
@@ -572,25 +606,31 @@ span.button-modifyConfiguraion {
   flex-direction: column;
   align-items: center;
   //flex: 50; /* 給予每個項目相等的空間 */
-  margin: 0 9px;   // 增加左右邊距，數值根據需要調整
+  margin: 0 9px; // 增加左右邊距，數值根據需要調整
 }
 
 // @12/11 Add by yuchen
 .label-container {
-  margin-bottom: 5px; /* 調整為所需的間距 */
-  white-space: nowrap; /* 防止標籤換行 */
+  margin-bottom: 5px;
+  /* 調整為所需的間距 */
+  white-space: nowrap;
+  /* 防止標籤換行 */
   text-align: center;
-  overflow: hidden; /* 超出容器的文本將被隱藏 */
-  text-overflow: ellipsis; /* 超出部分顯示省略符號 */
-  font-size: 1.05em; /* 根據需要調整字體大小 */
-  font-family: 'Arial', sans-serif; 
+  overflow: hidden;
+  /* 超出容器的文本將被隱藏 */
+  text-overflow: ellipsis;
+  /* 超出部分顯示省略符號 */
+  font-size: 1.05em;
+  /* 根據需要調整字體大小 */
+  font-family: "Arial", sans-serif;
   position: relative;
   left: -1px;
 }
 
 // @12/11 Add by yuchen
 circle-progress {
-  margin-top: 2px; /* 增加進度圈與下方元素之間的上邊距 */
+  margin-top: 2px;
+  /* 增加進度圈與下方元素之間的上邊距 */
 }
 
 // @12/07 Add by yuchen
@@ -600,91 +640,108 @@ circle-progress {
   position: fixed;
   top: 632px;
   left: 1270px;
-  overflow-y: auto; 
+  overflow-y: auto;
 }
 
-// @12/07 Add by yuchen
-.button-modifyConfiguraion {
+// @12/12 Update by yuchen
+.button-modifyConfiguration {
+  background-color: #2982e7e8; // Button 背景色
+  color: white; // Button 文字顏色
   display: block;
   justify-content: center;
   align-items: center;
-  height: 10%; 
-  margin: -5px auto 20px;;
+  height: 10%;
+  margin: -5px auto 10px;
 }
 
-  @media screen and (max-width:1366px) {
-    .BOX {
-      height: 11em;
-    }
-    .h30 {
-      height: 100em;
-      width: 100em;
-    }
-    .boxTitle {
-      font-size: 1.35em;
-      line-height: 1.5;
-    }
-    .basicInfo ul {
-      font-size: .9em;
-    }
+@media screen and (max-width: 1366px) {
+  .BOX {
+    height: 11em;
+  }
 
-    .percent {
-      position: relative;
-      width: 5.5em;
-      height: 5.5em;
-      padding: 3.5% 0 0;
-      font-size: 110%;
-      font-weight: bold;
-      font-family: Microsoft JhengHei;
-      line-height: 120%;
-      border-radius: 50%;
-      z-index: 1000;
-      display: inline-block;
-      margin: 0 3%;
-      border-width: 6px;
+  .h30 {
+    height: 100em;
+    width: 100em;
   }
-    .percent .number {
-      margin: 0.3em 0 0 0.3em;
-    }
-    .col-md-8 {
-      width: 57.3%;
-    }
-    .col-md-3 {
-      width:50%;
-    }
-    .basicInfo {
-      width: 39%;
-    }
-    .basicInfo ul li label {
-      width: auto;
-    }
 
-    .cpu span {
-      display: inline-block;
-      width: 47%;
-      margin: 0 0 1em;
+  .boxTitle {
+    font-size: 1.35em;
+    line-height: 1.5;
   }
-    :host ::ng-deep #gauge svg.dxg-circular-gauge {
-      display: block;
-      transform: translateX(6px) translateY(-71px) scale(0.75);
-    }
-    .table table td, .table table th {
-      line-height: 1;
-      white-space: nowrap;
-    }
-    .basicInfo ul li span {
-      width: 85%;
-    }
-    .cpu span img {
-      margin: 0 0.5em 0 0;
-      width: 2em;
+
+  .basicInfo ul {
+    font-size: 0.9em;
   }
+
+  .percent {
+    position: relative;
+    width: 5.5em;
+    height: 5.5em;
+    padding: 3.5% 0 0;
+    font-size: 110%;
+    font-weight: bold;
+    font-family: Microsoft JhengHei;
+    line-height: 120%;
+    border-radius: 50%;
+    z-index: 1000;
+    display: inline-block;
+    margin: 0 3%;
+    border-width: 6px;
+  }
+
+  .percent .number {
+    margin: 0.3em 0 0 0.3em;
+  }
+
+  .col-md-8 {
+    width: 57.3%;
+  }
+
+  .col-md-3 {
+    width: 50%;
+  }
+
+  .basicInfo {
+    width: 39%;
+  }
+
+  .basicInfo ul li label {
+    width: auto;
+  }
+
+  .cpu span {
+    display: inline-block;
+    width: 47%;
+    margin: 0 0 1em;
+  }
+
+  :host ::ng-deep #gauge svg.dxg-circular-gauge {
+    display: block;
+    transform: translateX(6px) translateY(-71px) scale(0.75);
+  }
+
+  .table table td,
+  .table table th {
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .basicInfo ul li span {
+    width: 85%;
+  }
+
+  .cpu span img {
+    margin: 0 0.5em 0 0;
+    width: 2em;
+  }
+
   .cpu span div {
-    font-size: .9em;
+    font-size: 0.9em;
     width: 72%;
   }
+
   .cpu span {
-    margin: .5% 0 2% 3%;
+    margin: 0.5% 0 2% 3%;
     font-size: 1.3em;
   }
 }

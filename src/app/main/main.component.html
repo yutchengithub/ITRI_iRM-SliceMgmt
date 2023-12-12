@@ -10,13 +10,14 @@
       </mat-menu>
       <span class="header_btn">
 
-        <span class="switch">
+        <span class="switch" style="position: relative; top: 1px; right: 18px;" >
           <mat-button-toggle-group name="language" [(ngModel)]="languageService.language" (ngModelChange)="languageService.toggleChange()">
             <mat-button-toggle value="TW">中</mat-button-toggle>
             <mat-button-toggle value="EN">EN</mat-button-toggle>
           </mat-button-toggle-group>
         </span>
-        <button tooltip="{{languageService.i18n['theme']}}" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+        <button style="position: relative; top: -3.5px; right: 22px;" 
+          tooltip="{{languageService.i18n['theme']}}" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
           <mat-icon>format_color_fill</mat-icon>
           <label>Change Color</label>
         </button>

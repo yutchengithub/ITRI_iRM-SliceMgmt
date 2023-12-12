@@ -56,8 +56,11 @@ import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud
 import { LanguageService } from './shared/service/language.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { GoogleMapsModule } from '@angular/google-maps';      // @12/10 Add by yuchen for googlemaps
-import { NgCircleProgressModule } from 'ng-circle-progress';  // @12/11 Add by yuchen for 圓形進度條
+import { GoogleMapsModule } from '@angular/google-maps';        // @12/10 Add by yuchen for googlemaps
+import { NgCircleProgressModule } from 'ng-circle-progress';    // @12/11 Add by yuchen for 圓形進度條
+import { MatButtonModule } from '@angular/material/button';     // @12/12 Add by yuchen for Button 樣式
+//import { MatDividerModule } from '@angular/material/divider';
+//import { MatListModule } from '@angular/material/list';
 
 
 @NgModule({
@@ -90,7 +93,6 @@ import { NgCircleProgressModule } from 'ng-circle-progress';  // @12/11 Add by y
   ],
   imports: [
     BrowserModule,
-
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
@@ -123,12 +125,15 @@ import { NgCircleProgressModule } from 'ng-circle-progress';  // @12/11 Add by y
       outerStrokeColor: "#39b3fe", // 定義圓形進度條外圈線條的顏色，可是任何合法的 CSS 顏色值。
       innerStrokeColor: "#b6d8fb", // 定義圓形進度條內圈線條的顏色，可是任何合法的 CSS 顏色值。
       animationDuration: 300,      // 定義動畫從 0% 到指定百分比的過渡時間，單位: 毫秒(ms)。
-      titleColor: '#a3bfff',
-      unitsColor: '#a3bfff',
-      titleFontWeight: '750',
-      unitsFontWeight: '900',
+      titleColor: '#a3bfff',       // 標題文字顏色
+      unitsColor: '#a3bfff',       // 單位文字顏色
+      titleFontSize: '24',         // 標題文字大小
+      unitsFontSize: '18',         // 單位文字大小 
+      titleFontWeight: '750',      // 標題文字粗度
+      unitsFontWeight: '900',      // 單位文字粗度
       showSubtitle: false          // 設定是否顯示副標題，true:顯示，false:隱藏。
-    })
+    }),
+    MatButtonModule,               // @12/12 Add by yuchen for Button 樣式
   ],
   providers: [
     AuthGuard,
@@ -152,24 +157,24 @@ import { NgCircleProgressModule } from 'ng-circle-progress';  // @12/11 Add by y
 })
 export class AppModule { 
 
-// 在 Angular 服務中註冊自定義圖標 @12/06 Add by yuchen
-constructor(
-  private matIconRegistry: MatIconRegistry, // 注入 Material 圖標註冊服務
-  private domSanitizer: DomSanitizer        // 使用 DomSanitizer ( DOM 淨化服務 ) 確保自定義 SVG 圖標的 URL 安全，預防 XSS 攻擊
+  // 在 Angular 服務中註冊自定義圖標 @12/06 Add by yuchen
+  constructor(
+    private matIconRegistry: MatIconRegistry, // 注入 Material 圖標註冊服務
+    private domSanitizer: DomSanitizer        // 使用 DomSanitizer ( DOM 淨化服務 ) 確保自定義 SVG 圖標的 URL 安全，預防 XSS 攻擊
 
-) {
+  ) {
 
-  // 添加自定義圖標 'export_to_xlsx'，並設置其路徑
-  this.matIconRegistry.addSvgIcon(
-    'export_to_xlsx', 
-    this.domSanitizer.bypassSecurityTrustResourceUrl('assets/img/xlsx.svg')
-  );
+    // 添加自定義圖標 'export_to_xlsx'，並設置其路徑
+    this.matIconRegistry.addSvgIcon(
+      'export_to_xlsx', 
+      this.domSanitizer.bypassSecurityTrustResourceUrl('assets/img/xlsx.svg')
+    );
 
-  // 添加自定義圖標 'export_to_csv'，並設置其路徑
-  this.matIconRegistry.addSvgIcon(
-    'export_to_csv', 
-    this.domSanitizer.bypassSecurityTrustResourceUrl('assets/img/csv.svg')
-  );
-}
+    // 添加自定義圖標 'export_to_csv'，並設置其路徑
+    this.matIconRegistry.addSvgIcon(
+      'export_to_csv', 
+      this.domSanitizer.bypassSecurityTrustResourceUrl('assets/img/csv.svg')
+    );
+  }
 
 }

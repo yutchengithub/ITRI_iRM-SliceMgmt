@@ -79,7 +79,7 @@ export const Enlanguage = {
   'field.gNBtype':'gNB Type',
   'field.Longitude':'Longitude',
   'field.Latitude':'Latitude',
-  'field.modifyConfiguraion':'Modify Configuraion',
+  'field.modifyConfiguration':'Modify Configuration',
   'field.neighboringBSList':'Neighboring gNB List',
 
   // Fault Management

@@ -46,7 +46,7 @@ export const TwLanguage = {
   'cancel':'取消',
   'search':'搜尋',
   'search_criteria':'篩選條件',  // @12/04 Add by yuchen
-  'clear_search':'搜尋重置',      // @11/24 Add by yuchen
+  'clear_search':'搜尋重置',     // @11/24 Add by yuchen
 
   // Field Management (場域管理) @11/30 Add by yuchen
   'field.list':'場域列表',
@@ -79,7 +79,7 @@ export const TwLanguage = {
   'field.gNBtype':'基站類型',
   'field.Longitude':'經度',
   'field.Latitude':'緯度',
-  'field.modifyConfiguraion':'修改配置',
+  'field.modifyConfiguration':'修改配置',
   'field.neighboringBSList':'鄰近基站列表',
 
   // Fault Management (故障管理)
@@ -266,11 +266,11 @@ export const TwLanguage = {
   'UserLog.logtime':'執行時間',
   'UserLog.view':'檢視',
   'UserLog.single':'項使用者日誌訊息',          // @11/21 add by yuchen
-  'UserLog.total':'項使用者日誌訊息',           // @11/21 changed by yuchen
-  'UserLog.logKeywordString':'執行動作',       // @11/17 changed by yuchen
-  'UserLog.detail':'使用者日誌詳細訊息',         // @11/03 add by yuchen
-  'UserLog.detailclose':'關閉',                // @11/03 add by yuchen
-  'UserLog.ExportCSV':'匯出使用者日誌為 .csv',   // @11/07 add by yuchen
+  'UserLog.total':'項使用者日誌訊息',            // @11/21 changed by yuchen
+  'UserLog.logKeywordString':'執行動作',        // @11/17 changed by yuchen
+  'UserLog.detail':'使用者日誌詳細訊息',          // @11/03 add by yuchen
+  'UserLog.detailclose':'關閉',                 // @11/03 add by yuchen
+  'UserLog.ExportCSV':'匯出使用者日誌為 .csv',    // @11/07 add by yuchen
   'UserLog.ExportXLSX':'匯出使用者日誌為 .xlsx',  // @11/23 Add by yuchen
 
   'NElog.No':'編號',
