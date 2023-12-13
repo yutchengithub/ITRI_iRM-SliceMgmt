@@ -88,8 +88,11 @@ export const Enlanguage = {
   'field.reportFM':'Alarms (FM)',              // @12/12 Add
   'field.optim':'Field Optimization',          // @12/12 Add
   'field.optimSON':'SON Calculation',          // @12/12 Add
-  'field.bsList':'gNB List',                   // @12/12 Add
   'field.mapModel':'Map Mode',                 // @12/12 Add
+  'field.bsList':'gNB List',                   // @12/12 Add
+  'field.bsAntennaCoord':'gNB Antenna Coordinates',  // @12/13 Add
+  'field.gNBstatus':'gNB Status',                    // @12/13 Add
+  'field.bsAlarm':'Alarm',                           // @12/13 Add
 
   // Fault Management
   'fm.start':'StartTime',

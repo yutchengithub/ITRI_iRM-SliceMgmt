@@ -105,12 +105,9 @@ export class DashboardComponent implements OnInit {
   ueNum: string = '0';
 					  
   showVircularGauge: boolean = false;
+
   /* CRITICAL,MAJOR,MINOR,WARNING */
   severitys: string[];
-
-  // @HostListener('window:resize') onResize() {
-  //   this.resize();
-  // }
 
   constructor(private http: HttpClient, public commonService: CommonService, private router: Router, public languageService: LanguageService) {
     this.severitys = this.commonService.severitys;
@@ -204,38 +201,13 @@ export class DashboardComponent implements OnInit {
     //   }
   }
 
-  // getOcloudSummary() {
-  //   if (this.commonService.isLocal) {
-  //     /* local file test */
-  //     this.ocloudSummary = this.commonService.ocloudSummary;
-  //     this.ocloudSummaryDeal();
-  //   } else {
-  //     const url = `${this.commonService.restPath}/queryOcloudSummary/${this.sessionId}`;
-  //     this.http.get(url).subscribe(
-  //       res => {
-  //         console.log('getOcloudSummary:');
-  //         console.log(res);
-  //         const str = JSON.stringify(res);//convert array to string
-  //         this.ocloudSummary = JSON.parse(str);
-  //         this.ocloudSummaryDeal();
-  //       }
-  //     );
-  //   }
-  // }
-
-  // ocloudSummaryDeal() {
-  //   this.ocloudSummary.forEach((row) => {
-  //     row.ocloudSummary = row;
-  //   });
-  // }
-
+  // @12/13 Add by yuchen
+  selectField!: Fields;   
+  // @12/13 Update by yuchen
   view(fields: Fields) {
-    //console.log(ocloudSummary);
-    this.router.navigate(['/main/field-mgr/info', fields.id]);
-  }
-
-  viewMore() {
-    this.router.navigate(['/main/fault-mgr', 'All','All']);
+    this.selectField = fields;
+    console.log("View Detail of the field id:", this.selectField.id, "and the field name: ", this.selectField.name);
+    this.router.navigate(['/main/field-mgr/info', this.selectField.id, this.selectField.name]);
   }
 
   severityCount(severity: string): number {
@@ -255,15 +227,5 @@ export class DashboardComponent implements OnInit {
   severityText(severity: string): string {
     return this.commonService.severityText(severity);
   }
-
-  // resize() {
-  //   clearTimeout(this.resizeTime);
-  //   this.resizeTime = window.setTimeout(() => {
-  //     const nodeElement = document.querySelector('.nodes') as HTMLDivElement;
-  //     const chartElement = document.querySelector('.chart') as HTMLDivElement;
-  //     this.circularHeight = nodeElement.getBoundingClientRect().top + nodeElement.offsetHeight - chartElement.getBoundingClientRect().top;
-  //     console.log('circularHeight = ' + this.circularHeight);
-  //   }, 0);
-  // }
 
 }

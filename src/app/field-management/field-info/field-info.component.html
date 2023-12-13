@@ -8,20 +8,45 @@
   </h5>
 	<!-- Field Map (場域地圖) -->
 	<div>
+		<!-- @12/13 Add the window of gNB List -->
 		<div class="BOX mapWindow">
-			<label class="boxTitle boxTitleRightAligned"> <span class="title-container">{{ languageService.i18n['field.Map'] }}</span>
-				<div class="button-container">
-					<button>{{ languageService.i18n['field.image'] }}</button>
-					<button>NR</button>
-					<button (click)="toggleColorbar('RSRP')">{{ languageService.i18n['field.rsrpMap'] }}</button>
-					<button (click)="toggleColorbar('SINR')">{{ languageService.i18n['field.sinrMap'] }}</button> 
+			<label class="boxTitle boxTitleRightAligned">
+				<span class="title-container" *ngIf="showMapModel">{{ languageService.i18n['field.Map'] }}</span>
+				<span class="title-container" *ngIf="!showMapModel">{{ languageService.i18n['field.bsList'] }}</span>
+
+				<!-- 按鈕容器，根據 showMapModel 的值顯示或隱藏按鈕 -->
+				<div class="fieldMap-button-container">
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel -->
+					<button mat-button *ngIf="showMapModel" [class.button-active]="activeButton_fieldImage === 'fieldImage'" (click)="setActiveButton_fieldImage('fieldImage')">
+						<mat-icon>photo_camera_back</mat-icon>
+						{{ languageService.i18n['field.image'] }}
+					</button>
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel -->
+					<button mat-button *ngIf="showMapModel" [class.button-active]="activeButton_NR === 'NR'" (click)="setActiveButton_NR('NR')">
+						<mat-icon>timeline</mat-icon>
+						NR
+					</button>
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> 
+					<button mat-button *ngIf="showMapModel" [class.button-active]="currentColorbar === 'RSRP'" (click)="toggleColorbar('RSRP')">
+						<mat-icon>signal_cellular_alt</mat-icon>
+						{{ languageService.i18n['field.rsrpMap'] }}
+					</button>
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel -->
+					<button mat-button *ngIf="showMapModel" [class.button-active]="currentColorbar === 'SINR'" (click)="toggleColorbar('SINR')">
+						<mat-icon>signal_cellular_alt</mat-icon>
+						{{ languageService.i18n['field.sinrMap'] }}
+					</button>
+					  
 					<!-- @12/12 Add button with a menu -->
-					<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="icon-button with a menu" tooltip="{{ languageService.i18n['field.MapOption'] }}" >
+					<!--　常駐顯示 -->
+					<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="icon-button with a menu" tooltip="{{ languageService.i18n['field.MapOption'] }}"
+					[class.button-active]="activeButton_menu === 'menu'" (click)="setActiveButton_menu('menu')">
 						<mat-icon>more_horiz</mat-icon>
 					  </button>
-					  <mat-menu #menu="matMenu">
+					  <mat-menu #menu="matMenu" >
+
 						<!-- Field Configuration -->
-						<button mat-menu-item disabled >
+						<button mat-menu-item disabled>
 							<mat-icon>build_circle</mat-icon>
 							<span>{{ languageService.i18n['field.config'] }}</span>
 						</button>
@@ -33,6 +58,7 @@
 							<mat-icon></mat-icon>
 							<span>{{ languageService.i18n['field.configPMset'] }}</span>
 						</button>
+
 						<!-- Field Reports -->
 						<button mat-menu-item disabled>
 						  <mat-icon>report</mat-icon>
@@ -42,10 +68,11 @@
 							<mat-icon></mat-icon>
 							<span>{{ languageService.i18n['field.reportPM'] }}</span>
 						</button>
-						<button mat-menu-item>
+						<button mat-menu-item (click)="goFaultMgr()"><!-- @12/13 Add click goFaultMgr() -->
 							<mat-icon></mat-icon>
 							<span>{{ languageService.i18n['field.reportFM'] }}</span>
 						</button>
+
 						<!-- Field Optimization -->
 						<button mat-menu-item disabled>
 						  <mat-icon>settings_suggest</mat-icon>
@@ -55,14 +82,99 @@
 							<mat-icon></mat-icon>
 							<span>{{ languageService.i18n['field.optimSON'] }}</span>
 						</button>
-						<!-- <button mat-menu-item>
-						  <mat-icon svgIcon="BaseStation" class="svg-icon_BS" ></mat-icon>
-						  <span>{{ languageService.i18n['field.bsList'] }}</span>
-						</button> -->
+
+						<!-- 當 showMapModel 為 true 時顯示 gNB 列表按鈕 @12/13 Add -->
+						<button mat-menu-item *ngIf="showMapModel" (click)="toggleMenuButton()">
+							<mat-icon svgIcon="BaseStation" class="svg-icon_BS"></mat-icon>
+							<span>{{ languageService.i18n['field.bsList'] }}</span>
+						</button>
+
+						<!-- 當 showMapModel 為 false 時顯示地圖模式按鈕 @12/13 Add -->
+						<button mat-menu-item *ngIf="!showMapModel" (click)="toggleMenuButton()">
+							<mat-icon>place</mat-icon>
+							<span>{{ languageService.i18n['field.mapModel'] }}</span>
+						</button>
+
 					  </mat-menu>
 				</div>
 			</label>
-			<google-map width="915px" height="748px" [center]="center" [zoom]="zoom" [options]="mapOptions"> </google-map>
+
+			<!-- 場域地圖只有當 showMapModel 為 true 時才顯示 -->
+			<google-map *ngIf="showMapModel" width="915px" height="748px" 
+						[center]="center" 
+						[zoom]="zoom" 
+						[options]="mapOptions">
+			</google-map>
+
+			<!-- 基站列表，只有當 showMapModel 為 false 時才顯示 -->
+			<div *ngIf="!showMapModel">
+				<!-- 基站列表 (還未實際接 api 值) @12/13 Add by yuchen -->
+				<div class="table">
+					<table class="center">
+						<thead>
+							<tr>
+								<th>{{ languageService.i18n['field.gNBname'] }}</th>
+								<th>{{ languageService.i18n['field.gNBtype'] }}</th>
+								<th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
+								<th>{{ languageService.i18n['field.gNBstatus'] }}</th>
+								<th>{{ languageService.i18n['field.view'] }}</th>
+								<th>{{ languageService.i18n['field.bsAlarm'] }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- <tr /**ngFor="let opt of msgToDisplay" >
+                  <td>{{opt.fieldName}}</td>
+                  <td>{{opt.bsName}}</td>
+                  <td>{{opt.compname}}</td>
+                </tr> -->
+							<tr>
+								<td>BS01</td>
+								<td>All-in-one: [CU + DU + RU]</td>
+								<td>[121.044029,24.773652]</td>
+								<td class="icon">
+									<!-- <label *ngIf="opt.status === 0" class="greenLight"></label> -->
+									<!-- <label *ngIf="opt.status === 1" class="redLight"></label> -->
+									<label class="greenLight"></label>
+								</td>
+								<td>
+									<mat-icon tooltip="{{ languageService.i18n['field.view'] }}">remove_red_eye</mat-icon>
+								</td>
+								<td>
+									<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}">warning</mat-icon>
+								</td>
+							</tr>
+							<tr>
+								<td>BS02</td>
+								<td>Disaggregated: [CU] + [DU] + [RU]</td>
+								<td>[121.044029,24.773652]</td>
+								<td>
+									<label class="redLight"></label>
+								</td>
+								<td>
+									<mat-icon tooltip="{{ languageService.i18n['field.view'] }}">remove_red_eye</mat-icon>
+								</td>
+								<td>
+									<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}">warning</mat-icon>
+								</td>
+							</tr>
+							<tr>
+								<td>BS03</td>
+								<td>Disaggregated: [CU] + [DU] + [RU]</td>
+								<td>[121.044324,24.773815]</td>
+								<td>
+									<label class="greenLight"></label>
+								</td>
+								<td>
+									<mat-icon tooltip="{{ languageService.i18n['field.view'] }}">remove_red_eye</mat-icon>
+								</td>
+								<td>
+									<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}">warning</mat-icon>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 		<div id="ColorBar" style="margin-top: -10px; ">
 			<ul *ngIf="currentColorbar === 'RSRP'">
@@ -88,6 +200,7 @@
 			<div class="percent {{severityText_forCSS(severity)}} Fault" *ngFor="let severity of severitys; let i = index"> {{ severityText(severity) }}
 				<br>{{ severityCount(severity) }} </div>
 		</div>
+
 		<!-- Field Performance Information (場域效能資訊) -->
 		<div class="BOX performanceWindow cpu">
 			<label class="boxTitle">{{languageService.i18n['field.performanceInfo']}}
@@ -124,6 +237,7 @@
 				</div>
 			</div>
 		</div>
+
 		<!-- gNB Detailed Information (基站資訊) -->
 		<div class="BOX col-md-3 basicInfo bsWindow">
 			<label class="boxTitle">{{languageService.i18n['field.bsInfo']}}</label>
@@ -154,8 +268,8 @@
 			</div>
 			<div>
 				<label class="boxTitle">{{languageService.i18n['field.neighboringBSList']}}</label>
-				<!-- @12/08 Add by yuchen -->
-				<div class="table ">
+				<!-- Neighboring gNB List @12/08 Add by yuchen -->
+				<div class="table">
 					<table>
 						<thead>
 							<tr>

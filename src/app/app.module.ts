@@ -59,8 +59,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { GoogleMapsModule } from '@angular/google-maps';        // @12/10 Add by yuchen for googlemaps
 import { NgCircleProgressModule } from 'ng-circle-progress';    // @12/11 Add by yuchen for 圓形進度條
 import { MatButtonModule } from '@angular/material/button';     // @12/12 Add by yuchen for Button 樣式
-//import { MatDividerModule } from '@angular/material/divider';
-//import { MatListModule } from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 
 
 @NgModule({
@@ -134,6 +135,9 @@ import { MatButtonModule } from '@angular/material/button';     // @12/12 Add by
       showSubtitle: false          // 設定是否顯示副標題，true:顯示，false:隱藏。
     }),
     MatButtonModule,               // @12/12 Add by yuchen for Button 樣式
+    MatListModule,                 // @12/12 Add by yuchen
+    MatDividerModule,              // @12/12 Add by yuchen for Divider 
+    ToggleButtonModule             // @12/13 Add by yuchen for Toggle Button
   ],
   providers: [
     AuthGuard,

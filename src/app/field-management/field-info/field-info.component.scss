@@ -78,6 +78,26 @@ svg circle {
   top: -5px;
 }
 
+// 激活狀態的按鈕樣式 @12/13 add by yuchen
+.button-active {
+  color: rgb(176, 207, 236);   // 激活狀態的字體顏色
+  mat-icon {
+    color: rgb(176, 207, 236); // 激活狀態的圖標顏色
+  }
+}
+
+// @12/13 add by yuchen
+.fieldMap-button-container{
+  display: flex;
+}
+
+// @12/13 add by yuchen
+.fieldMap-button-container button{
+  font-family: 'Arial Black', sans-serif;
+  font-weight: bolder;
+}
+
+
 .ocloudInfo h5 button {
   background: transparent;
   border-radius: 50em;
@@ -195,50 +215,6 @@ svg circle {
 
 .col-md-8 {
   width: 45.7%;
-}
-
-.cpu > div {
-  width: 60%;
-  margin: auto;
-  overflow: initial;
-}
-
-.cpu .bold {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #f5e388;
-}
-
-.cpu span {
-  display: inline-block;
-  width: 35%;
-  margin: 3% 0 3% 1%;
-  font-size: 0.85em;
-  font-family: sans-serif;
-}
-
-.cpu span label {
-  display: inline-block;
-  margin: 0 0.9em 0 0;
-  font-weight: bolder;
-  //color: #eee;
-}
-
-.cpu span img {
-  margin: 0 0.8em 0 0;
-  height: auto;
-  vertical-align: middle;
-  display: inline-block;
-  width: 3em;
-}
-
-.cpu span div {
-  display: inline-block;
-  margin: 0;
-  vertical-align: middle;
-  font-size: 1.1em;
-  font-weight: bold;
-  width: 85%;
 }
 
 .bigValue {
@@ -615,7 +591,7 @@ google-map {
   flex-direction: column;
   align-items: center;
   //flex: 50; /* 給予每個項目相等的空間 */
-  margin: 0 9px; // 增加左右邊距，數值根據需要調整
+  margin: 0 5.5px; // 增加左右邊距，數值根據需要調整
 }
 
 // @12/11 Add by yuchen

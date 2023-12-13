@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
+import { ChangeDetectorRef } from '@angular/core';  // @12/13 Add
 
 export interface OcloudInfo {
   id: string;
@@ -174,11 +175,11 @@ export interface Utilization {
   styleUrls: ['./field-info.component.scss']
 })
 
+
 export class FieldInfoComponent implements OnInit {
   sessionId: string = '';
   cloudId: string = '';
   cloudName: string = '';
-  // utilizationPercent: number = 0;
 
   fieldInfo: FieldInfo = {} as FieldInfo; // @12/05 Add by yuchen
   fieldId: string = '';   // @12/05 Add by yuchen
@@ -222,13 +223,78 @@ export class FieldInfoComponent implements OnInit {
     // ... 更多的選項
   };
 
+  // @12/08 Add for toggle colobar
+  currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何 colorbar
+
+  toggleColorbar(type: 'RSRP' | 'SINR') { // @12/08 Add
+    this.currentColorbar = this.currentColorbar === type ? null : type;
+    this.setActiveButton_rsrp_sinr('this.currentColorbar');
+  }
+
+  // @12/13 Add for listen activeButton
+  // 用於監聽當前哪個按鈕是激活的
+  activeButton_fieldImage: string | null = null;
+  activeButton_NR: string | null = 'NR';  // 預設激活 'NR' 按鈕
+  activeButton_rsrp_sinr: string | null = null;
+  activeButton_menu: string | null = null;
+
+  // 當按鈕被點擊時，觸發更新激活按鈕的狀態 @12/13 Add
+  setActiveButton_fieldImage(buttonId: string) {
+    this.activeButton_fieldImage = this.activeButton_fieldImage === buttonId ? null : buttonId;
+  }
+  setActiveButton_NR(buttonId: string) {
+      this.activeButton_NR = this.activeButton_NR === buttonId ? null : buttonId;
+  }
+  setActiveButton_rsrp_sinr(buttonId: string) {
+    this.activeButton_rsrp_sinr = this.activeButton_rsrp_sinr === buttonId ? null : buttonId;
+  }
+  setActiveButton_menu(buttonId: string) {
+    this.activeButton_menu = this.activeButton_menu === buttonId ? null : buttonId;
+  }
+
+  showMapModel: boolean = true;                   // 控制是否顯示地圖模式的 Flag    @12/13 Add
+  recordColorbar: 'RSRP' | 'SINR' | null = null;  // 用於記錄 Colorbar 狀態的 Flag @12/13 Add 
+
+  // 用於切換顯示地圖模式或基站列表 @12/13 Add to toggle Map Mode or gNB List
+  toggleMenuButton() {
+    
+    this.showMapModel = !this.showMapModel; // 切換顯示的頁面並更新該 Flag 狀態
+    //console.log("toggle showMapModel:", this.showMapModel);
+
+    // 記錄切換頁面當下的 ColorBar 狀態 ( 沒值時才記錄 )
+    if ( !this.recordColorbar ){
+      this.recordColorbar = this.currentColorbar; 
+    }
+
+    // 如切換的頁面為地圖模式，就預設激活 'NR' 按鈕
+    if ( this.showMapModel === true ) { 
+      this.activeButton_NR = 'NR';
+    }
+
+    // 如果記錄的 Colorbar 不為空且切換的頁面為地圖模式，則恢復顯示記錄的 Colorbar
+    if ( this.recordColorbar != null && this.showMapModel === true ) {
+
+      this.currentColorbar = this.recordColorbar;
+      //console.log("recordColorbar:", this.recordColorbar);
+      this.cdr.detectChanges();   // 手動觸發變更檢測
+      this.recordColorbar = null; // 初始化記錄 Colorbar 狀態的 Flag
+
+    } else { // 如切換的頁面不為地圖模式，就將此 flag 設為空並隱藏 ColorBar
+      this.currentColorbar = null;
+      //console.log("recordColorbar:", this.recordColorbar);
+      this.cdr.detectChanges(); // 手動觸發變更檢測
+    }
+    
+  }
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     public commonService: CommonService,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    public languageService: LanguageService
+    public languageService: LanguageService,
+    private cdr: ChangeDetectorRef  // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，確保當數據模型更新後，相關的視圖能夠及時反映
   ) {
     this.severitys = this.commonService.severitys;
   }
@@ -240,11 +306,12 @@ export class FieldInfoComponent implements OnInit {
       this.fieldName = params['name']; 
       console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
       this.getQueryFieldInfo();
-  
+      //this.setActiveButton('NR'); // 預設初始化時激活"NR"按鈕 @12/13 Add
+
       this.cloudId = params['cloudId'];
       this.cloudName = params['cloudName'];
       console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
-      this.getOcloudInfo();
+      //this.getOcloudInfo();
       this.getOcloudPerformance();
       this.getSoftwareList();
       this.getSystemSummary();
@@ -284,13 +351,13 @@ export class FieldInfoComponent implements OnInit {
 
   // @11/30 Add by yuchen
   fieldInfoDeal() {
+
     // 輸出檢查點
     console.log('fieldInfoDeal() - Start');
     console.log('The field info:', this.fieldInfo);
     console.log('The field info properties count:', this.fieldInfo ? Object.keys(this.fieldInfo).length : 'FieldInfo is undefined or null');
     console.log('After field info log');
 
-    
     // 定義一個空陣列，長度等於場域的總數
     this.nullList = new Array(this.totalItems);
   
@@ -305,8 +372,7 @@ export class FieldInfoComponent implements OnInit {
     }, 100); // timeout: 100 ms
   }
 
-  // string -> number @12/11 Add by yuchen 
-  // coverage - 換手成功率
+  // string -> number (coverage - 換手成功率) @12/11 Add by yuchen
   get coverageAsNumber(): number {
     return parseFloat(this.fieldInfo.coverage);
   }
@@ -325,14 +391,6 @@ export class FieldInfoComponent implements OnInit {
   get resourceMemoryAsNumber(): number {
     return parseFloat(this.fieldInfo.utilization.resourceMemory);
   }
-
-  // @12/08 Add
-  currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何 colorbar
-  
-  toggleColorbar(type: 'RSRP' | 'SINR') { // @12/08 Add
-    this.currentColorbar = this.currentColorbar === type ? null : type;
-  }
-  
 
   // 設定告警種類文字 @12/07 Update by yuchen
   severityText(severity: string): string {
@@ -366,25 +424,29 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-
-  getOcloudInfo() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.ocloudInfo = this.commonService.ocloudInfo;
-      this.ocloudInfoDeal();
-    } else { 
-      this.commonService.queryOcloudInfo(this.cloudId).subscribe(
-        res => { 
-          console.log('getOcloudInfo:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.ocloudInfo = JSON.parse(str);
-          this.ocloudInfo = res as OcloudInfo;
-          this.ocloudInfoDeal();
-        }
-      );
-    }
+  // 往 Fault Mnagement @12/07 Update
+  goFaultMgr() {
+    this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
   }
+
+  // getOcloudInfo() {
+  //   if (this.commonService.isLocal) {
+  //     /* local file test */
+  //     this.ocloudInfo = this.commonService.ocloudInfo;
+  //     this.ocloudInfoDeal();
+  //   } else { 
+  //     this.commonService.queryOcloudInfo(this.cloudId).subscribe(
+  //       res => { 
+  //         console.log('getOcloudInfo:');
+  //         console.log(res);
+  //         const str = JSON.stringify(res);//convert array to string
+  //         this.ocloudInfo = JSON.parse(str);
+  //         this.ocloudInfo = res as OcloudInfo;
+  //         this.ocloudInfoDeal();
+  //       }
+  //     );
+  //   }
+  // }
 
   getOcloudPerformance() {
     if (this.commonService.isLocal) {
@@ -474,11 +536,6 @@ export class FieldInfoComponent implements OnInit {
     this.router.navigate(['/main/field-mgr']);
   }
 
-  // 往 Fault Mnagement @12/07 Update
-  goFaultMgr() {
-    this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
-  }
-
   openUpdateModel() {
     this.formValidated = false;
     this.updateForm = this.fb.group({
@@ -532,7 +589,7 @@ export class FieldInfoComponent implements OnInit {
         () => console.log('Update Successful.')
       );
       this.updateModalRef.close();
-      this.getOcloudInfo();
+      //this.getOcloudInfo();
     }
   }
 
