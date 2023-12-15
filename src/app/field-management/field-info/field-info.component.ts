@@ -169,40 +169,60 @@ export interface Utilization {
   maxPdu: string | null;
 }
 
-/* @12/14 Add ↓ For BSInfo:[] ↓ */
+/* ↓ @12/14~15 Add For API of queryBsInfo ↓ */
 // notes: 當物件有可能是空的或可能不在 JSON 中設為"?:"
 export interface BSInfo {
-  info: Info[]; // ok
+  info: Info[]; // 
   extension_info: ExtensionInfo[]; // ok
-  cellInfo?: Cellinfo;
-  anr: Anr;
-  pci?: PCI;  // 目前沒看到有 BS 這個有值
-  cco?: CCO;  // 目前沒看到有 BS 這個有值
-  id: string;
-  name: string;
-  ip?: string;        // 不一定有值
-  port?: string;      // 不一定有值
-  position?: string;  // 不一定有值
-  description: string;
-  bstype: number;
-  components: Components;
-  status: number;
-  laston: string;
-  lastoff: string;
-  'components-info'?: {}; // 不一定有值
+  cellInfo?: Cellinfo; // ok
+  anr: Anr;     // ok
+  pci?: PCI;    // ok 目前沒看到有 BS 這個有值
+  cco?: CCO;    // ok 目前沒看到有 BS 這個有值
+  id: string;   // ok 
+  name: string; // ok 
+  ip?: string;              // ok 不一定有值
+  port?: string;            // ok 不一定有值
+  position?: string;        // ok 不一定有值
+  description: string;      // ok 
+  bstype: number;           // ok 
+  components: Components;   // ok 可能會出錯
+  status: number;           // ok 
+  laston: string;           // ok 
+  lastoff: string;          // ok 
+  'components-info'?: ComponentsInfo;   // ok 不一定有值
 }
 
-/* @12/14 Add ↓ For info:[] ↓ */
+  /* ↓ @12/15 AddFor info:[] ↓ */
 export interface Info {
-  nci: string;
+  bsConf?: BSConf; // 可選
+  nci?: string;
   gNBId: number;
   gNBIdLength: number;
-  cellLocalId: string;
-  CU: CU;
-  DU: DU;
-  RU: RU;
+  cellLocalId?: string;  // 可選
+  CU?: CU;               // 可選
+  DU?: DU;               // 可選
+  RU?: RU;               // 可選
+  'gNB-type'?: string;   // 可選
+  'gNBCUName'?: string;  // 可選
+  'pLMNId_MCC'?: string; // 可選
+  'pLMNId_MNC'?: string; // 可選
+  id?: string;           // 可選
 }
 
+// "bs-conf":
+export interface BSConf {
+  'plmn-id': PlmnId;
+  nci: string;
+  pci: number;
+  'nrarfcn-dl': number;
+  'nrarfcn-ul': number;
+  'duplex-mode'?: string;
+  'channel-bandwidth'?: number;
+  tac?: string;
+  'tx-power'?: number;
+}
+
+// "CU":
 export interface CU {
   id: string;
   func: string;
@@ -213,6 +233,7 @@ export interface CU {
   pLMNId_MNC: string;
 }
 
+// "DU":
 export interface DU {
   id: string;
   func: string;
@@ -234,14 +255,15 @@ export interface DU {
   configuredMaxTxPower: number;
 }
 
+// "RU":
 export interface RU {
   id: string;
   position: string;
 }
-/* @12/14 Add ↑ For info:[] ↑ */
+/* ↑ @12/15 Add For info:[] ↑ */
 
 
-/* @12/14 ↓ For extension_info:[] ↓ */
+/* ↓ @12/14 Add For extension_info:[] ↓ */
 
 export interface ExtensionInfo {
   gNBId: number;
@@ -806,46 +828,54 @@ export interface VnfParametersBWPPDetail {
   id: string;
 }
 
-/* @12/14 Add ↑ For extension_info:[] ↑ */
+/* ↑ @12/14 Add For extension_info:[] ↑ */
 
 
+/* ↓ @12/15 Add For "cellInfo": {} ↓ */
 export interface Cellinfo {
   [key: string]: string;
 }
+/* ↑ @12/15 Add For "cellInfo": {} ↑ */
 
+
+/* ↓ @12/15 Add For "anr": {} ↓ */
 export interface Anr {
   [key: string]: AnrSonOutput;
 }
 
+// "anr-son-output":
 export interface AnrSonOutput {
   'anr-son-output': AnrSonOutputDetail;
 }
-
 export interface AnrSonOutputDetail {
   neighbor: Neighbor[];
 }
 
+// "neighbor":
 export interface Neighbor {
   nci: string;
   pci: number;
   nrarfcn: number;
   'plmn-id': PlmnId;
   tac: string;
-  id: string;
-  enable: string;
-  alias: string;
-  cio: string;
-  blacklisted: string;
-  'must-include': string;
-  'q-offset': string;
-  'rs-tx-power': string;
+  id?: string;
+  enable?: string;
+  alias?: string;
+  cio?: string;
+  blacklisted?: string;
+  'must-include'?: string;
+  'q-offset'?: string;
+  'rs-tx-power'?: string;
   '__itri_default___': number;
 }
 
+// "plmn-id":
 export interface PlmnId {
   mcc: string;
   mnc: string;
 }
+
+/* ↑ @12/15 Add For "anr": {} ↑ */
 
 export interface PCI {
   // 待添加 (目前未看到有值的案例)
@@ -855,19 +885,65 @@ export interface CCO {
   // 待添加 (目前未看到有值的案例)
 }
 
+/* ↓ @12/15 Add  For "components": ↓ */
+
 export interface Components {
-  [cuId: string]: { 
-    [duId: string]: RUInfo[] 
+  [key: string]: { [key: string]: DUInfo[] } | string; // 添加了字符串的可能性
+}
+
+export interface DUInfo {
+  [key: string]: string;
+}
+
+/* ↑ @12/15 Add  For "components": ↑ */
+
+
+/* ↓ @12/15 Add  For "components-info": ↓ */
+
+export interface ComponentsInfo {
+  [componentId: string]: ComponentDetail | {}; // 允許空對象或具體的組件資訊
+}
+
+export interface ComponentDetail {
+  firm?: string;
+  modelname?: string;
+  'components-sw-inventory'?: SoftwareInventory;
+}
+
+// "components-sw-inventory":
+export interface SoftwareInventory {
+  'software-inventory': { 
+    'software-slot': SoftwareSlot[];
   };
 }
 
-export interface RUInfo {
-  [ruId: string]: string; // RU ID 映射到一个包含位置信息的字符串
+// "software-slot":
+export interface SoftwareSlot {
+  name: string;
+  status: string;
+  active: string;
+  running: string;
+  access: string;
+  'vendor-code'?: string;
+  'build-id'?: string;
+  'build-name'?: string;
+  'build-version'?: string;
+  files?: SoftwareFiles;
 }
 
+// "files":
+export interface SoftwareFiles {
+  name: string;
+  version: string;
+  'local-path': string;
+  integrity?: string;
+}
+
+   /* ↑ @12/15 Add  For "components-info": ↑ */
 
 
-/* @12/14 Add ↑ For BSInfo:[] ↑ */
+/* ↑ @12/14~15 Add For API of queryBsInfo ↑ */
+
 
 @Component({
   selector: 'app-field-info',
