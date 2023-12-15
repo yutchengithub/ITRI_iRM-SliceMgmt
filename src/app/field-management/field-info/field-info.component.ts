@@ -153,10 +153,10 @@ export interface CellInfo {
 // @12/05 Add by yuchen
 // 描述網路整體完整性的資訊
 export interface Integrity {
-  downlinkDelay: string | null;
-  uplinkDelay: string | null;
-  downlinkThrouthput: string | null;
-  uplinkThrouthput: string | null;
+  downlinkDelay?: string | null;
+  uplinkDelay?: string | null;
+  downlinkThrouthput?: string | null;
+  uplinkThrouthput?: string | null;
 }
 
 // @12/05 Add by yuchen
@@ -168,6 +168,706 @@ export interface Utilization {
   resourceDisk: string | null;
   maxPdu: string | null;
 }
+
+/* @12/14 Add ↓ For BSInfo:[] ↓ */
+// notes: 當物件有可能是空的或可能不在 JSON 中設為"?:"
+export interface BSInfo {
+  info: Info[]; // ok
+  extension_info: ExtensionInfo[]; // ok
+  cellInfo?: Cellinfo;
+  anr: Anr;
+  pci?: PCI;  // 目前沒看到有 BS 這個有值
+  cco?: CCO;  // 目前沒看到有 BS 這個有值
+  id: string;
+  name: string;
+  ip?: string;        // 不一定有值
+  port?: string;      // 不一定有值
+  position?: string;  // 不一定有值
+  description: string;
+  bstype: number;
+  components: Components;
+  status: number;
+  laston: string;
+  lastoff: string;
+  'components-info'?: {}; // 不一定有值
+}
+
+/* @12/14 Add ↓ For info:[] ↓ */
+export interface Info {
+  nci: string;
+  gNBId: number;
+  gNBIdLength: number;
+  cellLocalId: string;
+  CU: CU;
+  DU: DU;
+  RU: RU;
+}
+
+export interface CU {
+  id: string;
+  func: string;
+  cellLocalId: string;
+  absoluteFrequencySSB: string;
+  sSBSubCarrierSpacing: string;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+}
+
+export interface DU {
+  id: string;
+  func: string;
+  cellLocalId: string;
+  administrativeState: string;
+  arfcnDL: number;
+  arfcnSUL: number;
+  arfcnUL: number;
+  bSChannelBwDL: number;
+  bSChannelBwSUL: number;
+  bSChannelBwUL: number;
+  nRPCI: number;
+  nRTAC: string;
+  ssbDuration: number;
+  ssbFrequency: number;
+  ssbOffset: number;
+  ssbPeriodicity: number;
+  ssbSubCarrierSpacing: number;
+  configuredMaxTxPower: number;
+}
+
+export interface RU {
+  id: string;
+  position: string;
+}
+/* @12/14 Add ↑ For info:[] ↑ */
+
+
+/* @12/14 ↓ For extension_info:[] ↓ */
+
+export interface ExtensionInfo {
+  gNBId: number;
+  gNBIdLength: number;
+  cellLocalId: string;
+  nci: string;
+
+  gNBCUFunction: GNBCUFunction | null;
+  NRCellCU: NRCELLCU | null;
+  peeParametersList_CU: PeeParametersListCU | null;
+  vnfParametersList_CU: VnfParametersListCU | null;
+
+  EP_F1C_CU: EPF1C_CU | null;
+  EP_F1U_CU: EPF1U_CU | null;
+  EP_NgC: EPNgC | null;
+  EP_NgU: EPNgU | null;
+
+  peeParametersList_NRCellCU: PeeParametersListNRCellCU | null;
+  vnfParametersList_NRCellCU: VnfParametersListNRCellCU | null;
+  s_NSSAI_leafList_NRCellCU: SNSSAILeafListNRCellCU | null;
+  
+  gNBDUFunction: GNBDUFunction | null;
+  NRCellDU: NRCELLDU | null;
+  peeParametersList_DU: PeeParametersListDU | null;
+  vnfParametersList_DU: VnfParametersListDU | null;
+
+  EP_F1C_DU: EPF1C_DU | null;
+  EP_F1U_DU: EPF1U_DU | null;
+  NRSectorCarrier: NRSectorCarrier | null;
+
+  BWP: Bwp | null;
+  peeParametersList_NRSector: PeeParametersListNRSector | null;
+  vnfParametersList_NRSector: VnfParametersListNRSector | null;
+
+  peeParametersList_NRCellDU: PeeParametersListNRCellDU | null;
+  vnfParametersList_NRCellDU: VnfParametersListNRCellDU | null;
+  s_NSSAI_leafList_NRCellDU: SNSSAILeafListNRCellDU | null;
+
+  NRSectorCarrierRef_NRCellDU: NRSectorCarrierRefNRCellDU | null;
+  bWPRef_leafList_NRCellDU: BWPRefLeafListNRCellDU | null;
+
+  peeParametersList_BWP: PeeParametersListBWP | null;
+  vnfParametersList_BWP: VnfParametersListBWP | null;
+}
+
+export interface GNBCUFunction {
+  db: GNBCUFunctionDetail;
+  ds: GNBCUFunctionDetail;
+}
+
+export interface GNBCUFunctionDetail {
+  gNBId: number;
+  gNBIdLength: number;
+  'gNB-type': string;
+  gNBCUName: string;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  componentId: string;
+  id: string;
+}
+
+export interface NRCELLCU {
+  db: NRCELLCUDetail;
+  ds: NRCELLCUDetail;
+}
+
+export interface NRCELLCUDetail {
+  componentId: string;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  cellLocalId: string;
+  absoluteFrequencySSB: string;
+  sSBSubCarrierSpacing: string;
+  id: string;
+}
+
+export interface PeeParametersListCU {
+  db: PeeParametersDetail;
+  ds: PeeParametersDetail;
+}
+
+export interface PeeParametersDetail {
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  siteIdentification: string;
+  siteLatitude: string;
+  siteLongitude: string;
+  siteDescription: string;
+  equipmentType: string;
+  environmentType: string;
+  powerInterface: string;
+  id: string;
+}
+
+export interface VnfParametersListCU {
+  db: VnfParametersDetail;
+  ds: VnfParametersDetail;
+}
+
+export interface VnfParametersDetail {
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  autoScalable: boolean;
+  flavourId: string;
+  vnfInstanceId: string;
+  vnfdId: string;
+  id: string;
+}
+
+export interface EPF1C_CU {
+  db: EPF1C_CUDetail;
+  ds: EPF1C_CUDetail;
+}
+
+export interface EPF1C_CUDetail {
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  localAddress_ip_addr: string;
+  localAddress_vlan_id: string;
+  remoteAddress: string;
+  id: string;
+}
+
+export interface EPF1U_CU {
+  db: EPF1U_CUDetail;
+  ds: EPF1U_CUDetail;
+}
+
+export interface EPF1U_CUDetail {
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  localAddress_ip_addr: string;
+  localAddress_vlan_id: string;
+  remoteAddress: string;
+  id: string;
+}
+
+export interface EPNgC {
+  db: EPNgCDetail;
+  ds: EPNgCDetail;
+}
+
+export interface EPNgCDetail {
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  localAddress_ip_addr: string;
+  localAddress_vlan_id: string;
+  remoteAddress: string;
+  id: string;
+}
+
+export interface EPNgU {
+  db: EPNgUDetail;
+  ds: EPNgUDetail;
+}
+
+export interface EPNgUDetail {
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  localAddress_ip_addr: string;
+  localAddress_vlan_id: string;
+  remoteAddress: string;
+  id: string;
+}
+
+export interface PeeParametersListNRCellCU {
+  db: PeeParametersNRCellCUDetail;
+  ds: PeeParametersNRCellCUDetail;
+}
+
+export interface PeeParametersNRCellCUDetail {
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  cellLocalId: string;
+  siteIdentification: string;
+  siteLatitude: string;
+  siteLongitude: string;
+  siteDescription: string;
+  equipmentType: string;
+  environmentType: string;
+  powerInterface: string;
+  id: string;
+}
+
+export interface VnfParametersListNRCellCU {
+  db: VnfParametersNRCellCUDetail;
+  ds: VnfParametersNRCellCUDetail;
+}
+
+export interface VnfParametersNRCellCUDetail {
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  cellLocalId: string;
+  autoScalable: boolean;
+  flavourId: string;
+  vnfInstanceId: string;
+  vnfdId: string;
+  id: string;
+}
+
+export interface SNSSAILeafListNRCellCU {
+  db: SNSSAIDetail;
+  ds: SNSSAIDetail;
+}
+
+export interface SNSSAIDetail {
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  cellLocalId: string;
+  s_NSSAI: number;
+  id: string;
+}
+
+export interface GNBDUFunction {
+  db: GNBDUFunctionDetail;
+  ds: GNBDUFunctionDetail;
+}
+
+export interface GNBDUFunctionDetail {
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  gNBDUId: number;
+  gNBDUName: string;
+  componentId: string;
+  id: string;
+}
+
+export interface NRCELLDU {
+  db: NRCELLDUDetail;
+  ds: NRCELLDUDetail;
+}
+
+export interface NRCELLDUDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  cellLocalId: string;
+  administrativeState: string;
+  nRPCI: number;
+  nRTAC: string;
+  arfcnDL: number;
+  arfcnUL: number;
+  arfcnSUL: number;
+  bSChannelBwDL: number;
+  ssbFrequency: number;
+  ssbPeriodicity: number;
+  ssbSubCarrierSpacing: number;
+  ssbOffset: number;
+  ssbDuration: number;
+  bSChannelBwUL: number;
+  bSChannelBwSUL: number;
+  componentId: string;
+  id: string;
+}
+
+export interface PeeParametersListDU {
+  db: PeeParametersDUDetail;
+  ds: PeeParametersDUDetail;
+}
+
+export interface PeeParametersDUDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  siteIdentification: string;
+  siteLatitude: string;
+  siteLongitude: string;
+  siteDescription: string;
+  equipmentType: string;
+  environmentType: string;
+  powerInterface: string;
+  id: string;
+}
+
+export interface VnfParametersListDU {
+  db: VnfParametersDUDetail;
+  ds: VnfParametersDUDetail;
+}
+
+export interface VnfParametersDUDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  autoScalable: boolean;
+  flavourId: string;
+  vnfInstanceId: string;
+  vnfdId: string;
+  id: string;
+}
+
+export interface EPF1C_DU {
+  db: EPF1C_DUDetail;
+  ds: EPF1C_DUDetail;
+}
+
+export interface EPF1C_DUDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  localAddress_ip_addr: string;
+  localAddress_vlan_id: string;
+  remoteAddress: string;
+  id: string;
+}
+
+export interface EPF1U_DU {
+  db: EPF1U_DUDetail;
+  ds: EPF1U_DUDetail;
+}
+
+export interface EPF1U_DUDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  localAddress_ip_addr: string;
+  localAddress_vlan_id: string;
+  remoteAddress: string;
+  id: string;
+}
+
+export interface NRSectorCarrier {
+  db: NRSectorCarrierDetail;
+  ds: NRSectorCarrierDetail;
+}
+
+export interface NRSectorCarrierDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  txDirection: string;
+  configuredMaxTxPower: number;
+  configuredMaxTxEIRP: number;
+  arfcnDL: number;
+  arfcnUL: number;
+  bSChannelBwDL: number;
+  bSChannelBwUL: number;
+  id: string;
+}
+
+export interface Bwp {
+  db: BwpDetail;
+  ds: BwpDetail;
+}
+
+export interface BwpDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  bwpContext: number;
+  isInitialBwp: number;
+  subCarrierSpacing: number;
+  cyclicPrefix: number;
+  startRB: string;
+  numberOfRBs: number;
+  id: string;
+}
+
+export interface PeeParametersListNRSector {
+  db: PeeParametersNRSectorDetail;
+  ds: PeeParametersNRSectorDetail;
+}
+
+export interface PeeParametersNRSectorDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  idRef: string;
+  siteIdentification: string;
+  siteLatitude: string;
+  siteLongitude: string;
+  siteDescription: string;
+  equipmentType: string;
+  environmentType: string;
+  powerInterface: string;
+  id: string;
+}
+
+export interface VnfParametersListNRSector {
+  db: VnfParametersNRSectorDetail;
+  ds: VnfParametersNRSectorDetail;
+}
+
+export interface VnfParametersNRSectorDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  idRef: string;
+  autoScalable: boolean;
+  flavourId: string;
+  vnfInstanceId: string;
+  vnfdId: string;
+  id: string;
+}
+
+export interface PeeParametersListNRCellDU {
+  db: PeeParametersNRCellDUDetail;
+  ds: PeeParametersNRCellDUDetail;
+}
+
+export interface PeeParametersNRCellDUDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  cellLocalId: string;
+  siteIdentification: string;
+  siteLatitude: string;
+  siteLongitude: string;
+  siteDescription: string;
+  equipmentType: string;
+  environmentType: string;
+  powerInterface: string;
+  id: string;
+}
+
+export interface VnfParametersListNRCellDU {
+  db: VnfParametersNRCellDUDetail;
+  ds: VnfParametersNRCellDUDetail;
+}
+
+export interface VnfParametersNRCellDUDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  cellLocalId: string;
+  autoScalable: boolean;
+  flavourId: string;
+  vnfInstanceId: string;
+  vnfdId: string;
+  id: string;
+}
+
+export interface SNSSAILeafListNRCellDU {
+  db: SNSSAIDetail;
+  ds: SNSSAIDetail;
+}
+
+export interface SNSSAIDetail {
+  gNBDUId?: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  cellLocalId: string;
+  s_NSSAI: number;
+  id: string;
+}
+
+export interface NRSectorCarrierRefNRCellDU {
+  db: NRSectorCarrierRefDetail;
+  ds: NRSectorCarrierRefDetail;
+}
+
+export interface NRSectorCarrierRefDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  cellLocalId: string;
+  NRSectorCarrierRef: number;
+  id: string;
+}
+
+export interface BWPRefLeafListNRCellDU {
+  db: BWPRefDetail;
+  ds: BWPRefDetail;
+}
+
+export interface BWPRefDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  cellLocalId: string;
+  bWPRef: number;
+  id: string;
+}
+
+export interface PeeParametersListBWP {
+  db: PeeParametersBWPPDetail;
+  ds: PeeParametersBWPPDetail;
+}
+
+export interface PeeParametersBWPPDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  idRef: string;
+  siteIdentification: string;
+  siteLatitude: string;
+  siteLongitude: string;
+  siteDescription: string;
+  equipmentType: string;
+  environmentType: string;
+  powerInterface: string;
+  id: string;
+}
+
+export interface VnfParametersListBWP {
+  db: VnfParametersBWPPDetail;
+  ds: VnfParametersBWPPDetail;
+}
+
+export interface VnfParametersBWPPDetail {
+  gNBDUId: number;
+  gNBId: number;
+  gNBIdLength: number;
+  pLMNId_MCC: string;
+  pLMNId_MNC: string;
+  idRef: string;
+  autoScalable: boolean;
+  flavourId: string;
+  vnfInstanceId: string;
+  vnfdId: string;
+  id: string;
+}
+
+/* @12/14 Add ↑ For extension_info:[] ↑ */
+
+
+export interface Cellinfo {
+  [key: string]: string;
+}
+
+export interface Anr {
+  [key: string]: AnrSonOutput;
+}
+
+export interface AnrSonOutput {
+  'anr-son-output': AnrSonOutputDetail;
+}
+
+export interface AnrSonOutputDetail {
+  neighbor: Neighbor[];
+}
+
+export interface Neighbor {
+  nci: string;
+  pci: number;
+  nrarfcn: number;
+  'plmn-id': PlmnId;
+  tac: string;
+  id: string;
+  enable: string;
+  alias: string;
+  cio: string;
+  blacklisted: string;
+  'must-include': string;
+  'q-offset': string;
+  'rs-tx-power': string;
+  '__itri_default___': number;
+}
+
+export interface PlmnId {
+  mcc: string;
+  mnc: string;
+}
+
+export interface PCI {
+  // 待添加 (目前未看到有值的案例)
+}
+
+export interface CCO {
+  // 待添加 (目前未看到有值的案例)
+}
+
+export interface Components {
+  [cuId: string]: { 
+    [duId: string]: RUInfo[] 
+  };
+}
+
+export interface RUInfo {
+  [ruId: string]: string; // RU ID 映射到一个包含位置信息的字符串
+}
+
+
+
+/* @12/14 Add ↑ For BSInfo:[] ↑ */
 
 @Component({
   selector: 'app-field-info',
@@ -184,6 +884,9 @@ export class FieldInfoComponent implements OnInit {
   fieldInfo: FieldInfo = {} as FieldInfo; // @12/05 Add by yuchen
   fieldId: string = '';   // @12/05 Add by yuchen
   fieldName: string = ''; // @12/05 Add by yuchen
+
+  bsInfo: BSInfo = {} as BSInfo; // @12/14 Add by yuchen
+
 
   refreshTimeout!: any;
   refreshTime: number = 5;
@@ -306,7 +1009,6 @@ export class FieldInfoComponent implements OnInit {
       this.fieldName = params['name']; 
       console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
       this.getQueryFieldInfo();
-      //this.setActiveButton('NR'); // 預設初始化時激活"NR"按鈕 @12/13 Add
 
       this.cloudId = params['cloudId'];
       this.cloudName = params['cloudName'];

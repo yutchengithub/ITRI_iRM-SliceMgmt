@@ -127,12 +127,18 @@
                   <td>{{opt.bsName}}</td>
                   <td>{{opt.compname}}</td>
                 </tr> -->
-							<tr>
-								<td>BS01</td>
-								<td>All-in-one: [CU + DU + RU]</td>
+							<tr >
+								<td>BS01
+									<!-- {{opt.name}}-->
+								</td>
+								<td>
+									All-in-one: [CU + DU + RU]
+								    <!-- <label *ngIf="opt.bstype === 2" value="Disaggregated: [CU] + [DU] + [RU]"></label> -->
+									<!-- <label *ngIf="opt.bstype === 1" class="All-in-one: [CU + DU + RU]"></label> -->
+								</td>
 								<td>[121.044029,24.773652]</td>
 								<td class="icon">
-									<!-- <label *ngIf="opt.status === 0" class="greenLight"></label> -->
+									<!-- <label *ngIf="opt.status === 2" class="greenLight"></label> -->
 									<!-- <label *ngIf="opt.status === 1" class="redLight"></label> -->
 									<label class="greenLight"></label>
 								</td>

@@ -246,6 +246,9 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.createModalRef.afterClosed().subscribe(() => this.formValidated = false);
   }
 
+
+
+  
   changeMethod(e: MatButtonToggleChange) {
     this.formValidated = false;
     this.createForm.controls['imsEndpoint'].setValue('');
