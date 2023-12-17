@@ -2536,7 +2536,7 @@ export class CommonService {
     },
     "pci": {},
     "cco": {},
-    "id": "a767b4af84e24d6490e2",
+    "id": "fd005824997144b987d5",
     "name": "BS02",
     "ip": "",
     "port": "",

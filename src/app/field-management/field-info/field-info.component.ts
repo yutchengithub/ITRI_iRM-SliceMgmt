@@ -172,23 +172,23 @@ export interface Utilization {
 /* ↓ @12/14~15 Add For API of queryBsInfo ↓ */
 // notes: 當物件有可能是空的或可能不在 JSON 中設為"?:"
 export interface BSInfo {
-  info: Info[]; // 
-  extension_info: ExtensionInfo[]; // ok
+  info?: Info[]; // 
+  extension_info?: ExtensionInfo[]; // ok
   cellInfo?: Cellinfo; // ok
-  anr: Anr;     // ok
+  anr?: Anr;     // ok
   pci?: PCI;    // ok 目前沒看到有 BS 這個有值
   cco?: CCO;    // ok 目前沒看到有 BS 這個有值
-  id: string;   // ok 
+  id?: string;   // ok 
   name: string; // ok 
   ip?: string;              // ok 不一定有值
   port?: string;            // ok 不一定有值
   position?: string;        // ok 不一定有值
-  description: string;      // ok 
-  bstype: number;           // ok 
-  components: Components;   // ok 可能會出錯
-  status: number;           // ok 
-  laston: string;           // ok 
-  lastoff: string;          // ok 
+  description?: string;      // ok 
+  bstype?: number;           // ok 
+  components?: Components;   // ok 可能會出錯
+  status?: number;           // ok 
+  laston?: string;           // ok 
+  lastoff?: string;          // ok 
   'components-info'?: ComponentsInfo;   // ok 不一定有值
 }
 
@@ -945,6 +945,12 @@ export interface SoftwareFiles {
 /* ↑ @12/14~15 Add For API of queryBsInfo ↑ */
 
 
+
+// 定義一個接口，其內部結構可以是任意類型的屬性
+export interface DynamicBSInfo {
+  [key: string]: any;
+}
+
 @Component({
   selector: 'app-field-info',
   templateUrl: './field-info.component.html',
@@ -961,7 +967,7 @@ export class FieldInfoComponent implements OnInit {
   fieldId: string = '';   // @12/05 Add by yuchen
   fieldName: string = ''; // @12/05 Add by yuchen
 
-  bsInfo: BSInfo = {} as BSInfo; // @12/14 Add by yuchen
+  //bsInfo: BSInfo = {} as BSInfo; // @12/14 Add by yuchen
 
 
   refreshTimeout!: any;
@@ -1098,7 +1104,7 @@ export class FieldInfoComponent implements OnInit {
 
   // @12/05 Add by yuchen
   getQueryFieldInfo() {
-    console.log('QueryFieldInfo() - Start');
+    console.log('getQueryFieldInfo() - Start');
     clearTimeout(this.refreshTimeout);
   
     if (this.commonService.isLocal) {
@@ -1150,9 +1156,9 @@ export class FieldInfoComponent implements OnInit {
     }, 100); // timeout: 100 ms
   }
 
-  // string -> number (coverage - 換手成功率) @12/11 Add by yuchen
-  get coverageAsNumber(): number {
-    return parseFloat(this.fieldInfo.coverage);
+  //  string -> number (mobility - 換手成功率) @12/18 Update coverage -> mobility by yuchen 
+  get mobilityAsNumber(): number {
+    return parseFloat(this.fieldInfo.mobility);
   }
  
   // accessibility - 接入成功率
@@ -1206,6 +1212,45 @@ export class FieldInfoComponent implements OnInit {
   goFaultMgr() {
     this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
   }
+
+
+  bsInfoDetails: BSInfo[] = []; // 用來存儲每個基站詳細訊息的陣列
+  // get response of queryBsInfo API  @12/18 Add by yuchen
+  getQueryBsInfoForAll() {
+    console.log('getQueryBsInfoForAll() - Start');
+
+    if (this.commonService.isLocal) {
+      // 如果是本地測試，則直接使用本地資料
+      //this.bsInfoDetails = this.commonService.bsInfo;
+    } else if (this.fieldInfo.bsinfo && this.fieldInfo.bsinfo.length > 0) {
+      // 如果非本地測試，且 fieldInfo.bsinfo 不為空，則逐一查詢
+      this.fieldInfo.bsinfo.forEach((bsInfo) => {
+        if (bsInfo.id) {
+          this.getQueryBsInfo(bsInfo.id);
+        }
+      });
+    }
+    
+    console.log('getQueryBsInfoForAll() - End');
+  }
+
+  private getQueryBsInfo(bsId: string) {
+
+    // 發起對單個基站的請求
+    this.commonService.queryBsInfo(bsId).subscribe({
+      next: (res) => {
+        console.log('Get queryBsInfo from API:', res, '\nBsName:', res.name, ', BsId:', res.id);
+        this.bsInfoDetails.push(res); // 將取得的基站資訊加入陣列
+      },
+      error: (error) => {
+        console.error('Error fetching Bs Info:', error);
+      },
+      complete: () => {
+        console.log('Bs Info fetch for ID', bsId, 'completed');
+      }
+    });
+  }
+
 
   // getOcloudInfo() {
   //   if (this.commonService.isLocal) {

@@ -38,7 +38,7 @@
 					</button>
 					  
 					<!-- @12/12 Add button with a menu -->
-					<!--　常駐顯示 -->
+					<!-- 常駐顯示 -->
 					<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="icon-button with a menu" tooltip="{{ languageService.i18n['field.MapOption'] }}"
 					[class.button-active]="activeButton_menu === 'menu'" (click)="setActiveButton_menu('menu')">
 						<mat-icon>more_horiz</mat-icon>
@@ -218,7 +218,8 @@
 					<div class="label-container">
 						<label>{{ languageService.i18n['field.handoverRate'] }}</label>
 					</div>
-					<circle-progress [percent]="coverageAsNumber" [subtitle]="coverageAsNumber + '%'"></circle-progress>
+					<!-- @12/18 Update coverage -> mobility -->
+					<circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress>
 				</div>
 				<div class="item">
 					<!-- @12/10 update to get fieldInfo.accessibility -->
