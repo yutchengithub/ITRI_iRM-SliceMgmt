@@ -51,6 +51,7 @@ export class CommonService {
   severitys: string[] = ['CRITICAL', 'MAJOR', 'MINOR', 'WARNING'];
   statusTypes: string[] = ['New', 'Cleared'];
   situations: string[] = ['Pending', 'Ended'];
+  cmpsource: string[] = ['Startup', 'Running', 'Candidate'];
 
   // For Log Management @11/01 Add 
   UserLogType: string[] = ['GET', 'POST', 'DELETE'];
@@ -3835,7 +3836,7 @@ export class CommonService {
       modelname: "A001", 
       status: 0,
       info: {
-        data: "\n\n\t<netconf-server xmlns=\"urn:ietf:params:xml:ns:yang:ietf-netconf-server\">\n\t\t<listen>\n\t\t\t<endpoint>\n\t\t\t\t<name>default-ssh</name>\n\t\t\t\t<ssh>\n\t\t\t\t\t<tcp-server-parameters>\n\t\t\t\t\t\t<local-address>0.0.0.0</local-address>\n\t\t\t\t\t\t<keepalives>\n\t\t\t\t\t\t\t<idle-time>1</idle-time>\n\t\t\t\t\t\t\t<max-probes>10</max-probes>\n\t\t\t\t\t\t\t<probe-interval>5</probe-interval>\n\t\t\t\t\t\t</keepalives>\n\t\t\t\t\t</tcp-server-parameters>\n\t\t\t\t\t<ssh-server-parameters>\n\t\t\t\t\t\t<server-identity>\n\t\t\t\t\t\t\t<host-key>\n\t\t\t\t\t\t\t\t<name>default-key</name>\n\t\t\t\t\t\t\t\t<public-key>\n\t\t\t\t\t\t\t\t\t<keystore-reference>genkey</keystore-reference>\n\t\t\t\t\t\t\t\t</public-key>\n\t\t\t\t\t\t\t</host-key>\n\t\t\t\t\t\t</server-identity>\n\t\t\t\t\t\t<client-authentication>\n\t\t\t\t\t\t\t<supported-authentication-methods>\n\t\t\t\t\t\t\t\t<publickey/>\n\t\t\t\t\t\t\t\t<passsword/>\n\t\t\t\t\t\t\t\t<other>interactive</other>\n\t\t\t\t\t\t\t</supported-authentication-methods>\n\t\t\t\t\t\t\t<users/>\n\t\t\t\t\t\t</client-authentication>\n\t\t\t\t\t</ssh-server-parameters>\n\t\t\t\t</ssh>\n\t\t\t</endpoint>\n\t\t</listen>\n\t</netconf-server>"
+        data: ""
       },
       sm: {
         softwareInventory: {
@@ -3877,6 +3878,13 @@ export class CommonService {
               active: "false",
               running: "false",
               access: "READ_WRITE"
+            },
+            {
+              name: "slot-5",
+              status: "EMPTY",
+              active: "false",
+              running: "false",
+              access: "TEST"
             }
           ]
         }

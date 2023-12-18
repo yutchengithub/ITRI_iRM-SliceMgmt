@@ -62,12 +62,13 @@ interface SoftwareSlot {
   buildId?: string;
   buildName?: string;
   buildVersion?: string;
-  files?: {
-    name: string;
-    version: string;
-    localPath: string;
-    integrity: string;
-  };
+  files?: Files;
+}
+interface Files {
+  name: string;
+  version: string;
+  localPath: string;
+  integrity: string;
 }
 @Component({
   selector: 'app-component-info',
@@ -104,6 +105,7 @@ export class ComponentInfoComponent implements OnInit {
   formValidated = false;
   /* CRITICAL,MAJOR,MINOR,WARNING */
   severitys: string[];
+  cmpsource: string[];
   fmsgList: FmsgList = {} as FmsgList;
   searchForm!: FormGroup;
   p: number = 1;            // 當前頁數
@@ -139,6 +141,7 @@ export class ComponentInfoComponent implements OnInit {
     public languageService: LanguageService
   ) {
     this.severitys = this.commonService.severitys;
+    this.cmpsource = this.commonService.cmpsource;
   }
 
   ngOnInit(): void {
@@ -161,17 +164,23 @@ export class ComponentInfoComponent implements OnInit {
     if (this.commonService.isLocal) {
       /* local file test */
       this.bsComponentInfo = this.commonService.bsComponentInfo;
+      this.cmpsource = this.commonService.cmpsource;
     } else {
       this.commonService.queryBsComponentInfo(this.comId).subscribe(
-        res => {
-          console.log('getOcloudInfo:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.bsComponentInfo = JSON.parse(str);
-          this.bsComponentInfo = res as BsComponentInfo;
+        (res: BsComponentInfo) => {
+          console.log('getOcloudInfo:', res);
+          this.bsComponentInfo = res;
+        },
+        (error: any) => {
+          console.error('Error loading BsComponentInfo:', error);
         }
       );
     }
+  }
+
+  // Getter to get the first item in the softwareSlot array or undefined if the array is empty
+  get firstSoftwareSlot(): SoftwareSlot | undefined {
+    return this.bsComponentInfo?.sm.softwareInventory.softwareSlot[0];
   }
 
    // 建立搜尋表單
