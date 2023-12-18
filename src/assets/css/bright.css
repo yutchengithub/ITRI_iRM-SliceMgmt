@@ -1,5 +1,5 @@
-.wrap {
-  background: #fff;
+body {
+  background: #fff!important;
   background: linear-gradient(to top, rgb(177 184 191 / 40%) 0%, rgb(255 255 255 / 70%) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#ffffff", endColorstr="#ffffff",GradientType=1 );
   color: #333;
@@ -312,4 +312,49 @@ ul + .buttons button {
   cursor: pointer;
   transition: all 0.3s;
   min-width: 6em;
+}
+.collabsible {
+  margin: 0!important;
+}
+.collapsible-content .content-inner  .content-inner {
+  background-color: transparent!important;
+}
+.collabsible table th {
+  border: 1px solid #498cc3!important;
+}
+.collabsible .filter {
+  background-color: transparent!important;
+}
+.main.collabsible > div > .lbl-toggle {
+  background-color: #ebe8d0!important;
+  color: #333;
+  border-left: 7px solid #46b1d9;
+  border-right: 7px solid #46b1d9;
+}
+.collapsible-content > .content-inner {
+  background-color: #f3f3f3!important;
+  border-left: 7px solid #e2e8eb;
+  border-right: 7px solid #e2e8eb;
+}
+
+.collapsible-content > .content-inner .content-inner { 
+  background-color: #e9f2ffe8;
+  border: none!important;
+} 
+.collapsible-content > .content-inner > .content-inner .lbl-toggle{
+  padding: 0 1em!important;
+  color: #0f3e8d!important;
+  background: transparent;
+}
+.collabsible .collabsible > div > .lbl-toggle {
+  background: transparent!important;
+  color: #000!important;
+}
+.collabsible .collabsible > div {
+  border-bottom: 1px dashed #0b58a3;
+ padding-bottom: .5em;
+}
+.collapsible-content > .content-inner > .content-inner .collabsible > div {
+ border-bottom: 1px dashed #0b58a3;
+ padding-bottom: .5em;
 }

@@ -1,13 +1,11 @@
-<div class="ocloudInfo">
+<div class="ocloudInfo component">
   <h5>
-    <button (click)="back()">
-      <span class="material-icons">arrow_back</span>Back
-    </button>
+    <button (click)="back()"><span class="material-icons">arrow_back</span>Back</button>
     {{languageService.i18n['cm.info']}} – {{bsComponentInfo.name}}
   </h5>
 
-  <div class="BOX col-md-3 basicInfo h30">
-    <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
+ <!--  <div class="BOX basicInfo" >
+    <label class="boxTitle" (click)="clickBox('box1')" >{{languageService.i18n['basic.info']}}</label>
     <ul>
       <li><label>{{languageService.i18n['cm.name']}}</label><span>{{bsComponentInfo.name}}</span></li>
       <li><label>{{languageService.i18n['cm.type']}}</label><span>{{bsComponentInfo.comtype}}</span></li>
@@ -20,10 +18,571 @@
       <li><label>{{languageService.i18n['table.Status']}}</label><span>{{bsComponentInfo.status}}</span></li>
       <li><label>{{languageService.i18n['software_version']}}</label><span>{{bsComponentInfo.port}}</span></li>
     </ul>
-  </div>
+  </div> -->
 
-  <div class="BOX col-md-4 center Fault">
-    <label class="boxTitle">{{languageService.i18n['index.faultMsg']}}
+ <!--  <div class="BOX {{activeMap['box2']?'active':''}}">
+    <label class="boxTitle" (click)="clickBox('box2')">Datastore</label>
+      
+          <div class="collabsible">
+            <div>
+              <input id="netconf-server" class="toggle" type="checkbox">
+              <label for="netconf-server" class="lbl-toggle">Netconf Server:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>Attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>Listen:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <input id="keystore" class="toggle" type="checkbox">
+              <label for="keystore" class="lbl-toggle">Keystore:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>Attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>Asymmetric Keys:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <input id="nacm" class="toggle" type="checkbox">
+              <label for="nacm" class="lbl-toggle">NACM:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>Attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>Asymmetric Keys:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <input id="interface" class="toggle" type="checkbox">
+              <label for="interface" class="lbl-toggle">Interface:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>asymmetric-keys:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <input id="smo" class="toggle" type="checkbox">
+              <label for="smo" class="lbl-toggle">SMO:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>Attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>Asymmetric Keys:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <input id="me" class="toggle" type="checkbox">
+              <label for="me" class="lbl-toggle">ME:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>Attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>Asymmetric Keys:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+  </div> -->
+
+  <div class="main collabsible">
+    <div>
+      <input id="baseInfo" class="toggle" type="checkbox">
+      <label for="baseInfo" class="lbl-toggle">{{languageService.i18n['basic.info']}}:
+      </label>
+      <div class="collapsible-content">
+        <div class="content-inner">
+          
+            <ul>
+              <li><label>{{languageService.i18n['cm.name']}}</label><span>{{bsComponentInfo.name}}</span></li>
+              <li><label>{{languageService.i18n['cm.type']}}</label><span>{{bsComponentInfo.comtype}}</span></li>
+              <li><label>{{languageService.i18n['cm.ip']}}</label><span>{{bsComponentInfo.ip}}</span></li>
+              <li><label>{{languageService.i18n['cm.port']}}</label><span>{{bsComponentInfo.port}}</span></li>
+              <li><label>{{languageService.i18n['cm.acc']}}</label><span>{{bsComponentInfo.account}}</span></li>
+              <li><label>{{languageService.i18n['cm.passw']}}</label><span>{{bsComponentInfo.key}}</span></li>
+              <li><label>{{languageService.i18n['cm.manufacturer']}}</label><span>{{bsComponentInfo.firm}}</span></li>
+              <li><label>{{languageService.i18n['cm.model']}}</label><span>{{bsComponentInfo.modelname}}</span></li>
+              <li><label>{{languageService.i18n['table.Status']}}</label><span>{{bsComponentInfo.status}}</span></li>
+              <li><label>{{languageService.i18n['software_version']}}</label><span>{{bsComponentInfo.port}}</span></li>
+            </ul>
+          
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <input id="Datastore" class="toggle" type="checkbox">
+      <label for="Datastore" class="lbl-toggle">Datastore:
+        <span>
+          Source
+          <select>
+            <option value="S1">S1</option>
+            <option value="S2">S2</option>
+          </select>
+          <span class="material-symbols-outlined">double_arrow</span>
+          Target
+          <select>
+              <option value="T1">T1</option>
+              <option value="T2">T2</option>
+          </select>
+          <button>Copy</button>
+        </span>
+        <button>Export Datastore</button>
+        <button>Update Datastore</button>
+      </label>
+      <div class="collapsible-content">
+        <div class="content-inner">
+          <div class="collabsible">
+            <div>
+              <input id="netconf-server" class="toggle" type="checkbox">
+              <label for="netconf-server" class="lbl-toggle">Netconf Server:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>Attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>Listen:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <input id="keystore" class="toggle" type="checkbox">
+              <label for="keystore" class="lbl-toggle">Keystore:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>Attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>Asymmetric Keys:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <input id="nacm" class="toggle" type="checkbox">
+              <label for="nacm" class="lbl-toggle">NACM:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>Attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>Asymmetric Keys:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <input id="interface" class="toggle" type="checkbox">
+              <label for="interface" class="lbl-toggle">Interface:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>asymmetric-keys:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <input id="smo" class="toggle" type="checkbox">
+              <label for="smo" class="lbl-toggle">SMO:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>Attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>Asymmetric Keys:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <input id="me" class="toggle" type="checkbox">
+              <label for="me" class="lbl-toggle">ME:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <span>Attr:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                  <span>Asymmetric Keys:</span>
+                  <ul>
+                    <li>
+                      <label></label>
+                      <span></span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <input id="softInfo" class="toggle" type="checkbox">
+      <label for="softInfo" class="lbl-toggle">{{languageService.i18n['software.info']}} – {{bsComponentInfo.firm}} – {{bsComponentInfo.modelname}}
+      </label>
+      <div class="collapsible-content">
+        <div class="content-inner">
+            <div class="panel">
+              <label><input type="radio" name="software-group">
+                <div>
+                <ul>
+                  <li><label>Software</label><span>slot-1</span></li>
+                  <li><label>Status</label><span></span></li>
+                  <li><label>Active</label><span>Ture</span></li>
+                  <li><label>Running</label><span>Ture</span></li>
+                  <li><label>Access</label><span>Read Only</span></li>
+                  <li><label>Version</label><span>0.1.0</span></li>
+                </ul></div>
+              </label>
+
+              <label><input type="radio"  name="software-group">
+                <div>
+                <ul>
+                  <li><label>Software</label><span>slot-1</span></li>
+                  <li><label>Status</label><span></span></li>
+                  <li><label>Active</label><span></span></li>
+                  <li><label>Running</label><span></span></li>
+                  <li><label>Access</label><span></span></li>
+                  <li><label>Version</label><span></span></li>
+                </ul></div>
+              </label>
+
+              <label><input type="radio"  name="software-group">
+                <div>
+                <ul>
+                  <li><label>Software</label><span>slot-2</span></li>
+                  <li><label>Status</label><span></span></li>
+                  <li><label>Active</label><span></span></li>
+                  <li><label>Running</label><span></span></li>
+                  <li><label>Access</label><span></span></li>
+                  <li><label>Version</label><span></span></li>
+                </ul></div>
+              </label>
+
+              <label><input type="radio" name="software-group">
+                <div>
+                <ul>
+                  <li><label>Software</label><span>slot-3</span></li>
+                  <li><label>Status</label><span></span></li>
+                  <li><label>Active</label><span></span></li>
+                  <li><label>Running</label><span></span></li>
+                  <li><label>Access</label><span></span></li>
+                  <li><label>Version</label><span></span></li>
+                </ul></div>
+              </label>
+
+            </div>
+
+            <div class="table">
+              <table>
+                <thead>
+                  <tr>
+                    <!-- <th>{{languageService.i18n['table.header_name']}}</th> -->
+                    <th>{{languageService.i18n['manufacturer']}}</th>
+                    <th>{{languageService.i18n['model']}}</th>
+                    <th>{{languageService.i18n['type']}}</th>
+                    <th>{{languageService.i18n['version']}}</th>
+                    <th>{{languageService.i18n['notes']}}</th>
+                    <th>{{languageService.i18n['upload_time']}}</th>
+                    <th>{{languageService.i18n['cm.apply']}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <!-- <td>{{bsComponentInfo.name}}</td> -->
+                    <td>{{bsComponentInfo.firm}}</td>
+                    <td>{{bsComponentInfo.modelname}}</td>
+                    <td>{{bsComponentInfo.comtype}}</td>
+                    <td>{{componentInfosw.uploadinfos[0]?.uploadversion}}</td>
+                    <td></td>
+                    <td>{{componentInfosw.uploadinfos[0]?.uploadtime}}</td>
+                    <td class="center">
+                      <mat-icon tooltip="{{languageService.i18n['view_detail']}}">cloud_download</mat-icon>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <input id="faultMsg" class="toggle" type="checkbox">
+      <label for="faultMsg" class="lbl-toggle">Alarms<!-- {{languageService.i18n['index.faultMsg']}} -->
+        </label>
+      <div class="collapsible-content">
+        <div class="content-inner">
+          <form [formGroup]="searchForm">
+            <div class="filter">
+              <span><label>{{languageService.i18n['fm.severity']}}</label>
+                <select formControlName="severity">
+                  <option value="All">All</option>
+                  <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
+                </select>
+                <!-- <mat-error *ngIf="searchForm.controls['severity'].invalid">Required</mat-error> -->
+              </span>
+              <span><label>{{languageService.i18n['fm.start']}}</label>
+                <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+              </span>
+              <span><label>{{languageService.i18n['fm.end']}}</label>
+                <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+              </span>
+              <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+              <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search()">clear</span>
+            </div>
+          </form>
+            <div class="table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>{{languageService.i18n['fm.no']}}</th>
+                    <th>{{languageService.i18n['fm.field']}}</th>
+                    <th>{{languageService.i18n['fm.gnb']}}</th>
+                    <th>{{languageService.i18n['fm.component']}}</th>
+                    <th>{{languageService.i18n['fm.alarm']}}</th>
+                    <th>{{languageService.i18n['fm.severity']}}</th>
+                    <th>{{languageService.i18n['fm.occurtime']}}</th>
+                    <th>{{languageService.i18n['fm.status']}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: msgToDisplay.length, id: 'fmList' }; let i = index" >
+                    <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
+                    <td>{{opt.fieldName}}</td>
+                    <td>{{opt.bsName}}</td>
+                    <td>{{opt.compname}}</td>
+                    <td>{{opt.probablecause}}</td>
+                    <td>{{opt.eventtype}}</td>
+                    <td>{{opt.timestamp}}</td>
+                    <td>{{opt.status}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- pagination -->    
+              <span class="total">{{languageService.i18n['fm.total1']}} {{msgToDisplay.length}} {{languageService.i18n['fm.total2']}}</span>
+              <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
+        nextLabel="" id="fmList">
+          </pagination-controls>
+            </div>
+
+            <div class="note_info">
+              <ul>
+                <li><label>Field Name</label><span></span></li>
+                <li><label>gNB Name</label><span></span></li>
+                <li><label>Severity</label><span></span></li>
+                <li><label>Occur Time</label><span></span></li>
+                <li><label>Status</label><span></span></li>
+              </ul>
+              <ul class="event">
+                <li><label>Event Type</label><span></span></li>
+                <li><label>Event Cause</label><span></span></li>
+                <li><label>Event Desc.</label><span></span></li>
+              </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <input id="cm" class="toggle" type="checkbox">
+      <label for="cm" class="lbl-toggle">{{languageService.i18n['cm.file']}}</label>
+      <div class="collapsible-content">
+        <div class="content-inner">
+          <div class="table">
+            <table>
+              <thead>
+                <tr>
+                  <th>{{languageService.i18n['fileName']}}</th>
+                  <th>{{languageService.i18n['cm.path']}}</th>
+                  <th>{{languageService.i18n['cm.download']}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{bsComponentInfo.name}}</td>
+                  <td>{{bsComponentInfo.firm}}</td>
+                  <td class="center"><mat-icon tooltip="{{languageService.i18n['view_detail']}}">download_for_offline</mat-icon></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+ <!--  <div class="BOX nf {{activeMap['box3']?'active':''}}">
+    <label class="boxTitle"  (click)="clickBox('box3')">{{languageService.i18n['software.info']}} – {{bsComponentInfo.firm}} – {{bsComponentInfo.modelname}}
+      <span class="material-symbols-outlined">
+        expand_less
+        </span>
+      </label>
+    <div class="table">
+      <table>
+        <thead>
+          <tr>
+            <th>{{languageService.i18n['table.header_name']}}</th>
+            <th>{{languageService.i18n['manufacturer']}}</th>
+            <th>{{languageService.i18n['model']}}</th>
+            <th>{{languageService.i18n['type']}}</th>
+            <th>{{languageService.i18n['version']}}</th>
+            <th>{{languageService.i18n['upload_time']}}</th>
+            <th>{{languageService.i18n['cm.apply']}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{bsComponentInfo.name}}</td>
+            <td>{{bsComponentInfo.firm}}</td>
+            <td>{{bsComponentInfo.modelname}}</td>
+            <td>{{bsComponentInfo.comtype}}</td>
+            <td>{{componentInfosw.uploadinfos[0]?.uploadversion}}</td>
+            <td>{{componentInfosw.uploadinfos[0]?.uploadtime}}</td>
+            <td class="center">
+              <mat-icon tooltip="{{languageService.i18n['view_detail']}}">cloud_download</mat-icon>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div> -->
+
+  <!-- <div class="BOX center Fault {{activeMap['box4']?'active':''}}">
+    <label class="boxTitle"  (click)="clickBox('box4')">{{languageService.i18n['index.faultMsg']}}
+      <span class="material-symbols-outlined">
+        expand_less
+        </span>
       <a href="javascript:void(0)" (click)="goFaultMgr()">
        {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
       </a>
@@ -35,7 +594,6 @@
           <option value="All">All</option>
           <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
         </select>
-        <!-- <mat-error *ngIf="searchForm.controls['severity'].invalid">Required</mat-error> -->
       </span>
       <span><label>{{languageService.i18n['fm.occurtime']}}</label>
         <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
@@ -63,7 +621,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: msgToDisplay.length, id: 'fmList' }; let i = index" >
-            <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
+            <td>{{ (p - 1) * pageSize + i + 1 }}</td>
             <td>{{opt.fieldName}}</td>
             <td>{{opt.bsName}}</td>
             <td>{{opt.compname}}</td>
@@ -74,52 +632,19 @@
           </tr>
         </tbody>
       </table>
-      <!-- pagination -->    
       <span class="total">{{languageService.i18n['fm.total1']}} {{msgToDisplay.length}} {{languageService.i18n['fm.total2']}}</span>
       <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
 nextLabel="" id="fmList">
   </pagination-controls>
     </div>
-  </div>
+  </div> -->
 
-  <div class="BOX col-md-4 nf h30">
-    <label class="boxTitle">{{languageService.i18n['software.info']}} – {{bsComponentInfo.firm}} – {{bsComponentInfo.modelname}}</label>
-    <div class="table">
-      <table>
-        <thead>
-          <tr>
-            <th>{{languageService.i18n['table.header_name']}}</th>
-            <th>{{languageService.i18n['manufacturer']}}</th>
-            <th>{{languageService.i18n['model']}}</th>
-            <th>{{languageService.i18n['type']}}</th>
-            <th>{{languageService.i18n['version']}}</th>
-            <th>{{languageService.i18n['upload_time']}}</th>
-            <th>{{languageService.i18n['cm.apply']}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{bsComponentInfo.name}}</td>
-            <td>{{bsComponentInfo.firm}}</td>
-            <td>{{bsComponentInfo.modelname}}</td>
-            <td>{{bsComponentInfo.comtype}}</td>
-            <td>{{componentInfosw.uploadinfos[0]?.uploadversion}}</td>
-            <td>{{componentInfosw.uploadinfos[0]?.uploadtime}}</td>
-            <td>
-              <mat-icon tooltip="{{languageService.i18n['view_detail']}}">cloud_download</mat-icon>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="BOX col-md-4 h30">
-    <label class="boxTitle">Datastore</label>
-  </div>
-
-  <div class="BOX col-md-4 h30">
-    <label class="boxTitle">{{languageService.i18n['cm.file']}}</label>
+  <!-- <div class="BOX {{activeMap['box5']?'active':''}}">
+    <label class="boxTitle"  (click)="clickBox('box5')">{{languageService.i18n['cm.file']}}
+      <span class="material-symbols-outlined">
+        expand_less
+        </span>
+      </label>
     <div class="table">
       <table>
         <thead>
@@ -133,12 +658,12 @@ nextLabel="" id="fmList">
           <tr>
             <td>{{bsComponentInfo.name}}</td>
             <td>{{bsComponentInfo.firm}}</td>
-            <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}">download_for_offline</mat-icon></td>
+            <td class="center"><mat-icon tooltip="{{languageService.i18n['view_detail']}}">download_for_offline</mat-icon></td>
           </tr>
         </tbody>
       </table>
     </div>
-  </div>
+  </div> -->
 
 </div>
 

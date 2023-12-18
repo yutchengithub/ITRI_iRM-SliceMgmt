@@ -114,6 +114,16 @@ export class ComponentInfoComponent implements OnInit {
   timeSort: '' | 'asc' | 'desc' = '';
   isSearch: boolean = false;
   filteredFmList: FaultMessages[] = [];
+  isActive = false;
+  activeMap: any = {
+    box1 : true,
+    box2 : false,
+    box3 : false,
+    box4 : false,
+    box5 : false
+  };
+
+  
 
   tooltipOptions = {
     theme: 'light',     // 'dark' | 'light'
@@ -380,5 +390,15 @@ export class ComponentInfoComponent implements OnInit {
       this.updateNFSuccessful = null;
     }, 3000);
   }
+
+  
+  clickBox(key: string) {
+    Object.keys(this.activeMap).forEach((k) => {
+      console.log(k)
+      this.activeMap[k] = false;
+    });
+    this.activeMap[key] = true;
+  }
+ 
 
 }

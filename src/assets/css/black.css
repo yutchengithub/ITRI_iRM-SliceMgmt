@@ -1,8 +1,7 @@
-.wrap {
-    background: #0d3782;
+body {
     background: linear-gradient(to right, #071226 0%, #000000 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#0d3782", endColorstr="#180ea0",GradientType=1 );
-    color: #fff;
+    color: #fff!important;
 }
 
 div.header {
@@ -221,9 +220,7 @@ div.header {
 span.material-symbols-outlined.stop {
   color: #35d164;
 }
-.basicInfo ul li {
-  color: #8a9bb2;
-}
+
 .cpu span label {
   color: #c8c8c8;
 }
@@ -279,3 +276,65 @@ span.material-symbols-outlined.stop {
     transition: all 0.3s;
     min-width: 6em;
   }
+  .ocloudInfo.software .basicInfo ul li {
+    color: #fff;
+  }
+  /* component */
+  .ocloudInfo.component .BOX {
+    color: #333;
+  }  
+  .ocloudInfo.component .BOX.active {
+    background-color: #e3e3e3;
+  }
+  .ocloudInfo.component .BOX.active .boxTitle {
+    background-color: #062948!important;
+    color: #a9d0ef;
+  }
+  .ocloudInfo.component .table table tbody tr:nth-child(even) td {
+    background-color: #dfeef5e6;
+  }
+  .ocloudInfo.component .table tr td {
+    border-right: 1px solid #a9cfef;
+}
+  .ocloudInfo.component .BOX .table table tbody td {
+    color: #333;
+    border-right: 1px solid #7ca8cd;
+  }
+  .ocloudInfo.component .BOX .table table th {
+    color: #114d7e;
+    background: #c3ccd5;
+    border-bottom: 2px solid #498cc3;
+  }
+  .ocloudInfo.component .BOX .table table {
+    border: 1px solid #82aed3;
+  }
+  .ocloudInfo.component .BOX .filter {
+    background-color: #c7bfa1;
+  }
+  .ocloudInfo.component .BOX .filter span label {
+    color: #333;
+  }
+  .ocloudInfo.component .BOX .filter select, .ocloudInfo.component .BOX .filter input[type="text"] {
+    border: 1px solid #888e91;
+  }
+  .ocloudInfo.component .BOX .filter .material-icons, .ocloudInfo.component .BOX .filter .material-symbols-outlined {
+    color: #ddd6b0;
+    border: 1px solid transparent;
+    background-color: #ab995e;
+    font-size: 20px;
+  }
+  .ocloudInfo.component .BOX .filter .material-icons:hover, .ocloudInfo.component .BOX .filter .material-symbols-outlined:hover {
+    border: 1px solid #f5e77f;
+    color: #fff;
+}
+.ocloudInfo.component .BOX .total {
+  color: #333;
+}
+
+.ocloudInfo.component .ngx-pagination a,
+.ocloudInfo.component .ngx-pagination .small-screen {
+  color: #333!important;
+}
+.ocloudInfo.component .ngx-pagination .disabled {
+  color: #999!important;
+}

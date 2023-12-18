@@ -40,7 +40,7 @@ svg circle {
   border-radius: 50%;
   z-index: 1000;
   display: inline-block;
-  margin: 2em 1em 0;
+  margin: 1em 1em 0;
   border: 6.5px solid;
 }
 
@@ -206,7 +206,7 @@ svg circle {
 }
 
 .col-md-4 {
-  height: 18em;
+  height: 16em;
   width: 32%;
   position: fixed;
   top: 121.5px;
@@ -511,7 +511,7 @@ table {
 
 @media only screen and (max-width: 1600px) {
   .percent {
-    margin: 1.5em 0.5em;
+    margin: 1em 0.5em;
   }
 
   .BOX {
@@ -568,7 +568,7 @@ google-map {
   height: 18em;
   width: 32%;
   position: fixed;
-  top: 377px;
+  top: 350px;
   left: 1270px;
 }
 
@@ -620,10 +620,10 @@ circle-progress {
 
 // @12/07 Add by yuchen
 .bsWindow {
-  height: 27em;
+  height: 23.5em;
   width: 32%;
   position: fixed;
-  top: 632px;
+  top: 606px;
   left: 1270px;
   overflow-y: auto;
 }

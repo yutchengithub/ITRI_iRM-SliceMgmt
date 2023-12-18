@@ -1001,7 +1001,9 @@ transition: all .25s;
 .filterBY .material-symbols-outlined ~ span label {
 cursor: pointer;
 }
-
+.ocloudInfo.component .ngx-pagination .small-screen {
+  left: 2.5em;
+}
 @media screen and (max-width:1920px) {
  /*  .table table {
       font-size: 1em;

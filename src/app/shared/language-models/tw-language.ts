@@ -217,7 +217,7 @@ export const TwLanguage = {
   'cm.name':'元件名稱',
   'cm.provision':'匯入元件參數',
   'ExportCSV':'匯出過濾結果.csv', 
-  'cm.create':'新增元件',
+  'cm.add':'新增元件',
   'cm.type':'元件種類:',
   'cm.ip':'元件IP位址',
   'cm.port':'元件Port',
