@@ -98,12 +98,19 @@
 					  </mat-menu>
 				</div>
 			</label>
-
+			
 			<!-- 場域地圖只有當 showMapModel 為 true 時才顯示 -->
 			<google-map *ngIf="showMapModel" width="915px" height="748px" 
-						[center]="center" 
-						[zoom]="zoom" 
-						[options]="mapOptions">
+				[center]="center" 
+				[zoom]="zoom" 
+				[options]="mapOptions">
+				
+				<!-- 使用 *ngFor 為每個基站添加標記，並將位置訊息轉換為適當的格式 -->
+				<!-- 綁定 *ngFor 循環中的每個 map-marker 的 markerClick 事件到 onSelectBsInfo 方法 -->
+				<map-marker *ngFor="let bsInfo of bsInfoDetails" 
+							[position]="parsePosition(bsInfo.position)" 
+							(markerClick)="onSelectBsInfo(bsInfo)">
+				</map-marker>
 			</google-map>
 
 			<!-- 基站列表，只有當 showMapModel 為 false 時才顯示 -->
@@ -122,53 +129,24 @@
 							</tr>
 						</thead>
 						<tbody>
-							<!-- <tr /**ngFor="let opt of msgToDisplay" >
-                  <td>{{opt.fieldName}}</td>
-                  <td>{{opt.bsName}}</td>
-                  <td>{{opt.compname}}</td>
-                </tr> -->
-							<tr >
-								<td>BS01
-									<!-- {{opt.name}}-->
+							<tr *ngFor="let opt of bsInfoDetails">
+								<td>
+									<!-- 顯示 "基站名稱" -->
+									{{opt.name}}
 								</td>
 								<td>
-									All-in-one: [CU + DU + RU]
-								    <!-- <label *ngIf="opt.bstype === 2" value="Disaggregated: [CU] + [DU] + [RU]"></label> -->
-									<!-- <label *ngIf="opt.bstype === 1" class="All-in-one: [CU + DU + RU]"></label> -->
+									<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
+									<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
+									
+									<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
+									<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
 								</td>
-								<td>[121.044029,24.773652]</td>
+								<td>
+									<label>{{ opt.position }}</label>
+								</td>
 								<td class="icon">
-									<!-- <label *ngIf="opt.status === 2" class="greenLight"></label> -->
-									<!-- <label *ngIf="opt.status === 1" class="redLight"></label> -->
-									<label class="greenLight"></label>
-								</td>
-								<td>
-									<mat-icon tooltip="{{ languageService.i18n['field.view'] }}">remove_red_eye</mat-icon>
-								</td>
-								<td>
-									<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}">warning</mat-icon>
-								</td>
-							</tr>
-							<tr>
-								<td>BS02</td>
-								<td>Disaggregated: [CU] + [DU] + [RU]</td>
-								<td>[121.044029,24.773652]</td>
-								<td>
-									<label class="redLight"></label>
-								</td>
-								<td>
-									<mat-icon tooltip="{{ languageService.i18n['field.view'] }}">remove_red_eye</mat-icon>
-								</td>
-								<td>
-									<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}">warning</mat-icon>
-								</td>
-							</tr>
-							<tr>
-								<td>BS03</td>
-								<td>Disaggregated: [CU] + [DU] + [RU]</td>
-								<td>[121.044324,24.773815]</td>
-								<td>
-									<label class="greenLight"></label>
+									<label *ngIf="opt.status === 1" class="redLight"></label>
+									<label *ngIf="opt.status === 2" class="greenLight"></label>
 								</td>
 								<td>
 									<mat-icon tooltip="{{ languageService.i18n['field.view'] }}">remove_red_eye</mat-icon>
@@ -245,68 +223,97 @@
 			</div>
 		</div>
 
-		<!-- gNB Detailed Information (基站資訊) -->
-		<div class="BOX col-md-3 basicInfo bsWindow">
+		<!-- BS Information (基站資訊) -->
+		<div class="BOX col-md-3 basicInfo bsWindow" *ngIf="currentBsInfo" >
 			<label class="boxTitle">{{languageService.i18n['field.bsInfo']}}</label>
 			<ul>
 				<li>
-					<label>{{languageService.i18n['field.gNBname']}}</label><span>{{ocloudInfo.name}}</span></li>
+				  <label>{{languageService.i18n['field.gNBname']}}</label>
+				  <span>{{ currentBsInfo.name }}</span>
+				</li>
 				<li>
-					<label>{{languageService.i18n['field.gNBtype']}}</label><span>{{ocloudInfo.id}}</span></li>
+				  <label>{{languageService.i18n['field.gNBtype']}}</label>
+				  <span *ngIf="currentBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
+				  <span *ngIf="currentBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
+				</li>
 				<li>
-					<label>NCI</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+				  <label>NCI</label>
+				  <span>{{ currentBsInfo.info['bs-conf'].nci }}</span>
+				</li>
 				<li>
-					<label>PCI</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+				  <label>PCI</label>
+				  <span>{{ currentBsInfo.info['bs-conf'].pci }}</span>
+				</li>
 				<li>
-					<label>PLMN ID</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+				  <label>PLMN ID</label>
+				  <span>
+					{{ currentBsInfo.info['bs-conf']['plmn-id'].mcc }}{{ currentBsInfo.info['bs-conf']['plmn-id'].mnc }}
+				  </span>
+				</li>
 				<li>
-					<label>Tx Power (dBm)</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+				  <label>Tx Power (dBm)</label>
+				  <span>{{ currentBsInfo.info['bs-conf']['tx-power'] }}</span>
+				</li>
 				<li>
-					<label>NR-ARFCN-UL</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+				  <label>NR-ARFCN-UL</label>
+				  <span>{{ currentBsInfo.info['bs-conf']['nrarfcn-ul'] }}</span>
+				</li>
 				<li>
-					<label>NR-ARFCN-DL</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+				  <label>NR-ARFCN-DL</label>
+				  <span>{{ currentBsInfo.info['bs-conf']['nrarfcn-dl'] }}</span>
+				</li>
+
+				  <!-- 使用 currentBsInfoPosition getter 方法獲取經度 -->
 				<li>
-					<label>{{languageService.i18n['field.Longitude']}}</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
+					<label>{{languageService.i18n['field.Longitude']}}</label>
+					<span>{{ currentBsInfoPosition.lng }}</span>
+				</li>
+
+				<!-- 使用 currentBsInfoPosition getter 方法獲取緯度 -->
 				<li>
-					<label>{{languageService.i18n['field.Latitude']}}</label><span>{{ocloudInfo.imsEndpoint}}</span></li>
-			</ul>
+					<label>{{languageService.i18n['field.Latitude']}}</label>
+					<span>{{ currentBsInfoPosition.lat }}</span>
+				</li>
+			  </ul>  
 			<div>
 				<button mat-flat-button class="button-modifyConfiguration" tooltip="{{languageService.i18n['field.modifyConfiguration']}}" (click)="openUpdateModel()">{{languageService.i18n['field.modifyConfiguration']}}</button>
 			</div>
+
 			<div>
 				<label class="boxTitle">{{languageService.i18n['field.neighboringBSList']}}</label>
-				<!-- Neighboring gNB List @12/08 Add by yuchen -->
+				<!-- Neighboring BS List -->
 				<div class="table">
-					<table>
-						<thead>
-							<tr>
-								<th>PLMN ID</th>
-								<th>NCI</th>
-								<th>PCI</th>
-							</tr>
-						</thead>
-						<tbody>
-							<!-- <tr /**ngFor="let opt of msgToDisplay" >
-                  <td>{{opt.fieldName}}</td>
-                  <td>{{opt.bsName}}</td>
-                  <td>{{opt.compname}}</td>
-                </tr> -->
-							<tr>
-								<td>46655</td>
-								<td>000004108</td>
-								<td>100</td>
-							</tr>
-							<tr>
-								<td>46655</td>
-								<td>000050109</td>
-								<td>101</td>
-							</tr>
-						</tbody>
-					</table>
+				  <table>
+					<thead>
+					  <tr>
+						<th>PLMN ID</th>
+						<th>NCI</th>
+						<th>PCI</th>
+					  </tr>
+					</thead>
+					<tbody>
+					  <!-- 使用 *ngFor 來迭代 currentBsInfo.anr['anr-son-output'].neighbor 數組中的每一個 neighbor 對象 -->
+					  <tr *ngFor="let neighbor of currentBsInfo.anr['anr-son-output'].neighbor">
+						<td>
+						  <!-- 顯示每個 neighbor 對象的 PLMN ID -->
+						  {{ neighbor['plmn-id'].mcc }}{{ neighbor['plmn-id'].mnc }}
+						</td>
+						<td>
+						  <!-- 顯示每個 neighbor 對象的 NCI -->
+						  {{ neighbor.nci }}
+						</td>
+						<td>
+						  <!-- 顯示每個 neighbor 對象的 PCI -->
+						  {{ neighbor.pci }}
+						</td>
+					  </tr>
+					</tbody>
+				  </table>
 				</div>
 			</div>
 		</div>
 	</div>
+
 	<ng-template #updateModal>
 		<h5>{{languageService.i18n['software_update']}}</h5>
 		<form [formGroup]="updateForm">

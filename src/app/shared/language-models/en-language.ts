@@ -14,7 +14,7 @@ export const Enlanguage = {
   'index.menu_iRmSys':'Athena Orchestrator',
   'index.menu_dashboard':'Dashboard',
   'index.menu_fieldMgr':'Field Management',
-  'index.menu_gNB':'gNB Management',
+  'index.menu_BS':'BS Management',
   'index.menu_componentMgr':'Component Management',
   'index.menu_faultMgr':'Fault Management',
   'index.menu_performMgr':'Performance Management',
@@ -51,7 +51,7 @@ export const Enlanguage = {
   // Field Management (場域管理) @11/30 Add by yuchen
   'field.list':'Field List',
   'field.name':'Field Name',
-  'field.bsNum':'Number of gNBs',
+  'field.bsNum':'Number of BSs',
   'field.view':'View',
   'field.alarm':'Field Alarm',
   'field.snapshot':'Snapshot',
@@ -64,23 +64,23 @@ export const Enlanguage = {
   'field.rsrpMap':'RSRP MAP',
   'field.sinrMap':'SINR MAP',
   'field.MapOption':'More Options',
-  'field.faultInfo':'Field Alarms Information',
+  'field.faultInfo':'Field Alarms',
   'field.criticalFault':'Critical',
   'field.majorFault':'Major',
   'field.minorFault':'Minor',
   'field.warningFault':'Warning',
-  'field.performanceInfo':'Field Performance Information',
+  'field.performanceInfo':'Field Performance',
   'field.handoverRate':'Handover Success Rate',
   'field.accessRate':'Access Success Rate',
   'field.CPU_Utilization':'CPU Utilization',
   'field.Memory_Utilization':'Memory Utilization',
-  'field.bsInfo':'gNB Detailed Information',
-  'field.gNBname':'gNB Name',
-  'field.gNBtype':'gNB Type',
+  'field.bsInfo':'BS Information',
+  'field.gNBname':'Name',
+  'field.gNBtype':'Type',
   'field.Longitude':'Longitude',
   'field.Latitude':'Latitude',
   'field.modifyConfiguration':'Modify Configuration',
-  'field.neighboringBSList':'Neighboring gNB List',
+  'field.neighboringBSList':'Neighboring BS List',
   'field.config':'Field Configuration',        // @12/12 Add
   'field.configPMset':'PM Parameter Setting',  // @12/12 Add
   'field.report':'Field Reports',              // @12/12 Add
@@ -89,9 +89,9 @@ export const Enlanguage = {
   'field.optim':'Field Optimization',          // @12/12 Add
   'field.optimSON':'SON Calculation',          // @12/12 Add
   'field.mapModel':'Map Mode',                 // @12/12 Add
-  'field.bsList':'gNB List',                   // @12/12 Add
-  'field.bsAntennaCoord':'gNB Antenna Coordinates',  // @12/13 Add
-  'field.gNBstatus':'gNB Status',                    // @12/13 Add
+  'field.bsList':'BS List',                    // @12/12 Add
+  'field.bsAntennaCoord':'BS Antenna Coordinates',  // @12/13 Add
+  'field.gNBstatus':'BS Status',                    // @12/13 Add
   'field.bsAlarm':'Alarm',                           // @12/13 Add
 
   // Fault Management

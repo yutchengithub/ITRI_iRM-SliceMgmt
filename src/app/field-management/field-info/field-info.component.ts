@@ -10,6 +10,9 @@ import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
 import { ChangeDetectorRef } from '@angular/core';  // @12/13 Add
 
+import { forkJoin, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+
 export interface OcloudInfo {
   id: string;
   name: string;
@@ -172,17 +175,75 @@ export interface Utilization {
 /* ↓ @12/14~15 Add For API of queryBsInfo ↓ */
 // notes: 當物件有可能是空的或可能不在 JSON 中設為"?:"
 export interface BSInfo {
-  info?: Info[]; // 
-  extension_info?: ExtensionInfo[]; // ok
+  info: {
+    'bs-conf': {
+      'plmn-id': {
+        mcc: string;
+        mnc: string;
+      };
+      nci: string;
+      pci: number;
+      'nrarfcn-dl': number;
+      'nrarfcn-ul': number;
+      'duplex-mode': string;
+      'channel-bandwidth': number;
+      tac: string;
+      'tx-power': number;
+    };
+    nci?: string;
+    gNBId: number;
+    gNBIdLength: number;
+    'gNB-type'?: string;
+    gNBCUName ?: string;
+    pLMNId_MCC ?: string; 
+    pLMNId_MNC ?: string; 
+    cellLocalId?: string;
+    id?: string; 
+    CU?:{
+      id: string;
+      func: string;
+      cellLocalId: string;
+      absoluteFrequencySSB: string;
+      sSBSubCarrierSpacing: string;
+      pLMNId_MCC: string;
+      pLMNId_MNC: string;
+    };
+    DU?: {
+      id: string;
+      func: string;
+      cellLocalId: string;
+      administrativeState: string;
+      arfcnDL: number;
+      arfcnSUL: number;
+      arfcnUL: number;
+      bSChannelBwDL: number;
+      bSChannelBwSUL: number;
+      bSChannelBwUL: number;
+      nRPCI: number;
+      nRTAC: string;
+      ssbDuration: number;
+      ssbFrequency: number;
+      ssbOffset: number;
+      ssbPeriodicity: number;
+      ssbSubCarrierSpacing: number;
+      configuredMaxTxPower: number;
+    }
+    RU: {
+      id: string;
+      position: string;
+    };
+  };
+
+  extension_info: ExtensionInfo[]; // ok
   cellInfo?: Cellinfo; // ok
-  anr?: Anr;     // ok
-  pci?: PCI;    // ok 目前沒看到有 BS 這個有值
-  cco?: CCO;    // ok 目前沒看到有 BS 這個有值
-  id?: string;   // ok 
+  anr: Anr;     // ok
+  pci: PCI;     // ok 目前沒看到有 BS 這個有值
+  cco: CCO;     // ok 目前沒看到有 BS 這個有值
+  id: string;   // ok 
   name: string; // ok 
-  ip?: string;              // ok 不一定有值
-  port?: string;            // ok 不一定有值
-  position?: string;        // ok 不一定有值
+  ip: string;              // ok 不一定有值
+  port: string;            // ok 不一定有值
+  position: string;        // ok 不一定有值
   description?: string;      // ok 
   bstype?: number;           // ok 
   components?: Components;   // ok 可能會出錯
@@ -191,77 +252,6 @@ export interface BSInfo {
   lastoff?: string;          // ok 
   'components-info'?: ComponentsInfo;   // ok 不一定有值
 }
-
-  /* ↓ @12/15 AddFor info:[] ↓ */
-export interface Info {
-  bsConf?: BSConf; // 可選
-  nci?: string;
-  gNBId: number;
-  gNBIdLength: number;
-  cellLocalId?: string;  // 可選
-  CU?: CU;               // 可選
-  DU?: DU;               // 可選
-  RU?: RU;               // 可選
-  'gNB-type'?: string;   // 可選
-  'gNBCUName'?: string;  // 可選
-  'pLMNId_MCC'?: string; // 可選
-  'pLMNId_MNC'?: string; // 可選
-  id?: string;           // 可選
-}
-
-// "bs-conf":
-export interface BSConf {
-  'plmn-id': PlmnId;
-  nci: string;
-  pci: number;
-  'nrarfcn-dl': number;
-  'nrarfcn-ul': number;
-  'duplex-mode'?: string;
-  'channel-bandwidth'?: number;
-  tac?: string;
-  'tx-power'?: number;
-}
-
-// "CU":
-export interface CU {
-  id: string;
-  func: string;
-  cellLocalId: string;
-  absoluteFrequencySSB: string;
-  sSBSubCarrierSpacing: string;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-}
-
-// "DU":
-export interface DU {
-  id: string;
-  func: string;
-  cellLocalId: string;
-  administrativeState: string;
-  arfcnDL: number;
-  arfcnSUL: number;
-  arfcnUL: number;
-  bSChannelBwDL: number;
-  bSChannelBwSUL: number;
-  bSChannelBwUL: number;
-  nRPCI: number;
-  nRTAC: string;
-  ssbDuration: number;
-  ssbFrequency: number;
-  ssbOffset: number;
-  ssbPeriodicity: number;
-  ssbSubCarrierSpacing: number;
-  configuredMaxTxPower: number;
-}
-
-// "RU":
-export interface RU {
-  id: string;
-  position: string;
-}
-/* ↑ @12/15 Add For info:[] ↑ */
-
 
 /* ↓ @12/14 Add For extension_info:[] ↓ */
 
@@ -840,14 +830,10 @@ export interface Cellinfo {
 
 /* ↓ @12/15 Add For "anr": {} ↓ */
 export interface Anr {
-  [key: string]: AnrSonOutput;
+  'anr-son-output': AnrSonOutput;
 }
 
-// "anr-son-output":
 export interface AnrSonOutput {
-  'anr-son-output': AnrSonOutputDetail;
-}
-export interface AnrSonOutputDetail {
   neighbor: Neighbor[];
 }
 
@@ -856,7 +842,10 @@ export interface Neighbor {
   nci: string;
   pci: number;
   nrarfcn: number;
-  'plmn-id': PlmnId;
+  'plmn-id': {
+    mcc: string;
+    mnc: string;
+  };
   tac: string;
   id?: string;
   enable?: string;
@@ -867,12 +856,6 @@ export interface Neighbor {
   'q-offset'?: string;
   'rs-tx-power'?: string;
   '__itri_default___': number;
-}
-
-// "plmn-id":
-export interface PlmnId {
-  mcc: string;
-  mnc: string;
 }
 
 /* ↑ @12/15 Add For "anr": {} ↑ */
@@ -889,6 +872,8 @@ export interface CCO {
 
 export interface Components {
   [key: string]: { [key: string]: DUInfo[] } | string; // 添加了字符串的可能性
+  //type: string;
+  //id: string;
 }
 
 export interface DUInfo {
@@ -983,7 +968,6 @@ export class FieldInfoComponent implements OnInit {
   softwareList: SoftwareList[] = [];
   systemSummary: SystemSummary = {} as SystemSummary;;
   fileNameMapSoftware: Map<string, SoftwareList> = new Map();
-  faultColors: string[] = ['#FF0000', '#FFA042', '	#FFFF37', '#00FFFF'];
   showTooltipCpu: any = {};
   showTooltipStorage: any = {};
   showTooltipNic: any = {};
@@ -1079,84 +1063,199 @@ export class FieldInfoComponent implements OnInit {
     private fb: FormBuilder,
     private dialog: MatDialog,
     public languageService: LanguageService,
-    private cdr: ChangeDetectorRef  // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，確保當數據模型更新後，相關的視圖能夠及時反映
+    // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，
+    //              確保當數據模型更新後，相關的視圖能夠及時反映
+    private cdr: ChangeDetectorRef  
   ) {
-    this.severitys = this.commonService.severitys;
+    this.severitys = this.commonService.severitys; // 取得告警資訊種類名稱
   }
 
-  ngOnInit(){
+  // 頁面初始化
+  ngOnInit(){ 
+
     this.sessionId = this.commonService.getSessionId();
     this.route.params.subscribe((params) => {
       this.fieldId = params['id'];  
       this.fieldName = params['name']; 
       console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
       this.getQueryFieldInfo();
-
-      this.cloudId = params['cloudId'];
-      this.cloudName = params['cloudName'];
-      console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
-      //this.getOcloudInfo();
-      this.getOcloudPerformance();
-      this.getSoftwareList();
-      this.getSystemSummary();
     });
+
   }
 
-  // @12/05 Add by yuchen
+ // @12/18 Update
   getQueryFieldInfo() {
-    console.log('getQueryFieldInfo() - Start');
+    console.log('getQueryFieldInfo() - Start'); // 啟動獲取場域資訊
+    console.log('Start fetching field info');   // 開始獲取場域訊息
     clearTimeout(this.refreshTimeout);
-  
+
     if (this.commonService.isLocal) {
-
-      // local files test
+      
+      // For testing with local files
       this.fieldInfo = this.commonService.fieldInfo;
-      this.fieldInfoDeal();
-
+      this.processFieldInfo(); // 處理場域資訊
     } else {
-
-      // 使用 commonService 中的 queryFieldInfo() 發起 HTTP GET 請求
+      
+      // Use commonService's queryFieldInfo() to make an HTTP GET request
       this.commonService.queryFieldInfo(this.fieldId).subscribe({
         next: (res) => {
-          console.log('Get queryFieldInfo from API: ', res,'\nfieldId: '+ res.id +', fieldName: '+res.name);
-          this.fieldInfo = res ;
-          console.log('The Field info:', this.fieldInfo);
-          this.fieldInfoDeal();
+
+          // 當 API 響應數據到達時，執行此回調
+          // This callback is executed when API response data arrives
+          console.log('從 API 獲取 queryFieldInfo\n( Fetched queryFieldInfo from API ): ', res, '\nfieldId: ' + res.id + ', fieldName: ' + res.name);
+          console.log('從 API 獲取 fieldId.bsinfo\n( Fetched fieldId.bsinfo from API ):', res.bsinfo);
+          this.fieldInfo = res;
+          console.log('場域資訊\n( Field info ):', this.fieldInfo); // 取得的場域資訊 ( Obtained field information ):
+
+          // 確保場域資訊已經被賦值後再進行後續處理
+          // Ensure field info is assigned before proceeding
+          this.processFieldInfo(); // 進行後續處理
         },
         error: (error) => {
+          // 獲取資訊出錯時執行此回調
+          // This callback is executed when there is an error fetching the info
+          console.error('獲取場域資訊出錯:', error);
           console.error('Error fetching field info:', error);
         },
         complete: () => {
+          // 請求完成時執行此回調
+          // This callback is executed when the request is complete
+          console.log('場域資訊獲取完成');
           console.log('Field info fetch completed');
         }
       });
     }
   }
 
-  // @11/30 Add by yuchen
-  fieldInfoDeal() {
+  // @12/18 Add
+  // 處理場域資訊並調用 getQueryBsInfoForAll
+  // Process field info and call getQueryBsInfoForAll
+  processFieldInfo() {
 
-    // 輸出檢查點
-    console.log('fieldInfoDeal() - Start');
-    console.log('The field info:', this.fieldInfo);
-    console.log('The field info properties count:', this.fieldInfo ? Object.keys(this.fieldInfo).length : 'FieldInfo is undefined or null');
-    console.log('After field info log');
+    // 確認 fieldInfo 和 fieldInfo.bsinfo 是否已經被定義
+    // Ensure fieldInfo and fieldInfo.bsinfo are defined
+    if (this.fieldInfo && this.fieldInfo.bsinfo) {
+      
+      // 確認場域資訊記錄的"基站數量"是否與"bsinfo"內的資料筆數相等
+      if ( this.fieldInfo.bsNum === this.fieldInfo.bsinfo.length ) {
 
-    // 定義一個空陣列，長度等於場域的總數
-    this.nullList = new Array(this.totalItems);
-  
-    // 如果需要，可以使用 setTimeout 設定一個定時刷新
-    this.refreshTimeout = window.setTimeout(() => {
-      if (this.p === 1) {
-        console.log(`page[${this.p}] ===> refresh.`);
-        //this.getQueryFieldInfo();  // 刷新場域資訊函數
-      } else {
-        console.log(`page[${this.p}] ===> no refresh.`);
+        // 取得該場域所有基站之詳細資訊
+        this.getQueryBsInfoForAll(this.fieldInfo.bsNum, this.fieldInfo.bsinfo); 
       }
-    }, 100); // timeout: 100 ms
+    }
   }
 
-  //  string -> number (mobility - 換手成功率) @12/18 Update coverage -> mobility by yuchen 
+  // 用來存儲當前選擇的基站資訊 @12/19 Add
+  currentBsInfo: BSInfo | null = null;
+
+  // 用來切換成顯示"當下點擊的基站資訊" @12/19 Add
+  onSelectBsInfo(bsInfo: BSInfo) {
+    
+    this.currentBsInfo = bsInfo;
+    
+    this.cdr.detectChanges(); // 手動觸發變化檢測
+    console.log("After click onSelectBsInfo the currentBsInfo:", this.currentBsInfo)
+  }
+
+  // @12/18 Add
+  bsInfoDetails: BSInfo[] = [];  // 用來存儲每個基站的詳細資訊之矩陣
+  // Get the All infos of BSs in the field
+  getQueryBsInfoForAll(bsNum: number, bsinfo: BsInfo[]) {
+    console.log('getQueryBsInfoForAll() - Start');
+
+
+    const observables: Observable<BSInfo>[] = bsinfo.map((bsInfo) => {
+      return this.commonService.queryBsInfo(bsInfo.id);
+    });
+
+    // 使用 forkJoin 等待所有請求完成
+    forkJoin(observables).subscribe({
+      next: (results: BSInfo[]) => {
+        // 此時 results 是一個包含所有響應的數組
+        this.bsInfoDetails = results;
+        console.log('The BSs info in the field:', this.bsInfoDetails);
+        console.log('bsInfoDetails[0].info:', this.bsInfoDetails[0].info);
+
+        // 檢查是否有基站資訊，如果有，則將第一筆設為當前顯示的基站資訊
+        if (this.bsInfoDetails.length > 0) {
+          this.currentBsInfo = this.bsInfoDetails[0];
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching BS Infos:', error);
+      },
+      complete: () => {
+        console.log('All BS Info fetches completed');
+        console.log('getQueryBsInfoForAll() - End');
+      }
+    });
+  }
+
+  // @12/18 Add
+  // Get response of queryBsInfo API 
+  // 這個方法現在不需要改變，它應該返回一個 Observable
+  getQueryBsInfo(bsId: string) {
+    console.log('getQueryBsInfo() - Start');
+    console.log('bsId: ', bsId);
+
+    // 直接返回 API 請求的 Observable
+    return this.commonService.queryBsInfo(bsId).pipe(
+      tap({
+        next: (res) => {
+          console.log('Get queryBsInfo from API:', res, '\nBsName:', res.name, ', BsId:', res.id);
+
+          // 處理從 API 獲取的基站資訊中的位置訊息
+          if (!res.position) { // 檢查位置訊息是否為空、undefined 或 null
+            // 嘗試從 res.info.RU.position 獲取位置訊息
+            // 如果 res.info 或 res.info.RU 不存在，或者 res.info.RU.position 為空，
+            // 則將 res.position 設置為 "None"
+            res.position = res.info?.RU?.position || "None";
+          }
+        },
+        error: (error) => {
+          console.error('Error fetching Bs Info:', error);
+        },
+        complete: () => {
+          console.log('Bs Info fetch for ID', bsId, 'completed');
+        }
+      })
+    );
+  }
+
+  // @12/19 Add
+  // 此方法用於將位置訊息的字串轉換為 Google 地圖所需的 LatLngLiteral 對象
+  parsePosition(positionStr: string): google.maps.LatLngLiteral {
+    try {
+
+      // 嘗試解析 JSON 字串以獲取經緯度數組
+      const positionArr = JSON.parse(positionStr);
+
+      // 返回一個 LatLngLiteral 對象，其 lat 和 lng 屬性分別對應於緯度和經度
+      return {
+        lat: positionArr[1],
+        lng: positionArr[0]
+      };
+
+    } catch (e) {
+
+      // 如果解析出錯，則在控制台打印錯誤訊息
+      console.error('Error parsing position:', e);
+
+      // 返回一個默認的 LatLngLiteral 對象，防止程序崩潰
+      return { lat: 0, lng: 0 };
+    }
+  }
+
+  // @12/19 Add
+  // 用於從當前基站資訊中獲取轉換後的位置對象 
+  get currentBsInfoPosition(): google.maps.LatLngLiteral {
+
+    // 如果 currentBsInfo 存在，則調用 parsePosition 方法進行轉換，否則返回默認值
+    return this.currentBsInfo ? this.parsePosition(this.currentBsInfo.position) : { lat: 0, lng: 0 };
+  }
+
+  //  string -> number (mobility - 換手成功率)
+  // @12/18 Update coverage -> mobility by yuchen 
   get mobilityAsNumber(): number {
     return parseFloat(this.fieldInfo.mobility);
   }
@@ -1184,7 +1283,7 @@ export class FieldInfoComponent implements OnInit {
 
   // 設定告警種類給 CSS 選擇器用文字 @12/07 Add by yuchen
   severityText_forCSS(severity: string): string {
-    console.log("severity:", severity);
+    //console.log("severity:", severity);
     return this.commonService.severityText(severity);
   }
 
@@ -1212,64 +1311,6 @@ export class FieldInfoComponent implements OnInit {
   goFaultMgr() {
     this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
   }
-
-
-  bsInfoDetails: BSInfo[] = []; // 用來存儲每個基站詳細訊息的陣列
-  // get response of queryBsInfo API  @12/18 Add by yuchen
-  getQueryBsInfoForAll() {
-    console.log('getQueryBsInfoForAll() - Start');
-
-    if (this.commonService.isLocal) {
-      // 如果是本地測試，則直接使用本地資料
-      //this.bsInfoDetails = this.commonService.bsInfo;
-    } else if (this.fieldInfo.bsinfo && this.fieldInfo.bsinfo.length > 0) {
-      // 如果非本地測試，且 fieldInfo.bsinfo 不為空，則逐一查詢
-      this.fieldInfo.bsinfo.forEach((bsInfo) => {
-        if (bsInfo.id) {
-          this.getQueryBsInfo(bsInfo.id);
-        }
-      });
-    }
-    
-    console.log('getQueryBsInfoForAll() - End');
-  }
-
-  private getQueryBsInfo(bsId: string) {
-
-    // 發起對單個基站的請求
-    this.commonService.queryBsInfo(bsId).subscribe({
-      next: (res) => {
-        console.log('Get queryBsInfo from API:', res, '\nBsName:', res.name, ', BsId:', res.id);
-        this.bsInfoDetails.push(res); // 將取得的基站資訊加入陣列
-      },
-      error: (error) => {
-        console.error('Error fetching Bs Info:', error);
-      },
-      complete: () => {
-        console.log('Bs Info fetch for ID', bsId, 'completed');
-      }
-    });
-  }
-
-
-  // getOcloudInfo() {
-  //   if (this.commonService.isLocal) {
-  //     /* local file test */
-  //     this.ocloudInfo = this.commonService.ocloudInfo;
-  //     this.ocloudInfoDeal();
-  //   } else { 
-  //     this.commonService.queryOcloudInfo(this.cloudId).subscribe(
-  //       res => { 
-  //         console.log('getOcloudInfo:');
-  //         console.log(res);
-  //         const str = JSON.stringify(res);//convert array to string
-  //         this.ocloudInfo = JSON.parse(str);
-  //         this.ocloudInfo = res as OcloudInfo;
-  //         this.ocloudInfoDeal();
-  //       }
-  //     );
-  //   }
-  // }
 
   getOcloudPerformance() {
     if (this.commonService.isLocal) {
