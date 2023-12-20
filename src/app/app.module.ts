@@ -56,7 +56,7 @@ import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud
 import { LanguageService } from './shared/service/language.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { GoogleMapsModule } from '@angular/google-maps';        // @12/10 Add by yuchen for googlemaps
+import { GoogleMapsModule } from '@angular/google-maps';        // @12/10 Add by yuchen for google maps
 import { NgCircleProgressModule } from 'ng-circle-progress';    // @12/11 Add by yuchen for 圓形進度條
 import { MatButtonModule } from '@angular/material/button';     // @12/12 Add by yuchen for Button 樣式
 import { MatDividerModule } from '@angular/material/divider';
@@ -116,7 +116,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     TabViewModule,
     ChartModule,
     MatSlideToggleModule,
-    GoogleMapsModule,                 // @12/10 Add by yuchen for googlemaps
+    GoogleMapsModule,                 // @12/10 Add by yuchen for google maps
     NgCircleProgressModule.forRoot({  // @12/11 Add by yuchen for 圓形進度條
       maxPercent: 100,
       radius: 45,                  // 圓的半徑，單位:像素(px)。這會影響到圓形進度條的大小。

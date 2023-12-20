@@ -99,16 +99,20 @@
 				</div>
 			</label>
 			
-			<!-- 場域地圖只有當 showMapModel 為 true 時才顯示 -->
+			<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
 			<google-map *ngIf="showMapModel" width="915px" height="748px" 
-				[center]="center" 
-				[zoom]="zoom" 
-				[options]="mapOptions">
+						[center]="center" [zoom]="zoom" [options]="mapOptions">
+
+				<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
+				<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
 				
-				<!-- 使用 *ngFor 為每個基站添加標記，並將位置訊息轉換為適當的格式 -->
-				<!-- 綁定 *ngFor 循環中的每個 map-marker 的 markerClick 事件到 onSelectBsInfo 方法 -->
+				<!-- 使用 *ngFor 指令迭代 bsInfoDetails 陣列中的每個基站資訊 -->
+				<!-- 為每個基站創建一個地圖標記，並將其位置設置為 bsInfo 的位置 -->
+				<!-- 同時綁定 markerClick 事件到 onSelectBsInfo 方法 -->
+				<!-- 這意味著當用戶點擊任何標記時，onSelectBsInfo 方法將被調用 -->
 				<map-marker *ngFor="let bsInfo of bsInfoDetails" 
 							[position]="parsePosition(bsInfo.position)" 
+							[icon]="customIcon"
 							(markerClick)="onSelectBsInfo(bsInfo)">
 				</map-marker>
 			</google-map>

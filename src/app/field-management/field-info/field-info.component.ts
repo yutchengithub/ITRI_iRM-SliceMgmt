@@ -8,10 +8,11 @@ import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
-import { ChangeDetectorRef } from '@angular/core';  // @12/13 Add
 
 import { forkJoin, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { ChangeDetectorRef } from '@angular/core';          // @12/13 Add for use 'detectChanges()'
+import { environment } from 'src/environments/environment'; // @12/20 Add for import Google Maps API Key
 
 export interface OcloudInfo {
   id: string;
@@ -926,15 +927,13 @@ export interface SoftwareFiles {
 
    /* ↑ @12/15 Add  For "components-info": ↑ */
 
-
 /* ↑ @12/14~15 Add For API of queryBsInfo ↑ */
-
-
 
 // 定義一個接口，其內部結構可以是任意類型的屬性
 export interface DynamicBSInfo {
   [key: string]: any;
 }
+
 
 @Component({
   selector: 'app-field-info',
@@ -952,9 +951,6 @@ export class FieldInfoComponent implements OnInit {
   fieldId: string = '';   // @12/05 Add by yuchen
   fieldName: string = ''; // @12/05 Add by yuchen
 
-  //bsInfo: BSInfo = {} as BSInfo; // @12/14 Add by yuchen
-
-
   refreshTimeout!: any;
   refreshTime: number = 5;
 
@@ -962,6 +958,11 @@ export class FieldInfoComponent implements OnInit {
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
   nullList: string[] = [];  // 給頁籤套件使用
+
+  @ViewChild('updateModal') updateModal: any;
+  updateModalRef!: MatDialogRef<any>;
+  updateForm!: FormGroup;
+  formValidated = false;
 
   ocloudInfo: OcloudInfo = {} as OcloudInfo;
   ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
@@ -971,10 +972,7 @@ export class FieldInfoComponent implements OnInit {
   showTooltipCpu: any = {};
   showTooltipStorage: any = {};
   showTooltipNic: any = {};
-  @ViewChild('updateModal') updateModal: any;
-  updateModalRef!: MatDialogRef<any>;
-  updateForm!: FormGroup;
-  formValidated = false;
+
 
   // For Fault Alarms: CRITICAL, MAJOR, MINOR, WARNING
   severitys: string[];
@@ -984,13 +982,56 @@ export class FieldInfoComponent implements OnInit {
     hideDelay: 250
   };
 
-  // For import Google Maps @12/10 Add by yuchen
-  center: google.maps.LatLngLiteral = {lat: 24, lng: 121};
-  zoom = 8;
-  mapOptions: google.maps.MapOptions = {
-    mapTypeId: 'roadmap',
-    // ... 更多的選項
+
+// ↓ For setting Google Maps @12/20 Update by yuchen
+
+  // 定義用於繪製多邊形的樣式選項
+  polyOptions: google.maps.PolygonOptions = {
+    strokeColor: '#0f91e7',   // 多邊形邊界的顏色
+    strokeOpacity: 0.8,       // 多邊形邊界的透明度
+    strokeWeight: 2,          // 多邊形邊界線的寬度
+    fillColor: '#0f91e7',     // 多邊形填充的顏色
+    fillOpacity: 0,           // 將多邊形填充的透明度設置為 0，使其透明
+    clickable: false          // 確保多邊形不會捕捉點擊事件
   };
+
+  // 用於存儲多邊形頂點的陣矩陣，初始時為空
+  polyPath: google.maps.LatLngLiteral[] = [];
+
+  // 初始化地圖中心的經緯度為(0, 0)，這可能會導致地圖在視圖上看不到任何內容(目前都可以顯示)
+  center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
+
+  // 設置地圖的初始縮放級別，這裡設為 19.5 ( 近地面 )
+  zoom = 19.5;
+
+  // 定義地圖的其他配置選項，包括樣式，來隱藏默認的地標
+  mapOptions: google.maps.MapOptions = {
+    mapTypeId: 'roadmap',            // 設置地圖類型為道路地圖
+    disableDefaultUI: true,          // 禁用地圖預設的用戶界面元件
+    backgroundColor: '#126df5',      // 設置地圖的背景顏色
+    clickableIcons: false,           // 設置地圖上的圖標是否可點擊
+    disableDoubleClickZoom: true,    // 禁用雙擊縮放功能
+    draggable: false,                // 禁止用戶拖動地圖
+    zoomControl: false,              // 禁止用戶通過控件來縮放地圖
+    styles: [                        // 自定義樣式來隱藏地圖上的點擊性圖標
+      {
+        // "poi" 隱藏所有類型的搜尋點
+        featureType: "poi", 
+        stylers: [{ visibility: "off" }]
+      }
+    ]
+  };
+
+  // 自定義標記 Icon
+  customIcon: google.maps.Icon = {
+    url: './assets/img/bs_icons_v3/dist_gnb_online_default.png', // 圖標的相對路徑 URL
+    scaledSize: new google.maps.Size(33, 33), // 設定圖標的大小
+    origin: new google.maps.Point(0, 0),      // 圖標的起始點
+    anchor: new google.maps.Point(20, 20),    // 圖標錨點的位置
+  };
+  
+// ↑ For setting Google Maps @12/20 Update by yuchen
+
 
   // @12/08 Add for toggle colobar
   currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何 colorbar
@@ -1065,9 +1106,11 @@ export class FieldInfoComponent implements OnInit {
     public languageService: LanguageService,
     // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，
     //              確保當數據模型更新後，相關的視圖能夠及時反映
-    private cdr: ChangeDetectorRef  
+    private cdr: ChangeDetectorRef
+
   ) {
-    this.severitys = this.commonService.severitys; // 取得告警資訊種類名稱
+    const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
+    this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
   }
 
   // 頁面初始化
@@ -1083,7 +1126,28 @@ export class FieldInfoComponent implements OnInit {
 
   }
 
- // @12/18 Update
+  // 計算多邊形中心點的函數 @12/20 Add
+  calculateCenter(points: google.maps.LatLngLiteral[]): google.maps.LatLngLiteral {
+    // 初始化緯度和經度的總和
+    let lat = 0;
+    let lng = 0;
+
+    // 迭代多邊形的每個頂點
+    points.forEach(point => {
+      // 累加所有頂點的緯度和經度
+      lat += point.lat;
+      lng += point.lng;
+    });
+
+    // 返回多邊形所有頂點緯度和經度的平均值作為多邊形的中心點
+    // 這是通過將總和除以點的數量來計算的
+    return {
+      lat: lat / points.length,  // 計算緯度的平均值
+      lng: lng / points.length   // 計算經度的平均值
+    };
+  }
+
+  // @12/18 Update
   getQueryFieldInfo() {
     console.log('getQueryFieldInfo() - Start'); // 啟動獲取場域資訊
     console.log('Start fetching field info');   // 開始獲取場域訊息
@@ -1107,17 +1171,41 @@ export class FieldInfoComponent implements OnInit {
           this.fieldInfo = res;
           console.log('場域資訊\n( Field info ):', this.fieldInfo); // 取得的場域資訊 ( Obtained field information ):
 
+          // 儲存場域位置 @12/20 Add
+          // 這裡建立了一個包含場域四個角落位置的陣列，並且將場域的第一個位置再次添加到陣列的末尾
+          // 以確保多邊形是閉合的。
+          const positions = [
+            this.parsePosition(this.fieldInfo.fieldposition1),
+            this.parsePosition(this.fieldInfo.fieldposition2),
+            this.parsePosition(this.fieldInfo.fieldposition3),
+            this.parsePosition(this.fieldInfo.fieldposition4),
+            this.parsePosition(this.fieldInfo.fieldposition1)  // 這樣做是為了閉合多邊形
+          ];
+
+          // 更新 polyPath 和中心點 @12/20 Add
+          // polyPath 用來儲存多邊形各個頂點的經緯度，這個數據將被用於在地圖上繪製多邊形。
+          this.polyPath = positions;
+
+          // calculateCenter 是一個自定義函數，用於計算多邊形頂點的平均中心點，
+          // 這個計算出的中心點將被用來設定地圖的初始視圖中心。
+          this.center = this.calculateCenter(positions);
+
+          // 輸出中心點到控制台，這樣可以用於調試和確認中心點是否如預期被正確計算。
+          console.log('In getQueryFieldInfo() - center:', this.center);
+
           // 確保場域資訊已經被賦值後再進行後續處理
           // Ensure field info is assigned before proceeding
           this.processFieldInfo(); // 進行後續處理
         },
         error: (error) => {
+
           // 獲取資訊出錯時執行此回調
           // This callback is executed when there is an error fetching the info
           console.error('獲取場域資訊出錯:', error);
           console.error('Error fetching field info:', error);
         },
         complete: () => {
+
           // 請求完成時執行此回調
           // This callback is executed when the request is complete
           console.log('場域資訊獲取完成');
@@ -1465,6 +1553,5 @@ export class FieldInfoComponent implements OnInit {
   goPerformanceMgr() {
     this.router.navigate(['/main/performance-mgr', this.fieldName]);
   }
-
 
 }

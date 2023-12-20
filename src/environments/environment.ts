@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,  // 這個標誌用於指示應用是否運行於"開發"模式
+
+  // 這表示這是用於"開發"環境的 Google Maps API 密鑰
+  googleMapsApiKey: 'AIzaSyA9dNTx8wzfyAFQW0_9HJmlAdVYCWzZPLY', // @12/20 Add the Google Maps API Key of yuchen
 };
 
 /*

@@ -700,6 +700,13 @@ circle-progress {
     margin: 0 0 1em;
   }
 
+  // @12/20 Add
+  :host{
+      display: block;
+      width: 100vw;
+      height: 100vh;
+  }
+
   :host ::ng-deep #gauge svg.dxg-circular-gauge {
     display: block;
     transform: translateX(6px) translateY(-71px) scale(0.75);
