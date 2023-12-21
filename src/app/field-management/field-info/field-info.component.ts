@@ -13,6 +13,12 @@ import { forkJoin, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ChangeDetectorRef } from '@angular/core';          // @12/13 Add for use 'detectChanges()'
 import { environment } from 'src/environments/environment'; // @12/20 Add for import Google Maps API Key
+import { NgZone } from '@angular/core';
+
+import { FieldInfo } from '../../shared/interfaces/Field_Info/For_queryFieldInfo'; // @12/21 Add
+import { BsInfo } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';    // @12/21 Add
+
+import { BSInfo } from '../../shared/interfaces/BS_Info/For_queryBsInfo_common'; // @12/21 Add
 
 export interface OcloudInfo {
   id: string;
@@ -101,846 +107,11 @@ export interface OcloudPerformance {
   network: string;
 }
 
-// @12/05 Add by yuchen
-// 描述單一場域的詳細資訊
-export interface FieldInfo {
-  id: string;
-  name: string;
-  phone: string;
-  fieldposition1: string;
-  fieldposition2: string;
-  fieldposition3: string;
-  fieldposition4: string;
-  bsinfo: BsInfo[];
-  bsNum: number;
-  ueNum: string;
-  coverage: string;
-  accessibility: string;
-  availability: string;
-  mobility: string;
-  retainability: string;
-  energy: string;
-  integrity: Integrity;
-  utilization: Utilization;
-  alarmCriticalNum: number;
-  alarmMajorNum: number;
-  alarmMinorNum: number;
-  alarmWarningNum: number;
-}
-
-// @12/05 Add by yuchen
-// 描述 BS 的資訊
-export interface BsInfo {
-  id: string;
-  name: string;
-  accessibility: string | null;
-  mobility: string | null;
-  retainability: string | null;
-  energy: string | null;
-  integrity: Integrity;
-  utilization: Utilization;
-  cellInfo?: CellInfo[];
-}
-
-// @12/05 Add by yuchen
-// 描述單一 BS 之 Cell 的資訊
-export interface CellInfo {
-  nci: string;
-  accessibility: string;
-  mobility: string;
-  retainability: string;
-  energy: string;
-  integrity: Integrity;
-  utilization: Utilization;
-}
-
-// @12/05 Add by yuchen
-// 描述網路整體完整性的資訊
-export interface Integrity {
-  downlinkDelay?: string | null;
-  uplinkDelay?: string | null;
-  downlinkThrouthput?: string | null;
-  uplinkThrouthput?: string | null;
-}
-
-// @12/05 Add by yuchen
-// 描述網路使用情況的資訊
-export interface Utilization {
-  pdu: string | null;
-  resourceProcess: string;
-  resourceMemory: string;
-  resourceDisk: string | null;
-  maxPdu: string | null;
-}
-
-/* ↓ @12/14~15 Add For API of queryBsInfo ↓ */
-// notes: 當物件有可能是空的或可能不在 JSON 中設為"?:"
-export interface BSInfo {
-  info: {
-    'bs-conf': {
-      'plmn-id': {
-        mcc: string;
-        mnc: string;
-      };
-      nci: string;
-      pci: number;
-      'nrarfcn-dl': number;
-      'nrarfcn-ul': number;
-      'duplex-mode': string;
-      'channel-bandwidth': number;
-      tac: string;
-      'tx-power': number;
-    };
-    nci?: string;
-    gNBId: number;
-    gNBIdLength: number;
-    'gNB-type'?: string;
-    gNBCUName ?: string;
-    pLMNId_MCC ?: string; 
-    pLMNId_MNC ?: string; 
-    cellLocalId?: string;
-    id?: string; 
-    CU?:{
-      id: string;
-      func: string;
-      cellLocalId: string;
-      absoluteFrequencySSB: string;
-      sSBSubCarrierSpacing: string;
-      pLMNId_MCC: string;
-      pLMNId_MNC: string;
-    };
-    DU?: {
-      id: string;
-      func: string;
-      cellLocalId: string;
-      administrativeState: string;
-      arfcnDL: number;
-      arfcnSUL: number;
-      arfcnUL: number;
-      bSChannelBwDL: number;
-      bSChannelBwSUL: number;
-      bSChannelBwUL: number;
-      nRPCI: number;
-      nRTAC: string;
-      ssbDuration: number;
-      ssbFrequency: number;
-      ssbOffset: number;
-      ssbPeriodicity: number;
-      ssbSubCarrierSpacing: number;
-      configuredMaxTxPower: number;
-    }
-    RU: {
-      id: string;
-      position: string;
-    };
-  };
-
-  extension_info: ExtensionInfo[]; // ok
-  cellInfo?: Cellinfo; // ok
-  anr: Anr;     // ok
-  pci: PCI;     // ok 目前沒看到有 BS 這個有值
-  cco: CCO;     // ok 目前沒看到有 BS 這個有值
-  id: string;   // ok 
-  name: string; // ok 
-  ip: string;              // ok 不一定有值
-  port: string;            // ok 不一定有值
-  position: string;        // ok 不一定有值
-  description?: string;      // ok 
-  bstype?: number;           // ok 
-  components?: Components;   // ok 可能會出錯
-  status?: number;           // ok 
-  laston?: string;           // ok 
-  lastoff?: string;          // ok 
-  'components-info'?: ComponentsInfo;   // ok 不一定有值
-}
-
-/* ↓ @12/14 Add For extension_info:[] ↓ */
-
-export interface ExtensionInfo {
-  gNBId: number;
-  gNBIdLength: number;
-  cellLocalId: string;
-  nci: string;
-
-  gNBCUFunction: GNBCUFunction | null;
-  NRCellCU: NRCELLCU | null;
-  peeParametersList_CU: PeeParametersListCU | null;
-  vnfParametersList_CU: VnfParametersListCU | null;
-
-  EP_F1C_CU: EPF1C_CU | null;
-  EP_F1U_CU: EPF1U_CU | null;
-  EP_NgC: EPNgC | null;
-  EP_NgU: EPNgU | null;
-
-  peeParametersList_NRCellCU: PeeParametersListNRCellCU | null;
-  vnfParametersList_NRCellCU: VnfParametersListNRCellCU | null;
-  s_NSSAI_leafList_NRCellCU: SNSSAILeafListNRCellCU | null;
-  
-  gNBDUFunction: GNBDUFunction | null;
-  NRCellDU: NRCELLDU | null;
-  peeParametersList_DU: PeeParametersListDU | null;
-  vnfParametersList_DU: VnfParametersListDU | null;
-
-  EP_F1C_DU: EPF1C_DU | null;
-  EP_F1U_DU: EPF1U_DU | null;
-  NRSectorCarrier: NRSectorCarrier | null;
-
-  BWP: Bwp | null;
-  peeParametersList_NRSector: PeeParametersListNRSector | null;
-  vnfParametersList_NRSector: VnfParametersListNRSector | null;
-
-  peeParametersList_NRCellDU: PeeParametersListNRCellDU | null;
-  vnfParametersList_NRCellDU: VnfParametersListNRCellDU | null;
-  s_NSSAI_leafList_NRCellDU: SNSSAILeafListNRCellDU | null;
-
-  NRSectorCarrierRef_NRCellDU: NRSectorCarrierRefNRCellDU | null;
-  bWPRef_leafList_NRCellDU: BWPRefLeafListNRCellDU | null;
-
-  peeParametersList_BWP: PeeParametersListBWP | null;
-  vnfParametersList_BWP: VnfParametersListBWP | null;
-}
-
-export interface GNBCUFunction {
-  db: GNBCUFunctionDetail;
-  ds: GNBCUFunctionDetail;
-}
-
-export interface GNBCUFunctionDetail {
-  gNBId: number;
-  gNBIdLength: number;
-  'gNB-type': string;
-  gNBCUName: string;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  componentId: string;
-  id: string;
-}
-
-export interface NRCELLCU {
-  db: NRCELLCUDetail;
-  ds: NRCELLCUDetail;
-}
-
-export interface NRCELLCUDetail {
-  componentId: string;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  cellLocalId: string;
-  absoluteFrequencySSB: string;
-  sSBSubCarrierSpacing: string;
-  id: string;
-}
-
-export interface PeeParametersListCU {
-  db: PeeParametersDetail;
-  ds: PeeParametersDetail;
-}
-
-export interface PeeParametersDetail {
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  siteIdentification: string;
-  siteLatitude: string;
-  siteLongitude: string;
-  siteDescription: string;
-  equipmentType: string;
-  environmentType: string;
-  powerInterface: string;
-  id: string;
-}
-
-export interface VnfParametersListCU {
-  db: VnfParametersDetail;
-  ds: VnfParametersDetail;
-}
-
-export interface VnfParametersDetail {
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  autoScalable: boolean;
-  flavourId: string;
-  vnfInstanceId: string;
-  vnfdId: string;
-  id: string;
-}
-
-export interface EPF1C_CU {
-  db: EPF1C_CUDetail;
-  ds: EPF1C_CUDetail;
-}
-
-export interface EPF1C_CUDetail {
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  localAddress_ip_addr: string;
-  localAddress_vlan_id: string;
-  remoteAddress: string;
-  id: string;
-}
-
-export interface EPF1U_CU {
-  db: EPF1U_CUDetail;
-  ds: EPF1U_CUDetail;
-}
-
-export interface EPF1U_CUDetail {
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  localAddress_ip_addr: string;
-  localAddress_vlan_id: string;
-  remoteAddress: string;
-  id: string;
-}
-
-export interface EPNgC {
-  db: EPNgCDetail;
-  ds: EPNgCDetail;
-}
-
-export interface EPNgCDetail {
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  localAddress_ip_addr: string;
-  localAddress_vlan_id: string;
-  remoteAddress: string;
-  id: string;
-}
-
-export interface EPNgU {
-  db: EPNgUDetail;
-  ds: EPNgUDetail;
-}
-
-export interface EPNgUDetail {
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  localAddress_ip_addr: string;
-  localAddress_vlan_id: string;
-  remoteAddress: string;
-  id: string;
-}
-
-export interface PeeParametersListNRCellCU {
-  db: PeeParametersNRCellCUDetail;
-  ds: PeeParametersNRCellCUDetail;
-}
-
-export interface PeeParametersNRCellCUDetail {
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  cellLocalId: string;
-  siteIdentification: string;
-  siteLatitude: string;
-  siteLongitude: string;
-  siteDescription: string;
-  equipmentType: string;
-  environmentType: string;
-  powerInterface: string;
-  id: string;
-}
-
-export interface VnfParametersListNRCellCU {
-  db: VnfParametersNRCellCUDetail;
-  ds: VnfParametersNRCellCUDetail;
-}
-
-export interface VnfParametersNRCellCUDetail {
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  cellLocalId: string;
-  autoScalable: boolean;
-  flavourId: string;
-  vnfInstanceId: string;
-  vnfdId: string;
-  id: string;
-}
-
-export interface SNSSAILeafListNRCellCU {
-  db: SNSSAIDetail;
-  ds: SNSSAIDetail;
-}
-
-export interface SNSSAIDetail {
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  cellLocalId: string;
-  s_NSSAI: number;
-  id: string;
-}
-
-export interface GNBDUFunction {
-  db: GNBDUFunctionDetail;
-  ds: GNBDUFunctionDetail;
-}
-
-export interface GNBDUFunctionDetail {
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  gNBDUId: number;
-  gNBDUName: string;
-  componentId: string;
-  id: string;
-}
-
-export interface NRCELLDU {
-  db: NRCELLDUDetail;
-  ds: NRCELLDUDetail;
-}
-
-export interface NRCELLDUDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  cellLocalId: string;
-  administrativeState: string;
-  nRPCI: number;
-  nRTAC: string;
-  arfcnDL: number;
-  arfcnUL: number;
-  arfcnSUL: number;
-  bSChannelBwDL: number;
-  ssbFrequency: number;
-  ssbPeriodicity: number;
-  ssbSubCarrierSpacing: number;
-  ssbOffset: number;
-  ssbDuration: number;
-  bSChannelBwUL: number;
-  bSChannelBwSUL: number;
-  componentId: string;
-  id: string;
-}
-
-export interface PeeParametersListDU {
-  db: PeeParametersDUDetail;
-  ds: PeeParametersDUDetail;
-}
-
-export interface PeeParametersDUDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  siteIdentification: string;
-  siteLatitude: string;
-  siteLongitude: string;
-  siteDescription: string;
-  equipmentType: string;
-  environmentType: string;
-  powerInterface: string;
-  id: string;
-}
-
-export interface VnfParametersListDU {
-  db: VnfParametersDUDetail;
-  ds: VnfParametersDUDetail;
-}
-
-export interface VnfParametersDUDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  autoScalable: boolean;
-  flavourId: string;
-  vnfInstanceId: string;
-  vnfdId: string;
-  id: string;
-}
-
-export interface EPF1C_DU {
-  db: EPF1C_DUDetail;
-  ds: EPF1C_DUDetail;
-}
-
-export interface EPF1C_DUDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  localAddress_ip_addr: string;
-  localAddress_vlan_id: string;
-  remoteAddress: string;
-  id: string;
-}
-
-export interface EPF1U_DU {
-  db: EPF1U_DUDetail;
-  ds: EPF1U_DUDetail;
-}
-
-export interface EPF1U_DUDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  localAddress_ip_addr: string;
-  localAddress_vlan_id: string;
-  remoteAddress: string;
-  id: string;
-}
-
-export interface NRSectorCarrier {
-  db: NRSectorCarrierDetail;
-  ds: NRSectorCarrierDetail;
-}
-
-export interface NRSectorCarrierDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  txDirection: string;
-  configuredMaxTxPower: number;
-  configuredMaxTxEIRP: number;
-  arfcnDL: number;
-  arfcnUL: number;
-  bSChannelBwDL: number;
-  bSChannelBwUL: number;
-  id: string;
-}
-
-export interface Bwp {
-  db: BwpDetail;
-  ds: BwpDetail;
-}
-
-export interface BwpDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  bwpContext: number;
-  isInitialBwp: number;
-  subCarrierSpacing: number;
-  cyclicPrefix: number;
-  startRB: string;
-  numberOfRBs: number;
-  id: string;
-}
-
-export interface PeeParametersListNRSector {
-  db: PeeParametersNRSectorDetail;
-  ds: PeeParametersNRSectorDetail;
-}
-
-export interface PeeParametersNRSectorDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  idRef: string;
-  siteIdentification: string;
-  siteLatitude: string;
-  siteLongitude: string;
-  siteDescription: string;
-  equipmentType: string;
-  environmentType: string;
-  powerInterface: string;
-  id: string;
-}
-
-export interface VnfParametersListNRSector {
-  db: VnfParametersNRSectorDetail;
-  ds: VnfParametersNRSectorDetail;
-}
-
-export interface VnfParametersNRSectorDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  idRef: string;
-  autoScalable: boolean;
-  flavourId: string;
-  vnfInstanceId: string;
-  vnfdId: string;
-  id: string;
-}
-
-export interface PeeParametersListNRCellDU {
-  db: PeeParametersNRCellDUDetail;
-  ds: PeeParametersNRCellDUDetail;
-}
-
-export interface PeeParametersNRCellDUDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  cellLocalId: string;
-  siteIdentification: string;
-  siteLatitude: string;
-  siteLongitude: string;
-  siteDescription: string;
-  equipmentType: string;
-  environmentType: string;
-  powerInterface: string;
-  id: string;
-}
-
-export interface VnfParametersListNRCellDU {
-  db: VnfParametersNRCellDUDetail;
-  ds: VnfParametersNRCellDUDetail;
-}
-
-export interface VnfParametersNRCellDUDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  cellLocalId: string;
-  autoScalable: boolean;
-  flavourId: string;
-  vnfInstanceId: string;
-  vnfdId: string;
-  id: string;
-}
-
-export interface SNSSAILeafListNRCellDU {
-  db: SNSSAIDetail;
-  ds: SNSSAIDetail;
-}
-
-export interface SNSSAIDetail {
-  gNBDUId?: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  cellLocalId: string;
-  s_NSSAI: number;
-  id: string;
-}
-
-export interface NRSectorCarrierRefNRCellDU {
-  db: NRSectorCarrierRefDetail;
-  ds: NRSectorCarrierRefDetail;
-}
-
-export interface NRSectorCarrierRefDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  cellLocalId: string;
-  NRSectorCarrierRef: number;
-  id: string;
-}
-
-export interface BWPRefLeafListNRCellDU {
-  db: BWPRefDetail;
-  ds: BWPRefDetail;
-}
-
-export interface BWPRefDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  cellLocalId: string;
-  bWPRef: number;
-  id: string;
-}
-
-export interface PeeParametersListBWP {
-  db: PeeParametersBWPPDetail;
-  ds: PeeParametersBWPPDetail;
-}
-
-export interface PeeParametersBWPPDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  idRef: string;
-  siteIdentification: string;
-  siteLatitude: string;
-  siteLongitude: string;
-  siteDescription: string;
-  equipmentType: string;
-  environmentType: string;
-  powerInterface: string;
-  id: string;
-}
-
-export interface VnfParametersListBWP {
-  db: VnfParametersBWPPDetail;
-  ds: VnfParametersBWPPDetail;
-}
-
-export interface VnfParametersBWPPDetail {
-  gNBDUId: number;
-  gNBId: number;
-  gNBIdLength: number;
-  pLMNId_MCC: string;
-  pLMNId_MNC: string;
-  idRef: string;
-  autoScalable: boolean;
-  flavourId: string;
-  vnfInstanceId: string;
-  vnfdId: string;
-  id: string;
-}
-
-/* ↑ @12/14 Add For extension_info:[] ↑ */
-
-
-/* ↓ @12/15 Add For "cellInfo": {} ↓ */
-export interface Cellinfo {
-  [key: string]: string;
-}
-/* ↑ @12/15 Add For "cellInfo": {} ↑ */
-
-
-/* ↓ @12/15 Add For "anr": {} ↓ */
-export interface Anr {
-  'anr-son-output': AnrSonOutput;
-}
-
-export interface AnrSonOutput {
-  neighbor: Neighbor[];
-}
-
-// "neighbor":
-export interface Neighbor {
-  nci: string;
-  pci: number;
-  nrarfcn: number;
-  'plmn-id': {
-    mcc: string;
-    mnc: string;
-  };
-  tac: string;
-  id?: string;
-  enable?: string;
-  alias?: string;
-  cio?: string;
-  blacklisted?: string;
-  'must-include'?: string;
-  'q-offset'?: string;
-  'rs-tx-power'?: string;
-  '__itri_default___': number;
-}
-
-/* ↑ @12/15 Add For "anr": {} ↑ */
-
-export interface PCI {
-  // 待添加 (目前未看到有值的案例)
-}
-
-export interface CCO {
-  // 待添加 (目前未看到有值的案例)
-}
-
-/* ↓ @12/15 Add  For "components": ↓ */
-
-export interface Components {
-  [key: string]: { [key: string]: DUInfo[] } | string; // 添加了字符串的可能性
-  //type: string;
-  //id: string;
-}
-
-export interface DUInfo {
-  [key: string]: string;
-}
-
-/* ↑ @12/15 Add  For "components": ↑ */
-
-
-/* ↓ @12/15 Add  For "components-info": ↓ */
-
-export interface ComponentsInfo {
-  [componentId: string]: ComponentDetail | {}; // 允許空對象或具體的組件資訊
-}
-
-export interface ComponentDetail {
-  firm?: string;
-  modelname?: string;
-  'components-sw-inventory'?: SoftwareInventory;
-}
-
-// "components-sw-inventory":
-export interface SoftwareInventory {
-  'software-inventory': { 
-    'software-slot': SoftwareSlot[];
-  };
-}
-
-// "software-slot":
-export interface SoftwareSlot {
-  name: string;
-  status: string;
-  active: string;
-  running: string;
-  access: string;
-  'vendor-code'?: string;
-  'build-id'?: string;
-  'build-name'?: string;
-  'build-version'?: string;
-  files?: SoftwareFiles;
-}
-
-// "files":
-export interface SoftwareFiles {
-  name: string;
-  version: string;
-  'local-path': string;
-  integrity?: string;
-}
-
-   /* ↑ @12/15 Add  For "components-info": ↑ */
-
-/* ↑ @12/14~15 Add For API of queryBsInfo ↑ */
-
-// 定義一個接口，其內部結構可以是任意類型的屬性
-export interface DynamicBSInfo {
-  [key: string]: any;
-}
-
-
 @Component({
   selector: 'app-field-info',
   templateUrl: './field-info.component.html',
   styleUrls: ['./field-info.component.scss']
 })
-
 
 export class FieldInfoComponent implements OnInit {
   sessionId: string = '';
@@ -973,7 +144,7 @@ export class FieldInfoComponent implements OnInit {
   showTooltipStorage: any = {};
   showTooltipNic: any = {};
 
-
+  
   // For Fault Alarms: CRITICAL, MAJOR, MINOR, WARNING
   severitys: string[];
 
@@ -1002,10 +173,11 @@ export class FieldInfoComponent implements OnInit {
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
 
   // 設置地圖的初始縮放級別，這裡設為 19.5 ( 近地面 )
-  zoom = 19.5;
+  zoom = 19;
 
   // 定義地圖的其他配置選項，包括樣式，來隱藏默認的地標
   mapOptions: google.maps.MapOptions = {
+    //center:{ lat: 0, lng: 0 }
     mapTypeId: 'roadmap',            // 設置地圖類型為道路地圖
     disableDefaultUI: true,          // 禁用地圖預設的用戶界面元件
     backgroundColor: '#126df5',      // 設置地圖的背景顏色
@@ -1016,7 +188,7 @@ export class FieldInfoComponent implements OnInit {
     styles: [                        // 自定義樣式來隱藏地圖上的點擊性圖標
       {
         // "poi" 隱藏所有類型的搜尋點
-        featureType: "poi", 
+        featureType: "poi",
         stylers: [{ visibility: "off" }]
       }
     ]
@@ -1024,12 +196,12 @@ export class FieldInfoComponent implements OnInit {
 
   // 自定義標記 Icon
   customIcon: google.maps.Icon = {
-    url: './assets/img/bs_icons_v3/dist_gnb_online_default.png', // 圖標的相對路徑 URL
-    scaledSize: new google.maps.Size(33, 33), // 設定圖標的大小
+    url: '', // 圖標的相對路徑 URL (邏輯不對)
+    scaledSize: new google.maps.Size(30, 30), // 設定圖標的大小
     origin: new google.maps.Point(0, 0),      // 圖標的起始點
-    anchor: new google.maps.Point(20, 20),    // 圖標錨點的位置
+    anchor: new google.maps.Point(15, 15),    // 圖標錨點的位置
   };
-  
+
 // ↑ For setting Google Maps @12/20 Update by yuchen
 
 
@@ -1044,7 +216,8 @@ export class FieldInfoComponent implements OnInit {
   // @12/13 Add for listen activeButton
   // 用於監聽當前哪個按鈕是激活的
   activeButton_fieldImage: string | null = null;
-  activeButton_NR: string | null = 'NR';  // 預設激活 'NR' 按鈕
+  //activeButton_NR: string | null = 'NR';  // 預設激活 'NR' 按鈕
+  activeButton_NR: string | null = null;    // 預設不激活 'NR' 按鈕 @12/21 Add
   activeButton_rsrp_sinr: string | null = null;
   activeButton_menu: string | null = null;
 
@@ -1062,22 +235,23 @@ export class FieldInfoComponent implements OnInit {
     this.activeButton_menu = this.activeButton_menu === buttonId ? null : buttonId;
   }
 
+  
   showMapModel: boolean = true;                   // 控制是否顯示地圖模式的 Flag    @12/13 Add
-  recordColorbar: 'RSRP' | 'SINR' | null = null;  // 用於記錄 Colorbar 狀態的 Flag @12/13 Add 
+  recordColorbar: 'RSRP' | 'SINR' | null = null;  // 用於記錄 Colorbar 狀態的 Flag @12/13 Add
 
   // 用於切換顯示地圖模式或基站列表 @12/13 Add to toggle Map Mode or gNB List
   toggleMenuButton() {
-    
+
     this.showMapModel = !this.showMapModel; // 切換顯示的頁面並更新該 Flag 狀態
     //console.log("toggle showMapModel:", this.showMapModel);
 
     // 記錄切換頁面當下的 ColorBar 狀態 ( 沒值時才記錄 )
     if ( !this.recordColorbar ){
-      this.recordColorbar = this.currentColorbar; 
+      this.recordColorbar = this.currentColorbar;
     }
 
     // 如切換的頁面為地圖模式，就預設激活 'NR' 按鈕
-    if ( this.showMapModel === true ) { 
+    if ( this.showMapModel === true ) {
       this.activeButton_NR = 'NR';
     }
 
@@ -1094,7 +268,7 @@ export class FieldInfoComponent implements OnInit {
       //console.log("recordColorbar:", this.recordColorbar);
       this.cdr.detectChanges(); // 手動觸發變更檢測
     }
-    
+
   }
 
   constructor(
@@ -1106,20 +280,20 @@ export class FieldInfoComponent implements OnInit {
     public languageService: LanguageService,
     // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，
     //              確保當數據模型更新後，相關的視圖能夠及時反映
-    private cdr: ChangeDetectorRef
-
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {
     const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
     this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
   }
 
   // 頁面初始化
-  ngOnInit(){ 
+  ngOnInit(){
 
     this.sessionId = this.commonService.getSessionId();
     this.route.params.subscribe((params) => {
-      this.fieldId = params['id'];  
-      this.fieldName = params['name']; 
+      this.fieldId = params['id'];
+      this.fieldName = params['name'];
       console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
       this.getQueryFieldInfo();
     });
@@ -1154,12 +328,12 @@ export class FieldInfoComponent implements OnInit {
     clearTimeout(this.refreshTimeout);
 
     if (this.commonService.isLocal) {
-      
+
       // For testing with local files
       this.fieldInfo = this.commonService.fieldInfo;
       this.processFieldInfo(); // 處理場域資訊
     } else {
-      
+
       // Use commonService's queryFieldInfo() to make an HTTP GET request
       this.commonService.queryFieldInfo(this.fieldId).subscribe({
         next: (res) => {
@@ -1171,15 +345,17 @@ export class FieldInfoComponent implements OnInit {
           this.fieldInfo = res;
           console.log('場域資訊\n( Field info ):', this.fieldInfo); // 取得的場域資訊 ( Obtained field information ):
 
+          this.updateResourceUtilization();
+
           // 儲存場域位置 @12/20 Add
-          // 這裡建立了一個包含場域四個角落位置的陣列，並且將場域的第一個位置再次添加到陣列的末尾
-          // 以確保多邊形是閉合的。
+          // 該處建立了一個包含場域四個角落位置的矩陣，
+          // 並且將場域的第一個位置再次添加到矩陣的末尾，以確保多邊形是閉合的。
           const positions = [
             this.parsePosition(this.fieldInfo.fieldposition1),
             this.parsePosition(this.fieldInfo.fieldposition2),
             this.parsePosition(this.fieldInfo.fieldposition3),
             this.parsePosition(this.fieldInfo.fieldposition4),
-            this.parsePosition(this.fieldInfo.fieldposition1)  // 這樣做是為了閉合多邊形
+            this.parsePosition(this.fieldInfo.fieldposition1)  // 該位置用於閉合多邊形框線
           ];
 
           // 更新 polyPath 和中心點 @12/20 Add
@@ -1223,12 +399,12 @@ export class FieldInfoComponent implements OnInit {
     // 確認 fieldInfo 和 fieldInfo.bsinfo 是否已經被定義
     // Ensure fieldInfo and fieldInfo.bsinfo are defined
     if (this.fieldInfo && this.fieldInfo.bsinfo) {
-      
+
       // 確認場域資訊記錄的"基站數量"是否與"bsinfo"內的資料筆數相等
       if ( this.fieldInfo.bsNum === this.fieldInfo.bsinfo.length ) {
 
         // 取得該場域所有基站之詳細資訊
-        this.getQueryBsInfoForAll(this.fieldInfo.bsNum, this.fieldInfo.bsinfo); 
+        this.getQueryBsInfoForAll(this.fieldInfo.bsNum, this.fieldInfo.bsinfo);
       }
     }
   }
@@ -1236,21 +412,70 @@ export class FieldInfoComponent implements OnInit {
   // 用來存儲當前選擇的基站資訊 @12/19 Add
   currentBsInfo: BSInfo | null = null;
 
-  // 用來切換成顯示"當下點擊的基站資訊" @12/19 Add
-  onSelectBsInfo(bsInfo: BSInfo) {
+  // 用來切換成顯示"當下點擊的基站資訊" @12/21 Update
+  onSelectBsInfo( clickbsInfo: BSInfo, clickbsInfoName: string, clickbsInfoID: string, 
+                  clickbsInfoBSType: number, clickbsInfoStatus: number) {
+
     
-    this.currentBsInfo = bsInfo;
-    
+    this.ngZone.run(() => {
+
+      this.currentBsInfo = clickbsInfo;
+      console.log("Marker BS name:", clickbsInfoName, "ID:", clickbsInfoID, "is clicked\n",
+                    "its type is", clickbsInfoBSType,"its status is", clickbsInfoStatus);
+
+      this.updateIconUrl( clickbsInfoBSType, clickbsInfoStatus ); //(邏輯不對)
+    });
+  
     this.cdr.detectChanges(); // 手動觸發變化檢測
     console.log("After click onSelectBsInfo the currentBsInfo:", this.currentBsInfo)
   }
 
-  // @12/18 Add
-  bsInfoDetails: BSInfo[] = [];  // 用來存儲每個基站的詳細資訊之矩陣
+  //(邏輯不對)
+  updateIconUrl( clickbsInfoBSType: number, clickbsInfoStatus: number ) {
+    
+    const basePath = './assets/img/bs_icons_v3/';
+    let iconName = '';
+  
+    if ( clickbsInfoBSType === 2 && clickbsInfoStatus === 1 ) {
+      iconName = 'dist_gnb_offline_default.png';
+    } else if ( clickbsInfoBSType === 2 && clickbsInfoStatus === 2) {
+      iconName = 'dist_gnb_online_default.png';
+    } else if ( clickbsInfoBSType === 1 && clickbsInfoStatus === 1) {
+      iconName = 'gnb_offline_nonselected.png';
+    } else if ( clickbsInfoBSType === 1 && clickbsInfoStatus === 2) {
+      iconName = 'gnb_online_nonselected.png';
+    }
+  
+    this.customIcon.url = basePath + iconName;
+  }
+
+  // 預設顯示的基站 icon (邏輯不對)
+  defaultIconUrl( bsInfoBSType: number, bsInfoStatus: number ) {
+    
+    const basePath = './assets/img/bs_icons_v3/';
+    let iconName = '';
+  
+    if ( bsInfoBSType === 2 && bsInfoStatus === 1 ) {
+      iconName = 'dist_gnb_offline_selected.png';
+    } else if ( bsInfoBSType === 2 && bsInfoStatus === 2) {
+      iconName = 'dist_gnb_online_selected.png';
+    } else if ( bsInfoBSType === 1 && bsInfoStatus === 1) {
+      iconName = 'gnb_offline_selected.png';
+    } else if ( bsInfoBSType === 1 && bsInfoStatus === 2) {
+      iconName = 'gnb_online_selected.png';
+    }
+  
+    this.customIcon.url = basePath + iconName;
+  }
+
+  // 用來存儲每個基站的詳細資訊之矩陣 @12/18 Add
+  bsInfoDetails: BSInfo[] = [];
+
   // Get the All infos of BSs in the field
   getQueryBsInfoForAll(bsNum: number, bsinfo: BsInfo[]) {
     console.log('getQueryBsInfoForAll() - Start');
 
+    console.log('There are', bsNum, 'BSs in the', this.fieldInfo.name, 'field');
 
     const observables: Observable<BSInfo>[] = bsinfo.map((bsInfo) => {
       return this.commonService.queryBsInfo(bsInfo.id);
@@ -1267,6 +492,9 @@ export class FieldInfoComponent implements OnInit {
         // 檢查是否有基站資訊，如果有，則將第一筆設為當前顯示的基站資訊
         if (this.bsInfoDetails.length > 0) {
           this.currentBsInfo = this.bsInfoDetails[0];
+
+          // 預設第一筆基站為選擇狀態 icon
+          this.defaultIconUrl( this.currentBsInfo.bstype, this.currentBsInfo.status);
         }
       },
       error: (error) => {
@@ -1280,8 +508,8 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // @12/18 Add
-  // Get response of queryBsInfo API 
-  // 這個方法現在不需要改變，它應該返回一個 Observable
+  // Get response of queryBsInfo API
+  // 該函數執行完應該會返回一個 Observable
   getQueryBsInfo(bsId: string) {
     console.log('getQueryBsInfo() - Start');
     console.log('bsId: ', bsId);
@@ -1318,7 +546,8 @@ export class FieldInfoComponent implements OnInit {
       // 嘗試解析 JSON 字串以獲取經緯度數組
       const positionArr = JSON.parse(positionStr);
 
-      // 返回一個 LatLngLiteral 對象，其 lat 和 lng 屬性分別對應於緯度和經度
+      // 返回一個 LatLngLiteral 對象，其 lat 和 lng 屬性分別對應於緯度和經度 
+      // ( 實際數據格式為: [ lng, lat ] = [ 121.044029, 24.773652 ] )
       return {
         lat: positionArr[1],
         lng: positionArr[0]
@@ -1335,7 +564,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // @12/19 Add
-  // 用於從當前基站資訊中獲取轉換後的位置對象 
+  // 用於從當前基站資訊中獲取轉換後的位置對象
   get currentBsInfoPosition(): google.maps.LatLngLiteral {
 
     // 如果 currentBsInfo 存在，則調用 parsePosition 方法進行轉換，否則返回默認值
@@ -1343,25 +572,51 @@ export class FieldInfoComponent implements OnInit {
   }
 
   //  string -> number (mobility - 換手成功率)
-  // @12/18 Update coverage -> mobility by yuchen 
+  // @12/18 Update coverage -> mobility by yuchen
   get mobilityAsNumber(): number {
     return parseFloat(this.fieldInfo.mobility);
   }
- 
+
   // accessibility - 接入成功率
   get accessibilityAsNumber(): number {
     return parseFloat(this.fieldInfo.accessibility);
   }
 
   // resourceProcess - CPU 使用率
-  get resourceProcessAsNumber(): number {
-    return parseFloat(this.fieldInfo.utilization.resourceProcess);
-  }
+  // get resourceProcessAsNumber(): number {
+  //   // 確保 this.fieldInfo 和 this.fieldInfo.utilization 都已定義
+  //   if (this.fieldInfo?.utilization) {
+  //     //console.log('resourceProcess:', this.fieldInfo.utilization.resourceProcess);
+  //     return parseFloat(this.fieldInfo.utilization.resourceProcess);
+  //   }
+  //   // 如果未定義，則可以返回一個預設值，比如 0
+  //   return 0;
+  // }
+
 
   // resourceMemory - Memory 使用率
-  get resourceMemoryAsNumber(): number {
-    return parseFloat(this.fieldInfo.utilization.resourceMemory);
+  // get resourceMemoryAsNumber(): number {
+  //   // 確保 this.fieldInfo 和 this.fieldInfo.utilization 都已定義
+  //   if (this.fieldInfo?.utilization) {
+  //     return parseFloat(this.fieldInfo.utilization.resourceMemory);
+  //   }
+  //   // 如果未定義，則可以返回一個預設值，比如 0
+  //   return 0;
+  // }
+
+  resourceProcess: number = 0;
+  resourceMemory: number = 0;
+  updateResourceUtilization() {
+
+    // 更新 CPU 使用率
+    this.resourceProcess = parseFloat(this.fieldInfo.utilization.resourceProcess);
+    console.log('resourceProcess:', this.resourceProcess);
+
+    // 更新 Memory 使用率
+    this.resourceMemory = parseFloat(this.fieldInfo.utilization.resourceMemory);
+    console.log('resourceMemory:', this.resourceMemory);
   }
+
 
   // 設定告警種類文字 @12/07 Update by yuchen
   severityText(severity: string): string {
@@ -1377,11 +632,11 @@ export class FieldInfoComponent implements OnInit {
 
   // 設定場域對應的告警種類數量 @12/07 Update by yuchen
   severityCount(severity: string): number {
-  
+
     if (!this.fieldInfo) {
       return 0; // 確保 fieldInfo 已被賦值且不為空
     }
-  
+
     if (severity.toUpperCase() === 'CRITICAL') {
       return this.fieldInfo.alarmCriticalNum;
     } else if (severity.toUpperCase() === 'MAJOR') {

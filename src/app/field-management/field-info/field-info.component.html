@@ -99,6 +99,7 @@
 				</div>
 			</label>
 			
+			
 			<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
 			<google-map *ngIf="showMapModel" width="915px" height="748px" 
 						[center]="center" [zoom]="zoom" [options]="mapOptions">
@@ -113,9 +114,10 @@
 				<map-marker *ngFor="let bsInfo of bsInfoDetails" 
 							[position]="parsePosition(bsInfo.position)" 
 							[icon]="customIcon"
-							(markerClick)="onSelectBsInfo(bsInfo)">
+							(mapClick)="onSelectBsInfo( bsInfo, bsInfo.name, bsInfo.id, bsInfo.bstype, bsInfo.status )">
 				</map-marker>
 			</google-map>
+			
 
 			<!-- 基站列表，只有當 showMapModel 為 false 時才顯示 -->
 			<div *ngIf="!showMapModel">
@@ -215,14 +217,14 @@
 					<div class="label-container">
 						<label>{{ languageService.i18n['field.CPU_Utilization'] }}</label>
 					</div>
-					<circle-progress [percent]="resourceProcessAsNumber" [subtitle]="resourceProcessAsNumber + '%'"></circle-progress>
+					<circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress>
 				</div>
 				<div class="item">
 					<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
 					<div class="label-container">
 						<label>{{ languageService.i18n['field.Memory_Utilization'] }}</label>
 					</div>
-					<circle-progress [percent]="resourceMemoryAsNumber" [subtitle]="resourceMemoryAsNumber + '%'"></circle-progress>
+					<circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress>
 				</div>
 			</div>
 		</div>

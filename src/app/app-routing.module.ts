@@ -36,7 +36,6 @@ const routes: Routes = [
         path: 'field-mgr',
         children: [
           { path: '', component: FieldManagementComponent },
-          //{ path: 'info/:cloudId/:cloudName', component: FieldInfoComponent },
           { path: 'info/:id/:name', component: FieldInfoComponent }
         ]
       },
@@ -44,7 +43,7 @@ const routes: Routes = [
         path: 'component-mgr',
         children: [
           { path: '', component: ComponentManagementComponent },
-          { path: 'info/:cloudId/:cloudName', component: ComponentInfoComponent }
+          { path: 'info/:id/:name', component: ComponentInfoComponent }
         ]
       },
       {
@@ -76,10 +75,6 @@ const routes: Routes = [
       },
       { // @10/25 Add by yuchen
         path: 'log-mgr', component: LogManagementComponent
-        /*children: [
-          { path: '', component: LogManagementComponent },
-          { path: 'info/:cloudId/:cloudName', component: LogInfoComponent }
-        ]*/
       },
       { path: 'fault-mgr/:cloudName/:nfName', component: FaultManagementComponent },
       { path: 'performance-mgr', component: PerformanceManagementComponent },

@@ -1,35 +1,63 @@
 import { Injectable } from '@angular/core';
+import { HttpHeaders, HttpClient, HttpParams  } from '@angular/common/http';
+import { FormGroup } from '@angular/forms';
+
 import { OCloudList } from './../field-management/field-management.component';
+import { OcloudInfo, OcloudPerformance } from '../field-management/field-info/field-info.component';
+import * as _ from 'lodash';
+
+import { Nf, OcloudDmsList } from '../nf-management/nf-management.component';
+
+import { Observable } from 'rxjs';
+import { DmsAvaliableCapacity, NfCapacityList, NfCapacitySummary, NfInfo, NfPerformance } 
+          from '../nf-management/nf-info/nf-info.component';
+
+import { Item } from './models/item';
+
+//import { MainComponent } from '../main/main.component';
+
+// Interfaces of Dashboard
 import { SystemSummary } from '../dashboard/dashboard.component';
 import { OcloudSummary } from '../dashboard/dashboard.component';
 import { FieldSummary } from '../dashboard/dashboard.component';
 import { FieldList } from '../dashboard/dashboard.component';
-import { FieldInfo } from '../field-management/field-info/field-info.component'; // @12/05 Add by yuchen
-import { BSInfo } from '../field-management/field-info/field-info.component';   // @12/14 Add by yuchen
-import { HttpHeaders, HttpClient, HttpParams  } from '@angular/common/http';
-import { OcloudInfo, OcloudPerformance } from '../field-management/field-info/field-info.component';
-import { FmsgList, FaultMessages, FmStatus } from '../fault-management/fault-management.component';
-import * as _ from 'lodash';
-import { PerformanceList } from '../performance-management/o-cloud-performance/o-cloud-performance.component';
-import { SoftwareList } from '../software-management/software-management.component';
-import { SoftwareLists} from '../software-management/software-management.component';
-import { AccountLists} from '../account-management/account-management.component';
-import { SoftwareInfo } from '../software-management/software-info/software-info.component';
-//import { MainComponent } from '../main/main.component';
-import { Nf, OcloudDmsList } from '../nf-management/nf-management.component';
-import { OcloudCpuLoading, OcloudCpuUsage, OcloudDiskRate, OcloudDiskUsage, OcloudInterfaceUsage, OcloudMemoryUsage, OcloudNetworkThroughput, OcloudPower, OverviewKpi } from '../performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
-import { Observable } from 'rxjs';
-import { DmsAvaliableCapacity, NfCapacityList, NfCapacitySummary, NfInfo, NfPerformance } from '../nf-management/nf-info/nf-info.component';
-import { NfPerformanceList } from '../performance-management/nf-performance/nf-performance.component';
-import { NfCpuLoading, NfCpuUsage, NfDiskRate, NfDiskUsage, NfInterfaceUsage, NfMemoryUsage, NfNetworkThroughput, NfOverviewKpi, NfPower } from '../performance-management/nf-performance-info/nf-performance-info.component';
-import { Item } from './models/item';
-import { FormGroup } from '@angular/forms';
-import { AccountInfo } from '../account-management/account-info/account-info.component';
-import { UserLogsList } from '../log-management/log-management.component'; // Add by yutchen @10/27
-import { NELogsList } from '../log-management/log-management.component'; // Add by yutchen @10/27
+
+// Interfaces of Field Management
+import { FieldInfo } from '../shared/interfaces/Field_Info/For_queryFieldInfo'; // @12/21 Update by yuchen
+
+// Interfaces of BS Management
+import { BSInfo } from './interfaces/BS_Info/For_queryBsInfo_common';  // @12/21 Update by yuchen
+
+// Interfaces of NE ( Component ) management 
 import { ComponentList } from '../component-management/component-management.component';
 import { BsComponentInfo } from '../component-management/component-info/component-info.component';
 import { ComponentInfosw } from '../component-management/component-info/component-info.component';
+
+// Interfaces of Fault Management
+import { FmsgList, FaultMessages, FmStatus } from '../fault-management/fault-management.component';
+
+// Interfaces of Performance Management
+import { PerformanceList } from '../performance-management/o-cloud-performance/o-cloud-performance.component';
+import { NfPerformanceList } from '../performance-management/nf-performance/nf-performance.component';
+import { NfCpuLoading, NfCpuUsage, NfDiskRate, NfDiskUsage, NfInterfaceUsage, NfMemoryUsage, NfNetworkThroughput, NfOverviewKpi, NfPower } 
+          from '../performance-management/nf-performance-info/nf-performance-info.component';
+import { OcloudCpuLoading, OcloudCpuUsage, OcloudDiskRate, OcloudDiskUsage, OcloudInterfaceUsage, OcloudMemoryUsage, OcloudNetworkThroughput, OcloudPower, OverviewKpi }
+          from '../performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
+
+// Interfaces of Software Management
+import { SoftwareList } from '../software-management/software-management.component';
+import { SoftwareLists} from '../software-management/software-management.component';
+import { SoftwareInfo } from '../software-management/software-info/software-info.component';
+
+// Interfaces of Account Management
+import { AccountLists} from '../account-management/account-management.component';
+import { AccountInfo } from '../account-management/account-info/account-info.component';
+
+// Interfaces of Schedule Management
+
+// Interfaces of Log Management
+import { UserLogsList } from '../log-management/log-management.component'; // Add by yutchen @10/27
+import { NELogsList } from '../log-management/log-management.component';   // Add by yutchen @10/27
 
 
 export interface NowTime {
@@ -57,7 +85,7 @@ export class CommonService {
   UserLogType: string[] = ['GET', 'POST', 'DELETE'];
   NELogType: string[] = ['get', 'get-config', 'edit-config'];
 
-  //Software Management
+  // Software Management
   nfTypeList: Item[] = [
     { displayName: 'CU', value: '0' },
     { displayName: `DU`, value: '1' },
@@ -95,22 +123,6 @@ export class CommonService {
     });
   }
   
-/*
-  loadConfig(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.http.get('./assets/config/connection.json').subscribe(
-        (res: any) => {
-          this.isLocal = false;
-          //this.restPath = 'http://140.96.102.202:8080/o2_smo/webresources/ocloud';
-          this.restPath = 'http://140.96.102.173:8080/irm';
-          // this.isLocal = res['local'];
-          //this.restPath = res['url'] + ':' + res['port'] + res['root'];
-          resolve(true);
-        });
-    });
-  }
-*/
-
   // 調整為 RxJS 新版本( Observer object )語法 @11/28 changed by yuchen
   loadConfig(): Promise<boolean> {
     return new Promise((resolve, reject) => {
@@ -834,11 +846,6 @@ export class CommonService {
       }
     ]
   };
- 
-  // For gNB List in FieldInfo @12/14 Add by yuchen 
-  // bsInfo: BSInfo = {
-    
-  //   }
 
   ocloudSummary: OcloudSummary[] = [
     {
@@ -1165,18 +1172,19 @@ export class CommonService {
               }
             ],
             memory: { name: "memory", size: "40GB" },
-            nic: [{
+            nic: [
+              {
               id: "nic0000001",
               name: "NIC1",
               product: "I350 Gigabit Network Connection",
               capacity: "1Gbit/s"
-            },
-            {
-              id: "nic0000002",
-              name: "NIC2",
-              product: "Ethernet Controller X710 for 10GbE SFP+",
-              capacity: "10Gbit/s"
-            }
+              },
+              {
+                id: "nic0000002",
+                name: "NIC2",
+                product: "Ethernet Controller X710 for 10GbE SFP+",
+                capacity: "10Gbit/s"
+              }
             ],
             storage: {
               total: "120GB",
@@ -2590,10 +2598,10 @@ export class CommonService {
     acknowledgeOwner: "Sam"
   }
 
-  // User logs files @10/27 add by yutchen
+  // User logs files @12/21 Update by yutchen add 5 files
   UserLogsList: UserLogsList = {
   
-    logNumber: 15,  // number
+    logNumber: 21,  // number
     loginfo: [
       {
         userid: "k200",   // string
@@ -2606,7 +2614,7 @@ export class CommonService {
         userid: "k300",
         logtype: "GET",
         loglevel: 20,
-        logmsg: "queryUploadFileList success field Id: k200",
+        logmsg: "queryUploadFileList success field Id: k300",
         logtime: "2023-10-27 17:44:19"
       },
       {
@@ -2641,7 +2649,7 @@ export class CommonService {
         userid: "k000",
         logtype: "GET",
         loglevel: 20,
-        logmsg: "k200 queryFieldList success",
+        logmsg: "k000 queryFieldList success",
         logtime: "2023-09-27 16:48:37"
       },
       {
@@ -2662,7 +2670,7 @@ export class CommonService {
         userid: "k100",
         logtype: "GET",
         loglevel: 20,
-        logmsg: "k200 QueryBsComponentList Success",
+        logmsg: "k100 QueryBsComponentList Success",
         logtime: "2023-09-27 16:48:47"
       },
       {
@@ -2676,37 +2684,72 @@ export class CommonService {
         userid: "k100",
         logtype: "GET",
         loglevel: 20,
-        logmsg: "k200 queryFieldList success",
+        logmsg: "k100 queryFieldList success",
         logtime: "2023-10-31 16:35:53"
       },
       {
         userid: "k000",
         logtype: "GET",
         loglevel: 20,
-        logmsg: "QueryBsList success field Id: k200",
+        logmsg: "QueryBsList success field Id: k000",
         logtime: "2023-10-31 16:35:54"
       },
       {
         userid: "k300",
         logtype: "DELETE",
         loglevel: 20,
-        logmsg: "RemoveBs success Id: k200",
+        logmsg: "RemoveBs success Id: k300",
         logtime: "2023-10-31 16:35:59"
       },
       {
         userid: "k100",
         logtype: "POST",
         loglevel: 20,
-        logmsg: "queryUploadFileList success field Id: k200",
+        logmsg: "queryUploadFileList success field Id: k100",
         logtime: "2023-10-31 16:40:19"
-      }
+      },      
+      {
+        userid: "k000",
+        logtype: "GET",
+        loglevel: 20,
+        logmsg: "queryUploadFileList success field Id: k000",
+        logtime: "2023-12-20 17:2:19"
+      },
+      {
+        userid: "k100",
+        logtype: "GET",
+        loglevel: 20,
+        logmsg: "k100 queryJobTicketList success",
+        logtime: "2023-11-27 18:19:04"
+      },      
+      {
+        userid: "k000",
+        logtype: "GET",
+        loglevel: 20,
+        logmsg: "k000 queryFieldList success",
+        logtime: "2023-11-15 13:48:37"
+      },
+      {
+        userid: "k200",
+        logtype: "GET",
+        loglevel: 20,
+        logmsg: "queryUploadFileList success field Id: k200",
+        logtime: "2023-12-03 13:48:38"
+      },
+      {
+        userid: "k200",
+        logtype: "GET",
+        loglevel: 20,
+        logmsg: "k200 queryJobTicketList success",
+        logtime: "2023-12-08 21:48:39"
+      },
     ]
   };
 
-  // NE logs files @10/27 add by yutchen
+  // NE logs files @12/21 Update by yutchen add 5 files
   NELogsList: NELogsList = {
     
-    logNumber: 15,
+    logNumber: 21,
     loginfo: [
       {
         userid: "k200",             // string
@@ -2829,7 +2872,55 @@ export class CommonService {
         resp_data: "<active-alarm-list xmlns=\"urn:o-ran:fm:1.0\"> <active-alarms> <fault-id>1</fault-id> <fault-source>fault-source_1</fault-source> <affected-objects> <name>affected-objects_1-1</name> </affected-objects> <affected-objects> <name>affected-objects_1-2</name> </affected-objects> <fault-severity>MAJOR</fault-severity> <is-cleared>false</is-cleared> <fault-text>fault-text_1</fault-text> <event-time>2020-01-01T00:00:00Z</event-time> </active-alarms> <active-alarms> <fault-id>2</fault-id> <fault-source>fault-source_2</fault-source> <affected-objects> <name>affected-objects_2-1</name> </affected-objects> <affected-objects> <name>affected-objects_2-2</name> </affected-objects> <fault-severity>MINOR</fault-severity> <is-cleared>false</is-cleared> <fault-text>fault-text_2</fault-text> <event-time>2020-01-11T00:00:00Z</event-time> </active-alarms> <active-alarms> <fault-id>3</fault-id> <fault-source>fault-source_3</fault-source> <affected-objects> <name>affected-objects_3-1</name> </affected-objects> <affected-objects> <name>affected-objects_3-2</name> </affected-objects> <fault-severity>CRITICAL</fault-severity> <is-cleared>false</is-cleared> <fault-text>fault-text_3</fault-text> <event-time>2020-01-01T00:00:00Z</event-time> </active-alarms> </active-alarm-list>",
         logtime: "2023-10-31 17:03:04.549773",  // string
         comp_name: "itri_10.0.2.20"  // string @11/22 Add 
-      }
+      },     
+      {
+        userid: "k200",
+        operation: "get-config",
+        req_data: "<filter><software-inventory xmlns=\"urn:itri-software-management\"><software-slot></software-slot></software-inventory></filter>",
+        resp_data: "<?xml version=\"1.0\" ?> <data xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\"> <software-inventory xmlns=\"urn:itri-software-management\"> <software-slot> <name>slot-1</name> <status>VALID</status> <active>true</active> <running>true</running> <access>READ_ONLY</access> <vendor-code>K2</vendor-code> <build-id>b01</build-id> <build-name>product-default</build-name> <build-version>0.1.0</build-version> <files> <name>file-1</name> <version>0.2.3</version> <local-path>~/some_dir/</local-path> <integrity>OK</integrity> </files> </software-slot> <software-slot> <name>slot-2</name> <status>EMPTY</status> <active>false</active> <running>false</running> <access>READ_WRITE</access> </software-slot> <software-slot> <name>slot-3</name> <status>EMPTY</status> <active>false</active> <running>false</running> <access>READ_WRITE</access> </software-slot> <software-slot> <name>slot-4</name> <status>EMPTY</status> <active>false</active> <running>false</running> <access>READ_WRITE</access> </software-slot> </software-inventory> </data>",
+        logtime: "2023-10-31 17:09:41.933556",  // string
+        comp_name: "itri_10.0.2.15"  // string @11/22 Add 
+      },
+      {
+        userid: "k100",
+        operation: "edit-config",
+        req_data: "<config><ME xmlns=\"urn:3gpp:tsg:sa5:nrm:ngran\" ><GNBDUFunction><id>0</id><NRCellDU><id>0</id><bWP>1</bWP></NRCellDU></GNBDUFunction></ME></config>",
+        resp_data: "1",
+        logtime: "2023-12-18 17:00:27.174804",  // string
+        comp_name: "itri_10.0.2.10"  // string @11/22 Add 
+      },
+      {
+        userid: "k000",
+        operation: "edit-config",
+        req_data: "<config><ME xmlns=\"urn:3gpp:tsg:sa5:nrm:ngran\" ><GNBDUFunction><id>0</id><NRCellDU><id>0</id><NRSectorCarrier>0</NRSectorCarrier></NRCellDU></GNBDUFunction></ME></config>",
+        resp_data: "1",
+        logtime: "2023-12-15 16:03:25.265801",  // string
+        comp_name: "itri_10.0.2.12"  // string @11/22 Add 
+      },      
+      {
+        userid: "k000",
+        operation: "edit-config",
+        req_data: "<config><ME xmlns=\"urn:3gpp:tsg:sa5:nrm:ngran\"><GNBCUFunction><id>0</id><NRCellCU><id>1</id><vsDataContainer><id>0</id><vsData><![CDATA[ <gnbvs xmlns=\"urn:rdns:com:radisys:nr:gnb\"> <gnbCuConfig> <id>0</id> <gnbCellCuVsConfig> <id>0</id> <duId>1</duId> <nRpCI>1</nRpCI> <ueInactivityTimerSec>day30</ueInactivityTimerSec> <eutraConfig> <eutraNeighbourCell> <eutraCellIdentifier>2</eutraCellIdentifier> <MCC>466</MCC> <MNC>66</MNC> <enbIdType>MACRO_ENB_ID</enbIdType> <enbId>1</enbId> </eutraNeighbourCell> <eutraQoSConfig> <configIndex>1</configIndex> <qci>1</qci> <snSizeDL>12</snSizeDL> <snSizeUL>12</snSizeUL> <ulDataSplitThresholdInBytes>b100</ulDataSplitThresholdInBytes> <enableUlOutOfOrderDelivery>false</enableUlOutOfOrderDelivery> <rlcMode>RLC_UM</rlcMode> <rlcUmDir>RLC_UM_DIR_BIDIRECTIONAL</rlcUmDir> <reorderingTimerMs>500</reorderingTimerMs> </eutraQoSConfig> </eutraConfig> <nrConfig> <NRNeighbourCell> <nrCellIdentifier>000004108</nrCellIdentifier> <nrPci>100</nrPci> <MCC>466</MCC> <MNC>55</MNC> <nrModeTdd> <TDDInfo> <nrArfcn>0</nrArfcn> </TDDInfo> </nrModeTdd> <nrArfcn>4850</nrArfcn> <TAC>111111</TAC> </NRNeighbourCell> <NRNeighbourCell> <nrCellIdentifier>000050108</nrCellIdentifier> <nrPci>160</nrPci> <MCC>466</MCC> <MNC>55</MNC> <nrModeTdd> <TDDInfo> <nrArfcn>0</nrArfcn> </TDDInfo> </nrModeTdd> <nrArfcn>4850</nrArfcn> <TAC>111111</TAC> </NRNeighbourCell> </nrConfig> <ueCapabilityTriggerAfterSMCProc>true</ueCapabilityTriggerAfterSMCProc> </gnbCellCuVsConfig> </gnbCuConfig> </gnbvs> ]]></vsData></vsDataContainer></NRCellCU></GNBCUFunction></ME></config>",
+        resp_data: "1",
+        logtime: "2023-10-31 17:08:08.866697",  // string
+        comp_name: "itri_10.0.2.18"  // string @11/22 Add 
+      },
+      {
+        userid: "k200",
+        operation: "get-config",
+        req_data: "<filter><software-inventory xmlns=\"urn:itri-software-management\"><software-slot></software-slot></software-inventory></filter>",
+        resp_data: "<?xml version=\"1.0\" ?> <data xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\"> <software-inventory xmlns=\"urn:itri-software-management\"> <software-slot> <name>slot-1</name> <status>VALID</status> <active>false</active> <running>true</running> <access>READ_ONLY</access> <vendor-code>K2</vendor-code> <build-id>b01</build-id> <build-name>product-default</build-name> <build-version>0.1.0</build-version> <files> <name>file-1</name> <version>0.2.3</version> <local-path>~/some_dir/</local-path> <integrity>OK</integrity> </files> </software-slot> <software-slot> <name>slot-2</name> <status>VALID</status> <active>true</active> <running>false</running> <access>READ_WRITE</access> <vendor-code>WN</vendor-code> <build-id>1</build-id> <build-name>WNC-official-build</build-name> <build-version>1-0-0</build-version> <files> <name>fw-v1-0-0.bin</name> <version>1.0.0</version> <local-path>/sw_inventory/slot_3/</local-path> <integrity>OK</integrity> </files> </software-slot> <software-slot> <name>slot-3</name> <status>EMPTY</status> <active>false</active> <running>false</running> <access>READ_WRITE</access> </software-slot> <software-slot> <name>slot-4</name> <status>EMPTY</status> <active>false</active> <running>false</running> <access>READ_WRITE</access> </software-slot> </software-inventory> </data>",
+        logtime: "2023-11-28 19:15:31.669459",  // string
+        comp_name: "itri_10.0.2.33"  // string @11/22 Add 
+      },
+      {
+        userid: "k100",
+        operation: "get-config",
+        req_data: "<filter><software-inventory xmlns=\"urn:itri-software-management\"><software-slot></software-slot></software-inventory></filter>",
+        resp_data: "<?xml version=\"1.0\" ?> <data xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\"> <software-inventory xmlns=\"urn:itri-software-management\"> <software-slot> <name>slot-1</name> <status>VALID</status> <active>true</active> <running>true</running> <access>READ_ONLY</access> <vendor-code>K2</vendor-code> <build-id>b01</build-id> <build-name>product-default</build-name> <build-version>0.1.0</build-version> <files> <name>file-1</name> <version>0.2.3</version> <local-path>~/some_dir/</local-path> <integrity>OK</integrity> </files> </software-slot> <software-slot> <name>slot-2</name> <status>EMPTY</status> <active>false</active> <running>false</running> <access>READ_WRITE</access> </software-slot> <software-slot> <name>slot-3</name> <status>EMPTY</status> <active>false</active> <running>false</running> <access>READ_WRITE</access> </software-slot> <software-slot> <name>slot-4</name> <status>EMPTY</status> <active>false</active> <running>false</running> <access>READ_WRITE</access> </software-slot> </software-inventory> </data>",
+        logtime: "2023-11-31 17:15:11.961997",  // string
+        comp_name: "itri_10.0.2.12"  // string @11/22 Add 
+      },
     ]
   };
 }

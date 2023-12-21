@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OCloudInfoComponent } from './field-info.component';
+import { FieldInfoComponent } from './field-info.component';
 
-describe('OCloudInfoComponent', () => {
-  let component: OCloudInfoComponent;
-  let fixture: ComponentFixture<OCloudInfoComponent>;
+describe('FieldInfoComponent', () => {
+  let component: FieldInfoComponent;
+  let fixture: ComponentFixture<FieldInfoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OCloudInfoComponent ]
+      declarations: [ FieldInfoComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(OCloudInfoComponent);
+    fixture = TestBed.createComponent(FieldInfoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
