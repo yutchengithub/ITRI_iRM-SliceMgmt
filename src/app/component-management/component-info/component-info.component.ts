@@ -12,6 +12,7 @@ import { LanguageService } from 'src/app/shared/service/language.service';
 import { FmsgList } from './../../fault-management/fault-management.component';
 import { FaultMessages } from './../../fault-management/fault-management.component';
 import { Subscription } from 'rxjs';
+import { XMLParser } from "fast-xml-parser";
 
 //component Info
 export interface BsComponentInfo {
@@ -70,6 +71,7 @@ interface Files {
   localPath: string;
   integrity: string;
 }
+
 @Component({
   selector: 'app-component-info',
   templateUrl: './component-info.component.html',
@@ -125,8 +127,6 @@ export class ComponentInfoComponent implements OnInit {
     box5 : false
   };
 
-  
-
   tooltipOptions = {
     theme: 'light',     // 'dark' | 'light'
     hideDelay: 250
@@ -153,18 +153,45 @@ export class ComponentInfoComponent implements OnInit {
       this.getComponentInfo();
       this.getSoftwareList();
       this.getFaultMessage();
+      this.search();
       
     });
   }
   ngOnDestroy() {
     clearTimeout(this.refreshTimeout);
   }
-
   getComponentInfo() {
     if (this.commonService.isLocal) {
       /* local file test */
+      const parseOption = {
+        cdataTagName: "![CDATA[",
+        cdataPositionChar: "\\c",
+        attributeNamePrefix: "",
+        attrNodeName: "attr",
+        textNodeName: "#text",
+        ignoreAttributes: false,
+        ignoreNameSpace: false,
+        allowBooleanAttributes: false,
+        parseNodeValue: false,
+        parseAttributeValue: false,
+        trimValues: true,
+        parseTrueNumberOnly: false,
+        numParseOptions: {
+          hex: true,
+          leadingZeros: true,
+        },
+        arrayMode: false,
+        stopNodes: ["parse-me-as-string"],
+        alwaysCreateTextNode: false,
+      };
       this.bsComponentInfo = this.commonService.bsComponentInfo;
       this.cmpsource = this.commonService.cmpsource;
+      const xmldata = this.commonService.bsComponentInfo.info.data;
+      const parser = new XMLParser(parseOption);
+      const output = parser.parse(xmldata);
+      //console.log('Json output: ',output);
+      console.log('Json output: ', JSON.stringify(output, null, 2));
+
     } else {
       this.commonService.queryBsComponentInfo(this.comId).subscribe(
         (res: BsComponentInfo) => {
@@ -186,18 +213,13 @@ export class ComponentInfoComponent implements OnInit {
    // 建立搜尋表單
    createSearchForm() {
     const nowTime = this.commonService.getNowTime();
+    const compName = this.commonService.bsComponentInfo.name;
     // // // console.log(nowTime)
     // // // 格式驗證需要處理?
 
     this.searchForm = this.fb.group({
-      'fieldName': new FormControl(''),
-      'gnbName': new FormControl(''),
-      'compName': new FormControl(''),
-      'alarmName': new FormControl(''),
+      'compName': new FormControl(compName),
       'severity': new FormControl('All'),
-      'status': new FormControl('All'),
-      'situation': new FormControl('All'),
-      'ackOwner': new FormControl(''),
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),   // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`))  // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
     });
@@ -210,7 +232,6 @@ export class ComponentInfoComponent implements OnInit {
     if (this.commonService.isLocal) {
       /* local file test */
       this.fmsgList = this.commonService.fmsgList;
-      console.log(this.fmsgList);
       this.faultMessageDeal();
     } else {
       const emptyvalue = '';
@@ -254,7 +275,7 @@ export class ComponentInfoComponent implements OnInit {
 
   search() {
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
-    const comp_name = this.searchForm.get('compName')?.value || '';
+    const comp_name = 'itri_10.0.2.7';
     const severity_lv = this.searchForm.get('severity')?.value;
     const from = this.searchForm.get('from')?.value;
     const to = this.searchForm.get('to')?.value;

@@ -319,7 +319,7 @@
                 <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
               </span>
               <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-              <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search()">clear</span>
+              <!-- <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search()">clear</span> -->
             </div>
           </form>
             <div class="table">
@@ -358,16 +358,16 @@
 
             <div class="note_info">
               <ul>
-                <li><label>Field Name</label><span></span></li>
-                <li><label>gNB Name</label><span></span></li>
-                <li><label>Severity</label><span></span></li>
-                <li><label>Occur Time</label><span></span></li>
-                <li><label>Status</label><span></span></li>
+                <li><label>Field Name</label><span>field01</span></li>
+                <li><label>gNB Name</label><span>BS_01</span></li>
+                <li><label>Severity</label><span>CRITICAL</span></li>
+                <li><label>Occur Time</label><span>2023-02-21 09:28:01</span></li>
+                <li><label>Status</label><span>0</span></li>
               </ul>
               <ul class="event">
-                <li><label>Event Type</label><span></span></li>
-                <li><label>Event Cause</label><span></span></li>
-                <li><label>Event Desc.</label><span></span></li>
+                <li><label>Event Type</label><span>CRITICAL</span></li>
+                <li><label>Event Cause</label><span>fault-text_2</span></li>
+                <li><label>Event Desc.</label><span>fault-text_2</span></li>
               </ul>
             </div>
         </div>
