@@ -26,7 +26,8 @@ import { FieldList } from '../dashboard/dashboard.component';
 import { FieldInfo } from '../shared/interfaces/Field_Info/For_queryFieldInfo'; // @12/21 Update by yuchen
 
 // Interfaces of BS Management
-import { BSInfo } from './interfaces/BS_Info/For_queryBsInfo_common';  // @12/21 Update by yuchen
+import { BSInfo } from './interfaces/BS_Info/For_queryBsInfo_BS';             // @12/21 Update by yuchen
+import { BSInfo_dist } from './interfaces/BS_Info/For_queryBsInfo_dist_BS';   // @12/24 Add
 
 // Interfaces of NE ( Component ) management 
 import { ComponentList } from '../component-management/component-management.component';
@@ -534,8 +535,8 @@ export class CommonService {
   //   return this.http.get(url);
   // }
 
-  // 將 Observable 的類型從 any 改為 BSInfo
-  queryBsInfo(bsId: string): Observable<BSInfo> {
+  // @12/24 Update - 將 Observable 的類型改為能接兩種 BSInfo 與 BSInfo_dist 介面的數據
+  queryBsInfo( bsId: string ): Observable<BSInfo | BSInfo_dist>  {
     const url = `${this.restPath}/queryBsInfo/${this.getSessionId()}/${bsId}`;
     return this.http.get<BSInfo>(url); // 告訴 HttpClient 期望的響應類型是 BSInfo
   }

@@ -1,84 +1,77 @@
 
-/* ↓ @12/14~15 Add For API of queryBsInfo ↓ */
+/* ↓ @12/24 Add For API of queryBsInfo for dist BS ↓ */
 // notes: 當物件有可能是空的或可能不在 JSON 中設為"?:"
-export interface BSInfo {
-    info: {
-      'bs-conf': {
-        'plmn-id': {
-          mcc: string;
-          mnc: string;
-        };
-        nci: string;
-        pci: number;
-        'nrarfcn-dl': number;
-        'nrarfcn-ul': number;
-        'duplex-mode': string;
-        'channel-bandwidth': number;
-        tac: string;
-        'tx-power': number;
-      };
-      nci?: string;
+export interface BSInfo_dist {
+    info: Info[];
+    extension_info: ExtensionInfo[]; // ok
+    cellInfo: Cellinfo; // ok
+    anr: Anr;           // ok
+    pci: PCI;           // ok 目前沒看到有 BS 這個有值
+    cco: CCO;           // ok 目前沒看到有 BS 這個有值
+    id: string;         // ok
+    name: string;       // ok
+    ip: string;               // ok 不一定有值
+    port: string;             // ok 不一定有值
+    position: string;         // ok dist BS 有定義該參數但都沒有值
+    description: string;      // ok
+    bstype: number;           // ok
+    components: Components;   // ok 可能會出錯
+    status: number;           // ok
+    laston: string;           // ok
+    lastoff: string;          // ok
+    'components-info': ComponentsInfo;   // ok 不一定有值
+}
+
+  /* ↓ @12/26 Add For info:[] ↓ */
+
+  export interface Info {
+      nci: string;
       gNBId: number;
       gNBIdLength: number;
-      'gNB-type'?: string;
-      gNBCUName ?: string;
-      pLMNId_MCC ?: string;
-      pLMNId_MNC ?: string;
-      cellLocalId?: string;
-      CU?:{
-        id: string;
-        func: string;
-        cellLocalId: string;
-        absoluteFrequencySSB: string;
-        sSBSubCarrierSpacing: string;
-        pLMNId_MCC: string;
-        pLMNId_MNC: string;
-      };
-      DU?: {
-        id: string;
-        func: string;
-        cellLocalId: string;
-        administrativeState: string;
-        arfcnDL: number;
-        arfcnSUL: number;
-        arfcnUL: number;
-        bSChannelBwDL: number;
-        bSChannelBwSUL: number;
-        bSChannelBwUL: number;
-        nRPCI: number;
-        nRTAC: string;
-        ssbDuration: number;
-        ssbFrequency: number;
-        ssbOffset: number;
-        ssbPeriodicity: number;
-        ssbSubCarrierSpacing: number;
-        configuredMaxTxPower: number;
-      }
-      RU: {
-        id: string;
-        position: string;
-      };
-    };
-  
-    extension_info: ExtensionInfo[]; // ok
-    cellInfo?: Cellinfo; // ok
-    anr: Anr;     // ok
-    pci: PCI;     // ok 目前沒看到有 BS 這個有值
-    cco: CCO;     // ok 目前沒看到有 BS 這個有值
-    id: string;   // ok
-    name: string; // ok
-    ip: string;              // ok 不一定有值
-    port: string;            // ok 不一定有值
-    position: string;        // ok 不一定有值
-    description?: string;      // ok
-    bstype: number;            // ok
-    components?: Components;   // ok 可能會出錯
-    status: number;            // ok
-    laston?: string;           // ok
-    lastoff?: string;          // ok
-    'components-info'?: ComponentsInfo;   // ok 不一定有值
+      cellLocalId: string;
+      CU: cuInfo;
+      DU: duInfo;
+      RU: ruInfo;
   }
-  
+
+    export interface cuInfo {
+      id: string;
+      func: string;
+      cellLocalId: string;
+      absoluteFrequencySSB: string;
+      sSBSubCarrierSpacing: string;
+      pLMNId_MCC: string;
+      pLMNId_MNC: string;
+    }
+
+    export interface duInfo {
+      id: string;
+      func: string;
+      cellLocalId: string;
+      administrativeState: string;
+      arfcnDL: number;
+      arfcnSUL: number;
+      arfcnUL: number;
+      bSChannelBwDL: number;
+      bSChannelBwSUL: number;
+      bSChannelBwUL: number;
+      nRPCI: number;
+      nRTAC: string;
+      ssbDuration: number;
+      ssbFrequency: number;
+      ssbOffset: number;
+      ssbPeriodicity: number;
+      ssbSubCarrierSpacing: number;
+      configuredMaxTxPower: number;
+    }
+
+    export interface ruInfo {
+      id: string;
+      position: string;
+    }
+
+  /* ↑ @12/26 Add For info:[] ↑ */
+
   /* ↓ @12/14 Add For extension_info:[] ↓ */
   
   export interface ExtensionInfo {
@@ -561,7 +554,7 @@ export interface BSInfo {
   }
   
   export interface SNSSAIDetail {
-    gNBDUId?: number;
+    gNBDUId: number;
     gNBId: number;
     gNBIdLength: number;
     pLMNId_MCC: string;
@@ -655,10 +648,15 @@ export interface BSInfo {
   
   
   /* ↓ @12/15 Add For "anr": {} ↓ */
+
   export interface Anr {
-    'anr-son-output': AnrSonOutput;
+    [key: string]: AnrWithId; // key 是動態的，例如 "000024001"
   }
   
+  export interface AnrWithId {
+    'anr-son-output': AnrSonOutput;
+  }
+
   export interface AnrSonOutput {
     neighbor: Neighbor[];
   }
@@ -668,24 +666,26 @@ export interface BSInfo {
     nci: string;
     pci: number;
     nrarfcn: number;
-    'plmn-id': {
-      mcc: string;
-      mnc: string;
-    };
+    'plmn-id': PLMNid;
     tac: string;
-    id?: string;
-    enable?: string;
-    alias?: string;
-    cio?: string;
-    blacklisted?: string;
-    'must-include'?: string;
-    'q-offset'?: string;
-    'rs-tx-power'?: string;
+    id: string;
+    enable: string;
+    alias: string;
+    cio: string;
+    blacklisted: string;
+    'must-include': string;
+    'q-offset': string;
+    'rs-tx-power': string;
     '__itri_default___': number;
   }
   
   /* ↑ @12/15 Add For "anr": {} ↑ */
   
+  export interface PLMNid{
+    mcc: string;
+    mnc: string;
+  }
+
   export interface PCI {
     // 待添加 (目前未看到有值的案例)
   }
@@ -697,13 +697,15 @@ export interface BSInfo {
   /* ↓ @12/15 Add  For "components": ↓ */
   
   export interface Components {
-    [key: string]: { [key: string]: DUInfo[] } | string; // 添加了字符串的可能性
-    //type: string;
-    //id: string;
+    [cuID: string]: duID; // 使用 CUId 而不是 CUId[]
   }
   
-  export interface DUInfo {
-    [key: string]: string;
+  export interface duID {
+    [DUid: string]: ruID[];
+  }
+  
+  export interface ruID {
+    [RUid: string]: string;
   }
   
   /* ↑ @12/15 Add  For "components": ↑ */
@@ -716,9 +718,9 @@ export interface BSInfo {
   }
   
   export interface ComponentDetail {
-    firm?: string;
-    modelname?: string;
-    'components-sw-inventory'?: SoftwareInventory;
+    firm: string;
+    modelname: string;
+    'components-sw-inventory': SoftwareInventory;
   }
   
   // "components-sw-inventory":
@@ -735,11 +737,11 @@ export interface BSInfo {
     active: string;
     running: string;
     access: string;
-    'vendor-code'?: string;
-    'build-id'?: string;
-    'build-name'?: string;
-    'build-version'?: string;
-    files?: SoftwareFiles;
+    'vendor-code': string;
+    'build-id': string;
+    'build-name': string;
+    'build-version': string;
+    files: SoftwareFiles;
   }
   
   // "files":
@@ -747,9 +749,9 @@ export interface BSInfo {
     name: string;
     version: string;
     'local-path': string;
-    integrity?: string;
+    integrity: string;
   }
   
      /* ↑ @12/15 Add  For "components-info": ↑ */
   
-  /* ↑ @12/14~15 Add For API of queryBsInfo ↑ */
+/* ↑ @12/24 Add For API of queryBsInfo for dist BS ↑ */

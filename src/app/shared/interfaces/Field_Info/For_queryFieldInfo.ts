@@ -9,7 +9,7 @@ export interface FieldInfo {
     fieldposition2: string;
     fieldposition3: string;
     fieldposition4: string;
-    bsinfo: BsInfo[];
+    bsinfo: BsInfoInField[]; // 先判斷裡面是否有 cellinfo，再看要用哪個結構接這個 bsinfo 完整資訊( 沒有，表 All-in-one；有，表 dist )
     bsNum: number;
     ueNum: string;
     coverage: string;
@@ -28,7 +28,7 @@ export interface FieldInfo {
   
   // @12/05 Add by yuchen
   // 描述 BS 的資訊
-  export interface BsInfo {
+  export interface BsInfoInField {
     id: string;
     name: string;
     accessibility: string | null;
@@ -37,7 +37,7 @@ export interface FieldInfo {
     energy: string | null;
     integrity: Integrity;
     utilization: Utilization;
-    cellInfo?: CellInfo[];
+    cellInfo?: CellInfo[];   // 判斷裡面 cellinfo 是否有值
   }
   
   // @12/05 Add by yuchen
