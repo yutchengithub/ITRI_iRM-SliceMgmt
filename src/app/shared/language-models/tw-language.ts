@@ -14,7 +14,7 @@ export const TwLanguage = {
   'index.menu_iRmSys':'Athena Orchestrator',
   'index.menu_dashboard':'主畫面',
   'index.menu_fieldMgr':'場域管理',
-  'index.menu_gNB':'基站管理',
+  'index.menu_BS':'基站管理',
   'index.menu_componentMgr':'元件管理',
   'index.menu_faultMgr':'故障管理',
   'index.menu_performMgr':'效能管理',
@@ -41,7 +41,7 @@ export const TwLanguage = {
   'table.performance':'部署狀態',
   'table.delete':'刪除',
   
-  //Common Items (共用項目)
+  // Common Items (共用項目)
   'ok':'確定',
   'cancel':'取消',
   'search':'搜尋',
@@ -75,8 +75,8 @@ export const TwLanguage = {
   'field.CPU_Utilization':'使用率 - CPU',
   'field.Memory_Utilization':'使用率 - Memory',
   'field.bsInfo':'基站資訊',
-  'field.gNBname':'基站名稱',
-  'field.gNBtype':'基站類型',
+  'field.BSname':'基站名稱',
+  'field.BStype':'基站類型',
   'field.Longitude':'經度',
   'field.Latitude':'緯度',
   'field.modifyConfiguration':'修改配置',
@@ -91,7 +91,7 @@ export const TwLanguage = {
   'field.mapModel':'地圖模式',              // @12/12 Add
   'field.bsList':'基站列表',                // @12/12 Add
   'field.bsAntennaCoord':'基站天線位置座標', // @12/13 Add
-  'field.gNBstatus':'連線狀態',             // @12/13 Add
+  'field.BSstatus':'連線狀態',             // @12/13 Add
   'field.bsAlarm':'告警',                  // @12/13 Add
   
 
@@ -100,7 +100,7 @@ export const TwLanguage = {
   'fm.end':'結束時間',
   'fm.no':'編號',
   'fm.field':'場域名稱',
-  'fm.gnb':'基站名稱',
+  'fm.BS':'基站名稱',
   'fm.component':'元件名稱',
   'fm.alarm':'告警名稱',
   'fm.severity':'嚴重度',
@@ -187,7 +187,7 @@ export const TwLanguage = {
 
   //Dashboard
   'num_fields':'場域數量',
-  'num_gNBs':'基站數量',
+  'num_BSs':'基站數量',
   'num_UEs':'使用者數量',
   'coverage':'覆蓋率',
   'critical_Alarm':'嚴重告警',

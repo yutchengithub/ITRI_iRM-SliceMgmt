@@ -121,7 +121,7 @@ export interface SimplifiedBSInfo {
   "nrarfcn-ul": number;
   position: string;
   neighbors: SimplifiedNeighborInfo[];
-  iconUrl: string; // 可選屬性，存儲基站圖標的 URL
+  iconUrl: string; // 存儲基站圖標的 URL
 }
 
 export interface SimplifiedNeighborInfo {
@@ -169,7 +169,8 @@ export class FieldInfoComponent implements OnInit {
   showTooltipNic: any = {};
 
   
-  // For Fault Alarms: CRITICAL, MAJOR, MINOR, WARNING
+  // For Fault Alarms: 
+  // CRITICAL, MAJOR, MINOR, WARNING
   severitys: string[];
 
   tooltipOptions = {
@@ -184,7 +185,7 @@ export class FieldInfoComponent implements OnInit {
   polyOptions: google.maps.PolygonOptions = {
     strokeColor: '#0f91e7',   // 多邊形邊界的顏色
     strokeOpacity: 0.8,       // 多邊形邊界的透明度
-    strokeWeight: 2,          // 多邊形邊界線的寬度
+    strokeWeight: 1.5,          // 多邊形邊界線的寬度
     fillColor: '#0f91e7',     // 多邊形填充的顏色
     fillOpacity: 0,           // 將多邊形填充的透明度設置為 0，使其透明
     clickable: false          // 確保多邊形不會捕捉點擊事件
@@ -195,9 +196,8 @@ export class FieldInfoComponent implements OnInit {
 
   // 初始化地圖中心的經緯度為(0, 0)，這可能會導致地圖在視圖上看不到任何內容(目前都可以顯示)
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
-
   // 設置地圖的初始縮放級別，這裡設為 19.5 ( 近地面 )
-  zoom = 17;
+  zoom = 16;
 
   // 定義地圖的其他配置選項，包括樣式，來隱藏默認的地標
   mapOptions: google.maps.MapOptions = {
@@ -207,13 +207,13 @@ export class FieldInfoComponent implements OnInit {
     backgroundColor: '#126df5',      // 設置地圖的背景顏色
     clickableIcons: false,           // 設置地圖上的圖標是否可點擊
     disableDoubleClickZoom: true,    // 禁用雙擊縮放功能
-    draggable: false,                // 禁止用戶拖動地圖
-    zoomControl: false,              // 禁止用戶通過控件來縮放地圖
+    draggable: true,                // 禁止用戶拖動地圖
+    zoomControl: true,               // 禁止用戶通過控件來縮放地圖
     styles: [                        // 自定義樣式來隱藏地圖上的點擊性圖標
       {
         // "poi" 隱藏所有類型的搜尋點
         featureType: "poi",
-        stylers: [{ visibility: "off" }]
+        stylers: [{ visibility: "off" }],
       }
     ]
   };
@@ -263,7 +263,7 @@ export class FieldInfoComponent implements OnInit {
   showMapModel: boolean = true;                   // 控制是否顯示地圖模式的 Flag    @12/13 Add
   recordColorbar: 'RSRP' | 'SINR' | null = null;  // 用於記錄 Colorbar 狀態的 Flag @12/13 Add
 
-  // 用於切換顯示地圖模式或基站列表 @12/13 Add to toggle Map Mode or gNB List
+  // 用於切換顯示地圖模式或基站列表 @12/13 Add to toggle Map Mode or BS List
   toggleMenuButton() {
 
     this.showMapModel = !this.showMapModel; // 切換顯示的頁面並更新該 Flag 狀態
@@ -330,28 +330,57 @@ export class FieldInfoComponent implements OnInit {
    * @param points 一個包含多邊形每個頂點經緯度的陣列。
    * @returns 返回一個包含多邊形幾何中心經緯度的物件。
    */
-  calculateCenter(points: google.maps.LatLngLiteral[]): google.maps.LatLngLiteral {
+  // calculateCenter(points: google.maps.LatLngLiteral[]): google.maps.LatLngLiteral {
 
-    // 初始化緯度和經度的總和
-    let lat = 0;
-    let lng = 0;
+  //   // 初始化緯度和經度的總和
+  //   let lat = 0;
+  //   let lng = 0;
 
-    // 迭代多邊形的每個頂點
+  //   // 迭代多邊形的每個頂點
+  //   points.forEach(point => {
+
+  //     // 累加所有頂點的緯度和經度
+  //     lat += point.lat;
+  //     lng += point.lng;
+  //   });
+
+  //   // 返回多邊形所有頂點緯度和經度的平均值作為多邊形的中心點
+  //   // 這是通過將總和除以點的數量來計算的
+  //   return {
+  //     lat: lat / points.length,  // 計算緯度的平均值
+  //     lng: lng / points.length   // 計算經度的平均值
+  //   };
+  // }
+
+  // @12/27 Add
+  calculateBoundingBoxCenter(points: google.maps.LatLngLiteral[]): google.maps.LatLngLiteral {
+
+    // 初始化最小和最大緯度、經度值，初始值設定為陣列中的第一個點的緯度和經度
+    let minLat = points[0].lat;
+    let maxLat = points[0].lat;
+    let minLng = points[0].lng;
+    let maxLng = points[0].lng;
+  
+    // 遍歷 points 陣列中的每一個 google.maps.LatLngLiteral 物件
     points.forEach(point => {
-
-      // 累加所有頂點的緯度和經度
-      lat += point.lat;
-      lng += point.lng;
+      // 如果當前點的緯度小於已知的最小緯度，更新 minLat 的值
+      if (point.lat < minLat) minLat = point.lat;
+      // 如果當前點的緯度大於已知的最大緯度，更新 maxLat 的值
+      if (point.lat > maxLat) maxLat = point.lat;
+      // 如果當前點的經度小於已知的最小經度，更新 minLng 的值
+      if (point.lng < minLng) minLng = point.lng;
+      // 如果當前點的經度大於已知的最大經度，更新 maxLng 的值
+      if (point.lng > maxLng) maxLng = point.lng;
     });
-
-    // 返回多邊形所有頂點緯度和經度的平均值作為多邊形的中心點
-    // 這是通過將總和除以點的數量來計算的
+  
+    // 計算緯度和經度的平均值，得出邊界框的中心點經緯度，並返回這個中心點
     return {
-      lat: lat / points.length,  // 計算緯度的平均值
-      lng: lng / points.length   // 計算經度的平均值
+      lat: (minLat + maxLat) / 2,
+      lng: (minLng + maxLng) / 2
     };
   }
-
+  
+  
   // @12/18 Update
   getQueryFieldInfo() {
     console.log('getQueryFieldInfo() - Start'); // 啟動獲取場域資訊
@@ -402,8 +431,8 @@ export class FieldInfoComponent implements OnInit {
 
           // calculateCenter 是一個自定義函數，用於計算多邊形頂點的平均中心點，
           // 這個計算出的中心點將被用來設定地圖的初始視圖中心。
-          this.center = this.calculateCenter(positions);
-
+          //this.center = this.calculateCenter(positions);
+          this.center = this.calculateBoundingBoxCenter(positions);
           // 輸出中心點到控制台，這樣可以用於調試和確認中心點是否如預期被正確計算。
           console.log('In getQueryFieldInfo() - center:', this.center);
 

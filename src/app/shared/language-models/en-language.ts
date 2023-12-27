@@ -75,8 +75,8 @@ export const Enlanguage = {
   'field.CPU_Utilization':'CPU Utilization',
   'field.Memory_Utilization':'Memory Utilization',
   'field.bsInfo':'BS Information',
-  'field.gNBname':'Name',
-  'field.gNBtype':'Type',
+  'field.BSname':'Name',
+  'field.BStype':'Type',
   'field.Longitude':'Longitude',
   'field.Latitude':'Latitude',
   'field.modifyConfiguration':'Modify Configuration',
@@ -91,7 +91,7 @@ export const Enlanguage = {
   'field.mapModel':'Map Mode',                 // @12/12 Add
   'field.bsList':'BS List',                    // @12/12 Add
   'field.bsAntennaCoord':'BS Antenna Coordinates',  // @12/13 Add
-  'field.gNBstatus':'BS Status',                    // @12/13 Add
+  'field.BSstatus':'BS Status',                    // @12/13 Add
   'field.bsAlarm':'Alarm',                           // @12/13 Add
 
   // Fault Management
@@ -99,7 +99,7 @@ export const Enlanguage = {
   'fm.end':'EndTime',
   'fm.no':'No.',
   'fm.field':'Field Name',
-  'fm.gnb':'gNB Name',
+  'fm.BS':'BS Name',
   'fm.component':'Component Name',
   'fm.alarm':'Alarm Name',
   'fm.severity':'Severity',
@@ -186,7 +186,7 @@ export const Enlanguage = {
 
   // Dashboard
   'num_fields':'Number of Field',
-  'num_gNBs':'Number of gNBs',
+  'num_BSs':'Number of BSs',
   'num_UEs':'Number of UEs',
   'coverage':'Coverage',
   'critical_Alarm':'Critical Alarm',
@@ -227,7 +227,7 @@ export const Enlanguage = {
   'cm.model':'Model',
   'cm.delete':'Delete Component',
   'cm.confirm_del':'Confirm to Delete Component',
-  'cm.unable_del':'Can not delete the component which has been assigned to a certain gNB',
+  'cm.unable_del':'Can not delete the component which has been assigned to a certain BS',
   'cm.error':'ERROR',
   'cm.info':'Component Detail Information',
   'cm.apply':'Apply',

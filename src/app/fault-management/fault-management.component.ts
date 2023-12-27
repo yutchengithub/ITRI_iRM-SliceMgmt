@@ -16,21 +16,21 @@ export interface FmsgList {
 }
 
 export interface FaultMessages {
-  fieldName: string;   // modify by Charles (cloudName -> fieldName)
-  bsName: string;   // add by Charles
-  compname: string;   // add by Charles
-  count: number;  // add by Charles  
+  fieldName: string;    // modify by Charles (cloudName -> fieldName)
+  bsName: string;       // add by Charles
+  compname: string;     // add by Charles
+  count: number;        // add by Charles  
   timestamp: string;
-  status: string; // add by Charles
-  eventtype: string; //modify by Charles (severity -> eventtype)
+  status: string;        // add by Charles
+  eventtype: string;     // modify by Charles (severity -> eventtype)
   probablecause: string; // modify by Charles (context -> probablecause)
   isCleared: boolean;
-  processstatus: number; //modify by Charles (processStatus -> processstatus)
-  processresult: string; //modify by Charles (processComment -> processresult)
+  processstatus: number; // modify by Charles (processStatus -> processstatus)
+  processresult: string; // modify by Charles (processComment -> processresult)
   acknowledgeOwner: string;
-  createtime: string; //add by Charles
-  updatetime: string; //add by Charles
-  eDesc: string; //add by Charles
+  createtime: string; // add by Charles
+  updatetime: string; // add by Charles
+  eDesc: string;      // add by Charles
   histories: situRecord[];
 }
 
@@ -143,7 +143,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
 
     this.searchForm = this.fb.group({
       'fieldName': new FormControl(''),
-      'gnbName': new FormControl(''),
+      'BSName': new FormControl(''),
       'compName': new FormControl(''),
       'alarmName': new FormControl(''),
       'severity': new FormControl('All'),
@@ -220,7 +220,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   search() {
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
     const field_name = this.searchForm.get('fieldName')?.value || '';
-    const gnb_name = this.searchForm.get('gnbName')?.value || '';
+    const BS_name = this.searchForm.get('BSName')?.value || '';
     const comp_name = this.searchForm.get('compName')?.value || '';
     const alarm_name = this.searchForm.get('alarmName')?.value || '';
     const severity_lv = this.searchForm.get('severity')?.value;
@@ -246,7 +246,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       /* local file test */
       this.filteredFmList = this.fmsgList.faultMessages.filter(msg => {
         const isFieldMatch = !field_name || msg.fieldName.includes(field_name);
-        const isGnbMatch = !gnb_name || msg.bsName.includes(gnb_name);
+        const isBSMatch = !BS_name || msg.bsName.includes(BS_name);
         const isCompMatch = !comp_name || msg.compname.includes(comp_name);
         const isAlarmMatch = !alarm_name || msg.probablecause.includes(alarm_name);
         const isSeverityMatch = severity_lv === 'All' || msg.eventtype === severity_lv;
@@ -257,7 +257,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
         const isBeforeTo = msgDate <= new Date(formattedTo);
         const isOwnerMatch = !owner_name || msg.acknowledgeOwner.includes(owner_name);
 
-        return isFieldMatch && isGnbMatch && isCompMatch && isAlarmMatch && isSeverityMatch 
+        return isFieldMatch && isBSMatch && isCompMatch && isAlarmMatch && isSeverityMatch 
                 && isStatusMatch && isSituMatch && isAfterFrom && isBeforeTo && isOwnerMatch;
       });
       this.isSearch = true; // Local Search 完畢，設置標記為 true
