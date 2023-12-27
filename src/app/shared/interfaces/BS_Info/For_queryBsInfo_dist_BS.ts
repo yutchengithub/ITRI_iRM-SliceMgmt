@@ -554,7 +554,7 @@ export interface BSInfo_dist {
   }
   
   export interface SNSSAIDetail {
-    gNBDUId: number;
+    gNBDUId?: number;
     gNBId: number;
     gNBIdLength: number;
     pLMNId_MCC: string;

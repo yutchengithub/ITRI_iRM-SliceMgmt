@@ -36,12 +36,12 @@ export interface BSInfo {
     ip: string;              // ok 不一定有值
     port: string;            // ok 不一定有值
     position: string;        // ok 不一定有值
-    description: string;      // ok
-    bstype: number;            // ok
-    components: Components;   // ok 可能會出錯
-    status: number;            // ok
-    laston: string;           // ok
-    lastoff: string;          // ok
+    description: string;        // ok
+    bstype: number;             // ok
+    components: Components[];   // ok 
+    status: number;             // ok
+    laston: string;             // ok
+    lastoff: string;            // ok
     'components-info': ComponentsInfo;   // ok 不一定有值
   }
   
@@ -525,7 +525,7 @@ export interface BSInfo {
   }
   
   export interface SNSSAIDetail {
-    gNBDUId: number;
+    gNBDUId?: number;
     gNBId: number;
     gNBIdLength: number;
     pLMNId_MCC: string;
@@ -693,11 +693,11 @@ export interface BSInfo {
     active: string;
     running: string;
     access: string;
-    'vendor-code': string;
-    'build-id': string;
-    'build-name': string;
-    'build-version': string;
-    files: SoftwareFiles;
+    'vendor-code'?: string;
+    'build-id'?: string;
+    'build-name'?: string;
+    'build-version'?: string;
+    files?: SoftwareFiles;
   }
   
   // "files":

@@ -15,12 +15,13 @@ import { ChangeDetectorRef } from '@angular/core';          // @12/13 Add for us
 import { environment } from 'src/environments/environment'; // @12/20 Add for import Google Maps API Key
 import { NgZone } from '@angular/core';
 
-import { FieldInfo } from '../../shared/interfaces/Field_Info/For_queryFieldInfo'; // @12/21 Add
-import { BsInfoInField } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';    // @12/21 Add
+import { FieldInfo } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';              // @12/21 Add
+import { BsInfoInField } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';          // @12/21 Add
 
-import { BSInfo, AnrSonOutput } from '../../shared/interfaces/BS_Info/For_queryBsInfo_BS';             // @12/21 Add
-import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS_Info/For_queryBsInfo_dist_BS';   // @12/24 Add
+import { BSInfo, AnrSonOutput } from '../../shared/interfaces/BS_Info/For_queryBsInfo_BS';      // @12/21 Add
+import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS_Info/For_queryBsInfo_dist_BS';  // @12/24 Add
 import { map } from 'rxjs/operators'; // 12/24 Add
+import { localBSinfo } from '../../shared/local-files/For_BS';  // @12/27 Add
 
 export interface OcloudInfo {
   id: string;
@@ -142,9 +143,9 @@ export class FieldInfoComponent implements OnInit {
   cloudId: string = '';
   cloudName: string = '';
 
-  fieldInfo: FieldInfo = {} as FieldInfo; // @12/05 Add by yuchen
-  fieldId: string = '';   // @12/05 Add by yuchen
-  fieldName: string = ''; // @12/05 Add by yuchen
+  fieldInfo: FieldInfo = {} as FieldInfo;      // @12/05 Add by yuchen
+  fieldId: string = '';     // @12/05 Add by yuchen
+  fieldName: string = '';   // @12/05 Add by yuchen
 
   refreshTimeout!: any;
   refreshTime: number = 5;
@@ -185,7 +186,7 @@ export class FieldInfoComponent implements OnInit {
   polyOptions: google.maps.PolygonOptions = {
     strokeColor: '#0f91e7',   // 多邊形邊界的顏色
     strokeOpacity: 0.8,       // 多邊形邊界的透明度
-    strokeWeight: 1.5,          // 多邊形邊界線的寬度
+    strokeWeight: 1.5,        // 多邊形邊界線的寬度
     fillColor: '#0f91e7',     // 多邊形填充的顏色
     fillOpacity: 0,           // 將多邊形填充的透明度設置為 0，使其透明
     clickable: false          // 確保多邊形不會捕捉點擊事件
@@ -299,6 +300,7 @@ export class FieldInfoComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public commonService: CommonService,
+    public bsLocalFiles: localBSinfo,      // @12/27 ADD for import BS Local Files
     private fb: FormBuilder,
     private dialog: MatDialog,
     public languageService: LanguageService,
@@ -381,7 +383,7 @@ export class FieldInfoComponent implements OnInit {
   }
   
   
-  // @12/18 Update
+  // @12/27 Update - Add Local Files Processing
   getQueryFieldInfo() {
     console.log('getQueryFieldInfo() - Start'); // 啟動獲取場域資訊
 
@@ -392,8 +394,29 @@ export class FieldInfoComponent implements OnInit {
 
       
       // For testing with local files
-      console.log('Start fetching field info in Local');   // 開始獲取場域資訊
+      console.log('Start fetching field info in Local');   // 開始獲取 local 場域資訊
       this.fieldInfo = this.commonService.fieldInfo;
+      console.log( 'Local field info in Local:', this.fieldInfo );
+
+      this.updateResourceUtilization();
+
+      // 儲存場域位置 @12/27 Add
+      // 該處建立了一個包含場域四個角落位置的矩陣，
+      // 並且將場域的第一個位置再次添加到矩陣的末尾，以確保多邊形是閉合的。
+      const positions = [
+        this.parsePosition(this.fieldInfo.fieldposition1),
+        this.parsePosition(this.fieldInfo.fieldposition2),
+        this.parsePosition(this.fieldInfo.fieldposition3),
+        this.parsePosition(this.fieldInfo.fieldposition4),
+        this.parsePosition(this.fieldInfo.fieldposition1)  // 該位置用於閉合多邊形框線
+      ];
+      console.log( 'Local field position:', positions );
+
+      this.polyPath = positions;
+
+      // 計算場域中心用來設定地圖的初始視圖中心
+      this.center = this.calculateBoundingBoxCenter(positions);
+
       this.processFieldInfo(); // 處理場域資訊
 
     } else {
@@ -457,21 +480,68 @@ export class FieldInfoComponent implements OnInit {
       });
     }
   }
-
-  // @12/18 Add
+  
+  // @12/27 Update - Add Local Files Processing
   // 處理場域資訊並調用 getQueryBsInfoForAll
   // Process field info and call getQueryBsInfoForAll
   processFieldInfo() {
 
-    // 確認 fieldInfo 和 fieldInfo.bsinfo 是否已經被定義
-    // Ensure fieldInfo and fieldInfo.bsinfo are defined
-    if (this.fieldInfo && this.fieldInfo.bsinfo) {
+    if ( this.commonService.isLocal ) {
+    
+      console.log('Start fetching BS info in Local');   // 開始獲取 Local BS 資訊
 
-      // 確認場域資訊記錄的"基站數量"是否與"bsinfo"內的資料筆數相等
-      if ( this.fieldInfo.bsNum === this.fieldInfo.bsinfo.length ) {
+      console.log( 'Local BS info in Local:', this.bsLocalFiles.bsInfo_local );
+      console.log( 'Local Dist_BS info in Local:', this.bsLocalFiles.dist_bsInfo_local );
 
-        // 取得該場域所有基站之詳細資訊
-        this.getQueryBsInfoForAll( this.fieldInfo.bsNum, this.fieldInfo.bsinfo );
+      // 初始化一個新數組用於存放所有轉換後的 SimplifiedBSInfo 對象
+      const allSimplifiedData: SimplifiedBSInfo[] = [];
+
+      // 遍歷 dist_bsInfo_local 數組並處理每一筆數據
+      this.bsLocalFiles.dist_bsInfo_local.forEach((distBsInfo: BSInfo_dist) => {
+        allSimplifiedData.push(...this.convertDistBsInfoToSimplifiedFormat(distBsInfo));
+      });
+
+      // 遍歷 bsInfo_local 數組並處理每一筆數據
+      this.bsLocalFiles.bsInfo_local.forEach((bsInfo: BSInfo) => {
+        allSimplifiedData.push(this.convertBsInfoToSimplifiedFormat(bsInfo));
+      });
+      
+      // 將合併後的所有 SimplifiedBSInfo 對象賦值給 this.allSimplifiedBsInfo 屬性
+      this.allSimplifiedBsInfo = allSimplifiedData;
+
+      // 檢查 allSimplifiedBsInfo 數組是否包含任何基站資訊
+      if ( this.allSimplifiedBsInfo.length > 0 ) {
+
+        // 有就遍歷 allSimplifiedBsInfo 並為每個基站設置圖標 URL
+        this.allSimplifiedBsInfo.forEach((bsInfo, index) => {
+          // 獲取 allSimplifiedBsInfo 數組中第一筆資料的名稱
+          const firstBsInfoName = this.allSimplifiedBsInfo[0].name;
+
+          // 判斷當前處理的基站是否為數組中的第一個元素（即索引為 0 的元素）
+          // 如果是第一個元素（index === 0），則 isSelected 為 true，否則為 false
+          // isSelected 用於確定當前基站是否應該顯示為「被選中」狀態的圖標
+          const isSelected = (index === 0);
+
+          // 為當前基站設置圖標 URL，根據基站的類型、狀態、是否被選中以及是否是數組中的第一個基站
+          bsInfo.iconUrl = this.setIconUrl(bsInfo.bstype, bsInfo.status, isSelected, firstBsInfoName, bsInfo.name);
+        });
+
+        // 將 allSimplifiedBsInfo 數組中的第一筆基站資訊顯示於「基站資訊」欄位上
+        this.displayBsInfo = this.allSimplifiedBsInfo[0];
+      }
+
+    } else {
+
+      // 確認 fieldInfo 和 fieldInfo.bsinfo 是否已經被定義
+      // Ensure fieldInfo and fieldInfo.bsinfo are defined
+      if (this.fieldInfo && this.fieldInfo.bsinfo) {
+
+        // 確認場域資訊記錄的"基站數量"是否與"bsinfo"內的資料筆數相等
+        if ( this.fieldInfo.bsNum === this.fieldInfo.bsinfo.length ) {
+
+          // 取得該場域所有基站之詳細資訊
+          this.getQueryBsInfoForAll( this.fieldInfo.bsNum, this.fieldInfo.bsinfo );
+        }
       }
     }
   }

@@ -65,6 +65,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 
+import { localBSinfo } from './shared/local-files/For_BS'; // @12/27 Add 
+
 
 @NgModule({
   declarations: [
@@ -147,6 +149,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     AuthGuard,
     LanguageService,
     CommonService,
+    localBSinfo, // @12/27 Add for import BS Local files
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,

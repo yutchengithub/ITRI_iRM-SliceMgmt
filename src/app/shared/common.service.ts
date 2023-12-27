@@ -603,12 +603,12 @@ export class CommonService {
   fieldInfo: FieldInfo = {
 
         "id": "b3035b3edf9f4b3e8bee",
-        "name": "ITRI",
-        "phone": "0911000111",
-        "fieldposition1": "[121.044734,24.774227]",
-        "fieldposition2": "[121.043587,24.774227]",
-        "fieldposition3": "[121.043587,24.773396]",
-        "fieldposition4": "[121.044734,24.773396]",
+        "name": "itri-field1",
+        "phone": "0912345678",
+        "fieldposition1": "[121.049825,24.778037]",
+        "fieldposition2": "[121.039552,24.778037]",
+        "fieldposition3": "[121.039552,24.770575]",
+        "fieldposition4": "[121.049825,24.770575]",
         "bsinfo": [
           {
             "id": "81e226c5a61d4409a923",
@@ -726,13 +726,13 @@ export class CommonService {
   fieldList: FieldList = {
     fields: [
       {
-        "id": "a542f7ab40a24ec48e84",
+        "id": "b3035b3edf9f4b3e8bee",
         "name": "itri-field1",
         "phone": "0912345678",
-        "fieldposition1": "[121.570381,25.033778]",
-        "fieldposition2": "[121.560381,25.033778]",
-        "fieldposition3": "[121.560381,25.023778]",
-        "fieldposition4": "[121.570381,25.023778]",
+        "fieldposition1": "[121.044734,24.774227]",
+        "fieldposition2": "[121.043587,24.774227]",
+        "fieldposition3": "[121.043587,24.773396]",
+        "fieldposition4": "[121.044734,24.773396]",
         bsinfo: [
           {
             "id": "fd005824997144b987d5",
@@ -769,10 +769,10 @@ export class CommonService {
         "id": "a542f7ab40a24ec48e84",
         "name": "itri-field2",
         "phone": "0912345678",
-        "fieldposition1": "[121.570381,25.033778]",
-        "fieldposition2": "[121.560381,25.033778]",
-        "fieldposition3": "[121.560381,25.023778]",
-        "fieldposition4": "[121.570381,25.023778]",
+        "fieldposition1": "[121.044734,24.774227]",
+        "fieldposition2": "[121.043587,24.774227]",
+        "fieldposition3": "[121.043587,24.773396]",
+        "fieldposition4": "[121.044734,24.773396]",
         bsinfo: [
           {
             "id": "fd005824997144b987d5",
@@ -809,10 +809,10 @@ export class CommonService {
         "id": "a542f7ab40a24ec48e84",
         "name": "itri-field3",
         "phone": "0912345678",
-        "fieldposition1": "[121.570381,25.033778]",
-        "fieldposition2": "[121.560381,25.033778]",
-        "fieldposition3": "[121.560381,25.023778]",
-        "fieldposition4": "[121.570381,25.023778]",
+        "fieldposition1": "[121.044734,24.774227]",
+        "fieldposition2": "[121.043587,24.774227]",
+        "fieldposition3": "[121.043587,24.773396]",
+        "fieldposition4": "[121.044734,24.773396]",
         bsinfo: [
           {
             "id": "fd005824997144b987d5",
