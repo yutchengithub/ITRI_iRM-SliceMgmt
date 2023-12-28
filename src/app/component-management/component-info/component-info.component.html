@@ -50,137 +50,102 @@
         <button>Export Datastore</button>
         <button>Update Datastore</button>
       </label>
+      
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="collabsible">
+            <div>
+              <input id="treemenu" class="toggle" type="checkbox">
+              <label for="treemenu" class="lbl-toggle">Netconf Server:<button>Update</button></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <ul class="treeList">
+                    <li class="SubItem">
+                        <label class="active">第1層</label>
+                        <ul>
+                          <li class="SubItem">
+                            <label class="active">第2層</label>
+                            <ul>
+                              <li class="SubItem">
+                                <label class="active">第3層</label>
+                                <ul>
+                                  <li>
+                                    <label class="active">第4層</label>
+                                    <span><input type="text"></span>
+                                  </li>
+                                  <li class="SubItem">
+                                    <label class="active">第4層</label>
+                                    <ul>
+                                      <li class="SubItem">
+                                        <label class="active">第5層</label>
+                                        <ul>
+                                          <li>
+                                            <label>第6層</label>
+                                            <span><input type="text"></span>
+                                          </li>
+                                          <li>
+                                            <label>第6層</label>
+                                            <span><input type="text"></span>
+                                          </li>
+                                        </ul>
+                                      </li>
+                                    </ul>
+                                  </li>
+                                  <li>
+                                    <label>第4層</label>
+                                    <span><input type="text"></span>
+                                  </li>
+                                </ul>
+                              </li>
+                              <li><label>第3層</label><span><input type="text"></span></li>
+                              <li><label>第3層</label><span><input type="text"></span></li>
+                            </ul>
+                          </li>
+                          <li class="SubItem">
+                            <label class="active">第2層</label>
+                            <ul>
+                              <li class="SubItem">
+                                <label class="active">第3層</label>
+                                <ul>
+                                  <li>
+                                    <label>第4層</label>
+                                    <span><input type="text"></span>
+                                  </li>
+                                </ul>
+                              </li>
+                              <li><label>第3層</label><span><input type="text"></span></li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><label>第1層</label><span><input type="text"></span></li>
+                      <li><label>第1層</label><span><input type="text"></span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
             <div>
               <input id="netconf-server" class="toggle" type="checkbox">
               <label for="netconf-server" class="lbl-toggle">Netconf Server:<button>Update</button></label>
               <div class="collapsible-content">
                 <div class="content-inner">
-                  <span>Attr:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
-                  </ul>
-                  <span>Listen:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div>
-              <input id="keystore" class="toggle" type="checkbox">
-              <label for="keystore" class="lbl-toggle">Keystore:<button>Update</button></label>
-              <div class="collapsible-content">
-                <div class="content-inner">
-                  <span>Attr:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
-                  </ul>
-                  <span>Asymmetric Keys:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div>
-              <input id="nacm" class="toggle" type="checkbox">
-              <label for="nacm" class="lbl-toggle">NACM:<button>Update</button></label>
-              <div class="collapsible-content">
-                <div class="content-inner">
-                  <span>Attr:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
-                  </ul>
-                  <span>Asymmetric Keys:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div>
-              <input id="interface" class="toggle" type="checkbox">
-              <label for="interface" class="lbl-toggle">Interface:<button>Update</button></label>
-              <div class="collapsible-content">
-                <div class="content-inner">
-                  <span>attr:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
-                  </ul>
-                  <span>asymmetric-keys:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div>
-              <input id="smo" class="toggle" type="checkbox">
-              <label for="smo" class="lbl-toggle">SMO:<button>Update</button></label>
-              <div class="collapsible-content">
-                <div class="content-inner">
-                  <span>Attr:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
-                  </ul>
-                  <span>Asymmetric Keys:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div>
-              <input id="me" class="toggle" type="checkbox">
-              <label for="me" class="lbl-toggle">ME:<button>Update</button></label>
-              <div class="collapsible-content">
-                <div class="content-inner">
-                  <span>Attr:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
-                  </ul>
-                  <span>Asymmetric Keys:</span>
-                  <ul>
-                    <li>
-                      <label></label>
-                      <span></span>
-                    </li>
+                  <ul class="treeList">
+                    <li class="SubItem">
+                        <label class="active">第1層</label>
+                        <ul>
+                          <li class="SubItem">
+                            <label class="active">第2層</label>
+                            <ul>
+                              <li><label>第3層</label><span><input type="text"></span></li>
+                              <li><label>第3層</label><span><input type="text"></span></li>
+                              <li><label>第3層</label><span><input type="text"></span></li>
+                            </ul>
+                          </li>
+                          
+                        </ul>
+                      </li>
+                      <li><label>第1層</label><span><input type="text"></span></li>
+                      <li><label>第1層</label><span><input type="text"></span></li>
                   </ul>
                 </div>
               </div>

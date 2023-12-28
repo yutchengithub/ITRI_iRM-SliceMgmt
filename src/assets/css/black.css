@@ -38,7 +38,8 @@ div.header {
     color: #fff;
   }
   .menu ul li.active .mat-icon  {
-    color: #2f8ce3;
+    color: #ffffff;
+    opacity: .8!important;
     opacity: 1;
   }
   .table table {
@@ -291,10 +292,10 @@ span.material-symbols-outlined.stop {
     color: #a9d0ef;
   }
   .ocloudInfo.component .table table tbody tr:nth-child(even) td {
-    background-color: #dfeef5e6;
+    background-color: #16283a;
   }
   .ocloudInfo.component .table tr td {
-    border-right: 1px solid #a9cfef;
+    /* border-right: 1px solid #a9cfef; */
 }
   .ocloudInfo.component .BOX .table table tbody td {
     color: #333;
@@ -333,8 +334,33 @@ span.material-symbols-outlined.stop {
 
 .ocloudInfo.component .ngx-pagination a,
 .ocloudInfo.component .ngx-pagination .small-screen {
-  color: #333!important;
+  /* color: #333!important; */
 }
 .ocloudInfo.component .ngx-pagination .disabled {
   color: #999!important;
+}
+.ocloudInfo.component .table tr td {
+  color: #fff;
+}
+.total {
+  color: #ddd;
+}
+.content-inner .panel > label input[type=radio]::after {
+  background-color: transparent!important;
+  color: #4b657a!important;
+}
+.content-inner .panel > label {
+  border-top: 6px solid #055c7d!important;
+  background: linear-gradient(140deg, #080c12d9, #1e2429);
+}
+.content-inner .panel > label input[type=radio]:checked + div {
+  background-color: transparent;
+  background: linear-gradient(139deg, #11589d, #079b95);
+}
+.content-inner .panel > label input[type=radio]:checked::after {
+  background-color: white!important;
+  color: #1882d7!important;
+}
+.collabsible .lbl-toggle span {
+  color: #074478!important;
 }
