@@ -18,7 +18,7 @@ import { NgZone } from '@angular/core';
 import { FieldInfo } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';              // @12/21 Add
 import { BsInfoInField } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';          // @12/21 Add
 
-import { BSInfo, AnrSonOutput } from '../../shared/interfaces/BS_Info/For_queryBsInfo_BS';      // @12/21 Add
+import { BSInfo } from '../../shared/interfaces/BS_Info/For_queryBsInfo_BS';      // @12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS_Info/For_queryBsInfo_dist_BS';  // @12/24 Add
 import { map } from 'rxjs/operators'; // 12/24 Add
 import { localBSinfo } from '../../shared/local-files/For_BS';  // @12/27 Add
@@ -382,7 +382,7 @@ export class FieldInfoComponent implements OnInit {
     };
   }
   
-  
+  isMarkersLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
   // @12/27 Update - Add Local Files Processing
   getQueryFieldInfo() {
     console.log('getQueryFieldInfo() - Start'); // 啟動獲取場域資訊
@@ -469,6 +469,7 @@ export class FieldInfoComponent implements OnInit {
           // This callback is executed when there is an error fetching the info
           console.error('獲取場域資訊出錯:', error);
           console.error('Error fetching field info:', error);
+          //this.isMarkersLoading = false; // 出錯時也應隱藏 spinner @12/28 Add for Progress Spinner
         },
         complete: () => {
 
@@ -476,6 +477,7 @@ export class FieldInfoComponent implements OnInit {
           // This callback is executed when the request is complete
           console.log('場域資訊獲取完成');
           console.log('Field info fetch completed');
+          //this.isMarkersLoading = false; // 加載完成 @12/28 Add for Progress Spinner
         }
       });
     }
@@ -530,6 +532,8 @@ export class FieldInfoComponent implements OnInit {
         this.displayBsInfo = this.allSimplifiedBsInfo[0];
       }
 
+      //this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
+
     } else {
 
       // 確認 fieldInfo 和 fieldInfo.bsinfo 是否已經被定義
@@ -543,6 +547,7 @@ export class FieldInfoComponent implements OnInit {
           this.getQueryBsInfoForAll( this.fieldInfo.bsNum, this.fieldInfo.bsinfo );
         }
       }
+      
     }
   }
   
@@ -628,17 +633,19 @@ export class FieldInfoComponent implements OnInit {
           // 將 allSimplifiedBsInfo 數組中的第一筆基站資訊顯示於「基站資訊」欄位上
           this.displayBsInfo = this.allSimplifiedBsInfo[0];
         }
-
+        this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
       },
       error: (error) => {
 
         // 如果在請求過程中出現錯誤，則在控制台輸出錯誤信息
         console.error('Error fetching BS Infos:', error);
+        this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
       },
       complete: () => {
 
         // 當所有請求都完成後，輸出一個完成訊息
         console.log('All BS Info fetches completed');
+        this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
       }
     });
 
@@ -929,6 +936,10 @@ export class FieldInfoComponent implements OnInit {
     this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
   }
 
+  goPerformanceMgr() {
+    this.router.navigate(['/main/performance-mgr', this.fieldName]);
+  }
+
   getOcloudPerformance() {
     if (this.commonService.isLocal) {
       /* local file test */
@@ -995,11 +1006,6 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  ocloudInfoDeal() {
-    if (this.ocloudInfo.resourcepool && this.ocloudInfo.resourcepool.length > 0) {
-      this.ocloudInfo.resourcepool[0].active = true;
-    }
-  }
 
   ocloudPerformanceDeal() {
     // this.utilizationPercent = Math.floor((Number(this.ocloudPerformance.usedCpu) / Number(this.ocloudPerformance.totalCpu)) * 100);
@@ -1074,13 +1080,5 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  veiw(opt: Nf) {
-    const url = '/main/nf-mgr';
-    this.router.navigate([url]);
-  }
-
-  goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr', this.fieldName]);
-  }
 
 }

@@ -103,6 +103,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   nullList: string[] = [];  // 給頁籤套件使用
   formValidated = false;
   
+  isLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
+
   // queryFieldList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
   queryFieldList!: Subscription;  // @11/30 Add by yuchen
 
@@ -148,14 +150,16 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   // @11/30 Add by yuchen
   getQueryFieldList() {
     console.log('getQueryFieldList() - Start');
+    this.isLoading = true;        // 開始加載數據時設置為 true @12/28 Add for Progress Spinner 
+
     clearTimeout(this.refreshTimeout);
   
-    if (this.commonService.isLocal) {
+    if ( this.commonService.isLocal ) {
 
       // 本地模式使用本地數據
       this.fieldList = this.commonService.fieldList;	
       this.FieldListDeal();
-
+      this.isLoading = false;     // 數據加載完成，設置為 false @12/28 Add for Progress Spinner
     } else {
 
       // 使用 commonService 中的 queryFieldList() 發起 HTTP GET 請求
@@ -167,9 +171,11 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching field info:', error);
+          this.isLoading = false; // 發生錯誤時也要設置為 false @12/28 Add for Progress Spinner
         },
         complete: () => {
           console.log('Field info fetch completed');
+          this.isLoading = false; // 加載完成 @12/28 Add for Progress Spinner
         }
       });
     }

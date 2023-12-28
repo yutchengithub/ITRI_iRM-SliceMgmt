@@ -13,22 +13,36 @@
         <th>{{languageService.i18n['field.delTitle']}}</th>
     </thead>
     <tbody>
-        <tr *ngFor="let opt of fieldList.fields | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fieldsListDisplay' };">
-          <td>{{opt.name}}</td>
-          <td>{{opt.bsNum}}</td>
-          <td>
-            <mat-icon tooltip="{{ languageService.i18n['field.view'] }}" (click)="viewFieldDetail(opt)">remove_red_eye</mat-icon>
-          </td>
-          <td>
-            <mat-icon tooltip="{{ languageService.i18n['field.alarm'] }}" (click)="viewFieldAlarm(opt)">warning</mat-icon>
-          </td>
-          <td>
-            <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openSnapshot(opt)">camera_alt</mat-icon>
-          </td>
-          <td>
-            <mat-icon tooltip="{{languageService.i18n['field.delItem']}}" (click)="openDeleteField(opt)">delete_forever</mat-icon>
-          </td>
-        </tr>
+        <!-- 顯示進度條 -->
+        <ng-container *ngIf="isLoading">
+          <tr>
+            <td colspan="6">
+              <div class="progress-spinner-container">
+                                                                                  <!-- diameter: 指示器大小-->
+                <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        <!-- 顯示數據 -->
+        <ng-container *ngIf="!isLoading">
+          <tr *ngFor="let opt of fieldList.fields | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fieldsListDisplay' };">
+            <td>{{opt.name}}</td>
+            <td>{{opt.bsNum}}</td>
+            <td>
+              <mat-icon tooltip="{{ languageService.i18n['field.view'] }}" (click)="viewFieldDetail(opt)">remove_red_eye</mat-icon>
+            </td>
+            <td>
+              <mat-icon tooltip="{{ languageService.i18n['field.alarm'] }}" (click)="viewFieldAlarm(opt)">warning</mat-icon>
+            </td>
+            <td>
+              <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openSnapshot(opt)">camera_alt</mat-icon>
+            </td>
+            <td>
+              <mat-icon tooltip="{{languageService.i18n['field.delItem']}}" (click)="openDeleteField(opt)">delete_forever</mat-icon>
+            </td>
+          </tr>
+        </ng-container>
     </tbody>
   </table>
 </div>

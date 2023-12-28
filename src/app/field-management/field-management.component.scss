@@ -28,6 +28,25 @@
   text-align: center;
 }
 
+// 進度調居中並設定大小 @12/28 Add
+.progress-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90px; 
+}
+
+// 設定進度調的顏色 @12/28 Add
+::ng-deep .mat-progress-spinner circle {
+  stroke: #7cbaec !important;
+}
+
+// 這個樣式類會增加進度調的大小 @12/28 Add
+.custom-spinner-size {
+  width: 100px;  // 進度調的寬度
+  height: 100px; // 進度調的高度
+}
+
 // 針對較小的螢幕尺寸進行響應式布局調整
 @media screen and (max-width:1366px) {
   .table th, 

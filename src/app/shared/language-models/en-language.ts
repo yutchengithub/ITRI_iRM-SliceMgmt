@@ -14,7 +14,7 @@ export const Enlanguage = {
   'index.menu_iRmSys':'Athena Orchestrator',
   'index.menu_dashboard':'Dashboard',
   'index.menu_fieldMgr':'Field Management',
-  'index.menu_BS':'BS Management',
+  'index.menu_BSMgr':'BS Management',
   'index.menu_componentMgr':'Component Management',
   'index.menu_faultMgr':'Fault Management',
   'index.menu_performMgr':'Performance Management',
@@ -91,8 +91,10 @@ export const Enlanguage = {
   'field.mapModel':'Map Mode',                 // @12/12 Add
   'field.bsList':'BS List',                    // @12/12 Add
   'field.bsAntennaCoord':'BS Antenna Coordinates',  // @12/13 Add
-  'field.BSstatus':'BS Status',                    // @12/13 Add
-  'field.bsAlarm':'Alarm',                           // @12/13 Add
+  'field.BSstatus':'BS Status',                     // @12/13 Add
+  'field.bsAlarm':'Alarm',                          // @12/13 Add
+  'field.legend_all-in-one_bs':'All-in-one BS',     // @12/28 Add
+  'field.legend_dist_bs':'O-RAN BS',                // @12/28 Add
 
   // Fault Management
   'fm.start':'StartTime',

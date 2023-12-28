@@ -98,28 +98,44 @@
 					  </mat-menu>
 				</div>
 			</label>
-			
-			
-			<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
-			<google-map *ngIf="showMapModel" width="939.5px" height="748px" 
-						[center]="center" [zoom]="zoom" [options]="mapOptions">
 
-				<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
-				<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
-				
-				<!-- 使用 *ngFor 指令迭代 bsInfoDetails 陣列中的每個基站資訊 -->
-				<!-- 為每個基站創建一個地圖標記，並將其位置設置為 bsInfo 的位置 -->
-				<!-- 同時綁定 markerClick 事件到 onSelectBsInfo 方法 -->
-				<!-- 這意味著當用戶點擊任何標記時，onSelectBsInfo 方法將被調用 -->
+			<!-- 在地圖和進度指示器外面包一層 div，用於定位進度指示器 -->
 			
-				<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
-							[position]="parsePosition(bsInfo.position)" 
-							[title]="bsInfo.name"
-							[icon]="bsInfo.iconUrl"
-							(mapClick)="onSelectBsInfo(bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status)">
-				</map-marker>
-				  
-			</google-map>
+				<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
+				<google-map *ngIf="showMapModel" width="939.5px" height="748px" 
+							[center]="center" [zoom]="zoom" [options]="mapOptions">
+					<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
+					<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
+					
+					<!-- 使用 *ngFor 指令迭代 bsInfoDetails 陣列中的每個基站資訊 -->
+					<!-- 為每個基站創建一個地圖標記，並將其位置設置為 bsInfo 的位置 -->
+					<!-- 同時綁定 markerClick 事件到 onSelectBsInfo 方法 -->
+					<!-- 這意味著當用戶點擊任何標記時，onSelectBsInfo 方法將被調用 -->
+				
+					<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
+								[position]="parsePosition(bsInfo.position)" 
+								[title]="bsInfo.name"
+								[icon]="bsInfo.iconUrl"
+								(mapClick)="onSelectBsInfo(bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status)">	
+					</map-marker>
+
+					<!-- 圖例 -->
+					<div class="map-legend">
+						<div style="display: flex; align-items: center;">
+						<img src="/assets/img/bs_icons_v3/gnb_online_nonselected.png" style="margin-right: 5px;">
+						<span>{{ languageService.i18n['field.legend_all-in-one_bs'] }}</span>
+						</div>
+						<div style="display: flex; align-items: center;">
+						<img src="/assets/img/bs_icons_v3/dist_gnb_online_default.png" style="margin-right: 5px;">
+						<span>{{ languageService.i18n['field.legend_dist_bs'] }}</span>
+						</div>
+					</div>
+					
+				</google-map>
+				<!-- 在地圖下方放置進度指示器，當 isMarkersLoading 為 true 時顯示 -->
+				<div *ngIf="isMarkersLoading" class="spinner-container">
+					<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
+				</div>
 			
 
 			<!-- 基站列表，只有當 showMapModel 為 false 時才顯示 -->
@@ -232,65 +248,77 @@
 			</div>
 		</div>
 
-		<!-- BS Information (基站資訊) @12/25 Update -->
-		<div class="BOX col-md-3 basicInfo bsWindow" *ngIf="displayBsInfo" >
+		<!-- BS Information (基站資訊) @12/28 Update -->
+		<div class="BOX col-md-3 basicInfo bsWindow"  >
 			<label class="boxTitle">{{languageService.i18n['field.bsInfo']}}</label>
-			<ul>
-				<li>
-				  <label>{{languageService.i18n['field.BSname']}}</label>
-				  <span>{{ displayBsInfo.name }}</span>
-				</li>
-				<li>
-				  <label>{{languageService.i18n['field.BStype']}}</label>
-				  <span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
-				  <span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
-				</li>
-				<li>
-				  <label>NCI</label>
-				  <span>{{ displayBsInfo.nci }}</span>
-				</li>
-				<li>
-				  <label>PCI</label>
-				  <span>{{ displayBsInfo.pci }}</span>
-				</li>
-				<li>
-				  <label>PLMN ID</label>
-				  <span>
-					{{ displayBsInfo['plmn-id'].mcc }}{{ displayBsInfo['plmn-id'].mnc }}
-				  </span>
-				</li>
-				<li>
-				  <label>Tx Power (dBm)</label>
-				  <span>{{ displayBsInfo['tx-power'] }}</span>
-				</li>
-				<li>
-				  <label>NR-ARFCN-UL</label>
-				  <span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
-				</li>
-				<li>
-				  <label>NR-ARFCN-DL</label>
-				  <span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
-				</li>
 
-				  <!-- 使用 displayBsInfoPosition getter 方法獲取經度 -->
-				<li>
-					<label>{{languageService.i18n['field.Longitude']}}</label>
-					<span>{{ displayBsInfoPosition.lng }}</span>
-				</li>
+			<!-- 顯示進度條 -->
+			<ng-container *ngIf="isMarkersLoading">
+				<!-- 加載中顯示 spinner -->
+				<div class="spinner-container">
+					<mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+				</div>
+			</ng-container>
 
-				<!-- 使用 displayBsInfoPosition getter 方法獲取緯度 -->
-				<li>
-					<label>{{languageService.i18n['field.Latitude']}}</label>
-					<span>{{ displayBsInfoPosition.lat }}</span>
-				</li>
-			  </ul>  
-			<div>
-				<button mat-flat-button class="button-modifyConfiguration" tooltip="{{languageService.i18n['field.modifyConfiguration']}}" (click)="openUpdateModel()">{{languageService.i18n['field.modifyConfiguration']}}</button>
-			</div>
+			<!-- 數據加載完畢後顯示基站資訊 -->
+			<ng-container *ngIf="!isMarkersLoading">
+				<ul *ngIf="!isMarkersLoading && displayBsInfo">
+					<li>
+					<label>{{languageService.i18n['field.BSname']}}</label>
+					<span>{{ displayBsInfo.name }}</span>
+					</li>
+					<li>
+					<label>{{languageService.i18n['field.BStype']}}</label>
+					<span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
+					<span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
+					</li>
+					<li>
+					<label>NCI</label>
+					<span>{{ displayBsInfo.nci }}</span>
+					</li>
+					<li>
+					<label>PCI</label>
+					<span>{{ displayBsInfo.pci }}</span>
+					</li>
+					<li>
+					<label>PLMN ID</label>
+					<span>
+						{{ displayBsInfo['plmn-id'].mcc }}{{ displayBsInfo['plmn-id'].mnc }}
+					</span>
+					</li>
+					<li>
+					<label>Tx Power (dBm)</label>
+					<span>{{ displayBsInfo['tx-power'] }}</span>
+					</li>
+					<li>
+					<label>NR-ARFCN-UL</label>
+					<span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
+					</li>
+					<li>
+					<label>NR-ARFCN-DL</label>
+					<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
+					</li>
+
+					<!-- 使用 displayBsInfoPosition getter 方法獲取經度 -->
+					<li>
+						<label>{{languageService.i18n['field.Longitude']}}</label>
+						<span>{{ displayBsInfoPosition.lng }}</span>
+					</li>
+
+					<!-- 使用 displayBsInfoPosition getter 方法獲取緯度 -->
+					<li>
+						<label>{{languageService.i18n['field.Latitude']}}</label>
+						<span>{{ displayBsInfoPosition.lat }}</span>
+					</li>
+				</ul>  
+				<div *ngIf="displayBsInfo">
+					<button mat-flat-button class="button-modifyConfiguration" tooltip="{{languageService.i18n['field.modifyConfiguration']}}" (click)="openUpdateModel()">{{languageService.i18n['field.modifyConfiguration']}}</button>
+				</div>
+			</ng-container>
 
 			<div>
 				<label class="boxTitle">{{languageService.i18n['field.neighboringBSList']}}</label>
-				<!-- Neighboring BS List @12/25 Update -->
+				<!-- Neighboring BS List @12/28 Update - Add Loading spinner -->
 				<div class="table">
 				  <table>
 					<thead>
@@ -301,21 +329,36 @@
 					  </tr>
 					</thead>
 					<tbody>
-					  <!-- 使用 *ngFor 來迭代 displayBsInfo.neighbors 數組中的每一個 neighbor 對象 -->
-					  <tr *ngFor="let neighbor of displayBsInfo.neighbors"> <!-- @12/25 Update -->
-						<td>
-						  <!-- 顯示每個 neighbor 對象的 PLMN ID -->
-						  {{ neighbor['plmn-id'].mcc }}{{ neighbor['plmn-id'].mnc }}
-						</td>
-						<td>
-						  <!-- 顯示每個 neighbor 對象的 NCI -->
-						  {{ neighbor.nci }}
-						</td>
-						<td>
-						  <!-- 顯示每個 neighbor 對象的 PCI -->
-						  {{ neighbor.pci }}
-						</td>
-					  </tr>
+						<!-- 顯示進度條 -->
+						<ng-container *ngIf="isMarkersLoading">
+							<tr>
+								<td colspan="6">
+								<div class="progress-spinner-container">
+																									<!-- diameter: 指示器大小-->
+									<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+								</div>
+								</td>
+							</tr>
+						</ng-container>
+
+						<!-- 顯示數據 -->
+						<ng-container *ngIf="!isMarkersLoading  && displayBsInfo">	
+							<!-- 使用 *ngFor 來迭代 displayBsInfo.neighbors 數組中的每一個 neighbor 對象 -->
+							<tr *ngFor="let neighbor of displayBsInfo.neighbors"> <!-- @12/25 Update -->
+								<td>
+								<!-- 顯示每個 neighbor 對象的 PLMN ID -->
+								{{ neighbor['plmn-id'].mcc }}{{ neighbor['plmn-id'].mnc }}
+								</td>
+								<td>
+								<!-- 顯示每個 neighbor 對象的 NCI -->
+								{{ neighbor.nci }}
+								</td>
+								<td>
+								<!-- 顯示每個 neighbor 對象的 PCI -->
+								{{ neighbor.pci }}
+								</td>
+							</tr>
+						</ng-container>
 					</tbody>
 				  </table>
 				</div>
@@ -324,7 +367,7 @@
 	</div>
 
 	<ng-template #updateModal>
-		<h5>{{languageService.i18n['software_update']}}</h5>
+		<h5>{{languageService.i18n['field.modifyConfiguration']}}</h5>
 		<form [formGroup]="updateForm">
 			<ul>
 				<li>

@@ -14,7 +14,7 @@ export const TwLanguage = {
   'index.menu_iRmSys':'Athena Orchestrator',
   'index.menu_dashboard':'主畫面',
   'index.menu_fieldMgr':'場域管理',
-  'index.menu_BS':'基站管理',
+  'index.menu_BSMgr':'基站管理',
   'index.menu_componentMgr':'元件管理',
   'index.menu_faultMgr':'故障管理',
   'index.menu_performMgr':'效能管理',
@@ -92,8 +92,9 @@ export const TwLanguage = {
   'field.bsList':'基站列表',                // @12/12 Add
   'field.bsAntennaCoord':'基站天線位置座標', // @12/13 Add
   'field.BSstatus':'連線狀態',             // @12/13 Add
-  'field.bsAlarm':'告警',                  // @12/13 Add
-  
+  'field.bsAlarm':'告警',                    // @12/13 Add
+  'field.legend_all-in-one_bs':'一體式基站',  // @12/28 Add
+  'field.legend_dist_bs':'O-RAN基站',       // @12/28 Add
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',

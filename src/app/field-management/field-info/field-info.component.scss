@@ -15,6 +15,56 @@ svg circle {
   transform: translate(5px, 5px);
 }
 
+// @12/28 Add for Map Legend
+.map-legend {
+  position: absolute; 
+  bottom: 30px; 
+  left: 10px; 
+  background: rgba(92, 141, 197, 0.678); 
+  padding: 8px; 
+  z-index: 1000;
+  color: #ffffff;
+  font-weight: bold;
+  display: flex; 
+  align-items: center; 
+  flex-direction: column; 
+}
+
+// @12/28 Add
+.map-container {
+  position: relative;
+  height: 900px; /* 設定與地圖相同的高度 */
+}
+
+// @12/28 Add
+.spinner-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); // 將 spinner 置於容器中心
+  z-index: 10; // 確保 spinner 顯示在地圖上方 
+}
+
+// 進度調居中並設定大小 @12/28 Add
+.progress-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90px; 
+}
+
+// 設定進度調的顏色 @12/28 Add
+::ng-deep .mat-progress-spinner circle {
+  stroke: #359aec9a !important;
+}
+
+// 這個樣式類會增加進度調的大小 @12/28 Add
+.custom-spinner-size {
+  width: 100px;  // 進度調的寬度
+  height: 100px; // 進度調的高度
+}
+
+
 // @12/12 Add by yuchen for BS icon
 .svg-icon_BS {
   width: 1.7em;
