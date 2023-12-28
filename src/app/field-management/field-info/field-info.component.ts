@@ -418,7 +418,8 @@ export class FieldInfoComponent implements OnInit {
       this.center = this.calculateBoundingBoxCenter(positions);
 
       this.processFieldInfo(); // 處理場域資訊
-
+      
+      this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
     } else {
       
       console.log('Start fetching field info feom API');   // 開始獲取場域資訊
@@ -532,7 +533,7 @@ export class FieldInfoComponent implements OnInit {
         this.displayBsInfo = this.allSimplifiedBsInfo[0];
       }
 
-      //this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
+      this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
 
     } else {
 
