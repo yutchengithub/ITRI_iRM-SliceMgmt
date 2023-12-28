@@ -8,7 +8,7 @@
   </h5>
 	<!-- Field Map (場域地圖) -->
 	<div>
-		<!-- @12/13 Add the window of gNB List -->
+		<!-- @12/13 Add the window of BS List -->
 		<div class="BOX mapWindow">
 			<label class="boxTitle boxTitleRightAligned">
 				<span class="title-container" *ngIf="showMapModel">{{ languageService.i18n['field.Map'] }}</span>
@@ -83,7 +83,7 @@
 							<span>{{ languageService.i18n['field.optimSON'] }}</span>
 						</button>
 
-						<!-- 當 showMapModel 為 true 時顯示 gNB 列表按鈕 @12/13 Add -->
+						<!-- 當 showMapModel 為 true 時顯示 BS 列表按鈕 @12/13 Add -->
 						<button mat-menu-item *ngIf="showMapModel" (click)="toggleMenuButton()">
 							<mat-icon svgIcon="BaseStation" class="svg-icon_BS"></mat-icon>
 							<span>{{ languageService.i18n['field.bsList'] }}</span>
@@ -101,7 +101,7 @@
 			
 			
 			<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
-			<google-map *ngIf="showMapModel" width="915px" height="748px" 
+			<google-map *ngIf="showMapModel" width="939.5px" height="748px" 
 						[center]="center" [zoom]="zoom" [options]="mapOptions">
 
 				<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
@@ -111,34 +111,37 @@
 				<!-- 為每個基站創建一個地圖標記，並將其位置設置為 bsInfo 的位置 -->
 				<!-- 同時綁定 markerClick 事件到 onSelectBsInfo 方法 -->
 				<!-- 這意味著當用戶點擊任何標記時，onSelectBsInfo 方法將被調用 -->
-				<map-marker *ngFor="let bsInfo of bsInfoDetails" 
+			
+				<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
 							[position]="parsePosition(bsInfo.position)" 
-							[icon]="customIcon"
-							(mapClick)="onSelectBsInfo( bsInfo, bsInfo.name, bsInfo.id, bsInfo.bstype, bsInfo.status )">
+							[title]="bsInfo.name"
+							[icon]="bsInfo.iconUrl"
+							(mapClick)="onSelectBsInfo(bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status)">
 				</map-marker>
+				  
 			</google-map>
 			
 
 			<!-- 基站列表，只有當 showMapModel 為 false 時才顯示 -->
 			<div *ngIf="!showMapModel">
-				<!-- 基站列表 (還未實際接 api 值) @12/13 Add by yuchen -->
+				<!-- 基站列表 @12/13 Add by yuchen -->
 				<div class="table">
 					<table class="center">
 						<thead>
 							<tr>
-								<th>{{ languageService.i18n['field.gNBname'] }}</th>
-								<th>{{ languageService.i18n['field.gNBtype'] }}</th>
+								<th>{{ languageService.i18n['field.BSname'] }}</th>
+								<th>{{ languageService.i18n['field.BStype'] }}</th>
 								<th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
-								<th>{{ languageService.i18n['field.gNBstatus'] }}</th>
+								<th>{{ languageService.i18n['field.BSstatus'] }}</th>
 								<th>{{ languageService.i18n['field.view'] }}</th>
 								<th>{{ languageService.i18n['field.bsAlarm'] }}</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr *ngFor="let opt of bsInfoDetails">
+							<tr *ngFor="let opt of allSimplifiedBsInfo">
 								<td>
 									<!-- 顯示 "基站名稱" -->
-									{{opt.name}}
+									{{ opt.name }}
 								</td>
 								<td>
 									<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
@@ -229,56 +232,56 @@
 			</div>
 		</div>
 
-		<!-- BS Information (基站資訊) -->
-		<div class="BOX col-md-3 basicInfo bsWindow" *ngIf="currentBsInfo" >
+		<!-- BS Information (基站資訊) @12/25 Update -->
+		<div class="BOX col-md-3 basicInfo bsWindow" *ngIf="displayBsInfo" >
 			<label class="boxTitle">{{languageService.i18n['field.bsInfo']}}</label>
 			<ul>
 				<li>
-				  <label>{{languageService.i18n['field.gNBname']}}</label>
-				  <span>{{ currentBsInfo.name }}</span>
+				  <label>{{languageService.i18n['field.BSname']}}</label>
+				  <span>{{ displayBsInfo.name }}</span>
 				</li>
 				<li>
-				  <label>{{languageService.i18n['field.gNBtype']}}</label>
-				  <span *ngIf="currentBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
-				  <span *ngIf="currentBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
+				  <label>{{languageService.i18n['field.BStype']}}</label>
+				  <span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
+				  <span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
 				</li>
 				<li>
 				  <label>NCI</label>
-				  <span>{{ currentBsInfo.info['bs-conf'].nci }}</span>
+				  <span>{{ displayBsInfo.nci }}</span>
 				</li>
 				<li>
 				  <label>PCI</label>
-				  <span>{{ currentBsInfo.info['bs-conf'].pci }}</span>
+				  <span>{{ displayBsInfo.pci }}</span>
 				</li>
 				<li>
 				  <label>PLMN ID</label>
 				  <span>
-					{{ currentBsInfo.info['bs-conf']['plmn-id'].mcc }}{{ currentBsInfo.info['bs-conf']['plmn-id'].mnc }}
+					{{ displayBsInfo['plmn-id'].mcc }}{{ displayBsInfo['plmn-id'].mnc }}
 				  </span>
 				</li>
 				<li>
 				  <label>Tx Power (dBm)</label>
-				  <span>{{ currentBsInfo.info['bs-conf']['tx-power'] }}</span>
+				  <span>{{ displayBsInfo['tx-power'] }}</span>
 				</li>
 				<li>
 				  <label>NR-ARFCN-UL</label>
-				  <span>{{ currentBsInfo.info['bs-conf']['nrarfcn-ul'] }}</span>
+				  <span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
 				</li>
 				<li>
 				  <label>NR-ARFCN-DL</label>
-				  <span>{{ currentBsInfo.info['bs-conf']['nrarfcn-dl'] }}</span>
+				  <span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
 				</li>
 
-				  <!-- 使用 currentBsInfoPosition getter 方法獲取經度 -->
+				  <!-- 使用 displayBsInfoPosition getter 方法獲取經度 -->
 				<li>
 					<label>{{languageService.i18n['field.Longitude']}}</label>
-					<span>{{ currentBsInfoPosition.lng }}</span>
+					<span>{{ displayBsInfoPosition.lng }}</span>
 				</li>
 
-				<!-- 使用 currentBsInfoPosition getter 方法獲取緯度 -->
+				<!-- 使用 displayBsInfoPosition getter 方法獲取緯度 -->
 				<li>
 					<label>{{languageService.i18n['field.Latitude']}}</label>
-					<span>{{ currentBsInfoPosition.lat }}</span>
+					<span>{{ displayBsInfoPosition.lat }}</span>
 				</li>
 			  </ul>  
 			<div>
@@ -287,7 +290,7 @@
 
 			<div>
 				<label class="boxTitle">{{languageService.i18n['field.neighboringBSList']}}</label>
-				<!-- Neighboring BS List -->
+				<!-- Neighboring BS List @12/25 Update -->
 				<div class="table">
 				  <table>
 					<thead>
@@ -298,8 +301,8 @@
 					  </tr>
 					</thead>
 					<tbody>
-					  <!-- 使用 *ngFor 來迭代 currentBsInfo.anr['anr-son-output'].neighbor 數組中的每一個 neighbor 對象 -->
-					  <tr *ngFor="let neighbor of currentBsInfo.anr['anr-son-output'].neighbor">
+					  <!-- 使用 *ngFor 來迭代 displayBsInfo.neighbors 數組中的每一個 neighbor 對象 -->
+					  <tr *ngFor="let neighbor of displayBsInfo.neighbors"> <!-- @12/25 Update -->
 						<td>
 						  <!-- 顯示每個 neighbor 對象的 PLMN ID -->
 						  {{ neighbor['plmn-id'].mcc }}{{ neighbor['plmn-id'].mnc }}
@@ -349,8 +352,8 @@
         </span> </li>
 			</ul>
 			<div class="buttons">
-				<button type="button" mat-dialog-close>Cancel</button>
 				<button type="button" (click)="update()">OK</button>
+				<button type="button" mat-dialog-close>Cancel</button>
 			</div>
 		</form>
 	</ng-template>

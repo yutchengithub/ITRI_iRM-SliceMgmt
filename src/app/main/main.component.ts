@@ -16,8 +16,8 @@ export interface style {
 export class MainComponent implements OnInit {
   title = 'Dashboard';
 
-  page: 'dashboard' | 'component-management' | 'field-management' | 'nf-management' | 'fault-management' | 'performance-management' | 'software-management' | 
-  'account-management' | 'schedule-management' /* @11/20 Add by yuchen */ | 'log-management'/* @10/25 Add by yuchen */ = 'dashboard';
+  page: 'dashboard' | 'component-management' | 'field-management' | 'bs-management' /* @12/27 Add by yuchen */ | 'fault-management' | 'performance-management' | 'software-management' | 
+ 'schedule-management' /* @11/20 Add by yuchen */ | 'log-management' /* @10/25 Add by yuchen */ | 'account-management' | 'nf-management' = 'dashboard';
   styles: style[] = [
     { displayName: 'Dark Style', value: 'black' },
     { displayName: 'Light Style', value: 'bright' }
@@ -26,15 +26,17 @@ export class MainComponent implements OnInit {
 
   pageRourter = {
     'dashboard': '/main/dashboard',
-    'component-management': '/main/component-mgr',
     'field-management': '/main/field-mgr',
-    'nf-management': '/main/nf-mgr',
+    'bs-management': '/main/bs-mgr',               // @12/27 Add by yuchen
+    'component-management': '/main/component-mgr',
     'fault-management': '/main/fault-mgr/All/All',
     'performance-management': '/main/performance-mgr',
     'software-management': '/main/software-mgr',
+    'schedule-management': '/main/schedule-mgr',   // @11/20 Add by yuchen
+    'log-management': '/main/log-mgr',             // @10/25 Add by yuchen
     'account-management': '/main/account-mgr',
-    'schedule-management': '/main/schedule-mgr',  // @11/20 Add by yuchen
-    'log-management': '/main/log-mgr'             // @10/25 Add by yuchen
+
+    'nf-management': '/main/nf-mgr'
   }
 
   constructor(private router: Router, private commonService: CommonService, public languageService: LanguageService) { }
@@ -72,12 +74,12 @@ export class MainComponent implements OnInit {
     } else if (routerUrl.indexOf('/main/field-mgr') >= 0) {
       this.title = 'Field Management';
       this.page = 'field-management';
+    } else if (routerUrl.indexOf('/main/bs-mgr') >= 0) {  // @12/27 Add by yuchen
+      this.title = 'BS Management';
+      this.page = 'bs-management';
     } else if (routerUrl.indexOf('/main/component-mgr') >= 0) {
       this.title = 'Component Management';
       this.page = 'component-management';
-    } else if (routerUrl.indexOf('/main/nf-mgr') >= 0) {
-      this.title = 'NF List';
-      this.page = 'nf-management';
     } else if (routerUrl.indexOf('/main/fault-mgr') >= 0) {
       this.title = 'Fault Management';
       this.page = 'fault-management';
@@ -87,15 +89,18 @@ export class MainComponent implements OnInit {
     } else if (routerUrl.indexOf('/main/software-mgr') >= 0) {
       this.title = 'Software Management';
       this.page = 'software-management';
-    } else if (routerUrl.indexOf('/main/account-mgr') >= 0) {
-      this.title = 'Account Management';
-      this.page = 'account-management';
-    } else if (routerUrl.indexOf('/main/schedule-mgr') >= 0) {   // @11/20 Add by yuchen
+    }  else if (routerUrl.indexOf('/main/schedule-mgr') >= 0) {   // @11/20 Add by yuchen
       this.title = 'Schedule Management';
       this.page = 'schedule-management';
     } else if (routerUrl.indexOf('/main/log-mgr') >= 0) {        // @10/25 Add by yuchen
       this.title = 'Log Management';
       this.page = 'log-management';
+    } else if (routerUrl.indexOf('/main/account-mgr') >= 0) {
+      this.title = 'Account Management';
+      this.page = 'account-management';
+    } else if (routerUrl.indexOf('/main/nf-mgr') >= 0) {
+      this.title = 'NF List';
+      this.page = 'nf-management';
     }
   }
 

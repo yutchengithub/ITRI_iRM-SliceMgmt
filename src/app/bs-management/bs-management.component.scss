@@ -1,0 +1,22 @@
+
+table {
+  //width: 100%;
+  max-width: 97.65%;
+  table-layout: fixed; // 固定列寬
+}
+
+thead tr th,
+tbody tr td {
+  width: 19.5%;    // 將每個列的寬度設置為相等的百分比
+  text-align: center; // 所有內容都居中對齊
+}
+
+tbody td.icon {
+  //width: auto;
+  width: 7.5em;
+  text-align: center;
+}
+
+input[type="file"] {
+  outline: 0;
+}

@@ -1,5 +1,5 @@
 
-/* ↓ @12/14~15 Add For API of queryBsInfo ↓ */
+/* ↓ @12/24 Update For API of queryBsInfo for BS ↓ */
 // notes: 當物件有可能是空的或可能不在 JSON 中設為"?:"
 export interface BSInfo {
     info: {
@@ -17,51 +17,17 @@ export interface BSInfo {
         tac: string;
         'tx-power': number;
       };
-      nci?: string;
       gNBId: number;
       gNBIdLength: number;
-      'gNB-type'?: string;
-      gNBCUName ?: string;
-      pLMNId_MCC ?: string;
-      pLMNId_MNC ?: string;
-      cellLocalId?: string;
-      CU?:{
-        id: string;
-        func: string;
-        cellLocalId: string;
-        absoluteFrequencySSB: string;
-        sSBSubCarrierSpacing: string;
-        pLMNId_MCC: string;
-        pLMNId_MNC: string;
-      };
-      DU?: {
-        id: string;
-        func: string;
-        cellLocalId: string;
-        administrativeState: string;
-        arfcnDL: number;
-        arfcnSUL: number;
-        arfcnUL: number;
-        bSChannelBwDL: number;
-        bSChannelBwSUL: number;
-        bSChannelBwUL: number;
-        nRPCI: number;
-        nRTAC: string;
-        ssbDuration: number;
-        ssbFrequency: number;
-        ssbOffset: number;
-        ssbPeriodicity: number;
-        ssbSubCarrierSpacing: number;
-        configuredMaxTxPower: number;
-      }
-      RU: {
-        id: string;
-        position: string;
-      };
+      'gNB-type': string;
+      gNBCUName: string;
+      pLMNId_MCC: string;
+      pLMNId_MNC: string;
+      id: string;
     };
   
     extension_info: ExtensionInfo[]; // ok
-    cellInfo?: Cellinfo; // ok
+    cellInfo: Cellinfo; // ok
     anr: Anr;     // ok
     pci: PCI;     // ok 目前沒看到有 BS 這個有值
     cco: CCO;     // ok 目前沒看到有 BS 這個有值
@@ -70,13 +36,13 @@ export interface BSInfo {
     ip: string;              // ok 不一定有值
     port: string;            // ok 不一定有值
     position: string;        // ok 不一定有值
-    description?: string;      // ok
-    bstype: number;            // ok
-    components?: Components;   // ok 可能會出錯
-    status: number;            // ok
-    laston?: string;           // ok
-    lastoff?: string;          // ok
-    'components-info'?: ComponentsInfo;   // ok 不一定有值
+    description: string;        // ok
+    bstype: number;             // ok
+    components: Components[];   // ok 
+    status: number;             // ok
+    laston: string;             // ok
+    lastoff: string;            // ok
+    'components-info': ComponentsInfo;   // ok 不一定有值
   }
   
   /* ↓ @12/14 Add For extension_info:[] ↓ */
@@ -87,8 +53,8 @@ export interface BSInfo {
     cellLocalId: string;
     nci: string;
   
-    gNBCUFunction: GNBCUFunction | null;
     NRCellCU: NRCELLCU | null;
+    gNBCUFunction: GNBCUFunction | null;
     peeParametersList_CU: PeeParametersListCU | null;
     vnfParametersList_CU: VnfParametersListCU | null;
   
@@ -108,19 +74,17 @@ export interface BSInfo {
   
     EP_F1C_DU: EPF1C_DU | null;
     EP_F1U_DU: EPF1U_DU | null;
-    NRSectorCarrier: NRSectorCarrier | null;
-  
-    BWP: Bwp | null;
-    peeParametersList_NRSector: PeeParametersListNRSector | null;
-    vnfParametersList_NRSector: VnfParametersListNRSector | null;
-  
     peeParametersList_NRCellDU: PeeParametersListNRCellDU | null;
     vnfParametersList_NRCellDU: VnfParametersListNRCellDU | null;
     s_NSSAI_leafList_NRCellDU: SNSSAILeafListNRCellDU | null;
-  
     NRSectorCarrierRef_NRCellDU: NRSectorCarrierRefNRCellDU | null;
     bWPRef_leafList_NRCellDU: BWPRefLeafListNRCellDU | null;
-  
+
+    NRSectorCarrier: NRSectorCarrier | null;
+    BWP: Bwp | null;
+
+    peeParametersList_NRSector: PeeParametersListNRSector | null;
+    vnfParametersList_NRSector: VnfParametersListNRSector | null;
     peeParametersList_BWP: PeeParametersListBWP | null;
     vnfParametersList_BWP: VnfParametersListBWP | null;
   }
@@ -649,7 +613,7 @@ export interface BSInfo {
   
   /* ↓ @12/15 Add For "cellInfo": {} ↓ */
   export interface Cellinfo {
-    [key: string]: string;
+    //[key: string]: string;
   }
   /* ↑ @12/15 Add For "cellInfo": {} ↑ */
   
@@ -665,23 +629,22 @@ export interface BSInfo {
   
   // "neighbor":
   export interface Neighbor {
+    id: string;
     nci: string;
-    pci: number;
-    nrarfcn: number;
+    enable: string;
+    alias: string;
+    'must-include': string;
     'plmn-id': {
       mcc: string;
       mnc: string;
     };
+    nrarfcn: number;
+    pci: number;
+    'q-offset': string;
+    cio: string;
+    'rs-tx-power': string;
+    blacklisted: string;
     tac: string;
-    id?: string;
-    enable?: string;
-    alias?: string;
-    cio?: string;
-    blacklisted?: string;
-    'must-include'?: string;
-    'q-offset'?: string;
-    'rs-tx-power'?: string;
-    '__itri_default___': number;
   }
   
   /* ↑ @12/15 Add For "anr": {} ↑ */
@@ -697,13 +660,8 @@ export interface BSInfo {
   /* ↓ @12/15 Add  For "components": ↓ */
   
   export interface Components {
-    [key: string]: { [key: string]: DUInfo[] } | string; // 添加了字符串的可能性
-    //type: string;
-    //id: string;
-  }
-  
-  export interface DUInfo {
-    [key: string]: string;
+    type: string;
+    id: string;
   }
   
   /* ↑ @12/15 Add  For "components": ↑ */
@@ -712,13 +670,13 @@ export interface BSInfo {
   /* ↓ @12/15 Add  For "components-info": ↓ */
   
   export interface ComponentsInfo {
-    [componentId: string]: ComponentDetail | {}; // 允許空對象或具體的組件資訊
+    [componentId: string]: ComponentDetail; // 允許空對象或具體的組件資訊
   }
   
   export interface ComponentDetail {
-    firm?: string;
-    modelname?: string;
-    'components-sw-inventory'?: SoftwareInventory;
+    firm: string;
+    modelname: string;
+    'components-sw-inventory': SoftwareInventory;
   }
   
   // "components-sw-inventory":
@@ -747,7 +705,7 @@ export interface BSInfo {
     name: string;
     version: string;
     'local-path': string;
-    integrity?: string;
+    integrity: string;
   }
   
      /* ↑ @12/15 Add  For "components-info": ↑ */

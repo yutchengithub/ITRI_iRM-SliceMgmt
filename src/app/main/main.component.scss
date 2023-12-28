@@ -107,6 +107,16 @@ div.header button label {
   border-radius: 5em;
   background-color: #fff!important;
 }
+
+// @12/27 Add by yuchen for BS icon
+.svg-icon_BS {
+  width: 1.7em;
+  height: 1.7em;
+  position: relative;
+  right: 1px;
+  bottom: 4px;
+}
+
 @media only screen and (max-width:1366px) {
   .wrap {
     overflow: auto;

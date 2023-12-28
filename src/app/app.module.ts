@@ -11,6 +11,8 @@ import { ComponentInfoComponent } from './component-management/component-info/co
 import { LoginComponent } from './login/login.component';
 import { FieldManagementComponent } from './field-management/field-management.component';
 import { FieldInfoComponent } from './field-management/field-info/field-info.component';
+import { BSManagementComponent } from './bs-management/bs-management.component'; // @12/27 Add by yuchen 
+import { BSInfoComponent } from './bs-management/bs-info/bs-info.component';     // @12/27 Add by yuchen 
 import { NfManagementComponent } from './nf-management/nf-management.component';
 import { FaultManagementComponent } from './fault-management/fault-management.component';
 import { PerformanceManagementComponent } from './performance-management/performance-management.component';
@@ -63,6 +65,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 
+import { localBSinfo } from './shared/local-files/For_BS'; // @12/27 Add 
+
 
 @NgModule({
   declarations: [
@@ -73,6 +77,8 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     LoginComponent,
     FieldManagementComponent,
     FieldInfoComponent,           // @11/30 Add by yuchen
+    BSManagementComponent,        // @12/27 Add by yuchen 
+    BSInfoComponent,              // @12/27 Add by yuchen
     NfManagementComponent,
     FaultManagementComponent,
     PerformanceManagementComponent,
@@ -143,6 +149,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     AuthGuard,
     LanguageService,
     CommonService,
+    localBSinfo, // @12/27 Add for import BS Local files
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
