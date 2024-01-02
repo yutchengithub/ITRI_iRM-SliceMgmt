@@ -571,6 +571,7 @@ export class FieldInfoComponent implements OnInit {
           };
           
           // 這個計算出的中心點將被用來設定地圖的初始視圖中心。
+          //this.center = this.calculateCenter(positions); // 用於計算多邊形頂點的平均中心點
           this.center = this.calculateBoundingBoxCenter(positions); 
           // 輸出中心點到控制台，這樣可以用於調試和確認中心點是否如預期被正確計算。
           console.log('In getQueryFieldInfo() - center:', this.center);
