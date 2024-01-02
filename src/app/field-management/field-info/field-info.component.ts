@@ -18,10 +18,11 @@ import { NgZone } from '@angular/core';
 import { FieldInfo } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';              // @12/21 Add
 import { BsInfoInField } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';          // @12/21 Add
 
-import { BSInfo } from '../../shared/interfaces/BS_Info/For_queryBsInfo_BS';      // @12/21 Add
+import { BSInfo } from '../../shared/interfaces/BS_Info/For_queryBsInfo_BS';                    // @12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS_Info/For_queryBsInfo_dist_BS';  // @12/24 Add
-import { map } from 'rxjs/operators'; // 12/24 Add
+import { map } from 'rxjs/operators';                           // @12/24 Add
 import { localBSinfo } from '../../shared/local-files/For_BS';  // @12/27 Add
+import { GoogleMap } from '@angular/google-maps';               // @2024/01/02 Add
 
 export interface OcloudInfo {
   id: string;
@@ -197,6 +198,7 @@ export class FieldInfoComponent implements OnInit {
 
   // 初始化地圖中心的經緯度為(0, 0)，這可能會導致地圖在視圖上看不到任何內容(目前都可以顯示)
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
+  
   // 設置地圖的初始縮放級別，這裡設為 19.5 ( 近地面 )
   zoom = 16;
 
@@ -208,7 +210,7 @@ export class FieldInfoComponent implements OnInit {
     backgroundColor: '#126df5',      // 設置地圖的背景顏色
     clickableIcons: false,           // 設置地圖上的圖標是否可點擊
     disableDoubleClickZoom: true,    // 禁用雙擊縮放功能
-    draggable: true,                // 禁止用戶拖動地圖
+    draggable: true,                 // 禁止用戶拖動地圖
     zoomControl: true,               // 禁止用戶通過控件來縮放地圖
     styles: [                        // 自定義樣式來隱藏地圖上的點擊性圖標
       {
@@ -240,16 +242,99 @@ export class FieldInfoComponent implements OnInit {
 
   // @12/13 Add for listen activeButton
   // 用於監聽當前哪個按鈕是激活的
-  activeButton_fieldImage: string | null = null;
-  //activeButton_NR: string | null = 'NR';  // 預設激活 'NR' 按鈕
-  activeButton_NR: string | null = null;    // 預設不激活 'NR' 按鈕 @12/21 Add
-  activeButton_rsrp_sinr: string | null = null;
-  activeButton_menu: string | null = null;
+  activeButton_fieldImage: string | null = null; // 儲存當前激活的場域圖片按鈕 ID
+  //activeButton_NR: string | null = 'NR';       // 預設激活 'NR' 按鈕
+  activeButton_NR: string | null = null;         // 預設不激活 'NR' 按鈕 @12/21 Add
+  activeButton_rsrp_sinr: string | null = null;  // 儲存當前激活的 RSRP 或 SINR 圖示按鈕 ID
+  activeButton_menu: string | null = null;       // 儲存當前激活的菜單按鈕 ID
 
-  // 當按鈕被點擊時，觸發更新激活按鈕的狀態 @12/13 Add
-  setActiveButton_fieldImage(buttonId: string) {
+  // @2024/01/02 Add
+  // 使用 @ViewChild 裝飾器來獲取模板中 <google-map> 元素的實例。
+  // '!' 非空斷言操作符告訴 TypeScript 編譯器該屬性將會在後續的代碼中被賦值，
+  // 因此它在初始化時不會是 null。這避免了 TypeScript 的嚴格 null 檢查錯誤。
+  @ViewChild(GoogleMap) map!: GoogleMap; // 獲取 Google 地圖實例的引用
+
+  // 用於儲存場域多邊形的邊界點 @2024/01/02 Add
+  fieldBounds!: google.maps.LatLngBoundsLiteral; // 儲存用於放置地圖覆蓋物的場域邊界資訊
+
+  // 在類的屬性中添加一個用於跟蹤 overlay 顯示狀態的變量
+  overlayVisible: boolean = false;                  // 一個 boolean 變量，用於指示 GroundOverlay 是否應該顯示在地圖上
+  overlay: google.maps.GroundOverlay | null = null; // 用於存儲 GroundOverlay 實例的變量，初始值為 null。這個變量將在需要顯示場域圖片時被賦值
+
+
+  // 當按鈕被點擊時，觸發更新激活按鈕的狀態 @2024/01/02 Update
+  setActiveButton_fieldImage( buttonId: string ) {
+    // 如果當前激活的按鈕 ID 與傳入的 buttonId 相同，則取消激活狀態（設為 null），否則設置為傳入的 buttonId
     this.activeButton_fieldImage = this.activeButton_fieldImage === buttonId ? null : buttonId;
+
+    // 檢查場域圖片按鈕的激活狀態
+    if (this.activeButton_fieldImage) {
+      // 如果按鈕被激活，則反轉 overlay 的顯示狀態（ 顯示變隱藏，隱藏變顯示 ）
+      this.overlayVisible = !this.overlayVisible;
+      if ( this.overlayVisible ) {
+        // 如果 overlay 應該顯示，則調用 getfieldImage 方法來獲取場域圖片
+        this.getfieldImage();
+      } else {
+        // 如果 overlay 應該隱藏，則調用 removeOverlay 方法來移除場域圖片
+        this.removeOverlay();
+      }
+    } else {
+
+      // 如果沒有按鈕被激活，確保 overlay 被設置為不顯示
+      this.overlayVisible = false;
+
+      // 並且調用 removeOverlay 方法來移除場域圖片
+      this.removeOverlay();
+    }
   }
+
+  // 獲取並顯示場域圖片 @2024/01/02 Add
+  getfieldImage(){
+    
+    if (this.activeButton_fieldImage) {
+      // 如果有激活按鈕，則調用 queryFieldImage API 獲取場域圖片
+      this.commonService.queryFieldImage(this.fieldId).subscribe({
+        next: (response) => {
+          // 當接收到圖片數據時，處理 Base64 編碼的圖片
+          if (response && response.fieldImage) {
+            const imageSrc = 'data:image/png;base64,' + response.fieldImage; // 將 Base64 字符串轉換為圖片URL
+            this.displayImageOnMap( imageSrc ); // 在地圖上顯示場域圖片
+          }
+        },
+        // 當圖片獲取失敗時，顯示其錯誤訊息
+        error: (error) => {
+          console.error('Error fetching field image:', error);
+        },
+        // 當圖片獲取過程完成時，顯示完成訊息
+        complete: () => {
+          console.log('Field image fetch completed')
+        }
+      });
+    }
+  }
+
+  // 在地圖上顯示場域圖片 @2024/01/02 Add
+  displayImageOnMap( imageSrc: string ) {
+
+    if (this.map.googleMap && this.overlayVisible) {
+      // 檢查地圖實例是否存在且 overlay 應該顯示
+      this.overlay = new google.maps.GroundOverlay(imageSrc, this.fieldBounds); // 使用場域圖片和邊界創建一個 GroundOverlay 實例
+      this.overlay.setMap(this.map.googleMap); // 將創建的 GroundOverlay 添加到 Google 地圖實例上
+      console.log('Dispaly field image');
+    }
+  }
+
+  // 在地圖上隱藏(移除)場域圖片 @2024/01/02 Add
+  removeOverlay() {
+    // 檢查 overlay 物件是否已經被創建
+    if (this.overlay) {
+      this.overlay.setMap(null); // 將 overlay 從 Google 地圖上移除
+      this.overlay = null; // 將 overlay 物件設置為 null，釋放資源並避免內存洩漏
+      console.log('Remove field image');
+    }
+  }
+
+
   setActiveButton_NR(buttonId: string) {
       this.activeButton_NR = this.activeButton_NR === buttonId ? null : buttonId;
   }
@@ -383,6 +468,8 @@ export class FieldInfoComponent implements OnInit {
   }
   
   isMarkersLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
+
+  // @2024/01/02 Add - 儲存場域邊界點
   // @12/27 Update - Add Local Files Processing
   getQueryFieldInfo() {
     console.log('getQueryFieldInfo() - Start'); // 啟動獲取場域資訊
@@ -413,6 +500,21 @@ export class FieldInfoComponent implements OnInit {
       console.log( 'Local field position:', positions );
 
       this.polyPath = positions;
+
+      // 儲存或更新場域邊界點 @2024/01/02 Add
+      this.fieldBounds = {
+        // `north` 表示多邊形北邊的緯度，通過取所有頂點緯度的最大值來確定
+        north: Math.max(...positions.map(p => p.lat)),
+        
+        // `south` 表示多邊形南邊的緯度，通過取所有頂點緯度的最小值來確定
+        south: Math.min(...positions.map(p => p.lat)),
+        
+        // `east` 表示多邊形東邊的經度，通過取所有頂點經度的最大值來確定
+        east: Math.max(...positions.map(p => p.lng)),
+        
+        // `west` 表示多邊形西邊的經度，通過取所有頂點經度的最小值來確定
+        west: Math.min(...positions.map(p => p.lng)),
+      };
 
       // 計算場域中心用來設定地圖的初始視圖中心
       this.center = this.calculateBoundingBoxCenter(positions);
@@ -453,10 +555,23 @@ export class FieldInfoComponent implements OnInit {
           // polyPath 用來儲存多邊形各個頂點的經緯度，這個數據將被用於在地圖上繪製多邊形。
           this.polyPath = positions;
 
-          // calculateCenter 是一個自定義函數，用於計算多邊形頂點的平均中心點，
+          // 儲存或更新場域邊界點 @2024/01/02 Add
+          this.fieldBounds = {
+            // `north` 表示多邊形北邊的緯度，通過取所有頂點緯度的最大值來確定
+            north: Math.max(...positions.map(p => p.lat)),
+            
+            // `south` 表示多邊形南邊的緯度，通過取所有頂點緯度的最小值來確定
+            south: Math.min(...positions.map(p => p.lat)),
+            
+            // `east` 表示多邊形東邊的經度，通過取所有頂點經度的最大值來確定
+            east: Math.max(...positions.map(p => p.lng)),
+            
+            // `west` 表示多邊形西邊的經度，通過取所有頂點經度的最小值來確定
+            west: Math.min(...positions.map(p => p.lng)),
+          };
+          
           // 這個計算出的中心點將被用來設定地圖的初始視圖中心。
-          //this.center = this.calculateCenter(positions);
-          this.center = this.calculateBoundingBoxCenter(positions);
+          this.center = this.calculateBoundingBoxCenter(positions); 
           // 輸出中心點到控制台，這樣可以用於調試和確認中心點是否如預期被正確計算。
           console.log('In getQueryFieldInfo() - center:', this.center);
 

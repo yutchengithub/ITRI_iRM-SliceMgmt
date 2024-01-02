@@ -525,15 +525,40 @@ export class CommonService {
     return this.http.get(url);
   }
 
-  // BS Management API  @12/19 Update by yuchen
-  //  queryBsInfo(bsId: string): Observable<any> {
-      
-  //   // 構建 API URL
-  //   const url = `${this.restPath}/queryBsInfo/${this.getSessionId()}/${bsId}`;
+  // get the Field Image @2024/01/02 Add by yuchen
+  queryFieldImage(fieldId: string): Observable<any> { 
+    
+    // 構建 API URL
+    const url = `${this.restPath}/queryFieldImage/${this.getSessionId()}/${fieldId}`;
+  
+    // 發起 HTTP GET 請求
+    return this.http.get(url);
+  }
 
-  //   // 發起 HTTP GET 請求
-  //   return this.http.get(url);
-  // }
+  // Get SINR or RSRP map @2024/01/02 Add by yuchen
+  bsHeatMap( fieldId: string, leftLongitude: number, leftLatitude: number, rightLongitude: number,
+             rightLatitude: number, mapType: number ): Observable<any> {
+    
+    // 構建 API URL，指向後端的 bsHeatMap 路徑
+    const url = `${this.restPath}/irm/bsHeatMap`;
+  
+    // 準備請求體，包含所有後端所需的參數
+    const requestBody = {
+      session: this.getSessionId(),      // 獲取當前會話的 ID
+      fieldId: fieldId,                  // 傳入場地 ID
+      'left-longitude': leftLongitude,   // 傳入左邊界的經度
+      'left-latitude': leftLatitude,     // 傳入左邊界的緯度
+      'right-longitude': rightLongitude, // 傳入右邊界的經度
+      'right-latitude': rightLatitude,   // 傳入右邊界的緯度
+      maptype: mapType                   // 傳入地圖類型，0 表示 SINR，1 表示 RSRP
+    };
+  
+    // 發起 HTTP POST 請求，並返回 Observable 以便訂閱和處理響應
+    return this.http.post( url, requestBody );
+  }
+  
+
+  // BS Management API  @12/19 Update by yuchen
 
   // @12/24 Update - 將 Observable 的類型改為能接兩種 BSInfo 與 BSInfo_dist 介面的數據
   queryBsInfo( bsId: string ): Observable<BSInfo | BSInfo_dist>  {
