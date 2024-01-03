@@ -132,6 +132,15 @@ export interface SimplifiedNeighborInfo {
   pci: number;
 }
 
+// @2024/01/03 Add
+// 定義一個枚舉來表示不同的 overlay 類型
+enum OverlayType {
+  FieldImage,
+  SINR,
+  RSRP,
+  None
+}
+
 @Component({
   selector: 'app-field-info',
   templateUrl: './field-info.component.html',
@@ -196,7 +205,7 @@ export class FieldInfoComponent implements OnInit {
   // 用於存儲多邊形頂點的陣矩陣，初始時為空
   polyPath: google.maps.LatLngLiteral[] = [];
 
-  // 初始化地圖中心的經緯度為(0, 0)，這可能會導致地圖在視圖上看不到任何內容(目前都可以顯示)
+  // 初始化地圖中心的經緯度為(0, 0)，這可能會導致地圖在視圖上看不到任何內容( 目前都可以顯示 )
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
   
   // 設置地圖的初始縮放級別，這裡設為 19.5 ( 近地面 )
@@ -232,20 +241,12 @@ export class FieldInfoComponent implements OnInit {
 // ↑ For setting Google Maps @12/20 Update by yuchen
 
 
-  // @12/08 Add for toggle colobar
-  currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何 colorbar
 
-  toggleColorbar(type: 'RSRP' | 'SINR') { // @12/08 Add
-    this.currentColorbar = this.currentColorbar === type ? null : type;
-    this.setActiveButton_rsrp_sinr('this.currentColorbar');
-  }
 
   // @12/13 Add for listen activeButton
   // 用於監聽當前哪個按鈕是激活的
-  activeButton_fieldImage: string | null = null; // 儲存當前激活的場域圖片按鈕 ID
   //activeButton_NR: string | null = 'NR';       // 預設激活 'NR' 按鈕
   activeButton_NR: string | null = null;         // 預設不激活 'NR' 按鈕 @12/21 Add
-  activeButton_rsrp_sinr: string | null = null;  // 儲存當前激活的 RSRP 或 SINR 圖示按鈕 ID
   activeButton_menu: string | null = null;       // 儲存當前激活的菜單按鈕 ID
 
   // @2024/01/02 Add
@@ -261,39 +262,73 @@ export class FieldInfoComponent implements OnInit {
   overlayVisible: boolean = false;                  // 一個 boolean 變量，用於指示 GroundOverlay 是否應該顯示在地圖上
   overlay: google.maps.GroundOverlay | null = null; // 用於存儲 GroundOverlay 實例的變量，初始值為 null。這個變量將在需要顯示場域圖片時被賦值
 
-  // 當按鈕被點擊時，觸發更新激活按鈕的狀態 @2024/01/02 Update
-  setActiveButton_fieldImage( buttonId: string ) {
-    // 如果當前激活的按鈕 ID 與傳入的 buttonId 相同，則取消激活狀態（ 設為 null ），否則設置為傳入的 buttonId
-    this.activeButton_fieldImage = this.activeButton_fieldImage === buttonId ? null : buttonId;
+  // 用於跟蹤當前 overlay 類型的屬性 @2024/01/03 Add
+  currentOverlayType: OverlayType = OverlayType.None;
 
-    // 檢查場域圖片按鈕的激活狀態
-    if (this.activeButton_fieldImage) {
-      // 如果按鈕被激活，則反轉 overlay 的顯示狀態（ 顯示變隱藏，隱藏變顯示 ）
-      this.overlayVisible = !this.overlayVisible;
-      if ( this.overlayVisible ) {
-        // 如果 overlay 應該顯示，則調用 getfieldImage 方法來獲取場域圖片
-        this.getfieldImage();
-      } else {
-        // 如果 overlay 應該隱藏，則調用 removeOverlay 方法來移除場域圖片
-        this.removeOverlay();
-      }
-    } else {
+  // 在地圖上的場域區域中顯示傳入的圖片 @2024/01/03 Update - 加入依據點擊類型顯示
+  displayImageOnMap( imageSrc: string, overlayType: OverlayType ) {
 
-      // 如果沒有按鈕被激活，確保 overlay 被設置為不顯示
-      this.overlayVisible = false;
+    if ( this.map.googleMap && this.overlayVisible ) {
+      // 設置當前 overlay 類型
+      this.currentOverlayType = overlayType;
+      
+      // 創建並顯示 overlay
+      this.overlay = new google.maps.GroundOverlay( imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 GroundOverlay 實例
+      this.overlay.setMap(this.map.googleMap); // 將創建的 GroundOverlay 添加到 Google 地圖實例上
+      this.overlay.setOpacity(0.8);            // 設定 GroundOverlay 的透明度
 
-      // 並且調用 removeOverlay 方法來移除場域圖片
-      this.removeOverlay();
+      console.log( 'Display', this.currentOverlayType, 'Overlay:', this.overlay );
     }
   }
 
+  // 隱藏(移除)在地圖上的場域區域中的圖片 @2024/01/03 Update
+  removeOverlay() {
+
+    // 檢查 overlay 物件是否已經被創建
+    if (this.overlay) {
+      this.overlay.setMap(null); // 將 overlay 從 Google 地圖上移除
+      this.overlay = null;       // 將 overlay 物件設置為 null，釋放資源並避免內存洩漏
+      this.currentOverlayType = OverlayType.None;   // 重置當前 overlay 類型為 None
+
+      console.log('Remove the Overlay:', this.overlay);
+    }
+  }
+
+  activeButton_fieldImage: string | null = null; // 儲存當前激活的場域圖片按鈕 ID
+
+  // 當按鈕被點擊時，觸發更新激活按鈕"fieldImage"的狀態 @2024/01/03 Update
+  setActiveButton_fieldImage( buttonId: string ) {
+    console.log("The click button is:", buttonId)
+
+    if ( this.activeButton_fieldImage === null ) {
+      
+      if ( this.activeButton_rsrp_sinr || this.currentColorbar ){
+        this.activeButton_rsrp_sinr = null; // 隱藏 SINR/RSRP 圖片
+        this.currentColorbar = null;        // 隱藏 ColorBar
+        this.removeOverlay();               // 移除當前顯示的 overlay
+        this.overlayVisible = false;
+      }
+      this.activeButton_fieldImage = buttonId;
+      this.overlayVisible = true;
+      this.getfieldImage();
+      
+    } else {
+      this.activeButton_fieldImage = null;
+      this.removeOverlay(); // 移除當前顯示的 overlay
+      this.overlayVisible = false;
+    }
+  }
+  
+
   // 獲取並顯示場域圖片 
-  // @2024/01/03 Update - local Processing
+  // @2024/01/03 Update - local Processing, displayImageOnMap()
   getfieldImage(){
     
     if ( this.activeButton_fieldImage ) {
-      // 檢查 Field Image 按鈕是否有被激活。如果此變量不為 null，則表示用戶已點擊了 Field Image 按鈕，
+      // 檢查 Field Image 按鈕是否有被激活。
+      // 如果此變數不為 null，則表示用戶已點擊了 Field Image 按鈕，
       // 並且期望根據當前的激活狀態來顯示或隱藏場域圖片。
+
       if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
 
         // 設定場域圖片的 Local 路徑
@@ -301,18 +336,18 @@ export class FieldInfoComponent implements OnInit {
 
         // 檢查 Local 場域圖片路徑是否存在
         if ( imageSrc_localPath ) {
-          this.displayImageOnMap( imageSrc_localPath ); // 如存在，則在地圖上顯示場域 local 圖片
+          this.displayImageOnMap( imageSrc_localPath, OverlayType.FieldImage );  // 如存在，則在地圖上顯示場域 local 圖片
         }
 
-      } else {
+      } else { // 如非使用 local files
 
-        // 如果有激活按鈕，則調用 queryFieldImage API 獲取場域圖片
+        // 跟後端 API 取得場域圖片
         this.commonService.queryFieldImage( this.fieldId ).subscribe({
           next: (response) => {
             // 當接收到圖片數據時，處理 Base64 編碼的圖片
             if (response && response.fieldImage) {
               const imageSrc = 'data:image/png;base64,' + response.fieldImage; // 將 Base64 字符串轉換為圖片URL
-              this.displayImageOnMap( imageSrc ); // 在地圖上顯示場域圖片
+              this.displayImageOnMap( imageSrc, OverlayType.FieldImage );      // 在地圖上顯示場域圖片
             }
           },
           // 當圖片獲取失敗時，顯示其錯誤訊息
@@ -328,37 +363,114 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  // 在地圖上顯示場域圖片 @2024/01/03 Update - 設定 GroundOverlay 的透明度
-  displayImageOnMap( imageSrc: string ) {
+  // @12/08 Add for toggle colobar
+  currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何 colorbar
 
-    if ( this.map.googleMap && this.overlayVisible ) {
-      // 檢查地圖實例是否存在且 overlay 應該顯示
-      this.overlay = new google.maps.GroundOverlay( imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 GroundOverlay 實例
-      this.overlay.setMap(this.map.googleMap); // 將創建的 GroundOverlay 添加到 Google 地圖實例上
+  // @2024/01/03 Update
+  toggleColorbar(type: 'RSRP' | 'SINR') {
+    console.log("The click button is:", type);
 
-      // 設定 GroundOverlay 的透明度
-      this.overlay.setOpacity( 0.8 );
+    // 如果 Field image 的按鈕是激活狀態，則移除 Field image 的 overlay
+    if (this.activeButton_fieldImage && this.overlayVisible === true) {
+      this.activeButton_fieldImage = null; // 將 Field image 的按鈕狀態設為非激活
+      this.removeOverlay();        // 移除 overlay
+      this.overlayVisible = false; // 設定 overlay 不可見
+    }
 
-      console.log( 'Dispaly field image:', this.overlay );
+    // 切換 Colorbar 狀態
+    if (this.currentColorbar === null) {
+      this.currentColorbar = type;
+      this.setActiveButton_rsrp_sinr(type);
+    } else {
+      if (type === this.currentColorbar) {
+        this.currentColorbar = null;
+        this.removeOverlay(); // 移除當前顯示的 overlay
+        this.overlayVisible = false; // 設定 overlay 不可見
+      } else {
+        this.currentColorbar = type;
+        this.setActiveButton_rsrp_sinr(type);
+      }
     }
   }
 
-  // 在地圖上隱藏(移除)場域圖片 @2024/01/02 Add
-  removeOverlay() {
-    // 檢查 overlay 物件是否已經被創建
-    if ( this.overlay ) {
-      this.overlay.setMap(null); // 將 overlay 從 Google 地圖上移除
-      this.overlay = null; // 將 overlay 物件設置為 null，釋放資源並避免內存洩漏
-      console.log( 'Remove field image:', this.overlay );
-    }
-  }
+  activeButton_rsrp_sinr: string | null = null;  // 儲存當前激活的 RSRP 或 SINR 圖示按鈕 ID
 
-  setActiveButton_NR(buttonId: string) {
-      this.activeButton_NR = this.activeButton_NR === buttonId ? null : buttonId;
-  }
+  // @2024/01/03 Update
   setActiveButton_rsrp_sinr(buttonId: string) {
-    this.activeButton_rsrp_sinr = this.activeButton_rsrp_sinr === buttonId ? null : buttonId;
+    console.log("The click button is:", buttonId);
+
+    // 切換 RSRP/SINR 圖示按鈕狀態
+    if (this.activeButton_rsrp_sinr === null) {
+
+      this.activeButton_rsrp_sinr = buttonId;
+      const overlayType = (this.activeButton_rsrp_sinr === 'SINR') ? OverlayType.SINR : OverlayType.RSRP;
+      this.overlayVisible = true; // 設定 overlay 為可見
+      this.getSinrRsrpImage(overlayType);
+
+    } else {
+      
+      this.removeOverlay(); // 移除當前顯示的 overlay
+      this.activeButton_rsrp_sinr = buttonId;
+      const overlayType = (this.activeButton_rsrp_sinr === 'SINR') ? OverlayType.SINR : OverlayType.RSRP;
+      this.overlayVisible = true; // 設定 overlay 為可見
+      this.getSinrRsrpImage(overlayType);
+
+    }
   }
+
+  // @2024/01/03 Add
+  getSinrRsrpImage(overlayType: OverlayType) {
+
+    // 根據 overlayType 決定 mapType
+    const mapType = (overlayType === OverlayType.SINR) ? 0 : 1;
+
+    if (this.activeButton_rsrp_sinr) {
+      if (this.commonService.isLocal) {
+        let imageSrc_localPath = '';
+
+        // 設定本地 SINR 或 RSRP 圖片的路徑
+        if (overlayType === OverlayType.SINR) {
+          imageSrc_localPath = './assets/img/sinrMap_local.png'; // 定義本地 SINR 圖片路徑
+          console.log("The local path of image is:", imageSrc_localPath);
+        } else {
+          imageSrc_localPath = './assets/img/rsrpMap_local.png'; // 定義本地 RSRP 圖片路徑
+          console.log("The local path of image is:", imageSrc_localPath);
+        }
+
+        // 如果本地路徑存在，則在地圖上顯示本地圖片
+        if (imageSrc_localPath) {
+          this.displayImageOnMap(imageSrc_localPath, overlayType);
+        }
+
+      } else {
+
+        // 從 fieldBounds 提取經緯度
+        const leftLongitude = this.fieldBounds.west;  // 西邊界經度
+        const leftLatitude = this.fieldBounds.north;  // 北邊界緯度
+        const rightLongitude = this.fieldBounds.east; // 東邊界經度
+        const rightLatitude = this.fieldBounds.south; // 南邊界緯度
+
+        // 調用後端 API 獲取 SINR 或 RSRP 圖片
+        this.commonService.bsHeatMap(this.fieldId, leftLongitude, leftLatitude, rightLongitude, rightLatitude, mapType).subscribe({
+          next: (response) => {
+            const imageSrc = 'data:image/png;base64,' + response.heatMap; // 從後端回應中獲取圖片
+            this.displayImageOnMap(imageSrc, overlayType);
+          },
+          error: (error) => {
+            console.error("Error fetching SINR/RSRP image:", error);
+          },
+          complete: () => {
+            console.log("SINR/RSRP image fetch completed");
+          }
+        });
+      }
+    }
+  }
+
+  setActiveButton_NR( buttonId: string ) {
+    this.activeButton_NR = this.activeButton_NR === buttonId ? null : buttonId;
+  }
+
   setActiveButton_menu(buttonId: string) {
     this.activeButton_menu = this.activeButton_menu === buttonId ? null : buttonId;
   }
@@ -379,9 +491,9 @@ export class FieldInfoComponent implements OnInit {
     }
 
     // 如切換的頁面為地圖模式，就預設激活 'NR' 按鈕
-    if ( this.showMapModel === true ) {
-      this.activeButton_NR = 'NR';
-    }
+    // if ( this.showMapModel === true ) {
+    //   this.activeButton_NR = 'NR';
+    // }
 
     // 如果記錄的 Colorbar 不為空且切換的頁面為地圖模式，則恢復顯示記錄的 Colorbar
     if ( this.recordColorbar != null && this.showMapModel === true ) {
@@ -403,7 +515,7 @@ export class FieldInfoComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public commonService: CommonService,
-    public bsLocalFiles: localBSinfo,      // @12/27 ADD for import BS Local Files
+    public bsLocalFiles: localBSinfo,      // @12/27 Add for import BS Local Files
     private fb: FormBuilder,
     private dialog: MatDialog,
     public languageService: LanguageService,
@@ -534,7 +646,7 @@ export class FieldInfoComponent implements OnInit {
       };
 
       // 計算場域中心用來設定地圖的初始視圖中心
-      this.center = this.calculateBoundingBoxCenter(positions);
+      this.center = this.calculateBoundingBoxCenter( positions );
 
       this.processFieldInfo(); // 處理場域資訊
       
