@@ -255,16 +255,15 @@ export class FieldInfoComponent implements OnInit {
   @ViewChild(GoogleMap) map!: GoogleMap; // 獲取 Google 地圖實例的引用
 
   // 用於儲存場域多邊形的邊界點 @2024/01/02 Add
-  fieldBounds!: google.maps.LatLngBoundsLiteral; // 儲存用於放置地圖覆蓋物的場域邊界資訊
+  fieldBounds!: google.maps.LatLngBoundsLiteral;    // 用於儲存放置 GroundOverlay 的場域邊界資訊
 
   // 在類的屬性中添加一個用於跟蹤 overlay 顯示狀態的變量
   overlayVisible: boolean = false;                  // 一個 boolean 變量，用於指示 GroundOverlay 是否應該顯示在地圖上
   overlay: google.maps.GroundOverlay | null = null; // 用於存儲 GroundOverlay 實例的變量，初始值為 null。這個變量將在需要顯示場域圖片時被賦值
 
-
   // 當按鈕被點擊時，觸發更新激活按鈕的狀態 @2024/01/02 Update
   setActiveButton_fieldImage( buttonId: string ) {
-    // 如果當前激活的按鈕 ID 與傳入的 buttonId 相同，則取消激活狀態（設為 null），否則設置為傳入的 buttonId
+    // 如果當前激活的按鈕 ID 與傳入的 buttonId 相同，則取消激活狀態（ 設為 null ），否則設置為傳入的 buttonId
     this.activeButton_fieldImage = this.activeButton_fieldImage === buttonId ? null : buttonId;
 
     // 檢查場域圖片按鈕的激活狀態
@@ -288,52 +287,71 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  // 獲取並顯示場域圖片 @2024/01/02 Add
+  // 獲取並顯示場域圖片 
+  // @2024/01/03 Update - local Processing
   getfieldImage(){
     
-    if (this.activeButton_fieldImage) {
-      // 如果有激活按鈕，則調用 queryFieldImage API 獲取場域圖片
-      this.commonService.queryFieldImage(this.fieldId).subscribe({
-        next: (response) => {
-          // 當接收到圖片數據時，處理 Base64 編碼的圖片
-          if (response && response.fieldImage) {
-            const imageSrc = 'data:image/png;base64,' + response.fieldImage; // 將 Base64 字符串轉換為圖片URL
-            this.displayImageOnMap( imageSrc ); // 在地圖上顯示場域圖片
-          }
-        },
-        // 當圖片獲取失敗時，顯示其錯誤訊息
-        error: (error) => {
-          console.error('Error fetching field image:', error);
-        },
-        // 當圖片獲取過程完成時，顯示完成訊息
-        complete: () => {
-          console.log('Field image fetch completed')
+    if ( this.activeButton_fieldImage ) {
+      // 檢查 Field Image 按鈕是否有被激活。如果此變量不為 null，則表示用戶已點擊了 Field Image 按鈕，
+      // 並且期望根據當前的激活狀態來顯示或隱藏場域圖片。
+      if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
+
+        // 設定場域圖片的 Local 路徑
+        const imageSrc_localPath = './assets/img/fieldImage_for_local.png'; // 定義本地場域圖片的路徑
+
+        // 檢查 Local 場域圖片路徑是否存在
+        if ( imageSrc_localPath ) {
+          this.displayImageOnMap( imageSrc_localPath ); // 如存在，則在地圖上顯示場域 local 圖片
         }
-      });
+
+      } else {
+
+        // 如果有激活按鈕，則調用 queryFieldImage API 獲取場域圖片
+        this.commonService.queryFieldImage( this.fieldId ).subscribe({
+          next: (response) => {
+            // 當接收到圖片數據時，處理 Base64 編碼的圖片
+            if (response && response.fieldImage) {
+              const imageSrc = 'data:image/png;base64,' + response.fieldImage; // 將 Base64 字符串轉換為圖片URL
+              this.displayImageOnMap( imageSrc ); // 在地圖上顯示場域圖片
+            }
+          },
+          // 當圖片獲取失敗時，顯示其錯誤訊息
+          error: (error) => {
+            console.error('Error fetching field image:', error);
+          },
+          // 當圖片獲取過程完成時，顯示完成訊息
+          complete: () => {
+            console.log('Field image fetch completed')
+          }
+        });
+      }
     }
   }
 
-  // 在地圖上顯示場域圖片 @2024/01/02 Add
+  // 在地圖上顯示場域圖片 @2024/01/03 Update - 設定 GroundOverlay 的透明度
   displayImageOnMap( imageSrc: string ) {
 
-    if (this.map.googleMap && this.overlayVisible) {
+    if ( this.map.googleMap && this.overlayVisible ) {
       // 檢查地圖實例是否存在且 overlay 應該顯示
-      this.overlay = new google.maps.GroundOverlay(imageSrc, this.fieldBounds); // 使用場域圖片和邊界創建一個 GroundOverlay 實例
+      this.overlay = new google.maps.GroundOverlay( imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 GroundOverlay 實例
       this.overlay.setMap(this.map.googleMap); // 將創建的 GroundOverlay 添加到 Google 地圖實例上
-      console.log('Dispaly field image');
+
+      // 設定 GroundOverlay 的透明度
+      this.overlay.setOpacity( 0.8 );
+
+      console.log( 'Dispaly field image:', this.overlay );
     }
   }
 
   // 在地圖上隱藏(移除)場域圖片 @2024/01/02 Add
   removeOverlay() {
     // 檢查 overlay 物件是否已經被創建
-    if (this.overlay) {
+    if ( this.overlay ) {
       this.overlay.setMap(null); // 將 overlay 從 Google 地圖上移除
       this.overlay = null; // 將 overlay 物件設置為 null，釋放資源並避免內存洩漏
-      console.log('Remove field image');
+      console.log( 'Remove field image:', this.overlay );
     }
   }
-
 
   setActiveButton_NR(buttonId: string) {
       this.activeButton_NR = this.activeButton_NR === buttonId ? null : buttonId;
@@ -448,7 +466,7 @@ export class FieldInfoComponent implements OnInit {
     let minLng = points[0].lng;
     let maxLng = points[0].lng;
   
-    // 遍歷 points 陣列中的每一個 google.maps.LatLngLiteral 物件
+    // 遍歷 points 矩陣中的每一個 google.maps.LatLngLiteral 物件
     points.forEach(point => {
       // 如果當前點的緯度小於已知的最小緯度，更新 minLat 的值
       if (point.lat < minLat) minLat = point.lat;
@@ -477,9 +495,8 @@ export class FieldInfoComponent implements OnInit {
     console.log('Start fetching field info');   // 開始獲取場域資訊
     clearTimeout(this.refreshTimeout);
 
-    if (this.commonService.isLocal) {
+    if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
 
-      
       // For testing with local files
       console.log('Start fetching field info in Local');   // 開始獲取 local 場域資訊
       this.fieldInfo = this.commonService.fieldInfo;
@@ -616,13 +633,13 @@ export class FieldInfoComponent implements OnInit {
       const allSimplifiedData: SimplifiedBSInfo[] = [];
 
       // 遍歷 dist_bsInfo_local 數組並處理每一筆數據
-      this.bsLocalFiles.dist_bsInfo_local.forEach((distBsInfo: BSInfo_dist) => {
-        allSimplifiedData.push(...this.convertDistBsInfoToSimplifiedFormat(distBsInfo));
+      this.bsLocalFiles.dist_bsInfo_local.forEach( ( distBsInfo: BSInfo_dist ) => {
+        allSimplifiedData.push( ...this.convertDistBsInfoToSimplifiedFormat( distBsInfo ));
       });
 
       // 遍歷 bsInfo_local 數組並處理每一筆數據
-      this.bsLocalFiles.bsInfo_local.forEach((bsInfo: BSInfo) => {
-        allSimplifiedData.push(this.convertBsInfoToSimplifiedFormat(bsInfo));
+      this.bsLocalFiles.bsInfo_local.forEach( ( bsInfo: BSInfo ) => {
+        allSimplifiedData.push( this.convertBsInfoToSimplifiedFormat( bsInfo )) ;
       });
       
       // 將合併後的所有 SimplifiedBSInfo 對象賦值給 this.allSimplifiedBsInfo 屬性
@@ -639,10 +656,10 @@ export class FieldInfoComponent implements OnInit {
           // 判斷當前處理的基站是否為數組中的第一個元素（即索引為 0 的元素）
           // 如果是第一個元素（index === 0），則 isSelected 為 true，否則為 false
           // isSelected 用於確定當前基站是否應該顯示為「被選中」狀態的圖標
-          const isSelected = (index === 0);
+          const isSelected = ( index === 0 );
 
           // 為當前基站設置圖標 URL，根據基站的類型、狀態、是否被選中以及是否是數組中的第一個基站
-          bsInfo.iconUrl = this.setIconUrl(bsInfo.bstype, bsInfo.status, isSelected, firstBsInfoName, bsInfo.name);
+          bsInfo.iconUrl = this.setIconUrl( bsInfo.bstype, bsInfo.status, isSelected, firstBsInfoName, bsInfo.name );
         });
 
         // 將 allSimplifiedBsInfo 數組中的第一筆基站資訊顯示於「基站資訊」欄位上
@@ -917,7 +934,7 @@ export class FieldInfoComponent implements OnInit {
         });
 
         // 在控制台輸出被點擊的基站名稱、類型和狀態
-        console.log("Marker BS name:", clickbsInfoName, "is clicked\n",
+        console.log("Marker", clickbsInfoName, "is clicked,\n",
                     "its type is", clickbsInfoBSType, "its status is", clickbsInfoStatus);
     });
 

@@ -60,7 +60,7 @@ export const TwLanguage = {
   'field.add':'新增場域',
   'field.info':'場域詳細資訊',
   'field.Map':'場域地圖',
-  'field.image':'場域影像',
+  'field.image':'場域圖片',    // @2024/01/03 Update
   'field.rsrpMap':'RSRP 地圖',
   'field.sinrMap':'SINR 地圖',
   'field.MapOption':'更多選項',
@@ -81,20 +81,20 @@ export const TwLanguage = {
   'field.Latitude':'緯度',
   'field.modifyConfiguration':'修改配置',
   'field.neighboringBSList':'鄰近基站列表',
-  'field.config':'場域配置',                // @12/12 Add
-  'field.configPMset':'效能管理參數設定',    // @12/12 Add 
-  'field.report':'場域報表',                // @12/12 Add
-  'field.reportPM':'場域效能 (PM)',         // @12/12 Add
-  'field.reportFM':'告警資訊 (FM)',         // @12/12 Add
-  'field.optim':'場域優化',                 // @12/12 Add
-  'field.optimSON':'執行 SON rApps',       // @12/12 Add
-  'field.mapModel':'地圖模式',              // @12/12 Add
-  'field.bsList':'基站列表',                // @12/12 Add
-  'field.bsAntennaCoord':'基站天線位置座標', // @12/13 Add
-  'field.BSstatus':'連線狀態',             // @12/13 Add
+  'field.config':'場域配置',                  // @12/12 Add
+  'field.configPMset':'效能管理參數設定',      // @12/12 Add 
+  'field.report':'場域報表',                  // @12/12 Add
+  'field.reportPM':'場域效能 (PM)',           // @12/12 Add
+  'field.reportFM':'告警資訊 (FM)',           // @12/12 Add
+  'field.optim':'場域優化',                   // @12/12 Add
+  'field.optimSON':'執行 SON rApps',         // @12/12 Add
+  'field.mapModel':'地圖模式',                // @12/12 Add
+  'field.bsList':'基站列表',                  // @12/12 Add
+  'field.bsAntennaCoord':'基站天線位置座標',   // @12/13 Add
+  'field.BSstatus':'連線狀態',                // @12/13 Add
   'field.bsAlarm':'告警',                    // @12/13 Add
   'field.legend_all-in-one_bs':'一體式基站',  // @12/28 Add
-  'field.legend_dist_bs':'O-RAN基站',       // @12/28 Add
+  'field.legend_dist_bs':'O-RAN基站',        // @12/28 Add
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',
