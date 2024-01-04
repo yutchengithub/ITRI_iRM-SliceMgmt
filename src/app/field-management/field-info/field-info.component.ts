@@ -211,8 +211,8 @@ export class FieldInfoComponent implements OnInit {
   // 初始化地圖中心的經緯度為(0, 0)，這可能會導致地圖在視圖上看不到任何內容( 目前都可以顯示 )
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
   
-  // 設置地圖的初始縮放級別，這裡設為 19.5 ( 近地面 )
-  zoom = 19.5;
+  // 設置地圖的初始縮放級別
+  zoom = 16;
 
   // 定義地圖的其他配置選項，包括樣式，來隱藏默認的地標
   mapOptions: google.maps.MapOptions = {
@@ -328,8 +328,8 @@ export class FieldInfoComponent implements OnInit {
   // @2024/01/04 Add loading spinner
   getfieldImage(){
     
-    //this.isMarkersLoading = true; // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中 
-    
+    this.isMarkersLoading = true; // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中 
+
     if ( this.activeButton_fieldImage ) {
       // 檢查 Field Image 按鈕是否有被激活。
       // 如果此變數不為 null，則表示用戶已點擊了 Field Image 按鈕，
@@ -344,11 +344,9 @@ export class FieldInfoComponent implements OnInit {
         if ( imageSrc_localPath ) {
           this.displayImageOnMap( imageSrc_localPath, OverlayType.FieldImage );  // 如存在，則在地圖上顯示場域 local 圖片
         }
-        //this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
+        this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
 
       } else { // 如非使用 local files
-
-        this.isMarkersLoading = true; // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中 
 
         // 跟後端 API 取得場域圖片
         this.commonService.queryFieldImage( this.fieldId ).subscribe({
@@ -430,9 +428,10 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  // @2024/01/03 Add
+  // @2024/01/04 Update
   getSinrRsrpImage( overlayType: OverlayType ) {
-    //this.isMarkersLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
+    
+    this.isMarkersLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
 
     // 根據 overlayType 決定 mapType
     const mapType = ( overlayType === OverlayType.SINR ) ? 0 : 1;
@@ -454,10 +453,8 @@ export class FieldInfoComponent implements OnInit {
         if ( imageSrc_localPath ) {
           this.displayImageOnMap( imageSrc_localPath, overlayType );
         }
-        //this.isMarkersLoading = false; // Local圖片載入完成，隱藏 Spinner
+        this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
       } else {
-
-        this.isMarkersLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
 
         // 從 fieldBounds 提取經緯度
         const leftLongitude = this.fieldBounds.west;  // 西邊界經度
@@ -711,9 +708,9 @@ export class FieldInfoComponent implements OnInit {
     
     // 這將會在地圖加載後自動調整到最佳視角和縮放級別
     // 注意: 這需要在地圖加載並準備好之後調用
-    if (this.map.googleMap) {
-      this.map.googleMap.fitBounds(bounds);
-    }
+    // if (this.map.googleMap) {
+    //   this.map.googleMap.fitBounds(bounds);
+    // }
   }
   
   isMarkersLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
