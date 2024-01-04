@@ -327,8 +327,9 @@ export class FieldInfoComponent implements OnInit {
   // @2024/01/03 Update - local Processing, displayImageOnMap()
   // @2024/01/04 Add loading spinner
   getfieldImage(){
-    this.isMarkersLoading = true; // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中 
-
+    
+    //this.isMarkersLoading = true; // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中 
+    
     if ( this.activeButton_fieldImage ) {
       // 檢查 Field Image 按鈕是否有被激活。
       // 如果此變數不為 null，則表示用戶已點擊了 Field Image 按鈕，
@@ -343,9 +344,11 @@ export class FieldInfoComponent implements OnInit {
         if ( imageSrc_localPath ) {
           this.displayImageOnMap( imageSrc_localPath, OverlayType.FieldImage );  // 如存在，則在地圖上顯示場域 local 圖片
         }
-        this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
+        //this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
 
       } else { // 如非使用 local files
+
+        this.isMarkersLoading = true; // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中 
 
         // 跟後端 API 取得場域圖片
         this.commonService.queryFieldImage( this.fieldId ).subscribe({
@@ -429,7 +432,7 @@ export class FieldInfoComponent implements OnInit {
 
   // @2024/01/03 Add
   getSinrRsrpImage( overlayType: OverlayType ) {
-    this.isMarkersLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
+    //this.isMarkersLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
 
     // 根據 overlayType 決定 mapType
     const mapType = ( overlayType === OverlayType.SINR ) ? 0 : 1;
@@ -451,8 +454,10 @@ export class FieldInfoComponent implements OnInit {
         if ( imageSrc_localPath ) {
           this.displayImageOnMap( imageSrc_localPath, overlayType );
         }
-        this.isMarkersLoading = false; // Local圖片載入完成，隱藏 Spinner
+        //this.isMarkersLoading = false; // Local圖片載入完成，隱藏 Spinner
       } else {
+
+        this.isMarkersLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
 
         // 從 fieldBounds 提取經緯度
         const leftLongitude = this.fieldBounds.west;  // 西邊界經度
