@@ -264,7 +264,7 @@
 			<ng-container *ngIf="!isMarkersLoading">
 				<ul *ngIf="!isMarkersLoading && displayBsInfo">
 					<li>
-					<label>{{languageService.i18n['field.BSname']}}</label>
+					<label>{{ languageService.i18n['field.BSname'] }}</label>
 					<span>{{ displayBsInfo.name }}</span>
 					</li>
 					<li>
@@ -283,7 +283,7 @@
 					<li>
 					<label>PLMN ID</label>
 					<span>
-						{{ displayBsInfo['plmn-id'].mcc }}{{ displayBsInfo['plmn-id'].mnc }}
+						{{ displayBsInfo['plmn-id'].mcc }} {{ displayBsInfo['plmn-id'].mnc }}
 					</span>
 					</li>
 					<li>
@@ -371,28 +371,63 @@
 		<form [formGroup]="updateForm">
 			<ul>
 				<li>
-					<label>Current Version</label> <span>{{ocloudInfo.softwareVersion}}</span> </li>
+					<label>{{ languageService.i18n['field.BSname'] }}</label>
+					<span>
+						<input type="text" formControlName="imageUrl" placeholder="{{ languageService.i18n['field.BSname'] }}" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
+						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+					</span>
+				</li>
 				<li>
-					<label>Update Software</label> <span class="SoftwareUpdate">
-          <mat-button-toggle-group formControlName="type" (change)="changeType($event)">
-            <mat-button-toggle value="imageUrl">Image URL</mat-button-toggle>
-            <mat-button-toggle value="existedFile">Existed File</mat-button-toggle>
-          </mat-button-toggle-group>
-
-          <div *ngIf="updateForm.controls['type'].value === 'imageUrl'">
-            <input type="text" formControlName="imageUrl" placeholder="Image URL" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-            <mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
-          </div>
-          <div *ngIf="updateForm.controls['type'].value === 'existedFile'">
-            <select formControlName="fileName" class="{{formValidated&&updateForm.controls['fileName'].invalid?'required':''}}">
-              <option *ngFor="let opt of softwareList" [value]="opt.fileName">{{opt.fileName}}</option>
-            </select>
-            <mat-error *ngIf="formValidated&&updateForm.controls['fileName'].invalid">Required</mat-error>
-            <div class="UV" *ngIf="updateForm.controls['type'].value === 'existedFile'">
-              Update Version : {{softwareVersion()}}
-            </div>
-          </div>
-        </span> </li>
+					<label>PCI</label>
+					<span>
+						<input type="text" formControlName="imageUrl" placeholder="PCI" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
+						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+					</span>
+				</li>
+				<li>
+					<label>PLMN ID</label>
+					<span>
+						<input type="text" formControlName="imageUrl" placeholder="MCC" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
+						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+						<input type="text" formControlName="imageUrl" placeholder="MNC" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
+						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+					</span>
+				</li>
+				<li>
+					<label>Tx Power (dBm)</label>
+					<span>
+						<input type="text" formControlName="imageUrl" placeholder="Tx Power (dBm)" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
+						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+					</span>
+				</li>
+				<li>
+					<label>NR-ARFCN-UL</label>
+					<span>
+						<input type="text" formControlName="imageUrl" placeholder="NR-ARFCN-UL" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
+						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+					</span>
+				</li>
+				<li>
+					<label>NR-ARFCN-DL</label>
+					<span>
+						<input type="text" formControlName="imageUrl" placeholder="NR-ARFCN-DL" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
+						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+					</span>
+				</li>
+				<li>
+					<label>{{languageService.i18n['field.Longitude']}}</label>
+					<span>
+						<input type="text" formControlName="imageUrl" placeholder="{{languageService.i18n['field.Longitude']}}" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
+						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+					</span>
+				</li>
+				<li>
+					<label>{{languageService.i18n['field.Latitude']}}</label>
+					<span>
+						<input type="text" formControlName="imageUrl" placeholder="{{languageService.i18n['field.Latitude']}}" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
+						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+					</span>
+				</li>
 			</ul>
 			<div class="buttons">
 				<button type="button" (click)="update()">OK</button>

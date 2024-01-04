@@ -20,9 +20,12 @@ import { BsInfoInField } from '../../shared/interfaces/Field_Info/For_queryField
 
 import { BSInfo } from '../../shared/interfaces/BS_Info/For_queryBsInfo_BS';                    // @12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS_Info/For_queryBsInfo_dist_BS';  // @12/24 Add
-import { map } from 'rxjs/operators';                           // @12/24 Add
-import { localBSinfo } from '../../shared/local-files/For_BS';  // @12/27 Add
-import { GoogleMap } from '@angular/google-maps';               // @2024/01/02 Add
+import { map } from 'rxjs/operators';                                 // @12/24 Add
+import { localBSinfo } from '../../shared/local-files/For_BS';        // @12/27 Add
+import { apiForField } from '../../shared/api/For-field-management';  // @2024/01/04 Add for import API of Field Management 
+
+import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
+
 
 export interface OcloudInfo {
   id: string;
@@ -209,7 +212,7 @@ export class FieldInfoComponent implements OnInit {
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
   
   // 設置地圖的初始縮放級別，這裡設為 19.5 ( 近地面 )
-  zoom = 16;
+  zoom = 19.5;
 
   // 定義地圖的其他配置選項，包括樣式，來隱藏默認的地標
   mapOptions: google.maps.MapOptions = {
@@ -275,7 +278,7 @@ export class FieldInfoComponent implements OnInit {
       // 創建並顯示 overlay
       this.overlay = new google.maps.GroundOverlay( imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 GroundOverlay 實例
       this.overlay.setMap(this.map.googleMap); // 將創建的 GroundOverlay 添加到 Google 地圖實例上
-      this.overlay.setOpacity(0.8);            // 設定 GroundOverlay 的透明度
+      this.overlay.setOpacity( 0.5 );            // 設定 GroundOverlay 的透明度
 
       console.log( 'Display', this.currentOverlayType, 'Overlay:', this.overlay );
     }
@@ -322,8 +325,10 @@ export class FieldInfoComponent implements OnInit {
 
   // 獲取並顯示場域圖片 
   // @2024/01/03 Update - local Processing, displayImageOnMap()
+  // @2024/01/04 Add loading spinner
   getfieldImage(){
-    
+    this.isMarkersLoading = true; // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中 
+
     if ( this.activeButton_fieldImage ) {
       // 檢查 Field Image 按鈕是否有被激活。
       // 如果此變數不為 null，則表示用戶已點擊了 Field Image 按鈕，
@@ -338,6 +343,7 @@ export class FieldInfoComponent implements OnInit {
         if ( imageSrc_localPath ) {
           this.displayImageOnMap( imageSrc_localPath, OverlayType.FieldImage );  // 如存在，則在地圖上顯示場域 local 圖片
         }
+        this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
 
       } else { // 如非使用 local files
 
@@ -353,10 +359,12 @@ export class FieldInfoComponent implements OnInit {
           // 當圖片獲取失敗時，顯示其錯誤訊息
           error: (error) => {
             console.error('Error fetching field image:', error);
+            this.isMarkersLoading = false; // 出錯時，也隱藏 Spinner
           },
           // 當圖片獲取過程完成時，顯示完成訊息
           complete: () => {
-            console.log('Field image fetch completed')
+            console.log('Field image fetch completed');
+            this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
           }
         });
       }
@@ -399,6 +407,7 @@ export class FieldInfoComponent implements OnInit {
   setActiveButton_rsrp_sinr(buttonId: string) {
     console.log("The click button is:", buttonId);
 
+    
     // 切換 RSRP/SINR 圖示按鈕狀態
     if (this.activeButton_rsrp_sinr === null) {
 
@@ -419,17 +428,18 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // @2024/01/03 Add
-  getSinrRsrpImage(overlayType: OverlayType) {
+  getSinrRsrpImage( overlayType: OverlayType ) {
+    this.isMarkersLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
 
     // 根據 overlayType 決定 mapType
-    const mapType = (overlayType === OverlayType.SINR) ? 0 : 1;
+    const mapType = ( overlayType === OverlayType.SINR ) ? 0 : 1;
 
-    if (this.activeButton_rsrp_sinr) {
+    if ( this.activeButton_rsrp_sinr ) {
       if (this.commonService.isLocal) {
         let imageSrc_localPath = '';
 
         // 設定本地 SINR 或 RSRP 圖片的路徑
-        if (overlayType === OverlayType.SINR) {
+        if ( overlayType === OverlayType.SINR ) {
           imageSrc_localPath = './assets/img/sinrMap_local.png'; // 定義本地 SINR 圖片路徑
           console.log("The local path of image is:", imageSrc_localPath);
         } else {
@@ -438,10 +448,10 @@ export class FieldInfoComponent implements OnInit {
         }
 
         // 如果本地路徑存在，則在地圖上顯示本地圖片
-        if (imageSrc_localPath) {
-          this.displayImageOnMap(imageSrc_localPath, overlayType);
+        if ( imageSrc_localPath ) {
+          this.displayImageOnMap( imageSrc_localPath, overlayType );
         }
-
+        this.isMarkersLoading = false; // Local圖片載入完成，隱藏 Spinner
       } else {
 
         // 從 fieldBounds 提取經緯度
@@ -451,31 +461,116 @@ export class FieldInfoComponent implements OnInit {
         const rightLatitude = this.fieldBounds.south; // 南邊界緯度
 
         // 調用後端 API 獲取 SINR 或 RSRP 圖片
-        this.commonService.bsHeatMap(this.fieldId, leftLongitude, leftLatitude, rightLongitude, rightLatitude, mapType).subscribe({
+        this.commonService.bsHeatMap( this.fieldId, leftLongitude, leftLatitude,
+                                       rightLongitude, rightLatitude, mapType ).subscribe({
           next: (response) => {
             const imageSrc = 'data:image/png;base64,' + response.heatMap; // 從後端回應中獲取圖片
-            this.displayImageOnMap(imageSrc, overlayType);
+            this.displayImageOnMap( imageSrc, overlayType );
           },
           error: (error) => {
             console.error("Error fetching SINR/RSRP image:", error);
+            this.isMarkersLoading = false; // 出錯時，也隱藏 Spinner
           },
           complete: () => {
             console.log("SINR/RSRP image fetch completed");
+            this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
           }
         });
       }
     }
   }
 
-  setActiveButton_NR( buttonId: string ) {
+  // 用於跟蹤鄰居線條的顯示狀態 @2024/01/04 Add 
+  showNeighborLines: boolean = false;
+
+  // Polyline 數組，用於保存基站之間的線條 @2024/01/04 Add 
+  nrLines: google.maps.Polyline[] = [];
+
+  /** @2024/01/04 Add
+   * 當按鈕被點擊時調用的函數，用於切換基站之間連線的顯示狀態
+   * @param {string} buttonId - 被點擊的按鈕ID
+   */
+  setActiveButton_NR(buttonId: string) {
+    // 如果當前按鈕 ID 和傳入的 ID 相同，則取消選中，否則設置為選中
     this.activeButton_NR = this.activeButton_NR === buttonId ? null : buttonId;
+    
+    // 切換顯示或隱藏與鄰居 BS 的連線
+    this.showNeighborLines = !this.showNeighborLines;
+    this.toggleNeighborLines(this.showNeighborLines);
   }
 
-  setActiveButton_menu(buttonId: string) {
+  /** @2024/01/04 Add
+   * 用於繪製或移除 BS 之間的線條
+   * @param {boolean} show - 指示是否顯示線條
+   */
+  toggleNeighborLines(show: boolean) {
+    if (show) {
+      // 繪製線條
+      this.allSimplifiedBsInfo.forEach(bs => {
+        if (bs.neighbors) {
+          bs.neighbors.forEach(neighbor => {
+            const neighborBs = this.allSimplifiedBsInfo.find(nbs => nbs.nci === neighbor.nci);
+            if (neighborBs) {
+
+              // 使用 parsePosition 函數來轉換位置字串為 LatLngLiteral 對象
+              const bsPosition = this.parsePosition(bs.position);
+              const neighborBsPosition = this.parsePosition(neighborBs.position);
+
+              // 創建路徑矩陣
+              const linePath = [bsPosition, neighborBsPosition];
+
+              // 創建 Polyline
+              const polyline = new google.maps.Polyline({
+                path: linePath,           // 設定 Polyline 的路徑點，將連接起來形成一條線
+                geodesic: true,           // 設定是否依據地球曲率顯示弧線
+                strokeColor: '#69ebf0f5', // 設定線的顏色
+                strokeOpacity: 0.4,       // 設定線的透明度
+                strokeWeight: 3           // 設定線的寬度(px)
+              });
+
+              // 將 Polyline 添加到地圖上
+              this.addPolylineToMap(polyline);
+
+              // 將 Polyline 添加到 nrLines 陣列中以便日後移除
+              this.nrLines.push(polyline);
+            }
+          });
+        }
+      });
+    } else {
+      // 移除線條
+      this.nrLines.forEach(polyline => {
+        this.removePolylineFromMap(polyline);
+      });
+      // 清空儲存線條的矩陣
+      this.nrLines = [];
+    }
+  }
+
+  /** @2024/01/04 Add
+   * 將 Polyline 添加到地圖上的方法
+   * @param {google.maps.Polyline} polyline - 要添加到地圖上的 Polyline 對象
+   */
+  addPolylineToMap(polyline: google.maps.Polyline) {
+    // 確認地圖已經載入，然後將 Polyline 設置到地圖上
+    if (this.map.googleMap) {
+      polyline.setMap(this.map.googleMap);
+    }
+  }
+
+  /** @2024/01/04 Add
+   * 從地圖上移除 Polyline 的方法
+   * @param {google.maps.Polyline} polyline - 要從地圖上移除的 Polyline 對象
+   */
+  removePolylineFromMap(polyline: google.maps.Polyline) {
+    // 將 Polyline 的地圖屬性設置為 null，從而將其從地圖上移除
+    polyline.setMap(null);
+  }
+
+  setActiveButton_menu( buttonId: string ) {
     this.activeButton_menu = this.activeButton_menu === buttonId ? null : buttonId;
   }
 
-  
   showMapModel: boolean = true;                   // 控制是否顯示地圖模式的 Flag    @12/13 Add
   recordColorbar: 'RSRP' | 'SINR' | null = null;  // 用於記錄 Colorbar 狀態的 Flag @12/13 Add
 
@@ -515,7 +610,8 @@ export class FieldInfoComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public commonService: CommonService,
-    public bsLocalFiles: localBSinfo,      // @12/27 Add for import BS Local Files
+    public bsLocalFiles: localBSinfo,    // @12/27 Add for import BS Local Files
+    //public API_field: apiForField,       // @2024/01/04 Add for import API of Field Management 
     private fb: FormBuilder,
     private dialog: MatDialog,
     public languageService: LanguageService,
@@ -596,11 +692,29 @@ export class FieldInfoComponent implements OnInit {
       lng: (minLng + maxLng) / 2
     };
   }
+
+
+  // 用於計算最佳視角和縮放級別( zoom of google map ) @2024/01/04 Add
+  calculateBestZoom() {
+    // 創建一個新的 LatLngBounds 對象
+    const bounds = new google.maps.LatLngBounds();
+    
+    // 將 polyPath 中的每個點加入 bounds 中
+    this.polyPath.forEach((position) => {
+      bounds.extend(position);
+    });
+    
+    // 這將會在地圖加載後自動調整到最佳視角和縮放級別
+    // 注意: 這需要在地圖加載並準備好之後調用
+    if (this.map.googleMap) {
+      this.map.googleMap.fitBounds(bounds);
+    }
+  }
   
   isMarkersLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
 
   // @2024/01/02 Add - 儲存場域邊界點
-  // @12/27 Update - Add Local Files Processing
+  // @2024/01/04 Update - Add calculateBestZoom()
   getQueryFieldInfo() {
     console.log('getQueryFieldInfo() - Start'); // 啟動獲取場域資訊
 
@@ -630,8 +744,11 @@ export class FieldInfoComponent implements OnInit {
 
       this.polyPath = positions;
 
+      this.calculateBestZoom(); // @2024/01/04 Add
+
       // 儲存或更新場域邊界點 @2024/01/02 Add
       this.fieldBounds = {
+
         // `north` 表示多邊形北邊的緯度，通過取所有頂點緯度的最大值來確定
         north: Math.max(...positions.map(p => p.lat)),
         
@@ -715,7 +832,7 @@ export class FieldInfoComponent implements OnInit {
           // This callback is executed when there is an error fetching the info
           console.error('獲取場域資訊出錯:', error);
           console.error('Error fetching field info:', error);
-          //this.isMarkersLoading = false; // 出錯時也應隱藏 spinner @12/28 Add for Progress Spinner
+          this.isMarkersLoading = false; // 出錯時也應隱藏 spinner @12/28 Add for Progress Spinner
         },
         complete: () => {
 

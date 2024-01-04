@@ -535,24 +535,34 @@ export class CommonService {
     return this.http.get(url);
   }
 
-  // Get SINR or RSRP map @2024/01/02 Add by yuchen
+  // Get SINR or RSRP map @2024/01/04 Update by yuchen
   bsHeatMap( fieldId: string, leftLongitude: number, leftLatitude: number, rightLongitude: number,
              rightLatitude: number, mapType: number ): Observable<any> {
     
     // 構建 API URL，指向後端的 bsHeatMap 路徑
-    const url = `${this.restPath}/irm/bsHeatMap`;
+    const url = `${this.restPath}/bsHeatMap`;
   
     // 準備請求體，包含所有後端所需的參數
     const requestBody = {
-      session: this.getSessionId(),      // 獲取當前會話的 ID
-      fieldId: fieldId,                  // 傳入場地 ID
-      'left-longitude': leftLongitude,   // 傳入左邊界的經度
-      'left-latitude': leftLatitude,     // 傳入左邊界的緯度
-      'right-longitude': rightLongitude, // 傳入右邊界的經度
-      'right-latitude': rightLatitude,   // 傳入右邊界的緯度
-      maptype: mapType                   // 傳入地圖類型，0 表示 SINR，1 表示 RSRP
+      session: this.getSessionId(),
+      fieldId: fieldId,
+      'left-longitude': String(Math.round(leftLongitude * 1000000)),    // 轉為字符串
+      'left-latitude': String(Math.round(rightLatitude * 1000000)),     // 轉為字符串
+      'right-longitude': String(Math.round(rightLongitude * 1000000)),  // 轉為字符串
+      'right-latitude': String(Math.round(leftLatitude * 1000000)),     // 轉為字符串
+      maptype: mapType
     };
-  
+    
+    console.log( "session:", requestBody.session, 
+                  "\nfieldId:", requestBody.fieldId, 
+                    "\nmaptype:", requestBody.maptype, 
+                    '\nleft-latitude:', requestBody['left-latitude'],
+                      '\nleft-longitude:', requestBody['left-longitude'], 
+                      '\nright-latitude:', requestBody['right-latitude'], 
+                        '\nright-longitude:', requestBody['right-longitude'] );
+
+    console.log( "JSON to bsHeatMap:", requestBody );
+
     // 發起 HTTP POST 請求，並返回 Observable 以便訂閱和處理響應
     return this.http.post( url, requestBody );
   }
