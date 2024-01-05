@@ -311,7 +311,7 @@
 					</li>
 				</ul>  
 				<div *ngIf="displayBsInfo">
-					<button mat-flat-button class="button-modifyConfiguration" tooltip="{{languageService.i18n['field.modifyConfiguration']}}" (click)="openUpdateModel()">{{languageService.i18n['field.modifyConfiguration']}}</button>
+					<button mat-flat-button class="button-modifyConfiguration" tooltip="{{languageService.i18n['field.modifyConfiguration']}}" (click)="openModifyConfigModel()">{{languageService.i18n['field.modifyConfiguration']}}</button>
 				</div>
 			</ng-container>
 
@@ -365,71 +365,73 @@
 		</div>
 	</div>
 
-	<ng-template #updateModal>
+	<ng-template #modifyConfigWindow>
 		<h5>{{languageService.i18n['field.modifyConfiguration']}}</h5>
-		<form [formGroup]="updateForm">
-			<ul>
+		<form [formGroup]="modifyConfigForm">
+			<ul *ngIf="displayBsInfo">
 				<li>
 					<label>{{ languageService.i18n['field.BSname'] }}</label>
 					<span>
-						<input type="text" formControlName="imageUrl" placeholder="{{ languageService.i18n['field.BSname'] }}" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+						<input type="text" formControlName="bsName" placeholder="{{ displayBsInfo.name }}" class="{{formValidated&&modifyConfigForm.controls['bsName'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>PCI</label>
 					<span>
-						<input type="text" formControlName="imageUrl" placeholder="PCI" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+						<input type="text" formControlName="pci" placeholder="{{ displayBsInfo.pci }}" class="{{formValidated&&modifyConfigForm.controls['pci'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>PLMN ID</label>
 					<span>
-						<input type="text" formControlName="imageUrl" placeholder="MCC" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
-						<input type="text" formControlName="imageUrl" placeholder="MNC" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+						<input type="text" formControlName="mcc" placeholder="{{ displayBsInfo['plmn-id'].mcc }}" class="{{formValidated&&modifyConfigForm.controls['mcc'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+					<span>
+						<input type="text" formControlName="mnc" placeholder="{{ displayBsInfo['plmn-id'].mnc }}" class="{{formValidated&&modifyConfigForm.controls['mnc'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>Tx Power (dBm)</label>
 					<span>
-						<input type="text" formControlName="imageUrl" placeholder="Tx Power (dBm)" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+						<input type="text" formControlName="txPower" placeholder="{{ displayBsInfo['tx-power'] }}" class="{{formValidated&&modifyConfigForm.controls['txPower'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>NR-ARFCN-UL</label>
 					<span>
-						<input type="text" formControlName="imageUrl" placeholder="NR-ARFCN-UL" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+						<input type="text" formControlName="nrarfcnul" placeholder="{{ displayBsInfo['nrarfcn-ul'] }}" class="{{formValidated&&modifyConfigForm.controls['nrarfcnul'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>NR-ARFCN-DL</label>
 					<span>
-						<input type="text" formControlName="imageUrl" placeholder="NR-ARFCN-DL" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+						<input type="text" formControlName="nrarfcndl" placeholder="{{ displayBsInfo['nrarfcn-dl'] }}" class="{{formValidated&&modifyConfigForm.controls['nrarfcndl'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>{{languageService.i18n['field.Longitude']}}</label>
 					<span>
-						<input type="text" formControlName="imageUrl" placeholder="{{languageService.i18n['field.Longitude']}}" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+						<input type="text" formControlName="longitude" placeholder="{{ displayBsInfoPosition.lng }}" class="{{formValidated&&modifyConfigForm.controls['longitude'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>{{languageService.i18n['field.Latitude']}}</label>
 					<span>
-						<input type="text" formControlName="imageUrl" placeholder="{{languageService.i18n['field.Latitude']}}" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-						<mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
+						<input type="text" formControlName="latitude" placeholder="{{ displayBsInfoPosition.lat }}" class="{{formValidated&&modifyConfigForm.controls['latitude'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 			</ul>
 			<div class="buttons">
-				<button type="button" (click)="update()">OK</button>
+				<button type="button" (click)="modifyConfig()">OK</button>
 				<button type="button" mat-dialog-close>Cancel</button>
 			</div>
 		</form>

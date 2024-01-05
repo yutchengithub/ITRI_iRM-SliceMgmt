@@ -6,7 +6,7 @@ export const environment = {
   production: false,  // 這個標誌用於指示應用是否運行於"開發"模式
 
   // 這表示這是用於"開發"環境的 Google Maps API 密鑰
-  googleMapsApiKey: 'Google_Maps_API_KEY', // 請自行調整成自己的KEY @12/20 Add
+  googleMapsApiKey: 'AIzaSyA5yDof3dbyeOvzepDYrnSGgVIqkRa3sNI', // 請自行調整成自己的KEY @12/20 Add
 };
 
 /*

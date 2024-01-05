@@ -19,11 +19,11 @@ import { BsInfoInField } from '../../shared/interfaces/Field_Info/For_queryField
 
 import { BSInfo } from '../../shared/interfaces/BS_Info/For_queryBsInfo_BS';                    // @12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS_Info/For_queryBsInfo_dist_BS';  // @12/24 Add
-import { map } from 'rxjs/operators';                                 // @12/24 Add
-import { localBSinfo } from '../../shared/local-files/For_BS';        // @12/27 Add
-import { apiForField } from '../../shared/api/For-field-management';  // @2024/01/04 Add for import API of Field Management 
+import { map } from 'rxjs/operators';                           // @12/24 Add
+import { localBSinfo } from '../../shared/local-files/For_BS';  // @12/27 Add
+import { GoogleMap } from '@angular/google-maps';               // @2024/01/03 Add
 
-import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
+import { apiForField } from '../../shared/api/For_Field';             // @2024/01/04 Add for import API of Field Management 
 
 
 export interface OcloudInfo {
@@ -114,8 +114,10 @@ export interface OcloudPerformance {
 }
 
 export interface SimplifiedBSInfo {
+  id: string;
   name: string;
   bstype: number;
+  description: string;
   status: number;
   nci: string;
   pci: number;
@@ -124,8 +126,13 @@ export interface SimplifiedBSInfo {
   "nrarfcn-dl": number;
   "nrarfcn-ul": number;
   position: string;
+  tac: string;
   neighbors: SimplifiedNeighborInfo[];
   iconUrl: string; // 存儲基站圖標的 URL
+  // components:{
+  //   type: string;
+  //   id: string;
+  // }
 }
 
 export interface SimplifiedNeighborInfo {
@@ -166,21 +173,6 @@ export class FieldInfoComponent implements OnInit {
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
   nullList: string[] = [];  // 給頁籤套件使用
-
-  @ViewChild('updateModal') updateModal: any;
-  updateModalRef!: MatDialogRef<any>;
-  updateForm!: FormGroup;
-  formValidated = false;
-
-  ocloudInfo: OcloudInfo = {} as OcloudInfo;
-  ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
-  softwareList: SoftwareList[] = [];
-  systemSummary: SystemSummary = {} as SystemSummary;;
-  fileNameMapSoftware: Map<string, SoftwareList> = new Map();
-  showTooltipCpu: any = {};
-  showTooltipStorage: any = {};
-  showTooltipNic: any = {};
-
   
   // For Fault Alarms: 
   // CRITICAL, MAJOR, MINOR, WARNING
@@ -190,7 +182,6 @@ export class FieldInfoComponent implements OnInit {
     theme: 'light',     // 'dark' | 'light'
     hideDelay: 250
   };
-
 
 // ↓ For setting Google Maps @2024/01/05 by yuchen
 
@@ -309,7 +300,7 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-// ↑ For setting Google Maps @2024/01/05 Update by yuchen
+// ↑ For setting Google Maps @2024/01/05 Update by yuchen ↑
 
 
   // @12/13 Add for listen activeButton
@@ -633,7 +624,7 @@ export class FieldInfoComponent implements OnInit {
     private route: ActivatedRoute,
     public commonService: CommonService,
     public bsLocalFiles: localBSinfo,    // @12/27 Add for import BS Local Files
-    //public API_field: apiForField,       // @2024/01/04 Add for import API of Field Management 
+    public API_field: apiForField,       // @2024/01/04 Add for import API of Field Management 
     private fb: FormBuilder,
     private dialog: MatDialog,
     public languageService: LanguageService,
@@ -644,12 +635,14 @@ export class FieldInfoComponent implements OnInit {
   ) {
     const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
     this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
+    this.createBSInfoForm(); // For updateBs API @2024/01/05 Add 
   }
 
   // 頁面初始化
   ngOnInit(){
 
     this.sessionId = this.commonService.getSessionId();
+    console.log( 'The sessionId is', this.sessionId ); // @2024/01/05 Add 
     this.route.params.subscribe((params) => {
       this.fieldId = params['id'];
       this.fieldName = params['name'];
@@ -1018,7 +1011,7 @@ export class FieldInfoComponent implements OnInit {
     console.log('getQueryBsInfoForAll() - End');
   }
 
-  // @12/26 Add
+  // @2024/01/05 Update - Add get "id" information
   // 函數定義: 將 BSInfo 類型轉換為 SimplifiedBSInfo 類型 - All-in-one BS
   convertBsInfoToSimplifiedFormat(bsInfo: BSInfo): SimplifiedBSInfo {
 
@@ -1035,9 +1028,12 @@ export class FieldInfoComponent implements OnInit {
     // 創建一個 SimplifiedBSInfo 類型的對象，並用 bsInfo 中的數據填充
     const simplified: SimplifiedBSInfo = {
 
-      name: bsInfo.name,      // 從 bsInfo 取出基站名稱
-      bstype: bsInfo.bstype,  // 從 bsInfo 取出基站類型
-      status: bsInfo.status,  // 從 bsInfo 取出基站狀態
+      id: bsInfo.id,                   // 從 bsInfo 取出基站 id
+      name: bsInfo.name,               // 從 bsInfo 取出基站名稱
+      tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
+      description: bsInfo.description, // 從 bsInfo 取出總基站描述
+      bstype: bsInfo.bstype,           // 從 bsInfo 取出基站類型
+      status: bsInfo.status,           // 從 bsInfo 取出基站狀態
       nci: bsInfo.info['bs-conf'].nci, // 從 bsInfo 的 info['bs-conf'] 取出 nci
       pci: bsInfo.info['bs-conf'].pci, // 從 bsInfo 的 info['bs-conf'] 取出 pci
       'plmn-id': { // 從 bsInfo 的 info['bs-conf']['plmn-id'] 取出 mcc 和 mnc 並創建 plmn-id 對象
@@ -1049,14 +1045,15 @@ export class FieldInfoComponent implements OnInit {
       "nrarfcn-ul": bsInfo.info['bs-conf']['nrarfcn-ul'], // 從 bsInfo 的 info['bs-conf'] 取出上行 NR ARFCN 
       position: bsInfo.position,  // 從 bsInfo 取出基站位置    
       neighbors,  // 設定鄰居基站數據
-      iconUrl: ""
+      iconUrl: "",
+      
     };
     
     // 返回轉換後的 SimplifiedBSInfo 對象
     return simplified;
   }
 
-  // @12/26 Add
+  // @2024/01/05 Update - Add get "id" information
   // 函數定義：將 BSInfo_dist 類型轉換為 SimplifiedBSInfo 類型的數組
   convertDistBsInfoToSimplifiedFormat(Dist_bsInfo: BSInfo_dist): SimplifiedBSInfo[] {
 
@@ -1075,19 +1072,22 @@ export class FieldInfoComponent implements OnInit {
 
       // 創建一個新的 SimplifiedBSInfo 對象，包含從子基站訊息和 ANR 訊息中提取的數據
       return {
-        name: Dist_bsInfo.name,              // 總基站名稱
-        bstype: Dist_bsInfo.bstype,          // 基站類型
-        status: Dist_bsInfo.status,          // 基站狀態
-        nci: subBsInfo.nci,                  // 子基站的 NCI
-        pci: subBsInfo.DU?.nRPCI,            // 子基站的 DU 中的 nRPCI 值
-        'plmn-id': {                         // 子基站的 PLMN ID 訊息
+        id: Dist_bsInfo.id,                   // 從 Dist_bsInfo 取出總基站 id
+        name: Dist_bsInfo.name,               // 從 Dist_bsInfo 取出總基站名稱
+        description: Dist_bsInfo.description, // 從 Dist_bsInfo 取出總基站描述
+        bstype: Dist_bsInfo.bstype,           // 從 Dist_bsInfo 取出總基站類型
+        status: Dist_bsInfo.status,           // 從 Dist_bsInfo 取出總基站狀態
+        nci: subBsInfo.nci,                   // 從 Dist_bsInfo 取出子基站的 NCI
+        pci: subBsInfo.DU?.nRPCI,             // 從 Dist_bsInfo 取出子基站的 DU 中的 nRPCI 值
+        'plmn-id': {                          // 從 Dist_bsInfo 取出子基站的 PLMN ID 訊息
           mcc: subBsInfo.CU?.pLMNId_MCC,
           mnc: subBsInfo.CU?.pLMNId_MNC,
         },
-        "tx-power": subBsInfo.DU?.configuredMaxTxPower, // DU 配置的最大傳輸功率
-        "nrarfcn-dl": subBsInfo.DU?.arfcnDL,            // 下行頻率
-        "nrarfcn-ul": subBsInfo.DU?.arfcnUL,            // 上行頻率
-        position: subBsInfo.RU?.position,               // RU 的位置訊息
+        "tx-power": subBsInfo.DU?.configuredMaxTxPower, // 取出 DU 配置的最大傳輸功率
+        "nrarfcn-dl": subBsInfo.DU?.arfcnDL,            // 取出 DU 配置下行頻率
+        "nrarfcn-ul": subBsInfo.DU?.arfcnUL,            // 取出 DU 配置上行頻率
+        tac: subBsInfo.DU?.nRTAC,                       // 取出 DU 配置 tac
+        position: subBsInfo.RU?.position,               // 取出 RU 的位置訊息
         neighbors: anrNeighbors,                        // 映射後的鄰居基站數據
         iconUrl: ""
       };
@@ -1109,7 +1109,7 @@ export class FieldInfoComponent implements OnInit {
     // 檢查基站是否被選中
     if (isSelected) {
 
-      if (bsInfoBSType === 2 && bsInfoStatus === 1) {
+      if ( bsInfoBSType === 2 && bsInfoStatus === 1 ) {
         iconName = 'dist_gnb_offline_selected.png'; // 分布式基站離線且被選中的圖標
       } else if (bsInfoBSType === 2 && bsInfoStatus === 2) {
         iconName = 'dist_gnb_online_selected.png';  // 分布式基站在線且被選中的圖標
@@ -1122,7 +1122,7 @@ export class FieldInfoComponent implements OnInit {
     } else { // 若基站未被選中
 
       // 檢查名稱是否與第一筆資料相同且 bsInfoBSType 為 2
-      if (bsInfoBSType === 2 && currentBsInfoName === firstORclickBsInfoName) {
+      if ( bsInfoBSType === 2 && currentBsInfoName === firstORclickBsInfoName ) {
       
         // 符合就選擇分布式基站的非選中圖標
         iconName = (bsInfoStatus === 1) ? 'dist_gnb_offline_nonselected.png' : 'dist_gnb_online_nonselected.png';
@@ -1174,37 +1174,6 @@ export class FieldInfoComponent implements OnInit {
     // 在控制台輸出當前顯示的基站資訊
     console.log("After click onSelectBsInfo the displayBsInfo:", this.displayBsInfo)
   }
-
-
-  // Get response of queryBsInfo API
-  // 該函數執行完應該會返回一個 Observable
-  // getQueryBsInfo(bsId: string) {
-  //   console.log('getQueryBsInfo() - Start');
-  //   console.log('bsId: ', bsId);
-
-  //   // 直接返回 API 請求的 Observable
-  //   return this.commonService.queryBsInfo(bsId).pipe(
-  //     tap({
-  //       next: (res) => {
-  //         console.log('Get queryBsInfo from API:', res, '\nBsName:', res.name, ', BsId:', res.id);
-
-  //         // 處理從 API 獲取的基站資訊中的位置訊息
-  //         if (!res.position) { // 檢查位置訊息是否為空、undefined 或 null
-  //           // 嘗試從 res.info.RU.position 獲取位置訊息
-  //           // 如果 res.info 或 res.info.RU 不存在，或者 res.info.RU.position 為空，
-  //           // 則將 res.position 設置為 "None"
-  //          // res.position = res.info?.RU?.position || "None";
-  //         }
-  //       },
-  //       error: (error) => {
-  //         console.error('Error fetching Bs Info:', error);
-  //       },
-  //       complete: () => {
-  //         console.log('Bs Info fetch for ID', bsId, 'completed');
-  //       }
-  //     })
-  //   );
-  // }
 
   // @12/19 Add
   // 此方法用於將位置訊息的字串轉換為 Google 地圖所需的 LatLngLiteral 對象
@@ -1277,7 +1246,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // 設定場域對應的告警種類數量 @12/07 Update by yuchen
-  severityCount(severity: string): number {
+  severityCount( severity: string ): number {
 
     if (!this.fieldInfo) {
       return 0; // 確保 fieldInfo 已被賦值且不為空
@@ -1296,14 +1265,121 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  // 往 Fault Mnagement @12/07 Update
+ // 返回 Field Management 主頁
+  back() {
+    this.router.navigate(['/main/field-mgr']);
+  }
+
+  // 往 Fault Management @12/07 Update
   goFaultMgr() {
     this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
   }
 
+  // 往 Performance Management @2024/01/05 Update
   goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr', this.fieldName]);
+    this.router.navigate(['/main/performance-mgr']);
   }
+
+
+// Modify Configuration Setting @2024/01/05 Add ↓
+
+  @ViewChild('modifyConfigWindow') modifyConfigWindow: any;
+  modifyConfigWindowRef!: MatDialogRef<any>;
+  modifyConfigForm!: FormGroup;
+  formValidated = false;
+
+  createBSInfoForm() {
+    this.modifyConfigForm = this.fb.group({
+      bsName: new FormControl(''), 
+      pci: new FormControl(''),
+      mcc: new FormControl(''),
+      mnc: new FormControl(''),
+      txPower: new FormControl(''),
+      nrarfcnul: new FormControl(''),
+      nrarfcndl: new FormControl(''),
+      longitude: new FormControl(''),
+      latitude: new FormControl('')
+    });
+  }
+  
+  openModifyConfigModel() {
+    this.formValidated = false;
+    this.modifyConfigWindowRef = this.dialog.open(this.modifyConfigWindow, { id: 'modifyConfigWindow' });
+    this.modifyConfigWindowRef.afterClosed().subscribe(() => {
+      this.formValidated = false;
+    });
+  }
+
+  modifyConfig() {
+    this.formValidated = true;
+    if (!this.modifyConfigForm.valid) {
+      return;
+    }
+  
+    const formValues = this.modifyConfigForm.value;
+  
+    // 解析原始的 position 字串以獲取經緯度
+    const originalPosition = this.displayBsInfo ? this.parsePosition( this.displayBsInfo.position ) : null;
+  
+    const body: any = {
+      session: this.sessionId,
+      id: this.displayBsInfo!.id,
+      name: formValues.bsName || this.displayBsInfo!.name,
+      bstype: this.displayBsInfo!.bstype,
+      description: this.displayBsInfo!.description,
+      pci: formValues.pci || this.displayBsInfo!.pci,
+      plmnid: {
+        mcc: formValues.mcc || this.displayBsInfo!['plmn-id'].mcc,
+        mnc: formValues.mnc || this.displayBsInfo!['plmn-id'].mnc
+      },
+      nci: this.displayBsInfo!.nci,
+      gpslongitude: formValues.longitude ? formValues.longitude * 1000000 : originalPosition ? originalPosition.lng * 1000000 : undefined,
+      gpslatitude: formValues.latitude ? formValues.latitude * 1000000 : originalPosition ? originalPosition.lat * 1000000 : undefined,
+      nrarfcndl: formValues.nrarfcndl || this.displayBsInfo!['nrarfcn-dl'],
+      nrarfcnul: formValues.nrarfcnul || this.displayBsInfo!['nrarfcn-ul'],
+      txpower: formValues.txPower || this.displayBsInfo!['tx-power'],
+      tac: this.displayBsInfo!.tac,
+      // components:{
+      //   type: this.displayBsInfo!.components.type,
+      //   id: this.displayBsInfo!.components.id
+      // }
+    };
+  
+    // 如果有新的經緯度值，則組合成所需的格式
+    if (formValues.longitude || formValues.latitude) {
+      body.position = `[${(formValues.longitude).toFixed(6)},${(formValues.latitude).toFixed(6)}]`;
+    } else if (originalPosition) {
+      // 如果經緯度沒有更改，使用原有的 position
+      body.position = this.displayBsInfo!.position;
+    }
+  
+    // 發送更新請求
+    this.API_field.updateBs(body).subscribe(
+      () => console.log('更新成功。')
+    );
+    this.modifyConfigWindowRef.close();
+  
+    this.getQueryFieldInfo(); // 刷新頁面數據
+  }
+  
+// Modify Configuration Setting @2024/01/05 Add ↑
+
+
+
+
+
+
+
+
+
+  ocloudInfo: OcloudInfo = {} as OcloudInfo;
+  ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
+  softwareList: SoftwareList[] = [];
+  systemSummary: SystemSummary = {} as SystemSummary;;
+  fileNameMapSoftware: Map<string, SoftwareList> = new Map();
+  showTooltipCpu: any = {};
+  showTooltipStorage: any = {};
+  showTooltipNic: any = {};
 
   getOcloudPerformance() {
     if (this.commonService.isLocal) {
@@ -1362,7 +1438,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
   softwareVersion(): string {
-    const fileName = this.updateForm.controls['fileName'].value;
+    const fileName = this.modifyConfigForm.controls['fileName'].value;
     if (fileName === '') {
       return '';
     } else {
@@ -1382,68 +1458,5 @@ export class FieldInfoComponent implements OnInit {
     //   this.ocloudPerformance.network += ' Kbps';
     // }
   }
-
-  // 返回 Field Mnagement 主頁
-  back() {
-    this.router.navigate(['/main/field-mgr']);
-  }
-
-  openUpdateModel() {
-    this.formValidated = false;
-    this.updateForm = this.fb.group({
-      'type': new FormControl('imageUrl'),
-      'imageUrl': new FormControl('', [Validators.required]),
-      'fileName': new FormControl('')
-    });
-    this.updateModalRef = this.dialog.open(this.updateModal, { id: 'updateModal' });
-    this.updateModalRef.afterClosed().subscribe(() => {
-      this.formValidated = false;
-    });
-  }
-
-  changeType(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    if (e.value === 'imageUrl') {
-      this.updateForm.controls['imageUrl'].setValidators([Validators.required]);
-      this.updateForm.controls['fileName'].setValidators(null);
-      this.updateForm.controls['fileName'].setValue('');
-    } else {
-      this.updateForm.controls['imageUrl'].setValidators(null);
-      this.updateForm.controls['imageUrl'].setValue('');
-      this.updateForm.controls['fileName'].setValidators([Validators.required]);
-    }
-    this.updateForm.controls['imageUrl'].updateValueAndValidity();
-    this.updateForm.controls['fileName'].updateValueAndValidity();
-  }
-
-  update() {
-    this.formValidated = true;
-    if (!this.updateForm.valid) {
-      return;
-    }
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.updateModalRef.close();
-    } else {
-      const body: any = {
-        ocloud: this.ocloudInfo.id,
-        currentVersion: this.ocloudInfo.softwareVersion,
-        sessionid: this.sessionId
-      };
-      if (this.updateForm.controls['type'].value === 'imageUrl') {
-        const imageUrlSplit = this.updateForm.controls['imageUrl'].value.split('/');
-        body['fileName'] = imageUrlSplit[imageUrlSplit.length - 1];
-      } else {
-        body['fileName'] = this.updateForm.controls['fileName'].value;
-        body['version'] = this.softwareVersion();
-      }
-      this.commonService.applyOcloudSoftware(body).subscribe(
-        () => console.log('Update Successful.')
-      );
-      this.updateModalRef.close();
-      //this.getOcloudInfo();
-    }
-  }
-
 
 }

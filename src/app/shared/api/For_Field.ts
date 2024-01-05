@@ -1,7 +1,11 @@
 import { HttpHeaders, HttpClient, HttpParams  } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Item } from '../models/item';
+import { Injectable } from '@angular/core';
 
+@Injectable({
+  providedIn: 'root'
+})
 export class apiForField {
 
   restPath!: string;
@@ -32,14 +36,10 @@ export class apiForField {
   statusMapDisplayName: Map<string, string> = new Map();
   typeMapDisplayName: Map<string, string> = new Map();
 
-  constructor(private http: HttpClient) {
-    this.statusList.forEach((row) => {
-      this.statusMapDisplayName.set(row.value, row.displayName);
-    });
-
-    this.TypeList.forEach((row) => {
-      this.typeMapDisplayName.set(row.value, row.displayName);
-    });
+  constructor(
+    private http: HttpClient
+  ) {
+   
   }
 
     
@@ -104,5 +104,13 @@ export class apiForField {
     return this.http.post( url, requestBody );
   }
   
+  updateBs( body: {} ): Observable<any> {
+
+    const url = `${this.restPath}/updateBs`;
+    
+    const bodyStr = JSON.stringify( body );
+    
+    return this.http.post( url, bodyStr );
+  }
 
 }

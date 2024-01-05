@@ -66,7 +66,7 @@ import { MatListModule } from '@angular/material/list';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 
 import { localBSinfo } from './shared/local-files/For_BS';       // @12/27 Add 
-import { apiForField } from './shared/api/For-field-management'; // @2024/01/04 Add 
+import { apiForField } from './shared/api/For_Field'; // @2024/01/04 Add 
 
 @NgModule({
   declarations: [
@@ -150,7 +150,7 @@ import { apiForField } from './shared/api/For-field-management'; // @2024/01/04 
     LanguageService,
     CommonService,
     localBSinfo,  // @12/27 Add for import BS Local files
-    //apiForField,  // @2024/01/04 Add for import API of Field Management 
+    apiForField,  // @2024/01/04 Add for import API of Field Management 
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
