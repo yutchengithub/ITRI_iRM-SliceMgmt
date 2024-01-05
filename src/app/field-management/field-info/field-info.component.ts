@@ -10,7 +10,6 @@ import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
 
 import { forkJoin, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { ChangeDetectorRef } from '@angular/core';          // @12/13 Add for use 'detectChanges()'
 import { environment } from 'src/environments/environment'; // @12/20 Add for import Google Maps API Key
 import { NgZone } from '@angular/core';
@@ -136,7 +135,7 @@ export interface SimplifiedNeighborInfo {
 }
 
 // @2024/01/03 Add
-// 定義一個枚舉來表示不同的 overlay 類型
+// 定義一個 enum 來表示不同的 overlay 類型
 enum OverlayType {
   FieldImage,
   SINR,
@@ -193,7 +192,7 @@ export class FieldInfoComponent implements OnInit {
   };
 
 
-// ↓ For setting Google Maps @12/20 Update by yuchen
+// ↓ For setting Google Maps @2024/01/05 by yuchen
 
   // 定義用於繪製多邊形的樣式選項
   polyOptions: google.maps.PolygonOptions = {
@@ -212,7 +211,7 @@ export class FieldInfoComponent implements OnInit {
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
   
   // 設置地圖的初始縮放級別
-  zoom = 16;
+  //zoom = 16;
 
   // 定義地圖的其他配置選項，包括樣式，來隱藏默認的地標
   mapOptions: google.maps.MapOptions = {
@@ -241,17 +240,6 @@ export class FieldInfoComponent implements OnInit {
     anchor: new google.maps.Point(15, 15),    // 圖標錨點的位置
   };
 
-// ↑ For setting Google Maps @12/20 Update by yuchen
-
-
-
-
-  // @12/13 Add for listen activeButton
-  // 用於監聽當前哪個按鈕是激活的
-  //activeButton_NR: string | null = 'NR';       // 預設激活 'NR' 按鈕
-  activeButton_NR: string | null = null;         // 預設不激活 'NR' 按鈕 @12/21 Add
-  activeButton_menu: string | null = null;       // 儲存當前激活的菜單按鈕 ID
-
   // @2024/01/02 Add
   // 使用 @ViewChild 裝飾器來獲取模板中 <google-map> 元素的實例。
   // '!' 非空斷言操作符告訴 TypeScript 編譯器該屬性將會在後續的代碼中被賦值，
@@ -261,10 +249,34 @@ export class FieldInfoComponent implements OnInit {
   // 用於儲存場域多邊形的邊界點 @2024/01/02 Add
   fieldBounds!: google.maps.LatLngBoundsLiteral;    // 用於儲存放置 GroundOverlay 的場域邊界資訊
 
-  // 在類的屬性中添加一個用於跟蹤 overlay 顯示狀態的變量
-  overlayVisible: boolean = false;                  // 一個 boolean 變量，用於指示 GroundOverlay 是否應該顯示在地圖上
-  overlay: google.maps.GroundOverlay | null = null; // 用於存儲 GroundOverlay 實例的變量，初始值為 null。這個變量將在需要顯示場域圖片時被賦值
+  // @2024/01/05 Add
+  // ngAfterViewInit 是 Angular 在組件視圖初始化後會呼叫的生命週期事件。
+  ngAfterViewInit() {
+    // 使用 setTimeout 確保地圖元素已經加載完成並存在於 DOM 中。
+    // 這樣做可以避免在 Google Maps API 還沒有完全準備好時嘗試操作地圖。
+    setTimeout(() => {
+      // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
+      this.adjustMapZoom();
+    }, 100); // 設定 100 毫秒的延遲，以確保地圖的初始化過程已經完成。
+  }
 
+  // @2024/01/05 Add
+  // adjustMapZoom 方法用於根據場域邊界自動調整地圖的縮放等級和視角。
+  adjustMapZoom() {
+    // 先檢查地圖實例和場域邊界是否都已經被正確設定。
+    if ( this.map.googleMap && this.fieldBounds ) {
+      // 如果都設定好了，就利用 Google Maps API 的 fitBounds 方法，
+      // 傳入場域邊界值，讓 API 自動調整地圖的縮放等級和中心點，
+      // 確保用戶視野範圍內可以看到完整的場域邊界。
+      this.map.googleMap.fitBounds( this.fieldBounds );
+    }
+  }
+
+
+  // 用於跟蹤 overlay 顯示狀態的變數
+  overlayVisible: boolean = false;                  // 一個 boolean 變數，用於指示 GroundOverlay 是否應該顯示在地圖上
+  overlay: google.maps.GroundOverlay | null = null; // 用於存儲 GroundOverlay 實例的變數，初始值為 null。這個變數將在需要顯示場域圖片時被賦值
+  
   // 用於跟蹤當前 overlay 類型的屬性 @2024/01/03 Add
   currentOverlayType: OverlayType = OverlayType.None;
 
@@ -297,7 +309,16 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
+// ↑ For setting Google Maps @2024/01/05 Update by yuchen
+
+
+  // @12/13 Add for listen activeButton
+  // 用於監聽當前哪個按鈕是激活的
   activeButton_fieldImage: string | null = null; // 儲存當前激活的場域圖片按鈕 ID
+  //activeButton_NR: string | null = 'NR';       // 預設激活 'NR' 按鈕
+  activeButton_NR: string | null = null;         // 預設不激活 'NR' 按鈕 @12/21 Add
+  activeButton_rsrp_sinr: string | null = null;  // 儲存當前激活的 RSRP 或 SINR 圖示按鈕 ID
+  activeButton_menu: string | null = null;       // 儲存當前激活的菜單按鈕 IDs
 
   // 當按鈕被點擊時，觸發更新激活按鈕"fieldImage"的狀態 @2024/01/03 Update
   setActiveButton_fieldImage( buttonId: string ) {
@@ -322,7 +343,6 @@ export class FieldInfoComponent implements OnInit {
     }
   }
   
-
   // 獲取並顯示場域圖片 
   // @2024/01/03 Update - local Processing, displayImageOnMap()
   // @2024/01/04 Add loading spinner
@@ -372,117 +392,8 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  // @12/08 Add for toggle colobar
-  currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何 colorbar
 
-  // @2024/01/03 Update
-  toggleColorbar(type: 'RSRP' | 'SINR') {
-    console.log("The click button is:", type);
-
-    // 如果 Field image 的按鈕是激活狀態，則移除 Field image 的 overlay
-    if (this.activeButton_fieldImage && this.overlayVisible === true) {
-      this.activeButton_fieldImage = null; // 將 Field image 的按鈕狀態設為非激活
-      this.removeOverlay();        // 移除 overlay
-      this.overlayVisible = false; // 設定 overlay 不可見
-    }
-
-    // 切換 Colorbar 狀態
-    if (this.currentColorbar === null) {
-      this.currentColorbar = type;
-      this.setActiveButton_rsrp_sinr(type);
-    } else {
-      if (type === this.currentColorbar) {
-        this.currentColorbar = null;
-        this.removeOverlay(); // 移除當前顯示的 overlay
-        this.overlayVisible = false; // 設定 overlay 不可見
-      } else {
-        this.currentColorbar = type;
-        this.setActiveButton_rsrp_sinr(type);
-      }
-    }
-  }
-
-  activeButton_rsrp_sinr: string | null = null;  // 儲存當前激活的 RSRP 或 SINR 圖示按鈕 ID
-
-  // @2024/01/03 Update
-  setActiveButton_rsrp_sinr(buttonId: string) {
-    console.log("The click button is:", buttonId);
-
-    
-    // 切換 RSRP/SINR 圖示按鈕狀態
-    if (this.activeButton_rsrp_sinr === null) {
-
-      this.activeButton_rsrp_sinr = buttonId;
-      const overlayType = (this.activeButton_rsrp_sinr === 'SINR') ? OverlayType.SINR : OverlayType.RSRP;
-      this.overlayVisible = true; // 設定 overlay 為可見
-      this.getSinrRsrpImage(overlayType);
-
-    } else {
-      
-      this.removeOverlay(); // 移除當前顯示的 overlay
-      this.activeButton_rsrp_sinr = buttonId;
-      const overlayType = (this.activeButton_rsrp_sinr === 'SINR') ? OverlayType.SINR : OverlayType.RSRP;
-      this.overlayVisible = true; // 設定 overlay 為可見
-      this.getSinrRsrpImage(overlayType);
-
-    }
-  }
-
-  // @2024/01/04 Update
-  getSinrRsrpImage( overlayType: OverlayType ) {
-    
-    this.isMarkersLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
-
-    // 根據 overlayType 決定 mapType
-    const mapType = ( overlayType === OverlayType.SINR ) ? 0 : 1;
-
-    if ( this.activeButton_rsrp_sinr ) {
-      if (this.commonService.isLocal) {
-        let imageSrc_localPath = '';
-
-        // 設定本地 SINR 或 RSRP 圖片的路徑
-        if ( overlayType === OverlayType.SINR ) {
-          imageSrc_localPath = './assets/img/sinrMap_local.png'; // 定義本地 SINR 圖片路徑
-          console.log("The local path of image is:", imageSrc_localPath);
-        } else {
-          imageSrc_localPath = './assets/img/rsrpMap_local.png'; // 定義本地 RSRP 圖片路徑
-          console.log("The local path of image is:", imageSrc_localPath);
-        }
-
-        // 如果本地路徑存在，則在地圖上顯示本地圖片
-        if ( imageSrc_localPath ) {
-          this.displayImageOnMap( imageSrc_localPath, overlayType );
-        }
-        this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
-      } else {
-
-        // 從 fieldBounds 提取經緯度
-        const leftLongitude = this.fieldBounds.west;  // 西邊界經度
-        const leftLatitude = this.fieldBounds.north;  // 北邊界緯度
-        const rightLongitude = this.fieldBounds.east; // 東邊界經度
-        const rightLatitude = this.fieldBounds.south; // 南邊界緯度
-
-        // 調用後端 API 獲取 SINR 或 RSRP 圖片
-        this.commonService.bsHeatMap( this.fieldId, leftLongitude, leftLatitude,
-                                       rightLongitude, rightLatitude, mapType ).subscribe({
-          next: (response) => {
-            const imageSrc = 'data:image/png;base64,' + response.heatMap; // 從後端回應中獲取圖片
-            this.displayImageOnMap( imageSrc, overlayType );
-          },
-          error: (error) => {
-            console.error("Error fetching SINR/RSRP image:", error);
-            this.isMarkersLoading = false; // 出錯時，也隱藏 Spinner
-          },
-          complete: () => {
-            console.log("SINR/RSRP image fetch completed");
-            this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
-          }
-        });
-      }
-    }
-  }
-
-  // 用於跟蹤鄰居線條的顯示狀態 @2024/01/04 Add 
+  // 用於跟蹤鄰居 BS 線條的顯示狀態 @2024/01/04 Add 
   showNeighborLines: boolean = false;
 
   // Polyline 數組，用於保存基站之間的線條 @2024/01/04 Add 
@@ -571,6 +482,115 @@ export class FieldInfoComponent implements OnInit {
 
   setActiveButton_menu( buttonId: string ) {
     this.activeButton_menu = this.activeButton_menu === buttonId ? null : buttonId;
+  }
+
+
+  // @12/08 Add for toggle colobar
+  currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何 colorbar
+
+  // @2024/01/03 Update
+  toggleColorbar(type: 'RSRP' | 'SINR') {
+    console.log("The click button is:", type);
+
+    // 如果 Field image 的按鈕是激活狀態，則移除 Field image 的 overlay
+    if (this.activeButton_fieldImage && this.overlayVisible === true) {
+      this.activeButton_fieldImage = null; // 將 Field image 的按鈕狀態設為非激活
+      this.removeOverlay();        // 移除 overlay
+      this.overlayVisible = false; // 設定 overlay 不可見
+    }
+
+    // 切換 Colorbar 狀態
+    if (this.currentColorbar === null) {
+      this.currentColorbar = type;
+      this.setActiveButton_rsrp_sinr(type);
+    } else {
+      if (type === this.currentColorbar) {
+        this.currentColorbar = null;
+        this.removeOverlay(); // 移除當前顯示的 overlay
+        this.overlayVisible = false; // 設定 overlay 不可見
+      } else {
+        this.currentColorbar = type;
+        this.setActiveButton_rsrp_sinr(type);
+      }
+    }
+  }
+
+  // @2024/01/03 Update
+  setActiveButton_rsrp_sinr(buttonId: string) {
+    console.log("The click button is:", buttonId);
+
+    
+    // 切換 RSRP/SINR 圖示按鈕狀態
+    if (this.activeButton_rsrp_sinr === null) {
+
+      this.activeButton_rsrp_sinr = buttonId;
+      const overlayType = (this.activeButton_rsrp_sinr === 'SINR') ? OverlayType.SINR : OverlayType.RSRP;
+      this.overlayVisible = true; // 設定 overlay 為可見
+      this.getSinrRsrpImage(overlayType);
+
+    } else {
+      
+      this.removeOverlay(); // 移除當前顯示的 overlay
+      this.activeButton_rsrp_sinr = buttonId;
+      const overlayType = (this.activeButton_rsrp_sinr === 'SINR') ? OverlayType.SINR : OverlayType.RSRP;
+      this.overlayVisible = true; // 設定 overlay 為可見
+      this.getSinrRsrpImage(overlayType);
+
+    }
+  }
+
+  // @2024/01/04 Update
+  getSinrRsrpImage( overlayType: OverlayType ) {
+    
+    this.isMarkersLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
+
+    // 根據 overlayType 決定 mapType
+    const mapType = ( overlayType === OverlayType.SINR ) ? 0 : 1;
+
+    if ( this.activeButton_rsrp_sinr ) {
+      if (this.commonService.isLocal) {
+        let imageSrc_localPath = '';
+
+        // 設定本地 SINR 或 RSRP 圖片的路徑
+        if ( overlayType === OverlayType.SINR ) {
+          imageSrc_localPath = './assets/img/sinrMap_local.png'; // 定義本地 SINR 圖片路徑
+          console.log("The local path of image is:", imageSrc_localPath);
+        } else {
+          imageSrc_localPath = './assets/img/rsrpMap_local.png'; // 定義本地 RSRP 圖片路徑
+          console.log("The local path of image is:", imageSrc_localPath);
+        }
+
+        // 如果本地路徑存在，則在地圖上顯示本地圖片
+        if ( imageSrc_localPath ) {
+          this.displayImageOnMap( imageSrc_localPath, overlayType );
+        }
+        this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
+      } else {
+
+        // 從 fieldBounds 提取經緯度
+        const leftLongitude = this.fieldBounds.west;  // 西邊界經度
+        const leftLatitude = this.fieldBounds.north;  // 北邊界緯度
+        const rightLongitude = this.fieldBounds.east; // 東邊界經度
+        const rightLatitude = this.fieldBounds.south; // 南邊界緯度
+
+        // 調用後端 API 獲取 SINR 或 RSRP 圖片
+        this.commonService.bsHeatMap( this.fieldId, leftLongitude, leftLatitude,
+                                       rightLongitude, rightLatitude, mapType ).subscribe({
+          next: (response) => {
+            const imageSrc = 'data:image/png;base64,' + response.heatMap; // 從後端回應中獲取圖片
+            this.displayImageOnMap( imageSrc, overlayType );
+          },
+          error: (error) => {
+            console.error("Error fetching SINR/RSRP image:", error);
+            this.isMarkersLoading = false; // 出錯時，也隱藏 Spinner
+          },
+          complete: () => {
+            console.log("SINR/RSRP image fetch completed");
+            this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
+          }
+        });
+      }
+    }
   }
 
   showMapModel: boolean = true;                   // 控制是否顯示地圖模式的 Flag    @12/13 Add
@@ -694,24 +714,6 @@ export class FieldInfoComponent implements OnInit {
       lng: (minLng + maxLng) / 2
     };
   }
-
-
-  // 用於計算最佳視角和縮放級別( zoom of google map ) @2024/01/04 Add
-  calculateBestZoom() {
-    // 創建一個新的 LatLngBounds 對象
-    const bounds = new google.maps.LatLngBounds();
-    
-    // 將 polyPath 中的每個點加入 bounds 中
-    this.polyPath.forEach((position) => {
-      bounds.extend(position);
-    });
-    
-    // 這將會在地圖加載後自動調整到最佳視角和縮放級別
-    // 注意: 這需要在地圖加載並準備好之後調用
-    // if (this.map.googleMap) {
-    //   this.map.googleMap.fitBounds(bounds);
-    // }
-  }
   
   isMarkersLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
 
@@ -745,8 +747,6 @@ export class FieldInfoComponent implements OnInit {
       console.log( 'Local field position:', positions );
 
       this.polyPath = positions;
-
-      this.calculateBestZoom(); // @2024/01/04 Add
 
       // 儲存或更新場域邊界點 @2024/01/02 Add
       this.fieldBounds = {
