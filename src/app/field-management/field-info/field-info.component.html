@@ -51,11 +51,15 @@
 							<span>{{ languageService.i18n['field.config'] }}</span>
 						</button>
 						<button mat-menu-item>
-							<mat-icon></mat-icon>
+							<span class="material-symbols-outlined">
+								tune
+								</span>
 							<span>{{ languageService.i18n['field.config'] }}</span>
 						</button>
 						<button mat-menu-item>
-							<mat-icon></mat-icon>
+							<span class="material-symbols-outlined">
+								tune
+								</span>
 							<span>{{ languageService.i18n['field.configPMset'] }}</span>
 						</button>
 
@@ -65,11 +69,15 @@
 						  <span>{{ languageService.i18n['field.report'] }}</span>
 						</button>
 						<button mat-menu-item>
-							<mat-icon></mat-icon>
+							<span class="material-symbols-outlined">
+								wysiwyg
+								</span>
 							<span>{{ languageService.i18n['field.reportPM'] }}</span>
 						</button>
 						<button mat-menu-item (click)="goFaultMgr()"><!-- @12/13 Add click goFaultMgr() -->
-							<mat-icon></mat-icon>
+							<span class="material-symbols-outlined">
+								wysiwyg
+								</span>
 							<span>{{ languageService.i18n['field.reportFM'] }}</span>
 						</button>
 
@@ -79,7 +87,9 @@
 						  <span>{{ languageService.i18n['field.optim'] }}</span>
 						</button>
 						<button mat-menu-item>
-							<mat-icon></mat-icon>
+							<span class="material-symbols-outlined">
+								play_circle
+								</span>
 							<span>{{ languageService.i18n['field.optimSON'] }}</span>
 						</button>
 
@@ -385,11 +395,9 @@
 				</li>
 				<li>
 					<label>PLMN ID</label>
-					<span>
+					<span class="input_2">
 						<input type="text" formControlName="mcc" placeholder="{{ displayBsInfo['plmn-id'].mcc }}" class="{{formValidated&&modifyConfigForm.controls['mcc'].invalid?'required':''}}">
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-					</span>
-					<span>
 						<input type="text" formControlName="mnc" placeholder="{{ displayBsInfo['plmn-id'].mnc }}" class="{{formValidated&&modifyConfigForm.controls['mnc'].invalid?'required':''}}">
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>

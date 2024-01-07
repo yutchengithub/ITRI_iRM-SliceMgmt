@@ -399,3 +399,11 @@ ul.treeList > li span input[type=text] {
 .content-inner .panel > label input[type=radio]:checked + div {
   background-color: #fff7a6ba;
 }
+.mat-menu-item[disabled], .mat-menu-item[disabled] .mat-menu-submenu-icon, .mat-menu-item[disabled] .mat-icon-no-color {
+  color: #657278!important;
+  background-color: #e3e3e3a3!important;
+  text-align: center!important;
+}
+.mat-menu-panel {
+  background: #ffffff!important;
+}

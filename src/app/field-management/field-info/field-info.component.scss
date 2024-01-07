@@ -296,6 +296,7 @@ svg circle {
 .basicInfo ul {
   margin: 0 0 1em 0;
   font-size: 0.9em;
+  color: #c7cbcf!important;
 }
 
 .basicInfo ul li {
@@ -807,3 +808,10 @@ circle-progress {
 .right_area > div.BOX ul {
   text-align: left;
 }
+.input_2 input[type="text"] {
+  width: 7.05em;
+  display: inline-block;
+  margin-right: 0.5em;
+}
+
+

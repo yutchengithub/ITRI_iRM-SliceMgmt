@@ -173,7 +173,7 @@ mat-dialog-container ul li {
 mat-dialog-container ul li > label,
 mat-dialog-container ul li > span {
   display: inline-block;
-  vertical-align: top;
+  vertical-align: middle;
   margin: 0 1%;
 }
 mat-dialog-container ul li > label {
@@ -1004,6 +1004,70 @@ cursor: pointer;
 .ocloudInfo.component .ngx-pagination .small-screen {
   left: 2.5em;
 }
+#modifyConfigWindow ul li span {
+  min-width: 15em;
+}
+/* field detail */
+.mat-menu-panel {
+  background: #c7e0ff;
+}
+.mat-menu-content:not(:empty) {
+  padding-top: 0!important;
+  padding-bottom: 0!important;
+}
+.mat-menu-item {
+  background: transparent;
+  color: rgba(0,0,0,.87);
+  border-bottom: 1px solid rgb(109 146 177 / 40%)!important;
+  line-height: 38px!important;
+  height: 38px!important;
+}
+.mat-menu-item[disabled],
+.mat-menu-item[disabled] .mat-menu-submenu-icon,
+.mat-menu-item[disabled] .mat-icon-no-color {
+  color: #356279;
+  background-color: #a4b8d3a3;
+  text-align: center;
+}
+.mat-menu-item[disabled] {
+  margin-top: .3em;
+}
+.mat-menu-content .mat-menu-item[disabled]:first-child {
+  margin-top: 0;
+}
+.mat-menu-content .mat-menu-item:nth-child(3),
+.mat-menu-content .mat-menu-item:nth-child(6) {
+  border-bottom: none!important;
+}
+.mat-menu-item .mat-icon {
+  color: #57abf1;
+  border-radius: 5em;
+  background-color: #ffffffd9;
+  vertical-align: middle!important;
+  margin-right: 11px !important;
+  padding: 0 !important;
+  
+}
+.mat-menu-item .material-symbols-outlined {
+  font-size: 22px;
+  color: #57abf1;
+  border-radius: 5em;
+  background-color: #ffffffd9;
+  vertical-align: middle;
+  margin-right: 8px;
+  padding: 3px;
+}
+.mat-menu-item[disabled] mat-icon {
+  display: none;
+}
+.mat-menu-item .mat-icon svg {
+  vertical-align: top;
+  width: 25px;
+  height: 25px;
+  color: #51a1e3;
+}
+/**/
+
 @media screen and (max-width:1920px) {
  /*  .table table {
       font-size: 1em;
