@@ -10,7 +10,6 @@ import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
 
 import { forkJoin, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { ChangeDetectorRef } from '@angular/core';          // @12/13 Add for use 'detectChanges()'
 import { environment } from 'src/environments/environment'; // @12/20 Add for import Google Maps API Key
 import { NgZone } from '@angular/core';
@@ -18,10 +17,14 @@ import { NgZone } from '@angular/core';
 import { FieldInfo } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';              // @12/21 Add
 import { BsInfoInField } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';          // @12/21 Add
 
-import { BSInfo } from '../../shared/interfaces/BS_Info/For_queryBsInfo_BS';      // @12/21 Add
+import { BSInfo } from '../../shared/interfaces/BS_Info/For_queryBsInfo_BS';                    // @12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS_Info/For_queryBsInfo_dist_BS';  // @12/24 Add
-import { map } from 'rxjs/operators'; // 12/24 Add
+import { map } from 'rxjs/operators';                           // @12/24 Add
 import { localBSinfo } from '../../shared/local-files/For_BS';  // @12/27 Add
+import { GoogleMap } from '@angular/google-maps';               // @2024/01/03 Add
+
+import { apiForField } from '../../shared/api/For_Field';             // @2024/01/04 Add for import API of Field Management 
+
 
 export interface OcloudInfo {
   id: string;
@@ -111,8 +114,10 @@ export interface OcloudPerformance {
 }
 
 export interface SimplifiedBSInfo {
+  id: string;
   name: string;
   bstype: number;
+  description: string;
   status: number;
   nci: string;
   pci: number;
@@ -121,14 +126,28 @@ export interface SimplifiedBSInfo {
   "nrarfcn-dl": number;
   "nrarfcn-ul": number;
   position: string;
+  tac: string;
   neighbors: SimplifiedNeighborInfo[];
   iconUrl: string; // 存儲基站圖標的 URL
+  // components:{
+  //   type: string;
+  //   id: string;
+  // }
 }
 
 export interface SimplifiedNeighborInfo {
   'plmn-id': PLMNid;
   nci: string;
   pci: number;
+}
+
+// @2024/01/03 Add
+// 定義一個 enum 來表示不同的 overlay 類型
+enum OverlayType {
+  FieldImage,
+  SINR,
+  RSRP,
+  None
 }
 
 @Component({
@@ -154,21 +173,6 @@ export class FieldInfoComponent implements OnInit {
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
   nullList: string[] = [];  // 給頁籤套件使用
-
-  @ViewChild('updateModal') updateModal: any;
-  updateModalRef!: MatDialogRef<any>;
-  updateForm!: FormGroup;
-  formValidated = false;
-
-  ocloudInfo: OcloudInfo = {} as OcloudInfo;
-  ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
-  softwareList: SoftwareList[] = [];
-  systemSummary: SystemSummary = {} as SystemSummary;;
-  fileNameMapSoftware: Map<string, SoftwareList> = new Map();
-  showTooltipCpu: any = {};
-  showTooltipStorage: any = {};
-  showTooltipNic: any = {};
-
   
   // For Fault Alarms: 
   // CRITICAL, MAJOR, MINOR, WARNING
@@ -179,8 +183,7 @@ export class FieldInfoComponent implements OnInit {
     hideDelay: 250
   };
 
-
-// ↓ For setting Google Maps @12/20 Update by yuchen
+// ↓ For setting Google Maps @2024/01/05 by yuchen
 
   // 定義用於繪製多邊形的樣式選項
   polyOptions: google.maps.PolygonOptions = {
@@ -195,10 +198,11 @@ export class FieldInfoComponent implements OnInit {
   // 用於存儲多邊形頂點的陣矩陣，初始時為空
   polyPath: google.maps.LatLngLiteral[] = [];
 
-  // 初始化地圖中心的經緯度為(0, 0)，這可能會導致地圖在視圖上看不到任何內容(目前都可以顯示)
+  // 初始化地圖中心的經緯度為(0, 0)，這可能會導致地圖在視圖上看不到任何內容( 目前都可以顯示 )
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
-  // 設置地圖的初始縮放級別，這裡設為 19.5 ( 近地面 )
-  zoom = 16;
+  
+  // 設置地圖的初始縮放級別
+  //zoom = 16;
 
   // 定義地圖的其他配置選項，包括樣式，來隱藏默認的地標
   mapOptions: google.maps.MapOptions = {
@@ -208,7 +212,7 @@ export class FieldInfoComponent implements OnInit {
     backgroundColor: '#126df5',      // 設置地圖的背景顏色
     clickableIcons: false,           // 設置地圖上的圖標是否可點擊
     disableDoubleClickZoom: true,    // 禁用雙擊縮放功能
-    draggable: true,                // 禁止用戶拖動地圖
+    draggable: true,                 // 禁止用戶拖動地圖
     zoomControl: true,               // 禁止用戶通過控件來縮放地圖
     styles: [                        // 自定義樣式來隱藏地圖上的點擊性圖標
       {
@@ -227,40 +231,359 @@ export class FieldInfoComponent implements OnInit {
     anchor: new google.maps.Point(15, 15),    // 圖標錨點的位置
   };
 
-// ↑ For setting Google Maps @12/20 Update by yuchen
+  // @2024/01/02 Add
+  // 使用 @ViewChild 裝飾器來獲取模板中 <google-map> 元素的實例。
+  // '!' 非空斷言操作符告訴 TypeScript 編譯器該屬性將會在後續的代碼中被賦值，
+  // 因此它在初始化時不會是 null。這避免了 TypeScript 的嚴格 null 檢查錯誤。
+  @ViewChild(GoogleMap) map!: GoogleMap; // 獲取 Google 地圖實例的引用
+
+  // 用於儲存場域多邊形的邊界點 @2024/01/02 Add
+  fieldBounds!: google.maps.LatLngBoundsLiteral;    // 用於儲存放置 GroundOverlay 的場域邊界資訊
+
+  // @2024/01/05 Add
+  // ngAfterViewInit 是 Angular 在組件視圖初始化後會呼叫的生命週期事件。
+  ngAfterViewInit() {
+    // 使用 setTimeout 確保地圖元素已經加載完成並存在於 DOM 中。
+    // 這樣做可以避免在 Google Maps API 還沒有完全準備好時嘗試操作地圖。
+    setTimeout(() => {
+      // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
+      this.adjustMapZoom();
+    }, 100); // 設定 100 毫秒的延遲，以確保地圖的初始化過程已經完成。
+  }
+
+  // @2024/01/05 Add
+  // adjustMapZoom 方法用於根據場域邊界自動調整地圖的縮放等級和視角。
+  adjustMapZoom() {
+    // 先檢查地圖實例和場域邊界是否都已經被正確設定。
+    if ( this.map.googleMap && this.fieldBounds ) {
+      // 如果都設定好了，就利用 Google Maps API 的 fitBounds 方法，
+      // 傳入場域邊界值，讓 API 自動調整地圖的縮放等級和中心點，
+      // 確保用戶視野範圍內可以看到完整的場域邊界。
+      this.map.googleMap.fitBounds( this.fieldBounds );
+    }
+  }
+
+
+  // 用於跟蹤 overlay 顯示狀態的變數
+  overlayVisible: boolean = false;                  // 一個 boolean 變數，用於指示 GroundOverlay 是否應該顯示在地圖上
+  overlay: google.maps.GroundOverlay | null = null; // 用於存儲 GroundOverlay 實例的變數，初始值為 null。這個變數將在需要顯示場域圖片時被賦值
+  
+  // 用於跟蹤當前 overlay 類型的屬性 @2024/01/03 Add
+  currentOverlayType: OverlayType = OverlayType.None;
+
+  // 在地圖上的場域區域中顯示傳入的圖片 @2024/01/03 Update - 加入依據點擊類型顯示
+  displayImageOnMap( imageSrc: string, overlayType: OverlayType ) {
+
+    if ( this.map.googleMap && this.overlayVisible ) {
+      // 設置當前 overlay 類型
+      this.currentOverlayType = overlayType;
+      
+      // 創建並顯示 overlay
+      this.overlay = new google.maps.GroundOverlay( imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 GroundOverlay 實例
+      this.overlay.setMap(this.map.googleMap); // 將創建的 GroundOverlay 添加到 Google 地圖實例上
+      this.overlay.setOpacity( 0.5 );            // 設定 GroundOverlay 的透明度
+
+      console.log( 'Display', this.currentOverlayType, 'Overlay:', this.overlay );
+    }
+  }
+
+  // 隱藏(移除)在地圖上的場域區域中的圖片 @2024/01/03 Update
+  removeOverlay() {
+
+    // 檢查 overlay 物件是否已經被創建
+    if (this.overlay) {
+      this.overlay.setMap(null); // 將 overlay 從 Google 地圖上移除
+      this.overlay = null;       // 將 overlay 物件設置為 null，釋放資源並避免內存洩漏
+      this.currentOverlayType = OverlayType.None;   // 重置當前 overlay 類型為 None
+
+      console.log('Remove the Overlay:', this.overlay);
+    }
+  }
+
+// ↑ For setting Google Maps @2024/01/05 Update by yuchen ↑
+
+
+  // @12/13 Add for listen activeButton
+  // 用於監聽當前哪個按鈕是激活的
+  activeButton_fieldImage: string | null = null; // 儲存當前激活的場域圖片按鈕 ID
+  //activeButton_NR: string | null = 'NR';       // 預設激活 'NR' 按鈕
+  activeButton_NR: string | null = null;         // 預設不激活 'NR' 按鈕 @12/21 Add
+  activeButton_rsrp_sinr: string | null = null;  // 儲存當前激活的 RSRP 或 SINR 圖示按鈕 ID
+  activeButton_menu: string | null = null;       // 儲存當前激活的菜單按鈕 IDs
+
+  // 當按鈕被點擊時，觸發更新激活按鈕"fieldImage"的狀態 @2024/01/03 Update
+  setActiveButton_fieldImage( buttonId: string ) {
+    console.log("The click button is:", buttonId)
+
+    if ( this.activeButton_fieldImage === null ) {
+      
+      if ( this.activeButton_rsrp_sinr || this.currentColorbar ){
+        this.activeButton_rsrp_sinr = null; // 隱藏 SINR/RSRP 圖片
+        this.currentColorbar = null;        // 隱藏 ColorBar
+        this.removeOverlay();               // 移除當前顯示的 overlay
+        this.overlayVisible = false;
+      }
+      this.activeButton_fieldImage = buttonId;
+      this.overlayVisible = true;
+      this.getfieldImage();
+      
+    } else {
+      this.activeButton_fieldImage = null;
+      this.removeOverlay(); // 移除當前顯示的 overlay
+      this.overlayVisible = false;
+    }
+  }
+  
+  // 獲取並顯示場域圖片 
+  // @2024/01/03 Update - local Processing, displayImageOnMap()
+  // @2024/01/04 Add loading spinner
+  getfieldImage(){
+    
+    this.isMarkersLoading = true; // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中 
+
+    if ( this.activeButton_fieldImage ) {
+      // 檢查 Field Image 按鈕是否有被激活。
+      // 如果此變數不為 null，則表示用戶已點擊了 Field Image 按鈕，
+      // 並且期望根據當前的激活狀態來顯示或隱藏場域圖片。
+
+      if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
+
+        // 設定場域圖片的 Local 路徑
+        const imageSrc_localPath = './assets/img/fieldImage_for_local.png'; // 定義本地場域圖片的路徑
+
+        // 檢查 Local 場域圖片路徑是否存在
+        if ( imageSrc_localPath ) {
+          this.displayImageOnMap( imageSrc_localPath, OverlayType.FieldImage );  // 如存在，則在地圖上顯示場域 local 圖片
+        }
+        this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
+
+      } else { // 如非使用 local files
+
+        // 跟後端 API 取得場域圖片
+        this.commonService.queryFieldImage( this.fieldId ).subscribe({
+          next: (response) => {
+            // 當接收到圖片數據時，處理 Base64 編碼的圖片
+            if (response && response.fieldImage) {
+              const imageSrc = 'data:image/png;base64,' + response.fieldImage; // 將 Base64 字符串轉換為圖片URL
+              this.displayImageOnMap( imageSrc, OverlayType.FieldImage );      // 在地圖上顯示場域圖片
+            }
+          },
+          // 當圖片獲取失敗時，顯示其錯誤訊息
+          error: (error) => {
+            console.error('Error fetching field image:', error);
+            this.isMarkersLoading = false; // 出錯時，也隱藏 Spinner
+          },
+          // 當圖片獲取過程完成時，顯示完成訊息
+          complete: () => {
+            console.log('Field image fetch completed');
+            this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
+          }
+        });
+      }
+    }
+  }
+
+
+  // 用於跟蹤鄰居 BS 線條的顯示狀態 @2024/01/04 Add 
+  showNeighborLines: boolean = false;
+
+  // Polyline 數組，用於保存基站之間的線條 @2024/01/04 Add 
+  nrLines: google.maps.Polyline[] = [];
+
+  /** @2024/01/04 Add
+   * 當按鈕被點擊時調用的函數，用於切換基站之間連線的顯示狀態
+   * @param {string} buttonId - 被點擊的按鈕ID
+   */
+  setActiveButton_NR(buttonId: string) {
+    // 如果當前按鈕 ID 和傳入的 ID 相同，則取消選中，否則設置為選中
+    this.activeButton_NR = this.activeButton_NR === buttonId ? null : buttonId;
+    
+    // 切換顯示或隱藏與鄰居 BS 的連線
+    this.showNeighborLines = !this.showNeighborLines;
+    this.toggleNeighborLines(this.showNeighborLines);
+  }
+
+  /** @2024/01/04 Add
+   * 用於繪製或移除 BS 之間的線條
+   * @param {boolean} show - 指示是否顯示線條
+   */
+  toggleNeighborLines(show: boolean) {
+    if (show) {
+      // 繪製線條
+      this.allSimplifiedBsInfo.forEach(bs => {
+        if (bs.neighbors) {
+          bs.neighbors.forEach(neighbor => {
+            const neighborBs = this.allSimplifiedBsInfo.find(nbs => nbs.nci === neighbor.nci);
+            if (neighborBs) {
+
+              // 使用 parsePosition 函數來轉換位置字串為 LatLngLiteral 對象
+              const bsPosition = this.parsePosition(bs.position);
+              const neighborBsPosition = this.parsePosition(neighborBs.position);
+
+              // 創建路徑矩陣
+              const linePath = [bsPosition, neighborBsPosition];
+
+              // 創建 Polyline
+              const polyline = new google.maps.Polyline({
+                path: linePath,           // 設定 Polyline 的路徑點，將連接起來形成一條線
+                geodesic: true,           // 設定是否依據地球曲率顯示弧線
+                strokeColor: '#69ebf0f5', // 設定線的顏色
+                strokeOpacity: 0.4,       // 設定線的透明度
+                strokeWeight: 3           // 設定線的寬度(px)
+              });
+
+              // 將 Polyline 添加到地圖上
+              this.addPolylineToMap(polyline);
+
+              // 將 Polyline 添加到 nrLines 陣列中以便日後移除
+              this.nrLines.push(polyline);
+            }
+          });
+        }
+      });
+    } else {
+      // 移除線條
+      this.nrLines.forEach(polyline => {
+        this.removePolylineFromMap(polyline);
+      });
+      // 清空儲存線條的矩陣
+      this.nrLines = [];
+    }
+  }
+
+  /** @2024/01/04 Add
+   * 將 Polyline 添加到地圖上的方法
+   * @param {google.maps.Polyline} polyline - 要添加到地圖上的 Polyline 對象
+   */
+  addPolylineToMap(polyline: google.maps.Polyline) {
+    // 確認地圖已經載入，然後將 Polyline 設置到地圖上
+    if (this.map.googleMap) {
+      polyline.setMap(this.map.googleMap);
+    }
+  }
+
+  /** @2024/01/04 Add
+   * 從地圖上移除 Polyline 的方法
+   * @param {google.maps.Polyline} polyline - 要從地圖上移除的 Polyline 對象
+   */
+  removePolylineFromMap(polyline: google.maps.Polyline) {
+    // 將 Polyline 的地圖屬性設置為 null，從而將其從地圖上移除
+    polyline.setMap(null);
+  }
+
+  setActiveButton_menu( buttonId: string ) {
+    this.activeButton_menu = this.activeButton_menu === buttonId ? null : buttonId;
+  }
 
 
   // @12/08 Add for toggle colobar
   currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何 colorbar
 
-  toggleColorbar(type: 'RSRP' | 'SINR') { // @12/08 Add
-    this.currentColorbar = this.currentColorbar === type ? null : type;
-    this.setActiveButton_rsrp_sinr('this.currentColorbar');
+  // @2024/01/03 Update
+  toggleColorbar(type: 'RSRP' | 'SINR') {
+    console.log("The click button is:", type);
+
+    // 如果 Field image 的按鈕是激活狀態，則移除 Field image 的 overlay
+    if (this.activeButton_fieldImage && this.overlayVisible === true) {
+      this.activeButton_fieldImage = null; // 將 Field image 的按鈕狀態設為非激活
+      this.removeOverlay();        // 移除 overlay
+      this.overlayVisible = false; // 設定 overlay 不可見
+    }
+
+    // 切換 Colorbar 狀態
+    if (this.currentColorbar === null) {
+      this.currentColorbar = type;
+      this.setActiveButton_rsrp_sinr(type);
+    } else {
+      if (type === this.currentColorbar) {
+        this.currentColorbar = null;
+        this.removeOverlay(); // 移除當前顯示的 overlay
+        this.overlayVisible = false; // 設定 overlay 不可見
+      } else {
+        this.currentColorbar = type;
+        this.setActiveButton_rsrp_sinr(type);
+      }
+    }
   }
 
-  // @12/13 Add for listen activeButton
-  // 用於監聽當前哪個按鈕是激活的
-  activeButton_fieldImage: string | null = null;
-  //activeButton_NR: string | null = 'NR';  // 預設激活 'NR' 按鈕
-  activeButton_NR: string | null = null;    // 預設不激活 'NR' 按鈕 @12/21 Add
-  activeButton_rsrp_sinr: string | null = null;
-  activeButton_menu: string | null = null;
-
-  // 當按鈕被點擊時，觸發更新激活按鈕的狀態 @12/13 Add
-  setActiveButton_fieldImage(buttonId: string) {
-    this.activeButton_fieldImage = this.activeButton_fieldImage === buttonId ? null : buttonId;
-  }
-  setActiveButton_NR(buttonId: string) {
-      this.activeButton_NR = this.activeButton_NR === buttonId ? null : buttonId;
-  }
+  // @2024/01/03 Update
   setActiveButton_rsrp_sinr(buttonId: string) {
-    this.activeButton_rsrp_sinr = this.activeButton_rsrp_sinr === buttonId ? null : buttonId;
-  }
-  setActiveButton_menu(buttonId: string) {
-    this.activeButton_menu = this.activeButton_menu === buttonId ? null : buttonId;
+    console.log("The click button is:", buttonId);
+
+    
+    // 切換 RSRP/SINR 圖示按鈕狀態
+    if (this.activeButton_rsrp_sinr === null) {
+
+      this.activeButton_rsrp_sinr = buttonId;
+      const overlayType = (this.activeButton_rsrp_sinr === 'SINR') ? OverlayType.SINR : OverlayType.RSRP;
+      this.overlayVisible = true; // 設定 overlay 為可見
+      this.getSinrRsrpImage(overlayType);
+
+    } else {
+      
+      this.removeOverlay(); // 移除當前顯示的 overlay
+      this.activeButton_rsrp_sinr = buttonId;
+      const overlayType = (this.activeButton_rsrp_sinr === 'SINR') ? OverlayType.SINR : OverlayType.RSRP;
+      this.overlayVisible = true; // 設定 overlay 為可見
+      this.getSinrRsrpImage(overlayType);
+
+    }
   }
 
-  
+  // @2024/01/04 Update
+  getSinrRsrpImage( overlayType: OverlayType ) {
+    
+    this.isMarkersLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
+
+    // 根據 overlayType 決定 mapType
+    const mapType = ( overlayType === OverlayType.SINR ) ? 0 : 1;
+
+    if ( this.activeButton_rsrp_sinr ) {
+      if (this.commonService.isLocal) {
+        let imageSrc_localPath = '';
+
+        // 設定本地 SINR 或 RSRP 圖片的路徑
+        if ( overlayType === OverlayType.SINR ) {
+          imageSrc_localPath = './assets/img/sinrMap_local.png'; // 定義本地 SINR 圖片路徑
+          console.log("The local path of image is:", imageSrc_localPath);
+        } else {
+          imageSrc_localPath = './assets/img/rsrpMap_local.png'; // 定義本地 RSRP 圖片路徑
+          console.log("The local path of image is:", imageSrc_localPath);
+        }
+
+        // 如果本地路徑存在，則在地圖上顯示本地圖片
+        if ( imageSrc_localPath ) {
+          this.displayImageOnMap( imageSrc_localPath, overlayType );
+        }
+        this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
+      } else {
+
+        // 從 fieldBounds 提取經緯度
+        const leftLongitude = this.fieldBounds.west;  // 西邊界經度
+        const leftLatitude = this.fieldBounds.north;  // 北邊界緯度
+        const rightLongitude = this.fieldBounds.east; // 東邊界經度
+        const rightLatitude = this.fieldBounds.south; // 南邊界緯度
+
+        // 調用後端 API 獲取 SINR 或 RSRP 圖片
+        this.commonService.bsHeatMap( this.fieldId, leftLongitude, leftLatitude,
+                                       rightLongitude, rightLatitude, mapType ).subscribe({
+          next: (response) => {
+            const imageSrc = 'data:image/png;base64,' + response.heatMap; // 從後端回應中獲取圖片
+            this.displayImageOnMap( imageSrc, overlayType );
+          },
+          error: (error) => {
+            console.error("Error fetching SINR/RSRP image:", error);
+            this.isMarkersLoading = false; // 出錯時，也隱藏 Spinner
+          },
+          complete: () => {
+            console.log("SINR/RSRP image fetch completed");
+            this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
+          }
+        });
+      }
+    }
+  }
+
   showMapModel: boolean = true;                   // 控制是否顯示地圖模式的 Flag    @12/13 Add
   recordColorbar: 'RSRP' | 'SINR' | null = null;  // 用於記錄 Colorbar 狀態的 Flag @12/13 Add
 
@@ -276,9 +599,9 @@ export class FieldInfoComponent implements OnInit {
     }
 
     // 如切換的頁面為地圖模式，就預設激活 'NR' 按鈕
-    if ( this.showMapModel === true ) {
-      this.activeButton_NR = 'NR';
-    }
+    // if ( this.showMapModel === true ) {
+    //   this.activeButton_NR = 'NR';
+    // }
 
     // 如果記錄的 Colorbar 不為空且切換的頁面為地圖模式，則恢復顯示記錄的 Colorbar
     if ( this.recordColorbar != null && this.showMapModel === true ) {
@@ -300,7 +623,8 @@ export class FieldInfoComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public commonService: CommonService,
-    public bsLocalFiles: localBSinfo,      // @12/27 ADD for import BS Local Files
+    public bsLocalFiles: localBSinfo,    // @12/27 Add for import BS Local Files
+    public API_field: apiForField,       // @2024/01/04 Add for import API of Field Management 
     private fb: FormBuilder,
     private dialog: MatDialog,
     public languageService: LanguageService,
@@ -311,12 +635,14 @@ export class FieldInfoComponent implements OnInit {
   ) {
     const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
     this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
+    this.createBSInfoForm(); // For updateBs API @2024/01/05 Add 
   }
 
   // 頁面初始化
   ngOnInit(){
 
     this.sessionId = this.commonService.getSessionId();
+    console.log( 'The sessionId is', this.sessionId ); // @2024/01/05 Add 
     this.route.params.subscribe((params) => {
       this.fieldId = params['id'];
       this.fieldName = params['name'];
@@ -363,7 +689,7 @@ export class FieldInfoComponent implements OnInit {
     let minLng = points[0].lng;
     let maxLng = points[0].lng;
   
-    // 遍歷 points 陣列中的每一個 google.maps.LatLngLiteral 物件
+    // 遍歷 points 矩陣中的每一個 google.maps.LatLngLiteral 物件
     points.forEach(point => {
       // 如果當前點的緯度小於已知的最小緯度，更新 minLat 的值
       if (point.lat < minLat) minLat = point.lat;
@@ -383,16 +709,17 @@ export class FieldInfoComponent implements OnInit {
   }
   
   isMarkersLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
-  // @12/27 Update - Add Local Files Processing
+
+  // @2024/01/02 Add - 儲存場域邊界點
+  // @2024/01/04 Update - Add calculateBestZoom()
   getQueryFieldInfo() {
     console.log('getQueryFieldInfo() - Start'); // 啟動獲取場域資訊
 
     console.log('Start fetching field info');   // 開始獲取場域資訊
     clearTimeout(this.refreshTimeout);
 
-    if (this.commonService.isLocal) {
+    if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
 
-      
       // For testing with local files
       console.log('Start fetching field info in Local');   // 開始獲取 local 場域資訊
       this.fieldInfo = this.commonService.fieldInfo;
@@ -414,8 +741,24 @@ export class FieldInfoComponent implements OnInit {
 
       this.polyPath = positions;
 
+      // 儲存或更新場域邊界點 @2024/01/02 Add
+      this.fieldBounds = {
+
+        // `north` 表示多邊形北邊的緯度，通過取所有頂點緯度的最大值來確定
+        north: Math.max(...positions.map(p => p.lat)),
+        
+        // `south` 表示多邊形南邊的緯度，通過取所有頂點緯度的最小值來確定
+        south: Math.min(...positions.map(p => p.lat)),
+        
+        // `east` 表示多邊形東邊的經度，通過取所有頂點經度的最大值來確定
+        east: Math.max(...positions.map(p => p.lng)),
+        
+        // `west` 表示多邊形西邊的經度，通過取所有頂點經度的最小值來確定
+        west: Math.min(...positions.map(p => p.lng)),
+      };
+
       // 計算場域中心用來設定地圖的初始視圖中心
-      this.center = this.calculateBoundingBoxCenter(positions);
+      this.center = this.calculateBoundingBoxCenter( positions );
 
       this.processFieldInfo(); // 處理場域資訊
       
@@ -453,10 +796,24 @@ export class FieldInfoComponent implements OnInit {
           // polyPath 用來儲存多邊形各個頂點的經緯度，這個數據將被用於在地圖上繪製多邊形。
           this.polyPath = positions;
 
-          // calculateCenter 是一個自定義函數，用於計算多邊形頂點的平均中心點，
+          // 儲存或更新場域邊界點 @2024/01/02 Add
+          this.fieldBounds = {
+            // `north` 表示多邊形北邊的緯度，通過取所有頂點緯度的最大值來確定
+            north: Math.max(...positions.map(p => p.lat)),
+            
+            // `south` 表示多邊形南邊的緯度，通過取所有頂點緯度的最小值來確定
+            south: Math.min(...positions.map(p => p.lat)),
+            
+            // `east` 表示多邊形東邊的經度，通過取所有頂點經度的最大值來確定
+            east: Math.max(...positions.map(p => p.lng)),
+            
+            // `west` 表示多邊形西邊的經度，通過取所有頂點經度的最小值來確定
+            west: Math.min(...positions.map(p => p.lng)),
+          };
+          
           // 這個計算出的中心點將被用來設定地圖的初始視圖中心。
-          //this.center = this.calculateCenter(positions);
-          this.center = this.calculateBoundingBoxCenter(positions);
+          //this.center = this.calculateCenter(positions); // 用於計算多邊形頂點的平均中心點
+          this.center = this.calculateBoundingBoxCenter(positions); 
           // 輸出中心點到控制台，這樣可以用於調試和確認中心點是否如預期被正確計算。
           console.log('In getQueryFieldInfo() - center:', this.center);
 
@@ -470,7 +827,7 @@ export class FieldInfoComponent implements OnInit {
           // This callback is executed when there is an error fetching the info
           console.error('獲取場域資訊出錯:', error);
           console.error('Error fetching field info:', error);
-          //this.isMarkersLoading = false; // 出錯時也應隱藏 spinner @12/28 Add for Progress Spinner
+          this.isMarkersLoading = false; // 出錯時也應隱藏 spinner @12/28 Add for Progress Spinner
         },
         complete: () => {
 
@@ -500,13 +857,13 @@ export class FieldInfoComponent implements OnInit {
       const allSimplifiedData: SimplifiedBSInfo[] = [];
 
       // 遍歷 dist_bsInfo_local 數組並處理每一筆數據
-      this.bsLocalFiles.dist_bsInfo_local.forEach((distBsInfo: BSInfo_dist) => {
-        allSimplifiedData.push(...this.convertDistBsInfoToSimplifiedFormat(distBsInfo));
+      this.bsLocalFiles.dist_bsInfo_local.forEach( ( distBsInfo: BSInfo_dist ) => {
+        allSimplifiedData.push( ...this.convertDistBsInfoToSimplifiedFormat( distBsInfo ));
       });
 
       // 遍歷 bsInfo_local 數組並處理每一筆數據
-      this.bsLocalFiles.bsInfo_local.forEach((bsInfo: BSInfo) => {
-        allSimplifiedData.push(this.convertBsInfoToSimplifiedFormat(bsInfo));
+      this.bsLocalFiles.bsInfo_local.forEach( ( bsInfo: BSInfo ) => {
+        allSimplifiedData.push( this.convertBsInfoToSimplifiedFormat( bsInfo )) ;
       });
       
       // 將合併後的所有 SimplifiedBSInfo 對象賦值給 this.allSimplifiedBsInfo 屬性
@@ -523,10 +880,10 @@ export class FieldInfoComponent implements OnInit {
           // 判斷當前處理的基站是否為數組中的第一個元素（即索引為 0 的元素）
           // 如果是第一個元素（index === 0），則 isSelected 為 true，否則為 false
           // isSelected 用於確定當前基站是否應該顯示為「被選中」狀態的圖標
-          const isSelected = (index === 0);
+          const isSelected = ( index === 0 );
 
           // 為當前基站設置圖標 URL，根據基站的類型、狀態、是否被選中以及是否是數組中的第一個基站
-          bsInfo.iconUrl = this.setIconUrl(bsInfo.bstype, bsInfo.status, isSelected, firstBsInfoName, bsInfo.name);
+          bsInfo.iconUrl = this.setIconUrl( bsInfo.bstype, bsInfo.status, isSelected, firstBsInfoName, bsInfo.name );
         });
 
         // 將 allSimplifiedBsInfo 數組中的第一筆基站資訊顯示於「基站資訊」欄位上
@@ -654,7 +1011,7 @@ export class FieldInfoComponent implements OnInit {
     console.log('getQueryBsInfoForAll() - End');
   }
 
-  // @12/26 Add
+  // @2024/01/05 Update - Add get "id" information
   // 函數定義: 將 BSInfo 類型轉換為 SimplifiedBSInfo 類型 - All-in-one BS
   convertBsInfoToSimplifiedFormat(bsInfo: BSInfo): SimplifiedBSInfo {
 
@@ -671,9 +1028,12 @@ export class FieldInfoComponent implements OnInit {
     // 創建一個 SimplifiedBSInfo 類型的對象，並用 bsInfo 中的數據填充
     const simplified: SimplifiedBSInfo = {
 
-      name: bsInfo.name,      // 從 bsInfo 取出基站名稱
-      bstype: bsInfo.bstype,  // 從 bsInfo 取出基站類型
-      status: bsInfo.status,  // 從 bsInfo 取出基站狀態
+      id: bsInfo.id,                   // 從 bsInfo 取出基站 id
+      name: bsInfo.name,               // 從 bsInfo 取出基站名稱
+      tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
+      description: bsInfo.description, // 從 bsInfo 取出總基站描述
+      bstype: bsInfo.bstype,           // 從 bsInfo 取出基站類型
+      status: bsInfo.status,           // 從 bsInfo 取出基站狀態
       nci: bsInfo.info['bs-conf'].nci, // 從 bsInfo 的 info['bs-conf'] 取出 nci
       pci: bsInfo.info['bs-conf'].pci, // 從 bsInfo 的 info['bs-conf'] 取出 pci
       'plmn-id': { // 從 bsInfo 的 info['bs-conf']['plmn-id'] 取出 mcc 和 mnc 並創建 plmn-id 對象
@@ -685,14 +1045,15 @@ export class FieldInfoComponent implements OnInit {
       "nrarfcn-ul": bsInfo.info['bs-conf']['nrarfcn-ul'], // 從 bsInfo 的 info['bs-conf'] 取出上行 NR ARFCN 
       position: bsInfo.position,  // 從 bsInfo 取出基站位置    
       neighbors,  // 設定鄰居基站數據
-      iconUrl: ""
+      iconUrl: "",
+      
     };
     
     // 返回轉換後的 SimplifiedBSInfo 對象
     return simplified;
   }
 
-  // @12/26 Add
+  // @2024/01/05 Update - Add get "id" information
   // 函數定義：將 BSInfo_dist 類型轉換為 SimplifiedBSInfo 類型的數組
   convertDistBsInfoToSimplifiedFormat(Dist_bsInfo: BSInfo_dist): SimplifiedBSInfo[] {
 
@@ -711,19 +1072,22 @@ export class FieldInfoComponent implements OnInit {
 
       // 創建一個新的 SimplifiedBSInfo 對象，包含從子基站訊息和 ANR 訊息中提取的數據
       return {
-        name: Dist_bsInfo.name,              // 總基站名稱
-        bstype: Dist_bsInfo.bstype,          // 基站類型
-        status: Dist_bsInfo.status,          // 基站狀態
-        nci: subBsInfo.nci,                  // 子基站的 NCI
-        pci: subBsInfo.DU?.nRPCI,            // 子基站的 DU 中的 nRPCI 值
-        'plmn-id': {                         // 子基站的 PLMN ID 訊息
+        id: Dist_bsInfo.id,                   // 從 Dist_bsInfo 取出總基站 id
+        name: Dist_bsInfo.name,               // 從 Dist_bsInfo 取出總基站名稱
+        description: Dist_bsInfo.description, // 從 Dist_bsInfo 取出總基站描述
+        bstype: Dist_bsInfo.bstype,           // 從 Dist_bsInfo 取出總基站類型
+        status: Dist_bsInfo.status,           // 從 Dist_bsInfo 取出總基站狀態
+        nci: subBsInfo.nci,                   // 從 Dist_bsInfo 取出子基站的 NCI
+        pci: subBsInfo.DU?.nRPCI,             // 從 Dist_bsInfo 取出子基站的 DU 中的 nRPCI 值
+        'plmn-id': {                          // 從 Dist_bsInfo 取出子基站的 PLMN ID 訊息
           mcc: subBsInfo.CU?.pLMNId_MCC,
           mnc: subBsInfo.CU?.pLMNId_MNC,
         },
-        "tx-power": subBsInfo.DU?.configuredMaxTxPower, // DU 配置的最大傳輸功率
-        "nrarfcn-dl": subBsInfo.DU?.arfcnDL,            // 下行頻率
-        "nrarfcn-ul": subBsInfo.DU?.arfcnUL,            // 上行頻率
-        position: subBsInfo.RU?.position,               // RU 的位置訊息
+        "tx-power": subBsInfo.DU?.configuredMaxTxPower, // 取出 DU 配置的最大傳輸功率
+        "nrarfcn-dl": subBsInfo.DU?.arfcnDL,            // 取出 DU 配置下行頻率
+        "nrarfcn-ul": subBsInfo.DU?.arfcnUL,            // 取出 DU 配置上行頻率
+        tac: subBsInfo.DU?.nRTAC,                       // 取出 DU 配置 tac
+        position: subBsInfo.RU?.position,               // 取出 RU 的位置訊息
         neighbors: anrNeighbors,                        // 映射後的鄰居基站數據
         iconUrl: ""
       };
@@ -745,7 +1109,7 @@ export class FieldInfoComponent implements OnInit {
     // 檢查基站是否被選中
     if (isSelected) {
 
-      if (bsInfoBSType === 2 && bsInfoStatus === 1) {
+      if ( bsInfoBSType === 2 && bsInfoStatus === 1 ) {
         iconName = 'dist_gnb_offline_selected.png'; // 分布式基站離線且被選中的圖標
       } else if (bsInfoBSType === 2 && bsInfoStatus === 2) {
         iconName = 'dist_gnb_online_selected.png';  // 分布式基站在線且被選中的圖標
@@ -758,7 +1122,7 @@ export class FieldInfoComponent implements OnInit {
     } else { // 若基站未被選中
 
       // 檢查名稱是否與第一筆資料相同且 bsInfoBSType 為 2
-      if (bsInfoBSType === 2 && currentBsInfoName === firstORclickBsInfoName) {
+      if ( bsInfoBSType === 2 && currentBsInfoName === firstORclickBsInfoName ) {
       
         // 符合就選擇分布式基站的非選中圖標
         iconName = (bsInfoStatus === 1) ? 'dist_gnb_offline_nonselected.png' : 'dist_gnb_online_nonselected.png';
@@ -801,7 +1165,7 @@ export class FieldInfoComponent implements OnInit {
         });
 
         // 在控制台輸出被點擊的基站名稱、類型和狀態
-        console.log("Marker BS name:", clickbsInfoName, "is clicked\n",
+        console.log("Marker", clickbsInfoName, "is clicked,\n",
                     "its type is", clickbsInfoBSType, "its status is", clickbsInfoStatus);
     });
 
@@ -810,37 +1174,6 @@ export class FieldInfoComponent implements OnInit {
     // 在控制台輸出當前顯示的基站資訊
     console.log("After click onSelectBsInfo the displayBsInfo:", this.displayBsInfo)
   }
-
-
-  // Get response of queryBsInfo API
-  // 該函數執行完應該會返回一個 Observable
-  // getQueryBsInfo(bsId: string) {
-  //   console.log('getQueryBsInfo() - Start');
-  //   console.log('bsId: ', bsId);
-
-  //   // 直接返回 API 請求的 Observable
-  //   return this.commonService.queryBsInfo(bsId).pipe(
-  //     tap({
-  //       next: (res) => {
-  //         console.log('Get queryBsInfo from API:', res, '\nBsName:', res.name, ', BsId:', res.id);
-
-  //         // 處理從 API 獲取的基站資訊中的位置訊息
-  //         if (!res.position) { // 檢查位置訊息是否為空、undefined 或 null
-  //           // 嘗試從 res.info.RU.position 獲取位置訊息
-  //           // 如果 res.info 或 res.info.RU 不存在，或者 res.info.RU.position 為空，
-  //           // 則將 res.position 設置為 "None"
-  //          // res.position = res.info?.RU?.position || "None";
-  //         }
-  //       },
-  //       error: (error) => {
-  //         console.error('Error fetching Bs Info:', error);
-  //       },
-  //       complete: () => {
-  //         console.log('Bs Info fetch for ID', bsId, 'completed');
-  //       }
-  //     })
-  //   );
-  // }
 
   // @12/19 Add
   // 此方法用於將位置訊息的字串轉換為 Google 地圖所需的 LatLngLiteral 對象
@@ -913,7 +1246,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // 設定場域對應的告警種類數量 @12/07 Update by yuchen
-  severityCount(severity: string): number {
+  severityCount( severity: string ): number {
 
     if (!this.fieldInfo) {
       return 0; // 確保 fieldInfo 已被賦值且不為空
@@ -932,14 +1265,121 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  // 往 Fault Mnagement @12/07 Update
+ // 返回 Field Management 主頁
+  back() {
+    this.router.navigate(['/main/field-mgr']);
+  }
+
+  // 往 Fault Management @12/07 Update
   goFaultMgr() {
     this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
   }
 
+  // 往 Performance Management @2024/01/05 Update
   goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr', this.fieldName]);
+    this.router.navigate(['/main/performance-mgr']);
   }
+
+
+// Modify Configuration Setting @2024/01/05 Add ↓
+
+  @ViewChild('modifyConfigWindow') modifyConfigWindow: any;
+  modifyConfigWindowRef!: MatDialogRef<any>;
+  modifyConfigForm!: FormGroup;
+  formValidated = false;
+
+  createBSInfoForm() {
+    this.modifyConfigForm = this.fb.group({
+      bsName: new FormControl(''), 
+      pci: new FormControl(''),
+      mcc: new FormControl(''),
+      mnc: new FormControl(''),
+      txPower: new FormControl(''),
+      nrarfcnul: new FormControl(''),
+      nrarfcndl: new FormControl(''),
+      longitude: new FormControl(''),
+      latitude: new FormControl('')
+    });
+  }
+  
+  openModifyConfigModel() {
+    this.formValidated = false;
+    this.modifyConfigWindowRef = this.dialog.open(this.modifyConfigWindow, { id: 'modifyConfigWindow' });
+    this.modifyConfigWindowRef.afterClosed().subscribe(() => {
+      this.formValidated = false;
+    });
+  }
+
+  modifyConfig() {
+    this.formValidated = true;
+    if (!this.modifyConfigForm.valid) {
+      return;
+    }
+  
+    const formValues = this.modifyConfigForm.value;
+  
+    // 解析原始的 position 字串以獲取經緯度
+    const originalPosition = this.displayBsInfo ? this.parsePosition( this.displayBsInfo.position ) : null;
+  
+    const body: any = {
+      session: this.sessionId,
+      id: this.displayBsInfo!.id,
+      name: formValues.bsName || this.displayBsInfo!.name,
+      bstype: this.displayBsInfo!.bstype,
+      description: this.displayBsInfo!.description,
+      pci: formValues.pci || this.displayBsInfo!.pci,
+      plmnid: {
+        mcc: formValues.mcc || this.displayBsInfo!['plmn-id'].mcc,
+        mnc: formValues.mnc || this.displayBsInfo!['plmn-id'].mnc
+      },
+      nci: this.displayBsInfo!.nci,
+      gpslongitude: formValues.longitude ? formValues.longitude * 1000000 : originalPosition ? originalPosition.lng * 1000000 : undefined,
+      gpslatitude: formValues.latitude ? formValues.latitude * 1000000 : originalPosition ? originalPosition.lat * 1000000 : undefined,
+      nrarfcndl: formValues.nrarfcndl || this.displayBsInfo!['nrarfcn-dl'],
+      nrarfcnul: formValues.nrarfcnul || this.displayBsInfo!['nrarfcn-ul'],
+      txpower: formValues.txPower || this.displayBsInfo!['tx-power'],
+      tac: this.displayBsInfo!.tac,
+      // components:{
+      //   type: this.displayBsInfo!.components.type,
+      //   id: this.displayBsInfo!.components.id
+      // }
+    };
+  
+    // 如果有新的經緯度值，則組合成所需的格式
+    if (formValues.longitude || formValues.latitude) {
+      body.position = `[${(formValues.longitude).toFixed(6)},${(formValues.latitude).toFixed(6)}]`;
+    } else if (originalPosition) {
+      // 如果經緯度沒有更改，使用原有的 position
+      body.position = this.displayBsInfo!.position;
+    }
+  
+    // 發送更新請求
+    this.API_field.updateBs(body).subscribe(
+      () => console.log('更新成功。')
+    );
+    this.modifyConfigWindowRef.close();
+  
+    this.getQueryFieldInfo(); // 刷新頁面數據
+  }
+  
+// Modify Configuration Setting @2024/01/05 Add ↑
+
+
+
+
+
+
+
+
+
+  ocloudInfo: OcloudInfo = {} as OcloudInfo;
+  ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
+  softwareList: SoftwareList[] = [];
+  systemSummary: SystemSummary = {} as SystemSummary;;
+  fileNameMapSoftware: Map<string, SoftwareList> = new Map();
+  showTooltipCpu: any = {};
+  showTooltipStorage: any = {};
+  showTooltipNic: any = {};
 
   getOcloudPerformance() {
     if (this.commonService.isLocal) {
@@ -998,7 +1438,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
   softwareVersion(): string {
-    const fileName = this.updateForm.controls['fileName'].value;
+    const fileName = this.modifyConfigForm.controls['fileName'].value;
     if (fileName === '') {
       return '';
     } else {
@@ -1018,68 +1458,5 @@ export class FieldInfoComponent implements OnInit {
     //   this.ocloudPerformance.network += ' Kbps';
     // }
   }
-
-  // 返回 Field Mnagement 主頁
-  back() {
-    this.router.navigate(['/main/field-mgr']);
-  }
-
-  openUpdateModel() {
-    this.formValidated = false;
-    this.updateForm = this.fb.group({
-      'type': new FormControl('imageUrl'),
-      'imageUrl': new FormControl('', [Validators.required]),
-      'fileName': new FormControl('')
-    });
-    this.updateModalRef = this.dialog.open(this.updateModal, { id: 'updateModal' });
-    this.updateModalRef.afterClosed().subscribe(() => {
-      this.formValidated = false;
-    });
-  }
-
-  changeType(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    if (e.value === 'imageUrl') {
-      this.updateForm.controls['imageUrl'].setValidators([Validators.required]);
-      this.updateForm.controls['fileName'].setValidators(null);
-      this.updateForm.controls['fileName'].setValue('');
-    } else {
-      this.updateForm.controls['imageUrl'].setValidators(null);
-      this.updateForm.controls['imageUrl'].setValue('');
-      this.updateForm.controls['fileName'].setValidators([Validators.required]);
-    }
-    this.updateForm.controls['imageUrl'].updateValueAndValidity();
-    this.updateForm.controls['fileName'].updateValueAndValidity();
-  }
-
-  update() {
-    this.formValidated = true;
-    if (!this.updateForm.valid) {
-      return;
-    }
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.updateModalRef.close();
-    } else {
-      const body: any = {
-        ocloud: this.ocloudInfo.id,
-        currentVersion: this.ocloudInfo.softwareVersion,
-        sessionid: this.sessionId
-      };
-      if (this.updateForm.controls['type'].value === 'imageUrl') {
-        const imageUrlSplit = this.updateForm.controls['imageUrl'].value.split('/');
-        body['fileName'] = imageUrlSplit[imageUrlSplit.length - 1];
-      } else {
-        body['fileName'] = this.updateForm.controls['fileName'].value;
-        body['version'] = this.softwareVersion();
-      }
-      this.commonService.applyOcloudSoftware(body).subscribe(
-        () => console.log('Update Successful.')
-      );
-      this.updateModalRef.close();
-      //this.getOcloudInfo();
-    }
-  }
-
 
 }

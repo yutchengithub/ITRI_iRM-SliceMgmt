@@ -525,15 +525,50 @@ export class CommonService {
     return this.http.get(url);
   }
 
-  // BS Management API  @12/19 Update by yuchen
-  //  queryBsInfo(bsId: string): Observable<any> {
-      
-  //   // 構建 API URL
-  //   const url = `${this.restPath}/queryBsInfo/${this.getSessionId()}/${bsId}`;
+  // get the Field Image @2024/01/02 Add by yuchen
+  queryFieldImage(fieldId: string): Observable<any> { 
+    
+    // 構建 API URL
+    const url = `${this.restPath}/queryFieldImage/${this.getSessionId()}/${fieldId}`;
+  
+    // 發起 HTTP GET 請求
+    return this.http.get(url);
+  }
 
-  //   // 發起 HTTP GET 請求
-  //   return this.http.get(url);
-  // }
+  // Get SINR or RSRP map @2024/01/04 Update by yuchen
+  bsHeatMap( fieldId: string, leftLongitude: number, leftLatitude: number, rightLongitude: number,
+             rightLatitude: number, mapType: number ): Observable<any> {
+    
+    // 構建 API URL，指向後端的 bsHeatMap 路徑
+    const url = `${this.restPath}/bsHeatMap`;
+  
+    // 準備請求體，包含所有後端所需的參數
+    const requestBody = {
+      session: this.getSessionId(),
+      fieldId: fieldId,
+      'left-longitude': String(Math.round(leftLongitude * 1000000)),    // 轉為字符串
+      'left-latitude': String(Math.round(rightLatitude * 1000000)),     // 轉為字符串
+      'right-longitude': String(Math.round(rightLongitude * 1000000)),  // 轉為字符串
+      'right-latitude': String(Math.round(leftLatitude * 1000000)),     // 轉為字符串
+      maptype: mapType
+    };
+    
+    console.log( "session:", requestBody.session, 
+                  "\nfieldId:", requestBody.fieldId, 
+                    "\nmaptype:", requestBody.maptype, 
+                    '\nleft-latitude:', requestBody['left-latitude'],
+                      '\nleft-longitude:', requestBody['left-longitude'], 
+                      '\nright-latitude:', requestBody['right-latitude'], 
+                        '\nright-longitude:', requestBody['right-longitude'] );
+
+    console.log( "JSON to bsHeatMap:", requestBody );
+
+    // 發起 HTTP POST 請求，並返回 Observable 以便訂閱和處理響應
+    return this.http.post( url, requestBody );
+  }
+  
+
+  // BS Management API  @12/19 Update by yuchen
 
   // @12/24 Update - 將 Observable 的類型改為能接兩種 BSInfo 與 BSInfo_dist 介面的數據
   queryBsInfo( bsId: string ): Observable<BSInfo | BSInfo_dist>  {

@@ -102,8 +102,7 @@
 			<!-- 在地圖和進度指示器外面包一層 div，用於定位進度指示器 -->
 			
 				<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
-				<google-map *ngIf="showMapModel" width="939.5px" height="748px" 
-							[center]="center" [zoom]="zoom" [options]="mapOptions">
+				<google-map *ngIf="showMapModel" width="939.5px" height="748px" [center]="center" [options]="mapOptions">
 					<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
 					<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
 					
@@ -113,10 +112,10 @@
 					<!-- 這意味著當用戶點擊任何標記時，onSelectBsInfo 方法將被調用 -->
 				
 					<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
-								[position]="parsePosition(bsInfo.position)" 
+								[position]="parsePosition( bsInfo.position )" 
 								[title]="bsInfo.name"
 								[icon]="bsInfo.iconUrl"
-								(mapClick)="onSelectBsInfo(bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status)">	
+								(mapClick)="onSelectBsInfo( bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">	
 					</map-marker>
 
 					<!-- 圖例 -->
@@ -193,7 +192,7 @@
 				</div>
 			</ul>
 			<ul *ngIf="currentColorbar === 'SINR'">
-				<div> <span class="colorbar-title">SINR</span> <img src="assets/img/rsrp_colorbar.png">
+				<div> <span class="colorbar-title">SINR</span> <img src="assets/img/sinr_colorbar.png">
 					<!-- SINR Colorbar -->
 					<div class="SINR_values"> <span>-10</span> <span>0</span> <span>10</span> <span>20</span> <span>30</span> </div>
 				</div>
@@ -264,7 +263,7 @@
 			<ng-container *ngIf="!isMarkersLoading">
 				<ul *ngIf="!isMarkersLoading && displayBsInfo">
 					<li>
-					<label>{{languageService.i18n['field.BSname']}}</label>
+					<label>{{ languageService.i18n['field.BSname'] }}</label>
 					<span>{{ displayBsInfo.name }}</span>
 					</li>
 					<li>
@@ -283,7 +282,7 @@
 					<li>
 					<label>PLMN ID</label>
 					<span>
-						{{ displayBsInfo['plmn-id'].mcc }}{{ displayBsInfo['plmn-id'].mnc }}
+						{{ displayBsInfo['plmn-id'].mcc }} {{ displayBsInfo['plmn-id'].mnc }}
 					</span>
 					</li>
 					<li>
@@ -312,7 +311,7 @@
 					</li>
 				</ul>  
 				<div *ngIf="displayBsInfo">
-					<button mat-flat-button class="button-modifyConfiguration" tooltip="{{languageService.i18n['field.modifyConfiguration']}}" (click)="openUpdateModel()">{{languageService.i18n['field.modifyConfiguration']}}</button>
+					<button mat-flat-button class="button-modifyConfiguration" tooltip="{{languageService.i18n['field.modifyConfiguration']}}" (click)="openModifyConfigModel()">{{languageService.i18n['field.modifyConfiguration']}}</button>
 				</div>
 			</ng-container>
 
@@ -366,36 +365,73 @@
 		</div>
 	</div>
 
-	<ng-template #updateModal>
+	<ng-template #modifyConfigWindow>
 		<h5>{{languageService.i18n['field.modifyConfiguration']}}</h5>
-		<form [formGroup]="updateForm">
-			<ul>
+		<form [formGroup]="modifyConfigForm">
+			<ul *ngIf="displayBsInfo">
 				<li>
-					<label>Current Version</label> <span>{{ocloudInfo.softwareVersion}}</span> </li>
+					<label>{{ languageService.i18n['field.BSname'] }}</label>
+					<span>
+						<input type="text" formControlName="bsName" placeholder="{{ displayBsInfo.name }}" class="{{formValidated&&modifyConfigForm.controls['bsName'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
 				<li>
-					<label>Update Software</label> <span class="SoftwareUpdate">
-          <mat-button-toggle-group formControlName="type" (change)="changeType($event)">
-            <mat-button-toggle value="imageUrl">Image URL</mat-button-toggle>
-            <mat-button-toggle value="existedFile">Existed File</mat-button-toggle>
-          </mat-button-toggle-group>
-
-          <div *ngIf="updateForm.controls['type'].value === 'imageUrl'">
-            <input type="text" formControlName="imageUrl" placeholder="Image URL" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-            <mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
-          </div>
-          <div *ngIf="updateForm.controls['type'].value === 'existedFile'">
-            <select formControlName="fileName" class="{{formValidated&&updateForm.controls['fileName'].invalid?'required':''}}">
-              <option *ngFor="let opt of softwareList" [value]="opt.fileName">{{opt.fileName}}</option>
-            </select>
-            <mat-error *ngIf="formValidated&&updateForm.controls['fileName'].invalid">Required</mat-error>
-            <div class="UV" *ngIf="updateForm.controls['type'].value === 'existedFile'">
-              Update Version : {{softwareVersion()}}
-            </div>
-          </div>
-        </span> </li>
+					<label>PCI</label>
+					<span>
+						<input type="text" formControlName="pci" placeholder="{{ displayBsInfo.pci }}" class="{{formValidated&&modifyConfigForm.controls['pci'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
+				<li>
+					<label>PLMN ID</label>
+					<span>
+						<input type="text" formControlName="mcc" placeholder="{{ displayBsInfo['plmn-id'].mcc }}" class="{{formValidated&&modifyConfigForm.controls['mcc'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+					<span>
+						<input type="text" formControlName="mnc" placeholder="{{ displayBsInfo['plmn-id'].mnc }}" class="{{formValidated&&modifyConfigForm.controls['mnc'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
+				<li>
+					<label>Tx Power (dBm)</label>
+					<span>
+						<input type="text" formControlName="txPower" placeholder="{{ displayBsInfo['tx-power'] }}" class="{{formValidated&&modifyConfigForm.controls['txPower'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
+				<li>
+					<label>NR-ARFCN-UL</label>
+					<span>
+						<input type="text" formControlName="nrarfcnul" placeholder="{{ displayBsInfo['nrarfcn-ul'] }}" class="{{formValidated&&modifyConfigForm.controls['nrarfcnul'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
+				<li>
+					<label>NR-ARFCN-DL</label>
+					<span>
+						<input type="text" formControlName="nrarfcndl" placeholder="{{ displayBsInfo['nrarfcn-dl'] }}" class="{{formValidated&&modifyConfigForm.controls['nrarfcndl'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
+				<li>
+					<label>{{languageService.i18n['field.Longitude']}}</label>
+					<span>
+						<input type="text" formControlName="longitude" placeholder="{{ displayBsInfoPosition.lng }}" class="{{formValidated&&modifyConfigForm.controls['longitude'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
+				<li>
+					<label>{{languageService.i18n['field.Latitude']}}</label>
+					<span>
+						<input type="text" formControlName="latitude" placeholder="{{ displayBsInfoPosition.lat }}" class="{{formValidated&&modifyConfigForm.controls['latitude'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
 			</ul>
 			<div class="buttons">
-				<button type="button" (click)="update()">OK</button>
+				<button type="button" (click)="modifyConfig()">OK</button>
 				<button type="button" mat-dialog-close>Cancel</button>
 			</div>
 		</form>

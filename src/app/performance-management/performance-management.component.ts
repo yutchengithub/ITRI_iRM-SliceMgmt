@@ -64,7 +64,7 @@ export interface Utilization {
 export class PerformanceManagementComponent implements OnInit {
   sessionId: string = '';
   p: number = 1;            // 當前頁數
-  pageSize: number = 2;    // 每頁幾筆
+  pageSize: number = 5;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
 
   @ViewChild('oCloudPerformanceComponent') oCloudPerformanceComponent!: OCloudPerformanceComponent;
