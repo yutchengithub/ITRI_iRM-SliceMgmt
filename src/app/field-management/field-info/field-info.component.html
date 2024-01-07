@@ -7,7 +7,7 @@
     {{languageService.i18n['field.info']}} – {{fieldName}}
   </h5>
 	<!-- Field Map (場域地圖) -->
-	<div>
+	<div class="left_area">
 		<!-- @12/13 Add the window of BS List -->
 		<div class="BOX mapWindow">
 			<label class="boxTitle boxTitleRightAligned">
@@ -200,9 +200,9 @@
 			</ul>
 		</div>
 	</div>
-	<div>
+	<div class="right_area">
 		<!-- Field Alarms Information (場域告警資訊) -->
-		<div class="BOX col-md-4 center">
+		<div class="BOX">
 			<label class="boxTitle">{{ languageService.i18n['field.faultInfo'] }}
 				<a href="javascript:void(0)" (click)="goFaultMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
 			</label>
@@ -249,7 +249,7 @@
 		</div>
 
 		<!-- BS Information (基站資訊) @12/28 Update -->
-		<div class="BOX col-md-3 basicInfo bsWindow"  >
+		<div class="BOX basicInfo bsWindow"  >
 			<label class="boxTitle">{{languageService.i18n['field.bsInfo']}}</label>
 
 			<!-- 顯示進度條 -->

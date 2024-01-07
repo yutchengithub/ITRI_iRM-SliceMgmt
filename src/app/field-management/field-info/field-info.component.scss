@@ -66,13 +66,14 @@ svg circle {
 
 
 // @12/12 Add by yuchen for BS icon
-.svg-icon_BS {
-  width: 1.7em;
-  height: 1.7em;
+/* .svg-icon_BS {
+  width: 1.4em;
+  height: 1.4em;
   position: relative;
-  right: 1px;
-  bottom: 4px;
-}
+  right: 0;
+  left: 3px;
+  top: 0;
+} */
 
 .center {
   text-align: center;
@@ -82,15 +83,15 @@ svg circle {
   position: relative;
   width: 5.5em;
   height: 5.5em !important;
-  padding: 4.5% 0 0;
+  padding: 3.2% 0 0;
   font-size: 135%;
   font-weight: bold;
   font-family: Microsoft JhengHei;
-  line-height: 125%;
   border-radius: 50%;
   z-index: 1000;
-  display: inline-block;
-  margin: 1em 1em 0;
+  text-align: center;
+  vertical-align: middle;display: inline-block;
+  margin:0 .5em;
   border: 6.5px solid;
 }
 
@@ -118,14 +119,14 @@ svg circle {
 // @12/10 add by yuchen
 // 指定所有:nth-child的數字大於或等於 3 的 .percent 元素位置高度
 .percent:nth-child(n + 3) {
-  position: relative;
-  top: -35px;
+  /* position: relative;
+  top: -5px; */
 }
 
 // @12/12 add by yuchen for "Critical"
 .percent:nth-child(2) {
-  position: relative;
-  top: -5px;
+  /* position: relative;
+  top: -13px; */
 }
 
 // 激活狀態的按鈕樣式 @12/13 add by yuchen
@@ -251,7 +252,7 @@ svg circle {
   opacity: 1;
 }
 
-.col-md-3 {
+/* .col-md-3 {
   width: 32%;
 }
 
@@ -262,7 +263,7 @@ svg circle {
   top: 121.5px;
   left: 1298px;
 }
-
+ */
 .col-md-8 {
   width: 45.7%;
 }
@@ -305,7 +306,7 @@ svg circle {
 .basicInfo ul li label {
   display: inline-block;
   margin: 0;
-  width: 28%;
+  width: 20%;
 }
 
 .basicInfo ul li label::after {
@@ -590,7 +591,7 @@ table {
 // @12/12 Update by yuchen
 .mapWindow {
   height: 58em;
-  width: 70.55em;
+  width:100%;
   // position: fixed;
 }
 
@@ -615,11 +616,11 @@ google-map {
 
 // @12/07 Add by yuchen
 .performanceWindow {
-  height: 18em;
-  width: 32%;
-  position: fixed;
+  height: 16em;
+  width: 100%;
+  /* position: fixed;
   top: 349px;
-  left: 1298px;
+  left: 1298px; */
 }
 
 // @12/11 Add by yuchen
@@ -632,7 +633,7 @@ google-map {
   //align-items: center; /* 垂直居中對齊項目 */
   flex-wrap: nowrap;
   /* 防止元素換行 */
-  padding-top: 25px;
+  padding-top: .5em;
 }
 
 // @12/11 Add by yuchen
@@ -670,11 +671,11 @@ circle-progress {
 
 // @12/07 Add by yuchen
 .bsWindow {
-  height: 29em;
-  width: 32%;
-  position: fixed;
+  height: 27.6em;
+  /* width: 32%; */
+  /* position: fixed;
   top: 604px;
-  left: 1298px;
+  left: 1298px; */
   overflow-y: auto;
 }
 
@@ -786,4 +787,23 @@ circle-progress {
     margin: 0.5% 0 2% 3%;
     font-size: 1.3em;
   }
+}
+/*2024-01-01 add by wen*/
+.left_area,
+.right_area {
+  display: inline-block;
+  vertical-align: top;
+  margin:0 .5em;
+  width: 60%;
+}
+.right_area {
+  width: 35%;
+}
+.right_area > div.BOX {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+.right_area > div.BOX ul {
+  text-align: left;
 }

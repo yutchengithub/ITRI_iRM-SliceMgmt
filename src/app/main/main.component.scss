@@ -110,11 +110,10 @@ div.header button label {
 
 // @12/27 Add by yuchen for BS icon
 .svg-icon_BS {
-  width: 1.7em;
-  height: 1.7em;
-  position: relative;
-  right: 1px;
-  bottom: 4px;
+  width: 1.6em !important;
+  height: 1.6em !important;
+  left: 3em!important;
+  top: -5px!important;
 }
 
 @media only screen and (max-width:1366px) {
