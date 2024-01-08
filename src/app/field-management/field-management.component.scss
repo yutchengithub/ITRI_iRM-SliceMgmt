@@ -12,19 +12,19 @@
   text-align: center;     // 內容水平居中
 }
 
-.table th:first-child,
-.table td:first-child {
-  width: 500px; // 內容寬度
+.table th,
+.table td {
+  width: 20%; // 內容寬度
 }
 
 .table th,
 .table td {
-  width: calc(100% / 6); // 將表格分為6等份，如果列數不同，請調整分母
+ /*  width: calc(100% / 6); */ // 將表格分為6等份，如果列數不同，請調整分母
 }
 
 // 針對圖示的特定調整
-.table mat-icon {
-  width: 7.5em;
+.icon {
+  width: 4%!important;
   text-align: center;
 }
 

@@ -7,10 +7,10 @@
       <tr>
         <th>{{languageService.i18n['field.name']}}</th>
         <th>{{languageService.i18n['field.bsNum']}}</th>
-        <th>{{languageService.i18n['field.view']}}</th>
-        <th>{{languageService.i18n['field.alarm']}}</th>
-        <th>{{languageService.i18n['field.snapshot']}}</th>
-        <th>{{languageService.i18n['field.delTitle']}}</th>
+        <th class="icon">{{languageService.i18n['field.view']}}</th>
+        <th class="icon">{{languageService.i18n['field.alarm']}}</th>
+        <th class="icon">{{languageService.i18n['field.snapshot']}}</th>
+        <th class="icon">{{languageService.i18n['field.delTitle']}}</th>
     </thead>
     <tbody>
         <!-- 顯示進度條 -->
@@ -29,16 +29,16 @@
           <tr *ngFor="let opt of fieldList.fields | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fieldsListDisplay' };">
             <td>{{opt.name}}</td>
             <td>{{opt.bsNum}}</td>
-            <td>
+            <td class="icon">
               <mat-icon tooltip="{{ languageService.i18n['field.view'] }}" (click)="viewFieldDetail(opt)">remove_red_eye</mat-icon>
             </td>
-            <td>
+            <td class="icon">
               <mat-icon tooltip="{{ languageService.i18n['field.alarm'] }}" (click)="viewFieldAlarm(opt)">warning</mat-icon>
             </td>
-            <td>
+            <td class="icon">
               <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openSnapshot(opt)">camera_alt</mat-icon>
             </td>
-            <td>
+            <td class="icon">
               <mat-icon tooltip="{{languageService.i18n['field.delItem']}}" (click)="openDeleteField(opt)">delete_forever</mat-icon>
             </td>
           </tr>
