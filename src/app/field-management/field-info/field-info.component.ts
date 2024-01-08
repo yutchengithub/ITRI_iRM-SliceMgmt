@@ -23,101 +23,13 @@ import { map } from 'rxjs/operators';                           // @12/24 Add
 import { localBSinfo } from '../../shared/local-files/For_BS';  // @12/27 Add
 import { GoogleMap } from '@angular/google-maps';               // @2024/01/03 Add
 
-import { apiForField } from '../../shared/api/For_Field';             // @2024/01/04 Add for import API of Field Management 
-
-
-export interface OcloudInfo {
-  id: string;
-  name: string;
-  imsEndpoint: string;
-  softwareVersion: string;
-  callbackUri: string;
-  dms: Dms[];
-  nf: Nf[];
-  fault: Fault;
-  resourcepool: Resourcepool[];
-}
-
-export interface Dms {
-  id: string;
-  name: string;
-  dmsEndpoint: string;
-}
-
-export interface Nf {
-  id: string;
-  name: string;
-  dmsName: string;
-  status: number;
-}
-
-export interface Fault {
-  critical: number;
-  major: number;
-  minor: number;
-  warning: number;
-}
-
-export interface Resourcepool {
-  poolId: string;
-  poolName: string;
-  active?: boolean;
-  node: Node[];
-}
-
-export interface Node {
-  nodeId: string;
-  nodeName: string;
-  cpu: Cpu[];
-  memory: Memory,
-  nic: Nic[];
-  storage: Storage;
-}
-
-export interface Cpu {
-  id: string;
-  name: string;
-  product: string;
-  capacity: string;
-}
-
-export interface Nic {
-  id: string;
-  name: string;
-  product: string;
-  capacity: string;
-}
-
-export interface Memory {
-  name: string;
-  size: string;
-}
-
-export interface Storage {
-  total: string;
-  items: Items[];
-}
-
-export interface Items {
-  id: string;
-  name: string;
-  size: string;
-}
-
-export interface OcloudPerformance {
-  // totalCpu: number;
-  // usedCpu: number;
-  cpu: string;
-  memory: string;
-  storage: string;
-  network: string;
-}
+import { apiForField } from '../../shared/API/For_Field';       // @2024/01/04 Add for import API of Field Management 
 
 export interface SimplifiedBSInfo {
-  id: string;
+  
+  // For display and POST of update
   name: string;
   bstype: number;
-  description: string;
   status: number;
   nci: string;
   pci: number;
@@ -126,13 +38,14 @@ export interface SimplifiedBSInfo {
   "nrarfcn-dl": number;
   "nrarfcn-ul": number;
   position: string;
-  tac: string;
   neighbors: SimplifiedNeighborInfo[];
-  iconUrl: string; // 存儲基站圖標的 URL
-  // components:{
-  //   type: string;
-  //   id: string;
-  // }
+  iconUrl: string;      // 存儲 BS 圖標的 URL
+
+  // For POST of update
+  id: string;
+  description: string;
+  //tac: string;
+  components: {};  // 存儲 BS 的 Component ID
 }
 
 export interface SimplifiedNeighborInfo {
@@ -360,7 +273,7 @@ export class FieldInfoComponent implements OnInit {
       } else { // 如非使用 local files
 
         // 跟後端 API 取得場域圖片
-        this.commonService.queryFieldImage( this.fieldId ).subscribe({
+        this.API_Field.queryFieldImage( this.fieldId ).subscribe({
           next: (response) => {
             // 當接收到圖片數據時，處理 Base64 編碼的圖片
             if (response && response.fieldImage) {
@@ -539,7 +452,7 @@ export class FieldInfoComponent implements OnInit {
     const mapType = ( overlayType === OverlayType.SINR ) ? 0 : 1;
 
     if ( this.activeButton_rsrp_sinr ) {
-      if (this.commonService.isLocal) {
+      if ( this.commonService.isLocal ) {
         let imageSrc_localPath = '';
 
         // 設定本地 SINR 或 RSRP 圖片的路徑
@@ -565,7 +478,7 @@ export class FieldInfoComponent implements OnInit {
         const rightLatitude = this.fieldBounds.south; // 南邊界緯度
 
         // 調用後端 API 獲取 SINR 或 RSRP 圖片
-        this.commonService.bsHeatMap( this.fieldId, leftLongitude, leftLatitude,
+        this.API_Field.bsHeatMap( this.fieldId, leftLongitude, leftLatitude,
                                        rightLongitude, rightLatitude, mapType ).subscribe({
           next: (response) => {
             const imageSrc = 'data:image/png;base64,' + response.heatMap; // 從後端回應中獲取圖片
@@ -623,8 +536,8 @@ export class FieldInfoComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public commonService: CommonService,
-    public bsLocalFiles: localBSinfo,    // @12/27 Add for import BS Local Files
-    public API_field: apiForField,       // @2024/01/04 Add for import API of Field Management 
+    public bsLocalFiles: localBSinfo,     // @12/27 Add for import BS Local Files
+    public API_Field: apiForField,        // @2024/01/04 Add for import API of Field Management 
     private fb: FormBuilder,
     private dialog: MatDialog,
     public languageService: LanguageService,
@@ -1030,7 +943,7 @@ export class FieldInfoComponent implements OnInit {
 
       id: bsInfo.id,                   // 從 bsInfo 取出基站 id
       name: bsInfo.name,               // 從 bsInfo 取出基站名稱
-      tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
+      //tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
       description: bsInfo.description, // 從 bsInfo 取出總基站描述
       bstype: bsInfo.bstype,           // 從 bsInfo 取出基站類型
       status: bsInfo.status,           // 從 bsInfo 取出基站狀態
@@ -1043,10 +956,12 @@ export class FieldInfoComponent implements OnInit {
       "tx-power": bsInfo.info['bs-conf']['tx-power'],     // 從 bsInfo 的 info['bs-conf'] 取出發射功率
       "nrarfcn-dl": bsInfo.info['bs-conf']['nrarfcn-dl'], // 從 bsInfo 的 info['bs-conf'] 取出下行 NR ARFCN
       "nrarfcn-ul": bsInfo.info['bs-conf']['nrarfcn-ul'], // 從 bsInfo 的 info['bs-conf'] 取出上行 NR ARFCN 
-      position: bsInfo.position,  // 從 bsInfo 取出基站位置    
+      position: bsInfo.position,  // 從 bsInfo 取出基站位置  
       neighbors,  // 設定鄰居基站數據
       iconUrl: "",
       
+
+      components: bsInfo.components
     };
     
     // 返回轉換後的 SimplifiedBSInfo 對象
@@ -1088,8 +1003,12 @@ export class FieldInfoComponent implements OnInit {
         "nrarfcn-ul": subBsInfo.DU?.arfcnUL,            // 取出 DU 配置上行頻率
         tac: subBsInfo.DU?.nRTAC,                       // 取出 DU 配置 tac
         position: subBsInfo.RU?.position,               // 取出 RU 的位置訊息
+        componentId: subBsInfo.CU.id,                   // 取出 CU 配置的 ID
         neighbors: anrNeighbors,                        // 映射後的鄰居基站數據
-        iconUrl: ""
+        iconUrl: "",
+
+
+        components: Dist_bsInfo.components
       };
     });
 
@@ -1310,63 +1229,94 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
-  modifyConfig() {
+  // @2024/01/08 Update 
+  modifyConfig( bsType: number ) {
+    console.log( "The modify bsType is:", bsType );
+
     this.formValidated = true;
-    if (!this.modifyConfigForm.valid) {
+    if ( !this.modifyConfigForm.valid ) {
       return;
     }
   
+    // 表格上的輸入值
     const formValues = this.modifyConfigForm.value;
   
     // 解析原始的 position 字串以獲取經緯度
     const originalPosition = this.displayBsInfo ? this.parsePosition( this.displayBsInfo.position ) : null;
-  
-    const body: any = {
-      session: this.sessionId,
-      id: this.displayBsInfo!.id,
+
+    const post_BS_body: any = {
+
+      // User can modify:
       name: formValues.bsName || this.displayBsInfo!.name,
-      bstype: this.displayBsInfo!.bstype,
-      description: this.displayBsInfo!.description,
       pci: formValues.pci || this.displayBsInfo!.pci,
       plmnid: {
         mcc: formValues.mcc || this.displayBsInfo!['plmn-id'].mcc,
         mnc: formValues.mnc || this.displayBsInfo!['plmn-id'].mnc
       },
-      nci: this.displayBsInfo!.nci,
-      gpslongitude: formValues.longitude ? formValues.longitude * 1000000 : originalPosition ? originalPosition.lng * 1000000 : undefined,
-      gpslatitude: formValues.latitude ? formValues.latitude * 1000000 : originalPosition ? originalPosition.lat * 1000000 : undefined,
+      txpower: formValues.txPower || this.displayBsInfo!['tx-power'],
       nrarfcndl: formValues.nrarfcndl || this.displayBsInfo!['nrarfcn-dl'],
       nrarfcnul: formValues.nrarfcnul || this.displayBsInfo!['nrarfcn-ul'],
-      txpower: formValues.txPower || this.displayBsInfo!['tx-power'],
-      tac: this.displayBsInfo!.tac,
-      // components:{
-      //   type: this.displayBsInfo!.components.type,
-      //   id: this.displayBsInfo!.components.id
-      // }
+      gpslongitude: formValues.longitude ? parseFloat(formValues.longitude) * 1000000 : (originalPosition ? originalPosition.lng : undefined),
+      gpslatitude: formValues.latitude ? parseFloat(formValues.latitude) * 1000000 : (originalPosition ? originalPosition.lat : undefined),
+
+      // User can't modify:
+      session: this.sessionId,
+      id: this.displayBsInfo!.id,
+      bstype: this.displayBsInfo!.bstype,
+      components: this.displayBsInfo!.components,
+      description: this.displayBsInfo!.description,
+      nci: this.displayBsInfo!.nci,
+      //tac: this.displayBsInfo!.tac,
     };
-  
-    // 如果有新的經緯度值，則組合成所需的格式
-    if (formValues.longitude || formValues.latitude) {
-      body.position = `[${(formValues.longitude).toFixed(6)},${(formValues.latitude).toFixed(6)}]`;
+
+    
+
+    // 確認解析後的 longitude 和 latitude 是有效的數字
+    if (!isNaN( post_BS_body.gpslongitude ) && !isNaN(post_BS_body.gpslatitude)) {
+      post_BS_body.position = `[${parseFloat(formValues.longitude)},${parseFloat(formValues.latitude)}]`;
     } else if (originalPosition) {
-      // 如果經緯度沒有更改，使用原有的 position
-      body.position = this.displayBsInfo!.position;
+      // 如果經緯度沒有更改，或者表單的值無效，使用原有的 position
+      post_BS_body.position = this.displayBsInfo!.position;
     }
-  
-    // 發送更新請求
-    this.API_field.updateBs(body).subscribe(
-      () => console.log('更新成功。')
-    );
+
+    // // User can modify:
+    // // 如有新的經緯度值，則組合成所需的格式
+    // if (formValues.longitude || formValues.latitude) {
+    //   post_BS_body.position = `[${(formValues.longitude).toFixed(6)},${(formValues.latitude).toFixed(6)}]`;
+    // } else if ( originalPosition ) {
+    //   // 如果經緯度沒有更改，使用原有的 position
+    //   post_BS_body.position = this.displayBsInfo!.position;
+    // }
+    
+    // if (formValues.longitude || formValues.latitude) {
+    //   post_BS_body.position = `[${longitude.toFixed(6)},${latitude.toFixed(6)}]`;
+    // } else if (originalPosition) {
+    //   // 直接使用原始的經緯度值，不進行乘以 1000000 的操作
+    //   post_BS_body.position = this.displayBsInfo!.position;
+    // }
+
+
+    // 發送 BS 配置更新請求
+    if ( bsType === 1 ) {
+      // For All-in-one BS
+      console.log( "The POST for updateBs():", post_BS_body );
+      this.API_Field.updateBs( post_BS_body ).subscribe(
+        () => console.log('All-in-one BS Update successful...')
+      );
+    } else {
+      // For Disaggregated BS: [CU] + [DU] + [RU]
+      console.log( "The POST for updateDistributedBs():", post_BS_body );
+      this.API_Field.updateDistributedBs( post_BS_body ).subscribe(
+        () => console.log('Disaggregated BS: [CU] + [DU] + [RU] Update successful...')
+      );
+    }
+
     this.modifyConfigWindowRef.close();
   
     this.getQueryFieldInfo(); // 刷新頁面數據
   }
   
 // Modify Configuration Setting @2024/01/05 Add ↑
-
-
-
-
 
 
 
@@ -1459,4 +1409,92 @@ export class FieldInfoComponent implements OnInit {
     // }
   }
 
+}
+
+
+export interface OcloudInfo {
+  id: string;
+  name: string;
+  imsEndpoint: string;
+  softwareVersion: string;
+  callbackUri: string;
+  dms: Dms[];
+  nf: Nf[];
+  fault: Fault;
+  resourcepool: Resourcepool[];
+}
+
+export interface Dms {
+  id: string;
+  name: string;
+  dmsEndpoint: string;
+}
+
+export interface Nf {
+  id: string;
+  name: string;
+  dmsName: string;
+  status: number;
+}
+
+export interface Fault {
+  critical: number;
+  major: number;
+  minor: number;
+  warning: number;
+}
+
+export interface Resourcepool {
+  poolId: string;
+  poolName: string;
+  active?: boolean;
+  node: Node[];
+}
+
+export interface Node {
+  nodeId: string;
+  nodeName: string;
+  cpu: Cpu[];
+  memory: Memory,
+  nic: Nic[];
+  storage: Storage;
+}
+
+export interface Cpu {
+  id: string;
+  name: string;
+  product: string;
+  capacity: string;
+}
+
+export interface Nic {
+  id: string;
+  name: string;
+  product: string;
+  capacity: string;
+}
+
+export interface Memory {
+  name: string;
+  size: string;
+}
+
+export interface Storage {
+  total: string;
+  items: Items[];
+}
+
+export interface Items {
+  id: string;
+  name: string;
+  size: string;
+}
+
+export interface OcloudPerformance {
+  // totalCpu: number;
+  // usedCpu: number;
+  cpu: string;
+  memory: string;
+  storage: string;
+  network: string;
 }

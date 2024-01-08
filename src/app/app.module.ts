@@ -65,37 +65,40 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 
-import { localBSinfo } from './shared/local-files/For_BS';       // @12/27 Add 
-import { apiForField } from './shared/api/For_Field'; // @2024/01/04 Add 
+import { localBSinfo } from './shared/local-files/For_BS';      // @12/27 Add 
+import { apiForField } from './shared/API/For_Field';           // @2024/01/04 Add
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent,
-    ComponentManagementComponent,
-    ComponentInfoComponent,
+    MainComponent,
+
     LoginComponent,
+    DashboardComponent,
     FieldManagementComponent,
     FieldInfoComponent,           // @11/30 Add by yuchen
     BSManagementComponent,        // @12/27 Add by yuchen 
     BSInfoComponent,              // @12/27 Add by yuchen
-    NfManagementComponent,
+    ComponentManagementComponent,
+    ComponentInfoComponent,
     FaultManagementComponent,
     PerformanceManagementComponent,
     SoftwareManagementComponent,
     SoftwareInfoComponent,
+    ScheduleManagementComponent,  // @11/20 Add by yuchen 
+    ScheduleInfoComponent,        // @11/20 Add by yuchen
+    LogManagementComponent,       // @10/25 Add by yuchen 
     AccountManagementComponent,
     AccountInfoComponent,
-    ScheduleManagementComponent,  // @11/20 Add by yuchen 
-    ScheduleInfoComponent,        // @11/20 Add by yuchen 
-    LogManagementComponent,       // @10/25 Add by yuchen 
+
     TruncatePipe,                 // @11/16 Add by yuchen 
-    MainComponent,
     DatePickerFormatDirective,
+    
+    NfManagementComponent,
     NfInfoComponent,
-    OCloudPerformanceComponent,
     NfPerformanceComponent,
     NfPerformanceInfoComponent,
+    OCloudPerformanceComponent,
     OCloudPerformanceInfoComponent
   ],
   imports: [

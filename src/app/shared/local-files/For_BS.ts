@@ -15794,7 +15794,7 @@
             "description": "BS09",
             "bstype": 2,
             "components": {
-              "1ebfdbd887034b439104": {
+              "1ebfdbd887034b439104": {  // gNBCUId - Update Distributed BS Configurations need it
                 "542ec6627f744df1bafd": [
                   {
                     "8ece726a4ebe4803b8be": "[121.045096,24.773931]"

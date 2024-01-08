@@ -1,62 +1,36 @@
 import { HttpHeaders, HttpClient, HttpParams  } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Item } from '../models/item';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { CommonService } from '../common.service'; // @2024/01/08 Add by yuchen
 
 @Injectable({
   providedIn: 'root'
 })
 export class apiForField {
 
-  restPath!: string;
-
-  statusList: Item[] = [
-    { displayName: 'All', value: 'All' },
-    { displayName: 'Running', value: '0' },
-    { displayName: 'Deploying', value: '1' },
-    { displayName: 'Fail Deploy', value: '2' },
-    { displayName: 'Stopped', value: '3' }
-  ];
-  TypeList: Item[] = [
-    { displayName: 'All', value: 'All' },
-    { displayName: 'CU', value: '0' },
-    { displayName: 'DU', value: '1' },
-    { displayName: 'CU+DU', value: '2' },
-    { displayName: 'CU+DU+RU', value: '3' }
-  ];
-
-  setSessionId(sessionId: string) {
-    window.sessionStorage.setItem('sessionId', sessionId);
-  }
-
-  getSessionId(): string {
-    return window.sessionStorage.getItem('sessionId') as string;
-  }
-
-  statusMapDisplayName: Map<string, string> = new Map();
-  typeMapDisplayName: Map<string, string> = new Map();
+  restPath = this.commonService.restPath;         // Get the root path  @2024/01/08
+  sessionId = this.commonService.getSessionId();  // Get the Session ID @2024/01/08
 
   constructor(
-    private http: HttpClient
-  ) {
-   
-  }
-
-    
+    private http: HttpClient,
+    private commonService: CommonService 
+  ) {}
+  
   // Field Management API  @11/30 Add by yuchen
   queryFieldList(): Observable<any> {
     
     // 構建 API URL
-    const url = `${this.restPath}/queryFieldList/${this.getSessionId()}`;
+    const url = `${this.restPath}/queryFieldList/${this.sessionId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get(url);
   }
 
-  queryFieldInfo(fieldId: string): Observable<any> {  // @12/05 Add by yuchen
+  // @12/05 Add by yuchen
+  queryFieldInfo(fieldId: string): Observable<any> {
     
     // 構建 API URL
-    const url = `${this.restPath}/queryFieldInfo/${this.getSessionId()}/${fieldId}`;
+    const url = `${this.restPath}/queryFieldInfo/${this.sessionId}/${fieldId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get(url);
@@ -66,7 +40,7 @@ export class apiForField {
   queryFieldImage(fieldId: string): Observable<any> { 
     
     // 構建 API URL
-    const url = `${this.restPath}/queryFieldImage/${this.getSessionId()}/${fieldId}`;
+    const url = `${this.restPath}/queryFieldImage/${this.sessionId}/${fieldId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get(url);
@@ -81,7 +55,7 @@ export class apiForField {
   
     // 準備請求體，包含所有後端所需的參數
     const requestBody = {
-      session: this.getSessionId(),
+      session: this.sessionId,
       fieldId: fieldId,
       'left-longitude': String(Math.round(leftLongitude * 1000000)),    // 轉為字符串
       'left-latitude': String(Math.round(rightLatitude * 1000000)),     // 轉為字符串
@@ -104,9 +78,20 @@ export class apiForField {
     return this.http.post( url, requestBody );
   }
   
+  // For Updating Configurations of All-in-one BS @2024/01/05 Add by yuchen
   updateBs( body: {} ): Observable<any> {
 
     const url = `${this.restPath}/updateBs`;
+    
+    const bodyStr = JSON.stringify( body );
+    
+    return this.http.post( url, bodyStr );
+  }
+
+  // For Updating Configurations of Distributed BS @2024/01/08 Add by yuchen
+  updateDistributedBs( body: {} ): Observable<any> {
+
+    const url = `${this.restPath}/updateDistributedBs`;
     
     const bodyStr = JSON.stringify( body );
     
