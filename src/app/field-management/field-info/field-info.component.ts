@@ -23,7 +23,7 @@ import { map } from 'rxjs/operators';                           // @12/24 Add
 import { localBSinfo } from '../../shared/local-files/For_BS';  // @12/27 Add
 import { GoogleMap } from '@angular/google-maps';               // @2024/01/03 Add
 
-import { apiForField } from '../../shared/API/For_Field';       // @2024/01/04 Add for import API of Field Management 
+import { apiForField } from '../../shared/api/For_Field';       // @2024/01/04 Add for import API of Field Management 
 
 export interface SimplifiedBSInfo {
   
