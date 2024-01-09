@@ -44,7 +44,8 @@ export interface SimplifiedBSInfo {
   // For POST of update
   id: string;
   description: string;
-  //tac: string;
+  tac: string;
+  channelbandwidth: number;
   components: {};  // 存儲 BS 的 Component ID
 }
 
@@ -943,7 +944,8 @@ export class FieldInfoComponent implements OnInit {
 
       id: bsInfo.id,                   // 從 bsInfo 取出基站 id
       name: bsInfo.name,               // 從 bsInfo 取出基站名稱
-      //tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
+      tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
+      channelbandwidth: bsInfo.info['bs-conf']['channel-bandwidth'], // 從 bsInfo 取出基站 channelbandwidth
       description: bsInfo.description, // 從 bsInfo 取出總基站描述
       bstype: bsInfo.bstype,           // 從 bsInfo 取出基站類型
       status: bsInfo.status,           // 從 bsInfo 取出基站狀態
@@ -1002,6 +1004,7 @@ export class FieldInfoComponent implements OnInit {
         "nrarfcn-dl": subBsInfo.DU?.arfcnDL,            // 取出 DU 配置下行頻率
         "nrarfcn-ul": subBsInfo.DU?.arfcnUL,            // 取出 DU 配置上行頻率
         tac: subBsInfo.DU?.nRTAC,                       // 取出 DU 配置 tac
+        channelbandwidth: subBsInfo.DU?.bSChannelBwDL,  // 取出 DU 配置 bSChannelBwDL
         position: subBsInfo.RU?.position,               // 取出 RU 的位置訊息
         componentId: subBsInfo.CU.id,                   // 取出 CU 配置的 ID
         neighbors: anrNeighbors,                        // 映射後的鄰居基站數據
@@ -1094,13 +1097,18 @@ export class FieldInfoComponent implements OnInit {
     console.log("After click onSelectBsInfo the displayBsInfo:", this.displayBsInfo)
   }
 
-  // @12/19 Add
+  // @2024/01/09 - Update
   // 此方法用於將位置訊息的字串轉換為 Google 地圖所需的 LatLngLiteral 對象
-  parsePosition(positionStr: string): google.maps.LatLngLiteral {
+  parsePosition( positionStr: string): google.maps.LatLngLiteral {
     try {
 
+      // 檢查字符串中是否包含 'NaN'
+      if (positionStr.includes('NaN')) {
+        throw new Error('Position contains NaN');
+      }
+
       // 嘗試解析 JSON 字串以獲取經緯度數組
-      const positionArr = JSON.parse(positionStr);
+      const positionArr = JSON.parse( positionStr );
 
       // 返回一個 LatLngLiteral 對象，其 lat 和 lng 屬性分別對應於緯度和經度 
       // ( 實際數據格式為: [ lng, lat ] = [ 121.044029, 24.773652 ] )
@@ -1118,6 +1126,7 @@ export class FieldInfoComponent implements OnInit {
       return { lat: 0, lng: 0 };
     }
   }
+  
 
   // @12/25 Add
   // 用於從當前顯示基站資訊中獲取轉換後的位置對象
@@ -1229,9 +1238,18 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
+  // 函數來驗證並解析坐標值
+  parseCoordinate(value: string, defaultValue?: number): number | undefined {
+    const parsed = parseFloat(value);
+    return !isNaN(parsed) ? parsed * 1000000 : defaultValue;
+  }
+
+
   // @2024/01/08 Update 
-  modifyConfig( bsType: number ) {
-    console.log( "The modify bsType is:", bsType );
+  modifyConfig( bsName: string ,bsType: number ) {
+    console.log( "modifyConfig() - Start" );
+    console.log( "The modify BS Name:", bsName, ", bsType is:", bsType );
+    this.isMarkersLoading = true; // 點擊 Modify Configuration 時，開始顯示 Spinner 表載入修改資訊中 
 
     this.formValidated = true;
     if ( !this.modifyConfigForm.valid ) {
@@ -1240,61 +1258,55 @@ export class FieldInfoComponent implements OnInit {
   
     // 表格上的輸入值
     const formValues = this.modifyConfigForm.value;
+    console.log(formValues);
   
     // 解析原始的 position 字串以獲取經緯度
     const originalPosition = this.displayBsInfo ? this.parsePosition( this.displayBsInfo.position ) : null;
 
+    console.log("When click Modify Configration the original position is:", originalPosition );
+    console.log("When click Modify Configration the formValues' position is:", formValues.longitude, formValues.latitude );
+
+
+    // 使用 parseCoordinate 函數來安全解析經度和緯度
+    const gpslongitude = this.parseCoordinate(formValues.longitude, originalPosition ? originalPosition.lng * 1000000 : undefined);
+    const gpslatitude = this.parseCoordinate(formValues.latitude, originalPosition ? originalPosition.lat * 1000000 : undefined);
+ 
     const post_BS_body: any = {
 
       // User can modify:
-      name: formValues.bsName || this.displayBsInfo!.name,
-      pci: formValues.pci || this.displayBsInfo!.pci,
+      // 確保所有值都是字符串類型
+      name: formValues.bsName !== '' ? String(formValues.bsName) : String(this.displayBsInfo!.name),
+      pci: formValues.pci !== '' ? String(formValues.pci) : String(this.displayBsInfo!.pci),
       plmnid: {
-        mcc: formValues.mcc || this.displayBsInfo!['plmn-id'].mcc,
-        mnc: formValues.mnc || this.displayBsInfo!['plmn-id'].mnc
+        mnc: formValues.mnc !== '' ? String(formValues.mnc) : String(this.displayBsInfo!['plmn-id'].mnc),
+        mcc: formValues.mcc !== '' ? String(formValues.mcc) : String(this.displayBsInfo!['plmn-id'].mcc)
       },
-      txpower: formValues.txPower || this.displayBsInfo!['tx-power'],
-      nrarfcndl: formValues.nrarfcndl || this.displayBsInfo!['nrarfcn-dl'],
-      nrarfcnul: formValues.nrarfcnul || this.displayBsInfo!['nrarfcn-ul'],
-      gpslongitude: formValues.longitude ? parseFloat(formValues.longitude) * 1000000 : (originalPosition ? originalPosition.lng : undefined),
-      gpslatitude: formValues.latitude ? parseFloat(formValues.latitude) * 1000000 : (originalPosition ? originalPosition.lat : undefined),
+      txpower: formValues.txPower !== '' ? String(formValues.txPower) : String(this.displayBsInfo!['tx-power']),
+      nrarfcndl: formValues.nrarfcndl !== '' ? String(formValues.nrarfcndl) : String(this.displayBsInfo!['nrarfcn-dl']),
+      nrarfcnul: formValues.nrarfcnul !== '' ? String(formValues.nrarfcnul) : String(this.displayBsInfo!['nrarfcn-ul']),
+      
+      // 使用 parseCoordinate 函數安全解析後的經緯度
+      gpslongitude: String(gpslongitude),
+      gpslatitude: String(gpslatitude),
 
       // User can't modify:
-      session: this.sessionId,
-      id: this.displayBsInfo!.id,
-      bstype: this.displayBsInfo!.bstype,
+      session: String(this.sessionId),
+      id: String(this.displayBsInfo!.id),
+      bstype: String(this.displayBsInfo!.bstype),
       components: this.displayBsInfo!.components,
-      description: this.displayBsInfo!.description,
-      nci: this.displayBsInfo!.nci,
-      //tac: this.displayBsInfo!.tac,
+      description: String(this.displayBsInfo!.description),
+      nci: String(this.displayBsInfo!.nci),
+      tac: String(this.displayBsInfo!.tac),
+      channelbandwidth: String(this.displayBsInfo!.channelbandwidth)
     };
 
-    
-
-    // 確認解析後的 longitude 和 latitude 是有效的數字
-    if (!isNaN( post_BS_body.gpslongitude ) && !isNaN(post_BS_body.gpslatitude)) {
-      post_BS_body.position = `[${parseFloat(formValues.longitude)},${parseFloat(formValues.latitude)}]`;
-    } else if (originalPosition) {
-      // 如果經緯度沒有更改，或者表單的值無效，使用原有的 position
-      post_BS_body.position = this.displayBsInfo!.position;
+    // 如果有有效的經緯度值
+    if (post_BS_body.gpslongitude !== undefined && post_BS_body.gpslatitude !== undefined) {
+      post_BS_body.position = String(`[${(post_BS_body.gpslongitude / 1000000).toFixed(6)},${(post_BS_body.gpslatitude / 1000000).toFixed(6)}]`);
+    } else {
+      // 如果任一值為 undefined，則使用原始的 position
+      post_BS_body.position = String(this.displayBsInfo!.position);
     }
-
-    // // User can modify:
-    // // 如有新的經緯度值，則組合成所需的格式
-    // if (formValues.longitude || formValues.latitude) {
-    //   post_BS_body.position = `[${(formValues.longitude).toFixed(6)},${(formValues.latitude).toFixed(6)}]`;
-    // } else if ( originalPosition ) {
-    //   // 如果經緯度沒有更改，使用原有的 position
-    //   post_BS_body.position = this.displayBsInfo!.position;
-    // }
-    
-    // if (formValues.longitude || formValues.latitude) {
-    //   post_BS_body.position = `[${longitude.toFixed(6)},${latitude.toFixed(6)}]`;
-    // } else if (originalPosition) {
-    //   // 直接使用原始的經緯度值，不進行乘以 1000000 的操作
-    //   post_BS_body.position = this.displayBsInfo!.position;
-    // }
-
 
     // 發送 BS 配置更新請求
     if ( bsType === 1 ) {
@@ -1303,17 +1315,20 @@ export class FieldInfoComponent implements OnInit {
       this.API_Field.updateBs( post_BS_body ).subscribe(
         () => console.log('All-in-one BS Update successful...')
       );
+      this.isMarkersLoading = false; // 刷新完成，隱藏 spinner
     } else {
       // For Disaggregated BS: [CU] + [DU] + [RU]
       console.log( "The POST for updateDistributedBs():", post_BS_body );
       this.API_Field.updateDistributedBs( post_BS_body ).subscribe(
         () => console.log('Disaggregated BS: [CU] + [DU] + [RU] Update successful...')
       );
+      this.isMarkersLoading = false; // 刷新完成，隱藏 spinner
     }
 
+    // 在 modifyConfig 方法的最後
     this.modifyConfigWindowRef.close();
-  
-    this.getQueryFieldInfo(); // 刷新頁面數據
+    this.getQueryFieldInfo();      // 刷新頁面數據
+    this.modifyConfigForm.reset(); // 這會重置整個表單
   }
   
 // Modify Configuration Setting @2024/01/05 Add ↑
