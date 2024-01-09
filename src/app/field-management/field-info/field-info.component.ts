@@ -25,6 +25,8 @@ import { GoogleMap } from '@angular/google-maps';               // @2024/01/03 A
 
 import { apiForField } from '../../shared/api/For_Field';       // @2024/01/04 Add for import API of Field Management 
 
+import { of } from 'rxjs'; // @2024/01/09 Add 
+
 export interface SimplifiedBSInfo {
   
   // For display and POST of update
@@ -1245,7 +1247,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
-  // @2024/01/08 Update 
+  // @2024/01/09 Update 
   modifyConfig( bsName: string ,bsType: number ) {
     console.log( "modifyConfig() - Start" );
     console.log( "The modify BS Name:", bsName, ", bsType is:", bsType );
@@ -1308,23 +1310,38 @@ export class FieldInfoComponent implements OnInit {
       post_BS_body.position = String(this.displayBsInfo!.position);
     }
 
-    // 發送 BS 配置更新請求
-    if ( bsType === 1 ) {
-      // For All-in-one BS
-      console.log( "The POST for updateBs():", post_BS_body );
-      this.API_Field.updateBs( post_BS_body ).subscribe(
-        () => console.log('All-in-one BS Update successful...')
-      );
-      this.isMarkersLoading = false; // 刷新完成，隱藏 spinner
-    } else {
-      // For Disaggregated BS: [CU] + [DU] + [RU]
-      console.log( "The POST for updateDistributedBs():", post_BS_body );
-      this.API_Field.updateDistributedBs( post_BS_body ).subscribe(
-        () => console.log('Disaggregated BS: [CU] + [DU] + [RU] Update successful...')
-      );
-      this.isMarkersLoading = false; // 刷新完成，隱藏 spinner
-    }
 
+    if ( this.commonService.isLocal ) {
+      // 如果是本地環境，可能需要進行模擬或者不進行任何操作
+
+      // 模擬一個成功響應或者直接返回
+      of({ success: true, message: 'All-in-one BS Update successful...' }).subscribe( response => {
+        console.log( response.message );
+        // 處理模擬響應
+        console.log('本地測試環境，不進行更新操作');
+      });
+
+    } else {
+
+      // 非本地環境，進行正常的更新請求
+      if (bsType === 1) {
+        // For All-in-one BS
+        console.log("The POST for updateBs():", post_BS_body);
+        this.API_Field.updateBs( post_BS_body ).subscribe(
+          () => console.log('All-in-one BS Update successful...')
+        );
+      } else {
+        // For Disaggregated BS: [CU] + [DU] + [RU]
+        console.log("The POST for updateDistributedBs():", post_BS_body);
+        this.API_Field.updateDistributedBs( post_BS_body ).subscribe(
+          () => console.log('Disaggregated BS: [CU] + [DU] + [RU] Update successful...')
+        );
+      }
+      
+      // 確保不管是本地還是非本地環境，spinner 都應該在請求結束後關閉
+      this.isMarkersLoading = false;
+    }
+    
     // 在 modifyConfig 方法的最後
     this.modifyConfigWindowRef.close();
     this.getQueryFieldInfo();      // 刷新頁面數據
@@ -1332,7 +1349,6 @@ export class FieldInfoComponent implements OnInit {
   }
   
 // Modify Configuration Setting @2024/01/05 Add ↑
-
 
 
 
