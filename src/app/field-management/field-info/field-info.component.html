@@ -112,7 +112,7 @@
 			<!-- 在地圖和進度指示器外面包一層 div，用於定位進度指示器 -->
 			
 				<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
-				<google-map *ngIf="showMapModel" width="939.5px" height="748px" [center]="center" [options]="mapOptions">
+				<google-map *ngIf="showMapModel" width="1025.5px" height="748px" [center]="center" [options]="mapOptions">
 					<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
 					<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
 					
@@ -145,7 +145,10 @@
 				<div *ngIf="isMarkersLoading" class="spinner-container">
 					<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
 				</div>
-			
+				<!-- 在地圖下方放置進度指示器，當 isfieldImage_or_RsrpSinrMapLoading 為 true 時顯示 -->
+				<div *ngIf="isfieldImage_or_RsrpSinrMapLoading" class="spinner-container">
+					<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
+				</div>
 
 			<!-- 基站列表，只有當 showMapModel 為 false 時才顯示 -->
 			<div *ngIf="!showMapModel">
@@ -259,7 +262,9 @@
 
 		<!-- BS Information (基站資訊) @12/28 Update -->
 		<div class="BOX basicInfo bsWindow"  >
-			<label class="boxTitle">{{languageService.i18n['field.bsInfo']}}</label>
+			<label class="boxTitle">
+				{{ languageService.i18n['field.bsInfo'] }}
+			</label>
 
 			<!-- 顯示進度條 -->
 			<ng-container *ngIf="isMarkersLoading">
@@ -308,20 +313,37 @@
 					<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
 					</li>
 
-					<!-- 使用 displayBsInfoPosition getter 方法獲取經度 -->
+					<!-- 使用 displayBsInfoPosition getter 獲取經度 -->
 					<li>
 						<label>{{languageService.i18n['field.Longitude']}}</label>
 						<span>{{ displayBsInfoPosition.lng }}</span>
 					</li>
 
-					<!-- 使用 displayBsInfoPosition getter 方法獲取緯度 -->
+					<!-- 使用 displayBsInfoPosition getter 獲取緯度 -->
 					<li>
 						<label>{{languageService.i18n['field.Latitude']}}</label>
 						<span>{{ displayBsInfoPosition.lat }}</span>
 					</li>
-				</ul>  
-				<div *ngIf="displayBsInfo">
-					<button mat-flat-button class="button-modifyConfiguration" tooltip="{{languageService.i18n['field.modifyConfiguration']}}" (click)="openModifyConfigModel()">{{languageService.i18n['field.modifyConfiguration']}}</button>
+				</ul>
+				
+				<!-- 修改配置按鈕 -->
+				<div *ngIf="displayBsInfo" class="button-and-success-message-container">
+					<div class="button-container">
+					  <button mat-flat-button class="button-modifyConfiguration" (click)="openModifyConfigModel()">
+						{{ languageService.i18n['field.modifyConfiguration'] }}
+					  </button>
+					  <div class="success-message-placeholder" *ngIf="!isModifySuccess"></div>
+					</div>
+					
+					<!-- 成功訊息與圖標 -->
+					<div *ngIf="isModifySuccess" class="success-message">
+					  <mat-icon>check_circle</mat-icon>{{ languageService.i18n['field.modifySuccess'] }} !
+					</div>
+
+					 <!-- 錯誤訊息與圖標 -->
+					<div *ngIf="isModifyError" class="error-message">
+						<mat-icon>error</mat-icon>{{ languageService.i18n['field.modifyError'] }} !
+					</div>
 				</div>
 			</ng-container>
 
@@ -376,7 +398,7 @@
 	</div>
 
 	<ng-template #modifyConfigWindow>
-		<h5>{{languageService.i18n['field.modifyConfiguration']}}</h5>
+		<h5 *ngIf="displayBsInfo">{{languageService.i18n['field.modifyConfiguration']}} – {{ displayBsInfo.name }}</h5>
 		<form [formGroup]="modifyConfigForm">
 			<ul *ngIf="displayBsInfo">
 				<li>
@@ -393,15 +415,15 @@
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
-				<li>
-					<label>PLMN ID</label>
-					<span class="input_2">
-						<input type="text" formControlName="mcc" placeholder="{{ displayBsInfo['plmn-id'].mcc }}" class="{{formValidated&&modifyConfigForm.controls['mcc'].invalid?'required':''}}">
+				<!-- <li> -->
+					<!-- <label>PLMN ID</label> -->
+					<!-- <span class="input_2"> -->
+						<!-- <input type="text" formControlName="mcc" placeholder="{{ displayBsInfo['plmn-id'].mcc }}" class="{{formValidated&&modifyConfigForm.controls['mcc'].invalid?'required':''}}"> -->
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						<input type="text" formControlName="mnc" placeholder="{{ displayBsInfo['plmn-id'].mnc }}" class="{{formValidated&&modifyConfigForm.controls['mnc'].invalid?'required':''}}">
+						<!-- <input type="text" formControlName="mnc" placeholder="{{ displayBsInfo['plmn-id'].mnc }}" class="{{formValidated&&modifyConfigForm.controls['mnc'].invalid?'required':''}}"> -->
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-					</span>
-				</li>
+					<!-- </span> -->
+				<!-- </li> -->
 				<li>
 					<label>Tx Power (dBm)</label>
 					<span>
@@ -424,14 +446,14 @@
 					</span>
 				</li>
 				<li>
-					<label>{{languageService.i18n['field.Longitude']}}</label>
+					<label>{{ languageService.i18n['field.Longitude'] }}</label>
 					<span>
 						<input type="text" formControlName="longitude" placeholder="{{ displayBsInfoPosition.lng }}" class="{{formValidated&&modifyConfigForm.controls['longitude'].invalid?'required':''}}">
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
-					<label>{{languageService.i18n['field.Latitude']}}</label>
+					<label>{{ languageService.i18n['field.Latitude'] }}</label>
 					<span>
 						<input type="text" formControlName="latitude" placeholder="{{ displayBsInfoPosition.lat }}" class="{{formValidated&&modifyConfigForm.controls['latitude'].invalid?'required':''}}">
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
@@ -439,8 +461,12 @@
 				</li>
 			</ul>
 			<div class="buttons">
-				<button type="button" (click)="modifyConfig( displayBsInfo!.name, displayBsInfo!.bstype )">OK</button>
-				<button type="button" mat-dialog-close>Cancel</button>
+				<button type="button" (click)="modifyConfig( displayBsInfo!.name, displayBsInfo!.bstype )">
+					{{ languageService.i18n['confirm'] }}
+				</button>
+				<button type="button" (click)="resetForm( displayBsInfo!.name )" mat-dialog-close>
+					{{ languageService.i18n['cancel'] }}
+				</button>
 			</div>
 		</form>
 	</ng-template>

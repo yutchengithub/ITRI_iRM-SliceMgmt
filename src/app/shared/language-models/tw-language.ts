@@ -43,6 +43,7 @@ export const TwLanguage = {
   
   // Common Items (共用項目)
   'ok':'確定',
+  'confirm':'確認',             // @2024/01/10 Add by yuchen
   'cancel':'取消',
   'search':'搜尋',
   'search_criteria':'篩選條件',  // @12/04 Add by yuchen
@@ -80,6 +81,8 @@ export const TwLanguage = {
   'field.Longitude':'經度',
   'field.Latitude':'緯度',
   'field.modifyConfiguration':'修改配置',
+  'field.modifySuccess':'修改已套用',         // @2024/01/10 Add
+  'field.modifyError':'修改錯誤',             // @2024/01/10 Add
   'field.neighboringBSList':'鄰近基站列表',
   'field.config':'場域配置',                  // @12/12 Add
   'field.configPMset':'效能管理參數設定',      // @12/12 Add 

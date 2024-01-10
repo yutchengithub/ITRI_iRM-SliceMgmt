@@ -20,8 +20,9 @@ export const Enlanguage = {
   'index.menu_performMgr':'Performance Management',
   'index.menu_softwareMgr':'Software Management',
   'index.menu_scheduleMgr':'Schedule Management',
-  'index.menu_accountMgr':'Account Management',
   'index.menu_logMgr':'Log Management',
+  'index.menu_accountMgr':'Account Management',
+ 
 
   'index.netFun':'Network Functions',
   'index.faultMsg':'Fault Messages',
@@ -43,10 +44,12 @@ export const Enlanguage = {
   
   // Common Items
   'ok':'OK',
+  'confirm':'Confirm',  // @2024/01/10 Add by yuchen
   'cancel':'Cancel',
   'search':'Search',
   'search_criteria':'Filter By',   // @12/04 Add by yuchen
-  'clear_search':'Search Reset',  // @11/24 Add by yuchen
+  'clear_search':'Search Reset',   // @11/24 Add by yuchen
+  
 
   // Field Management (場域管理) @11/30 Add by yuchen
   'field.list':'Field List',
@@ -80,21 +83,24 @@ export const Enlanguage = {
   'field.Longitude':'Longitude',
   'field.Latitude':'Latitude',
   'field.modifyConfiguration':'Modify Configuration',
+  'field.modifySuccess':'Modification Applied',     // @2024/01/10 Add
+  'field.modifyError':'Modification Error',         // @2024/01/10 Add
   'field.neighboringBSList':'Neighboring BS List',
-  'field.config':'Field Configuration',        // @12/12 Add
-  'field.configPMset':'PM Parameter Setting',  // @12/12 Add
-  'field.report':'Field Reports',              // @12/12 Add
-  'field.reportPM':'Performance (PM)',         // @12/12 Add
-  'field.reportFM':'Alarms (FM)',              // @12/12 Add
-  'field.optim':'Field Optimization',          // @12/12 Add
-  'field.optimSON':'SON Calculation',          // @12/12 Add
-  'field.mapModel':'Map Mode',                 // @12/12 Add
-  'field.bsList':'BS List',                    // @12/12 Add
+  'field.config':'Field Configuration',             // @12/12 Add
+  'field.configPMset':'PM Parameter Setting',       // @12/12 Add
+  'field.report':'Field Reports',                   // @12/12 Add
+  'field.reportPM':'Performance (PM)',              // @12/12 Add
+  'field.reportFM':'Alarms (FM)',                   // @12/12 Add
+  'field.optim':'Field Optimization',               // @12/12 Add
+  'field.optimSON':'SON Calculation',               // @12/12 Add
+  'field.mapModel':'Map Mode',                      // @12/12 Add
+  'field.bsList':'BS List',                         // @12/12 Add
   'field.bsAntennaCoord':'BS Antenna Coordinates',  // @12/13 Add
   'field.BSstatus':'BS Status',                     // @12/13 Add
   'field.bsAlarm':'Alarm',                          // @12/13 Add
   'field.legend_all-in-one_bs':'All-in-one BS',     // @12/28 Add
   'field.legend_dist_bs':'O-RAN BS',                // @12/28 Add
+  
 
   // Fault Management
   'fm.start':'StartTime',

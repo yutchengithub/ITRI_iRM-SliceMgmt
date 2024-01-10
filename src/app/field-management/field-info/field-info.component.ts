@@ -35,7 +35,6 @@ export interface SimplifiedBSInfo {
   status: number;
   nci: string;
   pci: number;
-  'plmn-id': PLMNid;
   "tx-power": number;
   "nrarfcn-dl": number;
   "nrarfcn-ul": number;
@@ -47,6 +46,7 @@ export interface SimplifiedBSInfo {
   id: string;
   description: string;
   tac: string;
+  'plmn-id': PLMNid;
   channelbandwidth: number;
   components: {};  // 存儲 BS 的 Component ID
 }
@@ -57,10 +57,9 @@ export interface SimplifiedNeighborInfo {
   pci: number;
 }
 
-// @2024/01/03 Add
+// @2024/01/10 Update
 // 定義一個 enum 來表示不同的 overlay 類型
 enum OverlayType {
-  FieldImage,
   SINR,
   RSRP,
   None
@@ -99,7 +98,7 @@ export class FieldInfoComponent implements OnInit {
     hideDelay: 250
   };
 
-// ↓ For setting Google Maps @2024/01/05 by yuchen
+// ↓ For setting Google Maps @2024/01/10 by yuchen
 
   // 定義用於繪製多邊形的樣式選項
   polyOptions: google.maps.PolygonOptions = {
@@ -216,7 +215,36 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-// ↑ For setting Google Maps @2024/01/05 Update by yuchen ↑
+
+  // Field image 的 overlay 變數 @2024/01/10 Add
+  fieldImageOverlay: google.maps.GroundOverlay | null = null;
+
+  // Field image overlay 是否可見的標記 @2024/01/10 Add
+  fieldImageOverlayVisible: boolean = false;
+
+  // 顯示 Field image overlay 的函數 @2024/01/10 Add
+  displayFieldImageOnMap( FieldImage_imageSrc: string ) {
+    
+    if ( this.map.googleMap && this.fieldImageOverlayVisible ) {
+      
+      // 創建並顯示 fieldImageOverlay
+      this.fieldImageOverlay = new google.maps.GroundOverlay( FieldImage_imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 fieldImageOverlay 實例
+      this.fieldImageOverlay.setMap( this.map.googleMap );   // 將創建的 fieldImageOverlay 添加到 Google 地圖實例上
+      this.fieldImageOverlay.setOpacity( 0.5 );              // 設定 fieldImageOverlay 的透明度
+    }
+  }
+
+  // 移除 Field image overlay 的函數 @2024/01/10 Add
+  removeFieldImageOverlay() {
+
+    // 檢查 fieldImageOverlay 物件是否已經被創建
+    if ( this.fieldImageOverlay ) {
+      this.fieldImageOverlay.setMap( null ); // 將 fieldImageOverlay 從 Google 地圖上移除
+      this.fieldImageOverlay = null;       // 將 fieldImageOverlay 物件設置為 null，釋放資源並避免內存洩漏
+    }
+  }
+
+// ↑ For setting Google Maps @2024/01/10 Update by yuchen ↑
 
 
   // @12/13 Add for listen activeButton
@@ -227,35 +255,31 @@ export class FieldInfoComponent implements OnInit {
   activeButton_rsrp_sinr: string | null = null;  // 儲存當前激活的 RSRP 或 SINR 圖示按鈕 ID
   activeButton_menu: string | null = null;       // 儲存當前激活的菜單按鈕 IDs
 
-  // 當按鈕被點擊時，觸發更新激活按鈕"fieldImage"的狀態 @2024/01/03 Update
+
+  // 當按鈕被點擊時，觸發更新激活按鈕"fieldImage"的狀態 @2024/01/10 Update
   setActiveButton_fieldImage( buttonId: string ) {
     console.log("The click button is:", buttonId)
 
-    if ( this.activeButton_fieldImage === null ) {
-      
-      if ( this.activeButton_rsrp_sinr || this.currentColorbar ){
-        this.activeButton_rsrp_sinr = null; // 隱藏 SINR/RSRP 圖片
-        this.currentColorbar = null;        // 隱藏 ColorBar
-        this.removeOverlay();               // 移除當前顯示的 overlay
-        this.overlayVisible = false;
-      }
+     // 基於 fieldImage 按鈕的當前狀態決定顯示或隱藏 overlay
+    if (this.activeButton_fieldImage === null) {
       this.activeButton_fieldImage = buttonId;
-      this.overlayVisible = true;
-      this.getfieldImage();
-      
+      this.fieldImageOverlayVisible = true;  // 設置為 true 以顯示 Field image 的 overlay
+      this.getfieldImage();        
     } else {
       this.activeButton_fieldImage = null;
-      this.removeOverlay(); // 移除當前顯示的 overlay
-      this.overlayVisible = false;
+      this.removeFieldImageOverlay();        // 新的函數來處理 Field image 的 overlay 移除
+      this.fieldImageOverlayVisible = false; // 設置為 false 以隱藏 overlay
     }
   }
-  
+
+  // @2024/01/10 Add for Progress Spinner
+  isfieldImage_or_RsrpSinrMapLoading = false; // 用於識別加載場域圖片、RSRP、SINR 地圖狀態的標誌，初始設置為 false 
+
   // 獲取並顯示場域圖片 
-  // @2024/01/03 Update - local Processing, displayImageOnMap()
-  // @2024/01/04 Add loading spinner
+  // @2024/01/10 Update
   getfieldImage(){
     
-    this.isMarkersLoading = true; // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中 
+    this.isfieldImage_or_RsrpSinrMapLoading = true; // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中 
 
     if ( this.activeButton_fieldImage ) {
       // 檢查 Field Image 按鈕是否有被激活。
@@ -269,9 +293,9 @@ export class FieldInfoComponent implements OnInit {
 
         // 檢查 Local 場域圖片路徑是否存在
         if ( imageSrc_localPath ) {
-          this.displayImageOnMap( imageSrc_localPath, OverlayType.FieldImage );  // 如存在，則在地圖上顯示場域 local 圖片
+          this.displayFieldImageOnMap( imageSrc_localPath );  // 如存在，則在地圖上顯示場域 local 圖片
         }
-        this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
+        this.isfieldImage_or_RsrpSinrMapLoading = false; // Local 圖片載入完成，隱藏 Spinner
 
       } else { // 如非使用 local files
 
@@ -281,18 +305,18 @@ export class FieldInfoComponent implements OnInit {
             // 當接收到圖片數據時，處理 Base64 編碼的圖片
             if (response && response.fieldImage) {
               const imageSrc = 'data:image/png;base64,' + response.fieldImage; // 將 Base64 字符串轉換為圖片URL
-              this.displayImageOnMap( imageSrc, OverlayType.FieldImage );      // 在地圖上顯示場域圖片
+              this.displayFieldImageOnMap( imageSrc );      // 在地圖上顯示場域圖片
             }
           },
           // 當圖片獲取失敗時，顯示其錯誤訊息
           error: (error) => {
             console.error('Error fetching field image:', error);
-            this.isMarkersLoading = false; // 出錯時，也隱藏 Spinner
+            this.isfieldImage_or_RsrpSinrMapLoading = false; // 出錯時，也隱藏 Spinner
           },
           // 當圖片獲取過程完成時，顯示完成訊息
           complete: () => {
             console.log('Field image fetch completed');
-            this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
+            this.isfieldImage_or_RsrpSinrMapLoading = false; // 加載完成，隱藏 Spinner
           }
         });
       }
@@ -323,7 +347,7 @@ export class FieldInfoComponent implements OnInit {
    * 用於繪製或移除 BS 之間的線條
    * @param {boolean} show - 指示是否顯示線條
    */
-  toggleNeighborLines(show: boolean) {
+  toggleNeighborLines( show: boolean ) {
     if (show) {
       // 繪製線條
       this.allSimplifiedBsInfo.forEach(bs => {
@@ -337,7 +361,7 @@ export class FieldInfoComponent implements OnInit {
               const neighborBsPosition = this.parsePosition(neighborBs.position);
 
               // 創建路徑矩陣
-              const linePath = [bsPosition, neighborBsPosition];
+              const linePath = [ bsPosition, neighborBsPosition ];
 
               // 創建 Polyline
               const polyline = new google.maps.Polyline({
@@ -382,7 +406,7 @@ export class FieldInfoComponent implements OnInit {
    * 從地圖上移除 Polyline 的方法
    * @param {google.maps.Polyline} polyline - 要從地圖上移除的 Polyline 對象
    */
-  removePolylineFromMap(polyline: google.maps.Polyline) {
+  removePolylineFromMap( polyline: google.maps.Polyline ) {
     // 將 Polyline 的地圖屬性設置為 null，從而將其從地圖上移除
     polyline.setMap(null);
   }
@@ -398,13 +422,6 @@ export class FieldInfoComponent implements OnInit {
   // @2024/01/03 Update
   toggleColorbar(type: 'RSRP' | 'SINR') {
     console.log("The click button is:", type);
-
-    // 如果 Field image 的按鈕是激活狀態，則移除 Field image 的 overlay
-    if (this.activeButton_fieldImage && this.overlayVisible === true) {
-      this.activeButton_fieldImage = null; // 將 Field image 的按鈕狀態設為非激活
-      this.removeOverlay();        // 移除 overlay
-      this.overlayVisible = false; // 設定 overlay 不可見
-    }
 
     // 切換 Colorbar 狀態
     if (this.currentColorbar === null) {
@@ -423,33 +440,32 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // @2024/01/03 Update
-  setActiveButton_rsrp_sinr(buttonId: string) {
+  setActiveButton_rsrp_sinr( buttonId: string ) {
     console.log("The click button is:", buttonId);
-
     
     // 切換 RSRP/SINR 圖示按鈕狀態
-    if (this.activeButton_rsrp_sinr === null) {
+    if ( this.activeButton_rsrp_sinr === null ) {
 
       this.activeButton_rsrp_sinr = buttonId;
-      const overlayType = (this.activeButton_rsrp_sinr === 'SINR') ? OverlayType.SINR : OverlayType.RSRP;
+      const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
       this.overlayVisible = true; // 設定 overlay 為可見
-      this.getSinrRsrpImage(overlayType);
+      this.getSinrRsrpImage( overlayType );
 
     } else {
       
       this.removeOverlay(); // 移除當前顯示的 overlay
       this.activeButton_rsrp_sinr = buttonId;
-      const overlayType = (this.activeButton_rsrp_sinr === 'SINR') ? OverlayType.SINR : OverlayType.RSRP;
+      const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
       this.overlayVisible = true; // 設定 overlay 為可見
-      this.getSinrRsrpImage(overlayType);
+      this.getSinrRsrpImage( overlayType );
 
     }
   }
 
-  // @2024/01/04 Update
+  // @2024/01/10 Update
   getSinrRsrpImage( overlayType: OverlayType ) {
     
-    this.isMarkersLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
+    this.isfieldImage_or_RsrpSinrMapLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
 
     // 根據 overlayType 決定 mapType
     const mapType = ( overlayType === OverlayType.SINR ) ? 0 : 1;
@@ -471,7 +487,7 @@ export class FieldInfoComponent implements OnInit {
         if ( imageSrc_localPath ) {
           this.displayImageOnMap( imageSrc_localPath, overlayType );
         }
-        this.isMarkersLoading = false; // Local 圖片載入完成，隱藏 Spinner
+        this.isfieldImage_or_RsrpSinrMapLoading = false; // Local 圖片載入完成，隱藏 Spinner
       } else {
 
         // 從 fieldBounds 提取經緯度
@@ -489,11 +505,11 @@ export class FieldInfoComponent implements OnInit {
           },
           error: (error) => {
             console.error("Error fetching SINR/RSRP image:", error);
-            this.isMarkersLoading = false; // 出錯時，也隱藏 Spinner
+            this.isfieldImage_or_RsrpSinrMapLoading = false; // 出錯時，也隱藏 Spinner
           },
           complete: () => {
             console.log("SINR/RSRP image fetch completed");
-            this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
+            this.isfieldImage_or_RsrpSinrMapLoading = false; // 加載完成，隱藏 Spinner
           }
         });
       }
@@ -946,14 +962,12 @@ export class FieldInfoComponent implements OnInit {
 
       id: bsInfo.id,                   // 從 bsInfo 取出基站 id
       name: bsInfo.name,               // 從 bsInfo 取出基站名稱
-      tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
-      channelbandwidth: bsInfo.info['bs-conf']['channel-bandwidth'], // 從 bsInfo 取出基站 channelbandwidth
-      description: bsInfo.description, // 從 bsInfo 取出總基站描述
       bstype: bsInfo.bstype,           // 從 bsInfo 取出基站類型
       status: bsInfo.status,           // 從 bsInfo 取出基站狀態
       nci: bsInfo.info['bs-conf'].nci, // 從 bsInfo 的 info['bs-conf'] 取出 nci
       pci: bsInfo.info['bs-conf'].pci, // 從 bsInfo 的 info['bs-conf'] 取出 pci
-      'plmn-id': { // 從 bsInfo 的 info['bs-conf']['plmn-id'] 取出 mcc 和 mnc 並創建 plmn-id 對象
+      'plmn-id': { 
+        // 從 bsInfo 的 info['bs-conf']['plmn-id'] 取出 mcc 和 mnc
         mcc: bsInfo.info['bs-conf']['plmn-id'].mcc,
         mnc: bsInfo.info['bs-conf']['plmn-id'].mnc,
       },
@@ -963,8 +977,11 @@ export class FieldInfoComponent implements OnInit {
       position: bsInfo.position,  // 從 bsInfo 取出基站位置  
       neighbors,  // 設定鄰居基站數據
       iconUrl: "",
-      
 
+      // When update BS need these:
+      tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
+      channelbandwidth: bsInfo.info['bs-conf']['channel-bandwidth'], // 從 bsInfo 取出基站 channelbandwidth
+      description: bsInfo.description, // 從 bsInfo 取出總基站描述
       components: bsInfo.components
     };
     
@@ -993,7 +1010,6 @@ export class FieldInfoComponent implements OnInit {
       return {
         id: Dist_bsInfo.id,                   // 從 Dist_bsInfo 取出總基站 id
         name: Dist_bsInfo.name,               // 從 Dist_bsInfo 取出總基站名稱
-        description: Dist_bsInfo.description, // 從 Dist_bsInfo 取出總基站描述
         bstype: Dist_bsInfo.bstype,           // 從 Dist_bsInfo 取出總基站類型
         status: Dist_bsInfo.status,           // 從 Dist_bsInfo 取出總基站狀態
         nci: subBsInfo.nci,                   // 從 Dist_bsInfo 取出子基站的 NCI
@@ -1005,14 +1021,15 @@ export class FieldInfoComponent implements OnInit {
         "tx-power": subBsInfo.DU?.configuredMaxTxPower, // 取出 DU 配置的最大傳輸功率
         "nrarfcn-dl": subBsInfo.DU?.arfcnDL,            // 取出 DU 配置下行頻率
         "nrarfcn-ul": subBsInfo.DU?.arfcnUL,            // 取出 DU 配置上行頻率
-        tac: subBsInfo.DU?.nRTAC,                       // 取出 DU 配置 tac
-        channelbandwidth: subBsInfo.DU?.bSChannelBwDL,  // 取出 DU 配置 bSChannelBwDL
         position: subBsInfo.RU?.position,               // 取出 RU 的位置訊息
         componentId: subBsInfo.CU.id,                   // 取出 CU 配置的 ID
-        neighbors: anrNeighbors,                        // 映射後的鄰居基站數據
+        neighbors: anrNeighbors,                        // 映射後的鄰居 BS 數據
         iconUrl: "",
 
-
+        // When update Dist BS need these:
+        description: Dist_bsInfo.description,           // 從 Dist_bsInfo 取出總基站描述
+        channelbandwidth: subBsInfo.DU?.bSChannelBwDL,  // 取出 DU 配置 bSChannelBwDL
+        tac: subBsInfo.DU?.nRTAC,                       // 取出 DU 配置 tac
         components: Dist_bsInfo.components
       };
     });
@@ -1195,21 +1212,6 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
- // 返回 Field Management 主頁
-  back() {
-    this.router.navigate(['/main/field-mgr']);
-  }
-
-  // 往 Fault Management @12/07 Update
-  goFaultMgr() {
-    this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
-  }
-
-  // 往 Performance Management @2024/01/05 Update
-  goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr']);
-  }
-
 
 // Modify Configuration Setting @2024/01/05 Add ↓
 
@@ -1217,13 +1219,16 @@ export class FieldInfoComponent implements OnInit {
   modifyConfigWindowRef!: MatDialogRef<any>;
   modifyConfigForm!: FormGroup;
   formValidated = false;
+  isModifySuccess: boolean = false; // For control display success message
+  isModifyError: boolean = false;   // For control display error message
+  errorMessage: string = '';        // For display error message
 
   createBSInfoForm() {
     this.modifyConfigForm = this.fb.group({
       bsName: new FormControl(''), 
       pci: new FormControl(''),
-      mcc: new FormControl(''),
-      mnc: new FormControl(''),
+      // mcc: new FormControl(''),
+      // mnc: new FormControl(''),
       txPower: new FormControl(''),
       nrarfcnul: new FormControl(''),
       nrarfcndl: new FormControl(''),
@@ -1246,11 +1251,11 @@ export class FieldInfoComponent implements OnInit {
     return !isNaN(parsed) ? parsed * 1000000 : defaultValue;
   }
 
-
-  // @2024/01/09 Update 
+  // @2024/01/10 Update 
   modifyConfig( bsName: string ,bsType: number ) {
     console.log( "modifyConfig() - Start" );
     console.log( "The modify BS Name:", bsName, ", bsType is:", bsType );
+
     this.isMarkersLoading = true; // 點擊 Modify Configuration 時，開始顯示 Spinner 表載入修改資訊中 
 
     this.formValidated = true;
@@ -1268,7 +1273,6 @@ export class FieldInfoComponent implements OnInit {
     console.log("When click Modify Configration the original position is:", originalPosition );
     console.log("When click Modify Configration the formValues' position is:", formValues.longitude, formValues.latitude );
 
-
     // 使用 parseCoordinate 函數來安全解析經度和緯度
     const gpslongitude = this.parseCoordinate(formValues.longitude, originalPosition ? originalPosition.lng * 1000000 : undefined);
     const gpslatitude = this.parseCoordinate(formValues.latitude, originalPosition ? originalPosition.lat * 1000000 : undefined);
@@ -1276,40 +1280,45 @@ export class FieldInfoComponent implements OnInit {
     const post_BS_body: any = {
 
       // User can modify:
-      // 確保所有值都是字符串類型
-      name: formValues.bsName !== '' ? String(formValues.bsName) : String(this.displayBsInfo!.name),
-      pci: formValues.pci !== '' ? String(formValues.pci) : String(this.displayBsInfo!.pci),
-      plmnid: {
-        mnc: formValues.mnc !== '' ? String(formValues.mnc) : String(this.displayBsInfo!['plmn-id'].mnc),
-        mcc: formValues.mcc !== '' ? String(formValues.mcc) : String(this.displayBsInfo!['plmn-id'].mcc)
-      },
-      txpower: formValues.txPower !== '' ? String(formValues.txPower) : String(this.displayBsInfo!['tx-power']),
-      nrarfcndl: formValues.nrarfcndl !== '' ? String(formValues.nrarfcndl) : String(this.displayBsInfo!['nrarfcn-dl']),
-      nrarfcnul: formValues.nrarfcnul !== '' ? String(formValues.nrarfcnul) : String(this.displayBsInfo!['nrarfcn-ul']),
+      name:      formValues.bsName !== null && formValues.bsName !== ''
+                   ? String( formValues.bsName ) : String( this.displayBsInfo!.name ),
+      pci:       formValues.pci !== null && formValues.pci !== ''
+                   ? String( formValues.pci ) : String( this.displayBsInfo!.pci ),
+      txpower:   formValues.txPower !== null && formValues.txPower !== ''
+                   ? String( formValues.txPower ) : String( this.displayBsInfo!['tx-power'] ),
+      nrarfcndl: formValues.nrarfcndl !== null && formValues.nrarfcndl !== ''
+                   ? String( formValues.nrarfcndl ) : String( this.displayBsInfo!['nrarfcn-dl'] ),
+      nrarfcnul: formValues.nrarfcnul !== null && formValues.nrarfcnul !== ''
+                   ? String( formValues.nrarfcnul ) : String( this.displayBsInfo!['nrarfcn-ul'] ),
       
       // 使用 parseCoordinate 函數安全解析後的經緯度
       gpslongitude: String(gpslongitude),
-      gpslatitude: String(gpslatitude),
+      gpslatitude:  String(gpslatitude),
 
-      // User can't modify:
-      session: String(this.sessionId),
-      id: String(this.displayBsInfo!.id),
-      bstype: String(this.displayBsInfo!.bstype),
-      components: this.displayBsInfo!.components,
-      description: String(this.displayBsInfo!.description),
-      nci: String(this.displayBsInfo!.nci),
-      tac: String(this.displayBsInfo!.tac),
-      channelbandwidth: String(this.displayBsInfo!.channelbandwidth)
+      // User can't modify in field-info:
+      session: String( this.sessionId ),
+      id:      String( this.displayBsInfo!.id ),
+      bstype:  String( this.displayBsInfo!.bstype ),
+      nci:     String( this.displayBsInfo!.nci ),
+      plmnid: {
+        mnc:   String( this.displayBsInfo!['plmn-id'].mnc ),
+        mcc:   String( this.displayBsInfo!['plmn-id'].mcc )
+        // mnc: formValues.mnc !== null && formValues.mnc !== '' ? String(formValues.mnc) : String(this.displayBsInfo!['plmn-id'].mnc),
+        // mcc: formValues.mcc !== null && formValues.mcc !== '' ? String(formValues.mcc) : String(this.displayBsInfo!['plmn-id'].mcc)
+      },
+      description:      String(this.displayBsInfo!.description),
+      channelbandwidth: String( this.displayBsInfo!.channelbandwidth ),
+      tac:              String( this.displayBsInfo!.tac ),
+      components:       this.displayBsInfo!.components
     };
 
-    // 如果有有效的經緯度值
+    // 如果為有效的經緯度值
     if (post_BS_body.gpslongitude !== undefined && post_BS_body.gpslatitude !== undefined) {
       post_BS_body.position = String(`[${(post_BS_body.gpslongitude / 1000000).toFixed(6)},${(post_BS_body.gpslatitude / 1000000).toFixed(6)}]`);
     } else {
       // 如果任一值為 undefined，則使用原始的 position
-      post_BS_body.position = String(this.displayBsInfo!.position);
+      post_BS_body.position = String( this.displayBsInfo!.position );
     }
-
 
     if ( this.commonService.isLocal ) {
       // 如果是本地環境，可能需要進行模擬或者不進行任何操作
@@ -1323,121 +1332,85 @@ export class FieldInfoComponent implements OnInit {
 
     } else {
 
-      // 非本地環境，進行正常的更新請求
-      if (bsType === 1) {
-        // For All-in-one BS
-        console.log("The POST for updateBs():", post_BS_body);
-        this.API_Field.updateBs( post_BS_body ).subscribe(
-          () => console.log('All-in-one BS Update successful...')
-        );
+        // 非 Local，進行正常的更新請求
+        if (bsType === 1) {
+
+          // For All-in-one BS
+          console.log( "The POST for updateBs():", post_BS_body );
+          this.API_Field.updateBs( post_BS_body ).subscribe({
+            next: (response) => {
+              // Handle success
+              console.log('All-in-one BS Modify successful...');
+              this.isModifySuccess = true;                           // 設置成功標記為 true
+              setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
+              this.getQueryFieldInfo();      // 確保這個函數會重新獲取最新的數據並更新頁面
+              this.isMarkersLoading = false; // 隱藏 spinner
+            },
+            error: ( error ) => {
+              // Handle error
+              console.log('All-in-one BS Modify error...');
+              this.isModifyError = true;
+              this.errorMessage = error;
+              setTimeout(() => this.isModifyError = false, 4500);
+              this.isMarkersLoading = false; // 隱藏 spinner
+            }
+          });
+
       } else {
-        // For Disaggregated BS: [CU] + [DU] + [RU]
-        console.log("The POST for updateDistributedBs():", post_BS_body);
-        this.API_Field.updateDistributedBs( post_BS_body ).subscribe(
-          () => console.log('Disaggregated BS: [CU] + [DU] + [RU] Update successful...')
-        );
+
+          // For Disaggregated BS: [CU] + [DU] + [RU]
+          console.log( "The POST for updateDistributedBs():", post_BS_body );
+          this.API_Field.updateDistributedBs( post_BS_body ).subscribe({
+            next: ( response ) => {
+              // Handle success
+              console.log('Disaggregated BS: [CU] + [DU] + [RU] Modify successful...');
+              this.isModifySuccess = true;                           // 設置成功標記為 true
+              setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
+              this.getQueryFieldInfo();      // 確保這個函數會重新獲取最新的數據並更新頁面
+              this.isMarkersLoading = false; // 隱藏 spinner
+            },
+            error: ( error ) => {
+              // Handle error
+              console.log('Disaggregated BS: [CU] + [DU] + [RU] Modify error...');
+              this.isModifyError = true;
+              this.errorMessage = error;
+              setTimeout(() => this.isModifyError = false, 4500);
+              this.isMarkersLoading = false; // 隱藏 spinner
+            }
+          });
       }
-      
-      // 確保不管是本地還是非本地環境，spinner 都應該在請求結束後關閉
-      this.isMarkersLoading = false;
     }
     
-    // 在 modifyConfig 方法的最後
+    // The end:
     this.modifyConfigWindowRef.close();
-    this.getQueryFieldInfo();      // 刷新頁面數據
-    this.modifyConfigForm.reset(); // 這會重置整個表單
+    this.modifyConfigForm.reset();      // 重置整個表單
+
+    console.log( "modifyConfig() - End" );
   }
   
+  // 點擊 Cancel 按鈕的行為 @2024/01/10 Add
+  resetForm( bsName: string ) {
+    console.log(`Modification for BS '${bsName}' has been cancelled.`);
+    this.modifyConfigForm.reset();  // 重置整個表單
+  }
+  
+
 // Modify Configuration Setting @2024/01/05 Add ↑
 
-
-
-
-  ocloudInfo: OcloudInfo = {} as OcloudInfo;
-  ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
-  softwareList: SoftwareList[] = [];
-  systemSummary: SystemSummary = {} as SystemSummary;;
-  fileNameMapSoftware: Map<string, SoftwareList> = new Map();
-  showTooltipCpu: any = {};
-  showTooltipStorage: any = {};
-  showTooltipNic: any = {};
-
-  getOcloudPerformance() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.ocloudPerformance = this.commonService.ocloudPerformance;
-      this.ocloudPerformanceDeal();
-    } else {
-      this.commonService.queryOcloudPerformance(this.cloudId).subscribe(
-        res => {
-          console.log('getOcloudPerformance:');
-          console.log(res);
-          this.ocloudPerformance = res as OcloudPerformance;
-          this.ocloudPerformanceDeal();
-        }
-      );
-    }
+  
+// 返回 Field Management 主頁
+  back() {
+    this.router.navigate(['/main/field-mgr']);
   }
 
-  getSoftwareList() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.softwareList = this.commonService.softwareList;
-      this.softwareDeal();
-    } else {
-      this.commonService.querySoftwareList('', '0', '').subscribe(
-        res => {
-          console.log('getSoftwareList:');
-          console.log(res);
-          this.softwareList = res as SoftwareList[];
-          this.softwareDeal();
-        }
-      );
-    }
+  // 往 Fault Management @12/07 Update
+  goFaultMgr() {
+    this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
   }
 
-  softwareDeal() {
-    this.fileNameMapSoftware = new Map();
-    this.softwareList.forEach((row) => {
-      this.fileNameMapSoftware.set(row.fileName, row);
-    });
-  }
-
-  getSystemSummary() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.systemSummary = this.commonService.systemSummary;
-    } else {
-      this.commonService.querySystemSummary().subscribe(
-        res => {
-          console.log('getSoftwareList:');
-          console.log(res);
-          this.systemSummary = res as SystemSummary;
-        }
-      );
-    }
-  }
-
-  softwareVersion(): string {
-    const fileName = this.modifyConfigForm.controls['fileName'].value;
-    if (fileName === '') {
-      return '';
-    } else {
-      const software = this.fileNameMapSoftware.get(fileName) as any;
-      return software.version;
-    }
-  }
-
-
-  ocloudPerformanceDeal() {
-    // this.utilizationPercent = Math.floor((Number(this.ocloudPerformance.usedCpu) / Number(this.ocloudPerformance.totalCpu)) * 100);
-    // if (this.ocloudPerformance.cpu != 'N/A' || this.ocloudPerformance.storage != 'N/A' ||
-    //   this.ocloudPerformance.memory != 'N/A' || this.ocloudPerformance.network != 'N/A') {
-    //   this.ocloudPerformance.cpu += ' %';
-    //   this.ocloudPerformance.memory += ' GB';
-    //   this.ocloudPerformance.storage += ' MB';
-    //   this.ocloudPerformance.network += ' Kbps';
-    // }
+  // 往 Performance Management @2024/01/05 Update
+  goPerformanceMgr() {
+    this.router.navigate(['/main/performance-mgr']);
   }
 
 }

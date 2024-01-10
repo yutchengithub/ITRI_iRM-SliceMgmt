@@ -64,17 +64,6 @@ svg circle {
   height: 100px; // 進度調的高度
 }
 
-
-// @12/12 Add by yuchen for BS icon
-/* .svg-icon_BS {
-  width: 1.4em;
-  height: 1.4em;
-  position: relative;
-  right: 0;
-  left: 3px;
-  top: 0;
-} */
-
 .center {
   text-align: center;
 }
@@ -116,18 +105,6 @@ svg circle {
   transition: 0.5s;
 }
 
-// @12/10 add by yuchen
-// 指定所有:nth-child的數字大於或等於 3 的 .percent 元素位置高度
-.percent:nth-child(n + 3) {
-  /* position: relative;
-  top: -5px; */
-}
-
-// @12/12 add by yuchen for "Critical"
-.percent:nth-child(2) {
-  /* position: relative;
-  top: -13px; */
-}
 
 // 激活狀態的按鈕樣式 @12/13 add by yuchen
 .button-active {
@@ -683,12 +660,74 @@ circle-progress {
 // @12/12 Update by yuchen
 .button-modifyConfiguration {
   background-color: #2982e7e8; // Button 背景色
-  color: white; // Button 文字顏色
-  display: block;
+  color: white;                // Button 文字顏色
+  display: inline-block;
   justify-content: center;
   align-items: center;
   height: 10%;
-  margin: 15px auto 18px;
+  margin: 15px auto 10px;
+  padding: 2px 15px;      // 按鈕大小
+}
+
+// @2024/01/10 Add by yuchen
+// 按鈕和占位符的容器
+.button-container {
+  display: flex;
+  justify-content: center; // 置中按鈕
+  align-items: center;     // 垂直對齊按鈕
+  width: 100%;             // 占滿全寬以容納按鈕和成功訊息
+}
+
+// @2024/01/10 Add by yuchen
+// 當成功訊息不可見時的占位符
+.success-message-placeholder {
+  visibility: hidden; // 不可見的占位符
+  width: 20px;        // 寬度應與成功訊息的寬度相符
+  flex-shrink: 0;     // 防止縮小
+}
+
+// @2024/01/10 Add by yuchen
+// 整行的容器
+.button-and-success-message-container {
+  display: flex;
+  justify-content: center; // 置中內容
+  align-items: center;     // 垂直對齊內容
+  gap: 5px;                // 按鈕容器和成功訊息之間的空隙
+}
+
+// @2024/01/10 Add by yuchen
+// 成功訊息的樣式
+.success-message {
+  display: flex;
+  align-items: center;     // 垂直置中 
+  justify-content: center; // 水平置中
+  color: green;          // 成功訊息和圖標的顏色
+  font-weight: bolder;
+  flex-shrink: 0;          // 防止縮小
+}
+
+// @2024/01/10 Add by yuchen
+// 訊息與圖標間距
+.success-message mat-icon {
+  margin-right: 5px; 
+}
+
+// @2024/01/10 Add by yuchen
+.success-message span {
+  display: block;
+  margin-top: auto;
+  margin-bottom: 100px;
+}
+
+// @2024/01/10 Add by yuchen
+// 錯誤訊息樣式
+.error-message {
+  display: flex;
+  align-items: center;     // 垂直置中 
+  justify-content: center; // 水平置中
+  color: red;            // 成功訊息和圖標的顏色
+  font-weight: bolder;  
+  flex-shrink: 0;          // 防止縮小
 }
 
 @media screen and (max-width: 1366px) {
