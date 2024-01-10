@@ -192,12 +192,12 @@ export class FieldInfoComponent implements OnInit {
     if ( this.map.googleMap && this.overlayVisible ) {
       // 設置當前 overlay 類型
       this.currentOverlayType = overlayType;
-      
+
       // 創建並顯示 overlay
       this.overlay = new google.maps.GroundOverlay( imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 GroundOverlay 實例
       this.overlay.setMap(this.map.googleMap); // 將創建的 GroundOverlay 添加到 Google 地圖實例上
       this.overlay.setOpacity( 0.5 );            // 設定 GroundOverlay 的透明度
-
+      
       console.log( 'Display', this.currentOverlayType, 'Overlay:', this.overlay );
     }
   }
@@ -223,14 +223,33 @@ export class FieldInfoComponent implements OnInit {
   fieldImageOverlayVisible: boolean = false;
 
   // 顯示 Field image overlay 的函數 @2024/01/10 Add
-  displayFieldImageOnMap( FieldImage_imageSrc: string ) {
+  displayFieldImageOnMap( FieldImage_imageSrc: string, overlayType: OverlayType ) {
     
     if ( this.map.googleMap && this.fieldImageOverlayVisible ) {
       
-      // 創建並顯示 fieldImageOverlay
-      this.fieldImageOverlay = new google.maps.GroundOverlay( FieldImage_imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 fieldImageOverlay 實例
-      this.fieldImageOverlay.setMap( this.map.googleMap );   // 將創建的 fieldImageOverlay 添加到 Google 地圖實例上
-      this.fieldImageOverlay.setOpacity( 0.5 );              // 設定 fieldImageOverlay 的透明度
+      if ( overlayType !== OverlayType.None ) { // 如之前有先顯示過 rsrp or sinr 的 overlay
+        // 確保 rsrp or sinr 的 overlay 都會壓在 Field image overlay 上層
+
+        this.overlay!.setMap( null ); // 先將 rsrp or sinr overlay 從 Google Map 上移除
+        this.overlay = null;          // 先將 rsrp or sinr overlay 物件設置為 null，釋放資源並避免內存洩漏
+
+        // 再創建並顯示 fieldImageOverlay
+        this.fieldImageOverlay = new google.maps.GroundOverlay( FieldImage_imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 fieldImageOverlay 實例
+        this.fieldImageOverlay.setMap( this.map.googleMap );   // 將創建的 fieldImageOverlay 添加到 Google 地圖實例上
+        this.fieldImageOverlay.setOpacity( 0.5 );              // 設定 fieldImageOverlay 的透明度
+        
+        // 再重新取得並顯示 rsrp or sinr 的 overlay
+        this.getSinrRsrpImage( overlayType );
+
+      } else { // 如之前未先顯示過 rsrp or sinr 的 overlay
+
+        // 就直接創建並顯示 fieldImageOverlay
+        this.fieldImageOverlay = new google.maps.GroundOverlay( FieldImage_imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 fieldImageOverlay 實例
+        this.fieldImageOverlay.setMap( this.map.googleMap );   // 將創建的 fieldImageOverlay 添加到 Google 地圖實例上
+        this.fieldImageOverlay.setOpacity( 0.5 );              // 設定 fieldImageOverlay 的透明度
+      }
+
+      
     }
   }
 
@@ -293,7 +312,7 @@ export class FieldInfoComponent implements OnInit {
 
         // 檢查 Local 場域圖片路徑是否存在
         if ( imageSrc_localPath ) {
-          this.displayFieldImageOnMap( imageSrc_localPath );  // 如存在，則在地圖上顯示場域 local 圖片
+          this.displayFieldImageOnMap( imageSrc_localPath, this.currentOverlayType );  // 如存在，則在地圖上顯示場域 local 圖片
         }
         this.isfieldImage_or_RsrpSinrMapLoading = false; // Local 圖片載入完成，隱藏 Spinner
 
@@ -305,7 +324,7 @@ export class FieldInfoComponent implements OnInit {
             // 當接收到圖片數據時，處理 Base64 編碼的圖片
             if (response && response.fieldImage) {
               const imageSrc = 'data:image/png;base64,' + response.fieldImage; // 將 Base64 字符串轉換為圖片URL
-              this.displayFieldImageOnMap( imageSrc );      // 在地圖上顯示場域圖片
+              this.displayFieldImageOnMap( imageSrc, this.currentOverlayType );      // 在地圖上顯示場域圖片
             }
           },
           // 當圖片獲取失敗時，顯示其錯誤訊息
@@ -1321,15 +1340,24 @@ export class FieldInfoComponent implements OnInit {
     }
 
     if ( this.commonService.isLocal ) {
-      // 如果是本地環境，可能需要進行模擬或者不進行任何操作
+      // 如是 local 環境
 
-      // 模擬一個成功響應或者直接返回
-      of({ success: true, message: 'All-in-one BS Update successful...' }).subscribe( response => {
-        console.log( response.message );
-        // 處理模擬響應
-        console.log('本地測試環境，不進行更新操作');
-      });
+      if ( bsType === 1 ) {
+        // 模擬一個成功響應或者直接返回
+        of({ success: true, message: 'All-in-one BS Update successful...' }).subscribe( response => {
+          console.log( response.message );
+          // 處理模擬響應
+          console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+        });
+      } else if ( bsType === 2 ) {
+        
+        of({ success: true, message: 'Disaggregated BS: [CU] + [DU] + [RU] Update successful...' }).subscribe( response => {
+          console.log( response.message );
+          console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+        });
+      }
 
+      this.isMarkersLoading = false; // 隱藏 spinner
     } else {
 
         // 非 Local，進行正常的更新請求
@@ -1356,7 +1384,7 @@ export class FieldInfoComponent implements OnInit {
             }
           });
 
-      } else {
+        } else if ( bsType === 2 )  {
 
           // For Disaggregated BS: [CU] + [DU] + [RU]
           console.log( "The POST for updateDistributedBs():", post_BS_body );
