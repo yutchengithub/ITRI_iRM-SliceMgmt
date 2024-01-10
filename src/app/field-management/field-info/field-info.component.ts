@@ -1348,12 +1348,16 @@ export class FieldInfoComponent implements OnInit {
           console.log( response.message );
           // 處理模擬響應
           console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+          this.isModifySuccess = true;                           // 設置成功標記為 true
+          setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
         });
       } else if ( bsType === 2 ) {
         
-        of({ success: true, message: 'Disaggregated BS: [CU] + [DU] + [RU] Update successful...' }).subscribe( response => {
+        of({ success: true, message: 'Disaggregated BS: [CU] + [DU] + [RU] Update error...' }).subscribe( response => {
           console.log( response.message );
           console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+          this.isModifyError = true;                           // 設置成功標記為 true
+          setTimeout(() => this.isModifyError = false, 4500);  // 可選: 4.5 秒後隱藏訊息
         });
       }
 
