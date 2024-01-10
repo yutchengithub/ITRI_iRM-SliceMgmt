@@ -26,6 +26,11 @@ export class apiForField {
     return this.http.get(url);
   }
 
+
+
+
+
+
   // @12/05 Add by yuchen
   queryFieldInfo(fieldId: string): Observable<any> {
     
@@ -37,13 +42,45 @@ export class apiForField {
   }
 
   // get the Field Image @2024/01/02 Add by yuchen
-  queryFieldImage(fieldId: string): Observable<any> { 
+  queryFieldImage( fieldId: string ): Observable<any> { 
     
     // 構建 API URL
     const url = `${this.restPath}/queryFieldImage/${this.sessionId}/${fieldId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get(url);
+  }
+
+  // Call to remove the Field Image @2024/01/10 Add by yuchen
+  removeFieldImage( fieldId: string ): Observable<any> { 
+    
+    // 構建 API URL
+    const url = `${this.restPath}/removeFieldImage`;
+    
+    // 準備請求體(JSON)，包含所有後端所需的參數
+    const removeFieldBody = {
+      fieldid: fieldId,
+      session: this.sessionId
+    };
+
+    // 定義 HTTP 請求選項
+    const httpOptions = {
+      // 設定 HTTP 標頭
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
+      }),
+      body: removeFieldBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
+    };
+
+    // 使用 HTTP 客戶端發送 DELETE 請求
+    // 通常 DELETE 請求不會包含正文，因為它們被設計用於刪除資源而不是傳遞資訊
+    // 但如果後端 API 規定需要在 DELETE 請求中包含正文，則必須在發送請求時提供 'body'
+    // 這裏的 'httpOptions' 包含了我們想要隨著請求發送的標頭和正文
+    // 請注意，並非所有的伺服器實現都支持在 DELETE 請求中包含正文
+    // 如果你控制不了伺服器端的實現，那麼你需要確認伺服器支持你的這種做法
+
+    // 發起 HTTP DELETE 請求
+    return this.http.delete( url, httpOptions );
   }
 
   // Get SINR or RSRP map @2024/01/04 Update by yuchen
