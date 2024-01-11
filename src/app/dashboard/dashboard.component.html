@@ -44,7 +44,8 @@
             <td>{{opt.name}}</td>
             <td>{{opt.bsNum}}</td>
             <td>{{NumUes(opt.ueNum) }}</td>
-            <td>{{opt.coverage}}</td>
+            <td *ngIf="opt.coverage">{{opt.coverage}} %</td>
+            <td *ngIf="!opt.coverage">0 %</td>
             <td>{{opt.alarmCriticalNum}}</td>
             <td>{{opt.alarmMajorNum}}</td>
             <td>{{opt.alarmMinorNum}}</td>

@@ -45,16 +45,16 @@
 					  </button>
 					  <mat-menu #menu="matMenu" >
 
-						<!-- Field Configuration -->
+						<!-- Field Configuration @2024/01/11 Update -->
 						<button mat-menu-item disabled>
 							<mat-icon>build_circle</mat-icon>
 							<span>{{ languageService.i18n['field.config'] }}</span>
 						</button>
-						<button mat-menu-item>
+						<button mat-menu-item (click)="openfieldEditWindow()">
 							<span class="material-symbols-outlined">
 								tune
 								</span>
-							<span>{{ languageService.i18n['field.config'] }}</span>
+							<span>{{ languageService.i18n['field.edit'] }}</span>
 						</button>
 						<button mat-menu-item>
 							<span class="material-symbols-outlined">
@@ -278,39 +278,39 @@
 			<ng-container *ngIf="!isMarkersLoading">
 				<ul *ngIf="!isMarkersLoading && displayBsInfo">
 					<li>
-					<label>{{ languageService.i18n['field.BSname'] }}</label>
-					<span>{{ displayBsInfo.name }}</span>
+						<label>{{ languageService.i18n['field.BSname'] }}</label>
+						<span>{{ displayBsInfo.name }}</span>
 					</li>
 					<li>
-					<label>{{languageService.i18n['field.BStype']}}</label>
-					<span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
-					<span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
+						<label>{{languageService.i18n['field.BStype']}}</label>
+						<span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
+						<span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
 					</li>
 					<li>
-					<label>NCI</label>
-					<span>{{ displayBsInfo.nci }}</span>
+						<label>NCI</label>
+						<span>{{ displayBsInfo.nci }}</span>
 					</li>
 					<li>
-					<label>PCI</label>
-					<span>{{ displayBsInfo.pci }}</span>
+						<label>PCI</label>
+						<span>{{ displayBsInfo.pci }}</span>
+					</li>
+						<li>
+						<label>PLMN ID</label>
+						<span>
+							{{ displayBsInfo['plmn-id'].mcc }} {{ displayBsInfo['plmn-id'].mnc }}
+						</span>
 					</li>
 					<li>
-					<label>PLMN ID</label>
-					<span>
-						{{ displayBsInfo['plmn-id'].mcc }} {{ displayBsInfo['plmn-id'].mnc }}
-					</span>
+						<label>Tx Power (dBm)</label>
+						<span>{{ displayBsInfo['tx-power'] }}</span>
 					</li>
 					<li>
-					<label>Tx Power (dBm)</label>
-					<span>{{ displayBsInfo['tx-power'] }}</span>
+						<label>NR-ARFCN-UL</label>
+						<span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
 					</li>
 					<li>
-					<label>NR-ARFCN-UL</label>
-					<span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
-					</li>
-					<li>
-					<label>NR-ARFCN-DL</label>
-					<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
+						<label>NR-ARFCN-DL</label>
+						<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
 					</li>
 
 					<!-- 使用 displayBsInfoPosition getter 獲取經度 -->
@@ -329,7 +329,7 @@
 				<!-- 修改配置按鈕 -->
 				<div *ngIf="displayBsInfo" class="button-and-success-message-container">
 					<div class="button-container">
-					  <button mat-flat-button class="button-modifyConfiguration" (click)="openModifyConfigModel()">
+					  <button mat-flat-button class="button-modifyConfiguration" (click)="openModifyConfigWindow()">
 						{{ languageService.i18n['field.modifyConfiguration'] }}
 					  </button>
 					  <div class="success-message-placeholder" *ngIf="!isModifySuccess"></div>
@@ -348,7 +348,7 @@
 			</ng-container>
 
 			<div>
-				<label class="boxTitle">{{languageService.i18n['field.neighboringBSList']}}</label>
+				<label class="boxTitle">{{ languageService.i18n['field.neighboringBSList'] }}</label>
 				<!-- Neighboring BS List @12/28 Update - Add Loading spinner -->
 				<div class="table">
 				  <table>
@@ -397,8 +397,9 @@
 		</div>
 	</div>
 
+	<!-- Window of Modify Configuration -->
 	<ng-template #modifyConfigWindow>
-		<h5 *ngIf="displayBsInfo">{{languageService.i18n['field.modifyConfiguration']}} – {{ displayBsInfo.name }}</h5>
+		<h5 *ngIf="displayBsInfo">{{ languageService.i18n['field.modifyConfiguration'] }} – {{ displayBsInfo.name }}</h5>
 		<form [formGroup]="modifyConfigForm">
 			<ul *ngIf="displayBsInfo">
 				<li>
@@ -469,4 +470,138 @@
 				</button>
 			</div>
 		</form>
+	</ng-template>
+	
+	<!-- Window of Field Editing -->
+	<ng-template #fieldEditWindow>
+		<h5>{{ languageService.i18n['field.edit'] }}</h5>
+		<div class="modal-header">
+			
+			<div class="fieldEditTab">
+				<mat-button-toggle-group name="fieldEditType" [(ngModel)]="fieldEditType" (change)="changefieldEditType( $event )">
+				  <mat-button-toggle value="Field_Infos" >{{ languageService.i18n['field.editInfo'] }}</mat-button-toggle>
+				  <mat-button-toggle value="BS_List" >{{ languageService.i18n['field.bsList'] }}</mat-button-toggle>
+				</mat-button-toggle-group>
+			</div>
+		</div>
+
+		<div *ngIf="fieldInfo && fieldBounds" style="position: relative; top: 50px;">
+			<!-- Field Infos -->
+			<ul *ngIf="fieldEditType === 'Field_Infos'">
+				<form [formGroup]="fieldEditForm">
+
+					<li>
+						<label>{{ languageService.i18n['field.name'] }}</label>
+						<span>
+							<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
+									 class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+					<li>
+						<label>{{ languageService.i18n['field.northBound'] }}</label>
+						<span>
+							<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
+									 class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+					<li>
+						<label>{{ languageService.i18n['field.southBound'] }}</label>
+						<span>
+							<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
+									 class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+					<li>
+						<label>{{ languageService.i18n['field.westBound'] }}</label>
+						<span>
+							<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
+									 class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+					<li>
+						<label>{{ languageService.i18n['field.eastBound'] }}</label>
+						<span>
+							<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
+									 class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+					<li>
+						<label>{{ languageService.i18n['field.notificationNum'] }}</label>
+						<span>
+							<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
+								 class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['phoneNumber'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+				</form>
+				<div class="button-container">
+					<button mat-flat-button class="button-modifyConfiguration" (click)="openModifyConfigWindow()">
+					  {{ languageService.i18n['field.imageUpload'] }}
+					</button>
+				</div>
+			</ul>
+
+			<!-- BS List -->
+			<ul *ngIf="fieldEditType === 'BS_List'">
+				<!-- 基站列表 For field Edit @2024/01/11 Add by yuchen -->
+				<div class="table" style="overflow-x: auto;">
+					<table class="center">
+						<thead>
+							<tr>
+								<th>{{ languageService.i18n['field.BSname'] }}</th>
+								<th>{{ languageService.i18n['field.BStype'] }}</th>
+								<th>gNB ID</th>
+								<th>gNB ID Length</th>
+								<th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
+								<th>{{ languageService.i18n['field.BSstatus'] }}</th>
+								
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let opt of allSimplifiedBsInfo">
+								<td>
+									<!-- 顯示 "基站名稱" -->
+									{{ opt.name }}
+								</td>
+								<td>
+									<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
+									<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
+									
+									<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
+									<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
+								</td>
+								<td>
+									{{ opt.gNBId }}
+								</td>
+								<td>
+									{{ opt.gNBIdLength }}
+								</td>
+								<td>
+									<label>{{ opt.position }}</label>
+								</td>
+								<td class="icon">
+									<label *ngIf="opt.status === 1" class="redLight"></label>
+									<label *ngIf="opt.status === 2" class="greenLight"></label>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</ul>
+		</div>
+			
+		<div class="buttons" style="position: relative; top: 50px;">
+			<button type="button">
+				{{ languageService.i18n['confirm'] }}
+			</button>
+			<button type="button" mat-dialog-close>
+				{{ languageService.i18n['cancel'] }}
+			</button>
+		</div>
+		
 	</ng-template>

@@ -27,6 +27,14 @@ import { apiForField } from '../../shared/api/For_Field';       // @2024/01/04 A
 
 import { of } from 'rxjs'; // @2024/01/09 Add 
 
+//import { MessageService } from 'primeng/api';
+import { FileUploadModule } from 'primeng/fileupload';
+
+interface UploadEvent {
+  originalEvent: Event;
+  files: File[];
+}
+
 export interface SimplifiedBSInfo {
   
   // For display and POST of update
@@ -49,6 +57,10 @@ export interface SimplifiedBSInfo {
   'plmn-id': PLMNid;
   channelbandwidth: number;
   components: {};  // 存儲 BS 的 Component ID
+
+  // For Field Edit @2024/01/11 Add
+  gNBId: number;
+  gNBIdLength: number;
 }
 
 export interface SimplifiedNeighborInfo {
@@ -127,8 +139,8 @@ export class FieldInfoComponent implements OnInit {
     backgroundColor: '#126df5',      // 設置地圖的背景顏色
     clickableIcons: false,           // 設置地圖上的圖標是否可點擊
     disableDoubleClickZoom: true,    // 禁用雙擊縮放功能
-    draggable: true,                 // 禁止用戶拖動地圖
-    zoomControl: true,               // 禁止用戶通過控件來縮放地圖
+    draggable: false,                 // 禁止用戶拖動地圖
+    zoomControl: false,               // 禁止用戶通過控件來縮放地圖
     styles: [                        // 自定義樣式來隱藏地圖上的點擊性圖標
       {
         // "poi" 隱藏所有類型的搜尋點
@@ -386,7 +398,7 @@ export class FieldInfoComponent implements OnInit {
               const polyline = new google.maps.Polyline({
                 path: linePath,           // 設定 Polyline 的路徑點，將連接起來形成一條線
                 geodesic: true,           // 設定是否依據地球曲率顯示弧線
-                strokeColor: '#69ebf0f5', // 設定線的顏色
+                strokeColor: '#00ffff',   // 設定線的顏色
                 strokeOpacity: 0.4,       // 設定線的透明度
                 strokeWeight: 3           // 設定線的寬度(px)
               });
@@ -582,7 +594,8 @@ export class FieldInfoComponent implements OnInit {
     // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，
     //              確保當數據模型更新後，相關的視圖能夠及時反映
     private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+   // private messageService: MessageService
   ) {
     const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
     this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
@@ -962,7 +975,7 @@ export class FieldInfoComponent implements OnInit {
     console.log('getQueryBsInfoForAll() - End');
   }
 
-  // @2024/01/05 Update - Add get "id" information
+  // @2024/01/11 Update
   // 函數定義: 將 BSInfo 類型轉換為 SimplifiedBSInfo 類型 - All-in-one BS
   convertBsInfoToSimplifiedFormat(bsInfo: BSInfo): SimplifiedBSInfo {
 
@@ -1001,14 +1014,19 @@ export class FieldInfoComponent implements OnInit {
       tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
       channelbandwidth: bsInfo.info['bs-conf']['channel-bandwidth'], // 從 bsInfo 取出基站 channelbandwidth
       description: bsInfo.description, // 從 bsInfo 取出總基站描述
-      components: bsInfo.components
+      components: bsInfo.components,
+
+      // @2024/01/11 Add
+      // When open Field Edit need these: 
+      gNBId: bsInfo.info.gNBId,
+      gNBIdLength: bsInfo.info.gNBIdLength
     };
     
     // 返回轉換後的 SimplifiedBSInfo 對象
     return simplified;
   }
 
-  // @2024/01/05 Update - Add get "id" information
+  // @2024/01/11 Update
   // 函數定義：將 BSInfo_dist 類型轉換為 SimplifiedBSInfo 類型的數組
   convertDistBsInfoToSimplifiedFormat(Dist_bsInfo: BSInfo_dist): SimplifiedBSInfo[] {
 
@@ -1049,7 +1067,12 @@ export class FieldInfoComponent implements OnInit {
         description: Dist_bsInfo.description,           // 從 Dist_bsInfo 取出總基站描述
         channelbandwidth: subBsInfo.DU?.bSChannelBwDL,  // 取出 DU 配置 bSChannelBwDL
         tac: subBsInfo.DU?.nRTAC,                       // 取出 DU 配置 tac
-        components: Dist_bsInfo.components
+        components: Dist_bsInfo.components,
+
+        // @2024/01/11 Add
+        // When open Field Edit need these: 
+        gNBId: subBsInfo.gNBId,
+        gNBIdLength: subBsInfo.gNBIdLength
       };
     });
 
@@ -1256,7 +1279,7 @@ export class FieldInfoComponent implements OnInit {
     });
   }
   
-  openModifyConfigModel() {
+  openModifyConfigWindow() {
     this.formValidated = false;
     this.modifyConfigWindowRef = this.dialog.open(this.modifyConfigWindow, { id: 'modifyConfigWindow' });
     this.modifyConfigWindowRef.afterClosed().subscribe(() => {
@@ -1429,8 +1452,67 @@ export class FieldInfoComponent implements OnInit {
 
 // Modify Configuration Setting @2024/01/05 Add ↑
 
-  
-// 返回 Field Management 主頁
+
+
+// Field Editing Setting @2024/01/11 Add ↓
+
+@ViewChild('fieldEditWindow') fieldEditWindow: any;
+fieldEditWindowRef!: MatDialogRef<any>;
+fieldEditFormValidated = false;
+
+openfieldEditWindow() {
+    this.fieldEditFormValidated = false;
+    this.fieldEditWindowRef = this.dialog.open( this.fieldEditWindow, { id: 'fieldEditWindow' } );
+    this.fieldEditWindowRef.afterClosed().subscribe(() => {
+      this.fieldEditFormValidated = false;
+  });
+}
+
+fieldEditType: string = 'Field_Infos';   // 預設選擇 "Field Infos"  
+//fieldEditType: string = 'BS_List';     // 預設選擇 "BS List"   
+
+changefieldEditType( e: MatButtonToggleChange ) {
+  console.log( "changefieldEditType() - Start" );
+
+  // 根據當前選擇的 field Edit 類型載入數據
+  if ( e.value === 'Field_Infos' ) {
+
+    this.fieldEditType = 'Field_Infos';
+    //this.getUserLogsInfo();  // 載入 Field Infos 數據
+
+  } else if ( e.value === 'BS_List' ) {
+
+    this.fieldEditType = 'BS_List';
+    //this.getNELogsInfo();    // 載入 BS List 數據
+  }
+
+  // 更新當前類型，以便知道哪個 Field Edit 類型被選中
+  // Set the Field Edit type to display after tab switch
+  //this.fieldEditType = e.value;
+  console.log('頁面切換後，顯示的 Field Edit 類型:', this.fieldEditType+
+  '\nField Edit type displayed after tab switch:', this.fieldEditType);
+
+  console.log( "changefieldEditType() - End" );
+}
+
+fieldEditForm!: FormGroup;
+createFieldInfoForm() {
+  this.fieldEditForm  = this.fb.group({
+    fieldName:        new FormControl(''), 
+    fieldBound_North: new FormControl(''),
+    fieldBound_South: new FormControl(''),
+    fieldBound_West:  new FormControl(''),
+    fieldBound_East:  new FormControl(''),
+    phoneNumber:      new FormControl('')
+  });
+}
+
+// Field Editing Setting @2024/01/11 Add ↑
+
+
+
+
+  // 返回 Field Management 主頁
   back() {
     this.router.navigate(['/main/field-mgr']);
   }

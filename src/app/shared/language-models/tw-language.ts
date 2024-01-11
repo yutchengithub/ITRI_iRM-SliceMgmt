@@ -85,6 +85,14 @@ export const TwLanguage = {
   'field.modifyError':'修改錯誤',             // @2024/01/10 Add
   'field.neighboringBSList':'鄰近基站列表',
   'field.config':'場域配置',                  // @12/12 Add
+  'field.edit':'場域編輯',                    // @2024/01/11 Add
+  'field.editInfo':'場域資訊',                // @2024/01/11 Add
+  'field.northBound':'場域北界',              // @2024/01/11 Add
+  'field.southBound':'場域南界',              // @2024/01/11 Add
+  'field.westBound':'場域西界',                // @2024/01/11 Add
+  'field.eastBound':'場域東界',                // @2024/01/11 Add
+  'field.notificationNum':'管理者通知門號',    // @2024/01/11 Add
+  'field.imageUpload':'場域圖片上傳',          // @2024/01/11 Add
   'field.configPMset':'效能管理參數設定',      // @12/12 Add 
   'field.report':'場域報表',                  // @12/12 Add
   'field.reportPM':'場域效能 (PM)',           // @12/12 Add

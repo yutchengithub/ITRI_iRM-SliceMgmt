@@ -87,6 +87,14 @@ export const Enlanguage = {
   'field.modifyError':'Modification Error',         // @2024/01/10 Add
   'field.neighboringBSList':'Neighboring BS List',
   'field.config':'Field Configuration',             // @12/12 Add
+  'field.edit':'Field Editing',                     // @2024/01/11 Add
+  'field.editInfo':'Field Information',             // @2024/01/11 Add
+  'field.northBound':'North Boundary',              // @2024/01/11 Add
+  'field.southBound':'South Boundary',              // @2024/01/11 Add
+  'field.westBound':'West Boundary',                // @2024/01/11 Add
+  'field.eastBound':'East Boundary',                // @2024/01/11 Add
+  'field.notificationNum':'Notification Number',    // @2024/01/11 Add
+  'field.imageUpload':'Upload Field Image',         // @2024/01/11 Add
   'field.configPMset':'PM Parameter Setting',       // @12/12 Add
   'field.report':'Field Reports',                   // @12/12 Add
   'field.reportPM':'Performance (PM)',              // @12/12 Add
