@@ -494,14 +494,15 @@ export class FieldInfoComponent implements OnInit {
     console.log("The click button is:", type);
 
     // 切換 Colorbar 狀態
-    if (this.currentColorbar === null) {
+    if ( this.currentColorbar === null ) {
       this.currentColorbar = type;
       this.setActiveButton_rsrp_sinr(type);
     } else {
-      if (type === this.currentColorbar) {
+      if ( type === this.currentColorbar ) {
         this.currentColorbar = null;
-        this.removeOverlay(); // 移除當前顯示的 overlay
-        this.overlayVisible = false; // 設定 overlay 不可見
+        this.activeButton_rsrp_sinr = null; // 再次點擊為同顆按鈕時將該 Flag 也初始化 
+        this.removeOverlay();               // 移除當前顯示的 overlay
+        this.overlayVisible = false;        // 設定 overlay 不可見
       } else {
         this.currentColorbar = type;
         this.setActiveButton_rsrp_sinr(type);
@@ -614,7 +615,7 @@ export class FieldInfoComponent implements OnInit {
         setTimeout(() => {
           // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
           this.adjustMapZoom();
-        }, 10); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
+        }, 10); // 設定 10 ms 的延遲，以確保地圖的初始化過程已經完成。
 
         // 如果記錄的 Colorbar 不為空，則恢復顯示記錄的 Colorbar
         if ( this.recordColorbar != null ) {
@@ -1394,19 +1395,38 @@ export class FieldInfoComponent implements OnInit {
       if ( bsType === 1 ) {
         // 模擬一個成功響應或者直接返回
         of({ success: true, message: 'All-in-one BS Update successful...' }).subscribe( response => {
-          console.log( response.message );
-          // 處理模擬響應
-          console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
-          this.isModifySuccess = true;                           // 設置成功標記為 true
-          setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
+            console.log( response.message );
+            // 處理模擬響應
+            console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+            this.isModifySuccess = true;                           // 設置成功標記為 true
+            setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
+
+            if ( this.activeButton_rsrp_sinr ){ 
+              console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
+              // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
+              const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+              this.removeOverlay();       // 移除當前顯示的 overlay
+              this.overlayVisible = true; // 設定 overlay 為可見
+              this.getSinrRsrpImage( overlayType );
+            }
         });
+
       } else if ( bsType === 2 ) {
         
         of({ success: true, message: 'Disaggregated BS: [CU] + [DU] + [RU] Update error...' }).subscribe( response => {
-          console.log( response.message );
-          console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
-          this.isModifyError = true;                           // 設置成功標記為 true
-          setTimeout(() => this.isModifyError = false, 4500);  // 可選: 4.5 秒後隱藏訊息
+            console.log( response.message );
+            console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+            this.isModifyError = true;                           // 設置成功標記為 true
+            setTimeout(() => this.isModifyError = false, 4500);  // 可選: 4.5 秒後隱藏訊息
+
+            if ( this.activeButton_rsrp_sinr ){ 
+              console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
+              // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
+              const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+              this.removeOverlay();       // 移除當前顯示的 overlay
+              this.overlayVisible = true; // 設定 overlay 為可見
+              this.getSinrRsrpImage( overlayType );
+            }
         });
       }
 
@@ -1428,6 +1448,7 @@ export class FieldInfoComponent implements OnInit {
               this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
 
               if ( this.activeButton_rsrp_sinr ){ 
+                  console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
                   // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
                   const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
                   this.removeOverlay();       // 移除當前顯示的 overlay
@@ -1497,7 +1518,6 @@ export class FieldInfoComponent implements OnInit {
   
 
 // Modify Configuration Setting @2024/01/05 Add ↑
-
 
 
 // Field Editing Setting @2024/01/11 Add ↓
