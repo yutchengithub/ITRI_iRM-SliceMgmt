@@ -175,7 +175,7 @@ export class FieldInfoComponent implements OnInit {
     setTimeout(() => {
       // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
       this.adjustMapZoom();
-    }, 1000); // 設定 100 毫秒的延遲，以確保地圖的初始化過程已經完成。
+    }, 1000); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
   }
 
   // @2024/01/05 Add
@@ -276,6 +276,45 @@ export class FieldInfoComponent implements OnInit {
   }
 
 // ↑ For setting Google Maps @2024/01/10 Update by yuchen ↑
+
+
+// ↓ Page Init ↓
+
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    public commonService: CommonService,
+    public bsLocalFiles: localBSinfo,     // @12/27 Add for import BS Local Files
+    public API_Field: apiForField,        // @2024/01/04 Add for import API of Field Management 
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    public languageService: LanguageService,
+    // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，
+    //              確保當數據模型更新後，相關的視圖能夠及時反映
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
+  // private messageService: MessageService
+  ) {
+    const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
+    this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
+    this.createBSInfoForm(); // For updateBs API @2024/01/05 Add 
+  }
+
+  // 頁面初始化
+  ngOnInit(){
+
+    this.sessionId = this.commonService.getSessionId();
+    console.log( 'The sessionId is', this.sessionId ); // @2024/01/05 Add 
+    this.route.params.subscribe((params) => {
+      this.fieldId = params['id'];
+      this.fieldName = params['name'];
+      console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
+      this.getQueryFieldInfo();
+    });
+
+  }
+
+// ↑ Page Init ↑
 
 
   // @12/13 Add for listen activeButton
@@ -550,7 +589,7 @@ export class FieldInfoComponent implements OnInit {
   showMapModel: boolean = true;                   // 控制是否顯示地圖模式的 Flag    @12/13 Add
   recordColorbar: 'RSRP' | 'SINR' | null = null;  // 用於記錄 Colorbar 狀態的 Flag @12/13 Add
 
-  // 用於切換顯示地圖模式或基站列表 @12/13 Add to toggle Map Mode or BS List
+  // 用於切換顯示地圖模式或基站列表 @2024/01/15 Update
   toggleMenuButton() {
 
     this.showMapModel = !this.showMapModel; // 切換顯示的頁面並更新該 Flag 狀態
@@ -566,53 +605,32 @@ export class FieldInfoComponent implements OnInit {
     //   this.activeButton_NR = 'NR';
     // }
 
-    // 如果記錄的 Colorbar 不為空且切換的頁面為地圖模式，則恢復顯示記錄的 Colorbar
-    if ( this.recordColorbar != null && this.showMapModel === true ) {
+    // 如果切換的頁面為地圖模式
+    if ( this.showMapModel === true ) {
 
-      this.currentColorbar = this.recordColorbar;
-      //console.log("recordColorbar:", this.recordColorbar);
-      this.cdr.detectChanges();   // 手動觸發變更檢測
-      this.recordColorbar = null; // 初始化記錄 Colorbar 狀態的 Flag
+          console.log("this.fieldBounds:", this.fieldBounds);
 
-    } else { // 如切換的頁面不為地圖模式，就將此 flag 設為空並隱藏 ColorBar
-      this.currentColorbar = null;
-      //console.log("recordColorbar:", this.recordColorbar);
-      this.cdr.detectChanges(); // 手動觸發變更檢測
+          // 重新調整地圖縮放 (zoom) 大小 @2024/01/15 Add
+          setTimeout(() => {
+            // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
+            this.adjustMapZoom();
+          }, 10); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
+
+          // 如果記錄的 Colorbar 不為空，則恢復顯示記錄的 Colorbar
+          if ( this.recordColorbar != null ) {
+
+            this.currentColorbar = this.recordColorbar;
+            //console.log("recordColorbar:", this.recordColorbar);
+            this.cdr.detectChanges();   // 手動觸發變更檢測
+            this.recordColorbar = null; // 初始化記錄 Colorbar 狀態的 Flag
+          } 
+
+    else { // 如切換的頁面不為地圖模式，就將此 flag 設為空並隱藏 ColorBar
+          this.currentColorbar = null;
+          //console.log("recordColorbar:", this.recordColorbar);
+          this.cdr.detectChanges(); // 手動觸發變更檢測
+        }
     }
-
-  }
-
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    public commonService: CommonService,
-    public bsLocalFiles: localBSinfo,     // @12/27 Add for import BS Local Files
-    public API_Field: apiForField,        // @2024/01/04 Add for import API of Field Management 
-    private fb: FormBuilder,
-    private dialog: MatDialog,
-    public languageService: LanguageService,
-    // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，
-    //              確保當數據模型更新後，相關的視圖能夠及時反映
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone,
-   // private messageService: MessageService
-  ) {
-    const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
-    this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
-    this.createBSInfoForm(); // For updateBs API @2024/01/05 Add 
-  }
-
-  // 頁面初始化
-  ngOnInit(){
-
-    this.sessionId = this.commonService.getSessionId();
-    console.log( 'The sessionId is', this.sessionId ); // @2024/01/05 Add 
-    this.route.params.subscribe((params) => {
-      this.fieldId = params['id'];
-      this.fieldName = params['name'];
-      console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
-      this.getQueryFieldInfo();
-    });
 
   }
 
@@ -1398,7 +1416,15 @@ export class FieldInfoComponent implements OnInit {
               console.log('All-in-one BS Modify successful...');
               this.isModifySuccess = true;                           // 設置成功標記為 true
               setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
-              this.getQueryFieldInfo();      // 確保這個函數會重新獲取最新的數據並更新頁面
+
+              this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
+
+              // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
+              const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+              this.removeOverlay();       // 移除當前顯示的 overlay
+              this.overlayVisible = true; // 設定 overlay 為可見
+              this.getSinrRsrpImage( overlayType );
+
               this.isMarkersLoading = false; // 隱藏 spinner
             },
             error: ( error ) => {
@@ -1406,7 +1432,7 @@ export class FieldInfoComponent implements OnInit {
               console.log('All-in-one BS Modify error...');
               this.isModifyError = true;
               this.errorMessage = error;
-              setTimeout(() => this.isModifyError = false, 4500);
+              setTimeout(() => this.isModifyError = false, 3500);
               this.isMarkersLoading = false; // 隱藏 spinner
             }
           });
@@ -1420,8 +1446,16 @@ export class FieldInfoComponent implements OnInit {
               // Handle success
               console.log('Disaggregated BS: [CU] + [DU] + [RU] Modify successful...');
               this.isModifySuccess = true;                           // 設置成功標記為 true
-              setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
-              this.getQueryFieldInfo();      // 確保這個函數會重新獲取最新的數據並更新頁面
+              setTimeout(() => this.isModifySuccess = false, 3500);  // 可選: 4.5 秒後隱藏訊息
+
+              this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
+
+              // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
+              const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+              this.removeOverlay(); // 移除當前顯示的 overlay
+              this.overlayVisible = true; // 設定 overlay 為可見
+              this.getSinrRsrpImage( overlayType );
+              
               this.isMarkersLoading = false; // 隱藏 spinner
             },
             error: ( error ) => {

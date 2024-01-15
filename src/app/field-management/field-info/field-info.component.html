@@ -16,23 +16,27 @@
 
 				<!-- 按鈕容器，根據 showMapModel 的值顯示或隱藏按鈕 -->
 				<div class="fieldMap-button-container">
-					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel -->
-					<button mat-button *ngIf="showMapModel" [class.button-active]="activeButton_fieldImage === 'fieldImage'" (click)="setActiveButton_fieldImage('fieldImage')">
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
+					<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': activeButton_fieldImage === 'fieldImage', 
+                   														 'button-inactive': activeButton_fieldImage !== 'fieldImage'}" (click)="setActiveButton_fieldImage('fieldImage')">
 						<mat-icon>photo_camera_back</mat-icon>
 						{{ languageService.i18n['field.image'] }}
 					</button>
-					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel -->
-					<button mat-button *ngIf="showMapModel" [class.button-active]="activeButton_NR === 'NR'" (click)="setActiveButton_NR('NR')">
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
+					<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': activeButton_NR === 'NR', 
+                    													'button-inactive': activeButton_NR !== 'NR'}" (click)="setActiveButton_NR('NR')">
 						<mat-icon>timeline</mat-icon>
 						NR
 					</button>
-					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> 
-					<button mat-button *ngIf="showMapModel" [class.button-active]="currentColorbar === 'RSRP'" (click)="toggleColorbar('RSRP')">
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
+					<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': currentColorbar === 'RSRP', 
+																		'button-inactive': currentColorbar !== 'RSRP'}" (click)="toggleColorbar('RSRP')">
 						<mat-icon>signal_cellular_alt</mat-icon>
 						{{ languageService.i18n['field.rsrpMap'] }}
 					</button>
-					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel -->
-					<button mat-button *ngIf="showMapModel" [class.button-active]="currentColorbar === 'SINR'" (click)="toggleColorbar('SINR')">
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
+					<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': currentColorbar === 'SINR', 
+																		'button-inactive': currentColorbar !== 'SINR'}" (click)="toggleColorbar('SINR')">
 						<mat-icon>signal_cellular_alt</mat-icon>
 						{{ languageService.i18n['field.sinrMap'] }}
 					</button>

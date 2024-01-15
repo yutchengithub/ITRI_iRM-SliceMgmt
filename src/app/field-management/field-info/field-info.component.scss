@@ -106,13 +106,20 @@ svg circle {
 }
 
 
-// 激活狀態的按鈕樣式 @12/13 add by yuchen
+// 激活狀態的按鈕樣式 @2024/01/15 update by yuchen
 .button-active {
-  color: rgb(176, 207, 236);   // 激活狀態的字體顏色
+  color: rgb(176, 207, 236);              // 激活狀態的字體顏色
+  border: 1.5px solid rgb(176, 207, 236); // 新增激活狀態的外框顏色
   mat-icon {
     color: rgb(176, 207, 236); // 激活狀態的圖標顏色
   }
 }
+
+// 非激活狀態時移除外框 @2024/01/15 add by yuchen
+.button-inactive {
+  border: none; // 確保非激活狀態不顯示外框
+}
+
 
 // @12/13 add by yuchen
 .fieldMap-button-container{
@@ -376,7 +383,7 @@ table {
 // @12/12 Update by yuchen
 #ColorBar .RSRP_values {
   color: rgb(188, 211, 233); // 設定字體顏色
-  font-size: 21.5px; // 設定字體大小
+  font-size: 17.5px; // 設定字體大小
   font-family: Arial, sans-serif; // 設定字體
   padding: 20px 10; // 上下填充
   display: block; // 使 div 作為塊級元素顯示
@@ -387,8 +394,8 @@ table {
 }
 // @12/12 Update by yuchen
 #ColorBar .RSRP_values span {
-  margin-right: 122px;   // 在值之間添加空間
-  display: inline-block; // 使 span 行內顯示
+  margin-right: 129.5px;   // 在值之間添加空間
+  display: inline-block;   // 使 span 行內顯示
 }
 
 // @12/12 Update by yuchen
@@ -642,16 +649,16 @@ google-map {
   padding-top: .5em;
 }
 
-// @12/11 Add by yuchen
+// @2024/01/15 Update by yuchen
 .item {
   display: flex;
   flex-direction: column;
   align-items: center;
   //flex: 50; /* 給予每個項目相等的空間 */
-  margin: 0 5.5px; // 增加左右邊距，數值根據需要調整
+  margin: 0 6.5px; // 增加左右邊距，數值根據需要調整
 }
 
-// @12/11 Add by yuchen
+// @2024/01/15 Update by yuchen
 .label-container {
   margin-bottom: 5px;
   /* 調整為所需的間距 */
@@ -662,7 +669,7 @@ google-map {
   /* 超出容器的文本將被隱藏 */
   text-overflow: ellipsis;
   /* 超出部分顯示省略符號 */
-  font-size: 1.05em;
+  font-size: 0.85em;
   /* 根據需要調整字體大小 */
   font-family: "Arial", sans-serif;
   position: relative;
