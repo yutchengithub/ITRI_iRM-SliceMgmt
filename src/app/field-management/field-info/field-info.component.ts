@@ -608,31 +608,39 @@ export class FieldInfoComponent implements OnInit {
     // 如果切換的頁面為地圖模式
     if ( this.showMapModel === true ) {
 
-          console.log("this.fieldBounds:", this.fieldBounds);
+        console.log("this.fieldBounds:", this.fieldBounds);
 
-          // 重新調整地圖縮放 (zoom) 大小 @2024/01/15 Add
-          setTimeout(() => {
-            // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
-            this.adjustMapZoom();
-          }, 10); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
+        // 重新調整地圖縮放 (zoom) 大小 @2024/01/15 Add
+        setTimeout(() => {
+          // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
+          this.adjustMapZoom();
+        }, 10); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
 
-          // 如果記錄的 Colorbar 不為空，則恢復顯示記錄的 Colorbar
-          if ( this.recordColorbar != null ) {
+        // 如果記錄的 Colorbar 不為空，則恢復顯示記錄的 Colorbar
+        if ( this.recordColorbar != null ) {
 
-            this.currentColorbar = this.recordColorbar;
-            //console.log("recordColorbar:", this.recordColorbar);
-            this.cdr.detectChanges();   // 手動觸發變更檢測
-            this.recordColorbar = null; // 初始化記錄 Colorbar 狀態的 Flag
-          } 
+          this.currentColorbar = this.recordColorbar;
+          //console.log("recordColorbar:", this.recordColorbar);
 
-    else { // 如切換的頁面不為地圖模式，就將此 flag 設為空並隱藏 ColorBar
+          // 同步顯示回 SINR 或 RSRP 分佈圖 @2024/01/15 
+          const overlayType = ( this.currentColorbar === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+          this.removeOverlay();       // 移除當前顯示的 overlay
+          this.overlayVisible = true; // 設定 overlay 為可見
+          this.getSinrRsrpImage( overlayType );
+          
+
+          this.cdr.detectChanges();   // 手動觸發變更檢測
+          this.recordColorbar = null; // 初始化記錄 Colorbar 狀態的 Flag
+
+        } 
+    } else { // 如切換的頁面不為地圖模式，就將此 flag 設為空並隱藏 ColorBar
           this.currentColorbar = null;
           //console.log("recordColorbar:", this.recordColorbar);
           this.cdr.detectChanges(); // 手動觸發變更檢測
-        }
     }
-
   }
+
+  
 
   /**
    * 計算多邊形中心點的函數。
