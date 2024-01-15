@@ -1288,9 +1288,11 @@ export class FieldInfoComponent implements OnInit {
   modifyConfigWindowRef!: MatDialogRef<any>;
   modifyConfigForm!: FormGroup;
   formValidated = false;
-  isModifySuccess: boolean = false; // For control display success message
-  isModifyError: boolean = false;   // For control display error message
-  errorMessage: string = '';        // For display error message
+  isModifySuccess: boolean = false;  // For control display success message
+  isModifyError: boolean = false;    // For control display error message
+  errorMessage: string = '';         // For display error message
+  isNothingChanged: boolean = false; // 控制 "nothing changed" 訊息的顯示 @2024/01/15 Add
+
 
   createBSInfoForm() {
     this.modifyConfigForm = this.fb.group({
@@ -1320,16 +1322,23 @@ export class FieldInfoComponent implements OnInit {
     return !isNaN(parsed) ? parsed * 1000000 : defaultValue;
   }
 
-  // @2024/01/10 Update 
+  modifyConfig_click_NUM = 0;
+  // @2024/01/15 Update 
   modifyConfig( bsName: string ,bsType: number ) {
     console.log( "modifyConfig() - Start" );
+
+    // 在方法開始時重置 'isNothingChanged'
+    this.isNothingChanged = false;
+
     console.log( "The modify BS Name:", bsName, ", bsType is:", bsType );
+
+    this.modifyConfig_click_NUM ++;
 
     this.isMarkersLoading = true; // 點擊 Modify Configuration 時，開始顯示 Spinner 表載入修改資訊中 
 
     this.formValidated = true;
     if ( !this.modifyConfigForm.valid ) {
-      return;
+       return;
     }
   
     // 表格上的輸入值
@@ -1345,168 +1354,201 @@ export class FieldInfoComponent implements OnInit {
     // 使用 parseCoordinate 函數來安全解析經度和緯度
     const gpslongitude = this.parseCoordinate(formValues.longitude, originalPosition ? originalPosition.lng * 1000000 : undefined);
     const gpslatitude = this.parseCoordinate(formValues.latitude, originalPosition ? originalPosition.lat * 1000000 : undefined);
- 
-    const post_BS_body: any = {
 
-      // User can modify:
-      name:      formValues.bsName !== null && formValues.bsName !== ''
-                   ? String( formValues.bsName ) : String( this.displayBsInfo!.name ),
-      pci:       formValues.pci !== null && formValues.pci !== ''
-                   ? String( formValues.pci ) : String( this.displayBsInfo!.pci ),
-      txpower:   formValues.txPower !== null && formValues.txPower !== ''
-                   ? String( formValues.txPower ) : String( this.displayBsInfo!['tx-power'] ),
-      nrarfcndl: formValues.nrarfcndl !== null && formValues.nrarfcndl !== ''
-                   ? String( formValues.nrarfcndl ) : String( this.displayBsInfo!['nrarfcn-dl'] ),
-      nrarfcnul: formValues.nrarfcnul !== null && formValues.nrarfcnul !== ''
-                   ? String( formValues.nrarfcnul ) : String( this.displayBsInfo!['nrarfcn-ul'] ),
-      
-      // 使用 parseCoordinate 函數安全解析後的經緯度
-      gpslongitude: String(gpslongitude),
-      gpslatitude:  String(gpslatitude),
+    // 檢查是否有變更 @2024/01/15 Add
+    const isNameChanged = formValues.bsName !== null && formValues.bsName !== '' && formValues.bsName !== this.displayBsInfo!.name;
+    const isPciChanged = formValues.pci !== null && formValues.pci !== '' && formValues.pci !== this.displayBsInfo!.pci;
+    const isTxPowerChanged = formValues.txPower !== null && formValues.txPower !== '' && formValues.txPower !== this.displayBsInfo!['tx-power'];
+    const isNrarfcndlChanged = formValues.nrarfcndl !== null && formValues.nrarfcndl !== '' && formValues.nrarfcndl !== this.displayBsInfo!['nrarfcn-dl'];
+    const isNrarfcnulChanged = formValues.nrarfcnul !== null && formValues.nrarfcnul !== '' && formValues.nrarfcnul !== this.displayBsInfo!['nrarfcn-ul'];
 
-      // User can't modify in field-info:
-      session: String( this.sessionId ),
-      id:      String( this.displayBsInfo!.id ),
-      bstype:  String( this.displayBsInfo!.bstype ),
-      nci:     String( this.displayBsInfo!.nci ),
-      plmnid: {
-        mnc:   String( this.displayBsInfo!['plmn-id'].mnc ),
-        mcc:   String( this.displayBsInfo!['plmn-id'].mcc )
-        // mnc: formValues.mnc !== null && formValues.mnc !== '' ? String(formValues.mnc) : String(this.displayBsInfo!['plmn-id'].mnc),
-        // mcc: formValues.mcc !== null && formValues.mcc !== '' ? String(formValues.mcc) : String(this.displayBsInfo!['plmn-id'].mcc)
-      },
-      description:      String(this.displayBsInfo!.description),
-      channelbandwidth: String( this.displayBsInfo!.channelbandwidth ),
-      tac:              String( this.displayBsInfo!.tac ),
-      components:       this.displayBsInfo!.components
-    };
+    console.log(  isNameChanged, isPciChanged, isTxPowerChanged, isNrarfcndlChanged, isNrarfcnulChanged );
+    // 如果所有欄位都沒有變更，則設置 isNothingChanged 為 true @2024/01/15 Add
+    this.isNothingChanged = !(isNameChanged || isPciChanged || isTxPowerChanged || isNrarfcndlChanged || isNrarfcnulChanged);
 
-    // 如果為有效的經緯度值
-    if (post_BS_body.gpslongitude !== undefined && post_BS_body.gpslatitude !== undefined) {
-      post_BS_body.position = String(`[${(post_BS_body.gpslongitude / 1000000).toFixed(6)},${(post_BS_body.gpslatitude / 1000000).toFixed(6)}]`);
-    } else {
-      // 如果任一值為 undefined，則使用原始的 position
-      post_BS_body.position = String( this.displayBsInfo!.position );
-    }
+    console.log( "The num of click Modify Config:", this.modifyConfig_click_NUM, 
+                  "\nand the flag of isNothingChanged:", this.isNothingChanged );
 
-    if ( this.commonService.isLocal ) {
-      // 如是 local 環境
+    // 如果沒有任何變更，則直接返回並顯示訊息，不進行後續操作 @2024/01/15 Add
+    if ( this.isNothingChanged ) {
 
-      if ( bsType === 1 ) {
-        // 模擬一個成功響應或者直接返回
-        of({ success: true, message: 'All-in-one BS Update successful...' }).subscribe( response => {
-            console.log( response.message );
-            // 處理模擬響應
-            console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
-            this.isModifySuccess = true;                           // 設置成功標記為 true
-            setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
-
-            if ( this.activeButton_rsrp_sinr ){ 
-              console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
-              // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
-              const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
-              this.removeOverlay();       // 移除當前顯示的 overlay
-              this.overlayVisible = true; // 設定 overlay 為可見
-              this.getSinrRsrpImage( overlayType );
-            }
-        });
-
-      } else if ( bsType === 2 ) {
-        
-        of({ success: true, message: 'Disaggregated BS: [CU] + [DU] + [RU] Update error...' }).subscribe( response => {
-            console.log( response.message );
-            console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
-            this.isModifyError = true;                           // 設置成功標記為 true
-            setTimeout(() => this.isModifyError = false, 4500);  // 可選: 4.5 秒後隱藏訊息
-
-            if ( this.activeButton_rsrp_sinr ){ 
-              console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
-              // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
-              const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
-              this.removeOverlay();       // 移除當前顯示的 overlay
-              this.overlayVisible = true; // 設定 overlay 為可見
-              this.getSinrRsrpImage( overlayType );
-            }
-        });
-      }
-
+      console.log("Nothing changed!");
       this.isMarkersLoading = false; // 隱藏 spinner
-    } else {
+      setTimeout( () => this.isNothingChanged = false, 4500 );  // 可選: 4.5 秒後隱藏訊息
+      this.modifyConfigWindowRef.close();
+      this.modifyConfigForm.reset();      // 重置整個表單
+      //this.isNothingChanged = false;
+      return;
 
-        // 非 Local，進行正常的更新請求
-        if (bsType === 1) {
+    } else { // 如果有變更
 
-          // For All-in-one BS
-          console.log( "The POST for updateBs():", post_BS_body );
-          this.API_Field.updateBs( post_BS_body ).subscribe({
-            next: (response) => {
-              // Handle success
-              console.log('All-in-one BS Modify successful...');
-              this.isModifySuccess = true;                           // 設置成功標記為 true
-              setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
+      const post_BS_body: any = {
 
-              this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
+            // User can modify:
+            name:      formValues.bsName !== null && formValues.bsName !== ''
+                        ? String( formValues.bsName ) : String( this.displayBsInfo!.name ),
+            pci:       formValues.pci !== null && formValues.pci !== ''
+                        ? String( formValues.pci ) : String( this.displayBsInfo!.pci ),
+            txpower:   formValues.txPower !== null && formValues.txPower !== ''
+                        ? String( formValues.txPower ) : String( this.displayBsInfo!['tx-power'] ),
+            nrarfcndl: formValues.nrarfcndl !== null && formValues.nrarfcndl !== ''
+                        ? String( formValues.nrarfcndl ) : String( this.displayBsInfo!['nrarfcn-dl'] ),
+            nrarfcnul: formValues.nrarfcnul !== null && formValues.nrarfcnul !== ''
+                        ? String( formValues.nrarfcnul ) : String( this.displayBsInfo!['nrarfcn-ul'] ),
+            
+            // 使用 parseCoordinate 函數安全解析後的經緯度
+            gpslongitude: String(gpslongitude),
+            gpslatitude:  String(gpslatitude),
 
-              if ( this.activeButton_rsrp_sinr ){ 
-                  console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
-                  // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
-                  const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
-                  this.removeOverlay();       // 移除當前顯示的 overlay
-                  this.overlayVisible = true; // 設定 overlay 為可見
-                  this.getSinrRsrpImage( overlayType );
-              }
-
-              this.isMarkersLoading = false; // 隱藏 spinner
+            // User can't modify in field-info:
+            session: String( this.sessionId ),
+            id:      String( this.displayBsInfo!.id ),
+            bstype:  String( this.displayBsInfo!.bstype ),
+            nci:     String( this.displayBsInfo!.nci ),
+            plmnid: {
+              mnc:   String( this.displayBsInfo!['plmn-id'].mnc ),
+              mcc:   String( this.displayBsInfo!['plmn-id'].mcc )
+              // mnc: formValues.mnc !== null && formValues.mnc !== '' ? String(formValues.mnc) : String(this.displayBsInfo!['plmn-id'].mnc),
+              // mcc: formValues.mcc !== null && formValues.mcc !== '' ? String(formValues.mcc) : String(this.displayBsInfo!['plmn-id'].mcc)
             },
-            error: ( error ) => {
-              // Handle error
-              console.log('All-in-one BS Modify error...');
-              this.isModifyError = true;
-              this.errorMessage = error;
-              setTimeout(() => this.isModifyError = false, 3500);
-              this.isMarkersLoading = false; // 隱藏 spinner
-            }
-          });
+            description:      String(this.displayBsInfo!.description),
+            channelbandwidth: String( this.displayBsInfo!.channelbandwidth ),
+            tac:              String( this.displayBsInfo!.tac ),
+            components:       this.displayBsInfo!.components
+          };
 
-        } else if ( bsType === 2 )  {
+          // 如果為有效的經緯度值
+          if (post_BS_body.gpslongitude !== undefined && post_BS_body.gpslatitude !== undefined) {
+            post_BS_body.position = String(`[${(post_BS_body.gpslongitude / 1000000).toFixed(6)},${(post_BS_body.gpslatitude / 1000000).toFixed(6)}]`);
+          } else {
+            // 如果任一值為 undefined，則使用原始的 position
+            post_BS_body.position = String( this.displayBsInfo!.position );
+          }
 
-          // For Disaggregated BS: [CU] + [DU] + [RU]
-          console.log( "The POST for updateDistributedBs():", post_BS_body );
-          this.API_Field.updateDistributedBs( post_BS_body ).subscribe({
-            next: ( response ) => {
-              // Handle success
-              console.log('Disaggregated BS: [CU] + [DU] + [RU] Modify successful...');
-              this.isModifySuccess = true;                           // 設置成功標記為 true
-              setTimeout(() => this.isModifySuccess = false, 3500);  // 可選: 4.5 秒後隱藏訊息
+          if ( this.commonService.isLocal ) {
+            // 如是 local 環境
 
-              this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
+            if ( bsType === 1 ) {
+              // 模擬一個成功響應或者直接返回
+              of({ success: true, message: 'All-in-one BS Update successful...' }).subscribe( response => {
+                  console.log( response.message );
+                  // 處理模擬響應
+                  console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+                  this.isModifySuccess = true;                           // 設置成功標記為 true
+                  setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
+
+                  if ( this.activeButton_rsrp_sinr ){ 
+                    console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
+                    // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
+                    const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+                    this.removeOverlay();       // 移除當前顯示的 overlay
+                    this.overlayVisible = true; // 設定 overlay 為可見
+                    this.getSinrRsrpImage( overlayType );
+                  }
+              });
+
+            } else if ( bsType === 2 ) {
               
-              if ( this.activeButton_rsrp_sinr ){
-                // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
-                const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
-                this.removeOverlay(); // 移除當前顯示的 overlay
-                this.overlayVisible = true; // 設定 overlay 為可見
-                this.getSinrRsrpImage( overlayType );
-              }
-              
-              this.isMarkersLoading = false; // 隱藏 spinner
-            },
-            error: ( error ) => {
-              // Handle error
-              console.log('Disaggregated BS: [CU] + [DU] + [RU] Modify error...');
-              this.isModifyError = true;
-              this.errorMessage = error;
-              setTimeout(() => this.isModifyError = false, 4500);
-              this.isMarkersLoading = false; // 隱藏 spinner
+              of({ success: true, message: 'Disaggregated BS: [CU] + [DU] + [RU] Update error...' }).subscribe( response => {
+                  console.log( response.message );
+                  console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+                  this.isModifyError = true;                           // 設置成功標記為 true
+                  setTimeout(() => this.isModifyError = false, 4500);  // 可選: 4.5 秒後隱藏訊息
+
+                  if ( this.activeButton_rsrp_sinr ){ 
+                    console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
+                    // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
+                    const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+                    this.removeOverlay();       // 移除當前顯示的 overlay
+                    this.overlayVisible = true; // 設定 overlay 為可見
+                    this.getSinrRsrpImage( overlayType );
+                  }
+              });
             }
-          });
-      }
+
+            this.isMarkersLoading = false; // 隱藏 spinner
+          } else {
+
+              // 非 Local，進行正常的更新請求
+              if (bsType === 1) {
+
+                // For All-in-one BS
+                console.log( "The POST for updateBs():", post_BS_body );
+                this.API_Field.updateBs( post_BS_body ).subscribe({
+                  next: (response) => {
+                    // Handle success
+                    console.log('All-in-one BS Modify successful...');
+                    this.isModifySuccess = true;                           // 設置成功標記為 true
+                    setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
+
+                    this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
+
+                    if ( this.activeButton_rsrp_sinr ){ 
+                        console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
+                        // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
+                        const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+                        this.removeOverlay();       // 移除當前顯示的 overlay
+                        this.overlayVisible = true; // 設定 overlay 為可見
+                        this.getSinrRsrpImage( overlayType );
+                    }
+
+                    this.isMarkersLoading = false; // 隱藏 spinner
+                  },
+                  error: ( error ) => {
+                    // Handle error
+                    console.log('All-in-one BS Modify error...');
+                    this.isModifyError = true;
+                    this.errorMessage = error;
+                    setTimeout(() => this.isModifyError = false, 3500);
+                    this.isMarkersLoading = false; // 隱藏 spinner
+                  }
+                });
+
+              } else if ( bsType === 2 )  {
+
+                // For Disaggregated BS: [CU] + [DU] + [RU]
+                console.log( "The POST for updateDistributedBs():", post_BS_body );
+                this.API_Field.updateDistributedBs( post_BS_body ).subscribe({
+                  next: ( response ) => {
+                    // Handle success
+                    console.log('Disaggregated BS: [CU] + [DU] + [RU] Modify successful...');
+                    this.isModifySuccess = true;                           // 設置成功標記為 true
+                    setTimeout(() => this.isModifySuccess = false, 3500);  // 可選: 4.5 秒後隱藏訊息
+
+                    this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
+                    
+                    if ( this.activeButton_rsrp_sinr ){
+                      // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
+                      const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+                      this.removeOverlay(); // 移除當前顯示的 overlay
+                      this.overlayVisible = true; // 設定 overlay 為可見
+                      this.getSinrRsrpImage( overlayType );
+                    }
+                    
+                    this.isMarkersLoading = false; // 隱藏 spinner
+                  },
+                  error: ( error ) => {
+                    // Handle error
+                    console.log('Disaggregated BS: [CU] + [DU] + [RU] Modify error...');
+                    this.isModifyError = true;
+                    this.errorMessage = error;
+                    setTimeout(() => this.isModifyError = false, 4500);
+                    this.isMarkersLoading = false; // 隱藏 spinner
+                  }
+                });
+            }
+
+            // 選擇性地在動作後重置 'isNothingChanged'
+            this.isNothingChanged = false;
+          }
+          
+          // The end:
+          this.modifyConfigWindowRef.close();
+          this.modifyConfigForm.reset();      // 重置整個表單
     }
-    
-    // The end:
-    this.modifyConfigWindowRef.close();
-    this.modifyConfigForm.reset();      // 重置整個表單
 
+    // 也可以考慮在方法結尾再次重置 'isNothingChanged'
+    this.isNothingChanged = false;
     console.log( "modifyConfig() - End" );
   }
   

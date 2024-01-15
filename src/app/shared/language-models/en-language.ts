@@ -85,6 +85,7 @@ export const Enlanguage = {
   'field.modifyConfiguration':'Modify Configuration',
   'field.modifySuccess':'Modification Applied',     // @2024/01/10 Add
   'field.modifyError':'Modification Error',         // @2024/01/10 Add
+  'field.nothingChanged':'Nothing Changed',         // @2024/01/15 Add
   'field.neighboringBSList':'Neighboring BS List',
   'field.config':'Field Configuration',             // @12/12 Add
   'field.edit':'Field Editing',                     // @2024/01/11 Add

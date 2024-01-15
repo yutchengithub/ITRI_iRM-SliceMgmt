@@ -760,9 +760,46 @@ circle-progress {
   display: flex;
   align-items: center;     // 垂直置中 
   justify-content: center; // 水平置中
-  color: red;            // 成功訊息和圖標的顏色
+  color: red;            // 錯誤訊息和圖標的顏色
   font-weight: bolder;  
   flex-shrink: 0;          // 防止縮小
+}
+
+// @2024/01/15 Add by yuchen
+// 訊息與圖標間距
+.error-message mat-icon {
+  margin-right: 5px; 
+}
+
+// @2024/01/15 Add by yuchen
+.error-message span {
+  display: block;
+  margin-top: auto;
+  margin-bottom: 100px;
+}
+
+// @2024/01/15 Add by yuchen
+// 未更動訊息樣式
+.info-message {
+  display: flex;
+  align-items: center;            // 垂直置中 
+  justify-content: center;        // 水平置中
+  color: rgb(197, 113, 245);    // 未更動訊息和圖標的顏色
+  font-weight: bolder;  
+  flex-shrink: 0;                 // 防止縮小
+}
+
+// @2024/01/15 Add by yuchen
+// 訊息與圖標間距
+.info-message mat-icon {
+  margin-right: 5px; 
+}
+
+// @2024/01/15 Add by yuchen
+.info-message span {
+  display: block;
+  margin-top: auto;
+  margin-bottom: 100px;
 }
 
 @media screen and (max-width: 1366px) {

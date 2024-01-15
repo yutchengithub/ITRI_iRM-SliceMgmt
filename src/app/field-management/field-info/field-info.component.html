@@ -350,6 +350,11 @@
 					<div *ngIf="isModifyError" class="error-message">
 						<mat-icon>error</mat-icon>{{ languageService.i18n['field.modifyError'] }} !
 					</div>
+
+					<!-- "Nothing changed" 訊息與圖標 @2024/01/15 Add -->
+					<div *ngIf="isNothingChanged" class="info-message">
+						<mat-icon>info</mat-icon>{{ languageService.i18n['field.nothingChanged'] }} !
+					</div>
 				</div>
 			</ng-container>
 

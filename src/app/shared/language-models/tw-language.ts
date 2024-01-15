@@ -83,6 +83,7 @@ export const TwLanguage = {
   'field.modifyConfiguration':'修改配置',
   'field.modifySuccess':'修改已套用',         // @2024/01/10 Add
   'field.modifyError':'修改錯誤',             // @2024/01/10 Add
+  'field.nothingChanged':'未有更動',          // @2024/01/15 Add
   'field.neighboringBSList':'鄰近基站列表',
   'field.config':'場域配置',                  // @12/12 Add
   'field.edit':'場域編輯',                    // @2024/01/11 Add
