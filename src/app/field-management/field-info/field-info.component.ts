@@ -1419,11 +1419,13 @@ export class FieldInfoComponent implements OnInit {
 
               this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
 
-              // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
-              const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
-              this.removeOverlay();       // 移除當前顯示的 overlay
-              this.overlayVisible = true; // 設定 overlay 為可見
-              this.getSinrRsrpImage( overlayType );
+              if ( this.activeButton_rsrp_sinr ){ 
+                  // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
+                  const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+                  this.removeOverlay();       // 移除當前顯示的 overlay
+                  this.overlayVisible = true; // 設定 overlay 為可見
+                  this.getSinrRsrpImage( overlayType );
+              }
 
               this.isMarkersLoading = false; // 隱藏 spinner
             },
@@ -1449,12 +1451,14 @@ export class FieldInfoComponent implements OnInit {
               setTimeout(() => this.isModifySuccess = false, 3500);  // 可選: 4.5 秒後隱藏訊息
 
               this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
-
-              // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
-              const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
-              this.removeOverlay(); // 移除當前顯示的 overlay
-              this.overlayVisible = true; // 設定 overlay 為可見
-              this.getSinrRsrpImage( overlayType );
+              
+              if ( this.activeButton_rsrp_sinr ){
+                // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
+                const overlayType = ( this.activeButton_rsrp_sinr === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+                this.removeOverlay(); // 移除當前顯示的 overlay
+                this.overlayVisible = true; // 設定 overlay 為可見
+                this.getSinrRsrpImage( overlayType );
+              }
               
               this.isMarkersLoading = false; // 隱藏 spinner
             },
