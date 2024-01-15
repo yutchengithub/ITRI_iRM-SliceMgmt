@@ -112,7 +112,7 @@
 			<!-- 在地圖和進度指示器外面包一層 div，用於定位進度指示器 -->
 			
 				<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
-				<google-map *ngIf="showMapModel" width="1025.5px" height="748px" [center]="center" [options]="mapOptions">
+				<google-map *ngIf="showMapModel" width="919px" height="748px" [center]="center" [options]="mapOptions">
 					<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
 					<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
 					
@@ -199,13 +199,15 @@
 		</div>
 		<div id="ColorBar" style="margin-top: -10px; ">
 			<ul *ngIf="currentColorbar === 'RSRP'">
-				<div> <span class="colorbar-title">RSRP</span> <img src="assets/img/rsrp_colorbar.png">
+				<div style="position: relative; left: 15px; top: 10px;"> 
+					<span class="colorbar-title">RSRP</span> <img src="assets/img/rsrp_colorbar.png">
 					<!-- RSRP Colorbar -->
 					<div class="RSRP_values"> <span>-130</span> <span>-120</span> <span>-110</span> <span>-100</span> <span>-90</span> <span>-80</span> </div>
 				</div>
 			</ul>
 			<ul *ngIf="currentColorbar === 'SINR'">
-				<div> <span class="colorbar-title">SINR</span> <img src="assets/img/sinr_colorbar.png">
+				<div style="position: relative; left: 50px; top: 10px;"> 
+					<span class="colorbar-title">SINR</span> <img style="max-width: 767px!important" src="assets/img/rsrp_colorbar.png">
 					<!-- SINR Colorbar -->
 					<div class="SINR_values"> <span>-10</span> <span>0</span> <span>10</span> <span>20</span> <span>30</span> </div>
 				</div>

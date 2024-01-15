@@ -175,7 +175,7 @@ export class FieldInfoComponent implements OnInit {
     setTimeout(() => {
       // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
       this.adjustMapZoom();
-    }, 100); // 設定 100 毫秒的延遲，以確保地圖的初始化過程已經完成。
+    }, 1000); // 設定 100 毫秒的延遲，以確保地圖的初始化過程已經完成。
   }
 
   // @2024/01/05 Add

@@ -350,7 +350,14 @@ table {
 
 // @12/12 Update by yuchen
 #ColorBar img {
-  max-width: 52.5%; // 確保圖片的寬度永遠不會超過其容器
+  max-width: 813px; // 確保圖片的寬度永遠不會超過其容器
+  height: auto; // 高度設定為自動，以維持長寬比
+  position: relative;
+  left: 25px;
+}
+
+#ColorBar_sinr {
+  max-width: 750px!important; // 確保圖片的寬度永遠不會超過其容器
   height: auto; // 高度設定為自動，以維持長寬比
   position: relative;
   left: 25px;
@@ -378,19 +385,18 @@ table {
   left: 73.5px;
   top: 2.5px;
 }
-
 // @12/12 Update by yuchen
 #ColorBar .RSRP_values span {
-  margin-right: 128.5px; // 在值之間添加空間
+  margin-right: 122px;   // 在值之間添加空間
   display: inline-block; // 使 span 行內顯示
 }
 
 // @12/12 Update by yuchen
 #ColorBar .SINR_values {
   color: rgb(188, 211, 233); // 設定字體顏色
-  font-size: 21.5px; // 設定字體大小
+  font-size: 17.5px; // 設定字體大小
   font-family: Arial, sans-serif; // 設定字體
-  padding: 20px 10; // 上下填充
+  padding: 20px 8; // 上下填充
   display: block; // 使 div 作為塊級元素顯示
   width: auto; // 根據內容自動調整寬度
   position: relative;
@@ -400,7 +406,7 @@ table {
 
 // @12/12 Update by yuchen
 #ColorBar .SINR_values span {
-  margin-right: 189.5px; // 在值之間添加空間
+  margin-right: 130pt; // 在值之間添加空間
   display: inline-block; // 使 span 行內顯示
 }
 

@@ -262,7 +262,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           //logType: this.searchForm.get('UserLogType')?.value,    // 取得 User Log 類型
           //keyword: this.searchForm.get('keyword')?.value || '',  // 取得想搜尋的關鍵字
           offset: (this.p - 1) * this.pageSize,                  // 計算分頁的 offset
-          limit: 20000                                           // 設定顯示的 Log 數量限制
+          limit: 10                                           // 設定顯示的 Log 數量限制
         };
 
         // @11/30 Add by yuchen
@@ -301,7 +301,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
       }
-    }, 100); // timeout: 100 ms
+    }, 1000); // timeout: 100 ms
   }
 
   
@@ -341,7 +341,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         neLogType: this.searchForm.get('NELogType')?.value,     // 取得 NE Log 類型
         keyword: this.searchForm.get('keyword')?.value || '',   // 取得想搜尋的關鍵字
         offset: (this.p - 1) * this.pageSize,                   // 計算分頁的 offset，以便從正確的記錄開始獲取 Log
-        limit: 20000                                            // 設定顯示的 Log 數量限制
+        limit: 10                                            // 設定顯示的 Log 數量限制
       };
 
       // @11/30 Add by yuchen
@@ -380,7 +380,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
       }
-    }, 100); // timeout 100ms
+    }, 1000); // timeout 100ms
   }
 
 
