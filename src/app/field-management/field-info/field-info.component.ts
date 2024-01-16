@@ -2,30 +2,30 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from './../../shared/common.service';
-import { SoftwareList } from './../../software-management/software-management.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
 
+import { of } from 'rxjs'; // @2024/01/09 Add 
 import { forkJoin, Observable } from 'rxjs';
-import { ChangeDetectorRef } from '@angular/core';          // @12/13 Add for use 'detectChanges()'
-import { environment } from 'src/environments/environment'; // @12/20 Add for import Google Maps API Key
+import { ChangeDetectorRef } from '@angular/core';          // @2023/12/13 Add for use 'detectChanges()'
+import { environment } from 'src/environments/environment'; // @2023/12/20 Add for import Google Maps API Key
 import { NgZone } from '@angular/core';
 
-import { FieldInfo } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';              // @12/21 Add
-import { BsInfoInField } from '../../shared/interfaces/Field_Info/For_queryFieldInfo';          // @12/21 Add
+import { apiForField } from '../../shared/api/For_Field'; // @2024/01/04 Add for import API of Field Management 
 
-import { BSInfo } from '../../shared/interfaces/BS_Info/For_queryBsInfo_BS';                    // @12/21 Add
-import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS_Info/For_queryBsInfo_dist_BS';  // @12/24 Add
-import { map } from 'rxjs/operators';                           // @12/24 Add
-import { localBSinfo } from '../../shared/local-files/For_BS';  // @12/27 Add
-import { GoogleMap } from '@angular/google-maps';               // @2024/01/03 Add
+import { FieldInfo } from '../../shared/interfaces/Field/For_queryFieldInfo';              // @2023/12/21 Add
+import { BsInfoInField } from '../../shared/interfaces/Field/For_queryFieldInfo';          // @2023/12/21 Add
+import { BSList } from '../../shared/interfaces/BS/For_queryBsList';                       // @2024/01/16 Add
+import { localBSList } from '../../shared/local-files/For_queryBsList';                    // @2024/01/16 Add
 
-import { apiForField } from '../../shared/api/For_Field';       // @2024/01/04 Add for import API of Field Management 
+import { BSInfo } from '../../shared/interfaces/BS/For_queryBsInfo_BS';                    // @2023/12/21 Add
+import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
+import { localBSinfo } from '../../shared/local-files/For_queryBsInfo';                    // @2023/12/27 Add
 
-import { of } from 'rxjs'; // @2024/01/09 Add 
+import { map } from 'rxjs/operators';              // @2023/12/24 Add
+import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
 
 //import { MessageService } from 'primeng/api';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -284,8 +284,9 @@ export class FieldInfoComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public commonService: CommonService,
-    public bsLocalFiles: localBSinfo,     // @12/27 Add for import BS Local Files
     public API_Field: apiForField,        // @2024/01/04 Add for import API of Field Management 
+    public bsInfoLocalFiles: localBSinfo, // @2023/12/27 Add for import BS Info Local Files
+    public bsList_LocalFiles: localBSList, // @2024/01/16 Add for import BS List Local Files
     private fb: FormBuilder,
     private dialog: MatDialog,
     public languageService: LanguageService,
@@ -841,19 +842,19 @@ export class FieldInfoComponent implements OnInit {
     
       console.log('Start fetching BS info in Local');   // 開始獲取 Local BS 資訊
 
-      console.log( 'Local BS info in Local:', this.bsLocalFiles.bsInfo_local );
-      console.log( 'Local Dist_BS info in Local:', this.bsLocalFiles.dist_bsInfo_local );
+      console.log( 'Local BS info in Local:', this.bsInfoLocalFiles.bsInfo_local );
+      console.log( 'Local Dist_BS info in Local:', this.bsInfoLocalFiles.dist_bsInfo_local );
 
       // 初始化一個新數組用於存放所有轉換後的 SimplifiedBSInfo 對象
       const allSimplifiedData: SimplifiedBSInfo[] = [];
 
       // 遍歷 dist_bsInfo_local 數組並處理每一筆數據
-      this.bsLocalFiles.dist_bsInfo_local.forEach( ( distBsInfo: BSInfo_dist ) => {
+      this.bsInfoLocalFiles.dist_bsInfo_local.forEach( ( distBsInfo: BSInfo_dist ) => {
         allSimplifiedData.push( ...this.convertDistBsInfoToSimplifiedFormat( distBsInfo ));
       });
 
       // 遍歷 bsInfo_local 數組並處理每一筆數據
-      this.bsLocalFiles.bsInfo_local.forEach( ( bsInfo: BSInfo ) => {
+      this.bsInfoLocalFiles.bsInfo_local.forEach( ( bsInfo: BSInfo ) => {
         allSimplifiedData.push( this.convertBsInfoToSimplifiedFormat( bsInfo )) ;
       });
       
@@ -1343,7 +1344,7 @@ export class FieldInfoComponent implements OnInit {
   
     // 表格上的輸入值
     const formValues = this.modifyConfigForm.value;
-    console.log(formValues);
+    console.log( formValues );
   
     // 解析原始的 position 字串以獲取經緯度
     const originalPosition = this.displayBsInfo ? this.parsePosition( this.displayBsInfo.position ) : null;
@@ -1355,16 +1356,21 @@ export class FieldInfoComponent implements OnInit {
     const gpslongitude = this.parseCoordinate(formValues.longitude, originalPosition ? originalPosition.lng * 1000000 : undefined);
     const gpslatitude = this.parseCoordinate(formValues.latitude, originalPosition ? originalPosition.lat * 1000000 : undefined);
 
-    // 檢查是否有變更 @2024/01/15 Add
+    // 檢查是否有變更 @2024/01/16 Update for determining lat and lng
     const isNameChanged = formValues.bsName !== null && formValues.bsName !== '' && formValues.bsName !== this.displayBsInfo!.name;
     const isPciChanged = formValues.pci !== null && formValues.pci !== '' && formValues.pci !== this.displayBsInfo!.pci;
     const isTxPowerChanged = formValues.txPower !== null && formValues.txPower !== '' && formValues.txPower !== this.displayBsInfo!['tx-power'];
     const isNrarfcndlChanged = formValues.nrarfcndl !== null && formValues.nrarfcndl !== '' && formValues.nrarfcndl !== this.displayBsInfo!['nrarfcn-dl'];
     const isNrarfcnulChanged = formValues.nrarfcnul !== null && formValues.nrarfcnul !== '' && formValues.nrarfcnul !== this.displayBsInfo!['nrarfcn-ul'];
+    const isLongitudeChanged = originalPosition && gpslongitude !== undefined && originalPosition.lng * 1000000 !== gpslongitude;
+    const isLatitudeChanged = originalPosition && gpslatitude !== undefined && originalPosition.lat * 1000000 !== gpslatitude;
+    
+    console.log( isNameChanged, isPciChanged, isTxPowerChanged, isNrarfcndlChanged, isNrarfcnulChanged,
+                   isLongitudeChanged, isLatitudeChanged );
 
-    console.log(  isNameChanged, isPciChanged, isTxPowerChanged, isNrarfcndlChanged, isNrarfcnulChanged );
     // 如果所有欄位都沒有變更，則設置 isNothingChanged 為 true @2024/01/15 Add
-    this.isNothingChanged = !(isNameChanged || isPciChanged || isTxPowerChanged || isNrarfcndlChanged || isNrarfcnulChanged);
+    this.isNothingChanged = !(isNameChanged || isPciChanged || isTxPowerChanged || isNrarfcndlChanged || isNrarfcnulChanged ||
+                               isLongitudeChanged || isLatitudeChanged);
 
     console.log( "The num of click Modify Config:", this.modifyConfig_click_NUM, 
                   "\nand the flag of isNothingChanged:", this.isNothingChanged );
@@ -1373,7 +1379,7 @@ export class FieldInfoComponent implements OnInit {
     if ( this.isNothingChanged ) {
 
       console.log("Nothing changed!");
-      this.isMarkersLoading = false; // 隱藏 spinner
+      this.isMarkersLoading = false; // 隱藏 Spinner
       setTimeout( () => this.isNothingChanged = false, 4500 );  // 可選: 4.5 秒後隱藏訊息
       this.modifyConfigWindowRef.close();
       this.modifyConfigForm.reset();      // 重置整個表單
@@ -1547,7 +1553,7 @@ export class FieldInfoComponent implements OnInit {
           this.modifyConfigForm.reset();      // 重置整個表單
     }
 
-    // 也可以考慮在方法結尾再次重置 'isNothingChanged'
+    // 結尾重置 'isNothingChanged'
     this.isNothingChanged = false;
     console.log( "modifyConfig() - End" );
   }
@@ -1562,60 +1568,122 @@ export class FieldInfoComponent implements OnInit {
 // Modify Configuration Setting @2024/01/05 Add ↑
 
 
-// Field Editing Setting @2024/01/11 Add ↓
+// For Field Editing Setting @2024/01/11 Add ↓
 
-@ViewChild('fieldEditWindow') fieldEditWindow: any;
-fieldEditWindowRef!: MatDialogRef<any>;
-fieldEditFormValidated = false;
+  bsList: BSList = {} as BSList;   // @2024/01/16 Add
 
-openfieldEditWindow() {
-    this.fieldEditFormValidated = false;
-    this.fieldEditWindowRef = this.dialog.open( this.fieldEditWindow, { id: 'fieldEditWindow' } );
-    this.fieldEditWindowRef.afterClosed().subscribe(() => {
-      this.fieldEditFormValidated = false;
-  });
-}
+  // @2024/01/16 Add
+  // Get the BS List in the O1 System 
+  getQueryBsList() {
+    console.log( 'getQueryBsList() - Start' );         // getQueryBsList() 啟動 
+    console.log( 'Start fetching info of Bs List' );   // 開始獲取 BS List 資訊
+    clearTimeout( this.refreshTimeout );
 
-fieldEditType: string = 'Field_Infos';   // 預設選擇 "Field Infos"  
-//fieldEditType: string = 'BS_List';     // 預設選擇 "BS List"   
+    // 檢查是否為 local 環境
+    if ( this.commonService.isLocal ) { 
+      // For testing with local files
+      console.log('Start fetching BS List in Local');   // 開始獲取 Local BS List 資訊
 
-changefieldEditType( e: MatButtonToggleChange ) {
-  console.log( "changefieldEditType() - Start" );
+      this.bsList = this.bsList_LocalFiles.bsList_local;
+      console.log( 'BS List in Local:', this.bsList );
+      
+      this.isMarkersLoading = false; // 加載完成，隱藏 spinner 
+    } else {
+      
+      console.log('Start fetching BS List from API');   // 開始獲取 BS List 資訊
 
-  // 根據當前選擇的 field Edit 類型載入數據
-  if ( e.value === 'Field_Infos' ) {
+      // Use API_Field's queryBsList() to make an HTTP GET request
+      this.API_Field.queryBsList().subscribe({
+        next: (res) => {
 
-    this.fieldEditType = 'Field_Infos';
-    //this.getUserLogsInfo();  // 載入 Field Infos 數據
+          // 當 API 響應數據到達時，執行此回調
+          // This callback is executed when API response data arrives
+          console.log( '從 API 獲取 queryBsList\n( Fetched queryBsList from API ): ', res.basestation );
+          
+          this.bsList = res;
+          console.log( '基站列表資訊\n( BS List ):', this.bsList ); // 取得的 BS List 資訊 ( Obtained BS List information ):
+        },
+        error: (error) => {
 
-  } else if ( e.value === 'BS_List' ) {
+          // 獲取資訊出錯時執行此回調
+          // This callback is executed when there is an error fetching the info
+          console.error( '獲取基站列表資訊出錯:', error );
+          console.error( 'Error fetching - BS List:', error );
+          this.isMarkersLoading = false; // 出錯時也應隱藏 spinner
+        },
+        complete: () => {
 
-    this.fieldEditType = 'BS_List';
-    //this.getNELogsInfo();    // 載入 BS List 數據
+          // 請求完成時執行此回調
+          // This callback is executed when the request is complete
+          console.log( '基站列表資訊獲取完成' );
+          console.log( 'BS List - fetch completed' );
+          //this.isMarkersLoading = false; // 加載完成
+        }
+      });
+    }
+
+    console.log( 'getQueryBsList() - End' ); // getQueryBsList() 結束 
   }
 
-  // 更新當前類型，以便知道哪個 Field Edit 類型被選中
-  // Set the Field Edit type to display after tab switch
-  //this.fieldEditType = e.value;
-  console.log('頁面切換後，顯示的 Field Edit 類型:', this.fieldEditType+
-  '\nField Edit type displayed after tab switch:', this.fieldEditType);
 
-  console.log( "changefieldEditType() - End" );
-}
+  @ViewChild('fieldEditWindow') fieldEditWindow: any;
+  fieldEditWindowRef!: MatDialogRef<any>;
+  fieldEditFormValidated = false;
 
-fieldEditForm!: FormGroup;
-createFieldInfoForm() {
-  this.fieldEditForm  = this.fb.group({
-    fieldName:        new FormControl(''), 
-    fieldBound_North: new FormControl(''),
-    fieldBound_South: new FormControl(''),
-    fieldBound_West:  new FormControl(''),
-    fieldBound_East:  new FormControl(''),
-    phoneNumber:      new FormControl('')
-  });
-}
+  openfieldEditWindow() {
+      this.fieldEditFormValidated = false;
+      this.fieldEditWindowRef = this.dialog.open( this.fieldEditWindow, { id: 'fieldEditWindow' } );
+      this.fieldEditWindowRef.afterClosed().subscribe(() => {
+        this.fieldEditFormValidated = false;
+    });
+  }
 
-// Field Editing Setting @2024/01/11 Add ↑
+  fieldEditType: string = 'Field_Infos';   // 預設選擇 "Field Infos"  
+  //fieldEditType: string = 'BS_List';     // 預設選擇 "BS List"   
+
+  changefieldEditType( e: MatButtonToggleChange ) {
+    console.log( "changefieldEditType() - Start" );
+
+    // 根據當前選擇的 field Edit 類型載入數據
+    if ( e.value === 'Field_Infos' ) {
+
+      this.fieldEditType = 'Field_Infos';
+      //this.getUserLogsInfo();  // 載入 Field Infos 數據
+
+    } else if ( e.value === 'BS_List' ) {
+
+      this.fieldEditType = 'BS_List';
+      this.getQueryBsList();    // 載入 BS List 數據
+    }
+
+    // 更新當前類型，以便知道哪個 Field Edit 類型被選中
+    // Set the Field Edit type to display after tab switch
+    //this.fieldEditType = e.value;
+    console.log('頁面切換後，顯示的 Field Edit 類型:', this.fieldEditType+
+    '\nField Edit type displayed after tab switch:', this.fieldEditType);
+
+    console.log( "changefieldEditType() - End" );
+  }
+
+  fieldEditForm!: FormGroup;
+  createFieldInfoForm() {
+    this.fieldEditForm  = this.fb.group({
+      fieldName:        new FormControl(''), 
+      fieldBound_North: new FormControl(''),
+      fieldBound_South: new FormControl(''),
+      fieldBound_West:  new FormControl(''),
+      fieldBound_East:  new FormControl(''),
+      phoneNumber:      new FormControl('')
+    });
+  }
+
+// For Field Editing Setting @2024/01/11 Add ↑
+
+
+
+
+
+
 
 
 

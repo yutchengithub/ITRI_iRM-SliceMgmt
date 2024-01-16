@@ -1,3 +1,5 @@
+// 場域頁面會用到的 API 都於此 ( 還未移動完整 ) @2024/01/16
+
 import { HttpHeaders, HttpClient, HttpParams  } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -16,7 +18,7 @@ export class apiForField {
     private commonService: CommonService 
   ) {}
   
-  // Field Management API  @11/30 Add by yuchen
+  // Get Lists of Field @11/30 Add by yuchen
   queryFieldList(): Observable<any> {
     
     // 構建 API URL
@@ -26,12 +28,7 @@ export class apiForField {
     return this.http.get(url);
   }
 
-
-
-
-
-
-  // @12/05 Add by yuchen
+  // Get Information of Fields @12/05 Add by yuchen
   queryFieldInfo(fieldId: string): Observable<any> {
     
     // 構建 API URL
@@ -41,7 +38,18 @@ export class apiForField {
     return this.http.get(url);
   }
 
-  // get the Field Image @2024/01/02 Add by yuchen
+  // @2024/01/16 Add by yuchen
+  // Get a list of BSs that are not limited to being within the specified field
+  queryBsList(): Observable<any> {
+    
+    // 構建 API URL
+    const url = `${this.restPath}/queryBsList/${this.sessionId}`;
+  
+    // 發起 HTTP GET 請求
+    return this.http.get( url );
+  }
+
+  // Get Image of the Field  @2024/01/02 Add by yuchen
   queryFieldImage( fieldId: string ): Observable<any> { 
     
     // 構建 API URL

@@ -23,11 +23,11 @@ import { FieldSummary } from '../dashboard/dashboard.component';
 import { FieldList } from '../dashboard/dashboard.component';
 
 // Interfaces of Field Management
-import { FieldInfo } from '../shared/interfaces/Field_Info/For_queryFieldInfo'; // @12/21 Update by yuchen
+import { FieldInfo } from './interfaces/Field/For_queryFieldInfo'; // @12/21 Update by yuchen
 
 // Interfaces of BS Management
-import { BSInfo } from './interfaces/BS_Info/For_queryBsInfo_BS';             // @12/21 Update by yuchen
-import { BSInfo_dist } from './interfaces/BS_Info/For_queryBsInfo_dist_BS';   // @12/24 Add
+import { BSInfo } from './interfaces/BS/For_queryBsInfo_BS';             // @12/21 Update by yuchen
+import { BSInfo_dist } from './interfaces/BS/For_queryBsInfo_dist_BS';   // @12/24 Add
 
 // Interfaces of NE ( Component ) management 
 import { ComponentList } from '../component-management/component-management.component';
