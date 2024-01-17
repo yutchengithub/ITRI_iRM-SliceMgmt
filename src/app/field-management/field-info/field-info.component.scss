@@ -139,46 +139,34 @@ svg circle {
   margin-top: -3.25em;
   margin-left: 25.5em;
 }
-:host ::ng-deep .switch .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
-  padding: 4px 10px;
-}
-:host ::ng-deep .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
-  background-color:#ba5a2a!important;
-}
-:host ::ng-deep .mat-button-toggle-appearance-standard{
-  background-color:#485c77!important;
-  color:#ddd;
-}
-:host ::ng-deep .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
-    border-left:0;
-}
 
-/* 設定圖片容器的相對定位，以便於裡面的絕對定位標籤正確顯示 */
+
+// 設定圖片容器的相對定位，以便於裡面的絕對定位標籤正確顯示
 .image-container {
   position: relative;
-  width: 150%; /* 可以根據需要調整 */
-  max-width: 350px; /* 限制圖片容器的最大寬度 */
+  width: 150%;      // 可以根據需要調整 
+  max-width: 350px; // 限制圖片容器的最大寬度 
   left: 28px;
   top: 25px;
 }
 
-/* 圖片樣式 */
+// 圖片樣式
 .image-container img {
-  width: 100%; /* 使圖片寬度撐滿容器 */
-  height: auto; /* 保持圖片的原始比例 */
+  width: 100%;  // 使圖片寬度撐滿容器
+  height: auto; // 保持圖片的原始比例
   position: relative;
   left: 70px;
 }
 
-/* 標籤的基本樣式 */
+// 標籤的基本樣式
 .label-position {
   position: absolute;
-  //background: #fff; /* 白色背景 */
-  padding: 2px 5px; /* 添加一些內邊距 */
-  font-size: 12px; /* 字體大小 */
+  //background: #fff; // 白色背景
+  padding: 2px 5px;  // 添加一些內邊距
+  font-size: 12px;   // 字體大小
 }
 
-/* 四個角的標籤位置 */
+// 四個角的標籤位置
 .leftUp {
   bottom: 97%;
   left: 0;

@@ -298,12 +298,13 @@ export class FieldInfoComponent implements OnInit {
   ) {
     const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
     this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
-    this.createBSInfoForm(); // For updateBs API @2024/01/05 Add 
+    this.createBSInfoForm();    // For updateBs API @2024/01/05 Add 
+    this.createFieldInfoForm(); // Field Info in Field Editing  @2024/01/17 Add 
+    
   }
 
   // 頁面初始化
   ngOnInit(){
-
     this.sessionId = this.commonService.getSessionId();
     console.log( 'The sessionId is', this.sessionId ); // @2024/01/05 Add 
     this.route.params.subscribe((params) => {
@@ -312,7 +313,6 @@ export class FieldInfoComponent implements OnInit {
       console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
       this.getQueryFieldInfo();
     });
-
   }
 
 // ↑ Page Init ↑
@@ -752,6 +752,22 @@ export class FieldInfoComponent implements OnInit {
       // 計算場域中心用來設定地圖的初始視圖中心
       this.center = this.calculateBoundingBoxCenter( positions );
 
+      setTimeout(() => {
+        // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
+        this.adjustMapZoom();
+      }, 10); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
+
+      // @2024/01/17 Add 
+      // Set the get value to fieldEditForm for Field Editing  
+      this.fieldEditForm.patchValue({
+        fieldName:        this.fieldInfo.name,
+        fieldBound_North: this.fieldBounds.north,
+        fieldBound_South: this.fieldBounds.south,
+        fieldBound_West:  this.fieldBounds.west,
+        fieldBound_East:  this.fieldBounds.east,
+        phoneNumber:      this.fieldInfo.phone
+      });
+
       this.processFieldInfo(); // 處理場域資訊
       
       this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
@@ -808,6 +824,17 @@ export class FieldInfoComponent implements OnInit {
           this.center = this.calculateBoundingBoxCenter(positions); 
           // 輸出中心點到控制台，這樣可以用於調試和確認中心點是否如預期被正確計算。
           console.log('In getQueryFieldInfo() - center:', this.center);
+
+          // @2024/01/17 Add 
+          // Set the get value to fieldEditForm for Field Editing  
+          this.fieldEditForm.patchValue({
+            fieldName:        this.fieldInfo.name,
+            fieldBound_North: this.fieldBounds.north,
+            fieldBound_South: this.fieldBounds.south,
+            fieldBound_West:  this.fieldBounds.west,
+            fieldBound_East:  this.fieldBounds.east,
+            phoneNumber:      this.fieldInfo.phone
+          });
 
           // 確保場域資訊已經被賦值後再進行後續處理
           // Ensure field info is assigned before proceeding
@@ -880,6 +907,9 @@ export class FieldInfoComponent implements OnInit {
 
         // 將 allSimplifiedBsInfo 數組中的第一筆基站資訊顯示於「基站資訊」欄位上
         this.displayBsInfo = this.allSimplifiedBsInfo[0];
+
+        // 當 displayBsInfo 更新後，更新表單 @2024/01/17 Add
+        //this.updateModifyConfigForm( this.displayBsInfo );
       }
 
       this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
@@ -982,6 +1012,9 @@ export class FieldInfoComponent implements OnInit {
 
           // 將 allSimplifiedBsInfo 數組中的第一筆基站資訊顯示於「基站資訊」欄位上
           this.displayBsInfo = this.allSimplifiedBsInfo[0];
+
+          // 當 displayBsInfo 更新後，更新表單 @2024/01/17 Add
+          //this.updateModifyConfigForm( this.displayBsInfo );
         }
         this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
       },
@@ -1308,9 +1341,30 @@ export class FieldInfoComponent implements OnInit {
       latitude: new FormControl('')
     });
   }
+
+  // 接收 displayBsInfo 對象並使用其值來更新表單 @2024/01/17 Add
+  updateModifyConfigForm( bsInfo: SimplifiedBSInfo ) {
+    this.modifyConfigForm.patchValue({
+         bsName: bsInfo.name, 
+            pci: bsInfo.pci,
+         // mcc: bsInfo['plmn-id'].mcc, // 如果這些值是可用的
+         // mnc: bsInfo['plmn-id'].mnc,
+        txPower: bsInfo['tx-power'],
+      nrarfcnul: bsInfo['nrarfcn-ul'],
+      nrarfcndl: bsInfo['nrarfcn-dl'],
+      longitude: this.displayBsInfoPosition.lng, // 確保 position 是一個物件並有 lng 屬性
+       latitude: this.displayBsInfoPosition.lat  // 確保 position 是一個物件並有 lat 屬性
+    });
+  }
   
   openModifyConfigWindow() {
     this.formValidated = false;
+
+    // 如果 displayBsInfo 已被賦值，就更新表單
+    if ( this.displayBsInfo ) {
+      this.updateModifyConfigForm(this.displayBsInfo);
+    }
+
     this.modifyConfigWindowRef = this.dialog.open(this.modifyConfigWindow, { id: 'modifyConfigWindow' });
     this.modifyConfigWindowRef.afterClosed().subscribe(() => {
       this.formValidated = false;
@@ -1438,11 +1492,7 @@ export class FieldInfoComponent implements OnInit {
               // 模擬一個成功響應或者直接返回
               of({ success: true, message: 'All-in-one BS Update successful...' }).subscribe( response => {
                   console.log( response.message );
-                  // 處理模擬響應
-                  console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
-                  this.isModifySuccess = true;                           // 設置成功標記為 true
-                  setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
-
+                  
                   if ( this.activeButton_rsrp_sinr ){ 
                     console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
                     // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
@@ -1450,17 +1500,19 @@ export class FieldInfoComponent implements OnInit {
                     this.removeOverlay();       // 移除當前顯示的 overlay
                     this.overlayVisible = true; // 設定 overlay 為可見
                     this.getSinrRsrpImage( overlayType );
-                  }
+                    }
+
+                  // 處理模擬響應
+                  console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+                  this.isModifySuccess = true;                           // 設置成功標記為 true
+                  setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
               });
 
             } else if ( bsType === 2 ) {
               
               of({ success: true, message: 'Disaggregated BS: [CU] + [DU] + [RU] Update error...' }).subscribe( response => {
                   console.log( response.message );
-                  console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
-                  this.isModifyError = true;                           // 設置成功標記為 true
-                  setTimeout(() => this.isModifyError = false, 4500);  // 可選: 4.5 秒後隱藏訊息
-
+                  
                   if ( this.activeButton_rsrp_sinr ){ 
                     console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
                     // 同步更新 SINR 或 RSRP 分佈圖 @2024/01/15 
@@ -1469,10 +1521,15 @@ export class FieldInfoComponent implements OnInit {
                     this.overlayVisible = true; // 設定 overlay 為可見
                     this.getSinrRsrpImage( overlayType );
                   }
+
+                  console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+                  this.isModifyError = true;                           // 設置成功標記為 true
+                  setTimeout(() => this.isModifyError = false, 4500);  // 可選: 4.5 秒後隱藏訊息
               });
             }
 
             this.isMarkersLoading = false; // 隱藏 spinner
+            this.getQueryFieldInfo();      // 立即呼叫以刷新數據
           } else {
 
               // 非 Local，進行正常的更新請求
@@ -1482,12 +1539,8 @@ export class FieldInfoComponent implements OnInit {
                 console.log( "The POST for updateBs():", post_BS_body );
                 this.API_Field.updateBs( post_BS_body ).subscribe({
                   next: (response) => {
-                    // Handle success
-                    console.log('All-in-one BS Modify successful...');
-                    this.isModifySuccess = true;                           // 設置成功標記為 true
-                    setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
 
-                    this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
+                   this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
 
                     if ( this.activeButton_rsrp_sinr ){ 
                         console.log( 'Modify successful... ,and the flag of this.activeButton_rsrp_sinr is:', this.activeButton_rsrp_sinr );
@@ -1498,7 +1551,13 @@ export class FieldInfoComponent implements OnInit {
                         this.getSinrRsrpImage( overlayType );
                     }
 
+                    // Handle success
+                    console.log('All-in-one BS Modify successful...');
+                    this.isModifySuccess = true;                           // 設置成功標記為 true
+                    setTimeout(() => this.isModifySuccess = false, 4500);  // 可選: 4.5 秒後隱藏訊息
+
                     this.isMarkersLoading = false; // 隱藏 spinner
+                    //this.getQueryFieldInfo(); // 立即呼叫以刷新數據
                   },
                   error: ( error ) => {
                     // Handle error
@@ -1507,6 +1566,7 @@ export class FieldInfoComponent implements OnInit {
                     this.errorMessage = error;
                     setTimeout(() => this.isModifyError = false, 3500);
                     this.isMarkersLoading = false; // 隱藏 spinner
+                    this.getQueryFieldInfo(); // 錯誤處理後也刷新數據
                   }
                 });
 
@@ -1516,10 +1576,6 @@ export class FieldInfoComponent implements OnInit {
                 console.log( "The POST for updateDistributedBs():", post_BS_body );
                 this.API_Field.updateDistributedBs( post_BS_body ).subscribe({
                   next: ( response ) => {
-                    // Handle success
-                    console.log('Disaggregated BS: [CU] + [DU] + [RU] Modify successful...');
-                    this.isModifySuccess = true;                           // 設置成功標記為 true
-                    setTimeout(() => this.isModifySuccess = false, 3500);  // 可選: 4.5 秒後隱藏訊息
 
                     this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
                     
@@ -1530,15 +1586,22 @@ export class FieldInfoComponent implements OnInit {
                       this.overlayVisible = true; // 設定 overlay 為可見
                       this.getSinrRsrpImage( overlayType );
                     }
+
+                    // Handle success
+                    console.log('Disaggregated BS: [CU] + [DU] + [RU] Modify successful...');
+                    this.isModifySuccess = true;                           // 設置成功標記為 true
+                    setTimeout(() => this.isModifySuccess = false, 3500);  // 可選: 4.5 秒後隱藏訊息
                     
                     this.isMarkersLoading = false; // 隱藏 spinner
+                    //this.getQueryFieldInfo(); // 立即呼叫以刷新數據
                   },
                   error: ( error ) => {
                     // Handle error
                     console.log('Disaggregated BS: [CU] + [DU] + [RU] Modify error...');
+                    this.getQueryFieldInfo(); // 錯誤處理後也刷新數據
                     this.isModifyError = true;
                     this.errorMessage = error;
-                    setTimeout(() => this.isModifyError = false, 4500);
+                    setTimeout(() => this.isModifyError = false, 4500);  
                     this.isMarkersLoading = false; // 隱藏 spinner
                   }
                 });
@@ -1549,6 +1612,7 @@ export class FieldInfoComponent implements OnInit {
           }
           
           // The end:
+          // 關閉對話框並重置表單
           this.modifyConfigWindowRef.close();
           this.modifyConfigForm.reset();      // 重置整個表單
     }
@@ -1571,6 +1635,7 @@ export class FieldInfoComponent implements OnInit {
 // For Field Editing Setting @2024/01/11 Add ↓
 
   bsList: BSList = {} as BSList;   // @2024/01/16 Add
+  isGetQueryBsListLoading = false; // 用於表示加載 BS List 的 flag，初始設置為 false @2024/01/17 Add for Progress Spinner
 
   // @2024/01/16 Add
   // Get the BS List in the O1 System 
@@ -1578,6 +1643,8 @@ export class FieldInfoComponent implements OnInit {
     console.log( 'getQueryBsList() - Start' );         // getQueryBsList() 啟動 
     console.log( 'Start fetching info of Bs List' );   // 開始獲取 BS List 資訊
     clearTimeout( this.refreshTimeout );
+
+    this.isGetQueryBsListLoading = true; // 開始顯示 Spinner 表載入 BS List 數據中
 
     // 檢查是否為 local 環境
     if ( this.commonService.isLocal ) { 
@@ -1587,7 +1654,7 @@ export class FieldInfoComponent implements OnInit {
       this.bsList = this.bsList_LocalFiles.bsList_local;
       console.log( 'BS List in Local:', this.bsList );
       
-      this.isMarkersLoading = false; // 加載完成，隱藏 spinner 
+      this.isGetQueryBsListLoading = false; // 加載完成，隱藏 spinner 
     } else {
       
       console.log('Start fetching BS List from API');   // 開始獲取 BS List 資訊
@@ -1602,6 +1669,7 @@ export class FieldInfoComponent implements OnInit {
           
           this.bsList = res;
           console.log( '基站列表資訊\n( BS List ):', this.bsList ); // 取得的 BS List 資訊 ( Obtained BS List information ):
+          this.isGetQueryBsListLoading = false; // 取得後隱藏 spinner
         },
         error: (error) => {
 
@@ -1609,7 +1677,7 @@ export class FieldInfoComponent implements OnInit {
           // This callback is executed when there is an error fetching the info
           console.error( '獲取基站列表資訊出錯:', error );
           console.error( 'Error fetching - BS List:', error );
-          this.isMarkersLoading = false; // 出錯時也應隱藏 spinner
+          this.isGetQueryBsListLoading = false; // 出錯時也應隱藏 spinner
         },
         complete: () => {
 
@@ -1617,7 +1685,7 @@ export class FieldInfoComponent implements OnInit {
           // This callback is executed when the request is complete
           console.log( '基站列表資訊獲取完成' );
           console.log( 'BS List - fetch completed' );
-          //this.isMarkersLoading = false; // 加載完成
+          //this.isGetQueryBsListLoading = false; // 加載完成
         }
       });
     }
@@ -1631,11 +1699,26 @@ export class FieldInfoComponent implements OnInit {
   fieldEditFormValidated = false;
 
   openfieldEditWindow() {
+
+    // 確保數據已經獲取
+    if(this.fieldInfo && this.fieldBounds) {
+      this.fieldEditForm.patchValue({
+        fieldName:        this.fieldInfo.name,
+        fieldBound_North: this.fieldBounds.north,
+        fieldBound_South: this.fieldBounds.south,
+        fieldBound_West:  this.fieldBounds.west,
+        fieldBound_East:  this.fieldBounds.east,
+        phoneNumber:      this.fieldInfo.phone
+      });
+    }
+
+    this.fieldEditFormValidated = false;
+    this.fieldEditWindowRef = this.dialog.open( this.fieldEditWindow, { id: 'fieldEditWindow' } );
+    this.fieldEditWindowRef.afterClosed().subscribe(() => {
       this.fieldEditFormValidated = false;
-      this.fieldEditWindowRef = this.dialog.open( this.fieldEditWindow, { id: 'fieldEditWindow' } );
-      this.fieldEditWindowRef.afterClosed().subscribe(() => {
-        this.fieldEditFormValidated = false;
     });
+    
+    console.log( "Open the window of field Edit is:", this.fieldEditType )
   }
 
   fieldEditType: string = 'Field_Infos';   // 預設選擇 "Field Infos"  
@@ -1653,7 +1736,7 @@ export class FieldInfoComponent implements OnInit {
     } else if ( e.value === 'BS_List' ) {
 
       this.fieldEditType = 'BS_List';
-      this.getQueryBsList();    // 載入 BS List 數據
+      this.getQueryBsList();        // 載入 BS List 數據
     }
 
     // 更新當前類型，以便知道哪個 Field Edit 類型被選中
@@ -1662,18 +1745,18 @@ export class FieldInfoComponent implements OnInit {
     console.log('頁面切換後，顯示的 Field Edit 類型:', this.fieldEditType+
     '\nField Edit type displayed after tab switch:', this.fieldEditType);
 
-    console.log( "changefieldEditType() - End" );
+    console.log( "changefieldEditType() - End, the window of field Edit is", this.fieldEditType);
   }
 
   fieldEditForm!: FormGroup;
   createFieldInfoForm() {
     this.fieldEditForm  = this.fb.group({
-      fieldName:        new FormControl(''), 
-      fieldBound_North: new FormControl(''),
-      fieldBound_South: new FormControl(''),
-      fieldBound_West:  new FormControl(''),
-      fieldBound_East:  new FormControl(''),
-      phoneNumber:      new FormControl('')
+      fieldName:        new FormControl( this.fieldInfo?.name || '' ), 
+      fieldBound_North: new FormControl( this.fieldBounds?.north || '' ),
+      fieldBound_South: new FormControl( this.fieldBounds?.south || '' ),
+      fieldBound_West:  new FormControl( this.fieldBounds?.west || '' ),
+      fieldBound_East:  new FormControl( this.fieldBounds?.east || '' ),
+      phoneNumber:      new FormControl( this.fieldInfo?.phone || '' )
     });
   }
 

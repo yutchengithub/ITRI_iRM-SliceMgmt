@@ -271,93 +271,92 @@
 			<label class="boxTitle">
 				{{ languageService.i18n['field.bsInfo'] }}
 			</label>
+			<div>
+				<!-- 顯示進度條 -->
+				<ng-container *ngIf="isMarkersLoading">
+					<!-- 加載中顯示 spinner -->
+					<div class="spinner-container">
+						<mat-progress-spinner mode="indeterminate" diameter="150"></mat-progress-spinner>
+					</div>
+				</ng-container>
 
-			<!-- 顯示進度條 -->
-			<ng-container *ngIf="isMarkersLoading">
-				<!-- 加載中顯示 spinner -->
-				<div class="spinner-container">
-					<mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
-				</div>
-			</ng-container>
-
-			<!-- 數據加載完畢後顯示基站資訊 -->
-			<ng-container *ngIf="!isMarkersLoading">
-				<ul *ngIf="!isMarkersLoading && displayBsInfo">
-					<li>
-						<label>{{ languageService.i18n['field.BSname'] }}</label>
-						<span>{{ displayBsInfo.name }}</span>
-					</li>
-					<li>
-						<label>{{languageService.i18n['field.BStype']}}</label>
-						<span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
-						<span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
-					</li>
-					<li>
-						<label>NCI</label>
-						<span>{{ displayBsInfo.nci }}</span>
-					</li>
-					<li>
-						<label>PCI</label>
-						<span>{{ displayBsInfo.pci }}</span>
-					</li>
+				<!-- 數據加載完畢後顯示基站資訊 -->
+				<ng-container *ngIf="!isMarkersLoading">
+					<ul *ngIf="displayBsInfo">
 						<li>
-						<label>PLMN ID</label>
-						<span>
-							{{ displayBsInfo['plmn-id'].mcc }} {{ displayBsInfo['plmn-id'].mnc }}
-						</span>
-					</li>
-					<li>
-						<label>Tx Power (dBm)</label>
-						<span>{{ displayBsInfo['tx-power'] }}</span>
-					</li>
-					<li>
-						<label>NR-ARFCN-UL</label>
-						<span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
-					</li>
-					<li>
-						<label>NR-ARFCN-DL</label>
-						<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
-					</li>
+							<label>{{ languageService.i18n['field.BSname'] }}</label>
+							<span>{{ displayBsInfo.name }}</span>
+						</li>
+						<li>
+							<label>{{languageService.i18n['field.BStype']}}</label>
+							<span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
+							<span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
+						</li>
+						<li>
+							<label>NCI</label>
+							<span>{{ displayBsInfo.nci }}</span>
+						</li>
+						<li>
+							<label>PCI</label>
+							<span>{{ displayBsInfo.pci }}</span>
+						</li>
+							<li>
+							<label>PLMN ID</label>
+							<span>
+								{{ displayBsInfo['plmn-id'].mcc }} {{ displayBsInfo['plmn-id'].mnc }}
+							</span>
+						</li>
+						<li>
+							<label>Tx Power (dBm)</label>
+							<span>{{ displayBsInfo['tx-power'] }}</span>
+						</li>
+						<li>
+							<label>NR-ARFCN-UL</label>
+							<span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
+						</li>
+						<li>
+							<label>NR-ARFCN-DL</label>
+							<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
+						</li>
 
-					<!-- 使用 displayBsInfoPosition getter 獲取經度 -->
-					<li>
-						<label>{{languageService.i18n['field.Longitude']}}</label>
-						<span>{{ displayBsInfoPosition.lng }}</span>
-					</li>
+						<!-- 使用 displayBsInfoPosition getter 獲取經度 -->
+						<li>
+							<label>{{languageService.i18n['field.Longitude']}}</label>
+							<span>{{ displayBsInfoPosition.lng }}</span>
+						</li>
 
-					<!-- 使用 displayBsInfoPosition getter 獲取緯度 -->
-					<li>
-						<label>{{languageService.i18n['field.Latitude']}}</label>
-						<span>{{ displayBsInfoPosition.lat }}</span>
-					</li>
-				</ul>
-				
-				<!-- 修改配置按鈕 -->
-				<div *ngIf="displayBsInfo" class="button-and-success-message-container">
-					<div class="button-container">
-					  <button mat-flat-button class="button-modifyConfiguration" (click)="openModifyConfigWindow()">
-						{{ languageService.i18n['field.modifyConfiguration'] }}
-					  </button>
-					  <div class="success-message-placeholder" *ngIf="!isModifySuccess"></div>
+						<!-- 使用 displayBsInfoPosition getter 獲取緯度 -->
+						<li>
+							<label>{{languageService.i18n['field.Latitude']}}</label>
+							<span>{{ displayBsInfoPosition.lat }}</span>
+						</li>
+					</ul>
+					<!-- 修改配置按鈕 -->
+					<div *ngIf="displayBsInfo" class="button-and-success-message-container">
+						<div class="button-container">
+						<button mat-flat-button class="button-modifyConfiguration" (click)="openModifyConfigWindow()">
+							{{ languageService.i18n['field.modifyConfiguration'] }}
+						</button>
+						<div class="success-message-placeholder" *ngIf="!isModifySuccess"></div>
+						</div>
+						
+						<!-- 成功訊息與圖標 -->
+						<div *ngIf="isModifySuccess" class="success-message">
+						<mat-icon>check_circle</mat-icon>{{ languageService.i18n['field.modifySuccess'] }} !
+						</div>
+
+						<!-- 錯誤訊息與圖標 -->
+						<div *ngIf="isModifyError" class="error-message">
+							<mat-icon>error</mat-icon>{{ languageService.i18n['field.modifyError'] }} !
+						</div>
+
+						<!-- "Nothing changed" 訊息與圖標 @2024/01/15 Add -->
+						<div *ngIf="isNothingChanged" class="info-message">
+							<mat-icon>info</mat-icon>{{ languageService.i18n['field.nothingChanged'] }} !
+						</div>
 					</div>
-					
-					<!-- 成功訊息與圖標 -->
-					<div *ngIf="isModifySuccess" class="success-message">
-					  <mat-icon>check_circle</mat-icon>{{ languageService.i18n['field.modifySuccess'] }} !
-					</div>
-
-					 <!-- 錯誤訊息與圖標 -->
-					<div *ngIf="isModifyError" class="error-message">
-						<mat-icon>error</mat-icon>{{ languageService.i18n['field.modifyError'] }} !
-					</div>
-
-					<!-- "Nothing changed" 訊息與圖標 @2024/01/15 Add -->
-					<div *ngIf="isNothingChanged" class="info-message">
-						<mat-icon>info</mat-icon>{{ languageService.i18n['field.nothingChanged'] }} !
-					</div>
-				</div>
-			</ng-container>
-
+				</ng-container>
+			</div>
 			<div>
 				<label class="boxTitle">{{ languageService.i18n['field.neighboringBSList'] }}</label>
 				<!-- Neighboring BS List @12/28 Update - Add Loading spinner -->
@@ -488,13 +487,13 @@
 		<h5>{{ languageService.i18n['field.edit'] }}</h5>
 		<div style="overflow-y: auto;">			
 			<div class="fieldEditTab">
-				<mat-button-toggle-group name="fieldEditType" [(ngModel)]="fieldEditType" (change)="changefieldEditType( $event )">
+				<mat-button-toggle-group name="fieldEditType"  [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldEditType" (change)="changefieldEditType($event)">
 					<mat-button-toggle value="Field_Infos" >{{ languageService.i18n['field.editInfo'] }}</mat-button-toggle>
 					<mat-button-toggle value="BS_List" >{{ languageService.i18n['field.bsList'] }}</mat-button-toggle>
 				</mat-button-toggle-group>
 			</div>
 
-			<div *ngIf="fieldInfo && fieldBounds" style="position: relative; top: 0px;">
+			<div *ngIf="fieldInfo && fieldBounds">
 				<!-- Field Infos -->
 				<ul *ngIf="fieldEditType === 'Field_Infos'">
 					<form [formGroup]="fieldEditForm">
@@ -580,32 +579,46 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr *ngFor="let opt of bsList.basestation">
-									<td>
-										<!-- 顯示 "基站名稱" -->
-										{{ opt.name }}
-									</td>
-									<td>
-										<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
-										<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
-										
-										<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
-										<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
-									</td>
-									<td>
-										{{ opt.gNBId }}
-									</td>
-									<td>
-										{{ opt.gNBIdLength }}
-									</td>
-									<td>
-										<label>{{ opt.position }}</label>
-									</td>
-									<td class="icon">
-										<label *ngIf="opt.status === 0 || opt.status === 1" class="redLight"></label>
-										<label *ngIf="opt.status === 2" class="greenLight"></label>
-									</td>
-								</tr>
+								<!-- 顯示進度條 -->
+								<ng-container *ngIf="isGetQueryBsListLoading">
+									<tr>
+									  <td colspan="6">
+										<div class="progress-spinner-container">
+																											<!-- diameter: 指示器大小-->
+										  <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+										</div>
+									  </td>
+									</tr>
+								</ng-container>
+								<!-- 顯示數據 -->
+								<ng-container *ngIf="!isGetQueryBsListLoading">
+									<tr *ngFor="let opt of bsList.basestation">
+										<td>
+											<!-- 顯示 "基站名稱" -->
+											{{ opt.name }}
+										</td>
+										<td>
+											<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
+											<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
+											
+											<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
+											<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
+										</td>
+										<td>
+											{{ opt.gNBId }}
+										</td>
+										<td>
+											{{ opt.gNBIdLength }}
+										</td>
+										<td>
+											<label>{{ opt.position }}</label>
+										</td>
+										<td class="icon">
+											<label *ngIf="opt.status === 0 || opt.status === 1" class="redLight"></label>
+											<label *ngIf="opt.status === 2" class="greenLight"></label>
+										</td>
+									</tr>
+								</ng-container>
 							</tbody>
 						</table>
 					</div>
