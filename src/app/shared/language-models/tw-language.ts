@@ -90,23 +90,29 @@ export const TwLanguage = {
   'field.editInfo':'場域資訊',                // @2024/01/11 Add
   'field.northBound':'場域北界',              // @2024/01/11 Add
   'field.southBound':'場域南界',              // @2024/01/11 Add
-  'field.westBound':'場域西界',                // @2024/01/11 Add
-  'field.eastBound':'場域東界',                // @2024/01/11 Add
+  'field.westBound':'場域西界',               // @2024/01/11 Add
+  'field.eastBound':'場域東界',               // @2024/01/11 Add
   'field.notificationNum':'管理者通知門號',    // @2024/01/11 Add
-  'field.imageUpload':'場域圖片上傳',          // @2024/01/11 Add
-  'field.configPMset':'效能管理參數設定',      // @12/12 Add 
-  'field.report':'場域報表',                  // @12/12 Add
-  'field.reportPM':'場域效能 (PM)',           // @12/12 Add
-  'field.reportFM':'告警資訊 (FM)',           // @12/12 Add
-  'field.optim':'場域優化',                   // @12/12 Add
-  'field.optimSON':'執行 SON rApps',         // @12/12 Add
-  'field.mapModel':'地圖模式',                // @12/12 Add
-  'field.bsList':'基站列表',                  // @12/12 Add
-  'field.bsAntennaCoord':'基站天線位置座標',   // @12/13 Add
-  'field.BSstatus':'連線狀態',                // @12/13 Add
-  'field.bsAlarm':'告警',                    // @12/13 Add
-  'field.legend_all-in-one_bs':'一體式基站',  // @12/28 Add
-  'field.legend_dist_bs':'O-RAN基站',        // @12/28 Add
+  'field.fieldBoundsEx':'場域邊界示意圖',      // @2024/01/18 Add
+  'field.indoorMap':'室內地圖',               // @2024/01/18 Add
+  'field.selectBSs':'選擇基站',               // @2024/01/18 Add
+  'field.indoorMapUpload':'室內地圖上傳',      // @2024/01/18 Update
+  'field.indoorMapNone':'未有室內地圖',        // @2024/01/18 Add
+  'field.indoorMapNotUploaded': '室內地圖尚未上傳',  // @2024/01/18 Update
+  'field.DeleteindoorMap':'刪除該室內地圖',          // @2024/01/18 Add
+  'field.configPMset':'效能管理參數設定',            // @12/12 Add 
+  'field.report':'場域報表',                        // @12/12 Add
+  'field.reportPM':'場域效能 (PM)',                 // @12/12 Add
+  'field.reportFM':'告警資訊 (FM)',                 // @12/12 Add
+  'field.optim':'場域優化',                         // @12/12 Add
+  'field.optimSON':'執行 SON rApps',               // @12/12 Add
+  'field.mapModel':'地圖模式',                      // @12/12 Add
+  'field.bsList':'基站列表',                        // @12/12 Add
+  'field.bsAntennaCoord':'基站天線位置座標',         // @12/13 Add
+  'field.BSstatus':'連線狀態',                      // @12/13 Add
+  'field.bsAlarm':'告警',                          // @12/13 Add
+  'field.legend_all-in-one_bs':'一體式基站',        // @12/28 Add
+  'field.legend_dist_bs':'O-RAN基站',              // @12/28 Add
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',

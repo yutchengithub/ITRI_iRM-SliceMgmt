@@ -59,6 +59,18 @@ export class apiForField {
     return this.http.get(url);
   }
 
+  // Upload Field Image  @2024/01/18 Add by yuchen
+  uploadFieldImage( fieldId: string, file: File ): Observable<any> {
+    const url = `${this.restPath}/uploadFieldImage/${this.sessionId}/${fieldId}`;
+
+    // 創建 FormData 物件並附加文件
+    const formData: FormData = new FormData();
+    formData.append( 'file', file, file.name );
+
+    // 發起 HTTP POST 請求
+    return this.http.post( url, formData );
+  }
+
   // Call to remove the Field Image @2024/01/10 Add by yuchen
   removeFieldImage( fieldId: string ): Observable<any> { 
     

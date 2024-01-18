@@ -27,13 +27,7 @@ import { localBSinfo } from '../../shared/local-files/For_queryBsInfo';         
 import { map } from 'rxjs/operators';              // @2023/12/24 Add
 import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
 
-//import { MessageService } from 'primeng/api';
-import { FileUploadModule } from 'primeng/fileupload';
-
-interface UploadEvent {
-  originalEvent: Event;
-  files: File[];
-}
+import { ElementRef } from '@angular/core';
 
 export interface SimplifiedBSInfo {
   
@@ -207,7 +201,7 @@ export class FieldInfoComponent implements OnInit {
 
       // 創建並顯示 overlay
       this.overlay = new google.maps.GroundOverlay( imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 GroundOverlay 實例
-      this.overlay.setMap(this.map.googleMap); // 將創建的 GroundOverlay 添加到 Google 地圖實例上
+      this.overlay.setMap(this.map.googleMap);   // 將創建的 GroundOverlay 添加到 Google 地圖實例上
       this.overlay.setOpacity( 0.5 );            // 設定 GroundOverlay 的透明度
       
       console.log( 'Display', this.currentOverlayType, 'Overlay:', this.overlay );
@@ -347,53 +341,55 @@ export class FieldInfoComponent implements OnInit {
   isfieldImage_or_RsrpSinrMapLoading = false; // 用於識別加載場域圖片、RSRP、SINR 地圖狀態的標誌，初始設置為 false 
 
   // 獲取並顯示場域圖片 
-  // @2024/01/10 Update
+  // @2024/01/18 Update
   getfieldImage(){
     
-    this.isfieldImage_or_RsrpSinrMapLoading = true; // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中 
+     // 點擊 Field Image 部分的處理
 
-    if ( this.activeButton_fieldImage ) {
-      // 檢查 Field Image 按鈕是否有被激活。
-      // 如果此變數不為 null，則表示用戶已點擊了 Field Image 按鈕，
-      // 並且期望根據當前的激活狀態來顯示或隱藏場域圖片。
+      // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中
+      this.isfieldImage_or_RsrpSinrMapLoading = true;
 
-      if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
-
-        // 設定場域圖片的 Local 路徑
-        const imageSrc_localPath = './assets/img/fieldImage_for_local.png'; // 定義本地場域圖片的路徑
-
-        // 檢查 Local 場域圖片路徑是否存在
-        if ( imageSrc_localPath ) {
-          this.displayFieldImageOnMap( imageSrc_localPath, this.currentOverlayType );  // 如存在，則在地圖上顯示場域 local 圖片
-        }
-        this.isfieldImage_or_RsrpSinrMapLoading = false; // Local 圖片載入完成，隱藏 Spinner
-
-      } else { // 如非使用 local files
-
-        // 跟後端 API 取得場域圖片
-        this.API_Field.queryFieldImage( this.fieldId ).subscribe({
-          next: (response) => {
-            // 當接收到圖片數據時，處理 Base64 編碼的圖片
-            if (response && response.fieldImage) {
-              const imageSrc = 'data:image/png;base64,' + response.fieldImage; // 將 Base64 字符串轉換為圖片URL
-              this.displayFieldImageOnMap( imageSrc, this.currentOverlayType );      // 在地圖上顯示場域圖片
-            }
-          },
-          // 當圖片獲取失敗時，顯示其錯誤訊息
-          error: (error) => {
-            console.error('Error fetching field image:', error);
-            this.isfieldImage_or_RsrpSinrMapLoading = false; // 出錯時，也隱藏 Spinner
-          },
-          // 當圖片獲取過程完成時，顯示完成訊息
-          complete: () => {
-            console.log('Field image fetch completed');
-            this.isfieldImage_or_RsrpSinrMapLoading = false; // 加載完成，隱藏 Spinner
+      if ( this.activeButton_fieldImage ) {
+        // 檢查 Field Image 按鈕是否有被激活。
+        // 如果此變數不為 null，則表示用戶已點擊了 Field Image 按鈕，
+        // 並且期望根據當前的激活狀態來顯示或隱藏場域圖片。
+  
+        if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
+  
+          // 設定場域圖片的 Local 路徑
+          const imageSrc_localPath = './assets/img/fieldImage_for_local.png'; // 定義本地場域圖片的路徑
+  
+          // 檢查 Local 場域圖片路徑是否存在
+          if ( imageSrc_localPath ) {
+            this.displayFieldImageOnMap( imageSrc_localPath, this.currentOverlayType );  // 如存在，則在地圖上顯示場域 local 圖片
           }
-        });
+          this.isfieldImage_or_RsrpSinrMapLoading = false; // Local 圖片載入完成，隱藏 Spinner
+  
+        } else { // 如非使用 local files
+  
+          // 跟後端 API 取得場域圖片
+          this.API_Field.queryFieldImage( this.fieldId ).subscribe({
+              next: (response) => {
+                // 當接收到圖片數據時，處理 Base64 編碼的圖片
+                if (response && response.fieldImage) {
+                  const imageSrc = 'data:image/png;base64,' + response.fieldImage;   // 將 Base64 字符串轉換為圖片 URL
+                  this.displayFieldImageOnMap( imageSrc, this.currentOverlayType );  // 在地圖上顯示場域圖片
+                }
+              },
+              // 當圖片獲取失敗時，顯示其錯誤訊息
+              error: (error) => {
+                console.error('Error fetching field image:', error);
+                this.isfieldImage_or_RsrpSinrMapLoading = false; // 出錯時，也隱藏 Spinner
+              },
+              // 當圖片獲取過程完成時，顯示完成訊息
+              complete: () => {
+                console.log('Field image fetch completed');
+                this.isfieldImage_or_RsrpSinrMapLoading = false; // 加載完成，隱藏 Spinner
+              }
+          });
+        }
       }
-    }
   }
-
 
   // 用於跟蹤鄰居 BS 線條的顯示狀態 @2024/01/04 Add 
   showNeighborLines: boolean = false;
@@ -1151,7 +1147,7 @@ export class FieldInfoComponent implements OnInit {
     let iconName = ''; // 用於存儲最終的圖標文件名
 
     // 檢查基站是否被選中
-    if (isSelected) {
+    if ( isSelected ) {
 
       if ( bsInfoBSType === 2 && bsInfoStatus === 1 ) {
         iconName = 'dist_gnb_offline_selected.png'; // 分布式基站離線且被選中的圖標
@@ -1698,6 +1694,7 @@ export class FieldInfoComponent implements OnInit {
   fieldEditWindowRef!: MatDialogRef<any>;
   fieldEditFormValidated = false;
 
+  // @2024/01/18 Update
   openfieldEditWindow() {
 
     // 確保數據已經獲取
@@ -1713,12 +1710,18 @@ export class FieldInfoComponent implements OnInit {
     }
 
     this.fieldEditFormValidated = false;
-    this.fieldEditWindowRef = this.dialog.open( this.fieldEditWindow, { id: 'fieldEditWindow' } );
+    this.fieldEditWindowRef = this.dialog.open( this.fieldEditWindow, { 
+      id: 'fieldEditWindow',
+      //width: '800px', 
+      // height: '650px'
+    } );
     this.fieldEditWindowRef.afterClosed().subscribe(() => {
       this.fieldEditFormValidated = false;
     });
     
     console.log( "Open the window of field Edit is:", this.fieldEditType )
+
+    this.getfieldImage_forFieldEdit();
   }
 
   fieldEditType: string = 'Field_Infos';   // 預設選擇 "Field Infos"  
@@ -1760,13 +1763,144 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
+  // For upload Field Image @2024/01/18 Add
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
+  // For upload Field Image @2024/01/18 Add
+  triggerFileInput() {
+    // 觸發文件輸入元素的點擊事件
+    this.fileInput.nativeElement.click();
+  }
+
+  // For upload Field Image @2024/01/18 Add
+  onFileSelected( event: any ) {
+    const file = event.target.files[0];
+    if (file) {
+      this.isFieldImageOnFieldEditLoading = true;
+      this.API_Field.uploadFieldImage( this.fieldId, file ).subscribe({
+        next: (response) => {
+          console.log('Image uploaded successfully', response);
+
+          // 調用 getfieldImage_forFieldEdit()
+          this.getfieldImage_forFieldEdit();
+          this.isFieldImageOnFieldEditLoading = false;  // 載入出錯也停止顯示 Spinner
+        },
+        error: (error) => {
+          console.error('Error uploading image', error);
+          // 這裡處理上傳失敗的邏輯
+          this.isFieldImageOnFieldEditLoading = false;  // 載入出錯也停止顯示 Spinner
+        }
+      });
+    }
+  }
+
+  // 刪除顯示場域圖片 @2024/01/18 Add
+  removeImage() {
+    this.isFieldImageOnFieldEditLoading = true;
+
+    if ( this.activeButton_fieldImage ) {
+      // 檢查 Field Image 按鈕是否有被激活。
+
+      this.setActiveButton_fieldImage( this.activeButton_fieldImage ); // 有就傳入該 button ID 同步移除場域區域上的 Overlay
+    }
+    
+    this.API_Field.removeFieldImage( this.fieldId ).subscribe({
+      next: () => {
+        // 刪除成功，重新獲取圖片顯示狀態
+        this.getfieldImage_forFieldEdit();
+        this.isFieldImageOnFieldEditLoading = false;  // 載入出錯也停止顯示 Spinner
+      },
+      error: (error) => {
+        console.error('Failed to remove image:', error);
+        this.isFieldImageOnFieldEditLoading = false;  // 載入出錯也停止顯示 Spinner
+      }
+    });
+  }
+  
+
+
+  // @2024/01/18 Add
+  // 獲取並顯示場域圖片 (場域編輯用)
+
+  isFieldImageOnFieldEditLoading: boolean = false;  // 用於控制載入室內圖片時的進度條
+  getfieldImage_forFieldEdit() {
+
+    //this.isFieldImageOnFieldEditLoading = true;
+    if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
+
+      // 設定場域圖片的 Local 路徑
+      const imageSrc_localPath = './assets/img/fieldImage_for_local.png'; // 定義本地場域圖片的路徑
+
+      // 檢查 Local 場域圖片路徑是否存在
+      if ( imageSrc_localPath ) {
+        this.displayFieldImageOnMap( imageSrc_localPath, this.currentOverlayType );  // 如存在，則在地圖上顯示場域 local 圖片
+      }
+      //this.isFieldImageOnFieldEditLoading = false; // 載入 local 圖片完也停止顯示 Spinner
+
+    } else { // 如非使用 local files
+
+      //this.isFieldImageOnFieldEditLoading = true;
+
+      // 從後端 API 獲取場域圖片
+      this.API_Field.queryFieldImage( this.fieldId ).subscribe({
+        next: (response) => {
+          // 處理 Base64 編碼的圖片
+          if (response && response.fieldImage) {
+            const imageSrc = 'data:image/png;base64,' + response.fieldImage;
+            this.displayFieldImageOnFieldEdit(imageSrc); // 顯示圖片
+            //this.isFieldImageOnFieldEditLoading = false;   // 載入完成停止顯示 Spinner
+          } else {
+            // 如果沒有圖片，則顯示提示訊息
+            this.displayNoImageMessage();
+            //this.isFieldImageOnFieldEditLoading = false;   // 載入完成停止顯示 Spinner
+          }
+         //this.isFieldImageOnFieldEditLoading = false;   // 載入完成停止顯示 Spinner
+        },
+        error: (error) => {
+          console.error('Error fetching field image:', error);
+          // 出錯時，也顯示提示訊息
+          this.displayNoImageMessage();
+          //this.isFieldImageOnFieldEditLoading = false;  // 載入出錯也停止顯示 Spinner
+        }
+      });
+    }
+  }
+
+  // @2024/01/18 Add
+  // 用於顯示場域圖片於場域編輯中 
+  have_FieldImage_flag: boolean = false;  // 用於標記是否有場域圖片
+  displayFieldImageOnFieldEdit( FieldImage_imageSrc: string ) {
+    const imageElement = document.getElementById('uploadedImage') as HTMLImageElement;
+    const noImageMessageElement = document.getElementById('noImageMessage') as HTMLElement;
+
+    this.isFieldImageOnFieldEditLoading = true;
+    if (FieldImage_imageSrc) {
+      imageElement.src = FieldImage_imageSrc;
+      imageElement.style.display = 'block'; // 顯示圖片
+      noImageMessageElement.style.display = 'none'; // 隱藏提示訊息
+      this.have_FieldImage_flag = true; // 註記為有圖片
+    } else {
+      this.displayNoImageMessage();
+    }
+    this.isFieldImageOnFieldEditLoading = false;
+  }
+
+  // @2024/01/18 Add
+  // 顯示沒有圖片的提示訊息
+  displayNoImageMessage() {
+    const imageElement = document.getElementById('uploadedImage') as HTMLImageElement;
+    const noImageMessageElement = document.getElementById('noImageMessage') as HTMLElement;
+
+    //this.isFieldImageOnFieldEditLoading = true;
+    if ( imageElement && noImageMessageElement ) {
+      imageElement.style.display = 'none';           // 隱藏圖片
+      noImageMessageElement.style.display = 'block'; // 顯示提示訊息
+    }
+    this.have_FieldImage_flag = false; // 註記為未有圖片
+   // this.isFieldImageOnFieldEditLoading = false;
+  }
+  
 // For Field Editing Setting @2024/01/11 Add ↑
-
-
-
-
-
-
 
 
 

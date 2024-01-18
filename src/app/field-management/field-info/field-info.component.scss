@@ -120,7 +120,6 @@ svg circle {
   border: none; // 確保非激活狀態不顯示外框
 }
 
-
 // @12/13 add by yuchen
 .fieldMap-button-container{
   display: flex;
@@ -137,7 +136,19 @@ svg circle {
   position: absolute;
   z-index: 999;
   margin-top: -3.25em;
-  margin-left: 25.5em;
+  margin-left: 22em;
+}
+
+.delete-icon {
+  position: absolute;
+  top: 41px;
+  right: 15px;
+  cursor: pointer;
+  color: #ececec; /* 或您想要的顏色 */
+  background-color: rgba(0, 0, 0, 0.5); /* 為圖標添加背景色以增加可視性 */
+  border-radius: 65%; /* 可選，為圖標添加圓角邊框 */
+  //padding: 5px; /* 可選，圖標內填充 */
+  z-index: 100;
 }
 
 

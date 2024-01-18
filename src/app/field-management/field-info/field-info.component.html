@@ -11,7 +11,8 @@
 		<!-- @12/13 Add the window of BS List -->
 		<div class="BOX mapWindow">
 			<label class="boxTitle boxTitleRightAligned">
-				<span class="title-container" *ngIf="showMapModel">{{ languageService.i18n['field.Map'] }}</span>
+				<!-- <span class="title-container" *ngIf="showMapModel">{{ languageService.i18n['field.Map'] }}</span> -->
+				<span class="title-container" *ngIf="showMapModel"></span>
 				<span class="title-container" *ngIf="!showMapModel">{{ languageService.i18n['field.bsList'] }}</span>
 
 				<!-- 按鈕容器，根據 showMapModel 的值顯示或隱藏按鈕 -->
@@ -45,10 +46,9 @@
 					<!-- 常駐顯示 -->
 					<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="icon-button with a menu" tooltip="{{ languageService.i18n['field.MapOption'] }}"
 					[class.button-active]="activeButton_menu === 'menu'" (click)="setActiveButton_menu('menu')">
-						<mat-icon>more_horiz</mat-icon>
+					  <mat-icon>more_horiz</mat-icon>
 					  </button>
-					  <mat-menu #menu="matMenu" >
-
+					  <mat-menu #menu="matMenu">
 						<!-- Field Configuration @2024/01/11 Update -->
 						<button mat-menu-item disabled>
 							<mat-icon>build_circle</mat-icon>
@@ -374,10 +374,10 @@
 						<ng-container *ngIf="isMarkersLoading">
 							<tr>
 								<td colspan="6">
-								<div class="progress-spinner-container">
-																									<!-- diameter: 指示器大小-->
-									<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
-								</div>
+									<div class="progress-spinner-container">
+																										<!-- diameter: 指示器大小-->
+										<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+									</div>
 								</td>
 							</tr>
 						</ng-container>
@@ -483,155 +483,183 @@
 	</ng-template>
 	
 	<!-- Window of Field Editing -->
-	<ng-template #fieldEditWindow>
-		<h5>{{ languageService.i18n['field.edit'] }}</h5>
-		<div style="overflow-y: auto;">			
-			<div class="fieldEditTab">
-				<mat-button-toggle-group name="fieldEditType"  [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldEditType" (change)="changefieldEditType($event)">
-					<mat-button-toggle value="Field_Infos" >{{ languageService.i18n['field.editInfo'] }}</mat-button-toggle>
-					<mat-button-toggle value="BS_List" >{{ languageService.i18n['field.bsList'] }}</mat-button-toggle>
-				</mat-button-toggle-group>
-			</div>
+	<ng-template class="my-dialog-container" #fieldEditWindow>
+		<div><h5>{{ languageService.i18n['field.edit'] }}</h5></div>			
+		<div class="fieldEditTab">
+			<mat-button-toggle-group name="fieldEditType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldEditType" (change)="changefieldEditType($event)">
+				<mat-button-toggle value="Field_Infos" >{{ languageService.i18n['field.editInfo'] }}</mat-button-toggle>
+				<mat-button-toggle value="BS_List" >{{ languageService.i18n['field.bsList'] }}</mat-button-toggle>
+			</mat-button-toggle-group>
+		</div>
 
-			<div *ngIf="fieldInfo && fieldBounds">
-				<!-- Field Infos -->
-				<ul *ngIf="fieldEditType === 'Field_Infos'">
-					<form [formGroup]="fieldEditForm">
+		<div *ngIf="fieldInfo && fieldBounds" style="overflow-y: auto;">
+			<!-- Field Infos -->
+			<ul *ngIf="fieldEditType === 'Field_Infos'">
+				<form [formGroup]="fieldEditForm">
 
-						<li>
-							<label>{{ languageService.i18n['field.name'] }}</label>
-							<span>
-								<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li>
-						<li>
-							<label>{{ languageService.i18n['field.northBound'] }}</label>
-							<span>
-								<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li>
-						<li>
-							<label>{{ languageService.i18n['field.southBound'] }}</label>
-							<span>
-								<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li>
-						<li>
-							<label>{{ languageService.i18n['field.westBound'] }}</label>
-							<span>
-								<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li>
-						<li>
-							<label>{{ languageService.i18n['field.eastBound'] }}</label>
-							<span>
-								<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li>
-						<li>
-							<label>{{ languageService.i18n['field.notificationNum'] }}</label>
-							<span>
-								<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
-									class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['phoneNumber'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li>
-					</form>
+					<li>
+						<label>{{ languageService.i18n['field.name'] }}</label>
+						<span>
+							<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
+									class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+					<li>
+						<label>{{ languageService.i18n['field.northBound'] }}</label>
+						<span>
+							<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
+									class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+					<li>
+						<label>{{ languageService.i18n['field.southBound'] }}</label>
+						<span>
+							<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
+									class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+					<li>
+						<label>{{ languageService.i18n['field.westBound'] }}</label>
+						<span>
+							<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
+									class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+					<li>
+						<label>{{ languageService.i18n['field.eastBound'] }}</label>
+						<span>
+							<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
+									class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+					<li>
+						<label>{{ languageService.i18n['field.notificationNum'] }}</label>
+						<span>
+							<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
+								class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
+							<!-- <mat-error *ngIf="fieldEditForm.controls['phoneNumber'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						</span>
+					</li>
+				</form>
+				<div style="text-align: center;">
 					<div class="image-container">
 						<!-- 圖片和標籤 -->
 						<label class="label-position leftUp">[ {{ fieldBounds.north }}, {{ fieldBounds.west }} ]</label>
 						<label class="label-position rightUp">[ {{ fieldBounds.north }}, {{ fieldBounds.east }} ]</label>
-						<img src="/assets/img/fieldBounds_exampleImage.png" alt="Field Bounds Example">
+						<img title="{{ languageService.i18n['field.fieldBoundsEx'] }}" src="/assets/img/fieldBounds_exampleImage.png" alt="{{ languageService.i18n['field.fieldBoundsEx'] }}">
 						<label class="label-position leftDown">[ {{ fieldBounds.south }}, {{ fieldBounds.east }} ]</label>
 						<label class="label-position rightDown">[ {{ fieldBounds.south }}, {{ fieldBounds.west }} ]</label>
 					</div>	
-					<div class="button-container" style="position: relative; top: 48px; left: 18px;">
-						<button mat-flat-button class="button-modifyConfiguration" (click)="openModifyConfigWindow()">
-						{{ languageService.i18n['field.imageUpload'] }}
-						</button>
-					</div>
-				</ul>
+					<div style="position: relative; top: 70px;">
+						<span>{{ languageService.i18n['field.indoorMap'] }}</span>
+						<div>
+							<!-- 顯示進度條 -->
+							<ng-container *ngIf="isFieldImageOnFieldEditLoading">
+								<div class="progress-spinner-container">
+																									<!-- diameter: 指示器大小-->
+									<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="35"></mat-progress-spinner>
+								</div>
+							</ng-container>
+							<!-- 顯示室內圖片 -->
+							<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
+								<img style="width: 500px; position: relative; top: 15px;" id="uploadedImage" src="" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
+								<!-- 刪除圖標 --> <mat-icon title="{{ languageService.i18n['field.DeleteindoorMap'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="removeImage()">delete</mat-icon> 
+								<div id="noImageMessage" style="display: none; position: relative; top: 10px;">
+									<mat-icon>not_interested</mat-icon>
+									{{ languageService.i18n['field.indoorMapNotUploaded'] }}
+								</div>
+							</ng-container>
+						</div>
+						<div class="button-container" style="position: relative; top: 15px;">
+							<!-- 按鈕，用於觸發隱藏的 input 元素 -->
+							<button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()">
+							{{ languageService.i18n['field.indoorMapUpload'] }}
+							</button>
+							<!-- 隱藏的文件輸入元素，僅接受 PNG 和 JPG 圖片 -->
+							<input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".png, .jpg, .jpeg">
+						</div>
+					</div>	  
+				</div>
+			</ul>
+		</div>
 
-				<!-- BS List -->
-				<ul *ngIf="fieldEditType === 'BS_List'">
-					<!-- 基站列表 For field Edit @2024/01/11 Add by yuchen -->
-					<div class="table" style="overflow-x: auto;">
-						<table class="center">
-							<thead>
+		<div>
+			<!-- BS List -->
+			<ul *ngIf="fieldEditType === 'BS_List'">
+				<!-- 基站列表 For field Edit @2024/01/11 Add by yuchen -->
+				<div class="table">
+					<table class="center">
+						<thead>
+							<tr>
+								<th>{{ languageService.i18n['field.selectBSs'] }}</th>
+								<th>{{ languageService.i18n['field.BSname'] }}</th>
+								<th>{{ languageService.i18n['field.BStype'] }}</th>
+								<th>gNB ID</th>
+								<th>gNB ID Length</th>
+								<th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
+								<th>{{ languageService.i18n['field.BSstatus'] }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- 顯示進度條 -->
+							<ng-container *ngIf="isGetQueryBsListLoading">
 								<tr>
-									<th>{{ languageService.i18n['field.BSname'] }}</th>
-									<th>{{ languageService.i18n['field.BStype'] }}</th>
-									<th>gNB ID</th>
-									<th>gNB ID Length</th>
-									<th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
-									<th>{{ languageService.i18n['field.BSstatus'] }}</th>
-									
+									<td colspan="6">
+									<div class="progress-spinner-container">
+																										<!-- diameter: 指示器大小-->
+										<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+									</div>
+									</td>
 								</tr>
-							</thead>
-							<tbody>
-								<!-- 顯示進度條 -->
-								<ng-container *ngIf="isGetQueryBsListLoading">
-									<tr>
-									  <td colspan="6">
-										<div class="progress-spinner-container">
-																											<!-- diameter: 指示器大小-->
-										  <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
-										</div>
-									  </td>
-									</tr>
-								</ng-container>
-								<!-- 顯示數據 -->
-								<ng-container *ngIf="!isGetQueryBsListLoading">
-									<tr *ngFor="let opt of bsList.basestation">
-										<td>
-											<!-- 顯示 "基站名稱" -->
-											{{ opt.name }}
-										</td>
-										<td>
-											<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
-											<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
-											
-											<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
-											<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
-										</td>
-										<td>
-											{{ opt.gNBId }}
-										</td>
-										<td>
-											{{ opt.gNBIdLength }}
-										</td>
-										<td>
-											<label>{{ opt.position }}</label>
-										</td>
-										<td class="icon">
-											<label *ngIf="opt.status === 0 || opt.status === 1" class="redLight"></label>
-											<label *ngIf="opt.status === 2" class="greenLight"></label>
-										</td>
-									</tr>
-								</ng-container>
-							</tbody>
-						</table>
-					</div>
-				</ul>
-			</div>
-				
-			<div class="buttons" style="position: relative; top: 130px;">
-				<button type="button">
-					{{ languageService.i18n['confirm'] }}
-				</button>
-				<button type="button" mat-dialog-close>
-					{{ languageService.i18n['cancel'] }}
-				</button>
-			</div>
-		</div>	
+							</ng-container>
+							<!-- 顯示數據 -->
+							<ng-container *ngIf="!isGetQueryBsListLoading">
+								<tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;">
+									<td><input type="checkbox"></td>
+									<td>
+										<!-- 顯示 "基站名稱" -->
+										{{ opt.name }}
+									</td>
+									<td>
+										<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
+										<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
+										
+										<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
+										<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
+									</td>
+									<td>
+										{{ opt.gNBId }}
+									</td>
+									<td>
+										{{ opt.gNBIdLength }}
+									</td>
+									<td>
+										<label>{{ opt.position }}</label>
+									</td>
+									<td class="icon">
+										<label *ngIf="opt.status === 0 || opt.status === 1" class="redLight"></label>
+										<label *ngIf="opt.status === 2" class="greenLight"></label>
+									</td>
+								</tr>
+							</ng-container>
+						</tbody>
+					</table>
+				</div>
+			</ul>
+		</div>		
+
+		<div class="buttons">
+			<button type="button">
+				{{ languageService.i18n['confirm'] }}
+			</button>
+			<button type="button" mat-dialog-close>
+				{{ languageService.i18n['cancel'] }}
+			</button>
+		</div>
+
 	</ng-template>

@@ -95,7 +95,13 @@ export const Enlanguage = {
   'field.westBound':'West Boundary',                // @2024/01/11 Add
   'field.eastBound':'East Boundary',                // @2024/01/11 Add
   'field.notificationNum':'Notification Number',    // @2024/01/11 Add
-  'field.imageUpload':'Upload Field Image',         // @2024/01/11 Add
+  'field.fieldBoundsEx':'Field Boundary Diagram',   // @2024/01/18 Add
+  'field.selectBSs':'Choose BSs in field',          // @2024/01/18 Add
+  'field.indoorMapUpload':'Upload Indoor Map',      // @2024/01/18 Update
+  'field.indoorMapNotUploaded': 'Indoor map not yet uploaded',   // @2024/01/18 Update
+  'field.indoorMap':'Indoor Map',                   // @2024/01/18 Add
+  'field.indoorMapNone':'No indoor map available',  // @2024/01/18 Add
+  'field.DeleteindoorMap':'Delete the indoor map',  // @2024/01/18 Add
   'field.configPMset':'PM Parameter Setting',       // @12/12 Add
   'field.report':'Field Reports',                   // @12/12 Add
   'field.reportPM':'Performance (PM)',              // @12/12 Add
