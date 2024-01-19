@@ -98,8 +98,9 @@ export const TwLanguage = {
   'field.selectBSs':'選擇基站',               // @2024/01/18 Add
   'field.indoorMapUpload':'室內地圖上傳',      // @2024/01/18 Update
   'field.indoorMapNone':'未有室內地圖',        // @2024/01/18 Add
-  'field.indoorMapNotUploaded': '室內地圖尚未上傳',  // @2024/01/18 Update
-  'field.DeleteindoorMap':'刪除該室內地圖',          // @2024/01/18 Add
+  'field.indoorMapNotUploaded': '室內地圖尚未上傳',      // @2024/01/18 Update
+  'field.DeleteindoorMap':'刪除該室內地圖',              // @2024/01/18 Add
+  'field.confirmDeleteindoorMap':'確定刪除該室內地圖?',   // @2024/01/19 Add
   'field.configPMset':'效能管理參數設定',            // @12/12 Add 
   'field.report':'場域報表',                        // @12/12 Add
   'field.reportPM':'場域效能 (PM)',                 // @12/12 Add

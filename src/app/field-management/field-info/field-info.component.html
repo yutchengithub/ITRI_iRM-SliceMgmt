@@ -568,7 +568,7 @@
 							<!-- 顯示室內圖片 -->
 							<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
 								<img style="width: 500px; position: relative; top: 15px;" id="uploadedImage" src="" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
-								<!-- 刪除圖標 --> <mat-icon title="{{ languageService.i18n['field.DeleteindoorMap'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="removeImage()">delete</mat-icon> 
+								<!-- 刪除圖標 --> <mat-icon title="{{ languageService.i18n['field.DeleteindoorMap'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon> 
 								<div id="noImageMessage" style="display: none; position: relative; top: 10px;">
 									<mat-icon>not_interested</mat-icon>
 									{{ languageService.i18n['field.indoorMapNotUploaded'] }}
@@ -654,7 +654,7 @@
 		</div>		
 
 		<div class="buttons">
-			<button type="button">
+			<button type="button" mat-dialog-close>
 				{{ languageService.i18n['confirm'] }}
 			</button>
 			<button type="button" mat-dialog-close>
@@ -663,3 +663,22 @@
 		</div>
 
 	</ng-template>
+
+	<!-- Window of confirm-delete-dialog for Field Editing @2024/01/19 Add -->
+	<ng-template #confirmDeleteWindow_For_fieldEdit>
+		<div>
+		  <h5>{{ languageService.i18n['confirm'] }}</h5>
+		</div>  
+		<label class="label-centered">
+		  {{ languageService.i18n['field.confirmDeleteindoorMap'] }}
+		</label>
+		<div class="buttons buttons-centered">
+		  <button type="button" (click)="removeFieldImage()" mat-dialog-close>
+			{{ languageService.i18n['confirm'] }}
+		  </button>
+		  <button type="button" mat-dialog-close>
+			{{ languageService.i18n['cancel'] }}
+		  </button>
+		</div>
+	</ng-template>	  
+	  

@@ -4,8 +4,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from './../../shared/common.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
+
 import { LanguageService } from 'src/app/shared/service/language.service';
+
+// Mat Modules
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox'; // @2024/01/19 Add
+import { MatDialogModule } from '@angular/material/dialog';     // @2024/01/19 Add
+import { MatButtonModule } from '@angular/material/button';     // @2024/01/19 Add
+import {
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogTitle,
+  MatDialogContent,
+} from '@angular/material/dialog'; // @2024/01/19 Add
+
 
 import { of } from 'rxjs'; // @2024/01/09 Add 
 import { forkJoin, Observable } from 'rxjs';
@@ -1794,16 +1807,35 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  // 刪除顯示場域圖片 @2024/01/18 Add
-  removeImage() {
-    this.isFieldImageOnFieldEditLoading = true;
+  // 用於控制室內(場域)圖片刪除確認視窗 @2024/01/19 Add
+  @ViewChild('confirmDeleteWindow_For_fieldEdit') confirmDeleteWindow_For_fieldEdit: any;
+  confirmDeleteWindow_For_fieldEdit_Ref!: MatDialogRef<any>;
+  confirmDeleteWindow_For_fieldEdit_Validated = false;
 
+  // 開啟確認視窗 - 室內(場域)圖片刪除 @2024/01/19 Add
+  openConfirmDeleteWindow_For_fieldEdit() {
+
+    this.confirmDeleteWindow_For_fieldEdit_Validated = false;
+    this.confirmDeleteWindow_For_fieldEdit_Ref = this.dialog.open( this.confirmDeleteWindow_For_fieldEdit, { 
+      id: 'confirmDeleteWindow_For_fieldEdit',
+      //width: '300px', 
+      // height: '650px'
+    } );
+    this.confirmDeleteWindow_For_fieldEdit_Ref.afterClosed().subscribe(() => {
+      this.confirmDeleteWindow_For_fieldEdit_Validated = false;
+    });
+  }
+
+  // 刪除顯示室內(場域)圖片 @2024/01/18 Add
+  removeFieldImage() {
+
+    this.isFieldImageOnFieldEditLoading = true;
+    
     if ( this.activeButton_fieldImage ) {
       // 檢查 Field Image 按鈕是否有被激活。
-
       this.setActiveButton_fieldImage( this.activeButton_fieldImage ); // 有就傳入該 button ID 同步移除場域區域上的 Overlay
     }
-    
+  
     this.API_Field.removeFieldImage( this.fieldId ).subscribe({
       next: () => {
         // 刪除成功，重新獲取圖片顯示狀態
@@ -1814,14 +1846,18 @@ export class FieldInfoComponent implements OnInit {
         console.error('Failed to remove image:', error);
         this.isFieldImageOnFieldEditLoading = false;  // 載入出錯也停止顯示 Spinner
       }
-    });
+    });  
   }
-  
+
+
+
+
+
+
 
 
   // @2024/01/18 Add
   // 獲取並顯示場域圖片 (場域編輯用)
-
   isFieldImageOnFieldEditLoading: boolean = false;  // 用於控制載入室內圖片時的進度條
   getfieldImage_forFieldEdit() {
 

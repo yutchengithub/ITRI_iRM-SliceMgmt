@@ -95,7 +95,7 @@ import { localBSList } from './shared/local-files/For_queryBsList'; // @2024/01/
 
     TruncatePipe,                 // @11/16 Add by yuchen 
     DatePickerFormatDirective,
-    
+
     NfManagementComponent,
     NfInfoComponent,
     NfPerformanceComponent,

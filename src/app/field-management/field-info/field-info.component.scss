@@ -139,18 +139,30 @@ svg circle {
   margin-left: 22em;
 }
 
+// @2024/01/19 Add by yuchen
 .delete-icon {
   position: absolute;
   top: 41px;
   right: 15px;
   cursor: pointer;
-  color: #ececec; /* 或您想要的顏色 */
-  background-color: rgba(0, 0, 0, 0.5); /* 為圖標添加背景色以增加可視性 */
-  border-radius: 65%; /* 可選，為圖標添加圓角邊框 */
-  //padding: 5px; /* 可選，圖標內填充 */
+  color: #ececec;
+  background-color: rgba(0, 0, 0, 0.5); // 為圖標添加背景色
+  border-radius: 65%; // 為圖標添加圓角邊框
+  //padding: 5px;     // 圖標內填充
   z-index: 100;
 }
 
+// 設置標籤的字體大小 @2024/01/19 Add by yuchen
+.label-centered {
+  display: block;
+  text-align: center;
+  font-size: 19px; 
+}
+
+// 按鈕容器的對齊方式 @2024/01/19 Add by yuchen
+.buttons-centered {
+  text-align: center;
+}
 
 // 設定圖片容器的相對定位，以便於裡面的絕對定位標籤正確顯示
 .image-container {

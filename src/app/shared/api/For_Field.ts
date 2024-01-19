@@ -29,13 +29,23 @@ export class apiForField {
   }
 
   // Get Information of Fields @12/05 Add by yuchen
-  queryFieldInfo(fieldId: string): Observable<any> {
+  queryFieldInfo( fieldId: string ): Observable<any> {
     
     // 構建 API URL
     const url = `${this.restPath}/queryFieldInfo/${this.sessionId}/${fieldId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get(url);
+  }
+
+  // For Updating Field Configurations @2024/01/19 Add by yuchen
+  updateField( body: {} ): Observable<any> {
+
+    const url = `${this.restPath}/updateField`;
+    
+    const bodyStr = JSON.stringify( body );
+    
+    return this.http.post( url, bodyStr );
   }
 
   // @2024/01/16 Add by yuchen
