@@ -48,6 +48,7 @@ export const TwLanguage = {
   'search':'搜尋',
   'search_criteria':'篩選條件',  // @12/04 Add by yuchen
   'clear_search':'搜尋重置',     // @11/24 Add by yuchen
+  'close': '關閉',              // @2024/01/22 Add
 
   // Field Management (場域管理) @11/30 Add by yuchen
   'field.list':'場域列表',
@@ -61,7 +62,9 @@ export const TwLanguage = {
   'field.add':'新增場域',
   'field.info':'場域詳細資訊',
   'field.Map':'場域地圖',
-  'field.image':'場域圖片',    // @2024/01/03 Update
+  'field.image':'場域圖片', // @2024/01/03 Update
+  'field.noFieldImageAvailableTitle':  '注意',             // @2024/01/22 Add
+  'field.noFieldImageAvailableMessage':'場域圖片尚未上傳。', // @2024/01/22 Add
   'field.rsrpMap':'RSRP 地圖',
   'field.sinrMap':'SINR 地圖',
   'field.MapOption':'更多選項',

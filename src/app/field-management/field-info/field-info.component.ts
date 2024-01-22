@@ -176,15 +176,35 @@ export class FieldInfoComponent implements OnInit {
 
   // @2024/01/05 Add
   // ngAfterViewInit 是 Angular 在組件視圖初始化後會呼叫的生命週期事件。
-  ngAfterViewInit() {
-    // 使用 setTimeout 確保地圖元素已經加載完成並存在於 DOM 中。
-    // 這樣做可以避免在 Google Maps API 還沒有完全準備好時嘗試操作地圖。
-    setTimeout(() => {
-      // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
-      this.adjustMapZoom();
-    }, 1000); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
-  }
+  // ngAfterViewInit() {
+  //   // 使用 setTimeout 確保地圖元素已經加載完成並存在於 DOM 中。
+  //   // 這樣做可以避免在 Google Maps API 還沒有完全準備好時嘗試操作地圖。
+  //   setTimeout(() => {
+  //     // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
+  //     this.adjustMapZoom();
+  //   }, 1000); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
+  // }
 
+  ngAfterViewInit() {
+    // 檢查 this.map.googleMap 是否已經被定義。
+    // this.map 是通過 ViewChild 獲取的 GoogleMap 實例，
+    // 而 googleMap 是實際的 Google Maps JavaScript API 地圖對象。
+    if ( this.map.googleMap ) {
+      // 如果 googleMap 對象存在，則向它添加一個事件監聽器。
+      // 'tilesloaded' 事件會在地圖上的所有可見瓦片都已加載完成後觸發。
+      // 這是一個好時機來調整地圖的視角和縮放等級，因為它表明地圖已經準備好了。
+      this.map.googleMap.addListener('tilesloaded', () => {
+        // 當 'tilesloaded' 事件觸發時，調用 adjustMapZoom 方法。
+        // 此方法將根據場域的邊界值調整地圖的縮放等級，
+        // 確保用戶可以看到完整的場域範圍。
+        this.adjustMapZoom();
+      });
+    }
+    // 如果 this.map.googleMap 尚未定義，可能表示地圖尚未完全初始化。
+    // 在這種情況下，可能需要考慮使用其他方法或檢查點以確保地圖已經準備好
+  }
+  
+  
   // @2024/01/05 Add
   // adjustMapZoom 方法用於根據場域邊界自動調整地圖的縮放等級和視角。
   adjustMapZoom() {
@@ -353,11 +373,28 @@ export class FieldInfoComponent implements OnInit {
   // @2024/01/10 Add for Progress Spinner
   isfieldImage_or_RsrpSinrMapLoading = false; // 用於識別加載場域圖片、RSRP、SINR 地圖狀態的標誌，初始設置為 false 
 
+  // @2024/01/22 Add
+  @ViewChild('promptWindow_noFieldImage') promptWindow_noFieldImage: any; // 使用 ViewChild 來獲取模板中的 promptWindow_noFieldImage 參考
+  promptWindow_noFieldImage_Ref!: MatDialogRef<any>; // 儲存對話框的參考，以便在需要時可以操作對話框
+
+  // 打開無場域圖片提示視窗 @2024/01/22 Add
+  openNoFieldImagePromptWindow() {
+    // 使用 MatDialog 服務的 open 方法打開視窗，並傳遞 promptWindow_noFieldImage 的 TemplateRef。
+    // id: 'promptWindow_noFieldImage' 用於設定特定的 DOM ID，這樣可以在 CSS 中定制樣式或在測試中容易找到。
+    this.promptWindow_noFieldImage_Ref = this.dialog.open( this.promptWindow_noFieldImage,
+                                                           { id: 'promptWindow_noFieldImage' } );
+    // 將 activeButton_fieldImage 設置為 null，表示目前沒有場域圖片按鈕被激活。
+    this.activeButton_fieldImage = null;
+    // 調用 removeFieldImageOverlay() 函數來移除場域圖片的覆蓋層。
+    this.removeFieldImageOverlay();        
+    // 將 fieldImageOverlayVisible 設置為 false，這樣場域圖片的覆蓋層將不會被顯示。
+    this.fieldImageOverlayVisible = false; 
+  }
+
   // 獲取並顯示場域圖片 
-  // @2024/01/18 Update
+  // @2024/01/22 Update
   getfieldImage(){
-    
-     // 點擊 Field Image 部分的處理
+    // 點擊 Field Image 部分的處理
 
       // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中
       this.isfieldImage_or_RsrpSinrMapLoading = true;
@@ -382,17 +419,18 @@ export class FieldInfoComponent implements OnInit {
   
           // 跟後端 API 取得場域圖片
           this.API_Field.queryFieldImage( this.fieldId ).subscribe({
-              next: (response) => {
+              next: ( response ) => {
                 // 當接收到圖片數據時，處理 Base64 編碼的圖片
-                if (response && response.fieldImage) {
+                if ( response && response.fieldImage ) {
                   const imageSrc = 'data:image/png;base64,' + response.fieldImage;   // 將 Base64 字符串轉換為圖片 URL
                   this.displayFieldImageOnMap( imageSrc, this.currentOverlayType );  // 在地圖上顯示場域圖片
                 }
               },
               // 當圖片獲取失敗時，顯示其錯誤訊息
-              error: (error) => {
+              error: ( error ) => {
                 console.error('Error fetching field image:', error);
-                this.isfieldImage_or_RsrpSinrMapLoading = false; // 出錯時，也隱藏 Spinner
+                this.isfieldImage_or_RsrpSinrMapLoading = false;  // 出錯時，也隱藏 Spinner
+                this.openNoFieldImagePromptWindow();              // 未有場域圖片時顯示提示視窗
               },
               // 當圖片獲取過程完成時，顯示完成訊息
               complete: () => {
@@ -414,7 +452,7 @@ export class FieldInfoComponent implements OnInit {
    * 當按鈕被點擊時調用的函數，用於切換基站之間連線的顯示狀態
    * @param {string} buttonId - 被點擊的按鈕ID
    */
-  setActiveButton_NR(buttonId: string) {
+  setActiveButton_NR( buttonId: string ) {
     // 如果當前按鈕 ID 和傳入的 ID 相同，則取消選中，否則設置為選中
     this.activeButton_NR = this.activeButton_NR === buttonId ? null : buttonId;
     
@@ -428,7 +466,7 @@ export class FieldInfoComponent implements OnInit {
    * @param {boolean} show - 指示是否顯示線條
    */
   toggleNeighborLines( show: boolean ) {
-    if (show) {
+    if ( show ) {
       // 繪製線條
       this.allSimplifiedBsInfo.forEach(bs => {
         if (bs.neighbors) {
@@ -463,7 +501,7 @@ export class FieldInfoComponent implements OnInit {
       });
     } else {
       // 移除線條
-      this.nrLines.forEach(polyline => {
+      this.nrLines.forEach( polyline => {
         this.removePolylineFromMap(polyline);
       });
       // 清空儲存線條的矩陣
@@ -599,8 +637,10 @@ export class FieldInfoComponent implements OnInit {
 
   showMapModel: boolean = true;                   // 控制是否顯示地圖模式的 Flag    @12/13 Add
   recordColorbar: 'RSRP' | 'SINR' | null = null;  // 用於記錄 Colorbar 狀態的 Flag @12/13 Add
+  recordShowNeighborLines: boolean = false; 
 
-  // 用於切換顯示地圖模式或基站列表 @2024/01/15 Update
+  // @2024/01/22 Update
+  // 用於切換顯示地圖模式或基站列表 
   toggleMenuButton() {
 
     this.showMapModel = !this.showMapModel; // 切換顯示的頁面並更新該 Flag 狀態
@@ -609,6 +649,11 @@ export class FieldInfoComponent implements OnInit {
     // 記錄切換頁面當下的 ColorBar 狀態 ( 沒值時才記錄 )
     if ( !this.recordColorbar ){
       this.recordColorbar = this.currentColorbar;
+    }
+
+    if ( this.showNeighborLines ){
+      this.recordShowNeighborLines = this.showNeighborLines;
+      console.log( '是否有顯示 NR :', this.recordShowNeighborLines )
     }
 
     // 如切換的頁面為地圖模式，就預設激活 'NR' 按鈕
@@ -621,37 +666,48 @@ export class FieldInfoComponent implements OnInit {
 
         console.log("this.fieldBounds:", this.fieldBounds);
 
-        // 重新調整地圖縮放 (zoom) 大小 @2024/01/15 Add
+        // 重新調整地圖縮放 (zoom) 大小 @2024/01/22 Update
         setTimeout(() => {
+
           // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
           this.adjustMapZoom();
-        }, 10); // 設定 10 ms 的延遲，以確保地圖的初始化過程已經完成。
 
-        // 如果記錄的 Colorbar 不為空，則恢復顯示記錄的 Colorbar
-        if ( this.recordColorbar != null ) {
+          // 如切換地圖模式前有顯示 NR 就恢復顯示 @2024/01/22 Add
+          if ( this.activeButton_NR ) {
+            this.toggleNeighborLines( this.recordShowNeighborLines );
+            //this.cdr.detectChanges(); // 手動觸發變更檢測
+          }
 
-          this.currentColorbar = this.recordColorbar;
-          //console.log("recordColorbar:", this.recordColorbar);
+          // 如切換地圖模式前有顯示"場域圖片"就恢復顯示 @2024/01/22 Add
+          if ( this.activeButton_fieldImage ){
+            this.getfieldImage();
+          } 
 
-          // 同步顯示回 SINR 或 RSRP 分佈圖 @2024/01/15 
-          const overlayType = ( this.currentColorbar === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
-          this.removeOverlay();       // 移除當前顯示的 overlay
-          this.overlayVisible = true; // 設定 overlay 為可見
-          this.getSinrRsrpImage( overlayType );
-          
+          // 如切換地圖模式前有顯示 RSRP 或 SINR 分佈圖就恢復顯示
+          if ( this.recordColorbar ) {
+            // 如記錄的 Colorbar 不為空，則恢復顯示記錄的 Colorbar
 
-          this.cdr.detectChanges();   // 手動觸發變更檢測
-          this.recordColorbar = null; // 初始化記錄 Colorbar 狀態的 Flag
+            this.currentColorbar = this.recordColorbar;
+            //console.log("recordColorbar:", this.recordColorbar);
 
-        } 
+            // 同步顯示回 SINR 或 RSRP 分佈圖 @2024/01/15 
+            const overlayType = ( this.currentColorbar === 'SINR' ) ? OverlayType.SINR : OverlayType.RSRP;
+            this.removeOverlay();       // 移除當前顯示的 overlay
+            this.overlayVisible = true; // 設定 overlay 為可見
+            this.getSinrRsrpImage( overlayType );
+            
+            this.cdr.detectChanges();   // 手動觸發變更檢測
+            this.recordColorbar = null; // 初始化記錄 Colorbar 狀態的 Flag
+          } 
+
+        }, 100); // 設定 100 ms 的延遲，以確保地圖的初始化過程已經完成。   
+        
     } else { // 如切換的頁面不為地圖模式，就將此 flag 設為空並隱藏 ColorBar
           this.currentColorbar = null;
           //console.log("recordColorbar:", this.recordColorbar);
           this.cdr.detectChanges(); // 手動觸發變更檢測
     }
   }
-
-  
 
   /**
    * 計算多邊形中心點的函數。
@@ -1248,10 +1304,10 @@ export class FieldInfoComponent implements OnInit {
         lng: positionArr[0]
       };
 
-    } catch (e) {
+    } catch ( e ) {
 
       // 如果解析出錯，則在控制台打印錯誤訊息
-      console.error('Error parsing position:', e);
+      console.error( 'Error parsing position:', e );
 
       // 返回一個默認的 LatLngLiteral 對象，防止程序崩潰
       return { lat: 0, lng: 0 };
@@ -1547,7 +1603,7 @@ export class FieldInfoComponent implements OnInit {
                 // For All-in-one BS
                 console.log( "The POST for updateBs():", post_BS_body );
                 this.API_Field.updateBs( post_BS_body ).subscribe({
-                  next: (response) => {
+                  next: ( response ) => {
 
                    this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
 
@@ -1849,13 +1905,6 @@ export class FieldInfoComponent implements OnInit {
     });  
   }
 
-
-
-
-
-
-
-
   // @2024/01/18 Add
   // 獲取並顯示場域圖片 (場域編輯用)
   isFieldImageOnFieldEditLoading: boolean = false;  // 用於控制載入室內圖片時的進度條
@@ -1910,7 +1959,7 @@ export class FieldInfoComponent implements OnInit {
     const noImageMessageElement = document.getElementById('noImageMessage') as HTMLElement;
 
     this.isFieldImageOnFieldEditLoading = true;
-    if (FieldImage_imageSrc) {
+    if ( FieldImage_imageSrc ) {
       imageElement.src = FieldImage_imageSrc;
       imageElement.style.display = 'block'; // 顯示圖片
       noImageMessageElement.style.display = 'none'; // 隱藏提示訊息

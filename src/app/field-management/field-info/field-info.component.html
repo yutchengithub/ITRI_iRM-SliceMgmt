@@ -218,6 +218,20 @@
 			</ul>
 		</div>
 	</div>
+	<!-- Message prompt window when the O1 system has no field image @2024/01/22 Add -->
+	<ng-template #promptWindow_noFieldImage>
+		<div>
+			<h5><mat-icon style="background-color: none;">warning</mat-icon>{{ languageService.i18n['field.noFieldImageAvailableTitle'] }}</h5>
+		</div>  
+		<label class="label-centered">
+			{{ languageService.i18n['field.noFieldImageAvailableMessage'] }}
+		</label>
+		<div class="buttons buttons-centered">
+		  <button type="button" mat-dialog-close>
+			{{ languageService.i18n['close'] }}
+		  </button>
+		</div>
+	</ng-template>	  
 	<div class="right_area">
 		<!-- Field Alarms Information (場域告警資訊) -->
 		<div class="BOX">

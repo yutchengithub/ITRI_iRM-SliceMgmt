@@ -49,6 +49,7 @@ export const Enlanguage = {
   'search':'Search',
   'search_criteria':'Filter By',   // @12/04 Add by yuchen
   'clear_search':'Search Reset',   // @11/24 Add by yuchen
+  'close': 'Close',                // @2024/01/22 Add
   
 
   // Field Management (場域管理) @11/30 Add by yuchen
@@ -64,6 +65,8 @@ export const Enlanguage = {
   'field.info':'Field Detailed Information',
   'field.Map':'Field Map',
   'field.image':'Field Image',
+  'field.noFieldImageAvailableTitle':'Notice', // @2024/01/22 Add
+  'field.noFieldImageAvailableMessage':'The field image has not been uploaded yet.', // @2024/01/22 Add
   'field.rsrpMap':'RSRP MAP',
   'field.sinrMap':'SINR MAP',
   'field.MapOption':'More Options',

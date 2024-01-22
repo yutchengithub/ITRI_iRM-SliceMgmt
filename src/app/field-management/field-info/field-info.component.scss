@@ -15,6 +15,11 @@ svg circle {
   transform: translate(5px, 5px);
 }
 
+// @2024/01/22 Add
+h5 .mat-icon {
+  background-color: transparent;
+} 
+
 // @12/28 Add for Map Legend
 .map-legend {
   position: absolute; 
