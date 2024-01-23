@@ -1918,7 +1918,7 @@ export class FieldInfoComponent implements OnInit {
 
       // 檢查 Local 場域圖片路徑是否存在
       if ( imageSrc_localPath ) {
-        this.displayFieldImageOnMap( imageSrc_localPath, this.currentOverlayType );  // 如存在，則在地圖上顯示場域 local 圖片
+        this.displayFieldImageOnFieldEdit( imageSrc_localPath ); // 如存在，則在該場域編輯區上顯示場域 local 圖片
       }
       //this.isFieldImageOnFieldEditLoading = false; // 載入 local 圖片完也停止顯示 Spinner
 
