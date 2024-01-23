@@ -287,8 +287,6 @@ export class FieldInfoComponent implements OnInit {
         this.fieldImageOverlay.setMap( this.map.googleMap );   // 將創建的 fieldImageOverlay 添加到 Google 地圖實例上
         this.fieldImageOverlay.setOpacity( 0.5 );              // 設定 fieldImageOverlay 的透明度
       }
-
-      
     }
   }
 
@@ -1803,6 +1801,7 @@ export class FieldInfoComponent implements OnInit {
     if ( e.value === 'Field_Infos' ) {
 
       this.fieldEditType = 'Field_Infos';
+      this.getfieldImage_forFieldEdit();
       //this.getUserLogsInfo();  // 載入 Field Infos 數據
 
     } else if ( e.value === 'BS_List' ) {
@@ -1917,9 +1916,9 @@ export class FieldInfoComponent implements OnInit {
       const imageSrc_localPath = './assets/img/fieldImage_for_local.png'; // 定義本地場域圖片的路徑
 
       // 檢查 Local 場域圖片路徑是否存在
-      if ( imageSrc_localPath ) {
+      //if ( imageSrc_localPath ) {
         this.displayFieldImageOnFieldEdit( imageSrc_localPath ); // 如存在，則在該場域編輯區上顯示場域 local 圖片
-      }
+      //}
       //this.isFieldImageOnFieldEditLoading = false; // 載入 local 圖片完也停止顯示 Spinner
 
     } else { // 如非使用 local files
