@@ -1907,19 +1907,21 @@ export class FieldInfoComponent implements OnInit {
   // @2024/01/18 Add
   // 獲取並顯示場域圖片 (場域編輯用)
   isFieldImageOnFieldEditLoading: boolean = false;  // 用於控制載入室內圖片時的進度條
+  imageSrcLocal: string = './assets/img/fieldImage_for_local.png'; // 用於保存本地圖片路徑 @2024/01/23 Add
   getfieldImage_forFieldEdit() {
 
-    //this.isFieldImageOnFieldEditLoading = true;
+    
     if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
 
-      // 設定場域圖片的 Local 路徑
-      const imageSrc_localPath = './assets/img/fieldImage_for_local.png'; // 定義本地場域圖片的路徑
+      console.log( "is local in getfieldImage_forFieldEdit");
+      this.isFieldImageOnFieldEditLoading = true;
 
-      // 檢查 Local 場域圖片路徑是否存在
-      //if ( imageSrc_localPath ) {
-        this.displayFieldImageOnFieldEdit( imageSrc_localPath ); // 如存在，則在該場域編輯區上顯示場域 local 圖片
-      //}
-      //this.isFieldImageOnFieldEditLoading = false; // 載入 local 圖片完也停止顯示 Spinner
+      // 直接將本地圖片路徑賦值給 imageSrcLocal
+      this.imageSrcLocal = './assets/img/fieldImage_for_local.png';
+
+      this.have_FieldImage_flag = true; // 註記為有圖片
+
+      this.isFieldImageOnFieldEditLoading = false; // 載入 local 圖片完也停止顯示 Spinner
 
     } else { // 如非使用 local files
 
@@ -1927,12 +1929,12 @@ export class FieldInfoComponent implements OnInit {
 
       // 從後端 API 獲取場域圖片
       this.API_Field.queryFieldImage( this.fieldId ).subscribe({
-        next: (response) => {
+        next: ( response ) => {
           // 處理 Base64 編碼的圖片
-          if (response && response.fieldImage) {
+          if ( response && response.fieldImage ) {
             const imageSrc = 'data:image/png;base64,' + response.fieldImage;
-            this.displayFieldImageOnFieldEdit(imageSrc); // 顯示圖片
-            //this.isFieldImageOnFieldEditLoading = false;   // 載入完成停止顯示 Spinner
+            this.displayFieldImageOnFieldEdit( imageSrc ); // 顯示圖片
+            //this.isFieldImageOnFieldEditLoading = false; // 載入完成停止顯示 Spinner
           } else {
             // 如果沒有圖片，則顯示提示訊息
             this.displayNoImageMessage();

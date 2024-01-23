@@ -581,7 +581,8 @@
 							</ng-container>
 							<!-- 顯示室內圖片 -->
 							<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
-								<img style="width: 500px; position: relative; top: 15px;" id="uploadedImage" src="" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
+								<!-- For local @2024/01/23 Add --> <img *ngIf="commonService.isLocal" [src]="imageSrcLocal" style="width: 500px; position: relative; top: 15px;" id="uploadedImage" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
+								<img *ngIf="!commonService.isLocal" style="width: 500px; position: relative; top: 15px;" id="uploadedImage" src="" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
 								<!-- 刪除圖標 --> <mat-icon title="{{ languageService.i18n['field.DeleteindoorMap'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon> 
 								<div id="noImageMessage" style="display: none; position: relative; top: 10px;">
 									<mat-icon>not_interested</mat-icon>
