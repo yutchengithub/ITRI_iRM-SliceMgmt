@@ -1873,7 +1873,7 @@ export class FieldInfoComponent implements OnInit {
     this.confirmDeleteWindow_For_fieldEdit_Validated = false;
     this.confirmDeleteWindow_For_fieldEdit_Ref = this.dialog.open( this.confirmDeleteWindow_For_fieldEdit, { 
       id: 'confirmDeleteWindow_For_fieldEdit',
-      //width: '300px', 
+      // width: '300px', 
       // height: '650px'
     } );
     this.confirmDeleteWindow_For_fieldEdit_Ref.afterClosed().subscribe(() => {
@@ -1881,7 +1881,7 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
-  // 刪除顯示室內(場域)圖片 @2024/01/18 Add
+  // 刪除顯示室內(場域)圖片 @2024/01/24 Update
   removeFieldImage() {
 
     this.isFieldImageOnFieldEditLoading = true;
@@ -1890,18 +1890,26 @@ export class FieldInfoComponent implements OnInit {
       // 檢查 Field Image 按鈕是否有被激活。
       this.setActiveButton_fieldImage( this.activeButton_fieldImage ); // 有就傳入該 button ID 同步移除場域區域上的 Overlay
     }
-  
-    this.API_Field.removeFieldImage( this.fieldId ).subscribe({
-      next: () => {
-        // 刪除成功，重新獲取圖片顯示狀態
-        this.getfieldImage_forFieldEdit();
-        this.isFieldImageOnFieldEditLoading = false;  // 載入出錯也停止顯示 Spinner
-      },
-      error: (error) => {
-        console.error('Failed to remove image:', error);
-        this.isFieldImageOnFieldEditLoading = false;  // 載入出錯也停止顯示 Spinner
-      }
-    });  
+
+    if ( this.commonService.isLocal ) { // 新增如為 Local 模式的處理
+
+      this.displayNoImageMessage();                 // 顯示沒有圖片的提示訊息
+      this.isFieldImageOnFieldEditLoading = false;  // 停止顯示 Spinner
+
+    } else {
+
+      this.API_Field.removeFieldImage( this.fieldId ).subscribe({
+        next: () => {
+          // 刪除成功，重新獲取圖片顯示狀態
+          this.getfieldImage_forFieldEdit();
+          this.isFieldImageOnFieldEditLoading = false;  // 停止顯示 Spinner
+        },
+        error: (error) => {
+          console.error('Failed to remove image:', error);
+          this.isFieldImageOnFieldEditLoading = false;  // 停止顯示 Spinner
+        }
+      });  
+    }
   }
 
   // @2024/01/18 Add
@@ -1971,8 +1979,7 @@ export class FieldInfoComponent implements OnInit {
     this.isFieldImageOnFieldEditLoading = false;
   }
 
-  // @2024/01/18 Add
-  // 顯示沒有圖片的提示訊息
+  // 顯示沒有圖片的提示訊息 @2024/01/18 Add
   displayNoImageMessage() {
     const imageElement = document.getElementById('uploadedImage') as HTMLImageElement;
     const noImageMessageElement = document.getElementById('noImageMessage') as HTMLElement;
