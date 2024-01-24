@@ -246,8 +246,8 @@ export class FieldInfoComponent implements OnInit {
 
     // 檢查 overlay 物件是否已經被創建
     if (this.overlay) {
-      this.overlay.setMap(null); // 將 overlay 從 Google 地圖上移除
-      this.overlay = null;       // 將 overlay 物件設置為 null，釋放資源並避免內存洩漏
+      this.overlay.setMap( null ); // 將 overlay 從 Google 地圖上移除
+      this.overlay = null;         // 將 overlay 物件設置為 null，釋放資源並避免內存洩漏
       this.currentOverlayType = OverlayType.None;   // 重置當前 overlay 類型為 None
 
       console.log('Remove the Overlay:', this.overlay);
@@ -390,7 +390,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // 獲取並顯示場域圖片 
-  // @2024/01/22 Update
+  // @2024/01/24 Update
   getfieldImage(){
     // 點擊 Field Image 部分的處理
 
@@ -403,14 +403,27 @@ export class FieldInfoComponent implements OnInit {
         // 並且期望根據當前的激活狀態來顯示或隱藏場域圖片。
   
         if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
-  
-          // 設定場域圖片的 Local 路徑
-          const imageSrc_localPath = './assets/img/fieldImage_for_local.png'; // 定義本地場域圖片的路徑
-  
-          // 檢查 Local 場域圖片路徑是否存在
-          if ( imageSrc_localPath ) {
-            this.displayFieldImageOnMap( imageSrc_localPath, this.currentOverlayType );  // 如存在，則在地圖上顯示場域 local 圖片
+      
+          if ( this.removeImageInLocal_flag ) { // 檢查 local 下是否有刪除過圖片
+
+            // 有就顯示未有圖片提示視窗
+            this.openNoFieldImagePromptWindow();
+
+            // 重置記錄 Local 環境下圖片的刪除狀態
+            //this.removeImageInLocal_flag = false;
+
+          } else {
+
+            // 設定場域圖片的 Local 路徑
+            const imageSrc_localPath = './assets/img/fieldImage_for_local.png'; // 定義本地場域圖片的路徑
+              
+            // 檢查 Local 場域圖片路徑是否存在
+            if ( imageSrc_localPath ) {
+              this.displayFieldImageOnMap( imageSrc_localPath, this.currentOverlayType );  // 如存在，則在地圖上顯示場域 local 圖片
+            }
+
           }
+          
           this.isfieldImage_or_RsrpSinrMapLoading = false; // Local 圖片載入完成，隱藏 Spinner
   
         } else { // 如非使用 local files
@@ -1881,6 +1894,8 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
+  // 用於記錄 Local 環境下圖片的刪除狀態 @2024/01/24 Add
+  removeImageInLocal_flag: boolean = false;
   // 刪除顯示室內(場域)圖片 @2024/01/24 Update
   removeFieldImage() {
 
@@ -1894,6 +1909,7 @@ export class FieldInfoComponent implements OnInit {
     if ( this.commonService.isLocal ) { // 新增如為 Local 模式的處理
 
       this.displayNoImageMessage();                 // 顯示沒有圖片的提示訊息
+      this.removeImageInLocal_flag = true;          // 將 Local 環境下圖片的刪除狀態設為 true
       this.isFieldImageOnFieldEditLoading = false;  // 停止顯示 Spinner
 
     } else {
@@ -1912,13 +1928,12 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  // @2024/01/18 Add
+  // @2024/01/24 Update
   // 獲取並顯示場域圖片 (場域編輯用)
   isFieldImageOnFieldEditLoading: boolean = false;  // 用於控制載入室內圖片時的進度條
   imageSrcLocal: string = './assets/img/fieldImage_for_local.png'; // 用於保存本地圖片路徑 @2024/01/23 Add
   getfieldImage_forFieldEdit() {
 
-    
     if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
 
       console.log( "is local in getfieldImage_forFieldEdit");
@@ -1928,6 +1943,9 @@ export class FieldInfoComponent implements OnInit {
       this.imageSrcLocal = './assets/img/fieldImage_for_local.png';
 
       this.have_FieldImage_flag = true; // 註記為有圖片
+
+      // 重置記錄 Local 環境下圖片的刪除狀態
+      this.removeImageInLocal_flag = false; // @2024/01/24 Add
 
       this.isFieldImageOnFieldEditLoading = false; // 載入 local 圖片完也停止顯示 Spinner
 
