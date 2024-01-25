@@ -23,5 +23,7 @@ export interface Basestation {
     adminstate: number;
     laston: string;
     lastoff: string;
+
+    selected?: boolean; // 用於決定 BS list 每列 BS 對應到的 CheckBox 是否要顯示被選擇或未選擇
 }
   

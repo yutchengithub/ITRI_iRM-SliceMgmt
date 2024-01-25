@@ -30,7 +30,7 @@ import { apiForField } from '../../shared/api/For_Field'; // @2024/01/04 Add for
 
 import { FieldInfo } from '../../shared/interfaces/Field/For_queryFieldInfo';              // @2023/12/21 Add
 import { BsInfoInField } from '../../shared/interfaces/Field/For_queryFieldInfo';          // @2023/12/21 Add
-import { BSList } from '../../shared/interfaces/BS/For_queryBsList';                       // @2024/01/16 Add
+import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
 import { localBSList } from '../../shared/local-files/For_queryBsList';                    // @2024/01/16 Add
 
 import { BSInfo } from '../../shared/interfaces/BS/For_queryBsInfo_BS';                    // @2023/12/21 Add
@@ -338,6 +338,10 @@ export class FieldInfoComponent implements OnInit {
       console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
       this.getQueryFieldInfo();
     });
+
+    //this.getQueryBsList(); // @2024/01/25 Add 
+    // 預設為顯示已選中的基站
+    //this.updateDisplayedBasestations(); // @2024/01/25 Add 
   }
 
 // ↑ Page Init ↑
@@ -1455,8 +1459,8 @@ export class FieldInfoComponent implements OnInit {
 
   modifyConfig_click_NUM = 0;
   // @2024/01/15 Update 
-  modifyConfig( bsName: string ,bsType: number ) {
-    console.log( "modifyConfig() - Start" );
+  SubmitForModifyConfig( bsName: string ,bsType: number ) {
+    console.log( "SubmitForModifyConfig() - Start" );
 
     // 在方法開始時重置 'isNothingChanged'
     this.isNothingChanged = false;
@@ -1695,7 +1699,7 @@ export class FieldInfoComponent implements OnInit {
 
     // 結尾重置 'isNothingChanged'
     this.isNothingChanged = false;
-    console.log( "modifyConfig() - End" );
+    console.log( "SubmitForModifyConfig() - End" );
   }
   
   // 點擊 Cancel 按鈕的行為 @2024/01/10 Add
@@ -1704,71 +1708,22 @@ export class FieldInfoComponent implements OnInit {
     this.modifyConfigForm.reset();  // 重置整個表單
   }
   
-
 // Modify Configuration Setting @2024/01/05 Add ↑
 
 
 // For Field Editing Setting @2024/01/11 Add ↓
 
-  bsList: BSList = {} as BSList;   // @2024/01/16 Add
-  isGetQueryBsListLoading = false; // 用於表示加載 BS List 的 flag，初始設置為 false @2024/01/17 Add for Progress Spinner
-
-  // @2024/01/16 Add
-  // Get the BS List in the O1 System 
-  getQueryBsList() {
-    console.log( 'getQueryBsList() - Start' );         // getQueryBsList() 啟動 
-    console.log( 'Start fetching info of Bs List' );   // 開始獲取 BS List 資訊
-    clearTimeout( this.refreshTimeout );
-
-    this.isGetQueryBsListLoading = true; // 開始顯示 Spinner 表載入 BS List 數據中
-
-    // 檢查是否為 local 環境
-    if ( this.commonService.isLocal ) { 
-      // For testing with local files
-      console.log('Start fetching BS List in Local');   // 開始獲取 Local BS List 資訊
-
-      this.bsList = this.bsList_LocalFiles.bsList_local;
-      console.log( 'BS List in Local:', this.bsList );
-      
-      this.isGetQueryBsListLoading = false; // 加載完成，隱藏 spinner 
-    } else {
-      
-      console.log('Start fetching BS List from API');   // 開始獲取 BS List 資訊
-
-      // Use API_Field's queryBsList() to make an HTTP GET request
-      this.API_Field.queryBsList().subscribe({
-        next: (res) => {
-
-          // 當 API 響應數據到達時，執行此回調
-          // This callback is executed when API response data arrives
-          console.log( '從 API 獲取 queryBsList\n( Fetched queryBsList from API ): ', res.basestation );
-          
-          this.bsList = res;
-          console.log( '基站列表資訊\n( BS List ):', this.bsList ); // 取得的 BS List 資訊 ( Obtained BS List information ):
-          this.isGetQueryBsListLoading = false; // 取得後隱藏 spinner
-        },
-        error: (error) => {
-
-          // 獲取資訊出錯時執行此回調
-          // This callback is executed when there is an error fetching the info
-          console.error( '獲取基站列表資訊出錯:', error );
-          console.error( 'Error fetching - BS List:', error );
-          this.isGetQueryBsListLoading = false; // 出錯時也應隱藏 spinner
-        },
-        complete: () => {
-
-          // 請求完成時執行此回調
-          // This callback is executed when the request is complete
-          console.log( '基站列表資訊獲取完成' );
-          console.log( 'BS List - fetch completed' );
-          //this.isGetQueryBsListLoading = false; // 加載完成
-        }
-      });
-    }
-
-    console.log( 'getQueryBsList() - End' ); // getQueryBsList() 結束 
+  fieldEditForm!: FormGroup;
+  createFieldInfoForm() {
+    this.fieldEditForm  = this.fb.group({
+      fieldName:        new FormControl( this.fieldInfo?.name || '' ), 
+      fieldBound_North: new FormControl( this.fieldBounds?.north || '' ),
+      fieldBound_South: new FormControl( this.fieldBounds?.south || '' ),
+      fieldBound_West:  new FormControl( this.fieldBounds?.west || '' ),
+      fieldBound_East:  new FormControl( this.fieldBounds?.east || '' ),
+      phoneNumber:      new FormControl( this.fieldInfo?.phone || '' )
+    });
   }
-
 
   @ViewChild('fieldEditWindow') fieldEditWindow: any;
   fieldEditWindowRef!: MatDialogRef<any>;
@@ -1778,7 +1733,7 @@ export class FieldInfoComponent implements OnInit {
   openfieldEditWindow() {
 
     // 確保數據已經獲取
-    if(this.fieldInfo && this.fieldBounds) {
+    if( this.fieldInfo && this.fieldBounds ) {
       this.fieldEditForm.patchValue({
         fieldName:        this.fieldInfo.name,
         fieldBound_North: this.fieldBounds.north,
@@ -1815,34 +1770,154 @@ export class FieldInfoComponent implements OnInit {
 
       this.fieldEditType = 'Field_Infos';
       this.getfieldImage_forFieldEdit();
-      //this.getUserLogsInfo();  // 載入 Field Infos 數據
 
     } else if ( e.value === 'BS_List' ) {
 
       this.fieldEditType = 'BS_List';
-      this.getQueryBsList();        // 載入 BS List 數據
+      this.isCheckboxVisible = false; // 每次切換該頁面時，都預設不顯示 Checkbox 欄位 @2024/01/25 Add
+      this.getQueryBsList();          // 載入 BS List 數據
     }
 
     // 更新當前類型，以便知道哪個 Field Edit 類型被選中
     // Set the Field Edit type to display after tab switch
-    //this.fieldEditType = e.value;
+    // this.fieldEditType = e.value;
     console.log('頁面切換後，顯示的 Field Edit 類型:', this.fieldEditType+
     '\nField Edit type displayed after tab switch:', this.fieldEditType);
 
     console.log( "changefieldEditType() - End, the window of field Edit is", this.fieldEditType);
   }
 
-  fieldEditForm!: FormGroup;
-  createFieldInfoForm() {
-    this.fieldEditForm  = this.fb.group({
-      fieldName:        new FormControl( this.fieldInfo?.name || '' ), 
-      fieldBound_North: new FormControl( this.fieldBounds?.north || '' ),
-      fieldBound_South: new FormControl( this.fieldBounds?.south || '' ),
-      fieldBound_West:  new FormControl( this.fieldBounds?.west || '' ),
-      fieldBound_East:  new FormControl( this.fieldBounds?.east || '' ),
-      phoneNumber:      new FormControl( this.fieldInfo?.phone || '' )
-    });
+  bsList: BSList = {} as BSList;   // @2024/01/16 Add
+  selectedBsIds: string[] = [];    // 用於存儲選中的基站 ID @2024/01/25 Add
+  isGetQueryBsListLoading = false; // 用於表示加載 BS List 的 flag，初始設置為 false @2024/01/17 Add for Progress Spinner
+
+  // Get the BS List in the O1 System @2024/01/25 Update
+  getQueryBsList() {
+    console.log('getQueryBsList() - Start'); // getQueryBsList() 啟動 
+    console.log('Start fetching info of Bs List'); // 開始獲取 BS List 資訊
+    clearTimeout(this.refreshTimeout);
+
+    this.isGetQueryBsListLoading = true; // 開始顯示 Spinner 表載入 BS List 數據中
+
+    // 檢查是否為 local 環境
+    if (this.commonService.isLocal) { 
+      // For testing with local files
+      console.log('Start fetching BS List in Local'); // 開始獲取 Local BS List 資訊
+
+      // 模擬從 Local files 獲取數據並初始化 selected 屬性
+      this.bsList = this.bsList_LocalFiles.bsList_local;
+      this.bsList.basestation.forEach( bs => {
+        bs.selected = this.fieldInfo.bsinfo.some( fbs => fbs.id === bs.id );
+        // 如果基站已被選中，則添加其 ID 到 selectedBsIds 陣列
+        if ( bs.selected && !this.selectedBsIds.includes( bs.id ) ) {
+          this.selectedBsIds.push( bs.id );
+        }
+      });
+      console.log("In getQueryBsList(),\n Local 目前在場域內(被選中)的基站 id 目前有", this.selectedBsIds )
+
+      console.log('BS List in Local:', this.bsList);
+      
+      this.isGetQueryBsListLoading = false; // 加載完成，隱藏 spinner 
+
+    } else {
+      console.log('Start fetching BS List from API'); // 開始獲取 BS List 資訊
+
+      // Use API_Field's queryBsList() to make an HTTP GET request
+      this.API_Field.queryBsList().subscribe({
+        next: ( res: BSList ) => {
+
+           // 初始化 selected 屬性
+          res.basestation.forEach(bs => {
+            bs.selected = this.fieldInfo.bsinfo.some( fbs => fbs.id === bs.id );
+            // 如果基站已被選中，則添加其 ID 到 selectedBsIds 陣列
+            if (bs.selected && !this.selectedBsIds.includes(bs.id)) {
+              this.selectedBsIds.push(bs.id);
+            }
+          });
+          console.log("In getQueryBsList(),\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsIds )
+
+          this.bsList = res;
+          console.log('基站列表資訊\n( BS List ):', this.bsList); // 取得的 BS List 資訊 ( Obtained BS List information )
+
+          // 更新 displayedBasestations 為已選中的基站
+          this.displayedBasestations = this.bsList.basestation.filter( bs => bs.selected );
+          this.isGetQueryBsListLoading = false; // 取得後隱藏 spinner
+        },
+        error: (error) => {
+          console.error('獲取基站列表資訊出錯:', error);
+          console.error( 'Error fetching - BS List:', error );
+          this.isGetQueryBsListLoading = false; // 出錯時也應隱藏 spinner
+        },
+        complete: () => {
+          console.log('基站列表資訊獲取完成');
+          console.log( 'BS List - fetch completed' );
+        }
+      });
+    }
+
+    console.log('getQueryBsList() - End'); // getQueryBsList() end
   }
+
+  displayedBasestations: Basestation[] = []; // 用於控制顯示"場域編輯"中的基站列表 @2024/01/25 Add
+  isCheckboxVisible: boolean = false;        // 控制 Checkbox 顯示的標誌 @2024/01/25 Add
+
+  showAllBsButtonText = '列出 O1 內所有 BS'; // 控制按鈕文本的屬性
+
+  // 切換 Checkbox 的顯示和隱藏 @2024/01/25 Add
+  toggleCheckboxVisibility() {
+
+    this.isCheckboxVisible = !this.isCheckboxVisible;
+
+    // 更新按鈕文本
+    this.showAllBsButtonText = this.isCheckboxVisible ? '只顯示場域內有的 BS' : '列出 O1 內所有 BS';
+    
+    this.updateDisplayedBasestations();
+  }
+
+  // @2024/01/25 Add
+  onBsSelectionChange( bsId: string, event: Event ) {
+    const isChecked = ( event.target as HTMLInputElement ).checked;
+    if ( isChecked ) {
+      // 如果複選框被勾選，將基站 ID 添加到selectedBsIds陣列
+      if (!this.selectedBsIds.includes( bsId )) {
+        this.selectedBsIds.push( bsId );
+      }
+    } else {
+      // 如果複選框被取消勾選，將基站 ID 從 selectedBsIds 陣列移除
+      this.selectedBsIds = this.selectedBsIds.filter( id => id !== bsId );
+    }
+    console.log("In onBsSelectionChange(),\n 所有被選中的基站 id 現在有", this.selectedBsIds )
+
+    // 可以在這裡進行進一步的處理，例如發送更新至伺服器等
+  }
+
+  // 檢查基站是否應該被選中 @2024/01/25 Add
+  checkIfSelected( bsId: string ): boolean {
+    return this.fieldInfo.bsinfo.some( bs => bs.id === bsId );
+  }
+
+  // 更新 displayedBasestations 以顯示或隱藏基站 @2024/01/25 Add
+  updateDisplayedBasestations() {
+    if ( this.isCheckboxVisible ) {
+        // 如果應該顯示 Checkbox，則顯示所有基站
+        this.displayedBasestations = this.bsList.basestation;
+    } else {
+        // 如果不顯示 Checkbox，則只顯示已選中的基站
+        this.displayedBasestations = this.bsList.basestation.filter( bs => this.checkIfSelected( bs.id ) );
+    }
+    console.log( "In updateDisplayedBasestations(),\n 現在被選中的基站 id 目前有", this.selectedBsIds )
+  }
+
+  // @2024/01/25 Add
+  SubmitForUpdateFieldEditing(){
+
+    const submitData = {
+    };
+
+    // 發送 POST 請求
+    this.API_Field.updateField( submitData );
+  }
+
 
   // For upload Field Image @2024/01/18 Add
   @ViewChild('fileInput') fileInput!: ElementRef;
@@ -1966,7 +2041,7 @@ export class FieldInfoComponent implements OnInit {
             this.displayNoImageMessage();
             //this.isFieldImageOnFieldEditLoading = false;   // 載入完成停止顯示 Spinner
           }
-         //this.isFieldImageOnFieldEditLoading = false;   // 載入完成停止顯示 Spinner
+            //this.isFieldImageOnFieldEditLoading = false;   // 載入完成停止顯示 Spinner
         },
         error: (error) => {
           console.error('Error fetching field image:', error);
@@ -2002,15 +2077,15 @@ export class FieldInfoComponent implements OnInit {
     const imageElement = document.getElementById('uploadedImage') as HTMLImageElement;
     const noImageMessageElement = document.getElementById('noImageMessage') as HTMLElement;
 
-    //this.isFieldImageOnFieldEditLoading = true;
+    // this.isFieldImageOnFieldEditLoading = true;
     if ( imageElement && noImageMessageElement ) {
       imageElement.style.display = 'none';           // 隱藏圖片
       noImageMessageElement.style.display = 'block'; // 顯示提示訊息
     }
     this.have_FieldImage_flag = false; // 註記為未有圖片
-   // this.isFieldImageOnFieldEditLoading = false;
+    // this.isFieldImageOnFieldEditLoading = false;
   }
-  
+
 // For Field Editing Setting @2024/01/11 Add ↑
 
 

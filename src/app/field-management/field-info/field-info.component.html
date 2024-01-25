@@ -486,7 +486,7 @@
 				</li>
 			</ul>
 			<div class="buttons">
-				<button type="button" (click)="modifyConfig( displayBsInfo!.name, displayBsInfo!.bstype )">
+				<button type="button" (click)="SubmitForModifyConfig( displayBsInfo!.name, displayBsInfo!.bstype )">
 					{{ languageService.i18n['confirm'] }}
 				</button>
 				<button type="button" (click)="resetForm( displayBsInfo!.name )" mat-dialog-close>
@@ -606,12 +606,22 @@
 		<div>
 			<!-- BS List -->
 			<ul *ngIf="fieldEditType === 'BS_List'">
-				<!-- 基站列表 For field Edit @2024/01/11 Add by yuchen -->
+				
+				<!-- 控制 Checkbox 顯示/隱藏的按鈕 @2024/01/25 Add -->
+				<button mat-flat-button
+						[ngClass]="{'field-Edit-bsList-button-active': isCheckboxVisible,
+									 'field-Edit-bsList-button-inactive': !isCheckboxVisible}"
+						(click)="toggleCheckboxVisibility()">
+					{{ showAllBsButtonText }}
+				</button>
+
+				<!-- 基站列表 For field Edit @2024/01/11 Add by yuchen -->	
 				<div class="table">
 					<table class="center">
 						<thead>
 							<tr>
-								<th>{{ languageService.i18n['field.selectBSs'] }}</th>
+								<!-- 使用 *ngIf 控制顯示 "選擇基站" 這一列 @2024/01/25 Add -->
+    							<th *ngIf="isCheckboxVisible">{{ languageService.i18n['field.selectBSs'] }}</th>
 								<th>{{ languageService.i18n['field.BSname'] }}</th>
 								<th>{{ languageService.i18n['field.BStype'] }}</th>
 								<th>gNB ID</th>
@@ -634,8 +644,16 @@
 							</ng-container>
 							<!-- 顯示數據 -->
 							<ng-container *ngIf="!isGetQueryBsListLoading">
-								<tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;">
-									<td><input type="checkbox"></td>
+								<!-- <tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;"> -->
+								<tr *ngFor="let opt of displayedBasestations" style="overflow-y: auto;">
+									<!-- 根據條件顯示Checkbox @2024/01/25 Add -->
+									<!-- <td *ngIf="isCheckboxVisible && checkIfSelected( opt.id )"> -->
+									<!-- <td *ngIf="isCheckboxVisible">
+										<input type="checkbox" [(ngModel)]="opt.selected">
+									</td> -->
+									<td *ngIf="isCheckboxVisible">
+										<input type="checkbox" [checked]="opt.selected" (change)="onBsSelectionChange( opt.id, $event )">
+									</td>  
 									<td>
 										<!-- 顯示 "基站名稱" -->
 										{{ opt.name }}

@@ -110,6 +110,16 @@ h5 .mat-icon {
   transition: 0.5s;
 }
 
+// 場域配置-基站列表頁內按鈕切換樣式 @2024/01/25 Add by yuchen
+.field-Edit-bsList-button-active {
+  background-color: #485c77;   // 按鈕啟用時的顏色
+  color: white;                // 按鈕啟用時的字體顏色
+}
+
+.field-Edit-bsList-button-inactive {
+  background-color: #ba5a2a; // 按鈕未啟用時的顏色
+  color: white;              // 按鈕未啟用時的字體顏色
+}
 
 // 激活狀態的按鈕樣式 @2024/01/15 update by yuchen
 .button-active {

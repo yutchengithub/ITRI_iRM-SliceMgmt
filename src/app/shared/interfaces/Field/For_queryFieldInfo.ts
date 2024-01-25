@@ -1,7 +1,7 @@
 
-// @12/05 Add by yuchen
-// 描述單一場域的詳細資訊
-export interface FieldInfo {
+  // @12/05 Add by yuchen
+  // 描述單一場域的詳細資訊
+  export interface FieldInfo {
     id: string;
     name: string;
     phone: string;
