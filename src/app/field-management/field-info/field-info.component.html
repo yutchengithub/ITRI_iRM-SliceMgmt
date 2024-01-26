@@ -486,7 +486,7 @@
 				</li>
 			</ul>
 			<div class="buttons">
-				<button type="button" (click)="SubmitForModifyConfig( displayBsInfo!.name, displayBsInfo!.bstype )">
+				<button type="button" (click)="SubmitForModifyConfig_Submit( displayBsInfo!.name, displayBsInfo!.bstype )">
 					{{ languageService.i18n['confirm'] }}
 				</button>
 				<button type="button" (click)="resetForm( displayBsInfo!.name )" mat-dialog-close>
@@ -607,12 +607,11 @@
 			<!-- BS List -->
 			<ul *ngIf="fieldEditType === 'BS_List'">
 				
-				<!-- 控制 Checkbox 顯示/隱藏的按鈕 @2024/01/25 Add -->
-				<!-- 控制顯示所有BS/隱藏未在場域的BS按鈕 @2024/01/26 Update -->
+				<!-- 控制顯示所有 BS/隱藏未在場域的 BS 按鈕 @2024/01/26 Update -->
 				<button mat-flat-button
-						[ngClass]="{'field-Edit-bsList-button-active': isCheckboxVisible,
-									 'field-Edit-bsList-button-inactive': !isCheckboxVisible}"
-						(click)="toggleCheckboxVisibility()">
+						[ngClass]="{'field-Edit-bsList-button-active': displayAllBSFlag,
+									 'field-Edit-bsList-button-inactive': !displayAllBSFlag}"
+						(click)="toggleAllBSVisibility()">
 					{{ showAllBsButtonText }}
 				</button>
 
@@ -647,15 +646,13 @@
 							<!-- 顯示數據 -->
 							<ng-container *ngIf="!isGetQueryBsListLoading">
 								<!-- <tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;"> -->
+								
+								<!-- 根據 displayAllBSFlag 旗標選擇迭代的數據來源 ( .ts 進行控制 ) -->
 								<tr *ngFor="let opt of displayedBasestations" style="overflow-y: auto;">
-									<!-- 根據條件顯示Checkbox @2024/01/26 Update -->
-									<!-- <td *ngIf="isCheckboxVisible && checkIfSelected( opt.id )"> -->
-									<!-- <td *ngIf="isCheckboxVisible">
-										<input type="checkbox" [(ngModel)]="opt.selected">
-									</td> -->
-									<!-- <td *ngIf="isCheckboxVisible"> -->
+
+									<!-- 根據條件顯示 Checkbox @2024/01/26 Update -->
 									<td>
-										<input type="checkbox" [checked]="opt.selected" (change)="onBsSelectionChange(opt.id, $event)" [disabled]="!isCheckboxVisible">
+										<input type="checkbox" [checked]="opt.selected" (change)="onBsSelectionChange( opt.id, $event )" [disabled]="!displayAllBSFlag" >
 									</td>  
 									<td>
 										<!-- 顯示 "基站名稱" -->

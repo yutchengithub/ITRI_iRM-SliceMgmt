@@ -31,6 +31,7 @@ import { apiForField } from '../../shared/api/For_Field'; // @2024/01/04 Add for
 import { FieldInfo } from '../../shared/interfaces/Field/For_queryFieldInfo';              // @2023/12/21 Add
 import { BsInfoInField } from '../../shared/interfaces/Field/For_queryFieldInfo';          // @2023/12/21 Add
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
+import { ForUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_updateField';    // @2024/01/26 Add
 import { localBSList } from '../../shared/local-files/For_queryBsList';                    // @2024/01/16 Add
 
 import { BSInfo } from '../../shared/interfaces/BS/For_queryBsInfo_BS';                    // @2023/12/21 Add
@@ -338,10 +339,6 @@ export class FieldInfoComponent implements OnInit {
       console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
       this.getQueryFieldInfo();
     });
-
-    //this.getQueryBsList(); // @2024/01/25 Add 
-    // 預設為顯示已選中的基站
-    //this.updateDisplayedBasestations(); // @2024/01/25 Add 
   }
 
 // ↑ Page Init ↑
@@ -1459,8 +1456,8 @@ export class FieldInfoComponent implements OnInit {
 
   modifyConfig_click_NUM = 0;
   // @2024/01/15 Update 
-  SubmitForModifyConfig( bsName: string ,bsType: number ) {
-    console.log( "SubmitForModifyConfig() - Start" );
+  SubmitForModifyConfig_Submit( bsName: string ,bsType: number ) {
+    console.log( "SubmitForModifyConfig_Submit() - Start" );
 
     // 在方法開始時重置 'isNothingChanged'
     this.isNothingChanged = false;
@@ -1699,7 +1696,7 @@ export class FieldInfoComponent implements OnInit {
 
     // 結尾重置 'isNothingChanged'
     this.isNothingChanged = false;
-    console.log( "SubmitForModifyConfig() - End" );
+    console.log( "SubmitForModifyConfig_Submit() - End" );
   }
   
   // 點擊 Cancel 按鈕的行為 @2024/01/10 Add
@@ -1774,24 +1771,29 @@ export class FieldInfoComponent implements OnInit {
     } else if ( e.value === 'BS_List' ) {
 
       this.fieldEditType = 'BS_List';
-      this.isCheckboxVisible = false; // 每次切換該頁面時，都預設不顯示 Checkbox 欄位 @2024/01/25 Add
-      this.getQueryBsList();          // 載入 BS List 數據
+      //this.isCheckboxVisible = false; // 每次切換該頁面時，都預設不顯示 Checkbox 欄位 @2024/01/25 Add
+      this.displayAllBSFlag = false;      // 每次切換該頁面時，都預設不顯示 All BS  @2024/01/26 Add
+      this.getQueryBsList();            // 載入 BS List 數據
     }
 
     // 更新當前類型，以便知道哪個 Field Edit 類型被選中
     // Set the Field Edit type to display after tab switch
     // this.fieldEditType = e.value;
     console.log('頁面切換後，顯示的 Field Edit 類型:', this.fieldEditType+
-    '\nField Edit type displayed after tab switch:', this.fieldEditType);
+                  '\n Field Edit type displayed after tab switch:', this.fieldEditType );
 
-    console.log( "changefieldEditType() - End, the window of field Edit is", this.fieldEditType);
+    console.log( "changefieldEditType() - End, the window of field Edit is", this.fieldEditType );
   }
 
   bsList: BSList = {} as BSList;   // @2024/01/16 Add
-  selectedBsIds: string[] = [];    // 用於存儲選中的基站 ID @2024/01/25 Add
+  selectedBsInfos: Bsinfo[] = [];  // 用於存儲選中的基站 ID @2024/01/26 Add
   isGetQueryBsListLoading = false; // 用於表示加載 BS List 的 flag，初始設置為 false @2024/01/17 Add for Progress Spinner
 
-  // Get the BS List in the O1 System @2024/01/25 Update
+  displayedBasestations: Basestation[] = [];        // 用於控制顯示於"場域編輯"頁面上的所有 BS 列表 @2024/01/25 Add
+  BasestationsInField: Basestation[] = [];          // 用於存儲場域內的 BS  @2024/01/26 Add
+  SortAllBasestationsInO1: Basestation[] = [];      // 用於存儲排序過 O1 內的所有 BS 列表 @2024/01/26 Add
+
+  // Get the BS List in the O1 System @2024/01/26 Update
   getQueryBsList() {
     console.log('getQueryBsList() - Start'); // getQueryBsList() 啟動 
     console.log('Start fetching info of Bs List'); // 開始獲取 BS List 資訊
@@ -1806,18 +1808,28 @@ export class FieldInfoComponent implements OnInit {
 
       // 模擬從 Local files 獲取數據並初始化 selected 屬性
       this.bsList = this.bsList_LocalFiles.bsList_local;
-      this.bsList.basestation.forEach( bs => {
-        bs.selected = this.fieldInfo.bsinfo.some( fbs => fbs.id === bs.id );
-        // 如果基站已被選中，則添加其 ID 到 selectedBsIds 陣列
-        if ( bs.selected && !this.selectedBsIds.includes( bs.id ) ) {
-          this.selectedBsIds.push( bs.id );
+      this.bsList.basestation.forEach(bs => {
+        // 檢查每個基站是否存在於場域內的基站信息中
+        bs.selected = this.fieldInfo.bsinfo.some(fbs => fbs.id === bs.id);
+
+        // 如果基站已被選中，並且它的 ID 還沒有在 selectedBsInfos 中，則創建一個新的 Bsinfo 對象並添加它
+        if (bs.selected && !this.selectedBsInfos.some(bi => bi.id === bs.id)) {
+          this.selectedBsInfos.push({ id: bs.id });
         }
       });
-      console.log("In getQueryBsList(),\n Local 目前在場域內(被選中)的基站 id 目前有", this.selectedBsIds )
 
-      console.log('BS List in Local:', this.bsList);
+      console.log( "In getQueryBsList(),\n Local 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos );
+
+      console.log( 'BS List in Local:', this.bsList );
+
+      // 初始化 BasestationsInField 為場域內的基站
+      this.BasestationsInField = this.bsList.basestation.filter( bs => bs.selected );
+      this.displayedBasestations = this.BasestationsInField; // 同步初始化顯示於 html 上
+
+      // 使用 SortAllBSInO1 函數對 O1 內所有基站進行排序
+      this.SortAllBasestationsInO1 = this.SortAllBSInO1( [...this.bsList.basestation] );
       
-      this.isGetQueryBsListLoading = false; // 加載完成，隱藏 spinner 
+      this.isGetQueryBsListLoading = false; // 加載完成，隱藏 spinner
 
     } else {
       console.log('Start fetching BS List from API'); // 開始獲取 BS List 資訊
@@ -1826,25 +1838,34 @@ export class FieldInfoComponent implements OnInit {
       this.API_Field.queryBsList().subscribe({
         next: ( res: BSList ) => {
 
-           // 初始化 selected 屬性
-          res.basestation.forEach(bs => {
+          // 遍歷 API 傳回的基站列表 (res.basestation)
+          res.basestation.forEach( bs => {
+            // 對每個 bs 進行檢查，確定是否它的 ID 出現在另一個陣列 ( this.fieldInfo.bsinfo ) 中，
+            // 這個陣列包含了場域內的基站信息。如果是，則將該 bs 的 'selected' 屬性設置為 true。
             bs.selected = this.fieldInfo.bsinfo.some( fbs => fbs.id === bs.id );
-            // 如果基站已被選中，則添加其 ID 到 selectedBsIds 陣列
-            if (bs.selected && !this.selectedBsIds.includes(bs.id)) {
-              this.selectedBsIds.push(bs.id);
+
+            // 檢查選中的基站是否已經存在於 selectedBsInfos 陣列中
+            // 如果不存在，則創建一個新的 Bsinfo 對象並將其添加到陣列中
+            if ( bs.selected && !this.selectedBsInfos.some( bi => bi.id === bs.id ) ) {
+              this.selectedBsInfos.push({ id: bs.id });
             }
           });
-          console.log("In getQueryBsList(),\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsIds )
+          console.log("In getQueryBsList(),\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos )
 
           this.bsList = res;
           console.log('基站列表資訊\n( BS List ):', this.bsList); // 取得的 BS List 資訊 ( Obtained BS List information )
 
-          // 更新 displayedBasestations 為已選中的基站
-          this.displayedBasestations = this.bsList.basestation.filter( bs => bs.selected );
+          // 初始化 BasestationsInField 為場域內的基站
+          this.BasestationsInField = this.bsList.basestation.filter( bs => bs.selected );
+          this.displayedBasestations = this.BasestationsInField; // 同步初始化顯示於 html 上
+
+          // 使用 SortAllBSInO1 函數對 O1 內所有基站進行排序
+          this.SortAllBasestationsInO1 = this.SortAllBSInO1( this.bsList.basestation );
+          
           this.isGetQueryBsListLoading = false; // 取得後隱藏 spinner
         },
         error: (error) => {
-          console.error('獲取基站列表資訊出錯:', error);
+          console.error( '獲取基站列表資訊出錯:', error );
           console.error( 'Error fetching - BS List:', error );
           this.isGetQueryBsListLoading = false; // 出錯時也應隱藏 spinner
         },
@@ -1858,96 +1879,83 @@ export class FieldInfoComponent implements OnInit {
     console.log('getQueryBsList() - End'); // getQueryBsList() end
   }
 
-  displayedBasestations: Basestation[] = []; // 用於控制顯示"場域編輯"中的基站列表 @2024/01/25 Add
-  isCheckboxVisible: boolean = false;        // 控制 Checkbox 顯示的標誌 @2024/01/25 Add
+  displayAllBSFlag: Boolean = false;     // false 表示顯示場域內 BS，true 表示切換後顯示全部 BS @2024/01/26 Add
+  showAllBsButtonText = 'O1 內所有的 BS'; // 控制按鈕文本的屬性
 
-  showAllBsButtonText = '列出 O1 內所有 BS'; // 控制按鈕文本的屬性
-
-  // 切換 Checkbox 的顯示和隱藏 @2024/01/25 Add
-  // toggleCheckboxVisibility() {
-
-  //   this.isCheckboxVisible = !this.isCheckboxVisible;
-
-  //   // 更新按鈕文本
-  //   this.showAllBsButtonText = this.isCheckboxVisible ? '只顯示場域內有的 BS' : '列出 O1 內所有 BS';
-    
-  //   this.updateDisplayedBasestations();
-  // }
-
-  // 切換 Checkbox 的顯示和隱藏 @2024/01/26 Add
-  toggleCheckboxVisibility() {
-    this.isCheckboxVisible = !this.isCheckboxVisible;
+  // 切換顯示所有基站的可見性 @2024/01/26 Add
+  toggleAllBSVisibility() {
+    // 切換旗標狀態
+    this.displayAllBSFlag = !this.displayAllBSFlag;
 
     // 更新按鈕文本
-    this.showAllBsButtonText = this.isCheckboxVisible ? '只顯示場域內有的 BS' : '列出 O1 內所有 BS';
-    
-    // 啟用所有 Checkbox
-    if (this.isCheckboxVisible) {
-      this.sortDisplayedBasestations();   // 調用排序函數
-    } else {
-      this.updateDisplayedBasestations(); // 顯示已選中的基站
-    }
+    this.showAllBsButtonText = this.displayAllBSFlag ? '場域內的 BS' : 'O1 內所有的 BS';
+
+    // 根據旗標狀態切換 displayedBasestations 的數據來源
+    this.displayedBasestations = this.displayAllBSFlag 
+                                ? this.SortAllBasestationsInO1 
+                                : this.BasestationsInField;
   }
 
-  // 新增一個排序函數 @2024/01/26 Add
-  sortDisplayedBasestations() {
-    console.log(" 已觸發sortDisplayedBasestations() ");
-    this.displayedBasestations.sort((a, b) => {
-      // 首先根據狀態將紅燈狀態的基站放到前面
-      if ((a.status === 0 || a.status === 1) && (b.status !== 0 && b.status !== 1)) {
+  // 顯示所有 BS 時用的排序函數 @2024/01/26 Add
+  // SortAllBSInO1 函數接受一個 Basestation 類型的陣列作為參數，
+  // 如果沒有傳入參數，則預設為一個空陣列。
+  SortAllBSInO1( sortBasestations: Basestation[] = [] ) {
+    console.log( "已觸發 SortAllBSInO1()" );
+
+    // 對傳入的 sortBasestations 陣列進行排序
+    sortBasestations.sort( ( a, b ) => {
+      // 首先比較基站的狀態。如果 a 基站的狀態為 0 或 1（紅燈狀態，代表有問題或不可用），
+      // 而 b 基站的狀態不是 0 或 1，則 a 應該排在 b 之前（-1 表示 a 在排序中應該出現在 b 之前）。
+      if (( a.status === 0 || a.status === 1 ) && ( b.status !== 0 && b.status !== 1 )) {
         return -1;
-      } else if ((b.status === 0 || b.status === 1) && (a.status !== 0 && a.status !== 1)) {
+      } else if (( b.status === 0 || b.status === 1 ) && ( a.status !== 0 && a.status !== 1 )) {
+        // 如果 b 基站的狀態為 0 或 1 而 a 不是，則 b 應該排在 a 之前。
         return 1;
       }
 
-      // 如果狀態相同，則已選中的基站排序在前
-      if (a.selected && !b.selected) {
+      // 如果基站 a 和 b 的狀態相同，則進一步比較它們是否被選中（selected）。
+      // 如果 a 被選中而 b 沒有，則 a 應排在 b 之前。
+      if ( a.selected && !b.selected ) {
         return -1;
-      } else if (b.selected && !a.selected) {
+      } else if ( b.selected && !a.selected ) {
+        // 如果 b 被選中而 a 沒有，則 b 應排在 a 之前。
         return 1;
       }
 
-      // 最後按照原始順序排序
-      return this.bsList.basestation.findIndex(bs => bs.id === a.id) - this.bsList.basestation.findIndex(bs => bs.id === b.id);
+      // 如果基站 a 和 b 的狀態以及選中狀況相同，則根據它們在原始 bsList.basestation 陣列中的順序進行排序。
+      // 找到 a 和 b 在原始陣列中的索引，並返回它們的差值，這將保持它們的原始順序。
+      return this.bsList.basestation.findIndex( bs => bs.id === a.id ) - this.bsList.basestation.findIndex( bs => bs.id === b.id );
     });
+
+    // 返回排序後的陣列
+    return sortBasestations;
   }
 
-  // @2024/01/25 Add
+  // @2024/01/26 Update
+  // 當用戶改變基站選中狀態的事件處理函數 
   onBsSelectionChange( bsId: string, event: Event ) {
+    // 從事件獲取 Checkbox 的選中狀態
     const isChecked = ( event.target as HTMLInputElement ).checked;
+
+    // 檢查 Checkbox 是否被勾選
     if ( isChecked ) {
-      // 如果複選框被勾選，將基站 ID 添加到selectedBsIds陣列
-      if (!this.selectedBsIds.includes( bsId )) {
-        this.selectedBsIds.push( bsId );
+      // 如果 Checkbox 被勾選，進行檢查以確定該基站 ID 是否不在 selectedBsInfos 陣列中
+      if ( !this.selectedBsInfos.some( bi => bi.id === bsId ) ) {
+        // 如果該 ID 不在陣列中，則將其添加到陣列中
+        this.selectedBsInfos.push({ id: bsId });
       }
     } else {
-      // 如果複選框被取消勾選，將基站 ID 從 selectedBsIds 陣列移除
-      this.selectedBsIds = this.selectedBsIds.filter( id => id !== bsId );
+      // 如果 Checkbox 沒有被勾選，從 selectedBsInfos 陣列中移除對應的基站 ID
+      this.selectedBsInfos = this.selectedBsInfos.filter( bi => bi.id !== bsId );
     }
-    console.log("In onBsSelectionChange(),\n 所有被選中的基站 id 現在有", this.selectedBsIds )
+    // 在控制台輸出當前所有被選中的基站的 ID，以供調試使用
+    console.log( "In onBsSelectionChange(),\n 所有被選中的基站信息現在有", this.selectedBsInfos );
 
-    // 可以在這裡進行進一步的處理，例如發送更新至伺服器等
-  }
-
-  // 檢查基站是否應該被選中 @2024/01/25 Add
-  checkIfSelected( bsId: string ): boolean {
-    return this.fieldInfo.bsinfo.some( bs => bs.id === bsId );
-  }
-
-  // 更新 displayedBasestations 以顯示或隱藏基站 @2024/01/25 Add
-  updateDisplayedBasestations() {
-    if ( this.isCheckboxVisible ) {
-        // 如果應該顯示 Checkbox，則顯示所有基站
-        this.displayedBasestations = this.bsList.basestation;
-    } else {
-        // 如果不顯示 Checkbox，則只顯示已選中的基站
-        this.displayedBasestations = this.bsList.basestation.filter( bs => this.checkIfSelected( bs.id ) );
-    }
-    console.log( "In updateDisplayedBasestations(),\n 現在被選中的基站 id 目前有", this.selectedBsIds )
+    // 這裡可以添加額外的邏輯，比如將選中狀態的改變發送到伺服器等
   }
 
   // @2024/01/25 Add
-  SubmitForUpdateFieldEditing(){
+  UpdateFieldEditing_Submit(){
 
     const submitData = {
     };
