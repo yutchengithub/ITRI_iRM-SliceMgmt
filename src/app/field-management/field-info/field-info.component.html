@@ -655,7 +655,7 @@
 									</td> -->
 									<!-- <td *ngIf="isCheckboxVisible"> -->
 									<td>
-										<input type="checkbox" [checked]="opt.selected" (change)="onBsSelectionChange( opt.id, $event )">
+										<input type="checkbox" [checked]="opt.selected" (change)="onBsSelectionChange(opt.id, $event)" [disabled]="!isCheckboxVisible">
 									</td>  
 									<td>
 										<!-- 顯示 "基站名稱" -->

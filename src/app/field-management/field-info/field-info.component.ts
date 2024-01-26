@@ -1864,14 +1864,52 @@ export class FieldInfoComponent implements OnInit {
   showAllBsButtonText = '列出 O1 內所有 BS'; // 控制按鈕文本的屬性
 
   // 切換 Checkbox 的顯示和隱藏 @2024/01/25 Add
-  toggleCheckboxVisibility() {
+  // toggleCheckboxVisibility() {
 
+  //   this.isCheckboxVisible = !this.isCheckboxVisible;
+
+  //   // 更新按鈕文本
+  //   this.showAllBsButtonText = this.isCheckboxVisible ? '只顯示場域內有的 BS' : '列出 O1 內所有 BS';
+    
+  //   this.updateDisplayedBasestations();
+  // }
+
+  // 切換 Checkbox 的顯示和隱藏 @2024/01/26 Add
+  toggleCheckboxVisibility() {
     this.isCheckboxVisible = !this.isCheckboxVisible;
 
     // 更新按鈕文本
     this.showAllBsButtonText = this.isCheckboxVisible ? '只顯示場域內有的 BS' : '列出 O1 內所有 BS';
     
-    this.updateDisplayedBasestations();
+    // 啟用所有 Checkbox
+    if (this.isCheckboxVisible) {
+      this.sortDisplayedBasestations();   // 調用排序函數
+    } else {
+      this.updateDisplayedBasestations(); // 顯示已選中的基站
+    }
+  }
+
+  // 新增一個排序函數 @2024/01/26 Add
+  sortDisplayedBasestations() {
+    console.log(" 已觸發sortDisplayedBasestations() ");
+    this.displayedBasestations.sort((a, b) => {
+      // 首先根據狀態將紅燈狀態的基站放到前面
+      if ((a.status === 0 || a.status === 1) && (b.status !== 0 && b.status !== 1)) {
+        return -1;
+      } else if ((b.status === 0 || b.status === 1) && (a.status !== 0 && a.status !== 1)) {
+        return 1;
+      }
+
+      // 如果狀態相同，則已選中的基站排序在前
+      if (a.selected && !b.selected) {
+        return -1;
+      } else if (b.selected && !a.selected) {
+        return 1;
+      }
+
+      // 最後按照原始順序排序
+      return this.bsList.basestation.findIndex(bs => bs.id === a.id) - this.bsList.basestation.findIndex(bs => bs.id === b.id);
+    });
   }
 
   // @2024/01/25 Add
