@@ -50,7 +50,7 @@ export class MainComponent implements OnInit {
     });
 
     // 初始時根據語言加載對應的樣式表 @2024/01/24 Add
-    this.languageService.changeLanguageStylesheet( this.languageService.language );
+    //this.languageService.changeLanguageStylesheet( this.languageService.language );
 
     // init menu foucs
     this.reloadTitle(this.router.url);
