@@ -102,6 +102,8 @@ export const Enlanguage = {
   'field.editBSs':'Adjust BS Field Allocation',     // @2024/01/28 Add
   'field.cancelEditBSs':'Cancel',                   // @2024/01/28 Add
   'field.selectBSs':'Choose BSs in field',          // @2024/01/18 Add
+  'field.confirmFieldEditField': "Confirm to make these field changes?",  // @2024/01/28 Add
+  
   'field.indoorMapUpload':'Upload Indoor Map',      // @2024/01/18 Update
   'field.indoorMapNotUploaded': 'Indoor map not yet uploaded',      // @2024/01/18 Update
   'field.confirmDeleteindoorMap':'Sure to remove the indoor map?',  // @2024/01/19 Add

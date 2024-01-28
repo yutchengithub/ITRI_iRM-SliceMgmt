@@ -688,7 +688,7 @@
 
 		<div class="buttons">
 			<!-- @2024/01/28 Update -->
-			<button type="button" (click)="UpdateFieldEditing_Submit()" mat-dialog-close>
+			<button type="button" (click)="openConfirmFieldEditWindow()" mat-dialog-close>
 				{{ languageService.i18n['confirm'] }}
 			</button>
 			<!-- @2024/01/28 Update -->
@@ -716,4 +716,23 @@
 		  </button>
 		</div>
 	</ng-template>	  
+
+	<!-- 確認視窗 for Field Editing @2024/01/28 Add -->
+	<ng-template #confirmFieldEditWindow>
+		<div>
+		<h5>{{ languageService.i18n['confirm'] }}</h5>
+		</div>  
+		<label class="label-centered">
+			{{ languageService.i18n['field.confirmFieldEditField'] }} <!-- 更改文字以適應場域編輯的上下文 -->
+		</label>
+		<div class="buttons buttons-centered">
+		<button type="button" (click)="UpdateFieldEditing_Submit()" mat-dialog-close>
+			{{ languageService.i18n['confirm'] }}
+		</button>
+		<button type="button" mat-dialog-close>
+			{{ languageService.i18n['cancel'] }}
+		</button>
+		</div>
+	</ng-template>
+  
 	  

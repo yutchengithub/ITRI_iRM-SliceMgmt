@@ -787,6 +787,8 @@ export class FieldInfoComponent implements OnInit {
     console.log('Start fetching field info');   // 開始獲取場域資訊
     clearTimeout(this.refreshTimeout);
 
+    this.isMarkersLoading = true;
+    
     if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
 
       // For testing with local files
@@ -2097,6 +2099,29 @@ export class FieldInfoComponent implements OnInit {
     this.fieldEditWindowRef.close(); // 關閉場域編輯視窗
     this.fieldEditForm.reset();      // 重置整個場域編輯表單
   }
+
+  // 用於控制 field Edit 確認視窗 @2024/01/28 Add
+  @ViewChild('confirmFieldEditWindow') confirmFieldEditWindow: any;
+  confirmFieldEditWindow_Ref!: MatDialogRef<any>;
+  confirmFieldEditWindow_Validated = false;
+
+  // 開啟確認視窗 - 場域編輯 @2024/01/28 Add
+  openConfirmFieldEditWindow() {
+    this.confirmFieldEditWindow_Validated = false;
+    this.confirmFieldEditWindow_Ref = this.dialog.open(this.confirmFieldEditWindow, {
+      id: 'confirmFieldEditWindow',
+      // width 和 height 可以根據需要設置或去掉
+      // width: '300px', 
+      // height: '200px'
+    });
+
+    // 訂閱對話框關閉後的事件
+    this.confirmFieldEditWindow_Ref.afterClosed().subscribe(() => {
+      // 這裡可以添加當對話框關閉後的邏輯
+      this.confirmFieldEditWindow_Validated = false;
+    });
+  }
+
 
 
   // For upload Field Image @2024/01/18 Add

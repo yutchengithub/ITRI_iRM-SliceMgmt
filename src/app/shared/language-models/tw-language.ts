@@ -100,7 +100,9 @@ export const TwLanguage = {
   'field.indoorMap':'室內地圖',               // @2024/01/18 Add
   'field.editBSs':'調整基站分配',              // @2024/01/28 Add
   'field.cancelEditBSs':'取消',               // @2024/01/28 Add
-  'field.selectBSs':'選擇基站',               // @2024/01/18 Add
+  'field.selectBSs':'選擇基站',                // @2024/01/18 Add
+  'field.confirmFieldEditField': "確認進行場域變更？", // @2024/01/28 Add
+
   'field.indoorMapUpload':'室內地圖上傳',      // @2024/01/18 Update
   'field.indoorMapNone':'未有室內地圖',        // @2024/01/18 Add
   'field.indoorMapNotUploaded': '室內地圖尚未上傳',      // @2024/01/18 Update
