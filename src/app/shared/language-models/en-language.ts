@@ -99,6 +99,8 @@ export const Enlanguage = {
   'field.eastBound':'East Boundary',                // @2024/01/11 Add
   'field.notificationNum':'Notification Number',    // @2024/01/11 Add
   'field.fieldBoundsEx':'Field Boundary Diagram',   // @2024/01/18 Add
+  'field.editBSs':'Adjust BS Field Allocation',     // @2024/01/28 Add
+  'field.cancelEditBSs':'Cancel',                   // @2024/01/28 Add
   'field.selectBSs':'Choose BSs in field',          // @2024/01/18 Add
   'field.indoorMapUpload':'Upload Indoor Map',      // @2024/01/18 Update
   'field.indoorMapNotUploaded': 'Indoor map not yet uploaded',      // @2024/01/18 Update

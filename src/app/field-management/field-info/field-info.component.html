@@ -486,10 +486,10 @@
 				</li>
 			</ul>
 			<div class="buttons">
-				<button type="button" (click)="SubmitForModifyConfig_Submit( displayBsInfo!.name, displayBsInfo!.bstype )">
+				<button type="button" (click)="ModifyConfig_Submit( displayBsInfo!.name, displayBsInfo!.bstype )">
 					{{ languageService.i18n['confirm'] }}
 				</button>
-				<button type="button" (click)="resetForm( displayBsInfo!.name )" mat-dialog-close>
+				<button type="button" (click)="resetBSModifyConfigForm( displayBsInfo!.name )" mat-dialog-close>
 					{{ languageService.i18n['cancel'] }}
 				</button>
 			</div>
@@ -566,8 +566,8 @@
 						<label class="label-position leftUp">[ {{ fieldBounds.north }}, {{ fieldBounds.west }} ]</label>
 						<label class="label-position rightUp">[ {{ fieldBounds.north }}, {{ fieldBounds.east }} ]</label>
 						<img title="{{ languageService.i18n['field.fieldBoundsEx'] }}" src="/assets/img/fieldBounds_exampleImage.png" alt="{{ languageService.i18n['field.fieldBoundsEx'] }}">
-						<label class="label-position leftDown">[ {{ fieldBounds.south }}, {{ fieldBounds.east }} ]</label>
-						<label class="label-position rightDown">[ {{ fieldBounds.south }}, {{ fieldBounds.west }} ]</label>
+						<label class="label-position rightDown">[ {{ fieldBounds.south }}, {{ fieldBounds.east }} ]</label>
+						<label class="label-position leftDown">[ {{ fieldBounds.south }}, {{ fieldBounds.west }} ]</label>
 					</div>	
 					<div style="position: relative; top: 70px;">
 						<span>{{ languageService.i18n['field.indoorMap'] }}</span>
@@ -607,12 +607,12 @@
 			<!-- BS List -->
 			<ul *ngIf="fieldEditType === 'BS_List'">
 				
-				<!-- 控制顯示所有 BS/隱藏未在場域的 BS 按鈕 @2024/01/26 Update -->
+				<!-- 控制顯示所有 BS/隱藏未在場域的 BS 按鈕 @2024/01/28 Update -->
 				<button mat-flat-button
 						[ngClass]="{'field-Edit-bsList-button-active': displayAllBSFlag,
 									 'field-Edit-bsList-button-inactive': !displayAllBSFlag}"
 						(click)="toggleAllBSVisibility()">
-					{{ showAllBsButtonText }}
+						{{ displayAllBSFlag ? languageService.i18n['field.cancelEditBSs'] : languageService.i18n['field.editBSs'] }}
 				</button>
 
 				<!-- 基站列表 For field Edit @2024/01/11 Add by yuchen -->	
@@ -687,17 +687,19 @@
 		</div>		
 
 		<div class="buttons">
-			<button type="button" mat-dialog-close>
+			<!-- @2024/01/28 Update -->
+			<button type="button" (click)="UpdateFieldEditing_Submit()" mat-dialog-close>
 				{{ languageService.i18n['confirm'] }}
 			</button>
-			<button type="button" mat-dialog-close>
+			<!-- @2024/01/28 Update -->
+			<button type="button" (click)="resetFieldEditingForm( fieldName )" mat-dialog-close>
 				{{ languageService.i18n['cancel'] }}
 			</button>
 		</div>
 
 	</ng-template>
 
-	<!-- Window of confirm-delete-dialog for Field Editing @2024/01/19 Add -->
+	<!-- Window of confirm-delete-dialog for Field Editing @2024/01/28 Update -->
 	<ng-template #confirmDeleteWindow_For_fieldEdit>
 		<div>
 		  <h5>{{ languageService.i18n['confirm'] }}</h5>
@@ -706,7 +708,7 @@
 		  {{ languageService.i18n['field.confirmDeleteindoorMap'] }}
 		</label>
 		<div class="buttons buttons-centered">
-		  <button type="button" (click)="removeFieldImage()" mat-dialog-close>
+		  <button type="button" (click)="removeIndoorImage()" mat-dialog-close>
 			{{ languageService.i18n['confirm'] }}
 		  </button>
 		  <button type="button" mat-dialog-close>

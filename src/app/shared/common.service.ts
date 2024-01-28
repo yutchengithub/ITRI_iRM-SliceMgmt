@@ -637,7 +637,7 @@ export class CommonService {
   // @12/07 Update by yuchen
   fieldInfo: FieldInfo = {
 
-        "id": "b3035b3edf9f4b3e8bee",
+        "id": "aa520ec8e5074f54b77d",
         "name": "itri-field1",
         "phone": "0912345678",
         "fieldposition1": "[121.049825,24.778037]",
@@ -646,7 +646,7 @@ export class CommonService {
         "fieldposition4": "[121.049825,24.770575]",
         "bsinfo": [
           {
-            "id": "81e226c5a61d4409a923",
+            "id": "97a606c4994344e09d3b",
             "name": "BS01",
             "accessibility": "100.0",
             "mobility": "74.37",
@@ -667,7 +667,7 @@ export class CommonService {
             }
           },
           {
-            "id": "a767b4af84e24d6490e2",
+            "id": "c9bb081540ea4752982f",
             "name": "BS02",
             "accessibility": null,
             "mobility": null,
@@ -761,7 +761,7 @@ export class CommonService {
   fieldList: FieldList = {
     fields: [
       {
-        "id": "b3035b3edf9f4b3e8bee",
+        "id": "aa520ec8e5074f54b77d",
         "name": "itri-field1",
         "phone": "0912345678",
         "fieldposition1": "[121.044734,24.774227]",
@@ -801,7 +801,7 @@ export class CommonService {
         "alarmWarningNum": 18212
       },
       {
-        "id": "a542f7ab40a24ec48e84",
+        "id": "aa520ec8e5074f54b77d",
         "name": "itri-field2",
         "phone": "0912345678",
         "fieldposition1": "[121.044734,24.774227]",
@@ -841,7 +841,7 @@ export class CommonService {
         "alarmWarningNum": 100
       },
       {
-        "id": "a542f7ab40a24ec48e84",
+        "id": "aa520ec8e5074f54b77d",
         "name": "itri-field3",
         "phone": "0912345678",
         "fieldposition1": "[121.044734,24.774227]",

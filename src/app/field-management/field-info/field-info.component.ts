@@ -246,7 +246,7 @@ export class FieldInfoComponent implements OnInit {
   removeOverlay() {
 
     // 檢查 overlay 物件是否已經被創建
-    if (this.overlay) {
+    if ( this.overlay ) {
       this.overlay.setMap( null ); // 將 overlay 從 Google 地圖上移除
       this.overlay = null;         // 將 overlay 物件設置為 null，釋放資源並避免內存洩漏
       this.currentOverlayType = OverlayType.None;   // 重置當前 overlay 類型為 None
@@ -297,7 +297,7 @@ export class FieldInfoComponent implements OnInit {
     // 檢查 fieldImageOverlay 物件是否已經被創建
     if ( this.fieldImageOverlay ) {
       this.fieldImageOverlay.setMap( null ); // 將 fieldImageOverlay 從 Google 地圖上移除
-      this.fieldImageOverlay = null;       // 將 fieldImageOverlay 物件設置為 null，釋放資源並避免內存洩漏
+      this.fieldImageOverlay = null;         // 將 fieldImageOverlay 物件設置為 null，釋放資源並避免內存洩漏
     }
   }
 
@@ -358,7 +358,7 @@ export class FieldInfoComponent implements OnInit {
     console.log("The click button is:", buttonId)
 
      // 基於 fieldImage 按鈕的當前狀態決定顯示或隱藏 overlay
-    if (this.activeButton_fieldImage === null) {
+    if ( this.activeButton_fieldImage === null ) {
       this.activeButton_fieldImage = buttonId;
       this.fieldImageOverlayVisible = true;  // 設置為 true 以顯示 Field image 的 overlay
       this.getfieldImage();        
@@ -1097,7 +1097,7 @@ export class FieldInfoComponent implements OnInit {
       },
       error: (error) => {
 
-        // 如果在請求過程中出現錯誤，則在控制台輸出錯誤信息
+        // 如果在請求過程中出現錯誤，則在控制台輸出錯誤訊息
         console.error('Error fetching BS Infos:', error);
         this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
       },
@@ -1164,12 +1164,23 @@ export class FieldInfoComponent implements OnInit {
     return simplified;
   }
 
-  // @2024/01/11 Update
+  // @2024/01/27 Update
   // 函數定義：將 BSInfo_dist 類型轉換為 SimplifiedBSInfo 類型的數組
   convertDistBsInfoToSimplifiedFormat(Dist_bsInfo: BSInfo_dist): SimplifiedBSInfo[] {
 
+    // 首先檢查 Dist_bsInfo.info 是否為陣列 @2024/01/27 Add
+    if ( !Array.isArray( Dist_bsInfo.info ) ) {
+      // 如果不是陣列，你可以選擇拋出一個錯誤或返回一個空數組
+      // throw new Error('Dist_bsInfo.info is not an array');
+      // 或者
+      console.error('Dist_bsInfo.info is not an array:', Dist_bsInfo.info);
+      return [];
+    }
+
     // 創建一個 SimplifiedBSInfo 數組來存放每個子基站的簡化訊息
     const simplifiedInfos: SimplifiedBSInfo[] = Dist_bsInfo.info.map(subBsInfo => {
+
+      console.log()
 
       // 為當前子基站尋找相應的 ANR 訊息，使用子基站的 nci 值作為鍵
       const anrKey = subBsInfo.nci;
@@ -1363,7 +1374,7 @@ export class FieldInfoComponent implements OnInit {
   // 設定告警種類文字 @12/07 Update by yuchen
   severityText(severity: string): string {
     const severityKey = `field.${severity.toLowerCase()}Fault`;
-    return this.languageService.i18n[severityKey];
+    return this.languageService.i18n[ severityKey ];
   }
 
   // 設定告警種類給 CSS 選擇器用文字 @12/07 Add by yuchen
@@ -1393,7 +1404,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
-// Modify Configuration Setting @2024/01/05 Add ↓
+// BS Modify Configuration Setting @2024/01/05 Add ↓
 
   @ViewChild('modifyConfigWindow') modifyConfigWindow: any;
   modifyConfigWindowRef!: MatDialogRef<any>;
@@ -1454,10 +1465,10 @@ export class FieldInfoComponent implements OnInit {
     return !isNaN(parsed) ? parsed * 1000000 : defaultValue;
   }
 
-  modifyConfig_click_NUM = 0;
+  modifyConfig_click_NUM: number = 0;
   // @2024/01/15 Update 
-  SubmitForModifyConfig_Submit( bsName: string ,bsType: number ) {
-    console.log( "SubmitForModifyConfig_Submit() - Start" );
+  ModifyConfig_Submit( bsName: string ,bsType: number ) {
+    console.log( "ModifyConfig_Submit() - Start" );
 
     // 在方法開始時重置 'isNothingChanged'
     this.isNothingChanged = false;
@@ -1696,124 +1707,183 @@ export class FieldInfoComponent implements OnInit {
 
     // 結尾重置 'isNothingChanged'
     this.isNothingChanged = false;
-    console.log( "SubmitForModifyConfig_Submit() - End" );
+    console.log( "ModifyConfig_Submit() - End" );
   }
   
-  // 點擊 Cancel 按鈕的行為 @2024/01/10 Add
-  resetForm( bsName: string ) {
+  // 點擊 BS Modify Configuration 視窗的 Cancel 按鈕行為 @2024/01/28 Update
+  resetBSModifyConfigForm( bsName: string ) {
     console.log(`Modification for BS '${bsName}' has been cancelled.`);
     this.modifyConfigForm.reset();  // 重置整個表單
   }
   
-// Modify Configuration Setting @2024/01/05 Add ↑
+// BS Modify Configuration Setting @2024/01/05 Add ↑
 
 
 // For Field Editing Setting @2024/01/11 Add ↓
 
+  // 創建表單組，用於場域編輯
   fieldEditForm!: FormGroup;
   createFieldInfoForm() {
-    this.fieldEditForm  = this.fb.group({
-      fieldName:        new FormControl( this.fieldInfo?.name || '' ), 
-      fieldBound_North: new FormControl( this.fieldBounds?.north || '' ),
-      fieldBound_South: new FormControl( this.fieldBounds?.south || '' ),
-      fieldBound_West:  new FormControl( this.fieldBounds?.west || '' ),
-      fieldBound_East:  new FormControl( this.fieldBounds?.east || '' ),
-      phoneNumber:      new FormControl( this.fieldInfo?.phone || '' )
+    // 初始化表單控件
+    this.fieldEditForm = this.fb.group({
+      fieldName: new FormControl(this.fieldInfo?.name || ''),           // 場域名稱，默認值為現有場域名稱或空字串
+      fieldBound_North: new FormControl(this.fieldBounds?.north || ''), // 北邊界，默認值為現有北邊界或空字串
+      fieldBound_South: new FormControl(this.fieldBounds?.south || ''), // 南邊界，默認值為現有南邊界或空字串
+      fieldBound_West: new FormControl(this.fieldBounds?.west || ''),   // 西邊界，默認值為現有西邊界或空字串
+      fieldBound_East: new FormControl(this.fieldBounds?.east || ''),   // 東邊界，默認值為現有東邊界或空字串
+      phoneNumber: new FormControl(this.fieldInfo?.phone || '')         // 聯絡電話，默認值為現有聯絡電話或空字串
     });
   }
 
+  // 引用場域編輯視窗組件
   @ViewChild('fieldEditWindow') fieldEditWindow: any;
   fieldEditWindowRef!: MatDialogRef<any>;
   fieldEditFormValidated = false;
 
-  // @2024/01/18 Update
+  // 打開場域編輯視窗 @2024/01/28 Update
   openfieldEditWindow() {
 
-    // 確保數據已經獲取
+    // 確保場域資訊和邊界資訊已獲取
     if( this.fieldInfo && this.fieldBounds ) {
+
+      // 使用現有場域資訊和邊界資訊更新表單
       this.fieldEditForm.patchValue({
-        fieldName:        this.fieldInfo.name,
-        fieldBound_North: this.fieldBounds.north,
-        fieldBound_South: this.fieldBounds.south,
-        fieldBound_West:  this.fieldBounds.west,
-        fieldBound_East:  this.fieldBounds.east,
-        phoneNumber:      this.fieldInfo.phone
+          fieldName:        this.fieldInfo.name,
+          fieldBound_North: this.fieldBounds.north,
+          fieldBound_South: this.fieldBounds.south,
+          fieldBound_West:  this.fieldBounds.west,
+          fieldBound_East:  this.fieldBounds.east,
+          phoneNumber:      this.fieldInfo.phone
       });
     }
 
-    this.fieldEditFormValidated = false;
+    // 表單驗證狀態重置
+    this.fieldEditFormValidated = false; 
+
+    // 打開場域編輯視窗
     this.fieldEditWindowRef = this.dialog.open( this.fieldEditWindow, { 
-      id: 'fieldEditWindow',
-      //width: '800px', 
-      // height: '650px'
+          id: 'fieldEditWindow',
+          // 自定義視窗寬高設置
+          // width: '800px', 
+          // height: '650px'
     } );
+
+    // 訂閱視窗關閉事件，並在關閉時重置表單驗證狀態
     this.fieldEditWindowRef.afterClosed().subscribe(() => {
       this.fieldEditFormValidated = false;
     });
-    
+
+    // 打印當前場域編輯類型頁 
     console.log( "Open the window of field Edit is:", this.fieldEditType )
 
+    this.fieldEditType = 'Field_Infos';    // 每次打開該視窗都預設顯示場域資訊頁       @2024/01/28 Add
+    this.selectedBsInfos = [];             // 每次打開該視窗都初始化 selectedBsInfos @2024/01/28 Add
+    this.isFirstEnterInBSListPage = false; // 每次打開該視窗都初始化該 Flag @2024/01/27 Add
+    this.displayAllBSFlag =  false;        // 每次打開該視窗都初始化該 Flag ( 表只要當接著馬上打開 BS List 頁都是先顯示場域內 BS ) @2024/01/27 Add
+    
+    // 根據旗標狀態切換 displayedBasestations 的數據來源 ( 只要打開該視窗都是先顯示場域內 BS ) 
+    this.displayedBasestations = this.displayAllBSFlag 
+                                  ? this.SortAllBasestationsInO1 
+                                  : this.BasestationsInField;
+
+    this.getQueryBsList(); // 打開該視窗就先載入 BS List 數據  @2024/01/28 Add  
+    
+    // 打印當前場域內選中的基站 ID
+    console.log("In openfieldEditWindow(),\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos )
+
+    // 取得場域圖片
     this.getfieldImage_forFieldEdit();
   }
 
-  fieldEditType: string = 'Field_Infos';   // 預設選擇 "Field Infos"  
-  //fieldEditType: string = 'BS_List';     // 預設選擇 "BS List"   
-
+  fieldEditType: string = 'Field_Infos';      // 預設選擇 "Field Infos"  
+  //fieldEditType: string = 'BS_List';        // 預設選擇 "BS List"   
+  isFirstEnterInBSListPage: boolean = false;  // 用於檢測是不是第一次進 "BS List" 頁 @2024/01/27 Add
+  
+  // 變更 field Edit 視窗顯示類型的函數
   changefieldEditType( e: MatButtonToggleChange ) {
     console.log( "changefieldEditType() - Start" );
 
-    // 根據當前選擇的 field Edit 類型載入數據
+    // 根據用戶當前的選擇來設定 field Edit 視窗顯示的類型
     if ( e.value === 'Field_Infos' ) {
+      // 如果選擇的是場域資訊頁面
 
-      this.fieldEditType = 'Field_Infos';
-      this.getfieldImage_forFieldEdit();
-
+      this.fieldEditType = 'Field_Infos';  // 設定場域編輯類型為場域資訊
+      this.getfieldImage_forFieldEdit();    // 獲取場域圖片
+      
     } else if ( e.value === 'BS_List' ) {
+      // 如果選擇的是基站列表頁面
 
-      this.fieldEditType = 'BS_List';
-      //this.isCheckboxVisible = false; // 每次切換該頁面時，都預設不顯示 Checkbox 欄位 @2024/01/25 Add
-      this.displayAllBSFlag = false;      // 每次切換該頁面時，都預設不顯示 All BS  @2024/01/26 Add
-      this.getQueryBsList();            // 載入 BS List 數據
+      this.fieldEditType = 'BS_List';   // 設定場域編輯類型為基站列表
+      //this.displayAllBSFlag = false;  // 每次切換該頁面時，都預設不顯示 All BS  @2024/01/26 Add
+
+      // @2024/01/27 Add
+      // 如是進入 BS_List 的第一次，則載入數據 
+      if ( !this.isFirstEnterInBSListPage ) {
+          
+          this.getQueryBsList();                // 載入 BS List 數據
+          this.isFirstEnterInBSListPage = true; // 切換該 Flag ( 表示已不是第一次進入該頁面 )
+      } else {
+
+        // @2024/01/28 Add
+        // 如果不是第一次該頁面，則同步基站選中狀態 
+        this.syncBasestationSelection();
+      }
+      
+      // 否則不需要做任何事情，保留 displayAllBSFlag 和 selectedBsInfos 的狀態
     }
 
-    // 更新當前類型，以便知道哪個 Field Edit 類型被選中
-    // Set the Field Edit type to display after tab switch
-    // this.fieldEditType = e.value;
-    console.log('頁面切換後，顯示的 Field Edit 類型:', this.fieldEditType+
-                  '\n Field Edit type displayed after tab switch:', this.fieldEditType );
+    // 輸出場域編輯類型的變更結果
+    console.log("頁面切換後，顯示的 Field Edit 類型:", this.fieldEditType+
+                  "\n Field Edit type displayed after tab switch:", this.fieldEditType );
 
-    console.log( "changefieldEditType() - End, the window of field Edit is", this.fieldEditType );
+    // 輸出當前選中的基站 ID
+    console.log("In changefieldEditType(),\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos )
+    
+    // 函數結束的日誌
+    console.log( "changefieldEditType() - End,\n the window of field Edit is", this.fieldEditType );
   }
+
+  // @2024/01/28 Add
+  // 用於確保在顯示"BS List"頁前，每個 BS 的選中狀態與 selectedBsInfos 陣列同步
+  private syncBasestationSelection() {
+    // 遍歷當前顯示的 BS 列表
+    this.displayedBasestations.forEach( bs => {
+      // 更新每個 BS 的選中狀態，檢查它是否存在於 selectedBsInfos 陣列中
+      // 如果基站的 id 與 selectedBsInfos 中某個元素的 id 相符，則將該基站的 selected 屬性設為 true
+      bs.selected = this.selectedBsInfos.some( selectedBs => selectedBs.id === bs.id );
+    });
+  }
+
 
   bsList: BSList = {} as BSList;   // @2024/01/16 Add
   selectedBsInfos: Bsinfo[] = [];  // 用於存儲選中的基站 ID @2024/01/26 Add
   isGetQueryBsListLoading = false; // 用於表示加載 BS List 的 flag，初始設置為 false @2024/01/17 Add for Progress Spinner
 
-  displayedBasestations: Basestation[] = [];        // 用於控制顯示於"場域編輯"頁面上的所有 BS 列表 @2024/01/25 Add
-  BasestationsInField: Basestation[] = [];          // 用於存儲場域內的 BS  @2024/01/26 Add
-  SortAllBasestationsInO1: Basestation[] = [];      // 用於存儲排序過 O1 內的所有 BS 列表 @2024/01/26 Add
+  displayedBasestations: Basestation[] = [];    // 用於控制顯示於"場域編輯"頁面上的所有 BS 列表 @2024/01/25 Add
+  BasestationsInField: Basestation[] = [];      // 用於存儲場域內的 BS  @2024/01/26 Add
+  SortAllBasestationsInO1: Basestation[] = [];  // 用於存儲排序過 O1 內的所有 BS 列表 @2024/01/26 Add
 
   // Get the BS List in the O1 System @2024/01/26 Update
   getQueryBsList() {
-    console.log('getQueryBsList() - Start'); // getQueryBsList() 啟動 
+    console.log('getQueryBsList() - Start');       // getQueryBsList() 啟動 
     console.log('Start fetching info of Bs List'); // 開始獲取 BS List 資訊
     clearTimeout(this.refreshTimeout);
 
     this.isGetQueryBsListLoading = true; // 開始顯示 Spinner 表載入 BS List 數據中
 
     // 檢查是否為 local 環境
-    if (this.commonService.isLocal) { 
+    if ( this.commonService.isLocal ) { 
       // For testing with local files
       console.log('Start fetching BS List in Local'); // 開始獲取 Local BS List 資訊
 
       // 模擬從 Local files 獲取數據並初始化 selected 屬性
       this.bsList = this.bsList_LocalFiles.bsList_local;
       this.bsList.basestation.forEach(bs => {
-        // 檢查每個基站是否存在於場域內的基站信息中
+        // 檢查每個基站是否存在於場域內的基站訊息中
         bs.selected = this.fieldInfo.bsinfo.some(fbs => fbs.id === bs.id);
 
         // 如果基站已被選中，並且它的 ID 還沒有在 selectedBsInfos 中，則創建一個新的 Bsinfo 對象並添加它
-        if (bs.selected && !this.selectedBsInfos.some(bi => bi.id === bs.id)) {
+        if (bs.selected && !this.selectedBsInfos.some( bi => bi.id === bs.id )) {
           this.selectedBsInfos.push({ id: bs.id });
         }
       });
@@ -1841,7 +1911,7 @@ export class FieldInfoComponent implements OnInit {
           // 遍歷 API 傳回的基站列表 (res.basestation)
           res.basestation.forEach( bs => {
             // 對每個 bs 進行檢查，確定是否它的 ID 出現在另一個陣列 ( this.fieldInfo.bsinfo ) 中，
-            // 這個陣列包含了場域內的基站信息。如果是，則將該 bs 的 'selected' 屬性設置為 true。
+            // 這個陣列包含了場域內的基站訊息。如果是，則將該 bs 的 'selected' 屬性設置為 true。
             bs.selected = this.fieldInfo.bsinfo.some( fbs => fbs.id === bs.id );
 
             // 檢查選中的基站是否已經存在於 selectedBsInfos 陣列中
@@ -1879,16 +1949,14 @@ export class FieldInfoComponent implements OnInit {
     console.log('getQueryBsList() - End'); // getQueryBsList() end
   }
 
-  displayAllBSFlag: Boolean = false;     // false 表示顯示場域內 BS，true 表示切換後顯示全部 BS @2024/01/26 Add
-  showAllBsButtonText = 'O1 內所有的 BS'; // 控制按鈕文本的屬性
+
+  displayAllBSFlag: boolean = false;     // false 表示顯示場域內 BS，true 表示切換後顯示全部 BS @2024/01/26 Add
 
   // 切換顯示所有基站的可見性 @2024/01/26 Add
   toggleAllBSVisibility() {
+
     // 切換旗標狀態
     this.displayAllBSFlag = !this.displayAllBSFlag;
-
-    // 更新按鈕文本
-    this.showAllBsButtonText = this.displayAllBSFlag ? '場域內的 BS' : 'O1 內所有的 BS';
 
     // 根據旗標狀態切換 displayedBasestations 的數據來源
     this.displayedBasestations = this.displayAllBSFlag 
@@ -1904,8 +1972,8 @@ export class FieldInfoComponent implements OnInit {
 
     // 對傳入的 sortBasestations 陣列進行排序
     sortBasestations.sort( ( a, b ) => {
-      // 首先比較基站的狀態。如果 a 基站的狀態為 0 或 1（紅燈狀態，代表有問題或不可用），
-      // 而 b 基站的狀態不是 0 或 1，則 a 應該排在 b 之前（-1 表示 a 在排序中應該出現在 b 之前）。
+      // 首先比較基站的狀態。如果 a 基站的狀態為 0 或 1（ 紅燈狀態，代表有問題或不可用 ），
+      // 而 b 基站的狀態不是 0 或 1，則 a 應該排在 b 之前（ -1 表示 a 在排序中應該出現在 b 之前 ）。
       if (( a.status === 0 || a.status === 1 ) && ( b.status !== 0 && b.status !== 1 )) {
         return -1;
       } else if (( b.status === 0 || b.status === 1 ) && ( a.status !== 0 && a.status !== 1 )) {
@@ -1913,7 +1981,7 @@ export class FieldInfoComponent implements OnInit {
         return 1;
       }
 
-      // 如果基站 a 和 b 的狀態相同，則進一步比較它們是否被選中（selected）。
+      // 如果基站 a 和 b 的狀態相同，則進一步比較它們是否被選中（ selected ）。
       // 如果 a 被選中而 b 沒有，則 a 應排在 b 之前。
       if ( a.selected && !b.selected ) {
         return -1;
@@ -1948,20 +2016,86 @@ export class FieldInfoComponent implements OnInit {
       // 如果 Checkbox 沒有被勾選，從 selectedBsInfos 陣列中移除對應的基站 ID
       this.selectedBsInfos = this.selectedBsInfos.filter( bi => bi.id !== bsId );
     }
-    // 在控制台輸出當前所有被選中的基站的 ID，以供調試使用
-    console.log( "In onBsSelectionChange(),\n 所有被選中的基站信息現在有", this.selectedBsInfos );
+
+    // 輸出當前所有被選中的基站的 ID
+    console.log( "In onBsSelectionChange(),\n 所有被選中的基站訊息現在有", this.selectedBsInfos );
 
     // 這裡可以添加額外的邏輯，比如將選中狀態的改變發送到伺服器等
   }
 
-  // @2024/01/25 Add
-  UpdateFieldEditing_Submit(){
 
-    const submitData = {
+  /** @2024/01/28 Update
+   * 提交場域編輯信息。
+   * 如果是本地模式，則模擬數據更新過程；
+   * 如果不是本地模式，則向伺服器發送更新請求。
+   */
+  UpdateFieldEditing_Submit() {
+    console.log("UpdateFieldEditing_Submit() - Start");
+
+    // 準備提交的數據，按照 ForUpdateField 介面格式化
+    const submitData: ForUpdateField = {
+      // 使用者通過表單界面可調整的部分
+      fieldposition1: `[${this.fieldEditForm.value.fieldBound_East},${this.fieldEditForm.value.fieldBound_North}]`,
+      fieldposition2: `[${this.fieldEditForm.value.fieldBound_West},${this.fieldEditForm.value.fieldBound_North}]`,
+      fieldposition3: `[${this.fieldEditForm.value.fieldBound_West},${this.fieldEditForm.value.fieldBound_South}]`,
+      fieldposition4: `[${this.fieldEditForm.value.fieldBound_East},${this.fieldEditForm.value.fieldBound_South}]`,
+      name: this.fieldEditForm.value.fieldName,  // 從表單中獲取場域名稱
+      bsinfo: this.selectedBsInfos,              // 從先前的選擇中獲取基站信息
+      phone: this.fieldEditForm.value.phoneNumber, // 從表單中獲取聯絡電話
+
+      // 使用者不能調整但需提交的部分
+      session: this.sessionId,  // 使用當前會話 ID
+      id: this.fieldInfo.id,    // 使用場域的唯一識別符
     };
 
-    // 發送 POST 請求
-    this.API_Field.updateField( submitData );
+    // 檢查是否在本地模式運行
+    if ( this.commonService.isLocal ) {
+
+        // 在本地模式下模擬場域更新
+        console.log("本地模擬場域更新，提交的數據:", submitData);
+
+        // 模擬一個響應
+        setTimeout(() => {
+          console.log("本地場域更新成功");
+
+          // 更新成功後重新獲取場域訊息
+          this.getQueryFieldInfo();
+
+        }, 1000); // 假設 1 秒後獲得響應
+
+    } else {
+
+        // 非本地模式，向服務器發送 POST 請求
+        this.API_Field.updateField(submitData).subscribe({
+
+          next: (response) => {
+
+            // 處理成功響應
+            console.log("場域更新成功:", response);
+            
+            // 更新成功後重新獲取場域訊息
+            this.getQueryFieldInfo();
+          },
+          error: (error) => {
+            // 處理錯誤響應
+            console.error("更新場域出錯:", error);
+          }
+        });
+    }
+
+    // The end:
+    this.fieldEditWindowRef.close(); // 關閉場域編輯視窗
+    this.fieldEditForm.reset();      // 重置整個場域編輯表單
+
+    console.log("UpdateFieldEditing_Submit() - End");
+  }
+
+  // 點擊 field Edit 視窗的 Cancel 按鈕行為 @2024/01/28 Add
+  resetFieldEditingForm( fieldName: string ) {
+    console.log(`Edit for Field -'${fieldName}' has been cancelled.`);
+
+    this.fieldEditWindowRef.close(); // 關閉場域編輯視窗
+    this.fieldEditForm.reset();      // 重置整個場域編輯表單
   }
 
 
@@ -1975,26 +2109,41 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // For upload Field Image @2024/01/18 Add
+  // 當在前端選擇了檔案後觸發的事件處理函數，通常用於上傳檔案
   onFileSelected( event: any ) {
+    // 從事件中獲取到選擇的檔案
     const file = event.target.files[0];
-    if (file) {
+    
+    // 如果檔案存在
+    if ( file ) {
+      // 設置加載狀態為 true，通常用來顯示一個載入指示器
       this.isFieldImageOnFieldEditLoading = true;
+      
+      // 調用 API 服務上傳檔案，傳遞場域 ID 和選擇的檔案
       this.API_Field.uploadFieldImage( this.fieldId, file ).subscribe({
-        next: (response) => {
-          console.log('Image uploaded successfully', response);
+        next: ( response ) => {
 
-          // 調用 getfieldImage_forFieldEdit()
+          // 如上傳成功，打印成功訊息和響應
+          console.log( 'Image uploaded successfully', response );
+          
+          // 調用 getfieldImage_forFieldEdit 方法來獲取最新的場域圖像
           this.getfieldImage_forFieldEdit();
-          this.isFieldImageOnFieldEditLoading = false;  // 載入出錯也停止顯示 Spinner
+          
+          // 上傳完成後設置加載狀態為 false，隱藏載入指示器
+          this.isFieldImageOnFieldEditLoading = false;
         },
-        error: (error) => {
-          console.error('Error uploading image', error);
-          // 這裡處理上傳失敗的邏輯
-          this.isFieldImageOnFieldEditLoading = false;  // 載入出錯也停止顯示 Spinner
+        error: ( error ) => {
+
+          // 如上傳過程中出現錯誤，打印錯誤訊息
+          console.error( 'Error uploading image', error );
+          
+          // 這裡可以處理上傳失敗的邏輯，例如顯示錯誤訊息
+          this.isFieldImageOnFieldEditLoading = false;  // 錯誤發生時也應停止顯示載入指示器
         }
       });
     }
   }
+
 
   // 用於控制室內(場域)圖片刪除確認視窗 @2024/01/19 Add
   @ViewChild('confirmDeleteWindow_For_fieldEdit') confirmDeleteWindow_For_fieldEdit: any;
@@ -2017,8 +2166,8 @@ export class FieldInfoComponent implements OnInit {
 
   // 用於記錄 Local 環境下圖片的刪除狀態 @2024/01/24 Add
   removeImageInLocal_flag: boolean = false;
-  // 刪除顯示室內(場域)圖片 @2024/01/24 Update
-  removeFieldImage() {
+  // 刪除顯示室內(場域)圖片 @2024/01/28 Update
+  removeIndoorImage() {
 
     this.isFieldImageOnFieldEditLoading = true;
     
