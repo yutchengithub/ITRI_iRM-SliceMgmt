@@ -3,76 +3,21 @@ import { Component, OnInit, TemplateRef, ViewChild, OnDestroy } from '@angular/c
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+
 import * as _ from 'lodash';
-import { CommonService } from '../shared/common.service';
 import { Subscription } from 'rxjs';
-//import { MatRadioChange } from '@angular/material/radio';
+import { Router } from '@angular/router';
+import { CommonService } from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
 
-export interface OCloudList {
-  id: string;
-  name: string;
-  dmsCount: number;
-  nfCount: number;
-  imsEndpoint: string;
-  deployStatus: string;
-}
+// @2024/01/29 Add for import APIs of Field Management 
+import { apiForField } from '../shared/api/For_Field';
 
-// @11/30 Add by yuchen 
-export interface FieldList {
-  fields: Fields[];
-}
+// @2024/01/29 Add for import interfaces of Field Management 
+import { FieldList, Fields } from '../shared/interfaces/Field/For_queryFieldList';
 
-// @11/30 Add by yuchen 
-export interface Fields {
-  id: string;
-  name: string;
-  phone: string;
-  fieldposition1: string;
-  fieldposition2: string;
-  fieldposition3: string;
-  fieldposition4: string;
-  bsinfo: Bsinfo[];
-  bsNum: number;
-  ueNum: string;
-  coverage: string;
-  accessibility: string;
-  availability: string;
-  mobility: string;
-  retainability: string;
-  energy: string;
-  integrity: Integrity;
-  utilization: Utilization;
-  alarmCriticalNum: number;
-  alarmMajorNum: number;
-  alarmMinorNum: number;
-  alarmWarningNum: number;
-}
-
-// @11/30 Add by yuchen 
-export interface Bsinfo {
-  id: string;
-  name: string;
-}
-
-// @11/30 Add by yuchen 
-export interface Integrity {
-  downlinkDelay: string;
-  uplinkDelay: string;
-  downlinkThrouthput: string;
-  uplinkThrouthput: string;
-}
-
-// @11/30 Add by yuchen 
-export interface Utilization {
-  pdu: string;
-  resourceProcess: string;
-  resourceMemory: string;
-  resourceDisk: string;
-  maxPdu: string;
-}
-
+// @2024/01/29 Add for import local files of Field Management 
+import { localFieldList } from '../shared/local-files/Field/For_queryFieldList';
 
 @Component({
   selector: 'app-field-management',
@@ -87,9 +32,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   selectField!: Fields;                   // @11/30 Add by yuchen
 
   @ViewChild('createModal') createModal: any;
-  @ViewChild('deleteModal') deleteModal: any;
   createModalRef!: MatDialogRef<any>;
-  deleteModalRef!: MatDialogRef<any>;
 
   refreshTimeout!: any;
   refreshTime: number = 5;
@@ -112,6 +55,10 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private router: Router,
     private commonService: CommonService,
+    public API_Field: apiForField,        // @2024/01/29 Add for import API of Field Management 
+    
+    public fieldList_LocalFiles: localFieldList, // @2024/01/29 Add for import Field List Local Files
+
     //private http: HttpClient,
     private fb: FormBuilder,
     public languageService: LanguageService
@@ -141,41 +88,48 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
   // 銷毀 Component 時的清理工作
   ngOnDestroy() {
-    clearTimeout(this.refreshTimeout);
+    clearTimeout( this.refreshTimeout );
 
     // 如存在對 FieldSummaryInfo 的 API 請求訂閱，則取消訂閱以避免內存洩漏
-    if (this.queryFieldList) this.queryFieldList.unsubscribe();
+    if ( this.queryFieldList ) this.queryFieldList.unsubscribe();
   }
 
-  // @11/30 Add by yuchen
+  // @2024/01/29 Update by yuchen
   getQueryFieldList() {
     console.log('getQueryFieldList() - Start');
     this.isLoading = true;        // 開始加載數據時設置為 true @12/28 Add for Progress Spinner 
 
-    clearTimeout(this.refreshTimeout);
+    clearTimeout( this.refreshTimeout );
   
     if ( this.commonService.isLocal ) {
 
       // 本地模式使用本地數據
-      this.fieldList = this.commonService.fieldList;	
+      this.fieldList = this.fieldList_LocalFiles.fieldList;
       this.FieldListDeal();
       this.isLoading = false;     // 數據加載完成，設置為 false @12/28 Add for Progress Spinner
+      
     } else {
 
-      // 使用 commonService 中的 queryFieldList() 發起 HTTP GET 請求
-      this.commonService.queryFieldList().subscribe({
+      // 使用 API_Field 中的 queryFieldList() 發起 HTTP GET 請求
+      this.API_Field.queryFieldList().subscribe({
         next: (res) => {
+
           console.log('getQueryFieldList:', res);
           this.fieldList = res;
           this.FieldListDeal();
+
         },
         error: (error) => {
+
           console.error('Error fetching field info:', error);
           this.isLoading = false; // 發生錯誤時也要設置為 false @12/28 Add for Progress Spinner
+
         },
         complete: () => {
+
           console.log('Field info fetch completed');
           this.isLoading = false; // 加載完成 @12/28 Add for Progress Spinner
+
         }
       });
     }
@@ -193,7 +147,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     console.log('Total items:', this.totalItems);
     
     // 定義一個空陣列，長度等於場域的總數
-    this.nullList = new Array(this.totalItems);
+    this.nullList = new Array( this.totalItems );
   
     // 使用 setTimeout 設定一個定時刷新
     this.refreshTimeout = window.setTimeout(() => {
@@ -221,11 +175,76 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.router.navigate(['/main/fault-mgr', this.selectField.name, 'All']);
   }
 
-  // @11/30 Add by yuchen
-  openDeleteField(fields: Fields) {
+  @ViewChild('deleteField_ConfirmWindow') deleteField_ConfirmWindow: any;
+  deleteField_ConfirmWindowRef!: MatDialogRef<any>;
+
+  // @2024/01/29 Update by yuchen
+  // 根據用戶的選擇開啟刪除場域的對話框
+  openDeleteField_ConfirmWindow( fields: Fields ) {
     this.selectField = fields;
-    console.log("Deleted field name: ", this.selectField.name);
-    this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
+    console.log( "Deleted field name: ", this.selectField.name );
+
+    // 開啟刪除確認模態框
+    this.deleteField_ConfirmWindowRef = this.dialog.open( this.deleteField_ConfirmWindow, { id: 'deleteField_ConfirmWindow' } );
+
+    // 訂閱視窗關閉後的事件
+    this.deleteField_ConfirmWindowRef.afterClosed().subscribe( confirm => {});
+  }
+
+  // @2024/01/29 Add by yuchen
+  confirmDeleteField(){
+    // 顯示加載指示器
+    this.isLoading = true;
+
+    // 如果是 Local 環境，則設置標誌並返回
+    if ( this.commonService.isLocal ) {
+      console.log('Remove field in local environment.');
+
+      // 處理 Local 環境下的場域刪除邏輯 ( Local 依據 name 控制刪除 )
+      this.deleteFieldInLocal( this.selectField.name );
+
+      // 刷新場域列表或進行其他更新
+      this.getQueryFieldList();
+      this.isLoading = false;
+
+    } else {
+            
+      // 調用 API 進行場域刪除
+      this.API_Field.removeField( this.selectField.id ).subscribe({
+        next: ( response ) => {
+          // 處理場域刪除成功的邏輯
+          console.log( 'Field removed successfully', response );
+
+          // 刷新場域列表或進行其他更新
+          this.getQueryFieldList();
+          this.isLoading = false;
+        },
+        error: ( error ) => {
+          console.error( 'Failed to remove field:', error );
+          this.isLoading = false;
+        },
+        complete: () => {
+          // 在任何情況下，完成後都需要停止加載指示器
+          this.isLoading = false;
+        }
+      });   
+    }
+  }
+
+  // @2024/01/29 Add by yuchen
+  // 模擬在 Local 環境中刪除場域的函數 ( Local 依據 name 控制刪除 )
+  deleteFieldInLocal( fieldName: string ) {
+
+    console.log( "The delete field name:", fieldName )
+
+    // 確保 fieldList_LocalFiles.fieldList.fields 是一個陣列
+    if ( Array.isArray( this.fieldList_LocalFiles.fieldList.fields ) ) {
+      // 從場域列表中過濾掉要刪除的場域
+      this.fieldList_LocalFiles.fieldList.fields = this.fieldList_LocalFiles.fieldList.fields.filter( field => field.name !== fieldName  );
+    } else {
+      // 如果 fieldList_LocalFiles.fieldList.fields 不是陣列，可能需要初始化它或者拋出錯誤
+      console.error('fieldList.fields 不是陣列或為 undefined');
+    }
   }
 
   // @11/30 Add by yuchen
@@ -254,7 +273,6 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
 
 
-  
   changeMethod(e: MatButtonToggleChange) {
     this.formValidated = false;
     this.createForm.controls['imsEndpoint'].setValue('');
@@ -277,6 +295,9 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.createForm.controls['image'].updateValueAndValidity();
     this.createForm.controls['oCloudId'].updateValueAndValidity();
   }
+
+
+
 
   create() {
     this.formValidated = true;
@@ -321,37 +342,18 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  // openDelectModal(oCloudList: OCloudList) {
-  //   // this.selectOcloud = oCloudList;
-  //   this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
-  // }
+}
 
-  delete() {
-    // if (this.commonService.isLocal) {
-    //   /* local file test */
-    //   for (let i = 0; i < this.commonService.ocloudList.length; i++) {
-    //     if (this.selectOcloud.id === this.commonService.ocloudList[i].id) {
-    //       this.commonService.ocloudList.splice(i, 1);
-    //       break;
-    //     }
-    //   }
-    //   this.deleteModalRef.close();
-    //   this.getOcloudList();
-    // } else {
-    //   this.commonService.deleteOcloud(this.selectOcloud.id).subscribe(
-    //     res => {
-    //       console.log('deleteOcloud:');
-    //       console.log(this.selectOcloud.id);
-    //       this.deleteModalRef.close();
-    //       this.getOcloudList();
-    //     }
-    //   );
-    // }
-  }
 
-  // levelValue(deployStatus: any): string {
-  //   const level = this.levelMap.get(deployStatus) as number;
-  //   return ((level / 9) * 100).toString();
-  // }
 
+
+
+
+export interface OCloudList {
+  id: string;
+  name: string;
+  dmsCount: number;
+  nfCount: number;
+  imsEndpoint: string;
+  deployStatus: string;
 }

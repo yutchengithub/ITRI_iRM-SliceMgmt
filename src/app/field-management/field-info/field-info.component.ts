@@ -26,17 +26,18 @@ import { ChangeDetectorRef } from '@angular/core';          // @2023/12/13 Add f
 import { environment } from 'src/environments/environment'; // @2023/12/20 Add for import Google Maps API Key
 import { NgZone } from '@angular/core';
 
-import { apiForField } from '../../shared/api/For_Field'; // @2024/01/04 Add for import API of Field Management 
+// @2024/01/04 Add for import APIs of Field Management 
+import { apiForField } from '../../shared/api/For_Field'; 
 
 import { FieldInfo } from '../../shared/interfaces/Field/For_queryFieldInfo';              // @2023/12/21 Add
 import { BsInfoInField } from '../../shared/interfaces/Field/For_queryFieldInfo';          // @2023/12/21 Add
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
 import { ForUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_updateField';    // @2024/01/26 Add
-import { localBSList } from '../../shared/local-files/For_queryBsList';                    // @2024/01/16 Add
+import { localBSList } from '../../shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
 
 import { BSInfo } from '../../shared/interfaces/BS/For_queryBsInfo_BS';                    // @2023/12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
-import { localBSinfo } from '../../shared/local-files/For_queryBsInfo';                    // @2023/12/27 Add
+import { localBSinfo } from '../../shared/local-files/BS/For_queryBsInfo';                 // @2023/12/27 Add
 
 import { map } from 'rxjs/operators';              // @2023/12/24 Add
 import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
@@ -850,6 +851,7 @@ export class FieldInfoComponent implements OnInit {
       this.processFieldInfo(); // 處理場域資訊
       
       this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
+
     } else {
       
       console.log('Start fetching field info feom API');   // 開始獲取場域資訊
@@ -1020,7 +1022,7 @@ export class FieldInfoComponent implements OnInit {
 
   // 用於獲取場地內所有 BS 的資訊 @12/26 Update
   // Get the All infos of BSs in the field 
-  getQueryBsInfoForAll(bsNum: number, bsinfo_Infield: BsInfoInField[]) {
+  getQueryBsInfoForAll( bsNum: number, bsinfo_Infield: BsInfoInField[] ) {
 
     // 輸出開始處理的訊息到控制台
     console.log('getQueryBsInfoForAll() - Start');

@@ -1,6 +1,6 @@
   
   // Interfaces of BSList @2024/01/16 Add
-  import { BSList } from '../../shared/interfaces/BS/For_queryBsList';                       
+  import { BSList } from '../../interfaces/BS/For_queryBsList';                       
 
   // Local Files for general BSList @2024/01/16 Add by yuchen 
   export class localBSList {
