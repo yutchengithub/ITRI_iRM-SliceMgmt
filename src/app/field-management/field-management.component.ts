@@ -105,7 +105,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
       // 本地模式使用本地數據
       this.fieldList = this.fieldList_LocalFiles.fieldList;
-      this.FieldListDeal();
+      //this.FieldListDeal();
       this.isLoading = false;     // 數據加載完成，設置為 false @12/28 Add for Progress Spinner
       
     } else {
@@ -116,7 +116,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
           console.log('getQueryFieldList:', res);
           this.fieldList = res;
-          this.FieldListDeal();
+          //this.FieldListDeal();
 
         },
         error: (error) => {
@@ -135,7 +135,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  // @11/30 Add by yuchen
+  // @11/30 Add by yuchen ( 該函數應該用不到 )
   FieldListDeal() {
 
     // 輸出檢查點
@@ -150,14 +150,14 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.nullList = new Array( this.totalItems );
   
     // 使用 setTimeout 設定一個定時刷新
-    this.refreshTimeout = window.setTimeout(() => {
+    this.refreshTimeout = window.setTimeout( () => {
       if (this.p === 1) {
         console.log(`page[${this.p}] ===> refresh.`);
         //this.getQueryFieldList();  // 取得場域訊息函數
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
       }
-    }, 100); // timeout: 100 ms
+    }, 100 ); // timeout: 100 ms
   }
   
   // @12/05 Update by yuchen
@@ -175,56 +175,76 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.router.navigate(['/main/fault-mgr', this.selectField.name, 'All']);
   }
 
+  // @2024/01/29 Add
+  // ViewChild 裝飾器用於獲取模板中 #deleteField_ConfirmWindow 的元素引用
   @ViewChild('deleteField_ConfirmWindow') deleteField_ConfirmWindow: any;
+
+  // @2024/01/29 Add
+  // MatDialogRef 用於控制打開的對話框
   deleteField_ConfirmWindowRef!: MatDialogRef<any>;
 
-  // @2024/01/29 Update by yuchen
-  // 根據用戶的選擇開啟刪除場域的對話框
+  // 根據用戶的選擇開啟刪除場域的對話框 @2024/01/29 Update by yuchen
   openDeleteField_ConfirmWindow( fields: Fields ) {
+    // 將選中的場域賦值給 selectField
     this.selectField = fields;
-    console.log( "Deleted field name: ", this.selectField.name );
+    // 輸出將要刪除的場域名稱，用於記錄和調試
+    console.log("Deleted field name: ", this.selectField.name);
 
-    // 開啟刪除確認模態框
-    this.deleteField_ConfirmWindowRef = this.dialog.open( this.deleteField_ConfirmWindow, { id: 'deleteField_ConfirmWindow' } );
+    // 使用 MatDialog 服務開啟確認刪除的對話框
+    this.deleteField_ConfirmWindowRef = this.dialog.open(this.deleteField_ConfirmWindow, { id: 'deleteField_ConfirmWindow' });
 
-    // 訂閱視窗關閉後的事件
-    this.deleteField_ConfirmWindowRef.afterClosed().subscribe( confirm => {});
+    // 訂閱對話框關閉後的事件
+    this.deleteField_ConfirmWindowRef.afterClosed().subscribe(confirm => {
+      // 這裡可以根據用戶在對話框中的操作進行相應的處理
+    });
   }
 
-  // @2024/01/29 Add by yuchen
-  confirmDeleteField(){
+  // 確認刪除場域的操作 @2024/01/29 Add by yuchen
+  confirmDeleteField() {
+
     // 顯示加載指示器
     this.isLoading = true;
 
-    // 如果是 Local 環境，則設置標誌並返回
+    // 檢查是否是 Local 環境
     if ( this.commonService.isLocal ) {
+      // 在控制台輸出調試信息
       console.log('Remove field in local environment.');
 
-      // 處理 Local 環境下的場域刪除邏輯 ( Local 依據 name 控制刪除 )
+      // 調用刪除場域的函數，傳入場域名稱
       this.deleteFieldInLocal( this.selectField.name );
 
       // 刷新場域列表或進行其他更新
       this.getQueryFieldList();
+      // 關閉加載指示器
       this.isLoading = false;
 
     } else {
-            
-      // 調用 API 進行場域刪除
+
+      // 不是 Local 環境，調用後端 API 進行刪除
       this.API_Field.removeField( this.selectField.id ).subscribe({
-        next: ( response ) => {
-          // 處理場域刪除成功的邏輯
-          console.log( 'Field removed successfully', response );
+        next: (response) => {
+
+          // 刪除成功的回調，輸出成功信息和後端響應
+          console.log('Field removed successfully', response);
 
           // 刷新場域列表或進行其他更新
           this.getQueryFieldList();
+
+          // 關閉加載指示器
           this.isLoading = false;
         },
-        error: ( error ) => {
-          console.error( 'Failed to remove field:', error );
+        error: (error) => {
+
+          // 刪除失敗的回調，輸出錯誤信息
+          console.error('Failed to remove field:', error);
+
+          // 關閉加載指示器
           this.isLoading = false;
         },
         complete: () => {
-          // 在任何情況下，完成後都需要停止加載指示器
+
+          // 請求完成後的回調，不管成功或失敗都會執行
+          // 關閉加載指示器
           this.isLoading = false;
         }
       });   
@@ -235,17 +255,22 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   // 模擬在 Local 環境中刪除場域的函數 ( Local 依據 name 控制刪除 )
   deleteFieldInLocal( fieldName: string ) {
 
+    // 輸出將要刪除的場域名稱，用於記錄和調試
     console.log( "The delete field name:", fieldName )
 
     // 確保 fieldList_LocalFiles.fieldList.fields 是一個陣列
     if ( Array.isArray( this.fieldList_LocalFiles.fieldList.fields ) ) {
+
       // 從場域列表中過濾掉要刪除的場域
-      this.fieldList_LocalFiles.fieldList.fields = this.fieldList_LocalFiles.fieldList.fields.filter( field => field.name !== fieldName  );
+      this.fieldList_LocalFiles.fieldList.fields = this.fieldList_LocalFiles.fieldList.fields.filter( field => field.name !== fieldName );
+    
     } else {
-      // 如果 fieldList_LocalFiles.fieldList.fields 不是陣列，可能需要初始化它或者拋出錯誤
-      console.error('fieldList.fields 不是陣列或為 undefined');
+
+      // 如果 fieldList_LocalFiles.fieldList.fields 不是陣列，輸出錯誤信息
+      console.error( 'fieldList.fields 不是陣列或為 undefined' );
     }
   }
+
 
   // @11/30 Add by yuchen
   openSnapshot(fields: Fields){
