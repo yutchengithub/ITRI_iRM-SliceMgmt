@@ -506,71 +506,75 @@
 			</mat-button-toggle-group>
 		</div>
 
-		<div *ngIf="fieldInfo && fieldBounds" style="overflow-y: auto;">
+		<div *ngIf="fieldInfo && fieldBounds">
 			<!-- Field Infos -->
-			<ul *ngIf="fieldEditType === 'Field_Infos'">
-				<form [formGroup]="fieldEditForm">
-
-					<li>
-						<label>{{ languageService.i18n['field.name'] }}</label>
-						<span>
-							<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
-									class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-					<li>
-						<label>{{ languageService.i18n['field.northBound'] }}</label>
-						<span>
-							<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
-									class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-					<li>
-						<label>{{ languageService.i18n['field.southBound'] }}</label>
-						<span>
-							<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
-									class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-					<li>
-						<label>{{ languageService.i18n['field.westBound'] }}</label>
-						<span>
-							<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
-									class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-					<li>
-						<label>{{ languageService.i18n['field.eastBound'] }}</label>
-						<span>
-							<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
-									class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-					<li>
-						<label>{{ languageService.i18n['field.notificationNum'] }}</label>
-						<span>
-							<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
-								class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="fieldEditForm.controls['phoneNumber'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-				</form>
-				<div style="text-align: center;">
-					<div class="image-container">
-						<!-- 圖片和標籤 -->
+			<div class="Field_Infos" *ngIf="fieldEditType === 'Field_Infos'">
+				<span>
+					<form [formGroup]="fieldEditForm">
+						<UL>
+						<li>
+							<label>{{ languageService.i18n['field.name'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.northBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.southBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.westBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.eastBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.notificationNum'] }}</label>
+							<span>
+								<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
+									class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['phoneNumber'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li></UL>
+					</form>
+				</span>
+				<span>
+					<!-- 圖片和標籤 -->
+					<!-- 
+						<div class="image-container">
 						<label class="label-position leftUp">[ {{ fieldBounds.north }}, {{ fieldBounds.west }} ]</label>
 						<label class="label-position rightUp">[ {{ fieldBounds.north }}, {{ fieldBounds.east }} ]</label>
 						<img title="{{ languageService.i18n['field.fieldBoundsEx'] }}" src="/assets/img/fieldBounds_exampleImage.png" alt="{{ languageService.i18n['field.fieldBoundsEx'] }}">
 						<label class="label-position rightDown">[ {{ fieldBounds.south }}, {{ fieldBounds.east }} ]</label>
 						<label class="label-position leftDown">[ {{ fieldBounds.south }}, {{ fieldBounds.west }} ]</label>
-					</div>	
-					<div style="position: relative; top: 70px;">
-						<span>{{ languageService.i18n['field.indoorMap'] }}</span>
+						</div>	 
+					-->
+					<span>
+						<!-- <h3>{{ languageService.i18n['field.indoorMap'] }}</h3> -->
 						<div>
 							<!-- 顯示進度條 -->
 							<ng-container *ngIf="isFieldImageOnFieldEditLoading">
@@ -581,16 +585,22 @@
 							</ng-container>
 							<!-- 顯示室內圖片 -->
 							<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
-								<!-- For local @2024/01/23 Add --> <img *ngIf="commonService.isLocal" [src]="imageSrcLocal" style="width: 500px; position: relative; top: 15px;" id="uploadedImage" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
-								<img *ngIf="!commonService.isLocal" style="width: 500px; position: relative; top: 15px;" id="uploadedImage" src="" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
-								<!-- 刪除圖標 --> <mat-icon title="{{ languageService.i18n['field.DeleteindoorMap'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon> 
-								<div id="noImageMessage" style="display: none; position: relative; top: 10px;">
-									<mat-icon>not_interested</mat-icon>
+								<!-- For local @2024/01/23 Add -->
+								<div class="preview">
+									<div class="center">Preview</div>
+									<mat-icon title="{{ languageService.i18n['field.DeleteindoorMap'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon>
+									<img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
+									<img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
+								</div>
+								<div id="noImageMessage" style="display: none;">
+									<span class="material-symbols-outlined">
+										error
+										</span>
 									{{ languageService.i18n['field.indoorMapNotUploaded'] }}
 								</div>
 							</ng-container>
 						</div>
-						<div class="button-container" style="position: relative; top: 15px;">
+						<div class="button-container">
 							<!-- 按鈕，用於觸發隱藏的 input 元素 -->
 							<button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()">
 							{{ languageService.i18n['field.indoorMapUpload'] }}
@@ -598,12 +608,12 @@
 							<!-- 隱藏的文件輸入元素，僅接受 PNG 和 JPG 圖片 -->
 							<input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".png, .jpg, .jpeg">
 						</div>
-					</div>	  
-				</div>
-			</ul>
+					</span>	  
+				</span>
+			</div>
 		</div>
 
-		<div>
+		<div *ngIf="fieldEditType === 'BS_List'">
 			<!-- BS List -->
 			<ul *ngIf="fieldEditType === 'BS_List'">
 				

@@ -150,20 +150,24 @@ h5 .mat-icon {
 .fieldEditTab {
   position: absolute;
   z-index: 999;
-  margin-top: -3.25em;
-  margin-left: 22em;
+  right: 8px;
+  top: 5px;
 }
 
 // @2024/01/19 Add by yuchen
 .delete-icon {
   position: absolute;
-  top: 41px;
-  right: 15px;
+  top: 11px;
+  right: -10px;
+  font-size: 28px;
+  text-align: center;
+  width: 33px;
+  line-height: 33px;
+  height: 33px;
   cursor: pointer;
   color: #ececec;
-  background-color: rgba(0, 0, 0, 0.5); // 為圖標添加背景色
-  border-radius: 65%; // 為圖標添加圓角邊框
-  //padding: 5px;     // 圖標內填充
+  background-color: #ba5a2a;
+  border-radius: 65%;
   z-index: 100;
 }
 
@@ -217,13 +221,13 @@ h5 .mat-icon {
   transform: translateY(-50%) translateX(118%);
 }
 
-.rightDown {
+.leftDown {
   top: 105%;
   left: 50%;
   transform: translateY(-50%) translateX(118%);
 }
 
-.leftDown {
+.rightDown {
   top: 105%;
   left: 0;
   transform: translateY(-50%);
@@ -630,9 +634,13 @@ table {
 }
 
 .table table {
-  display: table;
+  display: block;
+  max-height: 38em;
+  overflow: auto;
 }
-
+.table table td label {
+  text-align: left;
+}
 .SoftwareUpdate .mat-button-toggle {
   width: 10.55em;
 }
@@ -1003,4 +1011,49 @@ circle-progress {
   margin-right: 0.5em;
 }
 
-
+.Field_Infos > span {
+  display: inline-block;
+  vertical-align: top;
+  width: 44%;
+  margin-top: 1em;
+}
+.Field_Infos > span:nth-child(2) {
+  margin-top: -1em;
+  width: 53%;
+}
+#noImageMessage {
+  margin: 0 auto 0em;
+  color: #ff9090;
+  border: 1px dashed #dd3535ed;
+  background-color: rgba(80, 80, 80, 0.48);
+  text-align: center;
+  line-height: 200%;
+  padding: 3em 0 0;
+  height: 10em;
+  width: 85%;
+}
+#noImageMessage  > span {
+  display: block;
+  color: #fff;
+  font-size: 30px;
+}
+h3 {
+  font-size: 1em;
+  display: block;
+  text-align: center;
+  margin: 10px 0 0;
+}
+.preview {
+  margin: 2.3em 0 0;
+  position: relative;
+}
+.preview > div.center {
+  margin: -5px 0 5px;
+}
+.preview img {
+  width: 100%;
+  height: auto;
+}
+.BS_List th {
+  white-space: nowrap;
+}
