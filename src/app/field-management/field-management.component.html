@@ -123,7 +123,11 @@
   </h5>
   <p>{{languageService.i18n['confirm_del_field']}} - {{selectField.name}} ?</p>
   <div class="buttons">
-    <button type="button" (click)="confirmDeleteField()" mat-dialog-close>Delete</button>
-    <button type="button" mat-dialog-close>Cancel</button>
+    <button type="button" (click)="confirmDeleteField()" mat-dialog-close>
+      {{ languageService.i18n['confirm'] }}
+    </button>
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }}
+    </button>
   </div>
 </ng-template>
