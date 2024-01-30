@@ -196,11 +196,10 @@ svg circle {
 .basicInfo ul li label {
   display: inline-block;
   margin:  0;
-  width: 40%;
-
+  width: 7em;
 }
 .basicInfo ul li label::after {
-  content: '';
+  content: ':';
   display: inline-block;
   margin: 0 .3em;
 }
