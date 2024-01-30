@@ -80,6 +80,9 @@ svg circle {
   cy:70px;
   r:70px;
 }
+h5 {
+  margin: 0 0 0 0.7em;
+}
 .ocloudInfo h5 button {
   background: transparent;
   border-radius: 50em;
@@ -419,57 +422,62 @@ svg circle {
 /*end*/
 
 
-
 .main.collabsible {
   width: 90%;
 }
-.main.collabsible > div > .lbl-toggle {
-  display: block;
-  text-align: left;
+.main.collabsible > div .lbl-toggle {
+  position: absolute;
+  top: -.6em;
+  width: 2em;
   padding: 0.5em 1em;
-  font-weight: bold;
-  font-size: 17px;
   cursor: pointer;
   transition: all 0.25s ease-out;
-  font-family: Microsoft JhengHei;
-  color: #a7d7ff;
-  background: linear-gradient(0deg, #3b9af6 0%, #002962 5%, #07141f 100%);
-  border: 1px solid #223b50;
 }
 .collabsible { 
   margin: 1.2rem 0;
   font-size: 16px;
   padding: 0 1em;
  } 
-.collabsible > div > input.toggle[type='checkbox'] { display: none; } 
+.collabsible > div input.toggle[type='checkbox'] { 
+  display: none; 
+} 
 .collabsible > div {
-  margin: 0 0 .5em 0;
+  margin: .5em 0 2em 0;
+  padding: 2em 0 0 0;
+  position: relative;
 }
-
+.collabsible > div > span:first-child {
+  position: absolute;
+  left: 0;
+  top: -9px;
+  line-height: 2;
+  padding: 0 0 0 2em;
+  border-radius: 5px 5px 0 0;
+  width: 100%;
+  height: 41px;
+  font-family: Microsoft JhengHei;
+  color: #fff;
+  background:linear-gradient(to right, #1d8ee5 0%, #1e5799 100%);
+  font-weight: bold;
+  font-size: 17px;
+  text-align: left;
+}
+.content-inner .collabsible > div > span:first-child {
+  background:linear-gradient(to right, #1d8ee5be 0%, #1e5799da 100%);
+}
 .collabsible .lbl-toggle {
   display: block;
   text-align: left;
   padding: 0.5em 1em;
   color: #b0ceff;
-  background: #3a5278c9;
   cursor: pointer;
   border-radius: 7px 7px 0 0;
   transition: all 0.25s ease-out;
 }
-.collabsible .lbl-toggle button {
-  background: linear-gradient(134deg, #19728d, #1a5691);
-  border-radius: 50em;
-  cursor: pointer;
-  font-size: 0.85em;
-  padding: 0.3em 0.7em;
-  vertical-align: middle;
-  margin: 0 0 0 0.5em;
-  border: 0;
-  color: #fff;
-}
+
 .collabsible .lbl-toggle::before { 
   content: ' '; 
-  color: #78abff;
+  color: #fff;
   display: inline-block; 
   border-top: 5px solid transparent; 
   border-bottom: 5px solid transparent; 
@@ -480,8 +488,14 @@ svg circle {
   transition: transform .2s ease-out;
   transform: rotate(90deg) translateX(-3px);
  } 
-.collabsible .toggle:checked+.lbl-toggle::before { transform: rotate(0deg) translateX(0px); } 
-.collapsible-content { max-height: 52vh; overflow: auto; transition: max-height .25s ease-in-out; } 
+.collabsible .toggle:checked + .lbl-toggle::before { 
+  transform: rotate(0deg) translateX(0px); 
+} 
+.collapsible-content { 
+  max-height: 52vh; 
+  overflow: auto; 
+  transition: max-height .25s ease-in-out; 
+} 
 .collabsible .toggle:checked + .lbl-toggle + .collapsible-content { 
   max-height: 0;
   overflow: hidden;
@@ -492,26 +506,34 @@ svg circle {
 .collabsible .toggle:checked+.lbl-toggle { 
   border-radius: 7px;
 } 
-.collabsible .lbl-toggle span {
+.collabsible span > span {
   display: inline-block;
-  margin: 0 1em;
+  margin: 0 0 0 1em;
   font-size: .9em;
-  background-color: #f9f9f9b0;
-  padding: 0 1em;
-  border-radius: 5em;
-  color: #337ab7;
+  padding: 0;
 }
-.collabsible .lbl-toggle .material-symbols-outlined {
+.collabsible span button {
+  background-color:#ba5a2a  ;
+  border-radius: 50em;
+  cursor: pointer;
+  font-size: 0.85em;
+  padding: 0.3em 0.7em;
+  vertical-align: middle;
+  margin: 0 0 0 0.5em;
+  border: 0;
+  color: #fff;
+}
+.collabsible span .material-symbols-outlined {
   padding: 0;
   margin: 0;
   font-size: 22px;
   vertical-align: middle;
 }
-.collabsible .lbl-toggle span select {
-  padding: 2px 5px;
-  border: 1px solid #337ab7;
+.collabsible  span select {
+  padding: 3px 5px;
   border-radius: 3px;
   margin: 5px;
+  border: 0;
 }
 .collapsible-content .content-inner { 
   background-color: #0d2032e6;
@@ -531,8 +553,11 @@ svg circle {
   font-size: 16px;
 }
 .collabsible .content-inner ul li label {
-  min-width: 5.7em;
+  width: auto;
   display: inline-block;
+}
+div.baseInfo .content-inner ul li label {
+  width: 7em;
 }
 .collabsible .content-inner ul li::marker {
   color: #5a8bdd;
@@ -542,16 +567,10 @@ svg circle {
   margin: 0 3px;
 }
 .collabsible table th {
-  /* background: #e1eefd;
-  border-bottom: 1px solid #498cc3;
-  color: #337ab7; */
   font-size: .9em;
   text-align: center;
 }
-.collabsible .table table {
-  /* border: 1px solid #5c91bd;
-  background: #fff; */
-}
+
 .collabsible .filter {
   text-align: center;
   background-color: #acb8c7c2;
@@ -801,6 +820,7 @@ ul.treeList li a.btn {
   margin: 0!important;
 }
 /**/
+
 @media screen and (max-width:1680px) {
   .h30 {
     height: 24em;

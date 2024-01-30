@@ -6,10 +6,10 @@
 
 
   <div class="main collabsible">
-    <div>
+    <div class="baseInfo">
+      <span>{{languageService.i18n['basic.info']}}:</span>
       <input id="baseInfo" class="toggle" type="checkbox">
-      <label for="baseInfo" class="lbl-toggle">{{languageService.i18n['basic.info']}}:
-      </label>
+      <label for="baseInfo" class="lbl-toggle"></label>
       <div class="collapsible-content">
         <div class="content-inner">
           
@@ -31,8 +31,8 @@
     </div>
 
     <div>
-      <input id="Datastore" class="toggle" type="checkbox">
-      <label for="Datastore" class="lbl-toggle">Datastore:
+      <span>
+        Datastore:
         <span>
           Source
           <select>
@@ -49,14 +49,18 @@
         </span>
         <button>Export Datastore</button>
         <button>Update Datastore</button>
-      </label>
+      
+      </span>
+      <input id="Datastore" class="toggle" type="checkbox">
+      <label for="Datastore" class="lbl-toggle"></label>
       
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="collabsible">
             <div>
+              <span>Netconf Server:<button>Update</button></span>
               <input id="treemenu" class="toggle" type="checkbox">
-              <label for="treemenu" class="lbl-toggle">Netconf Server:<button>Update</button></label>
+              <label for="treemenu" class="lbl-toggle"></label>
               <div class="collapsible-content">
                 <div class="content-inner">
                   <ul class="treeList">
@@ -125,8 +129,9 @@
               </div>
             </div>
             <div>
+              <span>Netconf Server:<button>Update</button></span>
               <input id="netconf-server" class="toggle" type="checkbox">
-              <label for="netconf-server" class="lbl-toggle">Netconf Server:<button>Update</button></label>
+              <label for="netconf-server" class="lbl-toggle"></label>
               <div class="collapsible-content">
                 <div class="content-inner">
                   <ul class="treeList">
@@ -156,9 +161,9 @@
     </div>
 
     <div>
+      <span>{{languageService.i18n['software.info']}} – {{bsComponentInfo.firm}} – {{bsComponentInfo.modelname}}</span>
       <input id="softInfo" class="toggle" type="checkbox">
-      <label for="softInfo" class="lbl-toggle">{{languageService.i18n['software.info']}} – {{bsComponentInfo.firm}} – {{bsComponentInfo.modelname}}
-      </label>
+      <label for="softInfo" class="lbl-toggle"></label>
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="panel">
@@ -176,56 +181,6 @@
               </div>
             </label>
           </div>
-            <!-- <div class="panel">
-              <label><input type="radio" name="software-group">
-                <div>
-                <ul>
-                  <li><label>Software</label><span>slot-1</span></li>
-                  <li><label>Status</label><span></span></li>
-                  <li><label>Active</label><span>Ture</span></li>
-                  <li><label>Running</label><span>Ture</span></li>
-                  <li><label>Access</label><span>Read Only</span></li>
-                  <li><label>Version</label><span>0.1.0</span></li>
-                </ul></div>
-              </label>
-
-              <label><input type="radio"  name="software-group">
-                <div>
-                <ul>
-                  <li><label>Software</label><span>slot-1</span></li>
-                  <li><label>Status</label><span></span></li>
-                  <li><label>Active</label><span></span></li>
-                  <li><label>Running</label><span></span></li>
-                  <li><label>Access</label><span></span></li>
-                  <li><label>Version</label><span></span></li>
-                </ul></div>
-              </label>
-
-              <label><input type="radio"  name="software-group">
-                <div>
-                <ul>
-                  <li><label>Software</label><span>slot-2</span></li>
-                  <li><label>Status</label><span></span></li>
-                  <li><label>Active</label><span></span></li>
-                  <li><label>Running</label><span></span></li>
-                  <li><label>Access</label><span></span></li>
-                  <li><label>Version</label><span></span></li>
-                </ul></div>
-              </label>
-
-              <label><input type="radio" name="software-group">
-                <div>
-                <ul>
-                  <li><label>Software</label><span>slot-3</span></li>
-                  <li><label>Status</label><span></span></li>
-                  <li><label>Active</label><span></span></li>
-                  <li><label>Running</label><span></span></li>
-                  <li><label>Access</label><span></span></li>
-                  <li><label>Version</label><span></span></li>
-                </ul></div>
-              </label>
-
-            </div> -->
 
             <div class="table">
               <table>
@@ -262,9 +217,9 @@
       </div>
     </div>
 
-    <div>
+    <div><span>Alarms</span>
       <input id="faultMsg" class="toggle" type="checkbox">
-      <label for="faultMsg" class="lbl-toggle">Alarms<!-- {{languageService.i18n['index.faultMsg']}} -->
+      <label for="faultMsg" class="lbl-toggle">
         </label>
       <div class="collapsible-content">
         <div class="content-inner">
@@ -340,8 +295,9 @@
     </div>
 
     <div>
+      <span>{{languageService.i18n['cm.file']}}</span>
       <input id="cm" class="toggle" type="checkbox">
-      <label for="cm" class="lbl-toggle">{{languageService.i18n['cm.file']}}</label>
+      <label for="cm" class="lbl-toggle"></label>
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="table">
@@ -367,128 +323,6 @@
     </div>
   </div>
   
- <!--  <div class="BOX nf {{activeMap['box3']?'active':''}}">
-    <label class="boxTitle"  (click)="clickBox('box3')">{{languageService.i18n['software.info']}} – {{bsComponentInfo.firm}} – {{bsComponentInfo.modelname}}
-      <span class="material-symbols-outlined">
-        expand_less
-        </span>
-      </label>
-    <div class="table">
-      <table>
-        <thead>
-          <tr>
-            <th>{{languageService.i18n['table.header_name']}}</th>
-            <th>{{languageService.i18n['manufacturer']}}</th>
-            <th>{{languageService.i18n['model']}}</th>
-            <th>{{languageService.i18n['type']}}</th>
-            <th>{{languageService.i18n['version']}}</th>
-            <th>{{languageService.i18n['upload_time']}}</th>
-            <th>{{languageService.i18n['cm.apply']}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{bsComponentInfo.name}}</td>
-            <td>{{bsComponentInfo.firm}}</td>
-            <td>{{bsComponentInfo.modelname}}</td>
-            <td>{{bsComponentInfo.comtype}}</td>
-            <td>{{componentInfosw.uploadinfos[0]?.uploadversion}}</td>
-            <td>{{componentInfosw.uploadinfos[0]?.uploadtime}}</td>
-            <td class="center">
-              <mat-icon tooltip="{{languageService.i18n['view_detail']}}">cloud_download</mat-icon>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
-
-  <!-- <div class="BOX center Fault {{activeMap['box4']?'active':''}}">
-    <label class="boxTitle"  (click)="clickBox('box4')">{{languageService.i18n['index.faultMsg']}}
-      <span class="material-symbols-outlined">
-        expand_less
-        </span>
-      <a href="javascript:void(0)" (click)="goFaultMgr()">
-       {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
-      </a>
-    </label>
-    <form [formGroup]="searchForm">
-    <div class="filter">
-      <span><label>{{languageService.i18n['fm.severity']}}</label>
-        <select formControlName="severity">
-          <option value="All">All</option>
-          <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
-        </select>
-      </span>
-      <span><label>{{languageService.i18n['fm.occurtime']}}</label>
-        <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
-      </span>
-      <span><label>~</label>
-        <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
-      </span>
-      <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-      <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search()">clear</span>
-    </div>
-  </form>
-    <div class="table">
-      <table>
-        <thead>
-          <tr>
-            <th>{{languageService.i18n['fm.no']}}</th>
-            <th>{{languageService.i18n['fm.field']}}</th>
-            <th>{{languageService.i18n['fm.BS']}}</th>
-            <th>{{languageService.i18n['fm.component']}}</th>
-            <th>{{languageService.i18n['fm.alarm']}}</th>
-            <th>{{languageService.i18n['fm.severity']}}</th>
-            <th>{{languageService.i18n['fm.occurtime']}}</th>
-            <th>{{languageService.i18n['fm.status']}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: msgToDisplay.length, id: 'fmList' }; let i = index" >
-            <td>{{ (p - 1) * pageSize + i + 1 }}</td>
-            <td>{{opt.fieldName}}</td>
-            <td>{{opt.bsName}}</td>
-            <td>{{opt.compname}}</td>
-            <td>{{opt.probablecause}}</td>
-            <td>{{opt.eventtype}}</td>
-            <td>{{opt.timestamp}}</td>
-            <td>{{opt.status}}</td>
-          </tr>
-        </tbody>
-      </table>
-      <span class="total">{{languageService.i18n['fm.total1']}} {{msgToDisplay.length}} {{languageService.i18n['fm.total2']}}</span>
-      <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
-nextLabel="" id="fmList">
-  </pagination-controls>
-    </div>
-  </div> -->
-
-  <!-- <div class="BOX {{activeMap['box5']?'active':''}}">
-    <label class="boxTitle"  (click)="clickBox('box5')">{{languageService.i18n['cm.file']}}
-      <span class="material-symbols-outlined">
-        expand_less
-        </span>
-      </label>
-    <div class="table">
-      <table>
-        <thead>
-          <tr>
-            <th>{{languageService.i18n['fileName']}}</th>
-            <th>{{languageService.i18n['cm.path']}}</th>
-            <th>{{languageService.i18n['cm.download']}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{bsComponentInfo.name}}</td>
-            <td>{{bsComponentInfo.firm}}</td>
-            <td class="center"><mat-icon tooltip="{{languageService.i18n['view_detail']}}">download_for_offline</mat-icon></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
 
 </div>
 
