@@ -309,6 +309,7 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
     position: sticky;
     top: -1px;
     font-weight: bold;
+    font-size: 1.1em;
 }
  table thead tr th:first-child {
   border-radius: 5px 0 0 0;
@@ -1122,7 +1123,7 @@ body.en .ocloudInfo.bs_mgr .basicInfo ul li label {
 body.tw #itemDetail ul li > label {
   min-width: 6em !important;
 }
-body.en .ocloudInfo.software .basicInfo ul li label {
+body.en .ocloudInfo.software .basicInfo ul.Software_info li label {
   width: 7em!important;
 }
 body.en .schedule_mgr .basicInfo ul li label {
@@ -1133,6 +1134,9 @@ body.en .account_mgr .basicInfo ul li label {
 }
 body.tw .dashboard  .boxTitle {
   margin: 0 26% 0 0!important;
+}
+body.en .account_Info .basicInfo ul li label {
+  width: 6.7em!important;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {

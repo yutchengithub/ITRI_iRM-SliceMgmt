@@ -28,8 +28,7 @@
 .basicInfo ul li label {
   display: inline-block;
   margin:  0;
-  /* width: 28%; */
-
+  width: 5em;
 }
 .basicInfo ul li label::after {
   content: ':';

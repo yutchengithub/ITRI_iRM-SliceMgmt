@@ -10,8 +10,29 @@
   margin: 0 0 0 1.5em;
   text-align: left;
 }
+.ocloudInfo.software .basicInfo ul li label {
+  display: inline-block;
+}
+ul.Software_info li label {
+  width: 5.5em;
+}
+ul.ftp_info li label {
+  width: 7em;
+}
+ul.file_url_info li label {
+  width: 5.6em;
+}
 .basicInfo ul li span {
   word-break: break-all;
+  display: inline-block;
+  vertical-align: top;
+  width: 70%;
+}
+.basicInfo ul.url li label {
+  width: 5.6em!important;
+}
+.basicInfo ul.url li span {
+  width: 75%;
 }
 .boxTitle {
   display: block;
