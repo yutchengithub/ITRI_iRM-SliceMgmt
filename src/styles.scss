@@ -450,12 +450,18 @@ input[type="text"].required + .mat-error {
   top: .3em;
 }
 #createModal {
-  min-width: 40vw;
+  min-width: 32em;
+}
+body.en #createModal {
+  min-width: 32em;
 }
 #createModal ul li label {
-  width: 16%;
+  width: 5em;
   min-width: initial;
   margin: 0;
+}
+body.tw #createModal ul li label {
+  width: 3em;
 }
 #createComponentModal {
   min-width: 40vw;
