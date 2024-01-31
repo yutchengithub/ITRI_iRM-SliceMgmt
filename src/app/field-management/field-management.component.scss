@@ -6,16 +6,25 @@
   border-collapse: collapse; // 移除單元格間的間距
 }
 
-//  @2024/01/31 Add 
+//  @2024/02/01 Add 
 .mat-stepper-vertical {
-  margin-top: 8px;
+  margin-top: 3px;
 }
 
-//  @2024/01/31 Add 
+//  @2024/02/01 Add 
 .mat-form-field {
   margin-top: 16px;
+  //background-color: #FFFFFF; /* 白色背景 */
+
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  padding: 10px;
 }
 
+//  @2024/02/01 Add 
+mat-stepper {
+  background-color: #232934; 
+}
 
 .table th, 
 .table td {

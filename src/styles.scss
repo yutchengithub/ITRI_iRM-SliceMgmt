@@ -290,7 +290,25 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
   background-color: #ff5722;
 }
 
- .table {
+// label of mat-steper @2024/02/01 Add
+.mat-step-text-label {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: #b9cde4;
+  font-weight: bolder;
+}
+
+.mat-step-header .mat-step-icon-selected {
+  background-color: #ba5a2a;
+  color: #fff;
+}
+
+.mat-step-header .mat-step-icon {
+  //background-color: #485c77;
+  color: #fff;
+}
+
+.table {
   display: block;
   margin: 1% 0 0;
 }
