@@ -124,9 +124,9 @@
     <h5>{{ languageService.i18n['field.createTitle'] }}</h5>
   </div>  
 
-  <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
+  <!-- <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
     {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
-  </button>
+  </button> -->
   <!-- <mat-stepper orientation="vertical" [linear]="isLinear" #stepper> -->
   <mat-stepper orientation="vertical" [linear]="true" #stepper> 
     <mat-step [stepControl]="firstFormGroup">
@@ -261,10 +261,6 @@
     </button>
   </div>
   
-  
-  
-  
-
 </ng-template>
   
 
