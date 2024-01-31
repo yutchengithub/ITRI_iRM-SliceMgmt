@@ -61,7 +61,20 @@ export const Enlanguage = {
   'field.snapshot':'Snapshot',
   'field.delTitle':'Delete',
   'field.delItem':'Delete this field',
-  'field.add':'Add Field',
+  'field.create':'Create field',
+  'field.createTitle':'Field Creation',
+  'field.createNext': 'Next',                  // @2024/01/31 Add
+  'field.createBack': 'Back',                  // @2024/01/31 Add
+  'field.createDone': 'Done',                  // @2024/01/31 Add
+  'field.createReset': 'Reset',                // @2024/01/31 Add
+  'field.setFieldName': 'Set Field Name',      // @2024/01/31 Add
+  'field.setFieldBoundsCoord': 'Set Field Boundary Coordinates', // @2024/01/31 Add
+  'field.setNotificationNum':  'Set Admin Notification Number',   // @2024/01/31 Add  
+  'field.PhoneNum': 'Phone Number',                   // @2024/01/31 Add
+  'field.selectBaseStations': 'Select Base Stations', // @2024/01/31 Add
+  'field.setupComplete': 'Field Setup Complete',      // @2024/01/31 Add
+
+
   'field.info':'Field Detailed Information',
   'field.Map':'Field Map',
   'field.image':'Field Image',

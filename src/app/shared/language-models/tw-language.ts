@@ -59,7 +59,19 @@ export const TwLanguage = {
   'field.snapshot':'快照',
   'field.delTitle':'刪除',
   'field.delItem':'刪除此場域',
-  'field.add':'新增場域',
+  'field.create':'建立場域',        // @2024/01/31 Add
+  'field.createNext':'下一步',      // @2024/01/31 Add
+  'field.createBack':'上一步',      // @2024/01/31 Add
+  'field.createDone':'完成',        // @2024/01/31 Add
+  'field.createReset':'重置',       // @2024/01/31 Add
+  'field.createTitle':'場域建立',    // @2024/01/31 Add
+  'field.setFieldName':'設定場域名稱',              // @2024/01/31 Add
+  'field.setFieldBoundsCoord':'設定場域邊界座標',    // @2024/01/31 Add
+  'field.setNotificationNum': '設定管理者通知門號',  // @2024/01/31 Add
+  'field.PhoneNum': '電話號碼',                    // @2024/01/31 Add
+  'field.selectBaseStations': '選擇基站',          // @2024/01/31 Add
+  'field.setupComplete': '場域設定完成',            // @2024/01/31 Add
+
   'field.info':'場域詳細資訊',
   'field.Map':'場域地圖',
   'field.image':'場域圖片', // @2024/01/03 Update

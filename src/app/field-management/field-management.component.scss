@@ -6,6 +6,17 @@
   border-collapse: collapse; // 移除單元格間的間距
 }
 
+//  @2024/01/31 Add 
+.mat-stepper-vertical {
+  margin-top: 8px;
+}
+
+//  @2024/01/31 Add 
+.mat-form-field {
+  margin-top: 16px;
+}
+
+
 .table th, 
 .table td {
   vertical-align: middle; // 內容垂直居中
@@ -17,10 +28,6 @@
   width: 20%; // 內容寬度
 }
 
-.table th,
-.table td {
- /*  width: calc(100% / 6); */ // 將表格分為6等份，如果列數不同，請調整分母
-}
 
 // 針對圖示的特定調整
 .icon {

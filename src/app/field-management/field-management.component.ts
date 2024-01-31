@@ -4,6 +4,11 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
+import { MatStepperModule } from '@angular/material/stepper';      // @2024/01/31 Add for Create Field
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // @2024/01/31 Add for Create Field
+import { MatInputModule } from '@angular/material/input';          // @2024/01/31 Add for Create Field
+import { MatFormFieldModule } from '@angular/material/form-field'; // @2024/01/31 Add for Create Field
+
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
@@ -31,22 +36,14 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   ueNum: string = '0';                    // @11/30 Add by yuchen
   selectField!: Fields;                   // @11/30 Add by yuchen
 
-  @ViewChild('createModal') createModal: any;
-  createModalRef!: MatDialogRef<any>;
-
   refreshTimeout!: any;
   refreshTime: number = 5;
-
-  createForm!: FormGroup;
-  levelMap: Map<string, number> = new Map();
 
   p: number = 1;            // 當前頁數
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
   nullList: string[] = [];  // 給頁籤套件使用
   formValidated = false;
-  
-  isLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
 
   // queryFieldList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
   queryFieldList!: Subscription;  // @11/30 Add by yuchen
@@ -55,35 +52,42 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private router: Router,
     private commonService: CommonService,
-    public API_Field: apiForField,        // @2024/01/29 Add for import API of Field Management 
+    public API_Field: apiForField,               // @2024/01/29 Add for import API of Field Management 
     
     public fieldList_LocalFiles: localFieldList, // @2024/01/29 Add for import Field List Local Files
 
     //private http: HttpClient,
     private fb: FormBuilder,
-    public languageService: LanguageService
+    public languageService: LanguageService,
+
   ) {
-    this.levelMap.set('Deploy MaaS', 1);
-    this.levelMap.set('Register VM on MaaS', 2);
-    this.levelMap.set('Commission VM', 3);
-    this.levelMap.set('Deploy Machines', 4);
-    this.levelMap.set('Set Environment for k8s', 5);
-    this.levelMap.set('Create k8s clusters', 6);
-    this.levelMap.set('Deploy Node-Agent on each node', 7);
-    this.levelMap.set('Deploy IMS', 8);
-    this.levelMap.set('Running', 9);
-    this.levelMap.set('Failed Deployment', 10);
+
   }
+ 
 
   sessionId: string = ''; // 宣告 sessionId 屬於字串型態
   /**
    * 當 Component 初始化完成後執行的 Lifecycle Hook。
    * 主要用於設定 Component 的初始狀態，包括預設的 Log 類型、sessionId、以及設定路由參數相關的應對處理。
    */
-  ngOnInit(): void {
+  ngOnInit() {
+
     this.sessionId = this.commonService.getSessionId();
+
     // Field Summary
     this.getQueryFieldList();
+
+
+    this.firstFormGroup = this.fb.group({
+      firstCtrl: ['', Validators.required],
+    });
+    this.secondFormGroup = this.fb.group({
+      secondCtrl: ['', Validators.required],
+    });
+    this.thirdFormGroup = this.fb.group({
+      thirdCtrl: ['', Validators.required],
+    });
+  
   }
 
   // 銷毀 Component 時的清理工作
@@ -93,6 +97,9 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     // 如存在對 FieldSummaryInfo 的 API 請求訂閱，則取消訂閱以避免內存洩漏
     if ( this.queryFieldList ) this.queryFieldList.unsubscribe();
   }
+
+
+  isLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
 
   // @2024/01/29 Update by yuchen
   getQueryFieldList() {
@@ -159,14 +166,48 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       }
     }, 100 ); // timeout: 100 ms
   }
+
+  // @2024/01/31 Add by yuchen
+  createForm!:      FormGroup;
+  firstFormGroup!:  FormGroup;
+  secondFormGroup!: FormGroup;
+  thirdFormGroup!:  FormGroup;
+  forthFormGroup!:  FormGroup;
+  isLinear = false;
   
+  //  @2024/01/31 Add by yuchen
+  @ViewChild('createFieldWindow') createFieldWindow: any;
+  createFieldWindowRef!: MatDialogRef<any>;
+
+  //  @2024/01/31 Add by yuchen
+  openCreateFieldWindow() {
+    this.formValidated = false;
+
+    this.createForm = this.fb.group({
+      'name': new FormControl('', [Validators.required]),
+      'description': new FormControl(''),
+      'imsEndpoint': new FormControl('', [Validators.required]),
+      'firstNode': new FormControl(''),
+      'image': new FormControl(''),
+      'method': new FormControl('existing'),
+      'oCloudId': new FormControl('', [Validators.required]),
+    });
+
+    this.createFieldWindowRef = this.dialog.open(
+       this.createFieldWindow, { id: 'createFieldWindow' } 
+    );
+    this.createFieldWindowRef.afterClosed().subscribe( () => this.formValidated = false );
+  }
+
+
+
+
   // @12/05 Update by yuchen
   viewFieldDetail(fields: Fields) {
     this.selectField = fields;
     console.log("View Detail of the field id:", this.selectField.id, "and the field name: ", this.selectField.name);
     this.router.navigate(['/main/field-mgr/info', this.selectField.id, this.selectField.name]);
   }
-  
   
   // @12/01 Update by yuchen
   viewFieldAlarm(fields: Fields) {
@@ -185,16 +226,20 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
   // 根據用戶的選擇開啟刪除場域的對話框 @2024/01/29 Update by yuchen
   openDeleteField_ConfirmWindow( fields: Fields ) {
+
     // 將選中的場域賦值給 selectField
     this.selectField = fields;
+
     // 輸出將要刪除的場域名稱，用於記錄和調試
-    console.log("Deleted field name: ", this.selectField.name);
+    console.log( "Deleted field name: ", this.selectField.name );
 
     // 使用 MatDialog 服務開啟確認刪除的對話框
-    this.deleteField_ConfirmWindowRef = this.dialog.open(this.deleteField_ConfirmWindow, { id: 'deleteField_ConfirmWindow' });
+    this.deleteField_ConfirmWindowRef = this.dialog.open( 
+        this.deleteField_ConfirmWindow, { id: 'deleteField_ConfirmWindow' }
+    );
 
     // 訂閱對話框關閉後的事件
-    this.deleteField_ConfirmWindowRef.afterClosed().subscribe(confirm => {
+    this.deleteField_ConfirmWindowRef.afterClosed().subscribe( confirm => {
       // 這裡可以根據用戶在對話框中的操作進行相應的處理
     });
   }
@@ -222,10 +267,10 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
       // 不是 Local 環境，調用後端 API 進行刪除
       this.API_Field.removeField( this.selectField.id ).subscribe({
-        next: (response) => {
+        next: ( response ) => {
 
           // 刪除成功的回調，輸出成功信息和後端響應
-          console.log('Field removed successfully', response);
+          console.log( 'Field removed successfully', response );
 
           // 刷新場域列表或進行其他更新
           this.getQueryFieldList();
@@ -233,7 +278,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           // 關閉加載指示器
           this.isLoading = false;
         },
-        error: (error) => {
+        error: ( error ) => {
 
           // 刪除失敗的回調，輸出錯誤信息
           console.error('Failed to remove field:', error);
@@ -281,23 +326,6 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.p = page;
   }
 
-  openCreateModal() {
-    this.formValidated = false;
-    this.createForm = this.fb.group({
-      'name': new FormControl('', [Validators.required]),
-      'description': new FormControl(''),
-      'imsEndpoint': new FormControl('', [Validators.required]),
-      'firstNode': new FormControl(''),
-      'image': new FormControl(''),
-      'method': new FormControl('existing'),
-      'oCloudId': new FormControl('', [Validators.required]),
-    });
-    this.createModalRef = this.dialog.open(this.createModal, { id: 'createModal' });
-    this.createModalRef.afterClosed().subscribe(() => this.formValidated = false);
-  }
-
-
-
   changeMethod(e: MatButtonToggleChange) {
     this.formValidated = false;
     this.createForm.controls['imsEndpoint'].setValue('');
@@ -321,9 +349,6 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.createForm.controls['oCloudId'].updateValueAndValidity();
   }
 
-
-
-
   create() {
     this.formValidated = true;
     console.log(this.createForm);
@@ -340,7 +365,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
         imsEndpoint: 'http://10.172.61.37:5005/o2ims_infrastructureInventory/v1/',
         deployStatus: 'Deploy MaaS'
       })
-      this.createModalRef.close();
+      this.createFieldWindowRef.close();
       // this.getOcloudList();
 
     } else {
@@ -360,7 +385,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
         res => {
           console.log('createOcloud:');
           console.log(res);
-          this.createModalRef.close();
+          this.createFieldWindowRef.close();
           // this.getOcloudList();
         }
       );
@@ -368,9 +393,6 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   }
 
 }
-
-
-
 
 
 

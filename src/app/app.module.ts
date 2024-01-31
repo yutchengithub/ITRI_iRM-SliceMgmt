@@ -65,6 +65,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 
+import { FormBuilder, FormGroup } from '@angular/forms';      // @2024/01/31 Add
+import { MatInputModule } from '@angular/material/input';     // @2024/01/31 Add
+import { MatStepperModule } from '@angular/material/stepper'; // @2024/01/31 Add
+
+
 import { apiForField } from './shared/api/For_Field'; // @2024/01/04 Add
 
 import { localFieldList } from './shared/local-files/Field/For_queryFieldList'; // @2024/01/29 Add
@@ -150,7 +155,10 @@ import { localBSList } from './shared/local-files/BS/For_queryBsList'; // @2024/
     MatButtonModule,               // @12/12 Add by yuchen for Button 樣式
     MatListModule,                 // @12/12 Add by yuchen
     MatDividerModule,              // @12/12 Add by yuchen for Divider 
-    ToggleButtonModule             // @12/13 Add by yuchen for Toggle Button
+    ToggleButtonModule,            // @12/13 Add by yuchen for Toggle Button
+
+    MatStepperModule,   // @2024/01/31 Add by yuchen
+    MatInputModule      // @2024/01/31 Add by yuchen
   ],
   providers: [
     AuthGuard,

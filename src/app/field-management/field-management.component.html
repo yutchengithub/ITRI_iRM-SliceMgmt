@@ -1,5 +1,5 @@
 <h5>{{languageService.i18n['index.menu_fieldMgr']}}
-  <mat-icon tooltip="{{languageService.i18n['field.add']}}" (click)="openCreateModal()">add</mat-icon>
+  <mat-icon tooltip="{{languageService.i18n['field.create']}}" (click)="openCreateFieldWindow()">add</mat-icon>
 </h5>
 <div class="table">
   <table>
@@ -117,6 +117,157 @@
   </form>
 </ng-template>
 
+
+<!-- Window of Create Field @2024/01/31 Add -->
+<ng-template #createFieldWindow>
+  <div>
+    <h5>{{ languageService.i18n['field.createTitle'] }}</h5>
+  </div>  
+
+  <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
+    {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
+  </button>
+  <!-- <mat-stepper orientation="vertical" [linear]="isLinear" #stepper> -->
+  <mat-stepper orientation="vertical" [linear]="true" #stepper> 
+    <mat-step [stepControl]="firstFormGroup">
+      <form [formGroup]="firstFormGroup">
+        <ng-template matStepLabel>{{ languageService.i18n['field.setFieldName'] }}</ng-template>
+        <mat-form-field appearance="fill">
+          <mat-label>{{ languageService.i18n['field.name'] }}</mat-label>
+          <input matInput formControlName="firstCtrl" required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="secondFormGroup">
+      <form [formGroup]="secondFormGroup">
+        <ng-template matStepLabel>{{ languageService.i18n['field.setFieldBoundsCoord'] }}</ng-template>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ languageService.i18n['field.northBound'] }}</mat-label>
+            <input matInput formControlName="secondCtrl" placeholder="( -90.0 ~ 90.0 )"
+                  required>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ languageService.i18n['field.southBound'] }}</mat-label>
+            <input matInput formControlName="secondCtrl" placeholder="( -90.0 ~ 90.0 )"
+                  required>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ languageService.i18n['field.westBound'] }}</mat-label>
+            <input matInput formControlName="secondCtrl" placeholder="( -180.0 ~ 180.0 )"
+                  required>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ languageService.i18n['field.eastBound'] }}</mat-label>
+            <input matInput formControlName="secondCtrl" placeholder="( -180.0 ~ 180.0 )"
+                  required>
+          </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
+          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="thirdFormGroup">
+      <form [formGroup]="thirdFormGroup">
+        <ng-template matStepLabel>{{ languageService.i18n['field.setNotificationNum'] }}</ng-template>
+        <mat-form-field appearance="fill">
+          <mat-label>{{ languageService.i18n['field.PhoneNum'] }}</mat-label>
+          <input matInput formControlName="thirdCtrl" placeholder="0912345678"
+                  required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
+          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="forthFormGroup">
+      <form [formGroup]="forthFormGroup">
+        <ng-template matStepLabel>{{ languageService.i18n['field.selectBaseStations'] }}</ng-template>
+          <!-- 選擇基站列表 For field Creation @2024/01/31 Add by yuchen -->	
+          <div class="table">
+            <table class="center">
+              <thead>
+                <tr>
+                  <!-- 使用 *ngIf 控制顯示 "選擇基站" 這一列 @2024/01/25 Add -->
+                    <!-- <th *ngIf="isCheckboxVisible">{{ languageService.i18n['field.selectBSs'] }}</th> -->
+                  <th>{{ languageService.i18n['field.selectBSs'] }}</th>
+                  <th>{{ languageService.i18n['field.BSname'] }}</th>
+                  <th>{{ languageService.i18n['field.BStype'] }}</th>
+                  <th>gNB ID</th>
+                  <th>gNB ID Length</th>
+                  <th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
+                  <th>{{ languageService.i18n['field.BSstatus'] }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <!-- <tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;"> -->
+                  
+                  <!-- 根據 displayAllBSFlag 旗標選擇迭代的數據來源 ( .ts 進行控制 ) -->
+                  <tr>
+
+                    <!-- 根據條件顯示 Checkbox @2024/01/26 Update -->
+                    <td>
+                      <input type="checkbox"  >
+                    </td>  
+                    <td>
+                      <!-- 顯示 "基站名稱" -->
+                      1111
+                    </td>
+                    <td>
+                      64646
+                      <!-- {{ opt.gNBId }} -->
+                    </td>
+                    <td>
+                      46546
+                      <!-- {{ opt.gNBIdLength }} -->
+                    </td>
+                    <td>
+                      4546546
+                      <!-- <label>{{ opt.position }}</label> -->
+                    </td>
+                    <td class="icon">
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+        <div>
+          <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
+          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>{{ languageService.i18n['field.createDone'] }}</ng-template>
+      <p>{{ languageService.i18n['field.setupComplete'] }}</p>
+      <div>
+        <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
+        <button mat-button (click)="stepper.reset()">{{ languageService.i18n['field.createReset'] }}</button>
+      </div>
+    </mat-step>
+  </mat-stepper>
+
+  <div class="buttons buttons-centered">
+    <button type="button"  mat-dialog-close>
+      {{ languageService.i18n['confirm'] }}
+    </button>
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }}
+    </button>
+  </div>
+  
+  
+  
+  
+
+</ng-template>
+  
+
 <!-- Window of Delete Field @2024/01/29 Update -->
 <ng-template #deleteField_ConfirmWindow>
   <!-- 標題部分，使用 languageService.i18n['confirm'] 來國際化確認文字 -->
@@ -138,4 +289,3 @@
     </button>
   </div>
 </ng-template>
-

@@ -19,7 +19,6 @@ import {
   MatDialogContent,
 } from '@angular/material/dialog'; // @2024/01/19 Add
 
-
 import { of } from 'rxjs'; // @2024/01/09 Add 
 import { forkJoin, Observable } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';          // @2023/12/13 Add for use 'detectChanges()'
@@ -321,7 +320,7 @@ export class FieldInfoComponent implements OnInit {
     //              確保當數據模型更新後，相關的視圖能夠及時反映
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
-  // private messageService: MessageService
+    // private messageService: MessageService
   ) {
     const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
     this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
