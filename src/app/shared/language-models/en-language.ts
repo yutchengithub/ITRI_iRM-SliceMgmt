@@ -73,6 +73,7 @@ export const Enlanguage = {
   'field.PhoneNum': 'Phone Number',                   // @2024/01/31 Add
   'field.selectBaseStations': 'Select Base Stations', // @2024/01/31 Add
   'field.setupComplete': 'Field Setup Complete',      // @2024/01/31 Add
+  'field.bsDescription': 'Description',               // @2024/02/01 Add
 
 
   'field.info':'Field Detailed Information',

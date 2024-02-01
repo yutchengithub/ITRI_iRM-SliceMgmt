@@ -71,6 +71,7 @@ export const TwLanguage = {
   'field.PhoneNum': '電話號碼',                    // @2024/01/31 Add
   'field.selectBaseStations': '選擇基站',          // @2024/01/31 Add
   'field.setupComplete': '場域設定完成',            // @2024/01/31 Add
+  'field.bsDescription': '基站地點說明',            // @2024/02/01 Add
 
   'field.info':'場域詳細資訊',
   'field.Map':'場域地圖',

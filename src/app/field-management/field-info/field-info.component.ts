@@ -31,7 +31,7 @@ import { apiForField } from '../../shared/api/For_Field';
 import { FieldInfo } from '../../shared/interfaces/Field/For_queryFieldInfo';              // @2023/12/21 Add
 import { BsInfoInField } from '../../shared/interfaces/Field/For_queryFieldInfo';          // @2023/12/21 Add
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
-import { ForUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_updateField';    // @2024/01/26 Add
+import { ForCreateOrUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_createField_or_updateField';    // @2024/01/26 Add
 import { localBSList } from '../../shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
 
 import { BSInfo } from '../../shared/interfaces/BS/For_queryBsInfo_BS';                    // @2023/12/21 Add
@@ -322,11 +322,11 @@ export class FieldInfoComponent implements OnInit {
     private ngZone: NgZone,
     // private messageService: MessageService
   ) {
+    
     const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
     this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
     this.createBSInfoForm();    // For updateBs API @2024/01/05 Add 
-    this.createFieldInfoForm(); // Field Info in Field Editing  @2024/01/17 Add 
-    
+    this.createFieldInfoForm(); // For Field Info in Field Editing  @2024/01/17 Add 
   }
 
   // 頁面初始化
@@ -2004,18 +2004,23 @@ export class FieldInfoComponent implements OnInit {
 
   // @2024/01/26 Update
   // 當用戶改變基站選中狀態的事件處理函數 
+  // 更新單一基站的選擇狀態，同時更新 selectedBsInfos 陣列
   onBsSelectionChange( bsId: string, event: Event ) {
+
     // 從事件獲取 Checkbox 的選中狀態
     const isChecked = ( event.target as HTMLInputElement ).checked;
 
     // 檢查 Checkbox 是否被勾選
     if ( isChecked ) {
+
       // 如果 Checkbox 被勾選，進行檢查以確定該基站 ID 是否不在 selectedBsInfos 陣列中
       if ( !this.selectedBsInfos.some( bi => bi.id === bsId ) ) {
+
         // 如果該 ID 不在陣列中，則將其添加到陣列中
         this.selectedBsInfos.push({ id: bsId });
       }
     } else {
+      
       // 如果 Checkbox 沒有被勾選，從 selectedBsInfos 陣列中移除對應的基站 ID
       this.selectedBsInfos = this.selectedBsInfos.filter( bi => bi.id !== bsId );
     }
@@ -2027,7 +2032,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
-  /** @2024/01/28 Update
+  /** @2024/02/01 Update
    * 提交場域編輯信息。
    * 如果是本地模式，則模擬數據更新過程；
    * 如果不是本地模式，則向伺服器發送更新請求。
@@ -2036,7 +2041,7 @@ export class FieldInfoComponent implements OnInit {
     console.log("UpdateFieldEditing_Submit() - Start");
 
     // 準備提交的數據，按照 ForUpdateField 介面格式化
-    const submitData: ForUpdateField = {
+    const submitData: ForCreateOrUpdateField = {
       // 使用者通過表單界面可調整的部分
       fieldposition1: `[${this.fieldEditForm.value.fieldBound_East},${this.fieldEditForm.value.fieldBound_North}]`,
       fieldposition2: `[${this.fieldEditForm.value.fieldBound_West},${this.fieldEditForm.value.fieldBound_North}]`,

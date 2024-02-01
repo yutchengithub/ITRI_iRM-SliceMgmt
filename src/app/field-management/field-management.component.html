@@ -1,5 +1,5 @@
 <h5>{{languageService.i18n['index.menu_fieldMgr']}}
-  <mat-icon tooltip="{{languageService.i18n['field.create']}}" (click)="openCreateFieldWindow()">add</mat-icon>
+  <mat-icon tooltip="{{languageService.i18n['field.create']}}" (click)="openfieldCreationWindow()">add</mat-icon>
 </h5>
 <div class="table">
   <table>
@@ -50,85 +50,13 @@
 </pagination-controls>
 
 
-<ng-template #createModal>
-  <h5>{{languageService.i18n['add_field']}}</h5>
-  <form [formGroup]="createForm">
-    <ul>
-      <li>
-        <label>Field {{languageService.i18n['table.header_name']}}</label>
-        <span>
-          <input type="text" formControlName="name" class="{{formValidated&&createForm.controls['name'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['name'].invalid">Required</mat-error>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['description']}}</label>
-        <span>
-          <textarea formControlName="description"></textarea>
-        </span>
-      </li>
-      <li>
-        <label>選擇新增方式</label>
-        <span>
-        <mat-button-toggle-group formControlName="method" (change)="changeMethod($event)">
-          <mat-button-toggle value="existing">納管既有的 Field</mat-button-toggle>
-          <mat-button-toggle value="smo">透過 SMO 建立 Field</mat-button-toggle>
-        </mat-button-toggle-group>
-        <ng-template [ngIf]="createForm.controls['method'].value === 'existing'">
-          <div>
-            <label>IMS Endpoint</label>
-            <span>
-              <input type="text" formControlName="imsEndpoint" class="{{formValidated&&createForm.controls['imsEndpoint'].invalid?'required':''}}">
-              <mat-error *ngIf="formValidated&&createForm.controls['imsEndpoint'].invalid">Required</mat-error>
-            </span>
-          </div>
-          <div>
-            <label>Field ID</label>
-            <span>
-              <input type="text" formControlName="oCloudId" class="{{formValidated&&createForm.controls['oCloudId'].invalid?'required':''}}">
-              <mat-error *ngIf="formValidated&&createForm.controls['oCloudId'].invalid">Required</mat-error>
-            </span>
-          </div>
-        </ng-template>
-
-        <ng-template [ngIf]="createForm.controls['method'].value === 'smo'">
-          <div>
-            <label>First Node URL</label>
-            <span>
-              <input type="text" formControlName="firstNode" class="{{formValidated&&createForm.controls['firstNode'].invalid?'required':''}}">
-              <mat-error *ngIf="formValidated&&createForm.controls['firstNode'].invalid">Required</mat-error>
-            </span>
-          </div>
-          <div>
-            <label>Image URL</label>
-            <span>
-              <input type="text" formControlName="image" class="{{formValidated&&createForm.controls['image'].invalid?'required':''}}">
-              <mat-error *ngIf="formValidated&&createForm.controls['image'].invalid">Required</mat-error>
-            </span>
-          </div>
-        </ng-template>
-      </span>
-      </li>
-    </ul>
-    <div class="buttons">
-      <button type="button" (click)="create()">OK</button>
-      <button type="button" mat-dialog-close>Cancel</button>
-    </div>
-  </form>
-</ng-template>
-
-
-<!-- Window of Create Field @2024/01/31 Add -->
-<ng-template #createFieldWindow>
+<!-- Window of Create Field @2024/02/01 Update -->
+<ng-template #fieldCreationWindow>
   <div>
     <h5>{{ languageService.i18n['field.createTitle'] }}</h5>
   </div>  
 
-  <!-- <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
-    {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
-  </button> -->
-  <!-- <mat-stepper orientation="vertical" [linear]="isLinear" #stepper> -->
-  <mat-stepper orientation="vertical" [linear]="true" #stepper> 
+  <mat-stepper orientation="vertical" [linear]="false" #stepper> 
     <mat-step [stepControl]="firstFormGroup">
       <form [formGroup]="firstFormGroup">
         <ng-template matStepLabel>{{ languageService.i18n['field.setFieldName'] }}</ng-template>
@@ -187,52 +115,51 @@
     <mat-step [stepControl]="forthFormGroup">
       <form [formGroup]="forthFormGroup">
         <ng-template matStepLabel>{{ languageService.i18n['field.selectBaseStations'] }}</ng-template>
-          <!-- 選擇基站列表 For field Creation @2024/01/31 Add by yuchen -->	
+          <!-- 選擇基站列表 For field creation @2024/02/01 Update by yuchen -->
           <div class="table">
+            <!-- 創建一個表格 -->
             <table class="center">
               <thead>
                 <tr>
-                  <!-- 使用 *ngIf 控制顯示 "選擇基站" 這一列 @2024/01/25 Add -->
-                    <!-- <th *ngIf="isCheckboxVisible">{{ languageService.i18n['field.selectBSs'] }}</th> -->
-                  <th>{{ languageService.i18n['field.selectBSs'] }}</th>
-                  <th>{{ languageService.i18n['field.BSname'] }}</th>
-                  <th>{{ languageService.i18n['field.BStype'] }}</th>
-                  <th>gNB ID</th>
-                  <th>gNB ID Length</th>
-                  <th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
-                  <th>{{ languageService.i18n['field.BSstatus'] }}</th>
+                  <th> <!-- 全選複選框的標題 -->
+                    <input type="checkbox" [checked]="isAllSelected" (change)="onSelectAllBs($event)">
+                    <!-- 綁定全選複選框的選中狀態到 isAllSelected 變數，並設置改變事件 -->
+                  </th>
+                  <th>{{ languageService.i18n['field.BSname'] }}</th> <!-- 基站名稱的標題 -->
+                  <th>gNB ID</th> <!-- gNB ID 的標題 -->
+                  <th>gNB ID Length</th> <!-- gNB ID 長度的標題 -->
+                  <th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th> <!-- 基站天線座標的標題 -->
+                  <th>{{ languageService.i18n['field.bsDescription'] }}</th> <!-- 基站描述的標題 -->
                 </tr>
               </thead>
               <tbody>
-                
-                  <!-- <tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;"> -->
-                  
-                  <!-- 根據 displayAllBSFlag 旗標選擇迭代的數據來源 ( .ts 進行控制 ) -->
-                  <tr>
-
-                    <!-- 根據條件顯示 Checkbox @2024/01/26 Update -->
-                    <td>
-                      <input type="checkbox"  >
-                    </td>  
-                    <td>
-                      <!-- 顯示 "基站名稱" -->
-                      1111
-                    </td>
-                    <td>
-                      64646
-                      <!-- {{ opt.gNBId }} -->
-                    </td>
-                    <td>
-                      46546
-                      <!-- {{ opt.gNBIdLength }} -->
-                    </td>
-                    <td>
-                      4546546
-                      <!-- <label>{{ opt.position }}</label> -->
-                    </td>
-                    <td class="icon">
-                    </td>
-                  </tr>
+                <!-- 循環 displayedBSs 陣列來顯示每個基站的資料 -->
+                <tr *ngFor="let opt of displayedBSs" style="overflow-y: auto;">
+                  <td>
+                    <input type="checkbox" [checked]="opt.selected" (change)="onBsSelectionChange( opt.id, $event )">
+                    <!-- 綁定每個基站選中狀態到 opt.selected，並設置改變事件 -->
+                  </td>
+                  <td>
+                    <!-- 顯示 "基站名稱" -->
+                    {{ opt.name }}
+                  </td>
+                  <td>
+                    <!-- 顯示 gNB ID -->
+                    {{ opt.gNBId }}
+                  </td>
+                  <td>
+                    <!-- 顯示 gNB ID 長度 -->
+                    {{ opt.gNBIdLength }}
+                  </td>
+                  <td>
+                    <!-- 顯示基站天線座標 -->
+                    {{ opt.position }}
+                  </td>
+                  <td>
+                    <!-- 顯示基站地點說明 -->
+                    {{ opt.description }}
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>

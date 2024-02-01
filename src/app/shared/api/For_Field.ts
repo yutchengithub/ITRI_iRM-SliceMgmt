@@ -28,6 +28,16 @@ export class apiForField {
     return this.http.get(url);
   }
 
+  // For create Field @2024/02/01 Add by yuchen
+  createField( body: {} ): Observable<any> {
+
+    const url = `${this.restPath}/createField`;
+    
+    const bodyStr = JSON.stringify( body );
+    
+    return this.http.post( url, bodyStr );
+  }
+
   // Remove Field of selection @2024/01/29 Add by yuchen
   removeField( fieldId: string ): Observable<any> { 
       

@@ -1,7 +1,7 @@
 
 // @2024/01/25 Add by yuchen
 // 描述單一場域的詳細資訊
-export interface ForUpdateField {
+export interface ForCreateOrUpdateField {
     fieldposition1: string;
     fieldposition2: string;
     fieldposition3: string;

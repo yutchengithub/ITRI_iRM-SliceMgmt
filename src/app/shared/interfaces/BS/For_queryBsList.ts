@@ -14,7 +14,7 @@ export interface Basestation {
     ip: string;
     port: string;
     position: string;
-    description: string;
+    description: string; // 基站地點說明
     bstype: number;
     components: {};
     status: number;
