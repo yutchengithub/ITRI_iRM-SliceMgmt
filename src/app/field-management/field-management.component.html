@@ -72,32 +72,34 @@
     <mat-step [stepControl]="secondFormGroup">
       <form [formGroup]="secondFormGroup">
         <ng-template matStepLabel>{{ languageService.i18n['field.setFieldBoundsCoord'] }}</ng-template>
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['field.northBound'] }}</mat-label>
-            <input matInput formControlName="secondCtrl" placeholder="( -90.0 ~ 90.0 )"
-                  required>
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['field.southBound'] }}</mat-label>
-            <input matInput formControlName="secondCtrl" placeholder="( -90.0 ~ 90.0 )"
-                  required>
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['field.westBound'] }}</mat-label>
-            <input matInput formControlName="secondCtrl" placeholder="( -180.0 ~ 180.0 )"
-                  required>
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['field.eastBound'] }}</mat-label>
-            <input matInput formControlName="secondCtrl" placeholder="( -180.0 ~ 180.0 )"
-                  required>
-          </mat-form-field>
+        <div class="mat-stepper-boundary-group">
+          <div class="mat-stepper-boundary-row">
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['field.northBound'] }}</mat-label>
+              <input matInput formControlName="northBound" placeholder="( -90.0 ~ 90.0 )" required>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['field.southBound'] }}</mat-label>
+              <input matInput formControlName="southBound" placeholder="( -90.0 ~ 90.0 )" required>
+            </mat-form-field>
+          </div>
+          <div class="mat-stepper-boundary-row">
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['field.westBound'] }}</mat-label>
+              <input matInput formControlName="westBound" placeholder="( -180.0 ~ 180.0 )" required>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['field.eastBound'] }}</mat-label>
+              <input matInput formControlName="eastBound" placeholder="( -180.0 ~ 180.0 )" required>
+            </mat-form-field>
+          </div>
+        </div>
         <div>
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
           <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
-    </mat-step>
+    </mat-step>    
     <mat-step [stepControl]="thirdFormGroup">
       <form [formGroup]="thirdFormGroup">
         <ng-template matStepLabel>{{ languageService.i18n['field.setNotificationNum'] }}</ng-template>
