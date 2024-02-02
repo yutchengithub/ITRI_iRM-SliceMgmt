@@ -39,10 +39,6 @@ import { localBSList } from '../shared/local-files/BS/For_queryBsList';         
 
 export class FieldManagementComponent implements OnInit, OnDestroy {
 
-  fieldList: FieldList = {} as FieldList; // @11/30 Add by yuchen
-  ueNum: string = '0';                    // @11/30 Add by yuchen
-  selectField!: Fields;                   // @11/30 Add by yuchen
-
   refreshTimeout!: any;
   refreshTime: number = 5;
 
@@ -50,60 +46,53 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
   nullList: string[] = [];  // 給頁籤套件使用
-  formValidated = false;
-
-  // queryFieldList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
-  queryFieldList!: Subscription;  // @11/30 Add by yuchen
 
   constructor(
-    private dialog: MatDialog,
-    private router: Router,
-    private commonService: CommonService,
-    public API_Field: apiForField,               // @2024/01/29 Add for import API of Field Management 
+
+    private router:              Router,
+    private dialog:              MatDialog,
+    private commonService:       CommonService,
+    private fb:                  FormBuilder,
+    public languageService:      LanguageService,
+    public API_Field:            apiForField,       // @2024/01/29 Add for import API of Field Management 
+    public fieldList_LocalFiles: localFieldList,    // @2024/01/29 Add for import Field List Local Files
+    public bsList_LocalFiles:    localBSList,       // @2024/02/01 Add for import BS List Local Files
     
-    public fieldList_LocalFiles: localFieldList, // @2024/01/29 Add for import Field List Local Files
-
-    //private http: HttpClient,
-    private fb: FormBuilder,
-    public languageService: LanguageService,
-
-
-    public bsList_LocalFiles: localBSList, // @2024/02/01 Add for import BS List Local Files
-
   ) {
-    this.createFieldCreationForm(); // For creating Field in Field Creation @2024/02/01 Add
+
+    this.createFieldCreationForm(); // 初始化並創建每個場域設置用的 FormGroup @2024/02/02 Add
   }
  
 
   sessionId: string = ''; // 宣告 sessionId 屬於字串型態
-  
+
   ngOnInit() {
 
     this.sessionId = this.commonService.getSessionId();
 
     // Field Summary
     this.getQueryFieldList();
-
-    this.firstFormGroup = this.fb.group({
-      firstCtrl: ['', Validators.required],
-    });
-    this.secondFormGroup = this.fb.group({
-      secondCtrl: ['', Validators.required],
-    });
-    this.thirdFormGroup = this.fb.group({
-      thirdCtrl: ['', Validators.required],
-    });
-  
   }
 
   // 銷毀 Component 時的清理工作
   ngOnDestroy() {
+
     clearTimeout( this.refreshTimeout );
 
-    // 如存在對 FieldSummaryInfo 的 API 請求訂閱，則取消訂閱以避免內存洩漏
+    // 如存在對 queryFieldList 的 API 請求訂閱，則取消訂閱以避免內存洩漏
     if ( this.queryFieldList ) this.queryFieldList.unsubscribe();
+
+    // 如存在對 queryBsList 的 API 請求訂閱，則取消訂閱以避免內存洩漏
+    if ( this.queryBsList ) this.queryBsList.unsubscribe();
   }
 
+
+  fieldList: FieldList = {} as FieldList; // @11/30 Add by yuchen
+  ueNum: string = '0';                    // @11/30 Add by yuchen
+  selectField!: Fields;                   // @11/30 Add by yuchen
+
+  // queryFieldList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
+  queryFieldList!: Subscription;  // @11/30 Add by yuchen
 
   isLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
 
@@ -125,14 +114,14 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
       // 使用 API_Field 中的 queryFieldList() 發起 HTTP GET 請求
       this.API_Field.queryFieldList().subscribe({
-        next: (res) => {
+        next: ( res ) => {
 
           console.log('getQueryFieldList:', res);
           this.fieldList = res;
-          //this.FieldListDeal();
+          // this.FieldListDeal();
 
         },
-        error: (error) => {
+        error: ( error ) => {
 
           console.error('Error fetching field info:', error);
           this.isLoading = false; // 發生錯誤時也要設置為 false @12/28 Add for Progress Spinner
@@ -164,9 +153,9 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   
     // 使用 setTimeout 設定一個定時刷新
     this.refreshTimeout = window.setTimeout( () => {
-      if (this.p === 1) {
+      if ( this.p === 1 ) {
         console.log(`page[${this.p}] ===> refresh.`);
-        //this.getQueryFieldList();  // 取得場域訊息函數
+        // this.getQueryFieldList();  // 取得場域訊息函數
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
       }
@@ -174,39 +163,67 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   }
 
 
-// For Field Creation Setting @2024/02/01 Add ↓
+// For Field Creation Setting @2024/02/02 Update ↓
 
   // @2024/01/31 Add by yuchen
-  createForm!:      FormGroup;
-  firstFormGroup!:  FormGroup;
-  secondFormGroup!: FormGroup;
-  thirdFormGroup!:  FormGroup;
-  forthFormGroup!:  FormGroup;
   isLinear = false;
-
-  // @2024/02/01 Add
-  // 創建表單組，用於建立場域 
-  fieldCreationForm!: FormGroup;
+  firstFormGroup_FieldName!:    FormGroup;
+  secondFormGroup_fieldBounds!: FormGroup;
+  thirdFormGroup_PhoneNum!:     FormGroup;
+  
+  // @2024/02/02 Update
+  // 初始化並創建每個 FormGroup，並用於"建立場域"設置 
   createFieldCreationForm() {
 
-    // 初始化表單控件
-    this.fieldCreationForm = this.fb.group({
-      fieldName:        new FormControl('', [Validators.required]),  // 場域名稱，默認值為空字串
-      fieldBound_North: new FormControl('', [Validators.required]),  //   北邊界，默認值為空字串
-      fieldBound_South: new FormControl('', [Validators.required]),  //   南邊界，默認值為空字串
-      fieldBound_West:  new FormControl('', [Validators.required]),  //   西邊界，默認值為空字串
-      fieldBound_East:  new FormControl('', [Validators.required]),  //   東邊界，默認值為空字串
-      phoneNumber:      new FormControl('', [Validators.required])   // 聯絡電話，默認值為空字串
+    // 初始化第一步驟的 FormGroup 用於設置場域名稱
+    this.firstFormGroup_FieldName = this.fb.group({
+      FieldName: ['', Validators.required],
     });
 
+    // 初始化第二步驟的 FormGroup 用於設置場域邊界
+    this.secondFormGroup_fieldBounds = this.fb.group({
+      northBound: ['', [Validators.required, Validators.pattern(/^(-?[0-8]?[0-9](\.[0-9]+)?|90(\.0+)?)$/)]],
+      southBound: ['', [Validators.required, Validators.pattern(/^(-?[0-8]?[0-9](\.[0-9]+)?|90(\.0+)?)$/)]],
+       westBound: ['', [Validators.required, Validators.pattern(/^(-?(1[0-7][0-9]|0?[0-9]{1,2})(\.[0-9]+)?|180(\.0+)?)$/)]],
+       eastBound: ['', [Validators.required, Validators.pattern(/^(-?(1[0-7][0-9]|0?[0-9]{1,2})(\.[0-9]+)?|180(\.0+)?)$/)]],
+    });
+  
+    // 初始化第三步驟的 FormGroup 用於設置管理者門號
+    this.thirdFormGroup_PhoneNum = this.fb.group({
+       PhoneNum: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+    });
   }
 
-  // 引用場域建立視窗組件  @2024/01/31 Add by yuchen
+  // 用於重置所有輸入的"建立場域"設定 @2024/02/02 Add
+  resetFieldCreationForm() {
+    console.log("Resetting field creation form settings.");
+
+    // 重置各個步驟的 FormGroup
+    this.firstFormGroup_FieldName.reset();
+    this.secondFormGroup_fieldBounds.reset();
+    this.thirdFormGroup_PhoneNum.reset();
+    
+    // 重置 displayedBSs 中的每個基站的選擇狀態
+    this.displayedBSs.forEach( bs => bs.selected = false );
+
+    // 清空 ( 初始化 ) 儲存選擇基站的陣列
+    this.selectedBsInfos = [];
+
+    // 重置全選 Checkbox 的狀態
+    this.isAllSelected = false;
+
+    // 如果還有其他相關的狀態需要重置，也應該在這裡進行
+    // 例如，如果有分頁或過濾器的狀態，也應該一併重置
+
+    console.log("Field creation form settings have been reset.");
+  }
+
+  // 引用場域建立視窗組件  @2024/02/02 Update by yuchen
   @ViewChild('fieldCreationWindow') fieldCreationWindow: any;
   fieldCreationWindowRef!: MatDialogRef<any>;
   fieldCreationFormValidated = false;
 
-  // 打開場域建立視窗 @2024/02/01 Add
+  // 打開"場域建立"視窗 @2024/02/01 Add
   openfieldCreationWindow() {
 
     // 表單驗證狀態重置
@@ -230,7 +247,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     // 打印當前場域內選中的基站 ID
     console.log("In openfieldCreationWindow(),\n 目前被選中的基站 id 有", this.selectedBsInfos )
 
-    this.selectedBsInfos = []; // 每次打開該視窗都初始化 selectedBsInfos @2024/02/01 Add
+    this.resetFieldCreationForm(); // 初始化所有輸入的"場域建立"設定  @2024/02/02 Add
 
     // 打印當前場域內選中的基站 ID
     console.log("In openfieldCreationWindow(),\n 目前被選中的基站 id 有", this.selectedBsInfos )
@@ -241,8 +258,11 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   selectedBsInfos: Bsinfo[] = [];      // 用於存儲用戶建立場域時要選擇放入的 BS 之 ID @2024/02/01 Add
   isGetQueryBsListLoading = false;     // 用於表示加載 BS List 的 flag，初始設置為 false @2024/02/01 Add for Progress Spinner
 
-  displayedBSs: Basestation[] = [];    // 用於控制顯示於"場域建立"頁面上的 BS 選擇列表 @2024/02/01 Add
+  displayedBSs:   Basestation[] = [];  // 用於控制顯示於"場域建立"頁面上的 BS 選擇列表 @2024/02/01 Add
   BSsNotUsedInO1: Basestation[] = [];  // 用於存儲 O1 內還未被使用的 BS  @2024/02/01 Add
+
+  // queryBsList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
+  queryBsList!: Subscription;  // @2024/02/02 Add by yuchen
 
   // @2024/02/01 Add 
   // Get the BS List in the O1 System 
@@ -303,7 +323,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           this.isGetQueryBsListLoading = false;
 
           console.log( "In getQueryBsList(),\n 目前被選中的基站 id 目前有 ( 此時應為空 ):\n", this.selectedBsInfos )
-          console.log( '目前內所有的基站有:\n', this.bsList ); 
+          console.log( '目前 O1 內所有的基站有:\n', this.bsList ); 
           console.log( '目前 O1 內未被選擇的基站有:\n', this.BSsNotUsedInO1 ); 
 
         },
@@ -384,7 +404,62 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     console.log( "In onSelectAllBs() - End,\n 所有被選中的基站訊息現在有", this.selectedBsInfos );
   }
 
-// For Field Creation Setting @2024/02/01 Add ↑
+  // @2024/02/02 Add
+  // 提交場域建立表單的函數。如果處於本地模式，則模擬提交過程；如果處於生產模式，則向後端 API 發送請求。
+  FieldCreation_Submit() {
+
+    // 在控制台記錄開始執行函數的訊息
+    console.log( "FieldCreation_Submit() - Start" );
+
+    // 根據用戶填寫的表單資料，建立提交到後端的數據結構
+    const fieldCreationData: ForCreateOrUpdateField = {
+
+      // 使用者可調整:
+      // 將表單內容轉換成場域位置數據
+      fieldposition1: `[${this.secondFormGroup_fieldBounds.value.eastBound},${this.secondFormGroup_fieldBounds.value.northBound}]`,
+      fieldposition2: `[${this.secondFormGroup_fieldBounds.value.westBound},${this.secondFormGroup_fieldBounds.value.northBound}]`,
+      fieldposition3: `[${this.secondFormGroup_fieldBounds.value.westBound},${this.secondFormGroup_fieldBounds.value.southBound}]`,
+      fieldposition4: `[${this.secondFormGroup_fieldBounds.value.eastBound},${this.secondFormGroup_fieldBounds.value.southBound}]`,
+                name: this.firstFormGroup_FieldName.value.FieldName,  // 場域名稱
+              bsinfo: this.selectedBsInfos,                         // 已選擇的基站信息
+               phone: this.thirdFormGroup_PhoneNum.value.PhoneNum,   // 管理者電話號碼
+
+      // 使用者不可調整:
+      session: this.sessionId // 會話識別碼
+    };
+
+    // 檢查是否在本地環境下模擬執行
+    if ( this.commonService.isLocal ) {
+      // 本地模式下模擬場域建立過程
+      console.log( "本地模擬場域建立，提交的數據:", fieldCreationData );
+      // 本地模擬建立成功的操作...
+    } else {
+      // 生產環境下向後端 API 發送場域建立請求
+      this.API_Field.createField( fieldCreationData ).subscribe({
+        next: ( response ) => {
+          // 處理成功響應
+          console.log( "場域建立成功:", response );
+          // 建立成功後的其他操作，如刷新場域列表
+        },
+        error: ( error ) => {
+          // 處理失敗響應
+          console.error("場域建立失敗:", error);
+          // 例如顯示錯誤訊息給用戶
+        }
+      });
+    }
+    
+    // 關閉場域建立視窗
+    this.fieldCreationWindowRef.close();
+    // 重置場域建立表單，清空所有已填寫的資料
+    this.resetFieldCreationForm();
+    
+    // 在控制台記錄函數執行結束的訊息
+    console.log("FieldCreation_Submit() - End");
+  }
+
+  
+// For Field Creation Setting @2024/02/02 Update ↑
 
 
 
@@ -439,7 +514,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
     // 檢查是否是 Local 環境
     if ( this.commonService.isLocal ) {
-      // 在控制台輸出調試信息
+      // 在控制台輸出調試訊息
       console.log('Remove field in local environment.');
 
       // 調用刪除場域的函數，傳入場域名稱
@@ -456,7 +531,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       this.API_Field.removeField( this.selectField.id ).subscribe({
         next: ( response ) => {
 
-          // 刪除成功的回調，輸出成功信息和後端響應
+          // 刪除成功的回調，輸出成功訊息和後端響應
           console.log( 'Field removed successfully', response );
 
           // 刷新場域列表或進行其他更新
@@ -467,7 +542,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
         },
         error: ( error ) => {
 
-          // 刪除失敗的回調，輸出錯誤信息
+          // 刪除失敗的回調，輸出錯誤訊息
           console.error('Failed to remove field:', error);
 
           // 關閉加載指示器
@@ -498,7 +573,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     
     } else {
 
-      // 如果 fieldList_LocalFiles.fieldList.fields 不是陣列，輸出錯誤信息
+      // 如果 fieldList_LocalFiles.fieldList.fields 不是陣列，輸出錯誤訊息
       console.error( 'fieldList.fields 不是陣列或為 undefined' );
     }
   }
@@ -511,29 +586,6 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
   pageChanged(page: number) {
     this.p = page;
-  }
-
-  changeMethod(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    this.createForm.controls['imsEndpoint'].setValue('');
-    this.createForm.controls['firstNode'].setValue('');
-    this.createForm.controls['image'].setValue('');
-    this.createForm.controls['oCloudId'].setValue('');
-    if (e.value === 'existing') {
-      this.createForm.controls['imsEndpoint'].setValidators([Validators.required]);
-      this.createForm.controls['firstNode'].setValidators(null);
-      this.createForm.controls['image'].setValidators(null);
-      this.createForm.controls['oCloudId'].setValidators([Validators.required]);
-    } else {
-      this.createForm.controls['imsEndpoint'].setValidators(null);
-      this.createForm.controls['firstNode'].setValidators([Validators.required]);
-      this.createForm.controls['image'].setValidators([Validators.required]);
-      this.createForm.controls['oCloudId'].setValidators(null);
-    }
-    this.createForm.controls['imsEndpoint'].updateValueAndValidity();
-    this.createForm.controls['firstNode'].updateValueAndValidity();
-    this.createForm.controls['image'].updateValueAndValidity();
-    this.createForm.controls['oCloudId'].updateValueAndValidity();
   }
 
 }

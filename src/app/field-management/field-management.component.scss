@@ -6,12 +6,12 @@
   border-collapse: collapse; // 移除單元格間的間距
 }
 
-// 整個 mat-stepper 區的設定 @2024/02/01 Add 
+// 整個 mat-stepper 區的設定 @2024/02/02 Add 
 mat-stepper {
   background-color: #232934; 
 }
 
-//  @2024/02/01 Add 
+//  @2024/02/02 Add 
 .mat-form-field {
   margin-top: 16px;
   background-color: rgb(255, 255, 255); // 輸入框背景底色
@@ -27,7 +27,7 @@ mat-stepper {
   width: calc( 50% - 10px ); // 設置寬度為容器的 50% 減去假設間距的一半
 }
 
-// @2024/02/01 Add 
+// @2024/02/02 Add 
 .mat-stepper-boundary-group {
   display: flex;
   flex-direction: column;
@@ -40,6 +40,31 @@ mat-stepper {
   justify-content: space-between; // 在子元素之間添加平均空間
   //margin-bottom: 0px; // 下方間距，可根據需要調整
 }
+
+// 設定輸入視窗的使用者輸入的字體大小 @2024/02/02 Add 
+.custom-stepper .mat-input-element {
+  color: #151b24; 
+  font-size: 13px; 
+}
+
+// 設定輸入視窗的標題字體大小 @2024/02/02 Add 
+::ng-deep .mat-form-field-label {
+  color: #3f4e69;
+  font-size: 13px; 
+}
+
+// 設定輸入視窗的 placeholder @2024/02/02 Add 
+::ng-deep .mat-input-element::placeholder {
+  font-size: 12px; 
+}
+
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+  /* 設定輸入框聚焦時的浮動標籤字體顏色 */
+  color: #3f4e69; 
+}
+
+
+
 
 .table th, 
 .table td {

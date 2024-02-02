@@ -72,9 +72,11 @@ export const Enlanguage = {
   'field.setNotificationNum':  'Set Admin Notification Number',   // @2024/01/31 Add  
   'field.PhoneNum': 'Phone Number',                   // @2024/01/31 Add
   'field.selectBaseStations': 'Select Base Stations', // @2024/01/31 Add
-  'field.setupComplete': 'Field Setup Complete',      // @2024/01/31 Add
+  'field.setupComplete': 'Field Setup Complete.',     // @2024/01/31 Add
   'field.bsDescription': 'Description',               // @2024/02/01 Add
-
+  'field.validLongitude': 'Please enter a valid longitude ( -180.0 ~ 180.0 )',  // @2024/02/02 Add
+  'field.validLatitude' : 'Please enter a valid latitude ( -90.0 ~ 90.0 )',     // @2024/02/02 Add
+  'field.validPhoneNumber' : 'Please enter a valid phone number ( 10 digits )', // @2024/02/02 Add
 
   'field.info':'Field Detailed Information',
   'field.Map':'Field Map',
@@ -109,8 +111,10 @@ export const Enlanguage = {
   'field.editInfo':'Field Information',             // @2024/01/11 Add
   'field.northBound':'North Boundary',              // @2024/01/11 Add
   'field.southBound':'South Boundary',              // @2024/01/11 Add
+  'field.lat':'Latitude',                           // @2024/02/02 Add
   'field.westBound':'West Boundary',                // @2024/01/11 Add
   'field.eastBound':'East Boundary',                // @2024/01/11 Add
+  'field.lng':'Longitude',                          // @2024/02/02 Add
   'field.notificationNum':'Notification Number',    // @2024/01/11 Add
   'field.fieldBoundsEx':'Field Boundary Diagram',   // @2024/01/18 Add
   'field.editBSs':'Adjust BS Field Allocation',     // @2024/01/28 Add
