@@ -430,16 +430,24 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
     // 檢查是否在本地環境下模擬執行
     if ( this.commonService.isLocal ) {
+
       // 本地模式下模擬場域建立過程
       console.log( "本地模擬場域建立，提交的數據:", fieldCreationData );
-      // 本地模擬建立成功的操作...
+
+       // 本地模式建立成功後，刷新場域列表
+       this.getQueryFieldList();
+
     } else {
+
       // 生產環境下向後端 API 發送場域建立請求
       this.API_Field.createField( fieldCreationData ).subscribe({
         next: ( response ) => {
+
           // 處理成功響應
           console.log( "場域建立成功:", response );
-          // 建立成功後的其他操作，如刷新場域列表
+
+          // 建立成功後，刷新場域列表
+          this.getQueryFieldList();
         },
         error: ( error ) => {
           // 處理失敗響應
@@ -451,6 +459,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     
     // 關閉場域建立視窗
     this.fieldCreationWindowRef.close();
+
     // 重置場域建立表單，清空所有已填寫的資料
     this.resetFieldCreationForm();
     
