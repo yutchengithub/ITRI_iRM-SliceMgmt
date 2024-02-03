@@ -1,54 +1,89 @@
 
-<h5>{{languageService.i18n['index.menu_fieldMgr']}}
-  <mat-icon tooltip="{{languageService.i18n['field.create']}}" (click)="openfieldCreationWindow()">add</mat-icon>
+<!-- 場域管理標題和創建場域按鈕 -->
+<h5>{{ languageService.i18n['index.menu_fieldMgr'] }}
+  <!-- 點擊此圖標會打開場域創建視窗 -->
+  <mat-icon tooltip="{{ languageService.i18n['field.create'] }}" (click)="openfieldCreationWindow()">add</mat-icon>
 </h5>
+
+<!-- 場域列表的表格 -->
 <div class="table">
+  <!-- 表格本體 -->
   <table>
+    <!-- 表格標題行 -->
     <thead>
       <tr>
-        <th>{{languageService.i18n['field.name']}}</th>
-        <th>{{languageService.i18n['field.bsNum']}}</th>
-        <th class="icon">{{languageService.i18n['field.view']}}</th>
-        <th class="icon">{{languageService.i18n['field.alarm']}}</th>
-        <th class="icon">{{languageService.i18n['field.snapshot']}}</th>
-        <th class="icon">{{languageService.i18n['field.delTitle']}}</th>
+        <!-- 表頭各列的標題，使用國際化服務顯示不同語言 -->
+        <th>{{ languageService.i18n['field.name'] }}</th>
+        <th>{{ languageService.i18n['field.bsNum'] }}</th>
+        <!-- 顯示、警報、快照、刪除操作圖標對應的標題名 -->
+        <th class="icon">{{ languageService.i18n['field.view'] }}</th>
+        <th class="icon">{{ languageService.i18n['field.alarm'] }}</th>
+        <th class="icon">{{ languageService.i18n['field.snapshot'] }}</th>
+        <th class="icon">{{ languageService.i18n['field.delTitle'] }}</th>
     </thead>
     <tbody>
-        <!-- 顯示進度條 -->
+        <!-- 當數據正在加載時顯示進度條 -->
         <ng-container *ngIf="isLoading">
           <tr>
             <td colspan="6">
               <div class="progress-spinner-container">
-                                                                                  <!-- diameter: 指示器大小-->
+                <!-- 指示器大小設置 -->
                 <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
               </div>
             </td>
           </tr>
         </ng-container>
-        <!-- 顯示數據 -->
+        <!-- 加載完成後顯示場域數據 -->
         <ng-container *ngIf="!isLoading">
-          <tr *ngFor="let opt of fieldList.fields | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fieldsListDisplay' };">
-            <td>{{opt.name}}</td>
-            <td>{{opt.bsNum}}</td>
+          <!-- 循環顯示場域列表，並應用分頁 -->
+          <tr *ngFor="let field of fieldList.fields | paginate: { 
+              itemsPerPage: pageSize,
+              currentPage: p, 
+              totalItems: totalItems, 
+              id: 'PageDisplay_of_fieldList' 
+            };">
+            <!-- 這行代碼使用 *ngFor 指令遍歷 fieldList.fields 數組 -->
+            <!-- paginate 管道用於實現分頁功能 -->
+            <!-- itemsPerPage: 每頁顯示的項目數 -->
+            <!--  currentPage: 當前頁碼，由變數 p 控制 -->
+            <!--   totalItems: 數據集的總項目數 -->
+            <!--           id: 分頁控件的唯一識別符，用於將數據集與分頁控件相關聯 -->
+            <!-- 在這個例子中，每次分頁控件改變頁碼時，只會顯示當前頁的數據 -->
+            <td>{{ field.name }}</td>
+            <td>{{ field.bsNum }}</td>
+            <!-- 圖標按鈕，點擊會觸發相應的方法 -->
             <td class="icon">
-              <mat-icon tooltip="{{ languageService.i18n['field.view'] }}" (click)="viewFieldDetail(opt)">remove_red_eye</mat-icon>
+              <mat-icon tooltip="{{ languageService.i18n['field.view'] }}" (click)="viewFieldDetailInfo( field )">remove_red_eye</mat-icon>
             </td>
             <td class="icon">
-              <mat-icon tooltip="{{ languageService.i18n['field.alarm'] }}" (click)="viewFieldAlarm(opt)">warning</mat-icon>
+              <mat-icon tooltip="{{ languageService.i18n['field.alarm'] }}" (click)="viewFieldAlarmInfo( field )">warning</mat-icon>
             </td>
             <td class="icon">
-              <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openSnapshot(opt)">camera_alt</mat-icon>
+              <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openSnapshot( field )">camera_alt</mat-icon>
             </td>
             <td class="icon">
-              <mat-icon tooltip="{{languageService.i18n['field.delItem']}}" (click)="openDeleteField_ConfirmWindow(opt)">delete_forever</mat-icon>
+              <mat-icon tooltip="{{languageService.i18n['field.delItem']}}" (click)="openDeleteField_ConfirmWindow( field )">delete_forever</mat-icon>
             </td>
           </tr>
         </ng-container>
     </tbody>
   </table>
 </div>
-<pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel="" nextLabel="" id="fieldsListDisplay">
-</pagination-controls>
+
+<!-- 分頁控制元件，當頁面改變時觸發 pageChanged 事件 -->
+<pagination-controls
+    (pageChange)="pageChanged( $event )"
+    screenReaderPaginationLabel="Pagination"
+    previousLabel=""
+    nextLabel=""
+    id="PageDisplay_of_fieldList"
+></pagination-controls>
+<!-- screenReaderPaginationLabel: 為螢幕閱讀器用戶提供分頁標籤 -->
+<!--               previousLabel: 自定義 "上一頁" 按鈕的標籤，空字符串表示無標籤 -->
+<!--                   nextLabel: 自定義 "下一頁" 按鈕的標籤，空字符串表示無標籤 -->
+<!--                  totalItems: 數據集的總項目數 -->
+<!--                          id: 分頁控制的唯一識別符，與分頁管道同步 -->
+<!-- 在這個例子中，每次分頁控件改變頁碼時，只會顯示當前頁的數據 -->
 
 
 <!-- Window of Create Field @2024/02/02 Update -->
