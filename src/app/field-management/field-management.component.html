@@ -247,8 +247,8 @@
       <div>
         <!-- 上一步按鈕 -->
         <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
-        <!-- 重置步驟按鈕 -->
-        <button mat-button (click)="stepper.reset()">{{ languageService.i18n['field.createReset'] }}</button>
+        <!-- 重置步驟按鈕 @2024/02/04 Update -->
+        <button mat-button (click)="stepper.reset(); resetFieldCreationForm()">{{ languageService.i18n['field.createReset'] }}</button>
       </div>
     </mat-step>
   </mat-stepper>
