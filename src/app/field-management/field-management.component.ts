@@ -215,7 +215,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  // 用於重置所有輸入的"建立場域"設定 @2024/02/02 Add
+  // 用於重置所有輸入的"建立場域"設定 @2024/02/04 Update
   resetFieldCreationForm() {
     console.log("Resetting field creation form settings.");
 
@@ -225,7 +225,17 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.thirdFormGroup_PhoneNum.reset();
     
     // 重置 displayedBSs 中的每個基站的選擇狀態
-    this.displayedBSs.forEach( bs => bs.selected = false );
+    // 使用 forEach 迭代 displayedBSs 數組中的每個基站物件，將其 selected 屬性設置為 false 以取消選中狀態
+    // this.displayedBSs.forEach(bs => bs.selected = false);
+
+    // 重置 displayedBSs 中的每個基站的選擇狀態
+    // 此行代碼創建一個新陣列，每個元素都是從 `displayedBSs` 原始元素複製過來的，
+    // 但將每個元素的 `selected` 屬性設置為 `false`。
+    // 使用展開運算符（`...`）來複製每個 `bs` 物件的所有現有屬性，
+    // 然後 `selected: false` 會在每個複製中覆寫 `selected` 屬性。
+    // 將這個新陣列重新賦值給 `displayedBSs`，我們確保 Angular 能夠
+    // 檢測到變化並相應地更新 UI，因為這是一個新的陣列參考。
+    this.displayedBSs = this.displayedBSs.map(bs => ({ ...bs, selected: false }));
 
     // 清空 ( 初始化 ) 儲存選擇基站的陣列
     this.selectedBsInfos = [];
