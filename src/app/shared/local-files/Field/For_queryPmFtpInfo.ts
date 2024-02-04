@@ -1,6 +1,6 @@
 
  // Interfaces of PmFTPInfo @2024/02/04 Add
- import { ForQueryOrUpdatePmFTPInfo } from './../../interfaces/Field/For_queryPmFtpInfo_or_updatePmFtpInfo';                       
+ import { ForQueryOrUpdatePmFTPInfo } from '../../interfaces/Field/For_queryPmFtpInfo_or_updatePmFtpInfo';                       
 
  // Local Files for general PmFTPInfo @2024/02/04 Add by yuchen 
  export class localPmFTPInfo {

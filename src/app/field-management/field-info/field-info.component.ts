@@ -37,11 +37,10 @@ import { BSInfo }              from '../../shared/interfaces/BS/For_queryBsInfo_
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
 
-
 // 引入所需 Local Files
-import { localPmFTPInfo } from '../../shared/local-files/Field/For_queryPmFtpInfo_or_updatePmFtpInfo'; // @2024/02/04 Add
-import { localBSList } from '../../shared/local-files/BS/For_queryBsList';      // @2024/01/16 Add
-import { localBSinfo } from '../../shared/local-files/BS/For_queryBsInfo';      // @2023/12/27 Add
+import { localPmFTPInfo } from '../../shared/local-files/Field/For_queryPmFtpInfo'; // @2024/02/04 Add
+import { localBSList }    from '../../shared/local-files/BS/For_queryBsList';       // @2024/01/16 Add
+import { localBSinfo }    from '../../shared/local-files/BS/For_queryBsInfo';       // @2023/12/27 Add
 
 import { map } from 'rxjs/operators';              // @2023/12/24 Add
 import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
@@ -50,30 +49,30 @@ import { ElementRef } from '@angular/core';
 
 export interface SimplifiedBSInfo {
   
-  // For display and POST of update BS
-          name: string;
-        bstype: number;
-        status: number;
-           nci: string;
-           pci: number;
-    "tx-power": number;
-  "nrarfcn-dl": number;
-  "nrarfcn-ul": number;
-      position: string;
-     neighbors: SimplifiedNeighborInfo[];
-       iconUrl: string; // 存儲 BS 圖標的 URL
+    // For display and POST of update BS
+            name: string;
+          bstype: number;
+          status: number;
+            nci: string;
+            pci: number;
+      "tx-power": number;
+    "nrarfcn-dl": number;
+    "nrarfcn-ul": number;
+        position: string;
+      neighbors: SimplifiedNeighborInfo[];
+        iconUrl: string; // 存儲 BS 圖標的 URL
 
-  // For POST of update BS
-           id: string;
-  description: string;
-          tac: string;
-    'plmn-id': PLMNid;
-  channelbandwidth: number;
-        components: {};  // 存儲 BS 的 Component ID
+    // For POST of update BS
+            id: string;
+    description: string;
+            tac: string;
+      'plmn-id': PLMNid;
+    channelbandwidth: number;
+          components: {};  // 存儲 BS 的 Component ID
 
-  // For Field Edit @2024/01/11 Add
-        gNBId: number;
-  gNBIdLength: number;
+    // For Field Edit @2024/01/11 Add
+          gNBId: number;
+    gNBIdLength: number;
 }
 
 export interface SimplifiedNeighborInfo {
