@@ -745,3 +745,73 @@
 		</div>
 	</ng-template>
   
+
+	<!-- Window of PM Parameter Setting @2024/02/04 Add -->
+	<ng-template class="my-dialog-container" #PMgmtParameterSetWindow>
+		<div><h5>{{ languageService.i18n['field.configPMset'] }}</h5></div>
+		<div *ngIf="fieldInfo && fieldBounds">
+			<!-- Pm Ftp Infos -->
+			<span>
+				<form [formGroup]="fieldEditForm">
+					<UL>
+						<li>
+							<label>{{ languageService.i18n['field.name'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.northBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.southBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.westBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.eastBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.notificationNum'] }}</label>
+							<span>
+								<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
+									class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['phoneNumber'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+					</UL>
+				</form>
+			</span>
+		</div>
+		<div class="buttons">
+			<button type="button" (click)="openConfirmFieldEditWindow()" mat-dialog-close>
+				{{ languageService.i18n['confirm'] }}
+			</button>
+			<button type="button" (click)="resetFieldEditingForm( fieldName )" mat-dialog-close>
+				{{ languageService.i18n['cancel'] }}
+			</button>
+		</div>
+	</ng-template>
