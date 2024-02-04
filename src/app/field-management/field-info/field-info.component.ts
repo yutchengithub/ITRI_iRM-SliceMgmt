@@ -39,8 +39,9 @@ import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList'
 
 
 // 引入所需 Local Files
-import { localBSList } from '../../shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
-import { localBSinfo } from '../../shared/local-files/BS/For_queryBsInfo';                 // @2023/12/27 Add
+import { localPmFTPInfo } from '../../shared/local-files/Field/For_queryPmFtpInfo_or_updatePmFtpInfo'; // @2024/02/04 Add
+import { localBSList } from '../../shared/local-files/BS/For_queryBsList';      // @2024/01/16 Add
+import { localBSinfo } from '../../shared/local-files/BS/For_queryBsInfo';      // @2023/12/27 Add
 
 import { map } from 'rxjs/operators';              // @2023/12/24 Add
 import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
@@ -131,6 +132,78 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
+// ↓ Page Init ↓
+
+  constructor(
+    private router: Router,
+    private  route: ActivatedRoute,
+    private     fb: FormBuilder,
+    private dialog: MatDialog,
+    // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，
+    //              確保當數據模型更新後，相關的視圖能夠及時反映
+    private    cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
+    // private messageService: MessageService
+
+    public languageService: LanguageService,
+    public   commonService: CommonService,
+    public       API_Field: apiForField,          // @2024/01/04 Add for import API of Field Management 
+    public     bsInfoLocalFiles: localBSinfo,     // @2023/12/27 Add for import BS Info Local Files
+    public    bsList_LocalFiles: localBSList,     // @2024/01/16 Add for import BS List Local Files 
+    public pmFtpInfo_LocalFiles: localPmFTPInfo,  // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+  ) {
+    
+    const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
+    this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
+       this.createBSInfoForm();  // For updateBs API @2024/01/05 Add 
+    this.createFieldInfoForm();  // For Field Info in Field Editing  @2024/01/17 Add 
+  }
+
+  // 頁面初始化
+  ngOnInit(){
+    this.sessionId = this.commonService.getSessionId();
+    console.log( 'The sessionId is', this.sessionId ); // @2024/01/05 Add 
+    this.route.params.subscribe((params) => {
+      this.fieldId = params['id'];
+      this.fieldName = params['name'];
+      console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
+      this.getQueryFieldInfo();
+    });
+  }
+
+  // @2024/01/05 Add
+  // ngAfterViewInit 是 Angular 在組件視圖初始化後會呼叫的生命週期事件。
+  // ngAfterViewInit() {
+  //   // 使用 setTimeout 確保地圖元素已經加載完成並存在於 DOM 中。
+  //   // 這樣做可以避免在 Google Maps API 還沒有完全準備好時嘗試操作地圖。
+  //   setTimeout(() => {
+  //     // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
+  //     this.adjustMapZoom();
+  //   }, 1000); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
+  // }
+
+  ngAfterViewInit() {
+    // 檢查 this.map.googleMap 是否已經被定義。
+    // this.map 是通過 ViewChild 獲取的 GoogleMap 實例，
+    // 而 googleMap 是實際的 Google Maps JavaScript API 地圖對象。
+    if ( this.map.googleMap ) {
+      // 如果 googleMap 對象存在，則向它添加一個事件監聽器。
+      // 'tilesloaded' 事件會在地圖上的所有可見瓦片都已加載完成後觸發。
+      // 這是一個好時機來調整地圖的視角和縮放等級，因為它表明地圖已經準備好了。
+      this.map.googleMap.addListener('tilesloaded', () => {
+        // 當 'tilesloaded' 事件觸發時，調用 adjustMapZoom 方法。
+        // 此方法將根據場域的邊界值調整地圖的縮放等級，
+        // 確保用戶可以看到完整的場域範圍。
+        this.adjustMapZoom();
+      });
+    }
+    // 如果 this.map.googleMap 尚未定義，可能表示地圖尚未完全初始化。
+    // 在這種情況下，可能需要考慮使用其他方法或檢查點以確保地圖已經準備好
+  }
+
+// ↑ Page Init ↑
+
+
 // ↓ For setting Google Maps @2024/01/10 by yuchen
 
   // 定義用於繪製多邊形的樣式選項
@@ -187,37 +260,6 @@ export class FieldInfoComponent implements OnInit {
 
   // 用於儲存場域多邊形的邊界點 @2024/01/02 Add
   fieldBounds!: google.maps.LatLngBoundsLiteral;    // 用於儲存放置 GroundOverlay 的場域邊界資訊
-
-  // @2024/01/05 Add
-  // ngAfterViewInit 是 Angular 在組件視圖初始化後會呼叫的生命週期事件。
-  // ngAfterViewInit() {
-  //   // 使用 setTimeout 確保地圖元素已經加載完成並存在於 DOM 中。
-  //   // 這樣做可以避免在 Google Maps API 還沒有完全準備好時嘗試操作地圖。
-  //   setTimeout(() => {
-  //     // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
-  //     this.adjustMapZoom();
-  //   }, 1000); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
-  // }
-
-  ngAfterViewInit() {
-    // 檢查 this.map.googleMap 是否已經被定義。
-    // this.map 是通過 ViewChild 獲取的 GoogleMap 實例，
-    // 而 googleMap 是實際的 Google Maps JavaScript API 地圖對象。
-    if ( this.map.googleMap ) {
-      // 如果 googleMap 對象存在，則向它添加一個事件監聽器。
-      // 'tilesloaded' 事件會在地圖上的所有可見瓦片都已加載完成後觸發。
-      // 這是一個好時機來調整地圖的視角和縮放等級，因為它表明地圖已經準備好了。
-      this.map.googleMap.addListener('tilesloaded', () => {
-        // 當 'tilesloaded' 事件觸發時，調用 adjustMapZoom 方法。
-        // 此方法將根據場域的邊界值調整地圖的縮放等級，
-        // 確保用戶可以看到完整的場域範圍。
-        this.adjustMapZoom();
-      });
-    }
-    // 如果 this.map.googleMap 尚未定義，可能表示地圖尚未完全初始化。
-    // 在這種情況下，可能需要考慮使用其他方法或檢查點以確保地圖已經準備好
-  }
-  
   
   // @2024/01/05 Add
   // adjustMapZoom 方法用於根據場域邊界自動調整地圖的縮放等級和視角。
@@ -315,46 +357,6 @@ export class FieldInfoComponent implements OnInit {
   }
 
 // ↑ For setting Google Maps @2024/01/10 Update by yuchen ↑
-
-
-// ↓ Page Init ↓
-
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    public commonService: CommonService,
-    public API_Field: apiForField,        // @2024/01/04 Add for import API of Field Management 
-    public bsInfoLocalFiles: localBSinfo, // @2023/12/27 Add for import BS Info Local Files
-    public bsList_LocalFiles: localBSList, // @2024/01/16 Add for import BS List Local Files
-    private fb: FormBuilder,
-    private dialog: MatDialog,
-    public languageService: LanguageService,
-    // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，
-    //              確保當數據模型更新後，相關的視圖能夠及時反映
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone,
-    // private messageService: MessageService
-  ) {
-    
-    const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
-    this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
-    this.createBSInfoForm();    // For updateBs API @2024/01/05 Add 
-    this.createFieldInfoForm(); // For Field Info in Field Editing  @2024/01/17 Add 
-  }
-
-  // 頁面初始化
-  ngOnInit(){
-    this.sessionId = this.commonService.getSessionId();
-    console.log( 'The sessionId is', this.sessionId ); // @2024/01/05 Add 
-    this.route.params.subscribe((params) => {
-      this.fieldId = params['id'];
-      this.fieldName = params['name'];
-      console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
-      this.getQueryFieldInfo();
-    });
-  }
-
-// ↑ Page Init ↑
 
 
   // @12/13 Add for listen activeButton
