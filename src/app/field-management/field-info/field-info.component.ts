@@ -2332,7 +2332,7 @@ export class FieldInfoComponent implements OnInit {
 // For Field Editing Setting @2024/01/11 Add ↑
 
 
-// For PM Parameter Setting @2024/02/04 Add ↓
+// For PM Parameter Setting @2024/02/04 Add ↓ ( 缺取得效能參數資訊 API、表單取值需改、缺 RADIO BUTTON 控制使用者選擇的量測類型 )
 
   // 創建表單組，用於效能管理參數設定
   PMgmtParameterSetForm!: FormGroup;
