@@ -5,7 +5,6 @@
  // Local Files for general FieldList @2024/01/29 Add by yuchen 
  export class localFieldList {
 
-
     fieldList: FieldList = {
         fields: [
         {

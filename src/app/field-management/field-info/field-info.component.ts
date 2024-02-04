@@ -25,17 +25,21 @@ import { ChangeDetectorRef } from '@angular/core';          // @2023/12/13 Add f
 import { environment } from 'src/environments/environment'; // @2023/12/20 Add for import Google Maps API Key
 import { NgZone } from '@angular/core';
 
-// @2024/01/04 Add for import APIs of Field Management 
+// import APIs of Field Management @2024/01/04 Add 
 import { apiForField } from '../../shared/api/For_Field'; 
 
-import { FieldInfo } from '../../shared/interfaces/Field/For_queryFieldInfo';              // @2023/12/21 Add
-import { BsInfoInField } from '../../shared/interfaces/Field/For_queryFieldInfo';          // @2023/12/21 Add
-import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
-import { ForCreateOrUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_createField_or_updateField';    // @2024/01/26 Add
-import { localBSList } from '../../shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
-
-import { BSInfo } from '../../shared/interfaces/BS/For_queryBsInfo_BS';                    // @2023/12/21 Add
+// 引入儲存各個資訊所需的 interfaces
+import { FieldInfo }                      from '../../shared/interfaces/Field/For_queryFieldInfo';                     // @2023/12/21 Add
+import { BsInfoInField }                  from '../../shared/interfaces/Field/For_queryFieldInfo';                     // @2023/12/21 Add
+import { ForCreateOrUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_createField_or_updateField';         // @2024/01/26 Add
+import { ForQueryOrUpdatePmFTPInfo }      from '../../shared/interfaces/Field/For_queryPmFtpInfo_or_updatePmFtpInfo';  // @2024/02/04 Add
+import { BSInfo }              from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2023/12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
+import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
+
+
+// 引入所需 Local Files
+import { localBSList } from '../../shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
 import { localBSinfo } from '../../shared/local-files/BS/For_queryBsInfo';                 // @2023/12/27 Add
 
 import { map } from 'rxjs/operators';              // @2023/12/24 Add
@@ -45,36 +49,36 @@ import { ElementRef } from '@angular/core';
 
 export interface SimplifiedBSInfo {
   
-  // For display and POST of update
-  name: string;
-  bstype: number;
-  status: number;
-  nci: string;
-  pci: number;
-  "tx-power": number;
+  // For display and POST of update BS
+          name: string;
+        bstype: number;
+        status: number;
+           nci: string;
+           pci: number;
+    "tx-power": number;
   "nrarfcn-dl": number;
   "nrarfcn-ul": number;
-  position: string;
-  neighbors: SimplifiedNeighborInfo[];
-  iconUrl: string;      // 存儲 BS 圖標的 URL
+      position: string;
+     neighbors: SimplifiedNeighborInfo[];
+       iconUrl: string; // 存儲 BS 圖標的 URL
 
-  // For POST of update
-  id: string;
+  // For POST of update BS
+           id: string;
   description: string;
-  tac: string;
-  'plmn-id': PLMNid;
+          tac: string;
+    'plmn-id': PLMNid;
   channelbandwidth: number;
-  components: {};  // 存儲 BS 的 Component ID
+        components: {};  // 存儲 BS 的 Component ID
 
   // For Field Edit @2024/01/11 Add
-  gNBId: number;
+        gNBId: number;
   gNBIdLength: number;
 }
 
 export interface SimplifiedNeighborInfo {
   'plmn-id': PLMNid;
-  nci: string;
-  pci: number;
+        nci: string;
+        pci: number;
 }
 
 // @2024/01/10 Update
@@ -94,29 +98,38 @@ enum OverlayType {
 export class FieldInfoComponent implements OnInit {
 
   sessionId: string = '';
-  cloudId: string = '';
-  cloudName: string = '';
+
+  tooltipOptions = {
+    theme: 'light',  // 'dark' | 'light'
+    hideDelay: 250
+  };
+
+  refreshTimeout!: any;
+  refreshTime: number = 5;
 
   fieldInfo: FieldInfo = {} as FieldInfo;      // @12/05 Add by yuchen
   fieldId: string = '';     // @12/05 Add by yuchen
   fieldName: string = '';   // @12/05 Add by yuchen
 
-  refreshTimeout!: any;
-  refreshTime: number = 5;
+  // 返回 Field Management 主頁
+  back() {
+    this.router.navigate( ['/main/field-mgr'] );
+  }
 
-  p: number = 1;            // 當前頁數
-  pageSize: number = 10;    // 每頁幾筆
-  totalItems: number = 0;   // 總筆數
-  nullList: string[] = [];  // 給頁籤套件使用
-  
   // For Fault Alarms: 
   // CRITICAL, MAJOR, MINOR, WARNING
   severitys: string[];
 
-  tooltipOptions = {
-    theme: 'light',     // 'dark' | 'light'
-    hideDelay: 250
-  };
+  // 往 Fault Management @12/07 Update
+  goFaultMgr() {
+    this.router.navigate( ['/main/fault-mgr', this.fieldName, 'All'] );
+  }
+
+  // 往 Performance Management @2024/01/05 Update
+  goPerformanceMgr() {
+    this.router.navigate( ['/main/performance-mgr'] );
+  }
+
 
 // ↓ For setting Google Maps @2024/01/10 by yuchen
 
@@ -2129,7 +2142,6 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
-
   // For upload Field Image @2024/01/18 Add
   @ViewChild('fileInput') fileInput!: ElementRef;
 
@@ -2315,26 +2327,26 @@ export class FieldInfoComponent implements OnInit {
 // For Field Editing Setting @2024/01/11 Add ↑
 
 
+// For PM Parameter Setting @2024/02/04 Add ↓
 
 
-  // 返回 Field Management 主頁
-  back() {
-    this.router.navigate(['/main/field-mgr']);
-  }
 
-  // 往 Fault Management @12/07 Update
-  goFaultMgr() {
-    this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
-  }
+// For PM Parameter Setting @2024/02/04 Add ↑
 
-  // 往 Performance Management @2024/01/05 Update
-  goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr']);
-  }
 
+
+
+
+  // 完成後可能要砍掉的
+           p: number = 1;     // 當前頁數
+    pageSize: number = 10;    // 每頁幾筆
+  totalItems: number = 0;     // 總筆數
+    nullList: string[] = [];  // 給頁籤套件使用
+     cloudId: string = '';
+   cloudName: string = '';
 }
 
-
+// 完成後要砍掉的
 export interface OcloudInfo {
   id: string;
   name: string;

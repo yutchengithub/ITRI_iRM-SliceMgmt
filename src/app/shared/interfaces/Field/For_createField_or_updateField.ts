@@ -7,9 +7,10 @@ export interface ForCreateOrUpdateField {
     fieldposition3: string;
     fieldposition4: string;
     name:           string;
-    id?:            string; // 建立場域時不需要攜帶場域 ID ( 因為未建立 )，故設置 "?" 表可存在或不存在 @yutchengithub - 2024/02/02 Add 
     bsinfo:         Bsinfo[];
     phone:          string;
+
+    id?:            string; // 建立場域時不需要攜帶場域 ID ( 因為未建立 )，故設置 "?" 表可存在或不存在 @yutchengithub - 2024/02/02 Add 
     session:        string;
 }
 
