@@ -1924,7 +1924,7 @@ export class FieldInfoComponent implements OnInit {
       this.API_Field.queryBsList().subscribe({
         next: ( res: BSList ) => {
 
-          // 遍歷 API 傳回的基站列表 (res.basestation)
+          // 遍歷 API 傳回的基站列表 ( res.basestation )
           res.basestation.forEach( bs => {
             // 對每個 bs 進行檢查，確定是否它的 ID 出現在另一個陣列 ( this.fieldInfo.bsinfo ) 中，
             // 這個陣列包含了場域內的基站訊息。如果是，則將該 bs 的 'selected' 屬性設置為 true。
@@ -2051,7 +2051,7 @@ export class FieldInfoComponent implements OnInit {
    * 如果不是本地模式，則向伺服器發送更新請求。
    */
   UpdateFieldEditing_Submit() {
-    console.log("UpdateFieldEditing_Submit() - Start");
+    console.log( "UpdateFieldEditing_Submit() - Start" );
 
     // 準備提交的數據，按照 ForUpdateField 介面格式化
     const submitData: ForCreateOrUpdateField = {
@@ -2073,33 +2073,33 @@ export class FieldInfoComponent implements OnInit {
     if ( this.commonService.isLocal ) {
 
         // 在本地模式下模擬場域更新
-        console.log("本地模擬場域更新，提交的數據:", submitData);
+        console.log( "本地模擬場域更新，提交的數據:", submitData );
 
         // 模擬一個響應
         setTimeout(() => {
-          console.log("本地場域更新成功");
+          console.log( "本地場域更新成功" );
 
           // 更新成功後重新獲取場域訊息
           this.getQueryFieldInfo();
 
-        }, 1000); // 假設 1 秒後獲得響應
+        }, 1000 ); // 假設 1 秒後獲得響應
 
     } else {
 
         // 非本地模式，向服務器發送 POST 請求
-        this.API_Field.updateField(submitData).subscribe({
+        this.API_Field.updateField( submitData ).subscribe({
 
-          next: (response) => {
+          next: ( response ) => {
 
             // 處理成功響應
-            console.log("場域更新成功:", response);
+            console.log( "場域更新成功:", response );
             
             // 更新成功後重新獲取場域訊息
             this.getQueryFieldInfo();
           },
-          error: (error) => {
+          error: ( error ) => {
             // 處理錯誤響應
-            console.error("更新場域出錯:", error);
+            console.error( "更新場域出錯:", error );
           }
         });
     }
