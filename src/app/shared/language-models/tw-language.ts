@@ -117,6 +117,7 @@ export const TwLanguage = {
   'field.notificationNum':'管理者通知門號',    // @2024/01/11 Add
   'field.fieldBoundsEx':'場域邊界示意圖',      // @2024/01/18 Add
   'field.indoorMap':'室內地圖',               // @2024/01/18 Add
+  'field.preview':'預覽',                     // @2024/02/04 Add
   'field.editBSs':'調整基站分配',              // @2024/01/28 Add
   'field.cancelEditBSs':'取消',               // @2024/01/28 Add
   'field.selectBSs':'選擇基站',                // @2024/01/18 Add

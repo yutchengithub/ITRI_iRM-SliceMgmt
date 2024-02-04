@@ -126,6 +126,7 @@ export const Enlanguage = {
   'field.indoorMapNotUploaded': 'Indoor map not yet uploaded',      // @2024/01/18 Update
   'field.confirmDeleteindoorMap':'Sure to remove the indoor map?',  // @2024/01/19 Add
   'field.indoorMap':'Indoor Map',                   // @2024/01/18 Add
+  'field.preview':'Preview',                        // @2024/02/04 Add
   'field.indoorMapNone':'No indoor map available',  // @2024/01/18 Add
   'field.DeleteindoorMap':'Delete the indoor map',  // @2024/01/18 Add
   'field.configPMset':'PM Parameter Setting',       // @12/12 Add

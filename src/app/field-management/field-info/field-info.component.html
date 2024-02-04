@@ -587,7 +587,7 @@
 							<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
 								<!-- For local @2024/01/23 Add -->
 								<div class="preview">
-									<div class="center">Preview</div>
+									<div class="center">{{ languageService.i18n['field.preview'] }}</div>
 									<mat-icon title="{{ languageService.i18n['field.DeleteindoorMap'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon>
 									<img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
 									<img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
