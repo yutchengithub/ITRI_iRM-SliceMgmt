@@ -60,7 +60,8 @@
 								</span>
 							<span>{{ languageService.i18n['field.edit'] }}</span>
 						</button>
-						<button mat-menu-item>
+						<!-- PM Parameter Setting @2024/02/04 Update -->
+						<button mat-menu-item (click)="openPMgmtParameterSetWindow()">
 							<span class="material-symbols-outlined">
 								tune
 								</span>
@@ -752,54 +753,54 @@
 		<div *ngIf="fieldInfo && fieldBounds">
 			<!-- Pm Ftp Infos -->
 			<span>
-				<form [formGroup]="fieldEditForm">
+				<form [formGroup]="PMgmtParameterSetForm">
 					<UL>
 						<li>
 							<label>{{ languageService.i18n['field.name'] }}</label>
 							<span>
-								<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								<input type="text" formControlName="pmIP" placeholder="{{ fieldInfo.name }}"
+										class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmIP'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmIP'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 						<li>
 							<label>{{ languageService.i18n['field.northBound'] }}</label>
 							<span>
-								<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								<input type="text" formControlName="folderPath" placeholder="{{ fieldBounds.north }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['folderPath'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['folderPath'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 						<li>
 							<label>{{ languageService.i18n['field.southBound'] }}</label>
 							<span>
-								<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								<input type="text" formControlName="pmID" placeholder="{{ fieldBounds.south }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmID'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmID'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 						<li>
 							<label>{{ languageService.i18n['field.westBound'] }}</label>
 							<span>
-								<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								<input type="text" formControlName="pmKey" placeholder="{{ fieldBounds.west }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmKey'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmKey'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 						<li>
 							<label>{{ languageService.i18n['field.eastBound'] }}</label>
 							<span>
-								<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								<input type="text" formControlName="MeasurementInterval_pmint" placeholder="{{ fieldBounds.east }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 						<li>
 							<label>{{ languageService.i18n['field.notificationNum'] }}</label>
 							<span>
-								<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
-									class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['phoneNumber'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								<input type="text" formControlName="UploadInterval_fmint" placeholder="{{ fieldInfo.phone }}"
+									class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['UploadInterval_fmint'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['UploadInterval_fmint'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 					</UL>

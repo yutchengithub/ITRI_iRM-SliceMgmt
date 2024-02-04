@@ -155,8 +155,11 @@ export class FieldInfoComponent implements OnInit {
     
     const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
     this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
-       this.createBSInfoForm();  // For updateBs API @2024/01/05 Add 
-    this.createFieldInfoForm();  // For Field Info in Field Editing  @2024/01/17 Add 
+
+    // 建立並初始化各功能所需表單
+    this.createBSInfoForm();              // For updateBs API @2024/01/05 Add 
+    this.createFieldInfoForm();           // For Field Info in Field Editing  @2024/01/17 Add
+    this.createPMgmtParameterSetFormm();  // For Pm Ftp Info in PM Parameter Setting  @2024/02/04 Add
   }
 
   // 頁面初始化
@@ -2331,6 +2334,59 @@ export class FieldInfoComponent implements OnInit {
 
 // For PM Parameter Setting @2024/02/04 Add ↓
 
+  // 創建表單組，用於效能管理參數設定
+  PMgmtParameterSetForm!: FormGroup;
+  createPMgmtParameterSetFormm() { // 默認值還未改 @02/04 Add
+    // 初始化表單控件
+    this.PMgmtParameterSetForm = this.fb.group({
+                           pmIP: new FormControl( this.fieldInfo?.name || '' ),    // PM 伺服器 IP 位址，默認值為現有 IP 位址 或 空字串
+                     folderPath: new FormControl( this.fieldBounds?.north || '' ), // 資料夾路徑，默認值為現有 資料夾路徑 或 空字串
+                           pmID: new FormControl( this.fieldBounds?.south || '' ), // 基站登入 PM 伺服器帳號，默認值為現有 帳號 或 空字串
+                          pmKey: new FormControl( this.fieldBounds?.west || '' ),  // 基站登入 PM 伺服器密碼，默認值為現有 密碼 或 空字串
+      MeasurementInterval_pmint: new FormControl( this.fieldBounds?.east || '' ),  // PM 資料量測頻率(秒)，默認值為現有 量測頻率 或 空字串
+           UploadInterval_fmint: new FormControl( this.fieldInfo?.phone || '' )    // PM 資料上傳頻率(秒):，默認值為現有 上傳頻率 或 空字串
+    });
+  }
+
+  // 引用場域編輯視窗組件
+  @ViewChild('PMgmtParameterSetWindow') PMgmtParameterSetWindow: any;
+  PMgmtParameterSetWindowRef!: MatDialogRef<any>;
+  PMgmtParameterSetFormValidated = false;
+
+  // 打開"效能管理參數設定"視窗 @2024/02/04 Add
+  openPMgmtParameterSetWindow() {
+
+    // 確保場域資訊和邊界資訊已獲取
+    if( this.fieldInfo && this.fieldBounds ) {
+
+      // 使用現有場域資訊和邊界資訊更新表單
+      this.PMgmtParameterSetForm.patchValue({ // 需調整為效能參數 @02/04 Add
+                             pmIP: this.fieldInfo.name,
+                       folderPath: this.fieldBounds.north,
+                             pmID: this.fieldBounds.south,
+                            pmKey: this.fieldBounds.west,
+        MeasurementInterval_pmint: this.fieldBounds.east,
+             UploadInterval_fmint: this.fieldInfo.phone
+      });
+    }
+
+    // 表單驗證狀態重置
+    this.PMgmtParameterSetFormValidated = false; 
+
+    // 打開 效能管理參數設定 視窗
+    this.PMgmtParameterSetWindowRef = this.dialog.open( this.PMgmtParameterSetWindow, { 
+          id: 'PMgmtParameterSetWindow',
+          // 自定義視窗寬高設置
+          // width: '800px', 
+          // height: '650px'
+    } );
+
+    // 訂閱視窗關閉事件，並在關閉時重置表單驗證狀態
+    this.PMgmtParameterSetWindowRef.afterClosed().subscribe(() => {
+      this.PMgmtParameterSetFormValidated = false;
+    });
+
+  }
 
 
 // For PM Parameter Setting @2024/02/04 Add ↑
