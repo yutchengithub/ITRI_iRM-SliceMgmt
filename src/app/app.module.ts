@@ -69,13 +69,14 @@ import { FormBuilder, FormGroup } from '@angular/forms';      // @2024/01/31 Add
 import { MatInputModule } from '@angular/material/input';     // @2024/01/31 Add
 import { MatStepperModule } from '@angular/material/stepper'; // @2024/01/31 Add
 
-
+// import API
 import { apiForField } from './shared/api/For_Field'; // @2024/01/04 Add
 
-import { localFieldList } from './shared/local-files/Field/For_queryFieldList'; // @2024/01/29 Add
-
-import { localBSinfo } from './shared/local-files/BS/For_queryBsInfo'; // @2023/12/27 Add 
-import { localBSList } from './shared/local-files/BS/For_queryBsList'; // @2024/01/16 Add
+// import Local Files
+import { localFieldList } from './shared/local-files/Field/For_queryFieldList';  // @2024/01/29 Add
+import { localPmFTPInfo } from './shared/local-files//Field/For_queryPmFtpInfo'; // @2024/02/04 Add
+import { localBSinfo }    from './shared/local-files/BS/For_queryBsInfo'; // @2023/12/27 Add 
+import { localBSList }    from './shared/local-files/BS/For_queryBsList'; // @2024/01/16 Add
 
 @NgModule({
   declarations: [
@@ -170,6 +171,7 @@ import { localBSList } from './shared/local-files/BS/For_queryBsList'; // @2024/
     localFieldList, // @2024/01/29 Add for import Local files of Field List
     localBSinfo,    // @2023/12/27 Add for import Local files of BS Info
     localBSList,    // @2024/01/16 Add for import Local files of BS List
+    localPmFTPInfo, // @2024/02/04 Add for import info of PM Parameter Setting Local Files
     
     {
       provide: HTTP_INTERCEPTORS,
