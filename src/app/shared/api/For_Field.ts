@@ -187,6 +187,26 @@ export class apiForField {
     // 發起 HTTP POST 請求，並返回 Observable 以便訂閱和處理響應
     return this.http.post( url, requestBody );
   }
+
+  // For Get PM Parameter Setting @2024/02/04 Add by yuchen
+  queryPmFtpInfo( fieldId: string ): Observable< any > { 
+  
+    // 構建 API URL
+    const url = `${this.restPath}/queryPmFtpInfo/${this.sessionId}/${fieldId}`;
+  
+    // 發起 HTTP GET 請求
+    return this.http.get( url );
+  }
+  
+  // For Updating PM Parameter Setting @2024/02/04 Add by yuchen
+  updatePmFtpInfo( body: {} ): Observable< any > {
+
+    const url = `${this.restPath}/updatePmFtpInfo`;
+    
+    const bodyStr = JSON.stringify( body );
+    
+    return this.http.post( url, bodyStr );
+  }
   
   // For Updating Configurations of All-in-one BS @2024/01/05 Add by yuchen
   updateBs( body: {} ): Observable<any> {
