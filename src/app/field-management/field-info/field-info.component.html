@@ -35,10 +35,10 @@
 			<!-- @12/12 Add button with a menu -->
 			<!-- 常駐顯示 -->
 			<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="icon-button with a menu" tooltip="{{ languageService.i18n['field.MapOption'] }}"
-			[class.button-active]="activeButton_menu === 'menu'" (click)="setActiveButton_menu('menu')">
-			  <mat-icon>more_horiz</mat-icon>
-			  </button>
-			  <mat-menu #menu="matMenu">
+					[class.button-active]="activeButton_menu === 'menu'" (click)="setActiveButton_menu('menu')">
+			  	<mat-icon>more_horiz</mat-icon>
+			</button>
+			<mat-menu #menu="matMenu">
 				<!-- Field Configuration @2024/01/11 Update -->
 				<button mat-menu-item disabled>
 					<mat-icon>build_circle</mat-icon>
@@ -50,7 +50,8 @@
 						</span>
 					<span>{{ languageService.i18n['field.edit'] }}</span>
 				</button>
-				<button mat-menu-item>
+				<!-- PM Parameter Setting @2024/02/05 Update -->
+				<button mat-menu-item (click)="openPMgmtParameterSetWindow()">
 					<span class="material-symbols-outlined">
 						tune
 						</span>
@@ -74,344 +75,367 @@
 						</span>
 					<span>{{ languageService.i18n['field.reportFM'] }}</span>
 				</button>
+
+				<!-- Field Optimization -->
+				<button mat-menu-item disabled>
+					<mat-icon>settings_suggest</mat-icon>
+					<span>{{ languageService.i18n['field.optim'] }}</span>
+				  </button>
+				  <button mat-menu-item>
+					  <span class="material-symbols-outlined">
+						  play_circle
+					  </span>
+					  <span>{{ languageService.i18n['field.optimSON'] }}</span>
+				  </button>
+
+				<!-- 當 showMapModel 為 true 時顯示 BS 列表按鈕 @12/13 Add -->
+				<button mat-menu-item *ngIf="showMapModel" (click)="toggleMenuButton()">
+					<mat-icon svgIcon="BaseStation" class="svg-icon_BS"></mat-icon>
+					<span>{{ languageService.i18n['field.bsList'] }}</span>
+				</button>
+
+				<!-- 當 showMapModel 為 false 時顯示地圖模式按鈕 @12/13 Add -->
+				<button mat-menu-item *ngIf="!showMapModel" (click)="toggleMenuButton()">
+					<mat-icon>place</mat-icon>
+					<span>{{ languageService.i18n['field.mapModel'] }}</span>
+				</button>
+
 			</mat-menu>
-					<!-- 按鈕容器，根據 showMapModel 的值顯示或隱藏按鈕 -->
 					
-						<span (click)="goFaultMgr()" class="badge" tooltip="{{ languageService.i18n['field.faultInfo'] }}">
-							<span class="value">99+</span>
-							<span class="material-symbols-outlined">notifications</span>
-							<div class="hoverInfo">
-								<span class="percent {{severityText_forCSS(severity)}}" *ngFor="let severity of severitys; let i = index">
-									<label>{{ severityText(severity) }}</label>
-									<span>{{ severityCount(severity) }}</span>
-								</span>
-							</div>
-						</span>
-				
+			<!-- 告警鈴鐺 -->	
+			<span (click)="goFaultMgr()" class="badge" tooltip="{{ languageService.i18n['field.faultInfo'] }}">
+				<span class="value">99+</span>
+				<span class="material-symbols-outlined">notifications</span>
+				<div class="hoverInfo">
+					<span class="percent {{severityText_forCSS(severity)}}" *ngFor="let severity of severitys; let i = index">
+						<label>{{ severityText(severity) }}</label>
+						<span>{{ severityCount(severity) }}</span>
+					</span>
+				</div>
+			</span>	
 		</span>
 	</h5>
 	
-		<div class="main_content">
-			<!-- Field Map (場域地圖) -->
-			<div class="left_area">
-				<!-- @12/13 Add the window of BS List -->
-				<div class="mapWindow">
-					<label class="boxTitle boxTitleRightAligned">
-						<!-- <span class="title-container" *ngIf="showMapModel">{{ languageService.i18n['field.Map'] }}</span> -->
-						<span class="title-container" *ngIf="showMapModel"></span>
-						<span class="title-container" *ngIf="!showMapModel">{{ languageService.i18n['field.bsList'] }}</span>
-	
-					</label>
-	
-					<!-- 在地圖和進度指示器外面包一層 div，用於定位進度指示器 -->
-					
-						<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
-						<google-map *ngIf="showMapModel" width="100%" height="52em" [center]="center" [options]="mapOptions">
-							<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
-							<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
-							
-							<!-- 使用 *ngFor 指令迭代 bsInfoDetails 陣列中的每個基站資訊 -->
-							<!-- 為每個基站創建一個地圖標記，並將其位置設置為 bsInfo 的位置 -->
-							<!-- 同時綁定 markerClick 事件到 onSelectBsInfo 方法 -->
-							<!-- 這意味著當用戶點擊任何標記時，onSelectBsInfo 方法將被調用 -->
+	<div class="main_content">
+		<!-- Field Map (場域地圖) -->
+		<div class="left_area">
+			<!-- @12/13 Add the window of BS List -->
+			<div class="mapWindow">
+				<label class="boxTitle boxTitleRightAligned">
+					<!-- <span class="title-container" *ngIf="showMapModel">{{ languageService.i18n['field.Map'] }}</span> -->
+					<span class="title-container" *ngIf="showMapModel"></span>
+					<span class="title-container" *ngIf="!showMapModel">{{ languageService.i18n['field.bsList'] }}</span>
+				</label>
+
+				<!-- 在地圖和進度指示器外面包一層 div，用於定位進度指示器 -->
+				
+					<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
+					<google-map *ngIf="showMapModel" width="100%" height="52em" [center]="center" [options]="mapOptions">
+						<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
+						<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
 						
-							<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
-										[position]="parsePosition( bsInfo.position )" 
-										[title]="bsInfo.name"
-										[icon]="bsInfo.iconUrl"
-										(mapClick)="onSelectBsInfo( bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">	
-							</map-marker>
-	
-							<!-- 圖例 -->
-							<div class="map-legend">
-								<div>
-								<img src="/assets/img/bs_icons_v3/gnb_online_nonselected.png">
-								<span>{{ languageService.i18n['field.legend_all-in-one_bs'] }}</span>
-								</div>
-								<div>
-								<img src="/assets/img/bs_icons_v3/dist_gnb_online_default.png">
-								<span>{{ languageService.i18n['field.legend_dist_bs'] }}</span>
-								</div>
+						<!-- 使用 *ngFor 指令迭代 bsInfoDetails 陣列中的每個基站資訊 -->
+						<!-- 為每個基站創建一個地圖標記，並將其位置設置為 bsInfo 的位置 -->
+						<!-- 同時綁定 markerClick 事件到 onSelectBsInfo 方法 -->
+						<!-- 這意味著當用戶點擊任何標記時，onSelectBsInfo 方法將被調用 -->
+					
+						<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
+									[position]="parsePosition( bsInfo.position )" 
+									[title]="bsInfo.name"
+									[icon]="bsInfo.iconUrl"
+									(mapClick)="onSelectBsInfo( bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">	
+						</map-marker>
+
+						<!-- 圖例 -->
+						<div class="map-legend">
+							<div>
+							<img src="/assets/img/bs_icons_v3/gnb_online_nonselected.png">
+							<span>{{ languageService.i18n['field.legend_all-in-one_bs'] }}</span>
 							</div>
-							
-						</google-map>
-						<!-- 在地圖下方放置進度指示器，當 isMarkersLoading 為 true 時顯示 -->
-						<div *ngIf="isMarkersLoading" class="spinner-container">
-							<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
+							<div>
+							<img src="/assets/img/bs_icons_v3/dist_gnb_online_default.png">
+							<span>{{ languageService.i18n['field.legend_dist_bs'] }}</span>
+							</div>
 						</div>
-						<!-- 在地圖下方放置進度指示器，當 isfieldImage_or_RsrpSinrMapLoading 為 true 時顯示 -->
-						<div *ngIf="isfieldImage_or_RsrpSinrMapLoading" class="spinner-container">
-							<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
-						</div>
-	
-					<!-- 基站列表，只有當 showMapModel 為 false 時才顯示 -->
-					<div *ngIf="!showMapModel">
-						<!-- 基站列表 @12/13 Add by yuchen -->
-						<div class="table">
-							<table class="center">
-								<thead>
-									<tr>
-										<th>{{ languageService.i18n['field.BSname'] }}</th>
-										<th>{{ languageService.i18n['field.BStype'] }}</th>
-										<th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
-										<th>{{ languageService.i18n['field.BSstatus'] }}</th>
-										<th>{{ languageService.i18n['field.view'] }}</th>
-										<th>{{ languageService.i18n['field.bsAlarm'] }}</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr *ngFor="let opt of allSimplifiedBsInfo">
-										<td>
-											<!-- 顯示 "基站名稱" -->
-											{{ opt.name }}
-										</td>
-										<td>
-											<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
-											<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
-											
-											<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
-											<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
-										</td>
-										<td>
-											<label>{{ opt.position }}</label>
-										</td>
-										<td class="icon">
-											<label *ngIf="opt.status === 1" class="redLight"></label>
-											<label *ngIf="opt.status === 2" class="greenLight"></label>
-										</td>
-										<td>
-											<mat-icon tooltip="{{ languageService.i18n['field.view'] }}">remove_red_eye</mat-icon>
-										</td>
-										<td>
-											<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}">warning</mat-icon>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
+						
+					</google-map>
+					<!-- 在地圖下方放置進度指示器，當 isMarkersLoading 為 true 時顯示 -->
+					<div *ngIf="isMarkersLoading" class="spinner-container">
+						<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
 					</div>
-				</div>
-				<div id="ColorBar">
-					<div class="RSRP" *ngIf="currentColorbar === 'RSRP'">
-						<span class="colorbar-title">RSRP</span>
-						<div class="colorbar"></div>
-						<!-- RSRP Colorbar -->
-						<div class="RSRP_values"> <span>-130</span> <span>-120</span> <span>-110</span> <span>-100</span> <span>-90</span> <span>-80</span> </div>
-						</div>
-					<div class="SINR" *ngIf="currentColorbar === 'SINR'">
-						<span class="colorbar-title">SINR</span>
-						<div class="colorbar"></div>
-						<!-- SINR Colorbar -->
-						<div class="SINR_values"> <span>-10</span> <span>0</span> <span>10</span> <span>20</span> <span>30</span> </div>
+					<!-- 在地圖下方放置進度指示器，當 isfieldImage_or_RsrpSinrMapLoading 為 true 時顯示 -->
+					<div *ngIf="isfieldImage_or_RsrpSinrMapLoading" class="spinner-container">
+						<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
+					</div>
+
+				<!-- 基站列表，只有當 showMapModel 為 false 時才顯示 -->
+				<div *ngIf="!showMapModel">
+					<!-- 基站列表 @12/13 Add by yuchen -->
+					<div class="table">
+						<table class="center">
+							<thead>
+								<tr>
+									<th>{{ languageService.i18n['field.BSname'] }}</th>
+									<th>{{ languageService.i18n['field.BStype'] }}</th>
+									<th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
+									<th>{{ languageService.i18n['field.BSstatus'] }}</th>
+									<th>{{ languageService.i18n['field.view'] }}</th>
+									<th>{{ languageService.i18n['field.bsAlarm'] }}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let opt of allSimplifiedBsInfo">
+									<td>
+										<!-- 顯示 "基站名稱" -->
+										{{ opt.name }}
+									</td>
+									<td>
+										<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
+										<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
+										
+										<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
+										<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
+									</td>
+									<td>
+										<label>{{ opt.position }}</label>
+									</td>
+									<td class="icon">
+										<label *ngIf="opt.status === 1" class="redLight"></label>
+										<label *ngIf="opt.status === 2" class="greenLight"></label>
+									</td>
+									<td>
+										<mat-icon tooltip="{{ languageService.i18n['field.view'] }}">remove_red_eye</mat-icon>
+									</td>
+									<td>
+										<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}">warning</mat-icon>
+									</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>
-			<!-- Message prompt window when the O1 system has no field image @2024/01/22 Add -->
-			<ng-template #promptWindow_noFieldImage>
-				<div>
-					<h5><mat-icon style="background-color: none;">warning</mat-icon>{{ languageService.i18n['field.noFieldImageAvailableTitle'] }}</h5>
-				</div>  
-				<label class="label-centered">
-					{{ languageService.i18n['field.noFieldImageAvailableMessage'] }}
-				</label>
-				<div class="buttons buttons-centered">
-				<button type="button" mat-dialog-close>
-					{{ languageService.i18n['close'] }}
-				</button>
-				</div>
-			</ng-template>	  
-			
-				<!-- Field Alarms Information (場域告警資訊) -->
-				<!-- <div class="BOX">
-					<label class="boxTitle">{{ languageService.i18n['field.faultInfo'] }}
-						<a href="javascript:void(0)" (click)="goFaultMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
-					</label>
-					<div class="percent {{severityText_forCSS(severity)}} Fault" *ngFor="let severity of severitys; let i = index"> {{ severityText(severity) }}
-						<br>{{ severityCount(severity) }} </div>
-				</div> -->
-	
-				<!-- Field Performance Information (場域效能資訊) -->
-				<div class="performanceWindow">
-					<label class="boxTitle">{{languageService.i18n['field.performanceInfo']}}
-						<a href="javascript:void(0)" (click)="goPerformanceMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
-					</label>
-					<div class="performance_percent">
-						<div class="item">
-							<!-- @12/10 update to get fieldInfo.handoverRate -->
-							<img src="assets/img/access.svg">
-							<span class="label-container">
-								{{ languageService.i18n['field.handoverRate'] }}
-								<span>77%</span>
-							</span>
-							<!-- @12/18 Update coverage -> mobility -->
-							<!-- <circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress> -->
-						</div>
-						<div class="item">
-							<!-- @12/10 update to get fieldInfo.accessibility -->
-							<img src="assets/img/handover.svg">
-							<span class="label-container">
-								{{ languageService.i18n['field.accessRate'] }}
-								<span>100%</span>
-							</span>
-							<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
-						</div>
-						<hr>
-						<div class="item">
-							<!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
-							<img src="assets/img/cpu.png">
-							<span class="label-container">{{ languageService.i18n['field.CPU_Utilization'] }}<span>5%</span></span>
-							<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
-						</div>
-						<div class="item">
-							<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
-							<img src="assets/img/memory.png">
-							<span class="label-container">{{ languageService.i18n['field.Memory_Utilization'] }}<span>47%</span></span>
-							<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
-						</div>
+			<div id="ColorBar">
+				<div class="RSRP" *ngIf="currentColorbar === 'RSRP'">
+					<span class="colorbar-title">RSRP</span>
+					<div class="colorbar"></div>
+					<!-- RSRP Colorbar -->
+					<div class="RSRP_values"> <span>-130</span> <span>-120</span> <span>-110</span> <span>-100</span> <span>-90</span> <span>-80</span> </div>
 					</div>
+				<div class="SINR" *ngIf="currentColorbar === 'SINR'">
+					<span class="colorbar-title">SINR</span>
+					<div class="colorbar"></div>
+					<!-- SINR Colorbar -->
+					<div class="SINR_values"> <span>-10</span> <span>0</span> <span>10</span> <span>20</span> <span>30</span> </div>
 				</div>
-	
-				<!-- BS Information (基站資訊) @12/28 Update -->
-				<div class="BOX basicInfo bsWindow" style="display: none;" >
-					<label class="boxTitle">
-						{{ languageService.i18n['field.bsInfo'] }}
-					</label>
-					<div>
-						<!-- 顯示進度條 -->
-						<ng-container *ngIf="isMarkersLoading">
-							<!-- 加載中顯示 spinner -->
-							<div class="spinner-container">
-								<mat-progress-spinner mode="indeterminate" diameter="150"></mat-progress-spinner>
-							</div>
-						</ng-container>
-	
-						<!-- 數據加載完畢後顯示基站資訊 -->
-						<ng-container *ngIf="!isMarkersLoading">
-							<ul *ngIf="displayBsInfo">
-								<li>
-									<label>{{ languageService.i18n['field.BSname'] }}</label>
-									<span>{{ displayBsInfo.name }}</span>
-								</li>
-								<li>
-									<label>{{languageService.i18n['field.BStype']}}</label>
-									<span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
-									<span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
-								</li>
-								<li>
-									<label>NCI</label>
-									<span>{{ displayBsInfo.nci }}</span>
-								</li>
-								<li>
-									<label>PCI</label>
-									<span>{{ displayBsInfo.pci }}</span>
-								</li>
-									<li>
-									<label>PLMN ID</label>
-									<span>
-										{{ displayBsInfo['plmn-id'].mcc }} {{ displayBsInfo['plmn-id'].mnc }}
-									</span>
-								</li>
-								<li>
-									<label>Tx Power (dBm)</label>
-									<span>{{ displayBsInfo['tx-power'] }}</span>
-								</li>
-								<li>
-									<label>NR-ARFCN-UL</label>
-									<span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
-								</li>
-								<li>
-									<label>NR-ARFCN-DL</label>
-									<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
-								</li>
-	
-								<!-- 使用 displayBsInfoPosition getter 獲取經度 -->
-								<li>
-									<label>{{languageService.i18n['field.Longitude']}}</label>
-									<span>{{ displayBsInfoPosition.lng }}</span>
-								</li>
-	
-								<!-- 使用 displayBsInfoPosition getter 獲取緯度 -->
-								<li>
-									<label>{{languageService.i18n['field.Latitude']}}</label>
-									<span>{{ displayBsInfoPosition.lat }}</span>
-								</li>
-							</ul>
-							<!-- 修改配置按鈕 -->
-							<div *ngIf="displayBsInfo" class="button-and-success-message-container">
-								<div class="button-container">
-								<button mat-flat-button class="button-modifyConfiguration" (click)="openModifyConfigWindow()">
-									{{ languageService.i18n['field.modifyConfiguration'] }}
-								</button>
-								<div class="success-message-placeholder" *ngIf="!isModifySuccess"></div>
-								</div>
-								
-								<!-- 成功訊息與圖標 -->
-								<div *ngIf="isModifySuccess" class="success-message">
-								<mat-icon>check_circle</mat-icon>{{ languageService.i18n['field.modifySuccess'] }} !
-								</div>
-	
-								<!-- 錯誤訊息與圖標 -->
-								<div *ngIf="isModifyError" class="error-message">
-									<mat-icon>error</mat-icon>{{ languageService.i18n['field.modifyError'] }} !
-								</div>
-	
-								<!-- "Nothing changed" 訊息與圖標 @2024/01/15 Add -->
-								<div *ngIf="isNothingChanged" class="info-message">
-									<mat-icon>info</mat-icon>{{ languageService.i18n['field.nothingChanged'] }} !
-								</div>
-							</div>
-						</ng-container>
-					</div>
-					<div>
-						<label class="boxTitle">{{ languageService.i18n['field.neighboringBSList'] }}</label>
-						<!-- Neighboring BS List @12/28 Update - Add Loading spinner -->
-						<div class="table">
-						<table>
-							<thead>
-							<tr>
-								<th>PLMN ID</th>
-								<th>NCI</th>
-								<th>PCI</th>
-							</tr>
-							</thead>
-							<tbody>
-								<!-- 顯示進度條 -->
-								<ng-container *ngIf="isMarkersLoading">
-									<tr>
-										<td colspan="6">
-											<div class="progress-spinner-container">
-																												<!-- diameter: 指示器大小-->
-												<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
-											</div>
-										</td>
-									</tr>
-								</ng-container>
-	
-								<!-- 顯示數據 -->
-								<ng-container *ngIf="!isMarkersLoading  && displayBsInfo">	
-									<!-- 使用 *ngFor 來迭代 displayBsInfo.neighbors 數組中的每一個 neighbor 對象 -->
-									<tr *ngFor="let neighbor of displayBsInfo.neighbors"> <!-- @12/25 Update -->
-										<td>
-										<!-- 顯示每個 neighbor 對象的 PLMN ID -->
-										{{ neighbor['plmn-id'].mcc }}{{ neighbor['plmn-id'].mnc }}
-										</td>
-										<td>
-										<!-- 顯示每個 neighbor 對象的 NCI -->
-										{{ neighbor.nci }}
-										</td>
-										<td>
-										<!-- 顯示每個 neighbor 對象的 PCI -->
-										{{ neighbor.pci }}
-										</td>
-									</tr>
-								</ng-container>
-							</tbody>
-						</table>
-						</div>
-					</div>
-				</div>
-			
+			</div>
 		</div>
+		<!-- Message prompt window when the O1 system has no field image @2024/01/22 Add -->
+		<ng-template #promptWindow_noFieldImage>
+			<div>
+				<h5><mat-icon style="background-color: none;">warning</mat-icon>{{ languageService.i18n['field.noFieldImageAvailableTitle'] }}</h5>
+			</div>  
+			<label class="label-centered">
+				{{ languageService.i18n['field.noFieldImageAvailableMessage'] }}
+			</label>
+			<div class="buttons buttons-centered">
+			<button type="button" mat-dialog-close>
+				{{ languageService.i18n['close'] }}
+			</button>
+			</div>
+		</ng-template>	  
+		
+			<!-- Field Alarms Information (場域告警資訊) -->
+			<!-- <div class="BOX">
+				<label class="boxTitle">{{ languageService.i18n['field.faultInfo'] }}
+					<a href="javascript:void(0)" (click)="goFaultMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
+				</label>
+				<div class="percent {{severityText_forCSS(severity)}} Fault" *ngFor="let severity of severitys; let i = index"> {{ severityText(severity) }}
+					<br>{{ severityCount(severity) }} </div>
+			</div> -->
+
+			<!-- Field Performance Information (場域效能資訊) -->
+			<div class="performanceWindow">
+				<label class="boxTitle">{{languageService.i18n['field.performanceInfo']}}
+					<a href="javascript:void(0)" (click)="goPerformanceMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
+				</label>
+				<div class="performance_percent">
+					<div class="item">
+						<!-- @12/10 update to get fieldInfo.handoverRate -->
+						<img src="assets/img/access.svg">
+						<span class="label-container">
+							{{ languageService.i18n['field.handoverRate'] }}
+							<span>77%</span>
+						</span>
+						<!-- @12/18 Update coverage -> mobility -->
+						<!-- <circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress> -->
+					</div>
+					<div class="item">
+						<!-- @12/10 update to get fieldInfo.accessibility -->
+						<img src="assets/img/handover.svg">
+						<span class="label-container">
+							{{ languageService.i18n['field.accessRate'] }}
+							<span>100%</span>
+						</span>
+						<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
+					</div>
+					<hr>
+					<div class="item">
+						<!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
+						<img src="assets/img/cpu.png">
+						<span class="label-container">{{ languageService.i18n['field.CPU_Utilization'] }}<span>5%</span></span>
+						<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
+					</div>
+					<div class="item">
+						<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
+						<img src="assets/img/memory.png">
+						<span class="label-container">{{ languageService.i18n['field.Memory_Utilization'] }}<span>47%</span></span>
+						<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
+					</div>
+				</div>
+			</div>
+
+			<!-- BS Information (基站資訊) @12/28 Update -->
+			<div class="BOX basicInfo bsWindow" style="display: none;" >
+				<label class="boxTitle">
+					{{ languageService.i18n['field.bsInfo'] }}
+				</label>
+				<div>
+					<!-- 顯示進度條 -->
+					<ng-container *ngIf="isMarkersLoading">
+						<!-- 加載中顯示 spinner -->
+						<div class="spinner-container">
+							<mat-progress-spinner mode="indeterminate" diameter="150"></mat-progress-spinner>
+						</div>
+					</ng-container>
+
+					<!-- 數據加載完畢後顯示基站資訊 -->
+					<ng-container *ngIf="!isMarkersLoading">
+						<ul *ngIf="displayBsInfo">
+							<li>
+								<label>{{ languageService.i18n['field.BSname'] }}</label>
+								<span>{{ displayBsInfo.name }}</span>
+							</li>
+							<li>
+								<label>{{languageService.i18n['field.BStype']}}</label>
+								<span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
+								<span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
+							</li>
+							<li>
+								<label>NCI</label>
+								<span>{{ displayBsInfo.nci }}</span>
+							</li>
+							<li>
+								<label>PCI</label>
+								<span>{{ displayBsInfo.pci }}</span>
+							</li>
+								<li>
+								<label>PLMN ID</label>
+								<span>
+									{{ displayBsInfo['plmn-id'].mcc }} {{ displayBsInfo['plmn-id'].mnc }}
+								</span>
+							</li>
+							<li>
+								<label>Tx Power (dBm)</label>
+								<span>{{ displayBsInfo['tx-power'] }}</span>
+							</li>
+							<li>
+								<label>NR-ARFCN-UL</label>
+								<span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
+							</li>
+							<li>
+								<label>NR-ARFCN-DL</label>
+								<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
+							</li>
+
+							<!-- 使用 displayBsInfoPosition getter 獲取經度 -->
+							<li>
+								<label>{{languageService.i18n['field.Longitude']}}</label>
+								<span>{{ displayBsInfoPosition.lng }}</span>
+							</li>
+
+							<!-- 使用 displayBsInfoPosition getter 獲取緯度 -->
+							<li>
+								<label>{{languageService.i18n['field.Latitude']}}</label>
+								<span>{{ displayBsInfoPosition.lat }}</span>
+							</li>
+						</ul>
+						<!-- 修改配置按鈕 -->
+						<div *ngIf="displayBsInfo" class="button-and-success-message-container">
+							<div class="button-container">
+							<button mat-flat-button class="button-modifyConfiguration" (click)="openModifyConfigWindow()">
+								{{ languageService.i18n['field.modifyConfiguration'] }}
+							</button>
+							<div class="success-message-placeholder" *ngIf="!isModifySuccess"></div>
+							</div>
+							
+							<!-- 成功訊息與圖標 -->
+							<div *ngIf="isModifySuccess" class="success-message">
+							<mat-icon>check_circle</mat-icon>{{ languageService.i18n['field.modifySuccess'] }} !
+							</div>
+
+							<!-- 錯誤訊息與圖標 -->
+							<div *ngIf="isModifyError" class="error-message">
+								<mat-icon>error</mat-icon>{{ languageService.i18n['field.modifyError'] }} !
+							</div>
+
+							<!-- "Nothing changed" 訊息與圖標 @2024/01/15 Add -->
+							<div *ngIf="isNothingChanged" class="info-message">
+								<mat-icon>info</mat-icon>{{ languageService.i18n['field.nothingChanged'] }} !
+							</div>
+						</div>
+					</ng-container>
+				</div>
+				<div>
+					<label class="boxTitle">{{ languageService.i18n['field.neighboringBSList'] }}</label>
+					<!-- Neighboring BS List @12/28 Update - Add Loading spinner -->
+					<div class="table">
+					<table>
+						<thead>
+						<tr>
+							<th>PLMN ID</th>
+							<th>NCI</th>
+							<th>PCI</th>
+						</tr>
+						</thead>
+						<tbody>
+							<!-- 顯示進度條 -->
+							<ng-container *ngIf="isMarkersLoading">
+								<tr>
+									<td colspan="6">
+										<div class="progress-spinner-container">
+																											<!-- diameter: 指示器大小-->
+											<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+										</div>
+									</td>
+								</tr>
+							</ng-container>
+
+							<!-- 顯示數據 -->
+							<ng-container *ngIf="!isMarkersLoading  && displayBsInfo">	
+								<!-- 使用 *ngFor 來迭代 displayBsInfo.neighbors 數組中的每一個 neighbor 對象 -->
+								<tr *ngFor="let neighbor of displayBsInfo.neighbors"> <!-- @12/25 Update -->
+									<td>
+									<!-- 顯示每個 neighbor 對象的 PLMN ID -->
+									{{ neighbor['plmn-id'].mcc }}{{ neighbor['plmn-id'].mnc }}
+									</td>
+									<td>
+									<!-- 顯示每個 neighbor 對象的 NCI -->
+									{{ neighbor.nci }}
+									</td>
+									<td>
+									<!-- 顯示每個 neighbor 對象的 PCI -->
+									{{ neighbor.pci }}
+									</td>
+								</tr>
+							</ng-container>
+						</tbody>
+					</table>
+					</div>
+				</div>
+			</div>
+		
+	</div>
 		<!-- Window of Modify Configuration -->
 		<ng-template #modifyConfigWindow>
 			<h5 *ngIf="displayBsInfo">{{ languageService.i18n['field.modifyConfiguration'] }} – {{ displayBsInfo.name }}</h5>
