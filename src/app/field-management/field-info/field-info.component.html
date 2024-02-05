@@ -129,44 +129,46 @@
 
 				<!-- 在地圖和進度指示器外面包一層 div，用於定位進度指示器 -->
 				
-					<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
-					<google-map *ngIf="showMapModel" width="100%" height="52em" [center]="center" [options]="mapOptions">
-						<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
-						<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
-						
-						<!-- 使用 *ngFor 指令迭代 bsInfoDetails 陣列中的每個基站資訊 -->
-						<!-- 為每個基站創建一個地圖標記，並將其位置設置為 bsInfo 的位置 -->
-						<!-- 同時綁定 markerClick 事件到 onSelectBsInfo 方法 -->
-						<!-- 這意味著當用戶點擊任何標記時，onSelectBsInfo 方法將被調用 -->
+				<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
+				<google-map *ngIf="showMapModel" width="100%" height="52em" [center]="center" [options]="mapOptions">
+					<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
+					<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
 					
-						<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
-									[position]="parsePosition( bsInfo.position )" 
-									[title]="bsInfo.name"
-									[icon]="bsInfo.iconUrl"
-									(mapClick)="onSelectBsInfo( bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">	
-						</map-marker>
+					<!-- 使用 *ngFor 指令迭代 bsInfoDetails 陣列中的每個基站資訊 -->
+					<!-- 為每個基站創建一個地圖標記，並將其位置設置為 bsInfo 的位置 -->
+					<!-- 同時綁定 markerClick 事件到 onSelectBsInfo 方法 -->
+					<!-- 這意味著當用戶點擊任何標記時，onSelectBsInfo 方法將被調用 -->
+				
+					<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
+								[position]="parsePosition( bsInfo.position )" 
+								[title]="bsInfo.name"
+								[icon]="bsInfo.iconUrl"
+								(mapClick)="onSelectBsInfo( bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">	
+					</map-marker>
 
-						<!-- 圖例 -->
-						<div class="map-legend">
-							<div>
-							<img src="/assets/img/bs_icons_v3/gnb_online_nonselected.png">
-							<span>{{ languageService.i18n['field.legend_all-in-one_bs'] }}</span>
-							</div>
-							<div>
-							<img src="/assets/img/bs_icons_v3/dist_gnb_online_default.png">
-							<span>{{ languageService.i18n['field.legend_dist_bs'] }}</span>
-							</div>
+					<!-- 圖例 -->
+					<div class="map-legend">
+						<div>
+						<img src="/assets/img/bs_icons_v3/gnb_online_nonselected.png">
+						<span>{{ languageService.i18n['field.legend_all-in-one_bs'] }}</span>
 						</div>
-						
-					</google-map>
-					<!-- 在地圖下方放置進度指示器，當 isMarkersLoading 為 true 時顯示 -->
-					<div *ngIf="isMarkersLoading" class="spinner-container">
-						<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
+						<div>
+						<img src="/assets/img/bs_icons_v3/dist_gnb_online_default.png">
+						<span>{{ languageService.i18n['field.legend_dist_bs'] }}</span>
+						</div>
 					</div>
-					<!-- 在地圖下方放置進度指示器，當 isfieldImage_or_RsrpSinrMapLoading 為 true 時顯示 -->
-					<div *ngIf="isfieldImage_or_RsrpSinrMapLoading" class="spinner-container">
-						<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
-					</div>
+					
+				</google-map>
+
+				<!-- 在地圖下方放置進度指示器，當 isMarkersLoading 為 true 時顯示 -->
+				<div *ngIf="isMarkersLoading" class="spinner-container">
+					<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
+				</div>
+				
+				<!-- 在地圖下方放置進度指示器，當 isfieldImage_or_RsrpSinrMapLoading 為 true 時顯示 -->
+				<div *ngIf="isfieldImage_or_RsrpSinrMapLoading" class="spinner-container">
+					<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
+				</div>
 
 				<!-- 基站列表，只有當 showMapModel 為 false 時才顯示 -->
 				<div *ngIf="!showMapModel">
@@ -230,6 +232,7 @@
 				</div>
 			</div>
 		</div>
+
 		<!-- Message prompt window when the O1 system has no field image @2024/01/22 Add -->
 		<ng-template #promptWindow_noFieldImage>
 			<div>
@@ -244,59 +247,65 @@
 			</button>
 			</div>
 		</ng-template>	  
-		
-			<!-- Field Alarms Information (場域告警資訊) -->
-			<!-- <div class="BOX">
-				<label class="boxTitle">{{ languageService.i18n['field.faultInfo'] }}
-					<a href="javascript:void(0)" (click)="goFaultMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
-				</label>
-				<div class="percent {{severityText_forCSS(severity)}} Fault" *ngFor="let severity of severitys; let i = index"> {{ severityText(severity) }}
-					<br>{{ severityCount(severity) }} </div>
-			</div> -->
+	
+		<!-- Field Alarms Information (場域告警資訊) -->
+		<!-- <div class="BOX">
+			<label class="boxTitle">{{ languageService.i18n['field.faultInfo'] }}
+				<a href="javascript:void(0)" (click)="goFaultMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
+			</label>
+			<div class="percent {{severityText_forCSS(severity)}} Fault" *ngFor="let severity of severitys; let i = index"> {{ severityText(severity) }}
+				<br>{{ severityCount(severity) }} </div>
+		</div> -->
 
-			<!-- Field Performance Information (場域效能資訊) -->
-			<div class="performanceWindow">
-				<label class="boxTitle">{{languageService.i18n['field.performanceInfo']}}
-					<a href="javascript:void(0)" (click)="goPerformanceMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
-				</label>
-				<div class="performance_percent">
-					<div class="item">
-						<!-- @12/10 update to get fieldInfo.handoverRate -->
-						<img src="assets/img/access.svg">
-						<span class="label-container">
-							{{ languageService.i18n['field.handoverRate'] }}
-							<span>77%</span>
-						</span>
-						<!-- @12/18 Update coverage -> mobility -->
-						<!-- <circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress> -->
-					</div>
-					<div class="item">
-						<!-- @12/10 update to get fieldInfo.accessibility -->
-						<img src="assets/img/handover.svg">
-						<span class="label-container">
-							{{ languageService.i18n['field.accessRate'] }}
-							<span>100%</span>
-						</span>
-						<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
-					</div>
-					<hr>
-					<div class="item">
-						<!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
-						<img src="assets/img/cpu.png">
-						<span class="label-container">{{ languageService.i18n['field.CPU_Utilization'] }}<span>5%</span></span>
-						<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
-					</div>
-					<div class="item">
-						<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
-						<img src="assets/img/memory.png">
-						<span class="label-container">{{ languageService.i18n['field.Memory_Utilization'] }}<span>47%</span></span>
-						<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
-					</div>
+		<!-- Field Performance Information (場域效能資訊) -->
+		<div class="performanceWindow">
+			<label class="boxTitle">{{languageService.i18n['field.performanceInfo']}}
+				<a href="javascript:void(0)" (click)="goPerformanceMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
+			</label>
+			<div class="performance_percent">
+				<div class="item">
+					<!-- @12/10 update to get fieldInfo.handoverRate -->
+					<img src="assets/img/access.svg">
+					<span class="label-container">
+						{{ languageService.i18n['field.handoverRate'] }}
+						<span>{{ mobilityAsNumber }}%</span>
+					</span>
+					<!-- @12/18 Update coverage -> mobility -->
+					<!-- <circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress> -->
+				</div>
+				<div class="item">
+					<!-- @12/10 update to get fieldInfo.accessibility -->
+					<img src="assets/img/handover.svg">
+					<span class="label-container">
+						{{ languageService.i18n['field.accessRate'] }}
+						<span>{{ accessibilityAsNumber }}%</span>
+					</span>
+					<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
+				</div>
+				<hr>
+				<div class="item">
+					<!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
+					<img src="assets/img/cpu.png">
+					<span class="label-container">
+						{{ languageService.i18n['field.CPU_Utilization'] }}
+						<span>{{ resourceProcess }}%</span>
+					</span>
+					<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
+				</div>
+				<div class="item">
+					<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
+					<img src="assets/img/memory.png">
+					<span class="label-container">
+						{{ languageService.i18n['field.Memory_Utilization'] }}
+						<span>{{ resourceMemory }}%</span>
+					</span>
+					<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
 				</div>
 			</div>
+		</div>
 
-			<!-- BS Information (基站資訊) @12/28 Update -->
-			<div class="BOX basicInfo bsWindow" style="display: none;" >
+		<!-- BS Information (基站資訊) @12/28 Update -->
+		<div class="BOX basicInfo bsWindow" style="display: none;" >
 				<label class="boxTitle">
 					{{ languageService.i18n['field.bsInfo'] }}
 				</label>
@@ -431,402 +440,402 @@
 							</ng-container>
 						</tbody>
 					</table>
-					</div>
 				</div>
 			</div>
-		
+		</div>
 	</div>
-		<!-- Window of Modify Configuration -->
-		<ng-template #modifyConfigWindow>
-			<h5 *ngIf="displayBsInfo">{{ languageService.i18n['field.modifyConfiguration'] }} – {{ displayBsInfo.name }}</h5>
-			<form [formGroup]="modifyConfigForm">
-				<ul *ngIf="displayBsInfo">
-					<li>
-						<label>{{ languageService.i18n['field.BSname'] }}</label>
-						<span>
-							<input type="text" formControlName="bsName" placeholder="{{ displayBsInfo.name }}" class="{{formValidated&&modifyConfigForm.controls['bsName'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-					<li>
-						<label>PCI</label>
-						<span>
-							<input type="text" formControlName="pci" placeholder="{{ displayBsInfo.pci }}" class="{{formValidated&&modifyConfigForm.controls['pci'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-					<!-- <li> -->
-						<!-- <label>PLMN ID</label> -->
-						<!-- <span class="input_2"> -->
-							<!-- <input type="text" formControlName="mcc" placeholder="{{ displayBsInfo['plmn-id'].mcc }}" class="{{formValidated&&modifyConfigForm.controls['mcc'].invalid?'required':''}}"> -->
-							<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							<!-- <input type="text" formControlName="mnc" placeholder="{{ displayBsInfo['plmn-id'].mnc }}" class="{{formValidated&&modifyConfigForm.controls['mnc'].invalid?'required':''}}"> -->
-							<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						<!-- </span> -->
-					<!-- </li> -->
-					<li>
-						<label>Tx Power (dBm)</label>
-						<span>
-							<input type="text" formControlName="txPower" placeholder="{{ displayBsInfo['tx-power'] }}" class="{{formValidated&&modifyConfigForm.controls['txPower'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-					<li>
-						<label>NR-ARFCN-UL</label>
-						<span>
-							<input type="text" formControlName="nrarfcnul" placeholder="{{ displayBsInfo['nrarfcn-ul'] }}" class="{{formValidated&&modifyConfigForm.controls['nrarfcnul'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-					<li>
-						<label>NR-ARFCN-DL</label>
-						<span>
-							<input type="text" formControlName="nrarfcndl" placeholder="{{ displayBsInfo['nrarfcn-dl'] }}" class="{{formValidated&&modifyConfigForm.controls['nrarfcndl'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-					<li>
-						<label>{{ languageService.i18n['field.Longitude'] }}</label>
-						<span>
-							<input type="text" formControlName="longitude" placeholder="{{ displayBsInfoPosition.lng }}" class="{{formValidated&&modifyConfigForm.controls['longitude'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-					<li>
-						<label>{{ languageService.i18n['field.Latitude'] }}</label>
-						<span>
-							<input type="text" formControlName="latitude" placeholder="{{ displayBsInfoPosition.lat }}" class="{{formValidated&&modifyConfigForm.controls['latitude'].invalid?'required':''}}">
-							<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						</span>
-					</li>
-				</ul>
-				<div class="buttons">
-					<button type="button" (click)="ModifyConfig_Submit( displayBsInfo!.name, displayBsInfo!.bstype )">
-						{{ languageService.i18n['confirm'] }}
-					</button>
-					<button type="button" (click)="resetBSModifyConfigForm( displayBsInfo!.name )" mat-dialog-close>
-						{{ languageService.i18n['cancel'] }}
-					</button>
-				</div>
-			</form>
-		</ng-template>
-		
-		<!-- Window of Field Editing -->
-		<ng-template class="my-dialog-container" #fieldEditWindow>
-			<div><h5>{{ languageService.i18n['field.edit'] }}</h5></div>			
-			<div class="fieldEditTab">
-				<mat-button-toggle-group name="fieldEditType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldEditType" (change)="changefieldEditType($event)">
-					<mat-button-toggle value="Field_Infos" >{{ languageService.i18n['field.editInfo'] }}</mat-button-toggle>
-					<mat-button-toggle value="BS_List" >{{ languageService.i18n['field.bsList'] }}</mat-button-toggle>
-				</mat-button-toggle-group>
-			</div>
-	
-			<div *ngIf="fieldInfo && fieldBounds">
-				<!-- Field Infos -->
-				<div class="Field_Infos" *ngIf="fieldEditType === 'Field_Infos'">
+
+	<!-- Window of Modify Configuration ( 目前版本已沒顯示該功能 ) -->
+	<ng-template #modifyConfigWindow>
+		<h5 *ngIf="displayBsInfo">{{ languageService.i18n['field.modifyConfiguration'] }} – {{ displayBsInfo.name }}</h5>
+		<form [formGroup]="modifyConfigForm">
+			<ul *ngIf="displayBsInfo">
+				<li>
+					<label>{{ languageService.i18n['field.BSname'] }}</label>
 					<span>
-						<form [formGroup]="fieldEditForm">
-							<UL>
-							<li>
-								<label>{{ languageService.i18n['field.name'] }}</label>
-								<span>
-									<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
-											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
-									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li>
-							<li>
-								<label>{{ languageService.i18n['field.northBound'] }}</label>
-								<span>
-									<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
-											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
-									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li>
-							<li>
-								<label>{{ languageService.i18n['field.southBound'] }}</label>
-								<span>
-									<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
-											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
-									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li>
-							<li>
-								<label>{{ languageService.i18n['field.westBound'] }}</label>
-								<span>
-									<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
-											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
-									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li>
-							<li>
-								<label>{{ languageService.i18n['field.eastBound'] }}</label>
-								<span>
-									<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
-											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
-									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li>
-							<li>
-								<label>{{ languageService.i18n['field.notificationNum'] }}</label>
-								<span>
-									<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
-									<!-- <mat-error *ngIf="fieldEditForm.controls['phoneNumber'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li></UL>
-						</form>
+						<input type="text" formControlName="bsName" placeholder="{{ displayBsInfo.name }}" class="{{formValidated&&modifyConfigForm.controls['bsName'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
+				</li>
+				<li>
+					<label>PCI</label>
 					<span>
-						<!-- 圖片和標籤 -->
-						<!-- 
-							<div class="image-container">
-							<label class="label-position leftUp">[ {{ fieldBounds.north }}, {{ fieldBounds.west }} ]</label>
-							<label class="label-position rightUp">[ {{ fieldBounds.north }}, {{ fieldBounds.east }} ]</label>
-							<img title="{{ languageService.i18n['field.fieldBoundsEx'] }}" src="/assets/img/fieldBounds_exampleImage.png" alt="{{ languageService.i18n['field.fieldBoundsEx'] }}">
-							<label class="label-position rightDown">[ {{ fieldBounds.south }}, {{ fieldBounds.east }} ]</label>
-							<label class="label-position leftDown">[ {{ fieldBounds.south }}, {{ fieldBounds.west }} ]</label>
-							</div>	 
-						-->
-						<span>
-							<!-- <h3>{{ languageService.i18n['field.indoorMap'] }}</h3> -->
-							<div>
-								<!-- 顯示進度條 -->
-								<ng-container *ngIf="isFieldImageOnFieldEditLoading">
-									<div class="progress-spinner-container">
-																										<!-- diameter: 指示器大小-->
-										<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="35"></mat-progress-spinner>
-									</div>
-								</ng-container>
-								<!-- 顯示室內圖片 -->
-								<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
-									<!-- For local @2024/01/23 Add -->
-									<div class="preview">
-										<div class="center">{{ languageService.i18n['field.preview'] }}</div>
-										<mat-icon title="{{ languageService.i18n['field.DeleteindoorMap'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon>
-										<img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
-										<img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
-									</div>
-									<div id="noImageMessage" style="display: none;">
-										<span class="material-symbols-outlined">
-											error
-											</span>
-										{{ languageService.i18n['field.indoorMapNotUploaded'] }}
-									</div>
-								</ng-container>
-							</div>
-							<div class="button-container">
-								<!-- 按鈕，用於觸發隱藏的 input 元素 -->
-								<button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()">
-								{{ languageService.i18n['field.indoorMapUpload'] }}
-								</button>
-								<!-- 隱藏的文件輸入元素，僅接受 PNG 和 JPG 圖片 -->
-								<input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".png, .jpg, .jpeg">
-							</div>
-						</span>	  
+						<input type="text" formControlName="pci" placeholder="{{ displayBsInfo.pci }}" class="{{formValidated&&modifyConfigForm.controls['pci'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
-				</div>
-			</div>
-	
-			<div *ngIf="fieldEditType === 'BS_List'">
-				<!-- BS List -->
-				<ul *ngIf="fieldEditType === 'BS_List'">
-					
-					<!-- 控制顯示所有 BS/隱藏未在場域的 BS 按鈕 @2024/01/28 Update -->
-					<button mat-flat-button
-							[ngClass]="{'field-Edit-bsList-button-active': displayAllBSFlag,
-										 'field-Edit-bsList-button-inactive': !displayAllBSFlag}"
-							(click)="toggleAllBSVisibility()">
-							{{ displayAllBSFlag ? languageService.i18n['field.cancelEditBSs'] : languageService.i18n['field.editBSs'] }}
-					</button>
-	
-					<!-- 基站列表 For field Edit @2024/01/11 Add by yuchen -->	
-					<div class="table">
-						<table class="center">
-							<thead>
-								<tr>
-									<!-- 使用 *ngIf 控制顯示 "選擇基站" 這一列 @2024/01/25 Add -->
-									<!-- <th *ngIf="isCheckboxVisible">{{ languageService.i18n['field.selectBSs'] }}</th> -->
-									<th>{{ languageService.i18n['field.selectBSs'] }}</th>
-									<th>{{ languageService.i18n['field.BSname'] }}</th>
-									<th>{{ languageService.i18n['field.BStype'] }}</th>
-									<th>gNB ID</th>
-									<th>gNB ID Length</th>
-									<th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
-									<th>{{ languageService.i18n['field.BSstatus'] }}</th>
-								</tr>
-							</thead>
-							<tbody>
-								<!-- 顯示進度條 -->
-								<ng-container *ngIf="isGetQueryBsListLoading">
-									<tr>
-										<td colspan="6">
-										<div class="progress-spinner-container">
-																											<!-- diameter: 指示器大小-->
-											<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
-										</div>
-										</td>
-									</tr>
-								</ng-container>
-								<!-- 顯示數據 -->
-								<ng-container *ngIf="!isGetQueryBsListLoading">
-									<!-- <tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;"> -->
-									
-									<!-- 根據 displayAllBSFlag 旗標選擇迭代的數據來源 ( .ts 進行控制 ) -->
-									<tr *ngFor="let opt of displayedBasestations" style="overflow-y: auto;">
-	
-										<!-- 根據條件顯示 Checkbox @2024/01/26 Update -->
-										<td>
-											<input type="checkbox" [checked]="opt.selected" (change)="onBsSelectionChange( opt.id, $event )" [disabled]="!displayAllBSFlag" >
-										</td>  
-										<td>
-											<!-- 顯示 "基站名稱" -->
-											{{ opt.name }}
-										</td>
-										<td>
-											<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
-											<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
-											
-											<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
-											<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
-										</td>
-										<td>
-											{{ opt.gNBId }}
-										</td>
-										<td>
-											{{ opt.gNBIdLength }}
-										</td>
-										<td>
-											<label>{{ opt.position }}</label>
-										</td>
-										<td class="icon">
-											<label *ngIf="opt.status === 0 || opt.status === 1" class="redLight"></label>
-											<label *ngIf="opt.status === 2" class="greenLight"></label>
-										</td>
-									</tr>
-								</ng-container>
-							</tbody>
-						</table>
-					</div>
-				</ul>
-			</div>		
-	
+				</li>
+				<!-- <li> -->
+					<!-- <label>PLMN ID</label> -->
+					<!-- <span class="input_2"> -->
+						<!-- <input type="text" formControlName="mcc" placeholder="{{ displayBsInfo['plmn-id'].mcc }}" class="{{formValidated&&modifyConfigForm.controls['mcc'].invalid?'required':''}}"> -->
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+						<!-- <input type="text" formControlName="mnc" placeholder="{{ displayBsInfo['plmn-id'].mnc }}" class="{{formValidated&&modifyConfigForm.controls['mnc'].invalid?'required':''}}"> -->
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					<!-- </span> -->
+				<!-- </li> -->
+				<li>
+					<label>Tx Power (dBm)</label>
+					<span>
+						<input type="text" formControlName="txPower" placeholder="{{ displayBsInfo['tx-power'] }}" class="{{formValidated&&modifyConfigForm.controls['txPower'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
+				<li>
+					<label>NR-ARFCN-UL</label>
+					<span>
+						<input type="text" formControlName="nrarfcnul" placeholder="{{ displayBsInfo['nrarfcn-ul'] }}" class="{{formValidated&&modifyConfigForm.controls['nrarfcnul'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
+				<li>
+					<label>NR-ARFCN-DL</label>
+					<span>
+						<input type="text" formControlName="nrarfcndl" placeholder="{{ displayBsInfo['nrarfcn-dl'] }}" class="{{formValidated&&modifyConfigForm.controls['nrarfcndl'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
+				<li>
+					<label>{{ languageService.i18n['field.Longitude'] }}</label>
+					<span>
+						<input type="text" formControlName="longitude" placeholder="{{ displayBsInfoPosition.lng }}" class="{{formValidated&&modifyConfigForm.controls['longitude'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
+				<li>
+					<label>{{ languageService.i18n['field.Latitude'] }}</label>
+					<span>
+						<input type="text" formControlName="latitude" placeholder="{{ displayBsInfoPosition.lat }}" class="{{formValidated&&modifyConfigForm.controls['latitude'].invalid?'required':''}}">
+						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+					</span>
+				</li>
+			</ul>
 			<div class="buttons">
-				<!-- @2024/01/28 Update -->
-				<button type="button" (click)="openConfirmFieldEditWindow()" mat-dialog-close>
+				<button type="button" (click)="ModifyConfig_Submit( displayBsInfo!.name, displayBsInfo!.bstype )">
 					{{ languageService.i18n['confirm'] }}
 				</button>
-				<!-- @2024/01/28 Update -->
-				<button type="button" (click)="resetFieldEditingForm( fieldName )" mat-dialog-close>
+				<button type="button" (click)="resetBSModifyConfigForm( displayBsInfo!.name )" mat-dialog-close>
 					{{ languageService.i18n['cancel'] }}
 				</button>
 			</div>
+		</form>
+	</ng-template>
 	
-		</ng-template>
-	
-		<!-- Window of confirm-delete-dialog for Field Editing @2024/01/28 Update -->
-		<ng-template #confirmDeleteWindow_For_fieldEdit>
-			<div>
-			  <h5>{{ languageService.i18n['confirm'] }}</h5>
-			</div>  
-			<label class="label-centered">
-			  {{ languageService.i18n['field.confirmDeleteindoorMap'] }}
-			</label>
-			<div class="buttons buttons-centered">
-			  <button type="button" (click)="removeIndoorImage()" mat-dialog-close>
-				{{ languageService.i18n['confirm'] }}
-			  </button>
-			  <button type="button" mat-dialog-close>
-				{{ languageService.i18n['cancel'] }}
-			  </button>
-			</div>
-		</ng-template>	  
-	
-		<!-- 確認視窗 for Field Editing @2024/01/28 Add -->
-		<ng-template #confirmFieldEditWindow>
-			<div>
-			<h5>{{ languageService.i18n['confirm'] }}</h5>
-			</div>  
-			<label class="label-centered">
-				{{ languageService.i18n['field.confirmFieldEditField'] }}
-			</label>
-			<div class="buttons buttons-centered">
-			<button type="button" (click)="UpdateFieldEditing_Submit()" mat-dialog-close>
-				{{ languageService.i18n['confirm'] }}
-			</button>
-			<button type="button" mat-dialog-close>
-				{{ languageService.i18n['cancel'] }}
-			</button>
-			</div>
-		</ng-template>
-	  
-	
-		<!-- Window of PM Parameter Setting @2024/02/04 Add -->
-		<ng-template class="my-dialog-container" #PMgmtParameterSetWindow>
-			<div><h5>{{ languageService.i18n['field.configPMset'] }}</h5></div>
-			<div *ngIf="fieldInfo && fieldBounds">
-				<!-- Pm Ftp Infos -->
+	<!-- Window of Field Editing -->
+	<ng-template class="my-dialog-container" #fieldEditWindow>
+		<div><h5>{{ languageService.i18n['field.edit'] }}</h5></div>			
+		<div class="fieldEditTab">
+			<mat-button-toggle-group name="fieldEditType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldEditType" (change)="changefieldEditType($event)">
+				<mat-button-toggle value="Field_Infos" >{{ languageService.i18n['field.editInfo'] }}</mat-button-toggle>
+				<mat-button-toggle value="BS_List" >{{ languageService.i18n['field.bsList'] }}</mat-button-toggle>
+			</mat-button-toggle-group>
+		</div>
+
+		<div *ngIf="fieldInfo && fieldBounds">
+			<!-- Field Infos -->
+			<div class="Field_Infos" *ngIf="fieldEditType === 'Field_Infos'">
 				<span>
-					<form [formGroup]="PMgmtParameterSetForm">
+					<form [formGroup]="fieldEditForm">
 						<UL>
-							<li>
-								<label>{{ languageService.i18n['field.name'] }}</label>
-								<span>
-									<input type="text" formControlName="pmIP" placeholder="{{ fieldInfo.name }}"
-											class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmIP'].invalid?'required':''}}">
-									<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmIP'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li>
-							<li>
-								<label>{{ languageService.i18n['field.northBound'] }}</label>
-								<span>
-									<input type="text" formControlName="folderPath" placeholder="{{ fieldBounds.north }}"
-											class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['folderPath'].invalid?'required':'' }}">
-									<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['folderPath'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li>
-							<li>
-								<label>{{ languageService.i18n['field.southBound'] }}</label>
-								<span>
-									<input type="text" formControlName="pmID" placeholder="{{ fieldBounds.south }}"
-											class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmID'].invalid?'required':'' }}">
-									<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmID'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li>
-							<li>
-								<label>{{ languageService.i18n['field.westBound'] }}</label>
-								<span>
-									<input type="text" formControlName="pmKey" placeholder="{{ fieldBounds.west }}"
-											class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmKey'].invalid?'required':'' }}">
-									<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmKey'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li>
-							<li>
-								<label>{{ languageService.i18n['field.eastBound'] }}</label>
-								<span>
-									<input type="text" formControlName="MeasurementInterval_pmint" placeholder="{{ fieldBounds.east }}"
-											class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].invalid?'required':'' }}">
-									<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li>
-							<li>
-								<label>{{ languageService.i18n['field.notificationNum'] }}</label>
-								<span>
-									<input type="text" formControlName="UploadInterval_fmint" placeholder="{{ fieldInfo.phone }}"
-										class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['UploadInterval_fmint'].invalid?'required':''}}">
-									<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['UploadInterval_fmint'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-								</span>
-							</li>
-						</UL>
+						<li>
+							<label>{{ languageService.i18n['field.name'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.northBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.southBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.westBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.eastBound'] }}</label>
+							<span>
+								<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.notificationNum'] }}</label>
+							<span>
+								<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
+									class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="fieldEditForm.controls['phoneNumber'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li></UL>
 					</form>
 				</span>
+				<span>
+					<!-- 圖片和標籤 -->
+					<!-- 
+						<div class="image-container">
+						<label class="label-position leftUp">[ {{ fieldBounds.north }}, {{ fieldBounds.west }} ]</label>
+						<label class="label-position rightUp">[ {{ fieldBounds.north }}, {{ fieldBounds.east }} ]</label>
+						<img title="{{ languageService.i18n['field.fieldBoundsEx'] }}" src="/assets/img/fieldBounds_exampleImage.png" alt="{{ languageService.i18n['field.fieldBoundsEx'] }}">
+						<label class="label-position rightDown">[ {{ fieldBounds.south }}, {{ fieldBounds.east }} ]</label>
+						<label class="label-position leftDown">[ {{ fieldBounds.south }}, {{ fieldBounds.west }} ]</label>
+						</div>	 
+					-->
+					<span>
+						<!-- <h3>{{ languageService.i18n['field.indoorMap'] }}</h3> -->
+						<div>
+							<!-- 顯示進度條 -->
+							<ng-container *ngIf="isFieldImageOnFieldEditLoading">
+								<div class="progress-spinner-container">
+																									<!-- diameter: 指示器大小-->
+									<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="35"></mat-progress-spinner>
+								</div>
+							</ng-container>
+							<!-- 顯示室內圖片 -->
+							<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
+								<!-- For local @2024/01/23 Add -->
+								<div class="preview">
+									<div class="center">{{ languageService.i18n['field.preview'] }}</div>
+									<mat-icon title="{{ languageService.i18n['field.DeleteindoorMap'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon>
+									<img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
+									<img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
+								</div>
+								<div id="noImageMessage" style="display: none;">
+									<span class="material-symbols-outlined">
+										error
+										</span>
+									{{ languageService.i18n['field.indoorMapNotUploaded'] }}
+								</div>
+							</ng-container>
+						</div>
+						<div class="button-container">
+							<!-- 按鈕，用於觸發隱藏的 input 元素 -->
+							<button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()">
+							{{ languageService.i18n['field.indoorMapUpload'] }}
+							</button>
+							<!-- 隱藏的文件輸入元素，僅接受 PNG 和 JPG 圖片 -->
+							<input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".png, .jpg, .jpeg">
+						</div>
+					</span>	  
+				</span>
 			</div>
-			<div class="buttons">
-				<button type="button" (click)="openConfirmFieldEditWindow()" mat-dialog-close>
-					{{ languageService.i18n['confirm'] }}
+		</div>
+
+		<div *ngIf="fieldEditType === 'BS_List'">
+			<!-- BS List -->
+			<ul *ngIf="fieldEditType === 'BS_List'">
+				
+				<!-- 控制顯示所有 BS/隱藏未在場域的 BS 按鈕 @2024/01/28 Update -->
+				<button mat-flat-button
+						[ngClass]="{'field-Edit-bsList-button-active': displayAllBSFlag,
+										'field-Edit-bsList-button-inactive': !displayAllBSFlag}"
+						(click)="toggleAllBSVisibility()">
+						{{ displayAllBSFlag ? languageService.i18n['field.cancelEditBSs'] : languageService.i18n['field.editBSs'] }}
 				</button>
-				<button type="button" (click)="resetFieldEditingForm( fieldName )" mat-dialog-close>
-					{{ languageService.i18n['cancel'] }}
-				</button>
-			</div>
-		</ng-template>
+
+				<!-- 基站列表 For field Edit @2024/01/11 Add by yuchen -->	
+				<div class="table">
+					<table class="center">
+						<thead>
+							<tr>
+								<!-- 使用 *ngIf 控制顯示 "選擇基站" 這一列 @2024/01/25 Add -->
+								<!-- <th *ngIf="isCheckboxVisible">{{ languageService.i18n['field.selectBSs'] }}</th> -->
+								<th>{{ languageService.i18n['field.selectBSs'] }}</th>
+								<th>{{ languageService.i18n['field.BSname'] }}</th>
+								<th>{{ languageService.i18n['field.BStype'] }}</th>
+								<th>gNB ID</th>
+								<th>gNB ID Length</th>
+								<th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
+								<th>{{ languageService.i18n['field.BSstatus'] }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- 顯示進度條 -->
+							<ng-container *ngIf="isGetQueryBsListLoading">
+								<tr>
+									<td colspan="6">
+									<div class="progress-spinner-container">
+																										<!-- diameter: 指示器大小-->
+										<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+									</div>
+									</td>
+								</tr>
+							</ng-container>
+							<!-- 顯示數據 -->
+							<ng-container *ngIf="!isGetQueryBsListLoading">
+								<!-- <tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;"> -->
+								
+								<!-- 根據 displayAllBSFlag 旗標選擇迭代的數據來源 ( .ts 進行控制 ) -->
+								<tr *ngFor="let opt of displayedBasestations" style="overflow-y: auto;">
+
+									<!-- 根據條件顯示 Checkbox @2024/01/26 Update -->
+									<td>
+										<input type="checkbox" [checked]="opt.selected" (change)="onBsSelectionChange( opt.id, $event )" [disabled]="!displayAllBSFlag" >
+									</td>  
+									<td>
+										<!-- 顯示 "基站名稱" -->
+										{{ opt.name }}
+									</td>
+									<td>
+										<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
+										<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
+										
+										<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
+										<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
+									</td>
+									<td>
+										{{ opt.gNBId }}
+									</td>
+									<td>
+										{{ opt.gNBIdLength }}
+									</td>
+									<td>
+										<label>{{ opt.position }}</label>
+									</td>
+									<td class="icon">
+										<label *ngIf="opt.status === 0 || opt.status === 1" class="redLight"></label>
+										<label *ngIf="opt.status === 2" class="greenLight"></label>
+									</td>
+								</tr>
+							</ng-container>
+						</tbody>
+					</table>
+				</div>
+			</ul>
+		</div>		
+
+		<div class="buttons">
+			<!-- @2024/01/28 Update -->
+			<button type="button" (click)="openConfirmFieldEditWindow()" mat-dialog-close>
+				{{ languageService.i18n['confirm'] }}
+			</button>
+			<!-- @2024/01/28 Update -->
+			<button type="button" (click)="resetFieldEditingForm( fieldName )" mat-dialog-close>
+				{{ languageService.i18n['cancel'] }}
+			</button>
+		</div>
+
+	</ng-template>
+	
+	<!-- Window of confirm-delete-dialog for Field Editing @2024/01/28 Update -->
+	<ng-template #confirmDeleteWindow_For_fieldEdit>
+		<div>
+			<h5>{{ languageService.i18n['confirm'] }}</h5>
+		</div>  
+		<label class="label-centered">
+			{{ languageService.i18n['field.confirmDeleteindoorMap'] }}
+		</label>
+		<div class="buttons buttons-centered">
+			<button type="button" (click)="removeIndoorImage()" mat-dialog-close>
+			{{ languageService.i18n['confirm'] }}
+			</button>
+			<button type="button" mat-dialog-close>
+			{{ languageService.i18n['cancel'] }}
+			</button>
+		</div>
+	</ng-template>	  
+	
+	<!-- Confirm Window for Field Editing @2024/01/28 Add -->
+	<ng-template #confirmFieldEditWindow>
+		<div>
+		<h5>{{ languageService.i18n['confirm'] }}</h5>
+		</div>  
+		<label class="label-centered">
+			{{ languageService.i18n['field.confirmFieldEditField'] }}
+		</label>
+		<div class="buttons buttons-centered">
+		<button type="button" (click)="UpdateFieldEditing_Submit()" mat-dialog-close>
+			{{ languageService.i18n['confirm'] }}
+		</button>
+		<button type="button" mat-dialog-close>
+			{{ languageService.i18n['cancel'] }}
+		</button>
+		</div>
+	</ng-template>
+	  
+	
+	<!-- Window of PM Parameter Setting @2024/02/04 Add -->
+	<ng-template class="my-dialog-container" #PMgmtParameterSetWindow>
+		<div><h5>{{ languageService.i18n['field.configPMset'] }}</h5></div>
+		<div *ngIf="fieldInfo && fieldBounds">
+			<!-- Pm Ftp Infos -->
+			<span>
+				<form [formGroup]="PMgmtParameterSetForm">
+					<UL>
+						<li>
+							<label>{{ languageService.i18n['field.name'] }}</label>
+							<span>
+								<input type="text" formControlName="pmIP" placeholder="{{ fieldInfo.name }}"
+										class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmIP'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmIP'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.northBound'] }}</label>
+							<span>
+								<input type="text" formControlName="folderPath" placeholder="{{ fieldBounds.north }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['folderPath'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['folderPath'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.southBound'] }}</label>
+							<span>
+								<input type="text" formControlName="pmID" placeholder="{{ fieldBounds.south }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmID'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmID'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.westBound'] }}</label>
+							<span>
+								<input type="text" formControlName="pmKey" placeholder="{{ fieldBounds.west }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmKey'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmKey'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.eastBound'] }}</label>
+							<span>
+								<input type="text" formControlName="MeasurementInterval_pmint" placeholder="{{ fieldBounds.east }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.notificationNum'] }}</label>
+							<span>
+								<input type="text" formControlName="UploadInterval_fmint" placeholder="{{ fieldInfo.phone }}"
+									class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['UploadInterval_fmint'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['UploadInterval_fmint'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+					</UL>
+				</form>
+			</span>
+		</div>
+		<div class="buttons">
+			<button type="button" (click)="openConfirmFieldEditWindow()" mat-dialog-close>
+				{{ languageService.i18n['confirm'] }}
+			</button>
+			<button type="button" (click)="resetFieldEditingForm( fieldName )" mat-dialog-close>
+				{{ languageService.i18n['cancel'] }}
+			</button>
+		</div>
+	</ng-template>
