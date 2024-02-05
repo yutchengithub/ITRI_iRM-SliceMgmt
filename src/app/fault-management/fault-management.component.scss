@@ -10,6 +10,7 @@ table thead th {
 table tr td {
   min-width: 5vw;
   text-align: center;
+  white-space: nowrap;
 }
 table tr td.time{
   width: 3vw;
@@ -19,7 +20,7 @@ table tr td.time{
 table tr td:nth-child(2),
 table tr td:nth-child(4){
   white-space: nowrap;
-  min-width: 12vw;
+  min-width: 11.5vw;
 }
 table tr td:nth-last-child(2){
   width: 3vw;

@@ -453,7 +453,7 @@ input[type="text"].required + .mat-error {
   min-width: 32em;
 }
 body.en #createModal {
-  min-width: 32em;
+  min-width: 35em;
 }
 #createModal ul li label {
   width: 5em;
@@ -1143,6 +1143,18 @@ body.tw .dashboard  .boxTitle {
 }
 body.en .account_Info .basicInfo ul li label {
   width: 6.7em!important;
+}
+body.tw #userlogDetail ul li > span:first-child {
+  width: 4.3em;
+}
+body.tw #createBSModal ul li > label {
+  min-width: 5em;
+}
+body.tw #createComponentModal ul li label {
+  width: 7em;}
+
+body.tw .performanceWindow {
+  width: 17em;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {

@@ -88,7 +88,7 @@ export const Enlanguage = {
   'field.majorFault':'Major',
   'field.minorFault':'Minor',
   'field.warningFault':'Warning',
-  'field.performanceInfo':'Field Performance',
+  'field.performanceInfo':'Performance',
   'field.handoverRate':'Handover Success Rate',
   'field.accessRate':'Access Success Rate',
   'field.CPU_Utilization':'CPU Utilization',
