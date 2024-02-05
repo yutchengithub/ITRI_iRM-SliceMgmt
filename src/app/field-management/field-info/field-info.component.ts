@@ -820,11 +820,11 @@ export class FieldInfoComponent implements OnInit {
       // 該處建立了一個包含場域四個角落位置的矩陣，
       // 並且將場域的第一個位置再次添加到矩陣的末尾，以確保多邊形是閉合的。
       const positions = [
-        this.parsePosition(this.fieldInfo.fieldposition1),
-        this.parsePosition(this.fieldInfo.fieldposition2),
-        this.parsePosition(this.fieldInfo.fieldposition3),
-        this.parsePosition(this.fieldInfo.fieldposition4),
-        this.parsePosition(this.fieldInfo.fieldposition1)  // 該位置用於閉合多邊形框線
+        this.parsePosition( this.fieldInfo.fieldposition1 ),
+        this.parsePosition( this.fieldInfo.fieldposition2 ),
+        this.parsePosition( this.fieldInfo.fieldposition3 ),
+        this.parsePosition( this.fieldInfo.fieldposition4 ),
+        this.parsePosition( this.fieldInfo.fieldposition1 )  // 該位置用於閉合多邊形框線
       ];
       console.log( 'Local field position:', positions );
 
@@ -834,25 +834,25 @@ export class FieldInfoComponent implements OnInit {
       this.fieldBounds = {
 
         // `north` 表示多邊形北邊的緯度，通過取所有頂點緯度的最大值來確定
-        north: Math.max(...positions.map(p => p.lat)),
+        north: Math.max( ...positions.map( p => p.lat ) ),
         
         // `south` 表示多邊形南邊的緯度，通過取所有頂點緯度的最小值來確定
-        south: Math.min(...positions.map(p => p.lat)),
+        south: Math.min( ...positions.map( p => p.lat ) ),
         
         // `east` 表示多邊形東邊的經度，通過取所有頂點經度的最大值來確定
-        east: Math.max(...positions.map(p => p.lng)),
+        east: Math.max( ...positions.map( p => p.lng ) ),
         
         // `west` 表示多邊形西邊的經度，通過取所有頂點經度的最小值來確定
-        west: Math.min(...positions.map(p => p.lng)),
+        west: Math.min( ...positions.map( p => p.lng ) ),
       };
 
       // 計算場域中心用來設定地圖的初始視圖中心
       this.center = this.calculateBoundingBoxCenter( positions );
 
-      setTimeout(() => {
+      setTimeout( () => {
         // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
         this.adjustMapZoom();
-      }, 10); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
+      }, 10 ); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
 
       // @2024/01/17 Add 
       // Set the get value to fieldEditForm for Field Editing  
@@ -873,9 +873,9 @@ export class FieldInfoComponent implements OnInit {
       
       console.log('Start fetching field info feom API');   // 開始獲取場域資訊
 
-      // Use commonService's queryFieldInfo() to make an HTTP GET request
-      this.commonService.queryFieldInfo(this.fieldId).subscribe({
-        next: (res) => {
+      // Use API_Field's queryFieldInfo() to make an HTTP GET request
+      this.API_Field.queryFieldInfo(this.fieldId).subscribe({
+        next: ( res ) => {
 
           // 當 API 響應數據到達時，執行此回調
           // This callback is executed when API response data arrives
@@ -891,11 +891,11 @@ export class FieldInfoComponent implements OnInit {
           // 該處建立了一個包含場域四個角落位置的矩陣，
           // 並且將場域的第一個位置再次添加到矩陣的末尾，以確保多邊形是閉合的。
           const positions = [
-            this.parsePosition(this.fieldInfo.fieldposition1),
-            this.parsePosition(this.fieldInfo.fieldposition2),
-            this.parsePosition(this.fieldInfo.fieldposition3),
-            this.parsePosition(this.fieldInfo.fieldposition4),
-            this.parsePosition(this.fieldInfo.fieldposition1)  // 該位置用於閉合多邊形框線
+            this.parsePosition( this.fieldInfo.fieldposition1 ),
+            this.parsePosition( this.fieldInfo.fieldposition2 ),
+            this.parsePosition( this.fieldInfo.fieldposition3 ),
+            this.parsePosition( this.fieldInfo.fieldposition4 ),
+            this.parsePosition( this.fieldInfo.fieldposition1 )  // 該位置用於閉合多邊形框線
           ];
 
           // 更新 polyPath 和中心點 @12/20 Add
@@ -1050,7 +1050,7 @@ export class FieldInfoComponent implements OnInit {
     // 將場地內基站的資訊映射為一個 Observable 數組，用於異步請求每個基站的詳細資訊
     const observables: Observable<BSInfo | BSInfo_dist>[] = bsinfo_Infield.map((originalBsInfoInfield) => {
       // 發起異步請求以獲取每個基站的詳細資訊
-      return this.commonService.queryBsInfo(originalBsInfoInfield.id).pipe(
+      return this.API_Field.queryBsInfo( originalBsInfoInfield.id ).pipe(
         map((response: BSInfo | BSInfo_dist) => {
 
           // 根據是否包含特定屬性來判斷返回的資訊類型
@@ -1187,7 +1187,7 @@ export class FieldInfoComponent implements OnInit {
 
   // @2024/01/27 Update
   // 函數定義：將 BSInfo_dist 類型轉換為 SimplifiedBSInfo 類型的數組
-  convertDistBsInfoToSimplifiedFormat(Dist_bsInfo: BSInfo_dist): SimplifiedBSInfo[] {
+  convertDistBsInfoToSimplifiedFormat( Dist_bsInfo: BSInfo_dist ): SimplifiedBSInfo[] {
 
     // 首先檢查 Dist_bsInfo.info 是否為陣列 @2024/01/27 Add
     if ( !Array.isArray( Dist_bsInfo.info ) ) {
@@ -1474,7 +1474,7 @@ export class FieldInfoComponent implements OnInit {
       this.updateModifyConfigForm(this.displayBsInfo);
     }
 
-    this.modifyConfigWindowRef = this.dialog.open(this.modifyConfigWindow, { id: 'modifyConfigWindow' });
+    this.modifyConfigWindowRef = this.dialog.open( this.modifyConfigWindow, { id: 'modifyConfigWindow' } );
     this.modifyConfigWindowRef.afterClosed().subscribe(() => {
       this.formValidated = false;
     });

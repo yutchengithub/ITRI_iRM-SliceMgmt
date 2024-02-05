@@ -107,7 +107,7 @@
 				<span class="value">99+</span>
 				<span class="material-symbols-outlined">notifications</span>
 				<div class="hoverInfo">
-					<span class="percent {{severityText_forCSS(severity)}}" *ngFor="let severity of severitys; let i = index">
+					<span class="percent {{ severityText_forCSS(severity) }}" *ngFor="let severity of severitys; let i = index">
 						<label>{{ severityText(severity) }}</label>
 						<span>{{ severityCount(severity) }}</span>
 					</span>

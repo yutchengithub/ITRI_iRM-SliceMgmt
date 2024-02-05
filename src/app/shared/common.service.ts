@@ -566,15 +566,7 @@ export class CommonService {
     // 發起 HTTP POST 請求，並返回 Observable 以便訂閱和處理響應
     return this.http.post( url, requestBody );
   }
-  
 
-  // BS Management API  @12/19 Update by yuchen
-
-  // @12/24 Update - 將 Observable 的類型改為能接兩種 BSInfo 與 BSInfo_dist 介面的數據
-  queryBsInfo( bsId: string ): Observable<BSInfo | BSInfo_dist>  {
-    const url = `${this.restPath}/queryBsInfo/${this.getSessionId()}/${bsId}`;
-    return this.http.get<BSInfo>(url); // 告訴 HttpClient 期望的響應類型是 BSInfo
-  }
 
   // Schedule  Management API  @11/24 Add by yuchen
   createJobTicket(body: any): Observable<any> {        // 建立 Schedule 用

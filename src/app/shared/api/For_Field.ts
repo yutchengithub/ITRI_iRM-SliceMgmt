@@ -1,9 +1,12 @@
 // 場域頁面會用到的 API 都於此 ( 還未移動完整 ) @2024/01/29 Update
 
 import { HttpHeaders, HttpClient, HttpParams  } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable }    from '@angular/core';
+import { Observable }    from 'rxjs';
 import { CommonService } from '../common.service'; // @2024/01/08 Add by yuchen
+
+import { BSInfo }      from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/02/05 Add
+import { BSInfo_dist } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/02/05 Add
 
 @Injectable({
   providedIn: 'root'
@@ -89,6 +92,12 @@ export class apiForField {
     const bodyStr = JSON.stringify( body );
     
     return this.http.post( url, bodyStr );
+  }
+
+  // 取得指定 id 基站所有資訊 @2024/02/05 Add - 從 commonService.ts 移入
+  queryBsInfo( bsId: string ): Observable< BSInfo | BSInfo_dist >  {
+    const url = `${this.restPath}/queryBsInfo/${this.sessionId}/${bsId}`;
+    return this.http.get< BSInfo >( url ); // 告訴 HttpClient 期望的響應類型是 BSInfo
   }
 
   // @2024/01/16 Add by yuchen
