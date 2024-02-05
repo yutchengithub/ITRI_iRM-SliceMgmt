@@ -1,4 +1,4 @@
-//import { HttpClient } from '@angular/common/http';
+
 import { Component, OnInit, TemplateRef, ViewChild, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
@@ -15,206 +15,525 @@ import { Router } from '@angular/router';
 import { CommonService } from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
 
-// @2024/01/29 Add for import APIs of Field Management 
-import { apiForField } from '../shared/api/For_Field';
+// For import APIs of Field Management 
+import { apiForField } from '../shared/api/For_Field';  // @2024/01/29 Add 
 
-// @2024/01/29 Add for import interfaces of Field Management 
-import { FieldList, Fields } from '../shared/interfaces/Field/For_queryFieldList';
+// For import interface of queryFieldList
+import { FieldList, Field } from '../shared/interfaces/Field/For_queryFieldList'; // @2024/01/29 Add 
 
-// @2024/01/29 Add for import local files of Field Management 
-import { localFieldList } from '../shared/local-files/Field/For_queryFieldList';
+// For import interfaces of queryBsList
+import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList'; // @2024/02/01 Add 
+
+// For import interfaces of createField
+import { ForCreateOrUpdateField, Bsinfo } from '../shared/interfaces/Field/For_createField_or_updateField'; // @2024/02/01 Add 
+
+// For import local files of Field Management 
+import { localFieldList } from '../shared/local-files/Field/For_queryFieldList';  // @2024/01/29 Add
+import { localBSList } from '../shared/local-files/BS/For_queryBsList';           // @2024/02/01 Add
 
 @Component({
-  selector: 'app-field-management',
-  templateUrl: './field-management.component.html',
-  styleUrls: ['./field-management.component.scss']
+  selector: 'app-field-management',                 // 定義組件的標籤選擇器，用於在其他 HTML 中引用此組件
+  templateUrl: './field-management.component.html', // 指定組件的 HTML 模板文件位置
+  styleUrls: ['./field-management.component.scss']  // 指定組件專用的樣式表(SCSS)文件
 })
+
 
 export class FieldManagementComponent implements OnInit, OnDestroy {
 
-  fieldList: FieldList = {} as FieldList; // @11/30 Add by yuchen
-  ueNum: string = '0';                    // @11/30 Add by yuchen
-  selectField!: Fields;                   // @11/30 Add by yuchen
-
-  refreshTimeout!: any;
-  refreshTime: number = 5;
-
-  p: number = 1;            // 當前頁數
-  pageSize: number = 10;    // 每頁幾筆
-  totalItems: number = 0;   // 總筆數
-  nullList: string[] = [];  // 給頁籤套件使用
-  formValidated = false;
+  sessionId: string = '';   // sessionId 用於存儲當前會話 ID
+  refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
+  refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
 
   // queryFieldList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
   queryFieldList!: Subscription;  // @11/30 Add by yuchen
 
-  constructor(
-    private dialog: MatDialog,
-    private router: Router,
-    private commonService: CommonService,
-    public API_Field: apiForField,               // @2024/01/29 Add for import API of Field Management 
-    
-    public fieldList_LocalFiles: localFieldList, // @2024/01/29 Add for import Field List Local Files
 
-    //private http: HttpClient,
-    private fb: FormBuilder,
-    public languageService: LanguageService,
+  // 類的構造函數，注入了多個依賴項目
+  constructor(
+
+    private router:         Router,          // Router 用於在應用內導航
+    private dialog:         MatDialog,       // MatDialog 用於彈出對話框
+    public languageService: LanguageService, // LanguageService 用於語言切換和國際化
+    private commonService:  CommonService,   // CommonService 提供通用的服務（如 Session ID 獲取）
+    private fb:             FormBuilder,     // FormBuilder 用於建立表單
+
+    public API_Field:            apiForField,    // API_Field 用於場域管理相關的 API 請求
+    public fieldList_LocalFiles: localFieldList, // fieldList_LocalFiles 用於從本地文件獲取場域列表數據
+    public bsList_LocalFiles:    localBSList,    // bsList_LocalFiles 用於從本地文件獲取基站列表數據
 
   ) {
-
+    this.createFieldCreationForm(); // 初始化並創建每個場域設置用的 FormGroup @2024/02/02 Add
   }
  
-
-  sessionId: string = ''; // 宣告 sessionId 屬於字串型態
-  /**
-   * 當 Component 初始化完成後執行的 Lifecycle Hook。
-   * 主要用於設定 Component 的初始狀態，包括預設的 Log 類型、sessionId、以及設定路由參數相關的應對處理。
-   */
+  // 組件初始化時執行的函數
   ngOnInit() {
 
+    // 從 commonService 獲取會話 ID
     this.sessionId = this.commonService.getSessionId();
 
-    // Field Summary
+    // 呼叫 getQueryFieldList 函數獲取 O1 內所有場域資訊
     this.getQueryFieldList();
-
-
-    this.firstFormGroup = this.fb.group({
-      firstCtrl: ['', Validators.required],
-    });
-    this.secondFormGroup = this.fb.group({
-      secondCtrl: ['', Validators.required],
-    });
-    this.thirdFormGroup = this.fb.group({
-      thirdCtrl: ['', Validators.required],
-    });
-  
   }
 
-  // 銷毀 Component 時的清理工作
+  // 組件銷毀時執行的清理工作
   ngOnDestroy() {
+
+    // 清除設置的 setTimeout，避免不必要的執行
     clearTimeout( this.refreshTimeout );
 
-    // 如存在對 FieldSummaryInfo 的 API 請求訂閱，則取消訂閱以避免內存洩漏
+    // 取消對 queryFieldList 的訂閱，防止內存洩漏
     if ( this.queryFieldList ) this.queryFieldList.unsubscribe();
+
+    // 取消對 queryBsList 的訂閱，防止內存洩漏
+    if ( this.queryBsList ) this.queryBsList.unsubscribe();
   }
 
 
-  isLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
+  p: number = 1;            // 當前頁數 - 指示分頁控件當前顯示的頁面編號，初始設定為第 1 頁。
+  pageSize: number = 10;    // 每頁幾筆 - 每頁顯示的數據條目數量，這裡設定為每頁顯示 10 條數據。
+  totalItems: number = 0;   // 總筆數 - 整個數據集的總條目數，用於計算分頁總數。
+  nullList: string[] = [];  // 給頁籤套件使用 - 用於分頁控件的一個空陣列，通常用於初始化或臨時存儲數據。
 
-  // @2024/01/29 Update by yuchen
+  /**
+   * 當分頁控件中的頁面發生變化時被呼叫的函數。
+   * @param page 這是新選擇的頁面編號。
+   * 
+   * 此函數更新當前頁面編號（this.p），從而觸發應用程式在該頁面上顯示相應的數據。
+   * 這通常會導致對應用程式的狀態或模型中的數據進行分頁處理，以便只顯示當前頁面的數據。
+   * 此方法與分頁管道（ngFor 與 paginate 管道）緊密相連，確保頁面上正確地顯示數據。
+   */
+  pageChanged( page: number ) {
+
+    this.p = page; // 更新當前頁面編號
+  }
+  
+  fieldList: FieldList = {} as FieldList; // 用於存儲從伺服器或本地文件獲取的場域列表數據 @11/30 Add by yuchen
+  selectField!: Field;  // 用於存儲當前選中的場域信息 @2024/02/03 Update by yuchen
+  isLoading = true;     // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
+
+  /** @2024/01/29 Update by yuchen
+   *  用於獲取場域列表。
+   *  根據是否處於本地模式，它會從本地文件或通過 API 從伺服器獲取場域資訊。
+   */
   getQueryFieldList() {
     console.log('getQueryFieldList() - Start');
-    this.isLoading = true;        // 開始加載數據時設置為 true @12/28 Add for Progress Spinner 
-
-    clearTimeout( this.refreshTimeout );
-  
+    this.isLoading = true; // 開始加載數據，顯示進度指示器
+    
+    clearTimeout( this.refreshTimeout ); // 取消之前設定的超時，避免重複或不必要的操作
+    
     if ( this.commonService.isLocal ) {
 
-      // 本地模式使用本地數據
+      // 本地模式: 使用本地文件提供的數據
       this.fieldList = this.fieldList_LocalFiles.fieldList;
-      //this.FieldListDeal();
-      this.isLoading = false;     // 數據加載完成，設置為 false @12/28 Add for Progress Spinner
-      
+      this.isLoading = false; // 本地模式下，數據加載快速完成，直接設置為 false
+
     } else {
 
-      // 使用 API_Field 中的 queryFieldList() 發起 HTTP GET 請求
+      // 非本地模式: 通過 API 從服務器獲取數據
       this.API_Field.queryFieldList().subscribe({
-        next: (res) => {
+        next: ( res ) => {
 
+          // 請求成功，獲得場域列表數據
           console.log('getQueryFieldList:', res);
-          this.fieldList = res;
-          //this.FieldListDeal();
 
+          this.fieldList = res; // 更新場域列表數據
+          this.FieldListDeal(); // 調用處理函數，進行數據處理（如分頁）
         },
-        error: (error) => {
+        error: ( error ) => {
 
+          // 請求出現錯誤
           console.error('Error fetching field info:', error);
-          this.isLoading = false; // 發生錯誤時也要設置為 false @12/28 Add for Progress Spinner
-
+          this.isLoading = false; // 出錯時設置加載標誌為 false
         },
         complete: () => {
-
+          // 數據流處理完成（ 無論成功或失敗 ）
           console.log('Field info fetch completed');
-          this.isLoading = false; // 加載完成 @12/28 Add for Progress Spinner
-
+          this.isLoading = false; // 數據加載完成
         }
       });
     }
   }
 
-  // @11/30 Add by yuchen ( 該函數應該用不到 )
+  /** @2024/02/03 Update by yuchen
+   *  用於處理場域列表的顯示和分頁。
+   *  它計算場域總數，設置分頁所需的空陣列，並根據當前頁數定時刷新場域資訊。
+   */
   FieldListDeal() {
 
-    // 輸出檢查點
+    // 輸出檢查點 - 打印場域列表的長度
     console.log('Field list length:', this.fieldList.fields?.length);
 
     // 計算 fields 數組中元素的數量，即場域的總數
-    //this.totalItems = this.fieldList.fields.length;
-    this.totalItems = this.fieldList.fields?.length || 0;  // 使用可選鏈和空值合併運算符來避免 undefined 或 null
+    // 使用可選鏈和空值合併運算符來避免 undefined 或 null
+    this.totalItems = this.fieldList.fields?.length || 0;
     console.log('Total items:', this.totalItems);
-    
-    // 定義一個空陣列，長度等於場域的總數
-    this.nullList = new Array( this.totalItems );
-  
+
+    // 定義一個空陣列，長度等於場域的總數，用於分頁控制
+    this.nullList = new Array(this.totalItems);
+
     // 使用 setTimeout 設定一個定時刷新
-    this.refreshTimeout = window.setTimeout( () => {
+    // 如果當前頁面是第一頁，則執行場域訊息更新
+    this.refreshTimeout = window.setTimeout(() => {
       if (this.p === 1) {
         console.log(`page[${this.p}] ===> refresh.`);
-        //this.getQueryFieldList();  // 取得場域訊息函數
+        // 可以在這裡調用 getQueryFieldList() 函數來更新場域訊息( 可選 )
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
       }
-    }, 100 ); // timeout: 100 ms
+    }, 100); // 設定 100 ms 後執行
   }
+
+
+// For Field Creation Setting @2024/02/02 Update ↓
 
   // @2024/01/31 Add by yuchen
-  createForm!:      FormGroup;
-  firstFormGroup!:  FormGroup;
-  secondFormGroup!: FormGroup;
-  thirdFormGroup!:  FormGroup;
-  forthFormGroup!:  FormGroup;
-  isLinear = false;
+  isLinear = true;                          // 用於控制步驟導航(mat-step)是否為線性模式（ 即必須按順序完成每一步，目前設為需要 ）
+  firstFormGroup_FieldName!:    FormGroup;  // 用於存儲場域名稱設置的表單控件
+  secondFormGroup_fieldBounds!: FormGroup;  // 用於存儲場域邊界設置的表單控件 
+  thirdFormGroup_PhoneNum!:     FormGroup;  // 用於存儲場域聯絡人電話號碼設置的表單控件
   
-  //  @2024/01/31 Add by yuchen
-  @ViewChild('createFieldWindow') createFieldWindow: any;
-  createFieldWindowRef!: MatDialogRef<any>;
+  // @2024/02/02 Update
+  // 初始化並創建每個 FormGroup，並用於"建立場域"設置 
+  createFieldCreationForm() {
 
-  //  @2024/01/31 Add by yuchen
-  openCreateFieldWindow() {
-    this.formValidated = false;
-
-    this.createForm = this.fb.group({
-      'name': new FormControl('', [Validators.required]),
-      'description': new FormControl(''),
-      'imsEndpoint': new FormControl('', [Validators.required]),
-      'firstNode': new FormControl(''),
-      'image': new FormControl(''),
-      'method': new FormControl('existing'),
-      'oCloudId': new FormControl('', [Validators.required]),
+    // 初始化第一步驟的 FormGroup 用於設置場域名稱
+    this.firstFormGroup_FieldName = this.fb.group({
+      FieldName: ['', Validators.required],
     });
 
-    this.createFieldWindowRef = this.dialog.open(
-       this.createFieldWindow, { id: 'createFieldWindow' } 
-    );
-    this.createFieldWindowRef.afterClosed().subscribe( () => this.formValidated = false );
+    // 初始化第二步驟的 FormGroup 用於設置場域邊界
+    this.secondFormGroup_fieldBounds = this.fb.group({
+      northBound: ['', [Validators.required, Validators.pattern(/^(-?[0-8]?[0-9](\.[0-9]+)?|90(\.0+)?)$/)]],
+      southBound: ['', [Validators.required, Validators.pattern(/^(-?[0-8]?[0-9](\.[0-9]+)?|90(\.0+)?)$/)]],
+       westBound: ['', [Validators.required, Validators.pattern(/^(-?(1[0-7][0-9]|0?[0-9]{1,2})(\.[0-9]+)?|180(\.0+)?)$/)]],
+       eastBound: ['', [Validators.required, Validators.pattern(/^(-?(1[0-7][0-9]|0?[0-9]{1,2})(\.[0-9]+)?|180(\.0+)?)$/)]],
+    });
+  
+    // 初始化第三步驟的 FormGroup 用於設置管理者門號
+    this.thirdFormGroup_PhoneNum = this.fb.group({
+       PhoneNum: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+    });
+  }
+
+  // 用於重置所有輸入的"建立場域"設定 @2024/02/04 Update
+  resetFieldCreationForm() {
+    console.log("Resetting field creation form settings.");
+
+    // 重置各個步驟的 FormGroup
+    this.firstFormGroup_FieldName.reset();
+    this.secondFormGroup_fieldBounds.reset();
+    this.thirdFormGroup_PhoneNum.reset();
+    
+    // 重置 displayedBSs 中的每個基站的選擇狀態
+    // 使用 forEach 迭代 displayedBSs 數組中的每個基站物件，將其 selected 屬性設置為 false 以取消選中狀態
+    // this.displayedBSs.forEach(bs => bs.selected = false);
+
+    // 重置 displayedBSs 中的每個基站的選擇狀態
+    // 此行代碼創建一個新陣列，每個元素都是從 `displayedBSs` 原始元素複製過來的，
+    // 但將每個元素的 `selected` 屬性設置為 `false`。
+    // 使用展開運算符（`...`）來複製每個 `bs` 物件的所有現有屬性，
+    // 然後 `selected: false` 會在每個複製中覆寫 `selected` 屬性。
+    // 將這個新陣列重新賦值給 `displayedBSs`，我們確保 Angular 能夠
+    // 檢測到變化並相應地更新 UI，因為這是一個新的陣列參考。
+    this.displayedBSs = this.displayedBSs.map(bs => ({ ...bs, selected: false }));
+
+    // 清空 ( 初始化 ) 儲存選擇基站的陣列
+    this.selectedBsInfos = [];
+
+    // 重置全選 Checkbox 的狀態
+    this.isAllSelected = false;
+
+    // 如果還有其他相關的狀態需要重置，也應該在這裡進行
+    // 例如，如果有分頁或過濾器的狀態，也應該一併重置
+
+    console.log("Field creation form settings have been reset.");
+  }
+
+  // 引用場域建立視窗組件  @2024/02/02 Update by yuchen
+  // 使用 ViewChild 裝飾器引用模板中的 'fieldCreationWindow' 元素
+  @ViewChild('fieldCreationWindow') fieldCreationWindow: any; // 這允許在 TypeScript 代碼中直接訪問該元素
+
+  // 用於存儲對 MatDialogRef 的引用
+  fieldCreationWindowRef!: MatDialogRef<any>; // 用於控制"場域建立"視窗的開啟和關閉
+
+  // 用於跟踪場域建立表單的驗證狀態
+  fieldCreationFormValidated = false; // 默認為 false，表示尚未驗證
+
+
+  // 打開"場域建立"視窗 @2024/02/01 Add
+  openfieldCreationWindow() {
+
+    // 表單驗證狀態重置
+    this.fieldCreationFormValidated = false; 
+
+    // 打開場域編輯視窗
+    this.fieldCreationWindowRef = this.dialog.open( this.fieldCreationWindow, { 
+          id: 'fieldCreationWindow',
+          // 自定義視窗寬高設置
+          // width: '800px', 
+          // height: '650px'
+    } );
+
+    // 訂閱視窗關閉事件，並在關閉時重置表單驗證狀態
+    this.fieldCreationWindowRef.afterClosed().subscribe(() => {
+      this.fieldCreationFormValidated = false;
+    });
+
+    this.getQueryBsList(); // 打開該視窗就先載入 BS List 數據  @2024/01/28 Add  
+    
+    // 打印當前場域內選中的基站 ID
+    console.log("In openfieldCreationWindow(),\n 目前被選中的基站 id 有", this.selectedBsInfos )
+
+    this.resetFieldCreationForm(); // 初始化所有輸入的"場域建立"設定  @2024/02/02 Add
+
+    // 打印當前場域內選中的基站 ID
+    console.log("In openfieldCreationWindow(),\n 目前被選中的基站 id 有", this.selectedBsInfos )
   }
 
 
+  bsList: BSList = {} as BSList;       // 用於存儲取得的 BS List 數據 @2024/02/01 Add
+  selectedBsInfos: Bsinfo[] = [];      // 用於存儲用戶建立場域時要選擇放入的 BS 之 ID @2024/02/01 Add
+  isGetQueryBsListLoading = false;     // 用於表示加載 BS List 的 flag，初始設置為 false @2024/02/01 Add for Progress Spinner
+
+  displayedBSs:   Basestation[] = [];  // 用於控制顯示於"場域建立"頁面上的 BS 選擇列表 @2024/02/01 Add
+  BSsNotUsedInO1: Basestation[] = [];  // 用於存儲 O1 內還未被使用的 BS  @2024/02/01 Add
+
+  // queryBsList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
+  queryBsList!: Subscription;  // @2024/02/02 Add by yuchen
+
+  // @2024/02/01 Add 
+  // Get the BS List in the O1 System 
+  getQueryBsList() {
+    console.log('getQueryBsList() - Start');  // 在控制台中記錄開始獲取基站列表的訊息
+
+    // 使用 clearTimeout 來取消任何已經設定但尚未執行的 setTimeout，
+    // 這可以防止在重新獲取基站列表之前執行之前的延遲任務，確保不會有多餘的執行或資源衝突。
+    clearTimeout( this.refreshTimeout );
+
+    this.isGetQueryBsListLoading = true; // 設置加載旗標為 true，表示開始加載
+
+    // 定義一個篩選基站列表的內部函數
+    const filterBSList = ( bsList: BSList ) => {
+      
+      // 從基站列表中篩選出未被使用的基站（ 即沒有 fieldId 和 fieldName 的基站 ）
+      this.BSsNotUsedInO1 = bsList.basestation.filter ( bs => !bs.fieldId && !bs.fieldName );
+
+      // 對篩選出來的基站列表中的每個基站設置其 selected 屬性為 false
+      this.BSsNotUsedInO1.forEach( bs => bs.selected = false );
+
+      // 將篩選後的基站列表賦值給顯示用的基站列表
+      this.displayedBSs = [...this.BSsNotUsedInO1];
+    };
+
+    // 檢查是否在本地測試環境
+    if ( this.commonService.isLocal ) {
+      console.log( 'Fetching BS List in Local' );  // 在控制台中記錄正在本地獲取基站列表的訊息
+
+      // 從本地文件中讀取基站列表
+      this.bsList = this.bsList_LocalFiles.bsList_local;
+
+      // 對本地的基站列表應用篩選函數
+      filterBSList ( this.bsList );
+
+      // 設置加載旗標為 false，表示加載完成
+      this.isGetQueryBsListLoading = false;
+
+      console.log( "In getQueryBsList(),\n 目前 local 環境中被選中的基站 id 目前有 ( 此時應為空 ):\n", this.selectedBsInfos )
+      console.log( '目前 local 環境中 O1 內所有的基站有:\n', this.bsList ); 
+      console.log( '目前 local 環境中 O1 內未被選擇的基站有:\n', this.BSsNotUsedInO1 ); 
+
+    } else {
+
+      console.log('Fetching BS List from API');  // 在控制台中記錄正在從 API 獲取基站列表的訊息
+
+      // 從 API 獲取基站列表
+      this.API_Field.queryBsList().subscribe({
+        next: ( res: BSList ) => {
+
+          // 將 API 返回的基站列表賦值給 bsList 變數
+          this.bsList = res;
+
+          // 對 API 返回的基站列表應用篩選函數
+          filterBSList( this.bsList );
+
+          // 設置加載旗標為 false，表示加載完成
+          this.isGetQueryBsListLoading = false;
+
+          console.log( "In getQueryBsList(),\n 目前被選中的基站 id 目前有 ( 此時應為空 ):\n", this.selectedBsInfos )
+          console.log( '目前 O1 內所有的基站有:\n', this.bsList ); 
+          console.log( '目前 O1 內未被選擇的基站有:\n', this.BSsNotUsedInO1 ); 
+
+        },
+        error: ( error ) => {
+
+          // 在控制台中記錄獲取基站列表出錯的訊息
+          console.error( 'Error fetching BS List:', error );
+
+          // 設置加載旗標為 false，表示加載出錯
+          this.isGetQueryBsListLoading = false;
+        },
+        complete: () => {
+
+          // 在控制台中記錄基站列表獲取完成的訊息
+          console.log( 'BS List fetch completed' );
+        }
+      });
+    }
+
+    // 在控制台中記錄方法結束的訊息
+    console.log( 'getQueryBsList() - End' );
+  }
+
+  // @2024/02/01 Add 
+  // 用於追蹤是否所有基站都被選中 
+  isAllSelected: boolean = false; 
+
+  // @2024/02/01 新增
+  // 當用戶改變基站選中狀態的事件處理函數
+  // 更新單一基站的選擇狀態，同時更新 selectedBsInfos 陣列
+  onBsSelectionChange( bsId: string, event: Event ) {
+    
+    // 從事件獲取 Checkbox 的選中狀態
+    const isChecked = ( event.target as HTMLInputElement ).checked;
+
+    // 檢查 Checkbox 是否被勾選
+    if ( isChecked ) {
+
+      // 如果 Checkbox 被勾選，進行檢查以確定該基站 ID 是否不在 selectedBsInfos 陣列中
+      if ( !this.selectedBsInfos.some( bi => bi.id === bsId ) ) {
+
+        // 如果該 ID 不在陣列中，則將其添加到陣列中
+        this.selectedBsInfos.push( { id: bsId } );
+      }
+    } else {
+
+      // 如果 Checkbox 沒有被勾選，從 selectedBsInfos 陣列中移除對應的基站 ID
+      this.selectedBsInfos = this.selectedBsInfos.filter( bi => bi.id !== bsId );
+    }
+
+    // 檢查是否所有基站都被選中，更新全選 Checkbox 的狀態
+    this.isAllSelected = this.displayedBSs.length === this.selectedBsInfos.length;
+
+    // 輸出當前所有被選中的基站的 ID
+    console.log( "In onBsSelectionChange() - End,\n 所有被選中的基站訊息現在有", this.selectedBsInfos );
+
+    // 這裡可以添加額外的邏輯，比如將選中狀態的改變發送到伺服器等
+  }
+
+  // @2024/02/01 Add
+  // 全選或全不選基站列表的函數
+  // 如果全選，則添加所有基站，如果取消全選，則清空陣列。
+  onSelectAllBs( event: Event ) {
+
+    // 從事件獲取 Checkbox 的選中狀態
+    const isChecked = ( event.target as HTMLInputElement ).checked;
+
+    // 更新所有 displayedBSs 的 selected 屬性
+    this.displayedBSs.forEach( bs => bs.selected = isChecked );
+
+    // 如果全選，則添加所有基站到 selectedBsInfos，否則清空陣列
+    this.selectedBsInfos = isChecked ? this.displayedBSs.map( bs => ( { id: bs.id } ) ) : [];
+
+    // 全選 Checkbox 的選中狀態
+    this.isAllSelected = isChecked;
+
+    // 輸出當前所有被選中的基站的 ID
+    console.log( "In onSelectAllBs() - End,\n 所有被選中的基站訊息現在有", this.selectedBsInfos );
+  }
+
+  // @2024/02/02 Add
+  // 提交場域建立表單的函數。如果處於本地模式，則模擬提交過程；如果處於生產模式，則向後端 API 發送請求。
+  FieldCreation_Submit() {
+
+    // 在控制台記錄開始執行函數的訊息
+    console.log( "FieldCreation_Submit() - Start" );
+
+    // 根據用戶填寫的表單資料，建立提交到後端的數據結構
+    const fieldCreationData: ForCreateOrUpdateField = {
+
+      // 使用者可調整:
+      // 將表單內容轉換成場域位置數據
+      fieldposition1: `[${this.secondFormGroup_fieldBounds.value.eastBound},${this.secondFormGroup_fieldBounds.value.northBound}]`,
+      fieldposition2: `[${this.secondFormGroup_fieldBounds.value.westBound},${this.secondFormGroup_fieldBounds.value.northBound}]`,
+      fieldposition3: `[${this.secondFormGroup_fieldBounds.value.westBound},${this.secondFormGroup_fieldBounds.value.southBound}]`,
+      fieldposition4: `[${this.secondFormGroup_fieldBounds.value.eastBound},${this.secondFormGroup_fieldBounds.value.southBound}]`,
+                name: this.firstFormGroup_FieldName.value.FieldName,  // 場域名稱
+              bsinfo: this.selectedBsInfos,                           // 已選擇的基站信息
+               phone: this.thirdFormGroup_PhoneNum.value.PhoneNum,    // 管理者電話號碼
+
+      // 使用者不可調整:
+      session: this.sessionId // 會話識別碼
+    };
+
+    // 檢查是否在本地環境下模擬執行
+    if ( this.commonService.isLocal ) {
+
+      // 本地模式下模擬場域建立過程
+      console.log( "本地模擬場域建立，提交的數據:", fieldCreationData );
+
+       // 本地模式建立成功後，刷新場域列表
+       this.getQueryFieldList();
+
+    } else {
+
+      // 生產環境下向後端 API 發送場域建立請求
+      this.API_Field.createField( fieldCreationData ).subscribe({
+        next: ( response ) => {
+
+          // 處理成功響應
+          console.log( "場域建立成功:", response );
+
+          // 建立成功後，刷新場域列表
+          this.getQueryFieldList();
+        },
+        error: ( error ) => {
+          // 處理失敗響應
+          console.error("場域建立失敗:", error);
+          // 例如顯示錯誤訊息給用戶
+        }
+      });
+    }
+    
+    // 關閉場域建立視窗
+    this.fieldCreationWindowRef.close();
+
+    // 重置場域建立表單，清空所有已填寫的資料
+    this.resetFieldCreationForm();
+    
+    // 在控制台記錄函數執行結束的訊息
+    console.log("FieldCreation_Submit() - End");
+  }
+
+  
+// For Field Creation Setting @2024/02/02 Update ↑
 
 
-  // @12/05 Update by yuchen
-  viewFieldDetail(fields: Fields) {
-    this.selectField = fields;
-    console.log("View Detail of the field id:", this.selectField.id, "and the field name: ", this.selectField.name);
-    this.router.navigate(['/main/field-mgr/info', this.selectField.id, this.selectField.name]);
+  /** @2024/02/03 Update by yuchen
+   * 導航到選定場域的詳細資訊頁面。
+   * @param field 從場域列表中選擇的場域物件。
+   */
+  viewFieldDetailInfo( field: Field ) {
+
+    this.selectField = field; // 設定當前選擇的場域。
+    console.log( "View Detail of the field id:", this.selectField.id, "and the field name: ", this.selectField.name ); // 輸出選擇的場域 ID 和名稱。
+    
+    // 導航到場域管理的詳細資訊頁面，帶上場域的 ID 和名稱作為路由參數。
+    this.router.navigate( ['/main/field-mgr/info', this.selectField.id, this.selectField.name] );
   }
   
-  // @12/01 Update by yuchen
-  viewFieldAlarm(fields: Fields) {
-    this.selectField = fields;
-    console.log("Selected alarm field name: ", this.selectField.name);
-    this.router.navigate(['/main/fault-mgr', this.selectField.name, 'All']);
+  /** @2024/02/03 Update by yuchen
+   * 導航到選定場域的警報資訊頁面。
+   * @param field 從場域列表中選擇的場域物件。
+   */
+  viewFieldAlarmInfo( field: Field ) {
+
+    this.selectField = field; // 設定當前選擇的場域。
+    console.log( "Selected alarm field name: ", this.selectField.name ); // 輸出選擇的場域名稱。
+
+    // 導航到故障管理的警報資訊頁面，帶上場域名稱和預設的警報類型 'All'。
+    this.router.navigate( ['/main/fault-mgr', this.selectField.name, 'All'] );
   }
+
 
   // @2024/01/29 Add
   // ViewChild 裝飾器用於獲取模板中 #deleteField_ConfirmWindow 的元素引用
@@ -225,10 +544,10 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   deleteField_ConfirmWindowRef!: MatDialogRef<any>;
 
   // 根據用戶的選擇開啟刪除場域的對話框 @2024/01/29 Update by yuchen
-  openDeleteField_ConfirmWindow( fields: Fields ) {
+  openDeleteField_ConfirmWindow( field: Field ) {
 
     // 將選中的場域賦值給 selectField
-    this.selectField = fields;
+    this.selectField = field;
 
     // 輸出將要刪除的場域名稱，用於記錄和調試
     console.log( "Deleted field name: ", this.selectField.name );
@@ -252,7 +571,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
     // 檢查是否是 Local 環境
     if ( this.commonService.isLocal ) {
-      // 在控制台輸出調試信息
+      // 在控制台輸出調試訊息
       console.log('Remove field in local environment.');
 
       // 調用刪除場域的函數，傳入場域名稱
@@ -269,7 +588,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       this.API_Field.removeField( this.selectField.id ).subscribe({
         next: ( response ) => {
 
-          // 刪除成功的回調，輸出成功信息和後端響應
+          // 刪除成功的回調，輸出成功訊息和後端響應
           console.log( 'Field removed successfully', response );
 
           // 刷新場域列表或進行其他更新
@@ -280,7 +599,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
         },
         error: ( error ) => {
 
-          // 刪除失敗的回調，輸出錯誤信息
+          // 刪除失敗的回調，輸出錯誤訊息
           console.error('Failed to remove field:', error);
 
           // 關閉加載指示器
@@ -311,91 +630,19 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     
     } else {
 
-      // 如果 fieldList_LocalFiles.fieldList.fields 不是陣列，輸出錯誤信息
+      // 如果 fieldList_LocalFiles.fieldList.fields 不是陣列，輸出錯誤訊息
       console.error( 'fieldList.fields 不是陣列或為 undefined' );
     }
   }
 
-
-  // @11/30 Add by yuchen
-  openSnapshot(fields: Fields){
-    this.selectField = fields;
-  }
-
-  pageChanged(page: number) {
-    this.p = page;
-  }
-
-  changeMethod(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    this.createForm.controls['imsEndpoint'].setValue('');
-    this.createForm.controls['firstNode'].setValue('');
-    this.createForm.controls['image'].setValue('');
-    this.createForm.controls['oCloudId'].setValue('');
-    if (e.value === 'existing') {
-      this.createForm.controls['imsEndpoint'].setValidators([Validators.required]);
-      this.createForm.controls['firstNode'].setValidators(null);
-      this.createForm.controls['image'].setValidators(null);
-      this.createForm.controls['oCloudId'].setValidators([Validators.required]);
-    } else {
-      this.createForm.controls['imsEndpoint'].setValidators(null);
-      this.createForm.controls['firstNode'].setValidators([Validators.required]);
-      this.createForm.controls['image'].setValidators([Validators.required]);
-      this.createForm.controls['oCloudId'].setValidators(null);
-    }
-    this.createForm.controls['imsEndpoint'].updateValueAndValidity();
-    this.createForm.controls['firstNode'].updateValueAndValidity();
-    this.createForm.controls['image'].updateValueAndValidity();
-    this.createForm.controls['oCloudId'].updateValueAndValidity();
-  }
-
-  create() {
-    this.formValidated = true;
-    console.log(this.createForm);
-    if (!this.createForm.valid) {
-      return;
-    }
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.commonService.ocloudList.push({
-        id: 'clould' + this.commonService.ocloudList.length,
-        name: this.createForm.controls['name'].value,
-        dmsCount: 4,
-        nfCount: 5,
-        imsEndpoint: 'http://10.172.61.37:5005/o2ims_infrastructureInventory/v1/',
-        deployStatus: 'Deploy MaaS'
-      })
-      this.createFieldWindowRef.close();
-      // this.getOcloudList();
-
-    } else {
-      const body: any = {
-        name: this.createForm.controls['name'].value,
-        description: this.createForm.controls['description'].value,
-        sessionid: this.sessionId
-      };
-      if (this.createForm.controls['method'].value === 'existing') {
-        body['imsEndpoint'] = this.createForm.controls['imsEndpoint'].value;
-        body['oCloudId'] = this.createForm.controls['oCloudId'].value;
-      } else {
-        body['firstNode'] = this.createForm.controls['firstNode'].value;
-        body['image'] = this.createForm.controls['image'].value;
-      }
-      this.commonService.createOcloud(body).subscribe(
-        res => {
-          console.log('createOcloud:');
-          console.log(res);
-          this.createFieldWindowRef.close();
-          // this.getOcloudList();
-        }
-      );
-    }
+  // 開啟快照功能視窗 @2024/02/03 Update by yuchen
+  openSnapshot( field: Field ){
+    this.selectField = field;
   }
 
 }
 
-
-
+// 此頁面開發完會刪除
 export interface OCloudList {
   id: string;
   name: string;

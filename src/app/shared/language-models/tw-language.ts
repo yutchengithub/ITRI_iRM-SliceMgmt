@@ -70,7 +70,11 @@ export const TwLanguage = {
   'field.setNotificationNum': '設定管理者通知門號',  // @2024/01/31 Add
   'field.PhoneNum': '電話號碼',                    // @2024/01/31 Add
   'field.selectBaseStations': '選擇基站',          // @2024/01/31 Add
-  'field.setupComplete': '場域設定完成',            // @2024/01/31 Add
+  'field.setupComplete': '場域設定完成。',          // @2024/01/31 Add
+  'field.bsDescription': '基站地點說明',            // @2024/02/01 Add
+  'field.validLongitude': '請輸入有效經度 ( -180.0 ~ 180.0 )',  // @2024/02/02 Add
+  'field.validLatitude' : '請輸入有效緯度 ( -90.0 ~ 90.0 )',    // @2024/02/02 Add
+  'field.validPhoneNumber' : '請輸入有效門號 ( 10 碼 )',        // @2024/02/02 Add
 
   'field.info':'場域詳細資訊',
   'field.Map':'場域地圖',
@@ -105,11 +109,15 @@ export const TwLanguage = {
   'field.editInfo':'場域資訊',                // @2024/01/11 Add
   'field.northBound':'場域北界',              // @2024/01/11 Add
   'field.southBound':'場域南界',              // @2024/01/11 Add
+  'field.lat':'緯度',                         // @2024/02/02 Add
   'field.westBound':'場域西界',               // @2024/01/11 Add
   'field.eastBound':'場域東界',               // @2024/01/11 Add
+  'field.lng':'經度',                         // @2024/02/02 Add
+  
   'field.notificationNum':'管理者通知門號',    // @2024/01/11 Add
   'field.fieldBoundsEx':'場域邊界示意圖',      // @2024/01/18 Add
   'field.indoorMap':'室內地圖',               // @2024/01/18 Add
+  'field.preview':'預覽',                     // @2024/02/04 Add
   'field.editBSs':'調整基站分配',              // @2024/01/28 Add
   'field.cancelEditBSs':'取消',               // @2024/01/28 Add
   'field.selectBSs':'選擇基站',                // @2024/01/18 Add

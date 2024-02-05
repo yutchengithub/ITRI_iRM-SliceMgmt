@@ -1,3 +1,4 @@
+
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,18 +26,22 @@ import { ChangeDetectorRef } from '@angular/core';          // @2023/12/13 Add f
 import { environment } from 'src/environments/environment'; // @2023/12/20 Add for import Google Maps API Key
 import { NgZone } from '@angular/core';
 
-// @2024/01/04 Add for import APIs of Field Management 
+// import APIs of Field Management @2024/01/04 Add 
 import { apiForField } from '../../shared/api/For_Field'; 
 
-import { FieldInfo } from '../../shared/interfaces/Field/For_queryFieldInfo';              // @2023/12/21 Add
-import { BsInfoInField } from '../../shared/interfaces/Field/For_queryFieldInfo';          // @2023/12/21 Add
-import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
-import { ForUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_updateField';    // @2024/01/26 Add
-import { localBSList } from '../../shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
-
-import { BSInfo } from '../../shared/interfaces/BS/For_queryBsInfo_BS';                    // @2023/12/21 Add
+// 引入儲存各個資訊所需的 interfaces
+import { FieldInfo }                      from '../../shared/interfaces/Field/For_queryFieldInfo';                     // @2023/12/21 Add
+import { BsInfoInField }                  from '../../shared/interfaces/Field/For_queryFieldInfo';                     // @2023/12/21 Add
+import { ForCreateOrUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_createField_or_updateField';         // @2024/01/26 Add
+import { ForQueryOrUpdatePmFTPInfo }      from '../../shared/interfaces/Field/For_queryPmFtpInfo_or_updatePmFtpInfo';  // @2024/02/04 Add
+import { BSInfo }              from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2023/12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
-import { localBSinfo } from '../../shared/local-files/BS/For_queryBsInfo';                 // @2023/12/27 Add
+import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
+
+// 引入所需 Local Files
+import { localPmFTPInfo } from '../../shared/local-files/Field/For_queryPmFtpInfo'; // @2024/02/04 Add
+import { localBSList }    from '../../shared/local-files/BS/For_queryBsList';       // @2024/01/16 Add
+import { localBSinfo }    from '../../shared/local-files/BS/For_queryBsInfo';       // @2023/12/27 Add
 
 import { map } from 'rxjs/operators';              // @2023/12/24 Add
 import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
@@ -45,36 +50,36 @@ import { ElementRef } from '@angular/core';
 
 export interface SimplifiedBSInfo {
   
-  // For display and POST of update
-  name: string;
-  bstype: number;
-  status: number;
-  nci: string;
-  pci: number;
-  "tx-power": number;
-  "nrarfcn-dl": number;
-  "nrarfcn-ul": number;
-  position: string;
-  neighbors: SimplifiedNeighborInfo[];
-  iconUrl: string;      // 存儲 BS 圖標的 URL
+    // For display and POST of update BS
+            name: string;
+          bstype: number;
+          status: number;
+            nci: string;
+            pci: number;
+      "tx-power": number;
+    "nrarfcn-dl": number;
+    "nrarfcn-ul": number;
+        position: string;
+      neighbors: SimplifiedNeighborInfo[];
+        iconUrl: string; // 存儲 BS 圖標的 URL
 
-  // For POST of update
-  id: string;
-  description: string;
-  tac: string;
-  'plmn-id': PLMNid;
-  channelbandwidth: number;
-  components: {};  // 存儲 BS 的 Component ID
+    // For POST of update BS
+            id: string;
+    description: string;
+            tac: string;
+      'plmn-id': PLMNid;
+    channelbandwidth: number;
+          components: {};  // 存儲 BS 的 Component ID
 
-  // For Field Edit @2024/01/11 Add
-  gNBId: number;
-  gNBIdLength: number;
+    // For Field Edit @2024/01/11 Add
+          gNBId: number;
+    gNBIdLength: number;
 }
 
 export interface SimplifiedNeighborInfo {
   'plmn-id': PLMNid;
-  nci: string;
-  pci: number;
+        nci: string;
+        pci: number;
 }
 
 // @2024/01/10 Update
@@ -94,29 +99,113 @@ enum OverlayType {
 export class FieldInfoComponent implements OnInit {
 
   sessionId: string = '';
-  cloudId: string = '';
-  cloudName: string = '';
+
+  tooltipOptions = {
+    theme: 'light',  // 'dark' | 'light'
+    hideDelay: 250
+  };
+
+  refreshTimeout!: any;
+  refreshTime: number = 5;
 
   fieldInfo: FieldInfo = {} as FieldInfo;      // @12/05 Add by yuchen
   fieldId: string = '';     // @12/05 Add by yuchen
   fieldName: string = '';   // @12/05 Add by yuchen
 
-  refreshTimeout!: any;
-  refreshTime: number = 5;
+  // 返回 Field Management 主頁
+  back() {
+    this.router.navigate( ['/main/field-mgr'] );
+  }
 
-  p: number = 1;            // 當前頁數
-  pageSize: number = 10;    // 每頁幾筆
-  totalItems: number = 0;   // 總筆數
-  nullList: string[] = [];  // 給頁籤套件使用
-  
   // For Fault Alarms: 
   // CRITICAL, MAJOR, MINOR, WARNING
   severitys: string[];
 
-  tooltipOptions = {
-    theme: 'light',     // 'dark' | 'light'
-    hideDelay: 250
-  };
+  // 往 Fault Management @12/07 Update
+  goFaultMgr() {
+    this.router.navigate( ['/main/fault-mgr', this.fieldName, 'All'] );
+  }
+
+  // 往 Performance Management @2024/01/05 Update
+  goPerformanceMgr() {
+    this.router.navigate( ['/main/performance-mgr'] );
+  }
+
+
+// ↓ Page Init ↓
+
+  constructor(
+    private router: Router,
+    private  route: ActivatedRoute,
+    private     fb: FormBuilder,
+    private dialog: MatDialog,
+    // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，
+    //              確保當數據模型更新後，相關的視圖能夠及時反映
+    private    cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
+    // private messageService: MessageService
+
+    public languageService: LanguageService,
+    public   commonService: CommonService,
+    public       API_Field: apiForField,          // @2024/01/04 Add for import API of Field Management 
+    public     bsInfoLocalFiles: localBSinfo,     // @2023/12/27 Add for import BS Info Local Files
+    public    bsList_LocalFiles: localBSList,     // @2024/01/16 Add for import BS List Local Files 
+    public pmFtpInfo_LocalFiles: localPmFTPInfo,  // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+  ) {
+    
+    const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
+    this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
+
+    // 建立並初始化各功能所需表單
+    this.createBSInfoForm();              // For updateBs API @2024/01/05 Add 
+    this.createFieldInfoForm();           // For Field Info in Field Editing  @2024/01/17 Add
+    this.createPMgmtParameterSetFormm();  // For Pm Ftp Info in PM Parameter Setting  @2024/02/04 Add
+  }
+
+  // 頁面初始化
+  ngOnInit(){
+    this.sessionId = this.commonService.getSessionId();
+    console.log( 'The sessionId is', this.sessionId ); // @2024/01/05 Add 
+    this.route.params.subscribe((params) => {
+      this.fieldId = params['id'];
+      this.fieldName = params['name'];
+      console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
+      this.getQueryFieldInfo();
+    });
+  }
+
+  // @2024/01/05 Add
+  // ngAfterViewInit 是 Angular 在組件視圖初始化後會呼叫的生命週期事件。
+  // ngAfterViewInit() {
+  //   // 使用 setTimeout 確保地圖元素已經加載完成並存在於 DOM 中。
+  //   // 這樣做可以避免在 Google Maps API 還沒有完全準備好時嘗試操作地圖。
+  //   setTimeout(() => {
+  //     // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
+  //     this.adjustMapZoom();
+  //   }, 1000); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
+  // }
+
+  ngAfterViewInit() {
+    // 檢查 this.map.googleMap 是否已經被定義。
+    // this.map 是通過 ViewChild 獲取的 GoogleMap 實例，
+    // 而 googleMap 是實際的 Google Maps JavaScript API 地圖對象。
+    if ( this.map.googleMap ) {
+      // 如果 googleMap 對象存在，則向它添加一個事件監聽器。
+      // 'tilesloaded' 事件會在地圖上的所有可見瓦片都已加載完成後觸發。
+      // 這是一個好時機來調整地圖的視角和縮放等級，因為它表明地圖已經準備好了。
+      this.map.googleMap.addListener('tilesloaded', () => {
+        // 當 'tilesloaded' 事件觸發時，調用 adjustMapZoom 方法。
+        // 此方法將根據場域的邊界值調整地圖的縮放等級，
+        // 確保用戶可以看到完整的場域範圍。
+        this.adjustMapZoom();
+      });
+    }
+    // 如果 this.map.googleMap 尚未定義，可能表示地圖尚未完全初始化。
+    // 在這種情況下，可能需要考慮使用其他方法或檢查點以確保地圖已經準備好
+  }
+
+// ↑ Page Init ↑
+
 
 // ↓ For setting Google Maps @2024/01/10 by yuchen
 
@@ -174,37 +263,6 @@ export class FieldInfoComponent implements OnInit {
 
   // 用於儲存場域多邊形的邊界點 @2024/01/02 Add
   fieldBounds!: google.maps.LatLngBoundsLiteral;    // 用於儲存放置 GroundOverlay 的場域邊界資訊
-
-  // @2024/01/05 Add
-  // ngAfterViewInit 是 Angular 在組件視圖初始化後會呼叫的生命週期事件。
-  // ngAfterViewInit() {
-  //   // 使用 setTimeout 確保地圖元素已經加載完成並存在於 DOM 中。
-  //   // 這樣做可以避免在 Google Maps API 還沒有完全準備好時嘗試操作地圖。
-  //   setTimeout(() => {
-  //     // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
-  //     this.adjustMapZoom();
-  //   }, 1000); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
-  // }
-
-  ngAfterViewInit() {
-    // 檢查 this.map.googleMap 是否已經被定義。
-    // this.map 是通過 ViewChild 獲取的 GoogleMap 實例，
-    // 而 googleMap 是實際的 Google Maps JavaScript API 地圖對象。
-    if ( this.map.googleMap ) {
-      // 如果 googleMap 對象存在，則向它添加一個事件監聽器。
-      // 'tilesloaded' 事件會在地圖上的所有可見瓦片都已加載完成後觸發。
-      // 這是一個好時機來調整地圖的視角和縮放等級，因為它表明地圖已經準備好了。
-      this.map.googleMap.addListener('tilesloaded', () => {
-        // 當 'tilesloaded' 事件觸發時，調用 adjustMapZoom 方法。
-        // 此方法將根據場域的邊界值調整地圖的縮放等級，
-        // 確保用戶可以看到完整的場域範圍。
-        this.adjustMapZoom();
-      });
-    }
-    // 如果 this.map.googleMap 尚未定義，可能表示地圖尚未完全初始化。
-    // 在這種情況下，可能需要考慮使用其他方法或檢查點以確保地圖已經準備好
-  }
-  
   
   // @2024/01/05 Add
   // adjustMapZoom 方法用於根據場域邊界自動調整地圖的縮放等級和視角。
@@ -302,46 +360,6 @@ export class FieldInfoComponent implements OnInit {
   }
 
 // ↑ For setting Google Maps @2024/01/10 Update by yuchen ↑
-
-
-// ↓ Page Init ↓
-
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    public commonService: CommonService,
-    public API_Field: apiForField,        // @2024/01/04 Add for import API of Field Management 
-    public bsInfoLocalFiles: localBSinfo, // @2023/12/27 Add for import BS Info Local Files
-    public bsList_LocalFiles: localBSList, // @2024/01/16 Add for import BS List Local Files
-    private fb: FormBuilder,
-    private dialog: MatDialog,
-    public languageService: LanguageService,
-    // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，
-    //              確保當數據模型更新後，相關的視圖能夠及時反映
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone,
-    // private messageService: MessageService
-  ) {
-    const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
-    this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
-    this.createBSInfoForm();    // For updateBs API @2024/01/05 Add 
-    this.createFieldInfoForm(); // Field Info in Field Editing  @2024/01/17 Add 
-    
-  }
-
-  // 頁面初始化
-  ngOnInit(){
-    this.sessionId = this.commonService.getSessionId();
-    console.log( 'The sessionId is', this.sessionId ); // @2024/01/05 Add 
-    this.route.params.subscribe((params) => {
-      this.fieldId = params['id'];
-      this.fieldName = params['name'];
-      console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
-      this.getQueryFieldInfo();
-    });
-  }
-
-// ↑ Page Init ↑
 
 
   // @12/13 Add for listen activeButton
@@ -1911,7 +1929,7 @@ export class FieldInfoComponent implements OnInit {
       this.API_Field.queryBsList().subscribe({
         next: ( res: BSList ) => {
 
-          // 遍歷 API 傳回的基站列表 (res.basestation)
+          // 遍歷 API 傳回的基站列表 ( res.basestation )
           res.basestation.forEach( bs => {
             // 對每個 bs 進行檢查，確定是否它的 ID 出現在另一個陣列 ( this.fieldInfo.bsinfo ) 中，
             // 這個陣列包含了場域內的基站訊息。如果是，則將該 bs 的 'selected' 屬性設置為 true。
@@ -2004,18 +2022,23 @@ export class FieldInfoComponent implements OnInit {
 
   // @2024/01/26 Update
   // 當用戶改變基站選中狀態的事件處理函數 
+  // 更新單一基站的選擇狀態，同時更新 selectedBsInfos 陣列
   onBsSelectionChange( bsId: string, event: Event ) {
+
     // 從事件獲取 Checkbox 的選中狀態
     const isChecked = ( event.target as HTMLInputElement ).checked;
 
     // 檢查 Checkbox 是否被勾選
     if ( isChecked ) {
+
       // 如果 Checkbox 被勾選，進行檢查以確定該基站 ID 是否不在 selectedBsInfos 陣列中
       if ( !this.selectedBsInfos.some( bi => bi.id === bsId ) ) {
+
         // 如果該 ID 不在陣列中，則將其添加到陣列中
         this.selectedBsInfos.push({ id: bsId });
       }
     } else {
+      
       // 如果 Checkbox 沒有被勾選，從 selectedBsInfos 陣列中移除對應的基站 ID
       this.selectedBsInfos = this.selectedBsInfos.filter( bi => bi.id !== bsId );
     }
@@ -2027,16 +2050,16 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
-  /** @2024/01/28 Update
+  /** @2024/02/01 Update
    * 提交場域編輯信息。
    * 如果是本地模式，則模擬數據更新過程；
    * 如果不是本地模式，則向伺服器發送更新請求。
    */
   UpdateFieldEditing_Submit() {
-    console.log("UpdateFieldEditing_Submit() - Start");
+    console.log( "UpdateFieldEditing_Submit() - Start" );
 
     // 準備提交的數據，按照 ForUpdateField 介面格式化
-    const submitData: ForUpdateField = {
+    const submitData: ForCreateOrUpdateField = {
       // 使用者通過表單界面可調整的部分
       fieldposition1: `[${this.fieldEditForm.value.fieldBound_East},${this.fieldEditForm.value.fieldBound_North}]`,
       fieldposition2: `[${this.fieldEditForm.value.fieldBound_West},${this.fieldEditForm.value.fieldBound_North}]`,
@@ -2055,33 +2078,33 @@ export class FieldInfoComponent implements OnInit {
     if ( this.commonService.isLocal ) {
 
         // 在本地模式下模擬場域更新
-        console.log("本地模擬場域更新，提交的數據:", submitData);
+        console.log( "本地模擬場域更新，提交的數據:", submitData );
 
         // 模擬一個響應
         setTimeout(() => {
-          console.log("本地場域更新成功");
+          console.log( "本地場域更新成功" );
 
           // 更新成功後重新獲取場域訊息
           this.getQueryFieldInfo();
 
-        }, 1000); // 假設 1 秒後獲得響應
+        }, 1000 ); // 假設 1 秒後獲得響應
 
     } else {
 
         // 非本地模式，向服務器發送 POST 請求
-        this.API_Field.updateField(submitData).subscribe({
+        this.API_Field.updateField( submitData ).subscribe({
 
-          next: (response) => {
+          next: ( response ) => {
 
             // 處理成功響應
-            console.log("場域更新成功:", response);
+            console.log( "場域更新成功:", response );
             
             // 更新成功後重新獲取場域訊息
             this.getQueryFieldInfo();
           },
-          error: (error) => {
+          error: ( error ) => {
             // 處理錯誤響應
-            console.error("更新場域出錯:", error);
+            console.error( "更新場域出錯:", error );
           }
         });
     }
@@ -2122,7 +2145,6 @@ export class FieldInfoComponent implements OnInit {
       this.confirmFieldEditWindow_Validated = false;
     });
   }
-
 
 
   // For upload Field Image @2024/01/18 Add
@@ -2310,26 +2332,79 @@ export class FieldInfoComponent implements OnInit {
 // For Field Editing Setting @2024/01/11 Add ↑
 
 
+// For PM Parameter Setting @2024/02/04 Add ↓ ( 缺取得效能參數資訊 API、表單取值需改、缺 RADIO BUTTON 控制使用者選擇的量測類型 )
 
-
-  // 返回 Field Management 主頁
-  back() {
-    this.router.navigate(['/main/field-mgr']);
+  // 創建表單組，用於效能管理參數設定
+  PMgmtParameterSetForm!: FormGroup;
+  createPMgmtParameterSetFormm() { // 默認值還未改 @02/04 Add
+    // 初始化表單控件
+    this.PMgmtParameterSetForm = this.fb.group({
+                           pmIP: new FormControl( this.fieldInfo?.name || '' ),    // PM 伺服器 IP 位址，默認值為現有 IP 位址 或 空字串
+                     folderPath: new FormControl( this.fieldBounds?.north || '' ), // 資料夾路徑，默認值為現有 資料夾路徑 或 空字串
+                           pmID: new FormControl( this.fieldBounds?.south || '' ), // 基站登入 PM 伺服器帳號，默認值為現有 帳號 或 空字串
+                          pmKey: new FormControl( this.fieldBounds?.west || '' ),  // 基站登入 PM 伺服器密碼，默認值為現有 密碼 或 空字串
+      MeasurementInterval_pmint: new FormControl( this.fieldBounds?.east || '' ),  // PM 資料量測頻率(秒)，默認值為現有 量測頻率 或 空字串
+           UploadInterval_fmint: new FormControl( this.fieldInfo?.phone || '' )    // PM 資料上傳頻率(秒):，默認值為現有 上傳頻率 或 空字串
+    });
   }
 
-  // 往 Fault Management @12/07 Update
-  goFaultMgr() {
-    this.router.navigate(['/main/fault-mgr', this.fieldName, 'All']);
+  // 引用場域編輯視窗組件
+  @ViewChild('PMgmtParameterSetWindow') PMgmtParameterSetWindow: any;
+  PMgmtParameterSetWindowRef!: MatDialogRef<any>;
+  PMgmtParameterSetFormValidated = false;
+
+  // 打開"效能管理參數設定"視窗 @2024/02/04 Add
+  openPMgmtParameterSetWindow() {
+
+    // 確保場域資訊和邊界資訊已獲取
+    if( this.fieldInfo && this.fieldBounds ) {
+
+      // 使用現有場域資訊和邊界資訊更新表單
+      this.PMgmtParameterSetForm.patchValue({ // 需調整為效能參數 @02/04 Add
+                             pmIP: this.fieldInfo.name,
+                       folderPath: this.fieldBounds.north,
+                             pmID: this.fieldBounds.south,
+                            pmKey: this.fieldBounds.west,
+        MeasurementInterval_pmint: this.fieldBounds.east,
+             UploadInterval_fmint: this.fieldInfo.phone
+      });
+    }
+
+    // 表單驗證狀態重置
+    this.PMgmtParameterSetFormValidated = false; 
+
+    // 打開 效能管理參數設定 視窗
+    this.PMgmtParameterSetWindowRef = this.dialog.open( this.PMgmtParameterSetWindow, { 
+          id: 'PMgmtParameterSetWindow',
+          // 自定義視窗寬高設置
+          // width: '800px', 
+          // height: '650px'
+    } );
+
+    // 訂閱視窗關閉事件，並在關閉時重置表單驗證狀態
+    this.PMgmtParameterSetWindowRef.afterClosed().subscribe(() => {
+      this.PMgmtParameterSetFormValidated = false;
+    });
+
   }
 
-  // 往 Performance Management @2024/01/05 Update
-  goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr']);
-  }
 
+// For PM Parameter Setting @2024/02/04 Add ↑
+
+
+
+
+
+  // 完成後可能要砍掉的
+           p: number = 1;     // 當前頁數
+    pageSize: number = 10;    // 每頁幾筆
+  totalItems: number = 0;     // 總筆數
+    nullList: string[] = [];  // 給頁籤套件使用
+     cloudId: string = '';
+   cloudName: string = '';
 }
 
-
+// 完成後要砍掉的
 export interface OcloudInfo {
   id: string;
   name: string;

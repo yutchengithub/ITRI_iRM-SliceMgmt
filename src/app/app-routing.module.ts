@@ -2,47 +2,51 @@ import { NgModule } from '@angular/core';
 import { AuthGuard } from './shared/guard/auth.guard';
 import { RouterModule, Routes } from '@angular/router';
 
-import { LoginComponent } from './login/login.component';
+// 底畫面 ( 網頁整體最下層 有 Bar 那塊 )
 import { MainComponent } from './main/main.component';
 
-// 主畫面
+// 登入畫面
+import { LoginComponent } from './login/login.component';
+
+// 主畫面 Portal
 import { DashboardComponent } from './dashboard/dashboard.component';   // 主畫面
 
 // 場域管理
 import { FieldManagementComponent } from './field-management/field-management.component'; 
 import { FieldInfoComponent } from './field-management/field-info/field-info.component';
 
-// 基站管理     @12/27 Add by yuchen 
+// 基站管理 頁     @12/27 Add by yuchen 
 import { BSManagementComponent } from './bs-management/bs-management.component';                        
 import { BSInfoComponent } from './bs-management/bs-info/bs-info.component';                             // 基站管理資訊  @12/27 Add by yuchen 
 
-// 元件管理
+// 元件管理頁
 import { ComponentManagementComponent } from './component-management/component-management.component';
 import { ComponentInfoComponent } from './component-management/component-info/component-info.component';
 
-// 故障管理
+// 故障管理頁
 import { FaultManagementComponent } from './fault-management/fault-management.component';  
 
-// 效能管理
+// 效能管理 頁
 import { PerformanceManagementComponent } from './performance-management/performance-management.component';  
 import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
 import { NfPerformanceInfoComponent } from './performance-management/nf-performance-info/nf-performance-info.component';
 
-// 軟體管理
+// 軟體管理 頁
 import { SoftwareManagementComponent } from './software-management/software-management.component';     
 import { SoftwareInfoComponent } from './software-management/software-info/software-info.component';
 
-// 排程管理     @11/20 Add by yuchen
+// 排程管理 頁 @11/20 Add by yuchen
 import { ScheduleManagementComponent } from './schedule-management/schedule-management.component';     
 import { ScheduleInfoComponent } from './schedule-management/schedule-info/schedule-info.component'; // 排程管理資訊  @11/20 Add by yuchen 
 
-// 日誌管理     @10/25 Add by yuchen 
+// 日誌管理 頁  @10/25 Add by yuchen 
 import { LogManagementComponent } from './log-management/log-management.component';   
 
-// 帳號管理
+// 帳號管理 頁
 import { AccountManagementComponent } from './account-management/account-management.component';      
 import { AccountInfoComponent } from './account-management/account-info/account-info.component';
 
+// O2 的 ( 最後刪掉 )
 import { NfManagementComponent } from './nf-management/nf-management.component';      // NF管理
 import { NfInfoComponent } from './nf-management/nf-info/nf-info.component';
 

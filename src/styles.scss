@@ -280,17 +280,49 @@ mat-dialog-container .mat-button-toggle-checked {
 mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
   line-height: 32px;
 }
+
 .mat-progress-bar {
   border-radius: 50em;
   height: 10px !important;
   width: 70% !important;
   margin: auto;
 }
+
 .mat-progress-bar-fill::after {
   background-color: #ff5722;
 }
 
- .table {
+
+
+// label of mat-steper @2024/02/01 Add
+.mat-step-text-label {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: #d8eaff;
+  font-weight: bolder;
+}
+
+// mat-steper icon 時初始的調色 @2024/02/01 Add
+.mat-step-header .mat-step-icon {
+  background-color: #485c77; // 背景色
+  color: #fff; // icon 本身顏色
+}
+
+// mat-steper icon 時被選擇時的調色 @2024/02/01 Add
+.mat-step-header .mat-step-icon-selected {
+  background-color: #ba5a2a; // 背景色
+  color: #fff; // icon 本身顏色
+}
+
+// mat-steper 變成編輯 icon 時的調色 @2024/02/02 Add
+.mat-step-header .mat-step-icon-state-edit {
+  background-color: #1e6cda; // 背景色
+  color: #fff; // icon 本身顏色
+}
+
+
+
+.table {
   display: block;
   margin: 1% 0 0;
 }

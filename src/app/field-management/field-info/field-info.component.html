@@ -74,6 +74,58 @@
 					</span>
 				<span>{{ languageService.i18n['field.reportFM'] }}</span>
 			</button>
+				<!-- 按鈕容器，根據 showMapModel 的值顯示或隱藏按鈕 -->
+				<div class="fieldMap-button-container">
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
+					<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': activeButton_fieldImage === 'fieldImage', 
+                   														 'button-inactive': activeButton_fieldImage !== 'fieldImage'}" (click)="setActiveButton_fieldImage('fieldImage')">
+						<mat-icon>photo_camera_back</mat-icon>
+						{{ languageService.i18n['field.image'] }}
+					</button>
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
+					<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': activeButton_NR === 'NR', 
+                    													'button-inactive': activeButton_NR !== 'NR'}" (click)="setActiveButton_NR('NR')">
+						<mat-icon>timeline</mat-icon>
+						NR
+					</button>
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
+					<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': currentColorbar === 'RSRP', 
+																		'button-inactive': currentColorbar !== 'RSRP'}" (click)="toggleColorbar('RSRP')">
+						<mat-icon>signal_cellular_alt</mat-icon>
+						{{ languageService.i18n['field.rsrpMap'] }}
+					</button>
+					<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
+					<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': currentColorbar === 'SINR', 
+																		'button-inactive': currentColorbar !== 'SINR'}" (click)="toggleColorbar('SINR')">
+						<mat-icon>signal_cellular_alt</mat-icon>
+						{{ languageService.i18n['field.sinrMap'] }}
+					</button>
+					  
+					<!-- @12/12 Add button with a menu -->
+					<!-- 常駐顯示 -->
+					<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="icon-button with a menu" tooltip="{{ languageService.i18n['field.MapOption'] }}"
+					[class.button-active]="activeButton_menu === 'menu'" (click)="setActiveButton_menu('menu')">
+					  <mat-icon>more_horiz</mat-icon>
+					  </button>
+					  <mat-menu #menu="matMenu">
+						<!-- Field Configuration @2024/01/11 Update -->
+						<button mat-menu-item disabled>
+							<mat-icon>build_circle</mat-icon>
+							<span>{{ languageService.i18n['field.config'] }}</span>
+						</button>
+						<button mat-menu-item (click)="openfieldEditWindow()">
+							<span class="material-symbols-outlined">
+								tune
+								</span>
+							<span>{{ languageService.i18n['field.edit'] }}</span>
+						</button>
+						<!-- PM Parameter Setting @2024/02/04 Update -->
+						<button mat-menu-item (click)="openPMgmtParameterSetWindow()">
+							<span class="material-symbols-outlined">
+								tune
+								</span>
+							<span>{{ languageService.i18n['field.configPMset'] }}</span>
+						</button>
 
 			<!-- Field Optimization -->
 			<button mat-menu-item disabled>
@@ -600,7 +652,7 @@
 							<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
 								<!-- For local @2024/01/23 Add -->
 								<div class="preview">
-									<div class="center">Preview</div>
+									<div class="center">{{ languageService.i18n['field.preview'] }}</div>
 									<mat-icon title="{{ languageService.i18n['field.DeleteindoorMap'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon>
 									<img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
 									<img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
@@ -758,3 +810,73 @@
 		</div>
 	</ng-template>
   
+
+	<!-- Window of PM Parameter Setting @2024/02/04 Add -->
+	<ng-template class="my-dialog-container" #PMgmtParameterSetWindow>
+		<div><h5>{{ languageService.i18n['field.configPMset'] }}</h5></div>
+		<div *ngIf="fieldInfo && fieldBounds">
+			<!-- Pm Ftp Infos -->
+			<span>
+				<form [formGroup]="PMgmtParameterSetForm">
+					<UL>
+						<li>
+							<label>{{ languageService.i18n['field.name'] }}</label>
+							<span>
+								<input type="text" formControlName="pmIP" placeholder="{{ fieldInfo.name }}"
+										class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmIP'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmIP'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.northBound'] }}</label>
+							<span>
+								<input type="text" formControlName="folderPath" placeholder="{{ fieldBounds.north }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['folderPath'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['folderPath'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.southBound'] }}</label>
+							<span>
+								<input type="text" formControlName="pmID" placeholder="{{ fieldBounds.south }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmID'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmID'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.westBound'] }}</label>
+							<span>
+								<input type="text" formControlName="pmKey" placeholder="{{ fieldBounds.west }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmKey'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmKey'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.eastBound'] }}</label>
+							<span>
+								<input type="text" formControlName="MeasurementInterval_pmint" placeholder="{{ fieldBounds.east }}"
+										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].invalid?'required':'' }}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+						<li>
+							<label>{{ languageService.i18n['field.notificationNum'] }}</label>
+							<span>
+								<input type="text" formControlName="UploadInterval_fmint" placeholder="{{ fieldInfo.phone }}"
+									class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['UploadInterval_fmint'].invalid?'required':''}}">
+								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['UploadInterval_fmint'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+							</span>
+						</li>
+					</UL>
+				</form>
+			</span>
+		</div>
+		<div class="buttons">
+			<button type="button" (click)="openConfirmFieldEditWindow()" mat-dialog-close>
+				{{ languageService.i18n['confirm'] }}
+			</button>
+			<button type="button" (click)="resetFieldEditingForm( fieldName )" mat-dialog-close>
+				{{ languageService.i18n['cancel'] }}
+			</button>
+		</div>
+	</ng-template>

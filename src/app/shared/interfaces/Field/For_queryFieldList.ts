@@ -1,12 +1,12 @@
 
-// @2024/01/29 Add
+// 用於儲存多個場域資訊的列表 @2024/02/03 Update
 // Interfaces of FieldList
 export interface FieldList {
-    fields: Fields[];
+    fields: Field[];
 }
 
-// @2024/01/29 Add
-export interface Fields {
+// 用於儲存一個場域的資訊 @2024/02/03 Update
+export interface Field {
     id: string;
     name: string;
     phone: string;

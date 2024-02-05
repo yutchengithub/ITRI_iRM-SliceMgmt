@@ -1,274 +1,271 @@
-<h5>{{languageService.i18n['index.menu_fieldMgr']}}
-  <mat-icon tooltip="{{languageService.i18n['field.create']}}" (click)="openCreateFieldWindow()">add</mat-icon>
+
+<!-- 場域管理標題和創建場域按鈕 -->
+<h5>{{ languageService.i18n['index.menu_fieldMgr'] }}
+  <!-- 點擊此圖標會打開場域創建視窗 -->
+  <mat-icon tooltip="{{ languageService.i18n['field.create'] }}" (click)="openfieldCreationWindow()">add</mat-icon>
 </h5>
+
+<!-- 場域列表的表格 -->
 <div class="table">
+  <!-- 表格本體 -->
   <table>
+    <!-- 表格標題行 -->
     <thead>
       <tr>
-        <th>{{languageService.i18n['field.name']}}</th>
-        <th>{{languageService.i18n['field.bsNum']}}</th>
-        <th class="icon">{{languageService.i18n['field.view']}}</th>
-        <th class="icon">{{languageService.i18n['field.alarm']}}</th>
-        <th class="icon">{{languageService.i18n['field.snapshot']}}</th>
-        <th class="icon">{{languageService.i18n['field.delTitle']}}</th>
+        <!-- 表頭各列的標題，使用國際化服務顯示不同語言 -->
+        <th>{{ languageService.i18n['field.name'] }}</th>
+        <th>{{ languageService.i18n['field.bsNum'] }}</th>
+        <!-- 顯示、警報、快照、刪除操作圖標對應的標題名 -->
+        <th class="icon">{{ languageService.i18n['field.view'] }}</th>
+        <th class="icon">{{ languageService.i18n['field.alarm'] }}</th>
+        <th class="icon">{{ languageService.i18n['field.snapshot'] }}</th>
+        <th class="icon">{{ languageService.i18n['field.delTitle'] }}</th>
     </thead>
     <tbody>
-        <!-- 顯示進度條 -->
+        <!-- 當數據正在加載時顯示進度條 -->
         <ng-container *ngIf="isLoading">
           <tr>
             <td colspan="6">
               <div class="progress-spinner-container">
-                                                                                  <!-- diameter: 指示器大小-->
+                <!-- 指示器大小設置 -->
                 <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
               </div>
             </td>
           </tr>
         </ng-container>
-        <!-- 顯示數據 -->
+        <!-- 加載完成後顯示場域數據 -->
         <ng-container *ngIf="!isLoading">
-          <tr *ngFor="let opt of fieldList.fields | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fieldsListDisplay' };">
-            <td>{{opt.name}}</td>
-            <td>{{opt.bsNum}}</td>
+          <!-- 循環顯示場域列表，並應用分頁 -->
+          <tr *ngFor="let field of fieldList.fields | paginate: { 
+              itemsPerPage: pageSize,
+              currentPage: p, 
+              totalItems: totalItems, 
+              id: 'PageDisplay_of_fieldList' 
+            };">
+            <!-- 這行代碼使用 *ngFor 指令遍歷 fieldList.fields 數組 -->
+            <!-- paginate 管道用於實現分頁功能 -->
+            <!-- itemsPerPage: 每頁顯示的項目數 -->
+            <!--  currentPage: 當前頁碼，由變數 p 控制 -->
+            <!--   totalItems: 數據集的總項目數 -->
+            <!--           id: 分頁控件的唯一識別符，用於將數據集與分頁控件相關聯 -->
+            <!-- 在這個例子中，每次分頁控件改變頁碼時，只會顯示當前頁的數據 -->
+            <td>{{ field.name }}</td>
+            <td>{{ field.bsNum }}</td>
+            <!-- 圖標按鈕，點擊會觸發相應的方法 -->
             <td class="icon">
-              <mat-icon tooltip="{{ languageService.i18n['field.view'] }}" (click)="viewFieldDetail(opt)">remove_red_eye</mat-icon>
+              <mat-icon tooltip="{{ languageService.i18n['field.view'] }}" (click)="viewFieldDetailInfo( field )">remove_red_eye</mat-icon>
             </td>
             <td class="icon">
-              <mat-icon tooltip="{{ languageService.i18n['field.alarm'] }}" (click)="viewFieldAlarm(opt)">warning</mat-icon>
+              <mat-icon tooltip="{{ languageService.i18n['field.alarm'] }}" (click)="viewFieldAlarmInfo( field )">warning</mat-icon>
             </td>
             <td class="icon">
-              <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openSnapshot(opt)">camera_alt</mat-icon>
+              <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openSnapshot( field )">camera_alt</mat-icon>
             </td>
             <td class="icon">
-              <mat-icon tooltip="{{languageService.i18n['field.delItem']}}" (click)="openDeleteField_ConfirmWindow(opt)">delete_forever</mat-icon>
+              <mat-icon tooltip="{{languageService.i18n['field.delItem']}}" (click)="openDeleteField_ConfirmWindow( field )">delete_forever</mat-icon>
             </td>
           </tr>
         </ng-container>
     </tbody>
   </table>
 </div>
-<pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel="" nextLabel="" id="fieldsListDisplay">
-</pagination-controls>
+
+<!-- 分頁控制元件，當頁面改變時觸發 pageChanged 事件 -->
+<pagination-controls
+    (pageChange)="pageChanged( $event )"
+    screenReaderPaginationLabel="Pagination"
+    previousLabel=""
+    nextLabel=""
+    id="PageDisplay_of_fieldList"
+></pagination-controls>
+<!-- screenReaderPaginationLabel: 為螢幕閱讀器用戶提供分頁標籤 -->
+<!--               previousLabel: 自定義 "上一頁" 按鈕的標籤，空字符串表示無標籤 -->
+<!--                   nextLabel: 自定義 "下一頁" 按鈕的標籤，空字符串表示無標籤 -->
+<!--                  totalItems: 數據集的總項目數 -->
+<!--                          id: 分頁控制的唯一識別符，與分頁管道同步 -->
+<!-- 在這個例子中，每次分頁控件改變頁碼時，只會顯示當前頁的數據 -->
 
 
-<ng-template #createModal>
-  <h5>{{languageService.i18n['add_field']}}</h5>
-  <form [formGroup]="createForm">
-    <ul>
-      <li>
-        <label>Field {{languageService.i18n['table.header_name']}}</label>
-        <span>
-          <input type="text" formControlName="name" class="{{formValidated&&createForm.controls['name'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['name'].invalid">Required</mat-error>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['description']}}</label>
-        <span>
-          <textarea formControlName="description"></textarea>
-        </span>
-      </li>
-      <li>
-        <label>選擇新增方式</label>
-        <span>
-        <mat-button-toggle-group formControlName="method" (change)="changeMethod($event)">
-          <mat-button-toggle value="existing">納管既有的 Field</mat-button-toggle>
-          <mat-button-toggle value="smo">透過 SMO 建立 Field</mat-button-toggle>
-        </mat-button-toggle-group>
-        <ng-template [ngIf]="createForm.controls['method'].value === 'existing'">
-          <div>
-            <label>IMS Endpoint</label>
-            <span>
-              <input type="text" formControlName="imsEndpoint" class="{{formValidated&&createForm.controls['imsEndpoint'].invalid?'required':''}}">
-              <mat-error *ngIf="formValidated&&createForm.controls['imsEndpoint'].invalid">Required</mat-error>
-            </span>
-          </div>
-          <div>
-            <label>Field ID</label>
-            <span>
-              <input type="text" formControlName="oCloudId" class="{{formValidated&&createForm.controls['oCloudId'].invalid?'required':''}}">
-              <mat-error *ngIf="formValidated&&createForm.controls['oCloudId'].invalid">Required</mat-error>
-            </span>
-          </div>
-        </ng-template>
-
-        <ng-template [ngIf]="createForm.controls['method'].value === 'smo'">
-          <div>
-            <label>First Node URL</label>
-            <span>
-              <input type="text" formControlName="firstNode" class="{{formValidated&&createForm.controls['firstNode'].invalid?'required':''}}">
-              <mat-error *ngIf="formValidated&&createForm.controls['firstNode'].invalid">Required</mat-error>
-            </span>
-          </div>
-          <div>
-            <label>Image URL</label>
-            <span>
-              <input type="text" formControlName="image" class="{{formValidated&&createForm.controls['image'].invalid?'required':''}}">
-              <mat-error *ngIf="formValidated&&createForm.controls['image'].invalid">Required</mat-error>
-            </span>
-          </div>
-        </ng-template>
-      </span>
-      </li>
-    </ul>
-    <div class="buttons">
-      <button type="button" (click)="create()">OK</button>
-      <button type="button" mat-dialog-close>Cancel</button>
-    </div>
-  </form>
-</ng-template>
-
-
-<!-- Window of Create Field @2024/01/31 Add -->
-<ng-template #createFieldWindow>
+<!-- Window of Create Field @2024/02/02 Update -->
+<ng-template #fieldCreationWindow>
   <div>
+    <!-- 欄位標題 - 場域建立 -->
     <h5>{{ languageService.i18n['field.createTitle'] }}</h5>
   </div>  
-
-  <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
-    {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
-  </button>
-  <!-- <mat-stepper orientation="vertical" [linear]="isLinear" #stepper> -->
-  <mat-stepper orientation="vertical" [linear]="true" #stepper> 
-    <mat-step [stepControl]="firstFormGroup">
-      <form [formGroup]="firstFormGroup">
+  <mat-stepper class="custom-stepper" orientation="vertical" [linear]="true" #stepper> 
+    <!-- 定義垂直方向的 mat-stepper，並設置為線性步驟，要求每個步驟完成後才能進行下一步 -->
+    <mat-step [stepControl]="firstFormGroup_FieldName">
+      <!-- 第一步：設置場域名稱 -->
+      <form [formGroup]="firstFormGroup_FieldName">
+        <!-- 使用 firstFormGroup_FieldName 這個 FormGroup -->
         <ng-template matStepLabel>{{ languageService.i18n['field.setFieldName'] }}</ng-template>
+        <!-- 步驟標籤：設置場域名稱 -->
         <mat-form-field appearance="fill">
+          <!-- 定義一個填滿式樣的表單欄位 -->
           <mat-label>{{ languageService.i18n['field.name'] }}</mat-label>
-          <input matInput formControlName="firstCtrl" required>
+          <!-- 欄位標籤：場域名稱 -->
+          <input matInput formControlName="FieldName" required>
+          <!-- 輸入欄位綁定到 FormGroup 的 FieldName 控件，並設置為必填 -->
         </mat-form-field>
         <div>
           <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+          <!-- 下一步按鈕 -->
         </div>
       </form>
     </mat-step>
-    <mat-step [stepControl]="secondFormGroup">
-      <form [formGroup]="secondFormGroup">
+    <mat-step [stepControl]="secondFormGroup_fieldBounds">
+      <!-- 第二步：設置場域邊界座標 -->
+      <form [formGroup]="secondFormGroup_fieldBounds">
+        <!-- 使用 secondFormGroup_fieldBounds 這個 FormGroup -->
         <ng-template matStepLabel>{{ languageService.i18n['field.setFieldBoundsCoord'] }}</ng-template>
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['field.northBound'] }}</mat-label>
-            <input matInput formControlName="secondCtrl" placeholder="( -90.0 ~ 90.0 )"
-                  required>
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['field.southBound'] }}</mat-label>
-            <input matInput formControlName="secondCtrl" placeholder="( -90.0 ~ 90.0 )"
-                  required>
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['field.westBound'] }}</mat-label>
-            <input matInput formControlName="secondCtrl" placeholder="( -180.0 ~ 180.0 )"
-                  required>
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['field.eastBound'] }}</mat-label>
-            <input matInput formControlName="secondCtrl" placeholder="( -180.0 ~ 180.0 )"
-                  required>
-          </mat-form-field>
+        <!-- 步驟標籤：設置場域邊界座標 -->
+        <div class="mat-stepper-boundary-group">
+          <!-- 包含邊界座標欄位的容器 -->
+          <div class="mat-stepper-boundary-row">
+            <!-- 第一行邊界座標欄位 -->
+            <!-- 北邊界欄位與錯誤提示，其他欄位類似，僅註解一次 -->
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['field.northBound'] }}</mat-label>
+              <input matInput formControlName="northBound" placeholder="{{ languageService.i18n['field.lat'] }} ( -90.0 ~ 90.0 )" required>
+              <mat-error *ngIf="secondFormGroup_fieldBounds.get('northBound')?.hasError('pattern')">{{ languageService.i18n['field.validLatitude'] }}</mat-error>
+              <!-- 如果 northBound 控件的 pattern 驗證器失敗，則顯示錯誤提示 -->
+            </mat-form-field>
+            <!-- 南邊界欄位，類似於北邊界 -->
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['field.southBound'] }}</mat-label>
+              <input matInput formControlName="southBound" placeholder="{{ languageService.i18n['field.lat'] }} ( -90.0 ~ 90.0 )" required>
+              <mat-error *ngIf="secondFormGroup_fieldBounds.get('southBound')?.hasError('pattern')">{{ languageService.i18n['field.validLatitude'] }}</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="mat-stepper-boundary-row">
+            <!-- 西邊界與東邊界欄位，類似於北邊界 -->
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['field.westBound'] }}</mat-label>
+              <input matInput formControlName="westBound" placeholder="{{ languageService.i18n['field.lng'] }} ( -180.0 ~ 180.0 )" required>
+              <mat-error *ngIf="secondFormGroup_fieldBounds.get('westBound')?.hasError('pattern')">{{ languageService.i18n['field.validLongitude'] }}</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['field.eastBound'] }}</mat-label>
+              <input matInput formControlName="eastBound" placeholder="{{ languageService.i18n['field.lng'] }} ( -180.0 ~ 180.0 )" required>
+              <mat-error *ngIf="secondFormGroup_fieldBounds.get('eastBound')?.hasError('pattern')">{{ languageService.i18n['field.validLongitude'] }}</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
         <div>
+          <!-- 下一步與上一步按鈕，類似於第一步 -->
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
           <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
-    </mat-step>
-    <mat-step [stepControl]="thirdFormGroup">
-      <form [formGroup]="thirdFormGroup">
+    </mat-step>    
+    <mat-step [stepControl]="thirdFormGroup_PhoneNum">
+      <!-- 第三步：設置場域管理者的通知電話號碼 -->
+      <form [formGroup]="thirdFormGroup_PhoneNum">
+        <!-- 使用 thirdFormGroup_PhoneNum 這個 FormGroup -->
         <ng-template matStepLabel>{{ languageService.i18n['field.setNotificationNum'] }}</ng-template>
+        <!-- 步驟標籤：設置通知電話號碼 -->
         <mat-form-field appearance="fill">
           <mat-label>{{ languageService.i18n['field.PhoneNum'] }}</mat-label>
-          <input matInput formControlName="thirdCtrl" placeholder="0912345678"
-                  required>
+          <input matInput formControlName="PhoneNum" placeholder="09xxxxxxxx" required>
+          <mat-error *ngIf="thirdFormGroup_PhoneNum.get('PhoneNum')?.hasError('pattern')">{{ languageService.i18n['field.validPhoneNumber'] }}</mat-error>
+          <!-- 如果 PhoneNum 控件的 pattern 驗證器失敗，則顯示錯誤提示 -->
         </mat-form-field>
         <div>
+          <!-- 下一步與上一步按鈕，類似於第一步 -->
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
           <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
     </mat-step>
-    <mat-step [stepControl]="forthFormGroup">
-      <form [formGroup]="forthFormGroup">
-        <ng-template matStepLabel>{{ languageService.i18n['field.selectBaseStations'] }}</ng-template>
-          <!-- 選擇基站列表 For field Creation @2024/01/31 Add by yuchen -->	
-          <div class="table">
-            <table class="center">
-              <thead>
-                <tr>
-                  <!-- 使用 *ngIf 控制顯示 "選擇基站" 這一列 @2024/01/25 Add -->
-                    <!-- <th *ngIf="isCheckboxVisible">{{ languageService.i18n['field.selectBSs'] }}</th> -->
-                  <th>{{ languageService.i18n['field.selectBSs'] }}</th>
-                  <th>{{ languageService.i18n['field.BSname'] }}</th>
-                  <th>{{ languageService.i18n['field.BStype'] }}</th>
-                  <th>gNB ID</th>
-                  <th>gNB ID Length</th>
-                  <th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
-                  <th>{{ languageService.i18n['field.BSstatus'] }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                  <!-- <tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;"> -->
-                  
-                  <!-- 根據 displayAllBSFlag 旗標選擇迭代的數據來源 ( .ts 進行控制 ) -->
-                  <tr>
-
-                    <!-- 根據條件顯示 Checkbox @2024/01/26 Update -->
-                    <td>
-                      <input type="checkbox"  >
-                    </td>  
-                    <td>
-                      <!-- 顯示 "基站名稱" -->
-                      1111
-                    </td>
-                    <td>
-                      64646
-                      <!-- {{ opt.gNBId }} -->
-                    </td>
-                    <td>
-                      46546
-                      <!-- {{ opt.gNBIdLength }} -->
-                    </td>
-                    <td>
-                      4546546
-                      <!-- <label>{{ opt.position }}</label> -->
-                    </td>
-                    <td class="icon">
-                    </td>
-                  </tr>
-              </tbody>
-            </table>
-          </div>
-        <div>
-          <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
-          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
-        </div>
-      </form>
-    </mat-step>
+    <!-- 場域建立的步驟 -->
     <mat-step>
+      <!-- 表單元素 -->
+      <form>
+        <!-- 步驟標籤 -->
+        <ng-template matStepLabel>{{ languageService.i18n['field.selectBaseStations'] }}</ng-template>
+        <!-- 表格容器 -->
+        <div class="table">
+          <!-- 表格元素 -->
+          <table class="center">
+            <!-- 表格頭部 -->
+            <thead>
+              <tr>
+                <!-- 全選框所在的表頭 -->
+                <th>
+                  <input type="checkbox" [checked]="isAllSelected" (change)="onSelectAllBs($event)">
+                </th>
+                <!-- 基站名稱表頭 -->
+                <th>{{ languageService.i18n['field.BSname'] }}</th>
+                <!-- gNB ID 表頭 -->
+                <th>gNB ID</th>
+                <!-- gNB ID 長度表頭 -->
+                <th>gNB ID Length</th>
+                <!-- 基站天線座標表頭 -->
+                <th>{{ languageService.i18n['field.bsAntennaCoord'] }}</th>
+                <!-- 基站描述表頭 -->
+                <th>{{ languageService.i18n['field.bsDescription'] }}</th>
+              </tr>
+            </thead>
+            <!-- 表格內容 -->
+            <tbody>
+              <!-- 循環顯示所有基站 -->
+              <tr *ngFor="let opt of displayedBSs" style="overflow-y: auto;">
+                <!-- 基站選擇框 -->
+                <td>
+                  <input type="checkbox" [checked]="opt.selected" (change)="onBsSelectionChange( opt.id, $event )">
+                </td>
+                <!-- 顯示基站名稱 -->
+                <td>{{ opt.name }}</td>
+                <!-- 顯示 gNB ID -->
+                <td>{{ opt.gNBId }}</td>
+                <!-- 顯示 gNB ID 長度 -->
+                <td>{{ opt.gNBIdLength }}</td>
+                <!-- 顯示基站天線座標 -->
+                <td>{{ opt.position }}</td>
+                <!-- 顯示基站描述 -->
+                <td>{{ opt.description }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- 操作按鈕 -->
+        <div>
+          <!-- 上一步按鈕 -->
+          <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
+          <!-- 下一步按鈕 -->
+          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+        </div>
+      </form>
+    </mat-step>
+    <!-- 步驟完成提示 -->
+    <mat-step>
+      <!-- 步驟標籤 -->
       <ng-template matStepLabel>{{ languageService.i18n['field.createDone'] }}</ng-template>
+      <!-- 完成提示訊息 -->
       <p>{{ languageService.i18n['field.setupComplete'] }}</p>
+      <!-- 操作按鈕 -->
       <div>
+        <!-- 上一步按鈕 -->
         <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
-        <button mat-button (click)="stepper.reset()">{{ languageService.i18n['field.createReset'] }}</button>
+        <!-- 重置步驟按鈕 @2024/02/04 Update -->
+        <button mat-button (click)="stepper.reset(); resetFieldCreationForm()">{{ languageService.i18n['field.createReset'] }}</button>
       </div>
     </mat-step>
   </mat-stepper>
-
+  <!-- 按鈕組容器，用於對齊並中心顯示按鈕 -->
   <div class="buttons buttons-centered">
-    <button type="button"  mat-dialog-close>
+    <!-- 確認按鈕：點擊時呼叫 FieldCreation_Submit() 方法來提交場域建立的資料，並關閉對話框 -->
+    <button type="button" (click)="FieldCreation_Submit()" mat-dialog-close>
       {{ languageService.i18n['confirm'] }}
     </button>
-    <button type="button" mat-dialog-close>
+    <!-- 取消按鈕：點擊時呼叫 resetFieldCreationForm() 方法來重置場域建立的表單，並關閉對話框 -->
+    <button type="button" (click)="resetFieldCreationForm()" mat-dialog-close>
       {{ languageService.i18n['cancel'] }}
     </button>
   </div>
-  
-  
-  
-  
-
 </ng-template>
-  
 
-<!-- Window of Delete Field @2024/01/29 Update -->
+<!-- Confirm Window of Delete Field @2024/01/29 Update -->
 <ng-template #deleteField_ConfirmWindow>
   <!-- 標題部分，使用 languageService.i18n['confirm'] 來國際化確認文字 -->
   <h5>{{languageService.i18n['confirm']}}</h5>
