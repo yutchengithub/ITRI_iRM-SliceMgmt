@@ -685,6 +685,10 @@ table {
   max-height: 38em;
   overflow: auto;
 }
+.table table td {
+  padding: 0.5em 0.1em;
+  white-space: nowrap;
+}
 .table table td label {
   text-align: left;
 }

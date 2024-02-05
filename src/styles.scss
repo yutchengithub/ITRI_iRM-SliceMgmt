@@ -1107,8 +1107,11 @@ cursor: pointer;
 }
 /**/
 #fieldEditWindow {
-  width: 60em;
+  width: 63em;
   position: relative;
+}
+body.en #fieldEditWindow {
+  width: 71em;
 }
  #fieldEditWindow .fieldEditTab mat-button-toggle-group .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
   background-color:#ba5a2a!important;
