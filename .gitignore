@@ -3,5 +3,3 @@ node_modules/
 
 ## connection related setting files
 package-lock.json
-src/environments/environments.ts
-src/environments/environment.prod.ts
