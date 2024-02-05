@@ -364,3 +364,7 @@ span.material-symbols-outlined.stop {
 .collabsible .lbl-toggle span {
   color: #074478!important;
 }
+.ocloudInfo h5 span button {
+  background: #337ab766!important;
+  color: #ddd;
+}

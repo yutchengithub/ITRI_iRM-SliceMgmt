@@ -1147,9 +1147,16 @@ body.en #fieldEditWindow {
 #fieldEditWindow thead th:nth-child(3) {
   width: 14em;
 }
+body.en #fieldEditWindow  ul li > span {
+  width: 67%;
+}
+
 #promptWindow_noFieldImage,
 #confirmDeleteWindow_For_fieldEdit {
   min-width: 21em;
+}
+body.en #promptWindow_noFieldImage {
+  min-width: 27em;
 }
 #promptWindow_noFieldImage .label-centered {
   width: 90%;
@@ -1190,6 +1197,15 @@ body.tw #createComponentModal ul li label {
 
 body.tw .performanceWindow {
   width: 17em;
+}
+#confirmFieldEditWindow {
+  min-width: 23em;
+}
+body.en #PMgmtParameterSetWindow ul li > label {
+  min-width: 9em;
+}
+body.en .fault_mgr.table table tbody tr td:nth-child(4) {
+  min-width: 9em;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {
