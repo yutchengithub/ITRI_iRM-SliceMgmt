@@ -102,17 +102,23 @@
 
 			</mat-menu>
 					
-			<!-- 告警鈴鐺 -->	
+			<!-- 告警鈴鐺 -->
 			<span (click)="goFaultMgr()" class="badge" tooltip="{{ languageService.i18n['field.faultInfo'] }}">
-				<span class="value">99+</span>
+				<!-- 顯示 CRITICAL 告警的數量，如果大於 99 則顯示 99+ -->
+				<span class="value">{{ getCriticalAlarmCount() }}</span>
+				<!-- 通知圖標 -->
 				<span class="material-symbols-outlined">notifications</span>
+				<!-- 滑鼠懸停時顯示的告警詳情信息 -->
 				<div class="hoverInfo">
-					<span class="percent {{ severityText_forCSS(severity) }}" *ngFor="let severity of severitys; let i = index">
-						<label>{{ severityText(severity) }}</label>
-						<span>{{ severityCount(severity) }}</span>
-					</span>
+				<!-- 循環遍歷每種嚴重程度的告警並顯示其百分比和數量 -->
+				<span class="percent {{ severityText_forCSS(severity) }}" *ngFor="let severity of severitys; let i = index">
+					<!-- 顯示告警種類的文字 -->
+					<label>{{ severityText(severity) }}</label>
+					<!-- 顯示對應告警種類的數量 -->
+					<span>{{ severityCount(severity) }}</span>
+				</span>
 				</div>
-			</span>	
+			</span>
 		</span>
 	</h5>
 	

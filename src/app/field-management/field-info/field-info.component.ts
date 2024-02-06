@@ -1424,6 +1424,15 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
+  // @2024/02/06 Add
+  // 用於獲取 CRITICAL 的告警數量
+  getCriticalAlarmCount(): string {
+    // 從 fieldInfo 對象中獲取 alarmCriticalNum 屬性的值，如果 fieldInfo 為 undefined，則默認值為 0
+    const criticalCount = this.fieldInfo?.alarmCriticalNum ?? 0;
+    // 如果 CRITICAL 告警的數量大於 99，則返回 '99+'，否則返回其數量的字符串表示
+    return criticalCount > 99 ? '99+' : criticalCount.toString();
+  }
+
 
 // BS Modify Configuration Setting @2024/01/05 Add ↓
 
