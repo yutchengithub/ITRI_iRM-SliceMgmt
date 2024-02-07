@@ -145,9 +145,9 @@ export class FieldInfoComponent implements OnInit {
     private ngZone: NgZone,
     // private messageService: MessageService
 
-    public languageService: LanguageService,
-    public   commonService: CommonService,
-    public       API_Field: apiForField,          // @2024/01/04 Add for import API of Field Management 
+    public      languageService: LanguageService,
+    public        commonService: CommonService,
+    public            API_Field: apiForField,     // @2024/01/04 Add for import API of Field Management 
     public     bsInfoLocalFiles: localBSinfo,     // @2023/12/27 Add for import BS Info Local Files
     public    bsList_LocalFiles: localBSList,     // @2024/01/16 Add for import BS List Local Files 
     public pmFtpInfo_LocalFiles: localPmFTPInfo,  // @2024/02/04 Add for import info of PM Parameter Setting Local Files
@@ -249,17 +249,17 @@ export class FieldInfoComponent implements OnInit {
 
   // 自定義標記 Icon
   customIcon: google.maps.Icon = {
-    url: '', // 圖標的相對路徑 URL
-    scaledSize: new google.maps.Size(30, 30), // 設定圖標的大小
-    origin: new google.maps.Point(0, 0),      // 圖標的起始點
-    anchor: new google.maps.Point(15, 15),    // 圖標錨點的位置
+           url: '', // 圖標的相對路徑 URL
+    scaledSize: new google.maps.Size( 30, 30 ), // 設定圖標的大小
+        origin: new google.maps.Point( 0, 0 ),      // 圖標的起始點
+        anchor: new google.maps.Point( 15, 15 ),    // 圖標錨點的位置
   };
 
   // @2024/01/02 Add
   // 使用 @ViewChild 裝飾器來獲取模板中 <google-map> 元素的實例。
   // '!' 非空斷言操作符告訴 TypeScript 編譯器該屬性將會在後續的代碼中被賦值，
   // 因此它在初始化時不會是 null。這避免了 TypeScript 的嚴格 null 檢查錯誤。
-  @ViewChild(GoogleMap) map!: GoogleMap; // 獲取 Google 地圖實例的引用
+  @ViewChild( GoogleMap ) map!: GoogleMap; // 獲取 Google 地圖實例的引用
 
   // 用於儲存場域多邊形的邊界點 @2024/01/02 Add
   fieldBounds!: google.maps.LatLngBoundsLiteral;    // 用於儲存放置 GroundOverlay 的場域邊界資訊
@@ -278,8 +278,8 @@ export class FieldInfoComponent implements OnInit {
 
 
   // 用於跟蹤 overlay 顯示狀態的變數
-  overlayVisible: boolean = false;                  // 一個 boolean 變數，用於指示 GroundOverlay 是否應該顯示在地圖上
-  overlay: google.maps.GroundOverlay | null = null; // 用於存儲 GroundOverlay 實例的變數，初始值為 null。這個變數將在需要顯示場域圖片時被賦值
+  overlayVisible: boolean = false;                         // 一個 boolean 變數，用於指示 GroundOverlay 是否應該顯示在地圖上
+         overlay: google.maps.GroundOverlay | null = null; // 用於存儲 GroundOverlay 實例的變數，初始值為 null。這個變數將在需要顯示場域圖片時被賦值
   
   // 用於跟蹤當前 overlay 類型的屬性 @2024/01/03 Add
   currentOverlayType: OverlayType = OverlayType.None;
@@ -309,7 +309,7 @@ export class FieldInfoComponent implements OnInit {
       this.overlay = null;         // 將 overlay 物件設置為 null，釋放資源並避免內存洩漏
       this.currentOverlayType = OverlayType.None;   // 重置當前 overlay 類型為 None
 
-      console.log('Remove the Overlay:', this.overlay);
+      console.log( 'Remove the Overlay:', this.overlay );
     }
   }
 
@@ -391,7 +391,7 @@ export class FieldInfoComponent implements OnInit {
   isfieldImage_or_RsrpSinrMapLoading = false; // 用於識別加載場域圖片、RSRP、SINR 地圖狀態的標誌，初始設置為 false 
 
   // @2024/01/22 Add
-  @ViewChild('promptWindow_noFieldImage') promptWindow_noFieldImage: any; // 使用 ViewChild 來獲取模板中的 promptWindow_noFieldImage 參考
+  @ViewChild( 'promptWindow_noFieldImage' ) promptWindow_noFieldImage: any; // 使用 ViewChild 來獲取模板中的 promptWindow_noFieldImage 參考
   promptWindow_noFieldImage_Ref!: MatDialogRef<any>; // 儲存對話框的參考，以便在需要時可以操作對話框
 
   // 打開無場域圖片提示視窗 @2024/01/22 Add
@@ -458,13 +458,13 @@ export class FieldInfoComponent implements OnInit {
               },
               // 當圖片獲取失敗時，顯示其錯誤訊息
               error: ( error ) => {
-                console.error('Error fetching field image:', error);
+                console.error( 'Error fetching field image:', error );
                 this.isfieldImage_or_RsrpSinrMapLoading = false;  // 出錯時，也隱藏 Spinner
                 this.openNoFieldImagePromptWindow();              // 未有場域圖片時顯示提示視窗
               },
               // 當圖片獲取過程完成時，顯示完成訊息
               complete: () => {
-                console.log('Field image fetch completed');
+                console.log( 'Field image fetch completed' );
                 this.isfieldImage_or_RsrpSinrMapLoading = false; // 加載完成，隱藏 Spinner
               }
           });
@@ -480,7 +480,7 @@ export class FieldInfoComponent implements OnInit {
 
   /** @2024/01/04 Add
    * 當按鈕被點擊時調用的函數，用於切換基站之間連線的顯示狀態
-   * @param {string} buttonId - 被點擊的按鈕ID
+   * @param { string } buttonId - 被點擊的按鈕ID
    */
   setActiveButton_NR( buttonId: string ) {
     // 如果當前按鈕 ID 和傳入的 ID 相同，則取消選中，否則設置為選中
@@ -488,25 +488,25 @@ export class FieldInfoComponent implements OnInit {
     
     // 切換顯示或隱藏與鄰居 BS 的連線
     this.showNeighborLines = !this.showNeighborLines;
-    this.toggleNeighborLines(this.showNeighborLines);
+    this.toggleNeighborLines( this.showNeighborLines );
   }
 
   /** @2024/01/04 Add
    * 用於繪製或移除 BS 之間的線條
-   * @param {boolean} show - 指示是否顯示線條
+   * @param { boolean } show - 指示是否顯示線條
    */
   toggleNeighborLines( show: boolean ) {
     if ( show ) {
       // 繪製線條
-      this.allSimplifiedBsInfo.forEach(bs => {
-        if (bs.neighbors) {
-          bs.neighbors.forEach(neighbor => {
-            const neighborBs = this.allSimplifiedBsInfo.find(nbs => nbs.nci === neighbor.nci);
-            if (neighborBs) {
+      this.allSimplifiedBsInfo.forEach( bs => {
+        if ( bs.neighbors ) {
+          bs.neighbors.forEach( neighbor => {
+            const neighborBs = this.allSimplifiedBsInfo.find( nbs => nbs.nci === neighbor.nci );
+            if ( neighborBs ) {
 
               // 使用 parsePosition 函數來轉換位置字串為 LatLngLiteral 對象
-              const bsPosition = this.parsePosition(bs.position);
-              const neighborBsPosition = this.parsePosition(neighborBs.position);
+              const bsPosition = this.parsePosition( bs.position );
+              const neighborBsPosition = this.parsePosition( neighborBs.position );
 
               // 創建路徑矩陣
               const linePath = [ bsPosition, neighborBsPosition ];
@@ -521,10 +521,10 @@ export class FieldInfoComponent implements OnInit {
               });
 
               // 將 Polyline 添加到地圖上
-              this.addPolylineToMap(polyline);
+              this.addPolylineToMap( polyline );
 
               // 將 Polyline 添加到 nrLines 陣列中以便日後移除
-              this.nrLines.push(polyline);
+              this.nrLines.push( polyline );
             }
           });
         }
@@ -541,12 +541,12 @@ export class FieldInfoComponent implements OnInit {
 
   /** @2024/01/04 Add
    * 將 Polyline 添加到地圖上的方法
-   * @param {google.maps.Polyline} polyline - 要添加到地圖上的 Polyline 對象
+   * @param { google.maps.Polyline } polyline - 要添加到地圖上的 Polyline 對象
    */
-  addPolylineToMap(polyline: google.maps.Polyline) {
+  addPolylineToMap( polyline: google.maps.Polyline ) {
     // 確認地圖已經載入，然後將 Polyline 設置到地圖上
-    if (this.map.googleMap) {
-      polyline.setMap(this.map.googleMap);
+    if ( this.map.googleMap ) {
+      polyline.setMap( this.map.googleMap );
     }
   }
 
@@ -556,7 +556,7 @@ export class FieldInfoComponent implements OnInit {
    */
   removePolylineFromMap( polyline: google.maps.Polyline ) {
     // 將 Polyline 的地圖屬性設置為 null，從而將其從地圖上移除
-    polyline.setMap(null);
+    polyline.setMap( null );
   }
 
   setActiveButton_menu( buttonId: string ) {
@@ -568,13 +568,13 @@ export class FieldInfoComponent implements OnInit {
   currentColorbar: 'RSRP' | 'SINR' | null = null; // 開始時不顯示任何 colorbar
 
   // @2024/01/03 Update
-  toggleColorbar(type: 'RSRP' | 'SINR') {
+  toggleColorbar( type: 'RSRP' | 'SINR' ) {
     console.log("The click button is:", type);
 
     // 切換 Colorbar 狀態
     if ( this.currentColorbar === null ) {
       this.currentColorbar = type;
-      this.setActiveButton_rsrp_sinr(type);
+      this.setActiveButton_rsrp_sinr( type );
     } else {
       if ( type === this.currentColorbar ) {
         this.currentColorbar = null;
@@ -583,7 +583,7 @@ export class FieldInfoComponent implements OnInit {
         this.overlayVisible = false;        // 設定 overlay 不可見
       } else {
         this.currentColorbar = type;
-        this.setActiveButton_rsrp_sinr(type);
+        this.setActiveButton_rsrp_sinr( type );
       }
     }
   }
@@ -768,7 +768,7 @@ export class FieldInfoComponent implements OnInit {
   // }
 
   // @12/27 Add
-  calculateBoundingBoxCenter(points: google.maps.LatLngLiteral[]): google.maps.LatLngLiteral {
+  calculateBoundingBoxCenter( points: google.maps.LatLngLiteral[] ): google.maps.LatLngLiteral {
 
     // 初始化最小和最大緯度、經度值，初始值設定為陣列中的第一個點的緯度和經度
     let minLat = points[0].lat;
@@ -777,21 +777,21 @@ export class FieldInfoComponent implements OnInit {
     let maxLng = points[0].lng;
   
     // 遍歷 points 矩陣中的每一個 google.maps.LatLngLiteral 物件
-    points.forEach(point => {
+    points.forEach( point => {
       // 如果當前點的緯度小於已知的最小緯度，更新 minLat 的值
-      if (point.lat < minLat) minLat = point.lat;
+      if ( point.lat < minLat ) minLat = point.lat;
       // 如果當前點的緯度大於已知的最大緯度，更新 maxLat 的值
-      if (point.lat > maxLat) maxLat = point.lat;
+      if ( point.lat > maxLat ) maxLat = point.lat;
       // 如果當前點的經度小於已知的最小經度，更新 minLng 的值
-      if (point.lng < minLng) minLng = point.lng;
+      if ( point.lng < minLng ) minLng = point.lng;
       // 如果當前點的經度大於已知的最大經度，更新 maxLng 的值
-      if (point.lng > maxLng) maxLng = point.lng;
+      if ( point.lng > maxLng ) maxLng = point.lng;
     });
   
     // 計算緯度和經度的平均值，得出邊界框的中心點經緯度，並返回這個中心點
     return {
-      lat: (minLat + maxLat) / 2,
-      lng: (minLng + maxLng) / 2
+      lat: ( minLat + maxLat ) / 2,
+      lng: ( minLng + maxLng ) / 2
     };
   }
   
@@ -800,17 +800,17 @@ export class FieldInfoComponent implements OnInit {
   // @2024/01/02 Add - 儲存場域邊界點
   // @2024/01/04 Update - Add calculateBestZoom()
   getQueryFieldInfo() {
-    console.log('getQueryFieldInfo() - Start'); // 啟動獲取場域資訊
+    console.log( 'getQueryFieldInfo() - Start' ); // 啟動獲取場域資訊
 
-    console.log('Start fetching field info');   // 開始獲取場域資訊
-    clearTimeout(this.refreshTimeout);
+    console.log( 'Start fetching field info' );   // 開始獲取場域資訊
+    clearTimeout( this.refreshTimeout );
 
     this.isMarkersLoading = true;
     
     if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
 
       // For testing with local files
-      console.log('Start fetching field info in Local');   // 開始獲取 local 場域資訊
+      console.log( 'Start fetching field info in Local' );   // 開始獲取 local 場域資訊
       this.fieldInfo = this.commonService.fieldInfo;
       console.log( 'Local field info in Local:', this.fieldInfo );
 
@@ -871,19 +871,19 @@ export class FieldInfoComponent implements OnInit {
 
     } else {
       
-      console.log('Start fetching field info feom API');   // 開始獲取場域資訊
+      console.log( 'Start fetching field info feom API' );   // 開始獲取場域資訊
 
       // Use API_Field's queryFieldInfo() to make an HTTP GET request
-      this.API_Field.queryFieldInfo(this.fieldId).subscribe({
+      this.API_Field.queryFieldInfo( this.fieldId ).subscribe({
         next: ( res ) => {
 
           // 當 API 響應數據到達時，執行此回調
           // This callback is executed when API response data arrives
-          console.log('從 API 獲取 queryFieldInfo\n( Fetched queryFieldInfo from API ): ', res, 
-                        '\nfieldId: ' + res.id + ', fieldName: ' + res.name);
-          console.log('從 API 獲取 fieldId.bsinfo\n( Fetched fieldId.bsinfo from API ):', res.bsinfo);
+          console.log( '從 API 獲取 queryFieldInfo\n( Fetched queryFieldInfo from API ): ', res, 
+                        '\nfieldId: ' + res.id + ', fieldName: ' + res.name );
+          console.log( '從 API 獲取 fieldId.bsinfo\n( Fetched fieldId.bsinfo from API ):', res.bsinfo );
           this.fieldInfo = res;
-          console.log('場域資訊\n( Field info ):', this.fieldInfo); // 取得的場域資訊 ( Obtained field information ):
+          console.log( '場域資訊\n( Field info ):', this.fieldInfo ); // 取得的場域資訊 ( Obtained field information ):
 
           this.updateResourceUtilization();
 
@@ -905,23 +905,23 @@ export class FieldInfoComponent implements OnInit {
           // 儲存或更新場域邊界點 @2024/01/02 Add
           this.fieldBounds = {
             // `north` 表示多邊形北邊的緯度，通過取所有頂點緯度的最大值來確定
-            north: Math.max(...positions.map(p => p.lat)),
+            north: Math.max( ...positions.map( p => p.lat ) ),
             
             // `south` 表示多邊形南邊的緯度，通過取所有頂點緯度的最小值來確定
-            south: Math.min(...positions.map(p => p.lat)),
+            south: Math.min( ...positions.map( p => p.lat ) ),
             
             // `east` 表示多邊形東邊的經度，通過取所有頂點經度的最大值來確定
-            east: Math.max(...positions.map(p => p.lng)),
+            east: Math.max( ...positions.map( p => p.lng ) ),
             
             // `west` 表示多邊形西邊的經度，通過取所有頂點經度的最小值來確定
-            west: Math.min(...positions.map(p => p.lng)),
+            west: Math.min( ...positions.map( p => p.lng ) ),
           };
           
           // 這個計算出的中心點將被用來設定地圖的初始視圖中心。
           //this.center = this.calculateCenter(positions); // 用於計算多邊形頂點的平均中心點
-          this.center = this.calculateBoundingBoxCenter(positions); 
+          this.center = this.calculateBoundingBoxCenter( positions ); 
           // 輸出中心點到控制台，這樣可以用於調試和確認中心點是否如預期被正確計算。
-          console.log('In getQueryFieldInfo() - center:', this.center);
+          console.log( 'In getQueryFieldInfo() - center:', this.center );
 
           // @2024/01/17 Add 
           // Set the get value to fieldEditForm for Field Editing  
@@ -938,20 +938,20 @@ export class FieldInfoComponent implements OnInit {
           // Ensure field info is assigned before proceeding
           this.processFieldInfo(); // 進行後續處理
         },
-        error: (error) => {
+        error: ( error ) => {
 
           // 獲取資訊出錯時執行此回調
           // This callback is executed when there is an error fetching the info
-          console.error('獲取場域資訊出錯:', error);
-          console.error('Error fetching field info:', error);
+          console.error( '獲取場域資訊出錯:', error );
+          console.error( 'Error fetching field info:', error );
           this.isMarkersLoading = false; // 出錯時也應隱藏 spinner @12/28 Add for Progress Spinner
         },
         complete: () => {
 
           // 請求完成時執行此回調
           // This callback is executed when the request is complete
-          console.log('場域資訊獲取完成');
-          console.log('Field info fetch completed');
+          console.log( '場域資訊獲取完成' );
+          console.log( 'Field info fetch completed' );
           //this.isMarkersLoading = false; // 加載完成 @12/28 Add for Progress Spinner
         }
       });
