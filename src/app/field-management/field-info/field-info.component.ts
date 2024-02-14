@@ -2341,48 +2341,81 @@ export class FieldInfoComponent implements OnInit {
 // For Field Editing Setting @2024/01/11 Add ↑
 
 
-// For PM Parameter Setting @2024/02/04 Add ↓ ( 缺取得效能參數資訊 API、表單取值需改、缺 RADIO BUTTON 控制使用者選擇的量測類型 )
+// For PM Parameter Setting @2024/02/15 Update ↓ ( 缺 RADIO BUTTON 控制使用者選擇的量測類型 )
 
-  // 創建表單組，用於效能管理參數設定
+  PmFtpInfo: ForQueryOrUpdatePmFTPInfo = {} as ForQueryOrUpdatePmFTPInfo; // 用於儲存"效能參數"的設定資訊 @2024/02/15 Add
+
+  // 用於取得"效能管理參數設定"資訊 @2024/02/15 Add
+  getQueryPmFtpInfo() {
+    console.log('getQueryPmFtpInfo() - Start'); // 獲取效能參數設定資訊 - 啟動
+
+    if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
+      console.log('Fetching PM FTP Info from local files'); // 從本地文件獲取 PM FTP 資訊
+
+      this.PmFtpInfo = this.pmFtpInfo_LocalFiles.pmFtpInfo_local; // 賦值本地存儲的 PM FTP 資訊
+      console.log( 'PM FTP Info from Local:', this.PmFtpInfo );   // 輸出本地的 PM FTP 資訊
+
+    } else {
+      console.log( 'Fetching PM FTP Info from API '); // 從 API 獲取 PM FTP 資訊
+
+      this.API_Field.queryPmFtpInfo( this.fieldId ).subscribe({
+        next: ( res: ForQueryOrUpdatePmFTPInfo ) => {
+          console.log('Fetched PM FTP Info from API:', res); // 從 API 獲取的 PM FTP 資訊
+          this.PmFtpInfo = res; // 更新 PM FTP 資訊
+        },
+        error: ( error ) => {
+          console.error('Error fetching PM FTP Info:', error); // 獲取 PM FTP 資訊出錯
+        },
+        complete: () => {
+          console.log('PM FTP Info fetch completed'); // PM FTP 資訊獲取完成
+        }
+      });
+    }
+    console.log('getQueryPmFtpInfo() - End'); // 獲取效能參數設定資訊 - 結束
+  }
+
+  // 創建表單組，用於"效能管理參數設定"
   PMgmtParameterSetForm!: FormGroup;
-  createPMgmtParameterSetFormm() { // 默認值還未改 @02/04 Add
+  createPMgmtParameterSetFormm() {
     // 初始化表單控件
     this.PMgmtParameterSetForm = this.fb.group({
-                           pmIP: new FormControl( this.fieldInfo?.name || '' ),    // PM 伺服器 IP 位址，默認值為現有 IP 位址 或 空字串
-                     folderPath: new FormControl( this.fieldBounds?.north || '' ), // 資料夾路徑，默認值為現有 資料夾路徑 或 空字串
-                           pmID: new FormControl( this.fieldBounds?.south || '' ), // 基站登入 PM 伺服器帳號，默認值為現有 帳號 或 空字串
-                          pmKey: new FormControl( this.fieldBounds?.west || '' ),  // 基站登入 PM 伺服器密碼，默認值為現有 密碼 或 空字串
-      MeasurementInterval_pmint: new FormControl( this.fieldBounds?.east || '' ),  // PM 資料量測頻率(秒)，默認值為現有 量測頻率 或 空字串
-           UploadInterval_fmint: new FormControl( this.fieldInfo?.phone || '' )    // PM 資料上傳頻率(秒):，默認值為現有 上傳頻率 或 空字串
+                           pmIP: new FormControl( this.PmFtpInfo?.ftpip || '' ),       // PM 伺服器 IP 位址，默認值為現有 IP 位址 或 空字串
+                           pmID: new FormControl( this.PmFtpInfo?.ftpid || '' ),       // 基站登入 PM 伺服器帳號，默認值為現有 帳號 或 空字串
+                          pmKey: new FormControl( this.PmFtpInfo?.ftpkey || '' ),      // 基站登入 PM 伺服器密碼，默認值為現有 密碼 或 空字串
+                     folderPath: new FormControl( this.PmFtpInfo?.folderpath || '' ),  // 資料夾路徑，默認值為現有 資料夾路徑 或 空字串
+      MeasurementInterval_pmint: new FormControl( this.PmFtpInfo?.pmint || '' ),       // PM 資料量測頻率(秒)，默認值為現有 量測頻率 或 空字串
+           UploadInterval_fmint: new FormControl( this.PmFtpInfo?.fmint || '' )        // PM 資料上傳頻率(秒):，默認值為現有 上傳頻率 或 空字串
     });
   }
 
-  // 引用場域編輯視窗組件
+  // 引用"效能管理參數設定"視窗組件
   @ViewChild('PMgmtParameterSetWindow') PMgmtParameterSetWindow: any;
   PMgmtParameterSetWindowRef!: MatDialogRef<any>;
   PMgmtParameterSetFormValidated = false;
 
-  // 打開"效能管理參數設定"視窗 @2024/02/04 Add
+  // 打開"效能管理參數設定"視窗 @2024/02/15 Update
   openPMgmtParameterSetWindow() {
 
-    // 確保場域資訊和邊界資訊已獲取
-    if( this.fieldInfo && this.fieldBounds ) {
+    this.getQueryPmFtpInfo(); // 取得"效能管理參數設定"資訊
 
-      // 使用現有場域資訊和邊界資訊更新表單
-      this.PMgmtParameterSetForm.patchValue({ // 需調整為效能參數 @02/04 Add
-                             pmIP: this.fieldInfo.name,
-                       folderPath: this.fieldBounds.north,
-                             pmID: this.fieldBounds.south,
-                            pmKey: this.fieldBounds.west,
-        MeasurementInterval_pmint: this.fieldBounds.east,
-             UploadInterval_fmint: this.fieldInfo.phone
+    // 確保"效能參數"的設定資訊已獲取
+    if( this.PmFtpInfo ) {
+
+      // 使用現有"效能參數"填入表單
+      this.PMgmtParameterSetForm.patchValue({
+                             pmIP: this.PmFtpInfo.ftpip,
+                             pmID: this.PmFtpInfo.ftpid,
+                            pmKey: this.PmFtpInfo.ftpkey,
+                       folderPath: this.PmFtpInfo.folderpath,
+        MeasurementInterval_pmint: this.PmFtpInfo.pmint,
+             UploadInterval_fmint: this.PmFtpInfo.fmint
       });
     }
 
     // 表單驗證狀態重置
     this.PMgmtParameterSetFormValidated = false; 
 
-    // 打開 效能管理參數設定 視窗
+    // 打開"效能管理參數設定"視窗
     this.PMgmtParameterSetWindowRef = this.dialog.open( this.PMgmtParameterSetWindow, { 
           id: 'PMgmtParameterSetWindow',
           // 自定義視窗寬高設置
@@ -2398,7 +2431,40 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
-// For PM Parameter Setting @2024/02/04 Add ↑
+  // 點擊 PMgmt Parameter Setting 視窗的 Cancel 按鈕行為 @2024/02/15 Add
+  resetPMgmtParameterSetForm() {
+    console.log(`Set for PM Parameter has been cancelled.`);
+
+    this.PMgmtParameterSetWindowRef.close(); // 關閉"效能管理參數設定"視窗
+    this.PMgmtParameterSetForm.reset();      // 重置整個"效能管理參數設定"表單
+  }
+
+  // 用於控制 PMgmt Parameter Setting 確認視窗 @2024/02/15 Add
+  @ViewChild('confirmPMgmtParameterSetWindow') confirmPMgmtParameterSetWindow: any;
+  confirmPMgmtParameterSetWindow_Ref!: MatDialogRef<any>;
+  confirmPMgmtParameterSetWindow_Validated = false;
+
+  // 開啟確認視窗 - 效能管理參數設定 @2024/02/15 Add
+  openConfirmPMgmtParameterSetWindow() {
+    this.confirmPMgmtParameterSetWindow_Validated = false;
+    this.confirmPMgmtParameterSetWindow_Ref = this.dialog.open( this.confirmPMgmtParameterSetWindow, {
+      id: 'confirmPMgmtParameterSetWindow',
+      // width 和 height 可以根據需要設置或去掉
+      // width: '300px', 
+      // height: '200px'
+    });
+
+    // 訂閱對話框關閉後的事件
+    this.confirmPMgmtParameterSetWindow_Ref.afterClosed().subscribe(() => {
+      // 這裡可以添加當對話框關閉後的邏輯
+      this.confirmPMgmtParameterSetWindow_Validated = false;
+    });
+  }
+
+// For PM Parameter Setting @2024/02/15 Update ↑
+
+
+
 
 
 

@@ -775,61 +775,55 @@
 		</div>
 	</ng-template>
 	  
-	
-	<!-- Window of PM Parameter Setting @2024/02/04 Add -->
+
+	<!-- Window of PM Parameter Setting @2024/02/15 Update -->
 	<ng-template class="my-dialog-container" #PMgmtParameterSetWindow>
 		<div><h5>{{ languageService.i18n['field.configPMset'] }}</h5></div>
-		<div *ngIf="fieldInfo && fieldBounds">
+		<div *ngIf="PmFtpInfo">
 			<!-- Pm Ftp Infos -->
 			<span>
 				<form [formGroup]="PMgmtParameterSetForm">
 					<UL>
 						<li>
-							<label>{{ languageService.i18n['field.name'] }}</label>
+							<label>{{ languageService.i18n['field.pmIP'] }}</label>
 							<span>
-								<input type="text" formControlName="pmIP" placeholder="{{ fieldInfo.name }}"
+								<input type="text" formControlName="pmIP" placeholder="{{ PmFtpInfo?.ftpip }}"
 										class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmIP'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmIP'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 						<li>
-							<label>{{ languageService.i18n['field.northBound'] }}</label>
+							<label>{{ languageService.i18n['field.folderPath'] }}</label>
 							<span>
-								<input type="text" formControlName="folderPath" placeholder="{{ fieldBounds.north }}"
+								<input type="text" formControlName="folderPath" placeholder="{{ PmFtpInfo?.folderpath }}"
 										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['folderPath'].invalid?'required':'' }}">
-								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['folderPath'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 						<li>
-							<label>{{ languageService.i18n['field.southBound'] }}</label>
+							<label>{{ languageService.i18n['field.pmID'] }}</label>
 							<span>
-								<input type="text" formControlName="pmID" placeholder="{{ fieldBounds.south }}"
+								<input type="text" formControlName="pmID" placeholder="{{ PmFtpInfo?.ftpid }}"
 										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmID'].invalid?'required':'' }}">
-								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmID'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 						<li>
-							<label>{{ languageService.i18n['field.westBound'] }}</label>
+							<label>{{ languageService.i18n['field.pmKey'] }}</label>
 							<span>
-								<input type="text" formControlName="pmKey" placeholder="{{ fieldBounds.west }}"
+								<input type="password" formControlName="pmKey" placeholder="{{ PmFtpInfo?.ftpkey }}"
 										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmKey'].invalid?'required':'' }}">
-								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['pmKey'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 						<li>
-							<label>{{ languageService.i18n['field.eastBound'] }}</label>
+							<label>{{ languageService.i18n['field.MeasurementInterval_pmint'] }}</label>
 							<span>
-								<input type="text" formControlName="MeasurementInterval_pmint" placeholder="{{ fieldBounds.east }}"
+								<input type="text" formControlName="MeasurementInterval_pmint" placeholder="{{ PmFtpInfo?.pmint }}"
 										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].invalid?'required':'' }}">
-								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 						<li>
-							<label>{{ languageService.i18n['field.notificationNum'] }}</label>
+							<label>{{ languageService.i18n['field.UploadInterval_fmint'] }}</label>
 							<span>
-								<input type="text" formControlName="UploadInterval_fmint" placeholder="{{ fieldInfo.phone }}"
+								<input type="text" formControlName="UploadInterval_fmint" placeholder="{{ PmFtpInfo?.fmint }}"
 									class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['UploadInterval_fmint'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="PMgmtParameterSetForm.controls['UploadInterval_fmint'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 							</span>
 						</li>
 					</UL>
@@ -837,11 +831,29 @@
 			</span>
 		</div>
 		<div class="buttons">
-			<button type="button" (click)="openConfirmFieldEditWindow()" mat-dialog-close>
+			<button type="button" (click)="openConfirmPMgmtParameterSetWindow()" mat-dialog-close>
 				{{ languageService.i18n['confirm'] }}
 			</button>
-			<button type="button" (click)="resetFieldEditingForm( fieldName )" mat-dialog-close>
+			<button type="button" (click)="resetPMgmtParameterSetForm()" mat-dialog-close>
 				{{ languageService.i18n['cancel'] }}
 			</button>
+		</div>
+	</ng-template>
+
+	<!-- Confirm Window for PM Parameter Setting @2024/02/15 Add -->
+	<ng-template #confirmPMgmtParameterSetWindow>
+		<div>
+		<h5>{{ languageService.i18n['confirm'] }}</h5>
+		</div>  
+		<label class="label-centered">
+			{{ languageService.i18n['field.confirmPMgmtParameterSet'] }}
+		</label>
+		<div class="buttons buttons-centered">
+		<button type="button" mat-dialog-close>
+			{{ languageService.i18n['confirm'] }}
+		</button>
+		<button type="button" (click)="resetPMgmtParameterSetForm()" mat-dialog-close>
+			{{ languageService.i18n['cancel'] }}
+		</button>
 		</div>
 	</ng-template>

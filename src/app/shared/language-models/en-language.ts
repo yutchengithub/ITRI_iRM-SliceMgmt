@@ -129,7 +129,16 @@ export const Enlanguage = {
   'field.preview':'Preview',                        // @2024/02/04 Add
   'field.indoorMapNone':'No indoor map available',  // @2024/01/18 Add
   'field.DeleteindoorMap':'Delete the indoor map',  // @2024/01/18 Add
-  'field.configPMset':'PM Parameter Setting',       // @12/12 Add
+
+  'field.configPMset':'PM Parameter Setting',  // @12/12 Add
+  'field.pmIP': 'PM Server IP Address',        // @2024/02/15 Add
+  'field.folderPath': 'Folder Path',           // @2024/02/15 Add
+  'field.pmID': 'Username',                    // @2024/02/15 Add
+  'field.pmKey': 'Password',                   // @2024/02/15 Add
+  'field.MeasurementInterval_pmint': 'Measurement Interval (s)',  // @2024/02/15 Add
+  'field.UploadInterval_fmint': 'Upload Interval (s)',            // @2024/02/15 Add
+  'field.confirmPMgmtParameterSet': 'Apply Performance Management Parameter changes?' ,  // @2024/02/15 Add
+
   'field.report':'Field Reports',                   // @12/12 Add
   'field.reportPM':'Performance (PM)',              // @12/12 Add
   'field.reportFM':'Alarms (FM)',                   // @12/12 Add

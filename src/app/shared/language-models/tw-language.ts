@@ -127,8 +127,17 @@ export const TwLanguage = {
   'field.indoorMapNone':'未有室內地圖',        // @2024/01/18 Add
   'field.indoorMapNotUploaded': '室內地圖尚未上傳',      // @2024/01/18 Update
   'field.DeleteindoorMap':'刪除該室內地圖',              // @2024/01/18 Add
-  'field.confirmDeleteindoorMap':'確定刪除該室內地圖?',   // @2024/01/19 Add
-  'field.configPMset':'效能管理參數設定',            // @12/12 Add 
+  'field.confirmDeleteindoorMap':'確定刪除該室內地圖？',  // @2024/01/19 Add
+
+  'field.configPMset':'效能管理參數設定',  // @12/12 Add 
+  'field.pmIP': 'PM伺服器IP位址',         // @2024/02/15 Add
+  'field.folderPath': '資料夾路徑',       // @2024/02/15 Add
+  'field.pmID': '使用者名稱',             // @2024/02/15 Add
+  'field.pmKey': '密碼',                 // @2024/02/15 Add
+  'field.MeasurementInterval_pmint': 'PM資料量測頻率(秒)',     // @2024/02/15 Add
+  'field.UploadInterval_fmint': 'PM資料上傳頻率(秒)',          // @2024/02/15 Add
+  'field.confirmPMgmtParameterSet': '應用效能管理參數變更？' ,  // @2024/02/15 Add
+  
   'field.report':'場域報表',                        // @12/12 Add
   'field.reportPM':'場域效能 (PM)',                 // @12/12 Add
   'field.reportFM':'告警資訊 (FM)',                 // @12/12 Add
