@@ -57,6 +57,7 @@ export const Enlanguage = {
   'field.name':'Field Name',
   'field.bsNum':'Number of BSs',
   'field.view':'View',
+  'field.viewDetail':'Details',
   'field.alarm':'Field Alarm',
   'field.snapshot':'Snapshot',
   'field.delTitle':'Delete',
@@ -124,7 +125,7 @@ export const Enlanguage = {
   
   'field.indoorMapUpload':'Upload Indoor Map',      // @2024/01/18 Update
   'field.indoorMapNotUploaded': 'Indoor map not yet uploaded',      // @2024/01/18 Update
-  'field.confirmDeleteindoorMap':'Sure to remove the indoor map?',  // @2024/01/19 Add
+  'field.confirmDeleteindoorMap':'Sure to remove the indoor map ?',  // @2024/01/19 Add
   'field.indoorMap':'Indoor Map',                   // @2024/01/18 Add
   'field.preview':'Preview',                        // @2024/02/04 Add
   'field.indoorMapNone':'No indoor map available',  // @2024/01/18 Add
@@ -137,7 +138,7 @@ export const Enlanguage = {
   'field.pmKey': 'Password',                   // @2024/02/15 Add
   'field.MeasurementInterval_pmint': 'Measurement Interval (s)',  // @2024/02/15 Add
   'field.UploadInterval_fmint': 'Upload Interval (s)',            // @2024/02/15 Add
-  'field.confirmPMgmtParameterSet': 'Apply Performance Management Parameter changes?' ,  // @2024/02/15 Add
+  'field.confirmPMgmtParameterSet': 'Apply Performance Management Parameter changes ?' ,  // @2024/02/15 Add
 
   'field.report':'Field Reports',                   // @12/12 Add
   'field.reportPM':'Performance (PM)',              // @12/12 Add

@@ -4,7 +4,8 @@
 		<button (click)="back()">
 		  <span class="material-icons">arrow_back</span>Back
 		</button>
-		<span>{{languageService.i18n['field.info']}} – {{fieldName}}</span>
+		<!-- <span>{{languageService.i18n['field.info']}} – {{fieldName}}</span> -->
+		<span>{{ fieldName }}</span>
 		<!-- 按鈕容器，根據 showMapModel 的值顯示或隱藏按鈕 -->
 		<span class="fieldMap-button-container">
 			<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->

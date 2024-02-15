@@ -56,6 +56,7 @@ export const TwLanguage = {
   'field.bsNum':'基站數量',
   'field.alarm':'場域告警',
   'field.view':'檢視',
+  'field.viewDetail':'詳細',
   'field.snapshot':'快照',
   'field.delTitle':'刪除',
   'field.delItem':'刪除此場域',
