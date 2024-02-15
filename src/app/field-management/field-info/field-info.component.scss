@@ -69,6 +69,13 @@ h5 .mat-icon {
   height: 100px; // 進度調的高度
 }
 
+
+// radio button of PM Parameter Setting @2024/02/16 Add
+.mat-radio-button ~ .mat-radio-button {
+  margin-left: 15px;
+}
+
+
 .center {
   text-align: center;
 }
@@ -521,10 +528,10 @@ table {
   flex-direction: row;
 }
 // @12/12 Update by yuchen
-#ColorBar .RSRP_values span {
-/*   margin-right: 129.5px;   // 在值之間添加空間
-  display: inline-block;   // 使 span 行內顯示
- */}
+// #ColorBar .RSRP_values span {
+//    margin-right: 129.5px;   // 在值之間添加空間
+//   display: inline-block;   // 使 span 行內顯示
+// }
 
 // @12/12 Update by yuchen
 #ColorBar .SINR_values {
@@ -538,10 +545,10 @@ table {
 }
 
 // @12/12 Update by yuchen
-#ColorBar .SINR_values span {
-/*   margin-right: 130pt; // 在值之間添加空間
-  display: inline-block; // 使 span 行內顯示
- */}
+// #ColorBar .SINR_values span {
+//   margin-right: 130pt; // 在值之間添加空間
+//   display: inline-block; // 使 span 行內顯示
+// }
 
 .greenLight {
   display: inline-block;

@@ -292,6 +292,22 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
   background-color: #ff5722;
 }
 
+// Radio button 外框 - 未被選擇時的顏色 @2024/02/16 Add
+.mat-radio-button .mat-radio-outer-circle {
+  border-color: #bcd3e9; 
+}
+
+// Radio button 內圈 - 被選時的配色 @2024/02/16 Add
+.mat-radio-button.mat-accent .mat-radio-inner-circle,
+.mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
+  background-color: #bcd3e9;
+}
+
+// Radio button 外框 - 被選擇時的顏色 @2024/02/16 Add
+.mat-radio-button.mat-accent .mat-radio-outer-circle {
+  border-color: #bcd3e9 !important;
+}
+
 
 
 // label of mat-steper @2024/02/01 Add

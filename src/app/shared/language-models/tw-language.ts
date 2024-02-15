@@ -137,6 +137,10 @@ export const TwLanguage = {
   'field.pmKey': '密碼',                 // @2024/02/15 Add
   'field.MeasurementInterval_pmint': 'PM資料量測頻率(秒)',     // @2024/02/15 Add
   'field.UploadInterval_fmint': 'PM資料上傳頻率(秒)',          // @2024/02/15 Add
+  'field.measurementType': '量測類型',  // @2024/02/16 Add
+  'field.off': '關閉',                  // @2024/02/16 Add
+  'field.default': '預設',              // @2024/02/16 Add
+  'field.selfDefined': '自定義',        // @2024/02/16 Add
   'field.confirmPMgmtParameterSet': '應用效能管理參數變更？' ,  // @2024/02/15 Add
   
   'field.report':'場域報表',                        // @12/12 Add

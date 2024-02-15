@@ -159,7 +159,7 @@ export class FieldInfoComponent implements OnInit {
     // 建立並初始化各功能所需表單
     this.createBSInfoForm();              // For updateBs API @2024/01/05 Add 
     this.createFieldInfoForm();           // For Field Info in Field Editing  @2024/01/17 Add
-    this.createPMgmtParameterSetFormm();  // For Pm Ftp Info in PM Parameter Setting  @2024/02/04 Add
+    this.createPMgmtParameterSetForm();   // For Pm Ftp Info in PM Parameter Setting  @2024/02/04 Add
   }
 
   // 頁面初始化
@@ -228,7 +228,7 @@ export class FieldInfoComponent implements OnInit {
   // 設置地圖的初始縮放級別
   //zoom = 16;
 
-  // 定義地圖的其他配置選項，包括樣式，來隱藏默認的地標
+  // 定義地圖的其他配置選項，包括樣式，來隱藏預設的地標
   mapOptions: google.maps.MapOptions = {
     //center:{ lat: 0, lng: 0 }
     mapTypeId: 'roadmap',            // 設置地圖類型為道路地圖
@@ -1146,7 +1146,7 @@ export class FieldInfoComponent implements OnInit {
       nci: neighborItem.nci,
       // 從 neighborItem 取出pci
       pci: neighborItem.pci
-    })) || []; // 如果 bsInfo.anr 是 undefined，則 neighbors 默認為空數組
+    })) || []; // 如果 bsInfo.anr 是 undefined，則 neighbors 預設為空數組
 
     // 創建一個 SimplifiedBSInfo 類型的對象，並用 bsInfo 中的數據填充
     const simplified: SimplifiedBSInfo = {
@@ -1211,7 +1211,7 @@ export class FieldInfoComponent implements OnInit {
         'plmn-id': neighborItem['plmn-id'], // 提取鄰居的 PLMN ID 訊息
         nci: neighborItem.nci,              // 提取鄰居的 NCI 訊息
         pci: neighborItem.pci               // 提取鄰居的 PCI 訊息
-      })) || []; // 如果對應的 ANR 訊息不存在，則使用空數組作為默認值
+      })) || []; // 如果對應的 ANR 訊息不存在，則使用空數組作為預設值
 
       // 創建一個新的 SimplifiedBSInfo 對象，包含從子基站訊息和 ANR 訊息中提取的數據
       return {
@@ -1280,12 +1280,12 @@ export class FieldInfoComponent implements OnInit {
         // 符合就選擇分布式基站的非選中圖標
         iconName = (bsInfoStatus === 1) ? 'dist_gnb_offline_nonselected.png' : 'dist_gnb_online_nonselected.png';
         
-      } else { // 其他情況選擇默認圖標
+      } else { // 其他情況選擇預設圖標
 
         if (bsInfoBSType === 2 && bsInfoStatus === 1) {
-          iconName = 'dist_gnb_offline_default.png'; // 分布式基站離線的默認圖標
+          iconName = 'dist_gnb_offline_default.png'; // 分布式基站離線的預設圖標
         } else if (bsInfoBSType === 2 && bsInfoStatus === 2) {
-          iconName = 'dist_gnb_online_default.png';  // 分布式基站在線的默認圖標
+          iconName = 'dist_gnb_online_default.png';  // 分布式基站在線的預設圖標
         } else if (bsInfoBSType === 1 && bsInfoStatus === 1) {
           iconName = 'gnb_offline_nonselected.png';  // 通用基站離線的非選中圖標
         } else if (bsInfoBSType === 1 && bsInfoStatus === 2) {
@@ -1353,7 +1353,7 @@ export class FieldInfoComponent implements OnInit {
       // 如果解析出錯，則在控制台打印錯誤訊息
       console.error( 'Error parsing position:', e );
 
-      // 返回一個默認的 LatLngLiteral 對象，防止程序崩潰
+      // 返回一個預設的 LatLngLiteral 對象，防止程序崩潰
       return { lat: 0, lng: 0 };
     }
   }
@@ -1363,7 +1363,7 @@ export class FieldInfoComponent implements OnInit {
   // 用於從當前顯示基站資訊中獲取轉換後的位置對象
   get displayBsInfoPosition(): google.maps.LatLngLiteral {
 
-    // 如果 displayBsInfo 存在，則調用 parsePosition 方法進行轉換，否則返回默認值
+    // 如果 displayBsInfo 存在，則調用 parsePosition 方法進行轉換，否則返回預設值
     return this.displayBsInfo ? this.parsePosition(this.displayBsInfo.position) : { lat: 0, lng: 0 };
   }
 
@@ -1427,7 +1427,7 @@ export class FieldInfoComponent implements OnInit {
   // @2024/02/06 Add
   // 用於獲取 CRITICAL 的告警數量
   getCriticalAlarmCount(): string {
-    // 從 fieldInfo 對象中獲取 alarmCriticalNum 屬性的值，如果 fieldInfo 為 undefined，則默認值為 0
+    // 從 fieldInfo 對象中獲取 alarmCriticalNum 屬性的值，如果 fieldInfo 為 undefined，則預設值為 0
     const criticalCount = this.fieldInfo?.alarmCriticalNum ?? 0;
     // 如果 CRITICAL 告警的數量大於 99，則返回 '99+'，否則返回其數量的字符串表示
     return criticalCount > 99 ? '99+' : criticalCount.toString();
@@ -1756,12 +1756,12 @@ export class FieldInfoComponent implements OnInit {
   createFieldInfoForm() {
     // 初始化表單控件
     this.fieldEditForm = this.fb.group({
-      fieldName: new FormControl(this.fieldInfo?.name || ''),           // 場域名稱，默認值為現有場域名稱或空字串
-      fieldBound_North: new FormControl(this.fieldBounds?.north || ''), // 北邊界，默認值為現有北邊界或空字串
-      fieldBound_South: new FormControl(this.fieldBounds?.south || ''), // 南邊界，默認值為現有南邊界或空字串
-      fieldBound_West: new FormControl(this.fieldBounds?.west || ''),   // 西邊界，默認值為現有西邊界或空字串
-      fieldBound_East: new FormControl(this.fieldBounds?.east || ''),   // 東邊界，默認值為現有東邊界或空字串
-      phoneNumber: new FormControl(this.fieldInfo?.phone || '')         // 聯絡電話，默認值為現有聯絡電話或空字串
+      fieldName: new FormControl(this.fieldInfo?.name || ''),           // 場域名稱，預設值為現有場域名稱或空字串
+      fieldBound_North: new FormControl(this.fieldBounds?.north || ''), // 北邊界，預設值為現有北邊界或空字串
+      fieldBound_South: new FormControl(this.fieldBounds?.south || ''), // 南邊界，預設值為現有南邊界或空字串
+      fieldBound_West: new FormControl(this.fieldBounds?.west || ''),   // 西邊界，預設值為現有西邊界或空字串
+      fieldBound_East: new FormControl(this.fieldBounds?.east || ''),   // 東邊界，預設值為現有東邊界或空字串
+      phoneNumber: new FormControl(this.fieldInfo?.phone || '')         // 聯絡電話，預設值為現有聯絡電話或空字串
     });
   }
 
@@ -2341,11 +2341,13 @@ export class FieldInfoComponent implements OnInit {
 // For Field Editing Setting @2024/01/11 Add ↑
 
 
-// For PM Parameter Setting @2024/02/15 Update ↓ ( 缺 RADIO BUTTON 控制使用者選擇的量測類型 )
+// For PM Parameter Setting @2024/02/16 Update ↓ ( 缺 RADIO BUTTON 控制使用者選擇的量測類型 )
 
   PmFtpInfo: ForQueryOrUpdatePmFTPInfo = {} as ForQueryOrUpdatePmFTPInfo; // 用於儲存"效能參數"的設定資訊 @2024/02/15 Add
 
-  // 用於取得"效能管理參數設定"資訊 @2024/02/15 Add
+  measurementType: string = ''; // 用於控制"量測類型"的選擇，預設為 "" ( off ) @2024/02/16 Add
+
+  // 用於取得"效能管理參數設定"資訊 @2024/02/16 Update
   getQueryPmFtpInfo() {
     console.log('getQueryPmFtpInfo() - Start'); // 獲取效能參數設定資訊 - 啟動
 
@@ -2355,6 +2357,12 @@ export class FieldInfoComponent implements OnInit {
       this.PmFtpInfo = this.pmFtpInfo_LocalFiles.pmFtpInfo_local; // 賦值本地存儲的 PM FTP 資訊
       console.log( 'PM FTP Info from Local:', this.PmFtpInfo );   // 輸出本地的 PM FTP 資訊
 
+      // @2024/02/16 Add
+      // 根據 PmFtpInfo.metric 設置 measurementType
+      if ( this.PmFtpInfo ) {
+        this.measurementType = this.PmFtpInfo.metric;
+      }
+
     } else {
       console.log( 'Fetching PM FTP Info from API '); // 從 API 獲取 PM FTP 資訊
 
@@ -2362,6 +2370,12 @@ export class FieldInfoComponent implements OnInit {
         next: ( res: ForQueryOrUpdatePmFTPInfo ) => {
           console.log('Fetched PM FTP Info from API:', res); // 從 API 獲取的 PM FTP 資訊
           this.PmFtpInfo = res; // 更新 PM FTP 資訊
+
+          // @2024/02/16 Add
+          // 根據 PmFtpInfo.metric 設置 measurementType
+          if ( this.PmFtpInfo ) {
+            this.measurementType = this.PmFtpInfo.metric;
+          }
         },
         error: ( error ) => {
           console.error('Error fetching PM FTP Info:', error); // 獲取 PM FTP 資訊出錯
@@ -2386,16 +2400,19 @@ export class FieldInfoComponent implements OnInit {
 
   // 創建表單組，用於"效能管理參數設定"
   PMgmtParameterSetForm!: FormGroup;
-  createPMgmtParameterSetFormm() {
+
+  // @2024/02/16 Update - 新增"量測類型"欄位的表單控件
+  createPMgmtParameterSetForm() {
     // 初始化表單控件
     this.PMgmtParameterSetForm = this.fb.group({
-                           pmIP: new FormControl( this.PmFtpInfo?.ftpip || '' ),       // PM 伺服器 IP 位址，默認值為現有 IP 位址 或 空字串
-                           pmID: new FormControl( this.PmFtpInfo?.ftpid || '' ),       // 基站登入 PM 伺服器帳號，默認值為現有 帳號 或 空字串
-                          pmKey: new FormControl( this.PmFtpInfo?.ftpkey || '' ),      // 基站登入 PM 伺服器密碼，默認值為現有 密碼 或 空字串
-                     folderPath: new FormControl( this.PmFtpInfo?.folderpath || '' ),  // 資料夾路徑，默認值為現有 資料夾路徑 或 空字串
-      MeasurementInterval_pmint: new FormControl( this.PmFtpInfo?.pmint || '' ),       // PM 資料量測頻率(秒)，默認值為現有 量測頻率 或 空字串
-           UploadInterval_fmint: new FormControl( this.PmFtpInfo?.fmint || '' )        // PM 資料上傳頻率(秒):，默認值為現有 上傳頻率 或 空字串
-    });
+                           pmIP: new FormControl( this.PmFtpInfo?.ftpip || '' ),       // PM 伺服器 IP 位址，預設值為現有 IP 位址 或 空字串
+                           pmID: new FormControl( this.PmFtpInfo?.ftpid || '' ),       // 基站登入 PM 伺服器帳號，預設值為現有 帳號 或 空字串
+                          pmKey: new FormControl( this.PmFtpInfo?.ftpkey || '' ),      // 基站登入 PM 伺服器密碼，預設值為現有 密碼 或 空字串
+                     folderPath: new FormControl( this.PmFtpInfo?.folderpath || '' ),  // 資料夾路徑，預設值為現有 資料夾路徑 或 空字串
+      MeasurementInterval_pmint: new FormControl( this.PmFtpInfo?.pmint || '' ),       // PM 資料量測頻率(秒)，預設值為現有 量測頻率 或 空字串
+           UploadInterval_fmint: new FormControl( this.PmFtpInfo?.fmint || '' ),       // PM 資料上傳頻率(秒):，預設值為現有 上傳頻率 或 空字串
+                measurementType: new FormControl( this.PmFtpInfo?.metric || '' )       // "量測類型"欄位的表單控件，預設值為現有 量測類型 或 空字串 ( 表 off ) @2024/02/16 Add
+      });
   }
 
   // 引用"效能管理參數設定"視窗組件
@@ -2418,7 +2435,8 @@ export class FieldInfoComponent implements OnInit {
                             pmKey: this.PmFtpInfo.ftpkey,
                        folderPath: this.PmFtpInfo.folderpath,
         MeasurementInterval_pmint: this.PmFtpInfo.pmint,
-             UploadInterval_fmint: this.PmFtpInfo.fmint
+             UploadInterval_fmint: this.PmFtpInfo.fmint,
+                  measurementType: this.PmFtpInfo.metric // "量測類型"欄位 @2024/02/16 Add
       });
     }
 
@@ -2471,7 +2489,7 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
-// For PM Parameter Setting @2024/02/15 Update ↑
+// For PM Parameter Setting @2024/02/16 Update ↑
 
 
 

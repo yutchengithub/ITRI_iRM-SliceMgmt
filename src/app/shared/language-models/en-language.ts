@@ -138,6 +138,10 @@ export const Enlanguage = {
   'field.pmKey': 'Password',                   // @2024/02/15 Add
   'field.MeasurementInterval_pmint': 'Measurement Interval (s)',  // @2024/02/15 Add
   'field.UploadInterval_fmint': 'Upload Interval (s)',            // @2024/02/15 Add
+  'field.measurementType': 'Measurement Type',  // @2024/02/16 Add
+  'field.off': 'Off',                           // @2024/02/16 Add
+  'field.default': 'Default',                   // @2024/02/16 Add
+  'field.selfDefined': 'Self-defined',          // @2024/02/16 Add
   'field.confirmPMgmtParameterSet': 'Apply Performance Management Parameter changes ?' ,  // @2024/02/15 Add
 
   'field.report':'Field Reports',                   // @12/12 Add
