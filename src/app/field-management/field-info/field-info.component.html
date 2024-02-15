@@ -837,7 +837,7 @@
 						<li> <!-- "量測類型"欄位 @2024/02/16 Add -->
 							<label>{{ languageService.i18n['field.measurementType'] }}</label>
 							<span>
-								<mat-radio-group formControlName="measurementType">
+								<mat-radio-group formControlName="measurementType"  (change)="logClickMeasurementType($event.value)" >
 									<mat-radio-button value="">{{ languageService.i18n['field.off'] }}</mat-radio-button>
 									<mat-radio-button value="default">{{ languageService.i18n['field.default'] }}</mat-radio-button>
 									<mat-radio-button value="selfDefined">{{ languageService.i18n['field.selfDefined'] }}</mat-radio-button>

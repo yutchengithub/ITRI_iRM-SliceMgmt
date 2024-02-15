@@ -2397,6 +2397,12 @@ export class FieldInfoComponent implements OnInit {
     this.hidePassword = !this.hidePassword;
   }
 
+  // 用於記錄 Radio Button 選擇的"量測類型" @2024/02/16 Add
+  logClickMeasurementType( value: string ) {
+    this.measurementType = value;
+    console.log( 'Selected Measurement Type:', this.measurementType );
+    // 其他邏輯...
+  }
 
   // 創建表單組，用於"效能管理參數設定"
   PMgmtParameterSetForm!: FormGroup;
