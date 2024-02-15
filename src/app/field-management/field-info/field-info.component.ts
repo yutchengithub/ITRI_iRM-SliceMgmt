@@ -2374,6 +2374,16 @@ export class FieldInfoComponent implements OnInit {
     console.log('getQueryPmFtpInfo() - End'); // 獲取效能參數設定資訊 - 結束
   }
 
+  // 用於控制密碼顯示的狀態( 預設為隱藏 ) @2024/02/15 Add
+  hidePassword: boolean = true;
+
+  // 用於控制是否顯示密碼 @2024/02/15 Add
+  togglePasswordVisibility(): void {
+    // 切換 hidePassword 狀態來顯示或隱藏密碼
+    this.hidePassword = !this.hidePassword;
+  }
+
+
   // 創建表單組，用於"效能管理參數設定"
   PMgmtParameterSetForm!: FormGroup;
   createPMgmtParameterSetFormm() {

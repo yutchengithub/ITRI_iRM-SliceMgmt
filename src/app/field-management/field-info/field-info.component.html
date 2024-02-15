@@ -805,13 +805,20 @@
 										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmID'].invalid?'required':'' }}">
 							</span>
 						</li>
-						<li>
+						<li> <!-- @2024/02/15 Add - 加入密碼隱藏/顯示功能 -->
 							<label>{{ languageService.i18n['field.pmKey'] }}</label>
 							<span>
-								<input type="password" formControlName="pmKey" placeholder="{{ PmFtpInfo?.ftpkey }}"
-										class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmKey'].invalid?'required':'' }}">
+							  <!-- 使用 span 標籤來群組輸入框和圖標 -->
+							  <input [type]="hidePassword ? 'password' : 'text'" formControlName="pmKey" [placeholder]="PmFtpInfo?.ftpkey"
+									 [class]="PMgmtParameterSetFormValidated && PMgmtParameterSetForm.controls['pmKey'].invalid ? 'required' : ''">
+							  <!-- 密碼輸入框，輸入類型根據 hidePassword 變數來切換 password 和 text -->
+							  <i class="material-icons" (click)="togglePasswordVisibility()">
+								<!-- 點擊可以切換密碼可見性的圖標 -->
+								{{ hidePassword ? 'visibility_off' : 'visibility' }}
+								<!-- 根據 hidePassword 屬性切換圖標 -->
+							  </i>
 							</span>
-						</li>
+						</li> 
 						<li>
 							<label>{{ languageService.i18n['field.MeasurementInterval_pmint'] }}</label>
 							<span>
