@@ -2357,11 +2357,19 @@ export class FieldInfoComponent implements OnInit {
       this.PmFtpInfo = this.pmFtpInfo_LocalFiles.pmFtpInfo_local; // 賦值本地存儲的 PM FTP 資訊
       console.log( 'PM FTP Info from Local:', this.PmFtpInfo );   // 輸出本地的 PM FTP 資訊
 
-      // @2024/02/16 Add
-      // 根據 PmFtpInfo.metric 設置 measurementType
-      if ( this.PmFtpInfo ) {
-        this.measurementType = this.PmFtpInfo.metric;
-      }
+      // @2024/02/20 Add
+      if ( this.PmFtpInfo ) { // 確保"效能參數"的設定資訊已獲取
+
+        this.PMgmtParameterSetForm.patchValue({ // 使用現有"效能參數"填入表單
+          pmIP: this.PmFtpInfo.ftpip,
+          pmID: this.PmFtpInfo.ftpid,
+          pmKey: this.PmFtpInfo.ftpkey,
+          folderPath: this.PmFtpInfo.folderpath,
+          MeasurementInterval_pmint: this.PmFtpInfo.pmint,
+          UploadInterval_fmint: this.PmFtpInfo.fmint,
+          measurementType: this.PmFtpInfo.metric      // "量測類型"欄位 
+        });
+      }  
 
     } else {
       console.log( 'Fetching PM FTP Info from API '); // 從 API 獲取 PM FTP 資訊
@@ -2371,11 +2379,20 @@ export class FieldInfoComponent implements OnInit {
           console.log('Fetched PM FTP Info from API:', res); // 從 API 獲取的 PM FTP 資訊
           this.PmFtpInfo = res; // 更新 PM FTP 資訊
 
-          // @2024/02/16 Add
-          // 根據 PmFtpInfo.metric 設置 measurementType
-          if ( this.PmFtpInfo ) {
-            this.measurementType = this.PmFtpInfo.metric;
-          }
+          // @2024/02/20 Add
+          if ( this.PmFtpInfo ) { // 確保"效能參數"的設定資訊已獲取
+
+            // 使用現有"效能參數"填入表單
+            this.PMgmtParameterSetForm.patchValue({
+              pmIP: this.PmFtpInfo.ftpip,
+              pmID: this.PmFtpInfo.ftpid,
+              pmKey: this.PmFtpInfo.ftpkey,
+              folderPath: this.PmFtpInfo.folderpath,
+              MeasurementInterval_pmint: this.PmFtpInfo.pmint,
+              UploadInterval_fmint: this.PmFtpInfo.fmint,
+              measurementType: this.PmFtpInfo.metric      // "量測類型"欄位 
+            });
+          }     
         },
         error: ( error ) => {
           console.error('Error fetching PM FTP Info:', error); // 獲取 PM FTP 資訊出錯
