@@ -2347,7 +2347,7 @@ export class FieldInfoComponent implements OnInit {
 
   measurementType: string = ''; // 用於控制"量測類型"的選擇，預設為 "" ( off ) @2024/02/16 Add
 
-  // 用於取得"效能管理參數設定"資訊 @2024/02/16 Update
+  // 用於取得"效能管理參數設定"資訊 @2024/02/20 Update
   getQueryPmFtpInfo() {
     console.log('getQueryPmFtpInfo() - Start'); // 獲取效能參數設定資訊 - 啟動
 
@@ -2398,7 +2398,7 @@ export class FieldInfoComponent implements OnInit {
           console.error('Error fetching PM FTP Info:', error); // 獲取 PM FTP 資訊出錯
         },
         complete: () => {
-          console.log('PM FTP Info fetch completed'); // PM FTP 資訊獲取完成
+          console.log('PM FTP Info fetch completed');          // PM FTP 資訊獲取完成
         }
       });
     }
