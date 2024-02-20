@@ -1,6 +1,6 @@
 
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from './../../shared/common.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -2405,22 +2405,6 @@ export class FieldInfoComponent implements OnInit {
     console.log('getQueryPmFtpInfo() - End'); // 獲取效能參數設定資訊 - 結束
   }
 
-  // 用於控制密碼顯示的狀態( 預設為隱藏 ) @2024/02/15 Add
-  hidePassword: boolean = true;
-
-  // 用於控制是否顯示密碼 @2024/02/15 Add
-  togglePasswordVisibility(): void {
-    // 切換 hidePassword 狀態來顯示或隱藏密碼
-    this.hidePassword = !this.hidePassword;
-  }
-
-  // 用於記錄 Radio Button 選擇的"量測類型" @2024/02/16 Add
-  logClickMeasurementType( value: string ) {
-    this.measurementType = value;
-    console.log( 'Selected Measurement Type:', this.measurementType );
-    // 其他邏輯...
-  }
-
   // 創建表單組，用於"效能管理參數設定"
   PMgmtParameterSetForm!: FormGroup;
 
@@ -2434,8 +2418,60 @@ export class FieldInfoComponent implements OnInit {
                      folderPath: new FormControl( this.PmFtpInfo?.folderpath || '' ),  // 資料夾路徑，預設值為現有 資料夾路徑 或 空字串
       MeasurementInterval_pmint: new FormControl( this.PmFtpInfo?.pmint || '' ),       // PM 資料量測頻率(秒)，預設值為現有 量測頻率 或 空字串
            UploadInterval_fmint: new FormControl( this.PmFtpInfo?.fmint || '' ),       // PM 資料上傳頻率(秒):，預設值為現有 上傳頻率 或 空字串
-                measurementType: new FormControl( this.PmFtpInfo?.metric || '' )       // "量測類型"欄位的表單控件，預設值為現有 量測類型 或 空字串 ( 表 off ) @2024/02/16 Add
-      });
+                measurementType: new FormControl( this.PmFtpInfo?.metric || '' ),      // "量測類型"欄位的表單控件，預設值為現有 量測類型 或 空字串 ( 表 off ) @2024/02/16 Add
+               customParameters: new FormArray([]),                                    // 自定義參數的表單數組   為自定義參數添加一個 FormArray @2024/02/20 Add
+    });
+  }
+
+  // 用於控制密碼顯示的狀態( 預設為隱藏 ) @2024/02/15 Add
+  hidePassword: boolean = true;
+
+  // 用於控制是否顯示密碼 @2024/02/15 Add
+  togglePasswordVisibility(): void {
+    // 切換 hidePassword 狀態來顯示或隱藏密碼
+    this.hidePassword = !this.hidePassword;
+  }
+
+  // 用於記錄 Radio Button 選擇的"量測類型" @2024/02/20 Update
+  logClickMeasurementType( value: string ) {
+    this.measurementType = value;
+
+    if (value === "selfDefined") {
+      // 如果還沒有添加任何自定義參數，則添加一個新的輸入欄位
+      if (this.customParameters.length === 0) {
+        this.addCustomParameterInput();
+      }
+    } else {
+      // 如果不是 selfDefined 選項，清空所有自定義參數輸入欄位
+      while (this.customParameters.length !== 0) {
+        this.removeCustomParameterInput(0);
+      }
+    }
+
+    if( this.measurementType === "" ){
+      console.log( 'Selected Measurement Type: Off' );
+    } else {
+      console.log( 'Selected Measurement Type:', this.measurementType );
+    }
+    
+    // 其他邏輯...
+  }
+
+  // 當選擇 'selfDefined' 選項時調用此方法
+  addCustomParameterInput() {
+    const customParameters = this.PMgmtParameterSetForm.get('customParameters') as FormArray;
+    customParameters.push(new FormControl('', Validators.required));
+  }
+
+  // 調用此方法以刪除自定義參數輸入
+  removeCustomParameterInput(index: number) {
+    const customParameters = this.PMgmtParameterSetForm.get('customParameters') as FormArray;
+    customParameters.removeAt(index);
+  }
+  
+  // 確保您有一個 getter 來獲取自定義參數的 FormArray
+  get customParameters(): FormArray {
+    return this.PMgmtParameterSetForm.get('customParameters') as FormArray;
   }
 
   // 引用"效能管理參數設定"視窗組件
@@ -2480,7 +2516,6 @@ export class FieldInfoComponent implements OnInit {
     });
 
   }
-
 
   // 點擊 PMgmt Parameter Setting 視窗的 Cancel 按鈕行為 @2024/02/15 Add
   resetPMgmtParameterSetForm() {

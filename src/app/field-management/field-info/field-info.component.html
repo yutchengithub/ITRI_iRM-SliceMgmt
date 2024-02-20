@@ -834,15 +834,32 @@
 									class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['UploadInterval_fmint'].invalid?'required':''}}">
 							</span>
 						</li>
-						<li> <!-- "量測類型"欄位 @2024/02/16 Add -->
+						<li> 
+							<!-- "量測類型"欄位 @2024/02/16 Add -->
 							<label>{{ languageService.i18n['field.measurementType'] }}</label>
 							<span>
+								<!-- "量測類型"欄位的 Radio Buttons -->
 								<mat-radio-group formControlName="measurementType"  (change)="logClickMeasurementType($event.value)" >
 									<mat-radio-button value="">{{ languageService.i18n['field.off'] }}</mat-radio-button>
 									<mat-radio-button value="default">{{ languageService.i18n['field.default'] }}</mat-radio-button>
 									<mat-radio-button value="selfDefined">{{ languageService.i18n['field.selfDefined'] }}</mat-radio-button>
 								</mat-radio-group>
 							</span>
+
+							<!-- 自定義參數輸入欄位，只有當 'selfDefined' 被選擇時才顯示 @2024/02/20 Add -->
+							<div *ngIf="measurementType === 'selfDefined'">
+								<div formArrayName="customParameters">
+									<!-- 您也可以添加一個按鈕來添加新的自定義參數欄位 -->
+									<!-- <button type="button" (click)="addCustomParameterInput()">{{ languageService.i18n['field.add'] }}</button> -->
+									<button type="button" (click)="addCustomParameterInput()">+</button> 
+									<div *ngFor="let customParam of customParameters.controls; let i = index" [formGroupName]="i">
+										<button type="button" (click)="removeCustomParameterInput(i)">-</button>
+										<!-- <button type="button" (click)="removeCustomParameterInput(i)">{{ languageService.i18n['field.remove'] }}</button> -->
+										<!-- <input type="text" formControlName="value" placeholder="{{ languageService.i18n['field.enterCustomParam'] }}"> -->
+										<input type="text" formControlName="value" placeholder="輸入自定義參數">
+									</div>
+								</div>
+							</div>
 						</li>
 					</UL>
 				</form>
