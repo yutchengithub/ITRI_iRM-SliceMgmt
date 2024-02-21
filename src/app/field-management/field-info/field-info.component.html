@@ -839,7 +839,7 @@
 							<label>{{ languageService.i18n['field.measurementType'] }}</label>
 							<span>
 								<!-- "量測類型"欄位的 Radio Buttons -->
-								<mat-radio-group formControlName="measurementType"  (change)="logClickMeasurementType($event.value)" >
+								<mat-radio-group formControlName="measurementType" (change)="logClickMeasurementType($event.value)" >
 									<mat-radio-button value="">{{ languageService.i18n['field.off'] }}</mat-radio-button>
 									<mat-radio-button value="default">{{ languageService.i18n['field.default'] }}</mat-radio-button>
 									<mat-radio-button value="selfDefined">{{ languageService.i18n['field.selfDefined'] }}</mat-radio-button>
@@ -849,12 +849,12 @@
 							<!-- 自定義參數輸入欄位，只有當 'selfDefined' 被選擇時才顯示 -->
 							<div *ngIf="measurementType === 'selfDefined'">
 								<div formArrayName="selfDefinedParameters">
-								<div *ngFor="let selfDefinedParamGroup of selfDefinedParameters.controls; let i = index" [formGroupName]="i">
-									<button type="button" (click)="removeSelfDefinedParameterInput(i)">-</button>
-									<!-- 確保這裡使用 formControlName='SelfDefinedParameter_input' 與 FormGroup 中的名稱對應 -->
-									<input type="text" formControlName="SelfDefinedParameter_input" placeholder="{{ languageService.i18n['field.enterSelfDefinedParam'] }}">
-								</div>
-								<button type="button" (click)="addSelfDefinedParameterInput()">+</button>
+									<div *ngFor="let selfDefinedParamGroup of selfDefinedParameters.controls; let i = index" [formGroupName]="i">
+										<button type="button" (click)="removeSelfDefinedParameterInput(i)">-</button>
+										<!-- 確保這裡使用 formControlName='SelfDefinedParameter_input' 與 FormGroup 中的名稱對應 -->
+										<input type="text" formControlName="SelfDefinedParameter_input" placeholder="{{ languageService.i18n['field.enterSelfDefinedParam'] }}">
+									</div>
+									<button type="button" (click)="addSelfDefinedParameterInput()">+</button>
 								</div>
 							</div>
 						</li>

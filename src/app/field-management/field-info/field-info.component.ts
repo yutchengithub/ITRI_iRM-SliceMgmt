@@ -1964,7 +1964,7 @@ export class FieldInfoComponent implements OnInit {
           
           this.isGetQueryBsListLoading = false; // 取得後隱藏 spinner
         },
-        error: (error) => {
+        error: ( error ) => {
           console.error( '獲取基站列表資訊出錯:', error );
           console.error( 'Error fetching - BS List:', error );
           this.isGetQueryBsListLoading = false; // 出錯時也應隱藏 spinner
@@ -2341,13 +2341,13 @@ export class FieldInfoComponent implements OnInit {
 // For Field Editing Setting @2024/01/11 Add ↑
 
 
-// For PM Parameter Setting @2024/02/16 Update ↓ ( 缺 RADIO BUTTON 控制使用者選擇的量測類型 )
+// For PM Parameter Setting @2024/02/22 Update ↓
 
   PmFtpInfo: ForQueryOrUpdatePmFTPInfo = {} as ForQueryOrUpdatePmFTPInfo; // 用於儲存"效能參數"的設定資訊 @2024/02/15 Add
 
-  measurementType: string = ''; // 用於控制"量測類型"的選擇，預設為 "" ( off ) @2024/02/16 Add
+  measurementType: string = ""; // 用於控制"量測類型"的選擇，預設為 "" ( off ) @2024/02/16 Add
 
-  // 用於取得"效能管理參數設定"資訊 @2024/02/20 Update
+  // 用於取得"效能管理參數設定"資訊 @2024/02/22 Update
   getQueryPmFtpInfo() {
     console.log('getQueryPmFtpInfo() - Start'); // 獲取效能參數設定資訊 - 啟動
 
@@ -2357,7 +2357,7 @@ export class FieldInfoComponent implements OnInit {
       this.PmFtpInfo = this.pmFtpInfo_LocalFiles.pmFtpInfo_local; // 賦值本地存儲的 PM FTP 資訊
       console.log( 'PM FTP Info from Local:', this.PmFtpInfo );   // 輸出本地的 PM FTP 資訊
 
-      // @2024/02/20 Add
+      // @2024/02/22 Update
       if ( this.PmFtpInfo ) { // 確保"效能參數"的設定資訊已獲取
 
         this.PMgmtParameterSetForm.patchValue({ // 使用現有"效能參數"填入表單
@@ -2367,8 +2367,13 @@ export class FieldInfoComponent implements OnInit {
           folderPath: this.PmFtpInfo.folderpath,
           MeasurementInterval_pmint: this.PmFtpInfo.pmint,
           UploadInterval_fmint: this.PmFtpInfo.fmint,
-          measurementType: this.PmFtpInfo.metric      // "量測類型"欄位 
+          //measurementType: this.PmFtpInfo.metric      // "量測類型"欄位
+          // 依據傳回值判定，要設定甚麼值給該欄位便於預設選擇的 Radio Button
+          measurementType: this.PmFtpInfo.metric !== "" && this.PmFtpInfo.metric !== "default" ? 'selfDefined' : this.PmFtpInfo.metric 
         });
+
+        // 初始化自定義參數 @2024/02/22 Add
+        this.initializeSelfDefinedParameters( this.PmFtpInfo.metric );
       }  
 
     } else {
@@ -2378,8 +2383,8 @@ export class FieldInfoComponent implements OnInit {
         next: ( res: ForQueryOrUpdatePmFTPInfo ) => {
           console.log('Fetched PM FTP Info from API:', res); // 從 API 獲取的 PM FTP 資訊
           this.PmFtpInfo = res; // 更新 PM FTP 資訊
-
-          // @2024/02/20 Add
+          
+          // @2024/02/22 Update
           if ( this.PmFtpInfo ) { // 確保"效能參數"的設定資訊已獲取
 
             // 使用現有"效能參數"填入表單
@@ -2390,20 +2395,27 @@ export class FieldInfoComponent implements OnInit {
               folderPath: this.PmFtpInfo.folderpath,
               MeasurementInterval_pmint: this.PmFtpInfo.pmint,
               UploadInterval_fmint: this.PmFtpInfo.fmint,
-              measurementType: this.PmFtpInfo.metric      // "量測類型"欄位 
+              //measurementType: this.PmFtpInfo.metric      // "量測類型"欄位 
+              // 依據傳回值判定，要設定甚麼值給該欄位便於預設選擇的 Radio Button
+              measurementType: this.PmFtpInfo.metric !== "" && this.PmFtpInfo.metric !== "default" ? 'selfDefined' : this.PmFtpInfo.metric
             });
+
+            // 初始化自定義參數 @2024/02/22 Add
+            this.initializeSelfDefinedParameters( this.PmFtpInfo.metric );
           }     
         },
         error: ( error ) => {
-          console.error('Error fetching PM FTP Info:', error); // 獲取 PM FTP 資訊出錯
+          console.error( 'Error fetching PM FTP Info:', error ); // 獲取 PM FTP 資訊出錯
         },
         complete: () => {
-          console.log('PM FTP Info fetch completed');          // PM FTP 資訊獲取完成
+          console.log( 'PM FTP Info fetch completed' );          // PM FTP 資訊獲取完成
         }
       });
     }
+
     console.log('getQueryPmFtpInfo() - End'); // 獲取效能參數設定資訊 - 結束
   }
+
 
   // 創建表單組，用於"效能管理參數設定"
   PMgmtParameterSetForm!: FormGroup;
@@ -2433,6 +2445,28 @@ export class FieldInfoComponent implements OnInit {
     this.hidePassword = !this.hidePassword;
   }
 
+
+  // 處理自定義參數的初始化 @2024/02/22 Add
+  initializeSelfDefinedParameters(metric: string) {
+    if (metric && metric !== "default" && metric !== "") {
+      const metricsArray = metric.split(',');
+      const selfDefinedParametersControl = this.PMgmtParameterSetForm.get('selfDefinedParameters') as FormArray;
+      
+      // 清除現有自定義參數欄位
+      while (selfDefinedParametersControl.length !== 0) {
+        selfDefinedParametersControl.removeAt(0);
+      }
+
+      // 為每個 metric 添加一個新的 FormGroup
+      metricsArray.forEach(metricValue => {
+        selfDefinedParametersControl.push(this.fb.group({
+          selfDefinedParameter_input: [metricValue, Validators.required]
+        }));
+      });
+    }
+  }
+  
+
   // @2024/02/20 Add
   // 確保您有一個 getter 來獲取自定義參數的 FormArray
   get selfDefinedParameters(): FormArray {
@@ -2445,10 +2479,16 @@ export class FieldInfoComponent implements OnInit {
     this.measurementType = value; // 設定當前選擇的量測類型
 
     if ( value === "selfDefined" ) {
+
+      if ( this.selfDefinedParameters.length === 0 && this.PmFtpInfo.metric ) {
+        this.initializeSelfDefinedParameters( this.PmFtpInfo.metric );
+      }
+
       // 如果選擇的是自定義量測類型且還沒有添加任何自定義參數，則添加一個新的輸入欄位
       if ( this.selfDefinedParameters.length === 0 ) {
         this.addSelfDefinedParameterInput();
       }
+
     } else {
       // 如果選擇的不是自定義量測類型，則清空所有自定義參數輸入欄位
       while ( this.selfDefinedParameters.length !== 0 ) {
@@ -2466,13 +2506,16 @@ export class FieldInfoComponent implements OnInit {
     // 其他邏輯...
   }
 
+
  // 當選擇 'selfDefined' 選項時調用此方法
   addSelfDefinedParameterInput() {
     const selfDefinedParameters = this.PMgmtParameterSetForm.get( 'selfDefinedParameters' ) as FormArray;
-    // 為每個新的自定義參數創建一個 FormGroup，並在其中添加一個名為 'value' 的 FormControl
+
+    // 為每個新的自定義參數創建一個 FormGroup，並在其中添加一個名為 'SelfDefinedParameter_input' 的 FormControl
     const group = new FormGroup({
       'SelfDefinedParameter_input': new FormControl( '', Validators.required )
     });
+
     selfDefinedParameters.push( group );
   }
 
@@ -2489,10 +2532,13 @@ export class FieldInfoComponent implements OnInit {
   PMgmtParameterSetWindowRef!: MatDialogRef<any>;
   PMgmtParameterSetFormValidated = false;
 
-  // 打開"效能管理參數設定"視窗 @2024/02/15 Update
+  // @2024/02/22 Update
+  // 打開"效能管理參數設定"視窗
   openPMgmtParameterSetWindow() {
 
-    this.getQueryPmFtpInfo(); // 取得"效能管理參數設定"資訊
+    this.measurementType = ""; // 先重置用於控制顯示"自定義參數輸入欄位"的變數
+
+    this.getQueryPmFtpInfo();  // 取得"效能管理參數設定"資訊
 
     // 確保"效能參數"的設定資訊已獲取
     if( this.PmFtpInfo ) {
@@ -2505,7 +2551,9 @@ export class FieldInfoComponent implements OnInit {
                        folderPath: this.PmFtpInfo.folderpath,
         MeasurementInterval_pmint: this.PmFtpInfo.pmint,
              UploadInterval_fmint: this.PmFtpInfo.fmint,
-                  measurementType: this.PmFtpInfo.metric // "量測類型"欄位 @2024/02/16 Add
+                  //measurementType: this.PmFtpInfo.metric // "量測類型"欄位 @2024/02/16 Add
+                  // 依據傳回值判定，要設定甚麼值給該欄位便於預設選擇的 Radio Button
+                  measurementType: this.PmFtpInfo.metric !== "" && this.PmFtpInfo.metric !== "default" ? 'selfDefined' : this.PmFtpInfo.metric
       });
     }
 
@@ -2524,10 +2572,10 @@ export class FieldInfoComponent implements OnInit {
     this.PMgmtParameterSetWindowRef.afterClosed().subscribe(() => {
       this.PMgmtParameterSetFormValidated = false;
     });
-
   }
 
-  // 點擊 PMgmt Parameter Setting 視窗的 Cancel 按鈕行為 @2024/02/15 Add
+  // @2024/02/15 Add
+  // 點擊 PMgmt Parameter Setting 視窗的 Cancel 按鈕行為
   resetPMgmtParameterSetForm() {
     console.log(`Set for PM Parameter has been cancelled.`);
 
@@ -2557,7 +2605,7 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
-// For PM Parameter Setting @2024/02/16 Update ↑
+// For PM Parameter Setting @2024/02/22 Update ↑
 
 
 
