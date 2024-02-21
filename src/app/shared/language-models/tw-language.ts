@@ -141,6 +141,7 @@ export const TwLanguage = {
   'field.off': '關閉',                  // @2024/02/16 Add
   'field.default': '預設',              // @2024/02/16 Add
   'field.selfDefined': '自定義',        // @2024/02/16 Add
+  "field.enterSelfDefinedParam": "輸入自定義參數",             // @2024/02/21 Add
   'field.confirmPMgmtParameterSet': '應用效能管理參數變更？' ,  // @2024/02/15 Add
   
   'field.report':'場域報表',                        // @12/12 Add

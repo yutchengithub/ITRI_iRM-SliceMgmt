@@ -846,18 +846,15 @@
 								</mat-radio-group>
 							</span>
 
-							<!-- 自定義參數輸入欄位，只有當 'selfDefined' 被選擇時才顯示 @2024/02/20 Add -->
+							<!-- 自定義參數輸入欄位，只有當 'selfDefined' 被選擇時才顯示 -->
 							<div *ngIf="measurementType === 'selfDefined'">
-								<div formArrayName="customParameters">
-									<!-- 您也可以添加一個按鈕來添加新的自定義參數欄位 -->
-									<!-- <button type="button" (click)="addCustomParameterInput()">{{ languageService.i18n['field.add'] }}</button> -->
-									<button type="button" (click)="addCustomParameterInput()">+</button> 
-									<div *ngFor="let customParam of customParameters.controls; let i = index" [formGroupName]="i">
-										<button type="button" (click)="removeCustomParameterInput(i)">-</button>
-										<!-- <button type="button" (click)="removeCustomParameterInput(i)">{{ languageService.i18n['field.remove'] }}</button> -->
-										<!-- <input type="text" formControlName="value" placeholder="{{ languageService.i18n['field.enterCustomParam'] }}"> -->
-										<input type="text" formControlName="value" placeholder="輸入自定義參數">
-									</div>
+								<div formArrayName="selfDefinedParameters">
+								<div *ngFor="let selfDefinedParamGroup of selfDefinedParameters.controls; let i = index" [formGroupName]="i">
+									<button type="button" (click)="removeSelfDefinedParameterInput(i)">-</button>
+									<!-- 確保這裡使用 formControlName='SelfDefinedParameter_input' 與 FormGroup 中的名稱對應 -->
+									<input type="text" formControlName="SelfDefinedParameter_input" placeholder="{{ languageService.i18n['field.enterSelfDefinedParam'] }}">
+								</div>
+								<button type="button" (click)="addSelfDefinedParameterInput()">+</button>
 								</div>
 							</div>
 						</li>

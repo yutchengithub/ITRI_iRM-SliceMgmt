@@ -121,7 +121,7 @@ export const Enlanguage = {
   'field.editBSs':'Adjust BS Field Allocation',     // @2024/01/28 Add
   'field.cancelEditBSs':'Cancel',                   // @2024/01/28 Add
   'field.selectBSs':'Choose BSs in field',          // @2024/01/18 Add
-  'field.confirmFieldEditField': "Confirm to make these field changes?",  // @2024/01/28 Add
+  'field.confirmFieldEditField': "Confirm to make these field changes ?",  // @2024/01/28 Add
   
   'field.indoorMapUpload':'Upload Indoor Map',      // @2024/01/18 Update
   'field.indoorMapNotUploaded': 'Indoor map not yet uploaded',      // @2024/01/18 Update
@@ -142,6 +142,7 @@ export const Enlanguage = {
   'field.off': 'Off',                           // @2024/02/16 Add
   'field.default': 'Default',                   // @2024/02/16 Add
   'field.selfDefined': 'Self-defined',          // @2024/02/16 Add
+  "field.enterSelfDefinedParam": "Enter self defined parameter",                          // @2024/02/21 Add
   'field.confirmPMgmtParameterSet': 'Apply Performance Management Parameter changes ?' ,  // @2024/02/15 Add
 
   'field.report':'Field Reports',                   // @12/12 Add

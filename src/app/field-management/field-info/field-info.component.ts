@@ -2419,11 +2419,12 @@ export class FieldInfoComponent implements OnInit {
       MeasurementInterval_pmint: new FormControl( this.PmFtpInfo?.pmint || '' ),       // PM 資料量測頻率(秒)，預設值為現有 量測頻率 或 空字串
            UploadInterval_fmint: new FormControl( this.PmFtpInfo?.fmint || '' ),       // PM 資料上傳頻率(秒):，預設值為現有 上傳頻率 或 空字串
                 measurementType: new FormControl( this.PmFtpInfo?.metric || '' ),      // "量測類型"欄位的表單控件，預設值為現有 量測類型 或 空字串 ( 表 off ) @2024/02/16 Add
-               customParameters: new FormArray([]),                                    // 自定義參數的表單數組   為自定義參數添加一個 FormArray @2024/02/20 Add
+          selfDefinedParameters: new FormArray([]),                                    // 輸入自定義參數用的 FormArray @2024/02/21 Add
     });
   }
 
-  // 用於控制密碼顯示的狀態( 預設為隱藏 ) @2024/02/15 Add
+  // @2024/02/15 Add
+  // 用於控制密碼顯示的狀態( 預設為隱藏 ) 
   hidePassword: boolean = true;
 
   // 用於控制是否顯示密碼 @2024/02/15 Add
@@ -2432,23 +2433,31 @@ export class FieldInfoComponent implements OnInit {
     this.hidePassword = !this.hidePassword;
   }
 
-  // 用於記錄 Radio Button 選擇的"量測類型" @2024/02/20 Update
-  logClickMeasurementType( value: string ) {
-    this.measurementType = value;
+  // @2024/02/20 Add
+  // 確保您有一個 getter 來獲取自定義參數的 FormArray
+  get selfDefinedParameters(): FormArray {
+    return this.PMgmtParameterSetForm.get( 'selfDefinedParameters' ) as FormArray; // 從表單中獲取名為 'selfDefinedParameters' 的 FormArray
+  }
 
-    if (value === "selfDefined") {
-      // 如果還沒有添加任何自定義參數，則添加一個新的輸入欄位
-      if (this.customParameters.length === 0) {
-        this.addCustomParameterInput();
+  // @2024/02/20 Update
+  // 用於記錄 Radio Button 選擇的"量測類型"
+  logClickMeasurementType( value: string ) {
+    this.measurementType = value; // 設定當前選擇的量測類型
+
+    if ( value === "selfDefined" ) {
+      // 如果選擇的是自定義量測類型且還沒有添加任何自定義參數，則添加一個新的輸入欄位
+      if ( this.selfDefinedParameters.length === 0 ) {
+        this.addSelfDefinedParameterInput();
       }
     } else {
-      // 如果不是 selfDefined 選項，清空所有自定義參數輸入欄位
-      while (this.customParameters.length !== 0) {
-        this.removeCustomParameterInput(0);
+      // 如果選擇的不是自定義量測類型，則清空所有自定義參數輸入欄位
+      while ( this.selfDefinedParameters.length !== 0 ) {
+        this.removeSelfDefinedParameterInput( 0 );
       }
     }
 
-    if( this.measurementType === "" ){
+    // 根據選擇的量測類型輸出不同的日誌
+    if ( this.measurementType === "" ) {
       console.log( 'Selected Measurement Type: Off' );
     } else {
       console.log( 'Selected Measurement Type:', this.measurementType );
@@ -2457,22 +2466,23 @@ export class FieldInfoComponent implements OnInit {
     // 其他邏輯...
   }
 
-  // 當選擇 'selfDefined' 選項時調用此方法
-  addCustomParameterInput() {
-    const customParameters = this.PMgmtParameterSetForm.get('customParameters') as FormArray;
-    customParameters.push(new FormControl('', Validators.required));
+ // 當選擇 'selfDefined' 選項時調用此方法
+  addSelfDefinedParameterInput() {
+    const selfDefinedParameters = this.PMgmtParameterSetForm.get( 'selfDefinedParameters' ) as FormArray;
+    // 為每個新的自定義參數創建一個 FormGroup，並在其中添加一個名為 'value' 的 FormControl
+    const group = new FormGroup({
+      'SelfDefinedParameter_input': new FormControl( '', Validators.required )
+    });
+    selfDefinedParameters.push( group );
   }
 
-  // 調用此方法以刪除自定義參數輸入
-  removeCustomParameterInput(index: number) {
-    const customParameters = this.PMgmtParameterSetForm.get('customParameters') as FormArray;
-    customParameters.removeAt(index);
+  // @2024/02/20 Add
+  // 調用此方法以刪除新增的自定義參數輸入區
+  removeSelfDefinedParameterInput( index: number ) {
+    const selfDefinedParameters = this.PMgmtParameterSetForm.get( 'selfDefinedParameters' ) as FormArray;
+    selfDefinedParameters.removeAt( index ); // 從 selfDefinedParameters FormArray 中移除指定索引的 FormGroup
   }
-  
-  // 確保您有一個 getter 來獲取自定義參數的 FormArray
-  get customParameters(): FormArray {
-    return this.PMgmtParameterSetForm.get('customParameters') as FormArray;
-  }
+
 
   // 引用"效能管理參數設定"視窗組件
   @ViewChild('PMgmtParameterSetWindow') PMgmtParameterSetWindow: any;
