@@ -2507,7 +2507,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
- // 當選擇 'selfDefined' 選項時調用此方法
+  // 當選擇 'selfDefined' 選項時調用此方法
   addSelfDefinedParameterInput() {
     const selfDefinedParameters = this.PMgmtParameterSetForm.get( 'selfDefinedParameters' ) as FormArray;
 
