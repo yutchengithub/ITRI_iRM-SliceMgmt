@@ -2366,14 +2366,16 @@ export class FieldInfoComponent implements OnInit {
           pmKey: this.PmFtpInfo.ftpkey,
           folderPath: this.PmFtpInfo.folderpath,
           MeasurementInterval_pmint: this.PmFtpInfo.pmint,
-          UploadInterval_fmint: this.PmFtpInfo.fmint,
-          //measurementType: this.PmFtpInfo.metric      // "量測類型"欄位
-          // 依據傳回值判定，要設定甚麼值給該欄位便於預設選擇的 Radio Button
+          UploadInterval_fmint: this.PmFtpInfo.fmint,    
+          // "量測類型"欄位，依據傳回值判定，要設定甚麼值給該欄位便於預設選擇的 Radio Button
           measurementType: this.PmFtpInfo.metric !== "" && this.PmFtpInfo.metric !== "default" ? 'selfDefined' : this.PmFtpInfo.metric 
         });
 
-        // 初始化自定義參數 @2024/02/22 Add
-        this.initializeSelfDefinedParameters( this.PmFtpInfo.metric );
+        // @2024/02/22 Add
+        // 檢測 PmFtpInfo.metric 其值是否同時不為 "default" 與 "" 
+        if ( this.PmFtpInfo.metric !== "default" && this.PmFtpInfo.metric !== "" ) { 
+          this.initializeSelfDefinedParameters( this.PmFtpInfo.metric ); // 如符合該條件即表示量測類型為自定義模式，因此進行初始化自定義參數 
+        }
       }  
 
     } else {
@@ -2395,13 +2397,15 @@ export class FieldInfoComponent implements OnInit {
               folderPath: this.PmFtpInfo.folderpath,
               MeasurementInterval_pmint: this.PmFtpInfo.pmint,
               UploadInterval_fmint: this.PmFtpInfo.fmint,
-              //measurementType: this.PmFtpInfo.metric      // "量測類型"欄位 
-              // 依據傳回值判定，要設定甚麼值給該欄位便於預設選擇的 Radio Button
+              // "量測類型"欄位，依據傳回值判定，要設定甚麼值給該欄位便於預設選擇的 Radio Button
               measurementType: this.PmFtpInfo.metric !== "" && this.PmFtpInfo.metric !== "default" ? 'selfDefined' : this.PmFtpInfo.metric
             });
 
-            // 初始化自定義參數 @2024/02/22 Add
-            this.initializeSelfDefinedParameters( this.PmFtpInfo.metric );
+            // @2024/02/22 Add
+            // 檢測 PmFtpInfo.metric 其值是否同時不為 "default" 與 "" 
+            if ( this.PmFtpInfo.metric !== "default" && this.PmFtpInfo.metric !== "" ) { 
+              this.initializeSelfDefinedParameters( this.PmFtpInfo.metric ); // 如符合該條件即表示量測類型為自定義模式，因此進行初始化自定義參數 
+            }
           }     
         },
         error: ( error ) => {
@@ -2445,52 +2449,43 @@ export class FieldInfoComponent implements OnInit {
     this.hidePassword = !this.hidePassword;
   }
 
-
-  // 處理自定義參數的初始化 @2024/02/22 Add
-  initializeSelfDefinedParameters(metric: string) {
-    if (metric && metric !== "default" && metric !== "") {
-      const metricsArray = metric.split(',');
-      const selfDefinedParametersControl = this.PMgmtParameterSetForm.get('selfDefinedParameters') as FormArray;
-      
-      // 清除現有自定義參數欄位
-      while (selfDefinedParametersControl.length !== 0) {
-        selfDefinedParametersControl.removeAt(0);
-      }
-
-      // 為每個 metric 添加一個新的 FormGroup
-      metricsArray.forEach(metricValue => {
-        selfDefinedParametersControl.push(this.fb.group({
-          selfDefinedParameter_input: [metricValue, Validators.required]
-        }));
-      });
-    }
-  }
-  
-
   // @2024/02/20 Add
   // 確保您有一個 getter 來獲取自定義參數的 FormArray
   get selfDefinedParameters(): FormArray {
     return this.PMgmtParameterSetForm.get( 'selfDefinedParameters' ) as FormArray; // 從表單中獲取名為 'selfDefinedParameters' 的 FormArray
   }
 
+  // 處理自定義參數的初始化 @2024/02/22 Add
+  initializeSelfDefinedParameters( metric: string ) {
+    const selfDefinedParametersControl = this.PMgmtParameterSetForm.get('selfDefinedParameters') as FormArray;
+    
+    // 清除現有的 FormGroup
+    while (selfDefinedParametersControl.length !== 0) {
+      selfDefinedParametersControl.removeAt( 0 );
+    }
+    
+    // 分割 metric 並為每個參數添加新的 FormGroup
+    if ( metric && metric !== "default" && metric !== "" ) {
+      metric.split(',').forEach(( metricValue ) => {
+        const group = this.fb.group({
+          'selfDefinedParameter_input': [metricValue, Validators.required] // 確保名稱與模板中的 formControlName 一致
+        });
+        selfDefinedParametersControl.push( group );
+      });
+    }
+  }
+
   // @2024/02/20 Update
   // 用於記錄 Radio Button 選擇的"量測類型"
   logClickMeasurementType( value: string ) {
+
     this.measurementType = value; // 設定當前選擇的量測類型
 
-    if ( value === "selfDefined" ) {
-
-      if ( this.selfDefinedParameters.length === 0 && this.PmFtpInfo.metric ) {
-        this.initializeSelfDefinedParameters( this.PmFtpInfo.metric );
-      }
-
-      // 如果選擇的是自定義量測類型且還沒有添加任何自定義參數，則添加一個新的輸入欄位
-      if ( this.selfDefinedParameters.length === 0 ) {
-        this.addSelfDefinedParameterInput();
-      }
-
-    } else {
-      // 如果選擇的不是自定義量測類型，則清空所有自定義參數輸入欄位
+    // 如果選擇的是"selfDefined"，且 PmFtpInfo.metric 有值，初始化輸入欄位
+    if ( value === "selfDefined" && this.PmFtpInfo.metric !== "default" && this.PmFtpInfo.metric !== "" ) {
+      this.initializeSelfDefinedParameters( this.PmFtpInfo.metric );
+    } else if ( value !== "selfDefined" ) {
+      // 如果選擇的不是"selfDefined"，清空所有自定義參數輸入欄位
       while ( this.selfDefinedParameters.length !== 0 ) {
         this.removeSelfDefinedParameterInput( 0 );
       }
@@ -2502,18 +2497,16 @@ export class FieldInfoComponent implements OnInit {
     } else {
       console.log( 'Selected Measurement Type:', this.measurementType );
     }
-    
-    // 其他邏輯...
+
   }
 
-
-  // 當選擇 'selfDefined' 選項時調用此方法
+  // 當量測類型為自定義時，新增"自定義參數"時會調用的函數
   addSelfDefinedParameterInput() {
     const selfDefinedParameters = this.PMgmtParameterSetForm.get( 'selfDefinedParameters' ) as FormArray;
 
     // 為每個新的自定義參數創建一個 FormGroup，並在其中添加一個名為 'SelfDefinedParameter_input' 的 FormControl
     const group = new FormGroup({
-      'SelfDefinedParameter_input': new FormControl( '', Validators.required )
+      'selfDefinedParameter_input': new FormControl( '', Validators.required )
     });
 
     selfDefinedParameters.push( group );
@@ -2555,6 +2548,12 @@ export class FieldInfoComponent implements OnInit {
                   // 依據傳回值判定，要設定甚麼值給該欄位便於預設選擇的 Radio Button
                   measurementType: this.PmFtpInfo.metric !== "" && this.PmFtpInfo.metric !== "default" ? 'selfDefined' : this.PmFtpInfo.metric
       });
+
+      // 檢測 PmFtpInfo.metric 其值是否同時不為 "default" 與 ""
+      if ( this.PmFtpInfo.metric !== "default" && this.PmFtpInfo.metric !== "" ) { 
+        this.logClickMeasurementType( "selfDefined" ); // 如符合上方條件表為自定義類型，則將 "selfDefined" 傳入該函數，觸發點擊自定義選項時所作的處理
+      }
+
     }
 
     // 表單驗證狀態重置
@@ -2572,6 +2571,7 @@ export class FieldInfoComponent implements OnInit {
     this.PMgmtParameterSetWindowRef.afterClosed().subscribe(() => {
       this.PMgmtParameterSetFormValidated = false;
     });
+
   }
 
   // @2024/02/15 Add

@@ -851,8 +851,8 @@
 								<div formArrayName="selfDefinedParameters">
 									<div *ngFor="let selfDefinedParamGroup of selfDefinedParameters.controls; let i = index" [formGroupName]="i">
 										<button type="button" (click)="removeSelfDefinedParameterInput(i)">-</button>
-										<!-- 確保這裡使用 formControlName='SelfDefinedParameter_input' 與 FormGroup 中的名稱對應 -->
-										<input type="text" formControlName="SelfDefinedParameter_input" placeholder="{{ languageService.i18n['field.enterSelfDefinedParam'] }}">
+										<!-- 確保這裡使用 formControlName='selfDefinedParameter_input' 與 FormGroup 中的名稱對應 -->
+										<input type="text" formControlName="selfDefinedParameter_input" placeholder="{{ languageService.i18n['field.enterSelfDefinedParam'] }}">
 									</div>
 									<button type="button" (click)="addSelfDefinedParameterInput()">+</button>
 								</div>
