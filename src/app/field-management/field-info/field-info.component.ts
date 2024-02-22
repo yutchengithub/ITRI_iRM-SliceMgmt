@@ -2661,7 +2661,8 @@ export class FieldInfoComponent implements OnInit {
       // 更新後，重新取得"效能管理參數設定"資訊
       this.getQueryPmFtpInfo();  
 
-      this.getQueryPmFtpInfo_Loading = false; // 更新完成後停止 Loading Progress Spinner @2024/02/22 Add
+      this.getQueryPmFtpInfo_Loading = false;  // 更新完成後停止 Loading Progress Spinner @2024/02/22 Add
+      this.PMgmtParameterSetWindowRef.close(); // 更新讀取完後，關閉效能參數設定視窗
 
     } else {
 
@@ -2676,16 +2677,18 @@ export class FieldInfoComponent implements OnInit {
           this.getQueryPmFtpInfo();  
 
           this.getQueryPmFtpInfo_Loading = false; // 更新完成後停止 Loading Progress Spinner @2024/02/22 Add
+          this.PMgmtParameterSetWindowRef.close(); // 關閉效能參數設定視窗
         },
         error: ( error ) => {
           console.error( "更新效能參數設定出錯:", error );
-          this.getQueryPmFtpInfo_Loading = false; // 更新完成後停止 Loading Progress Spinner @2024/02/22 Add
+          this.getQueryPmFtpInfo_Loading = false;  // 更新完成後停止 Loading Progress Spinner @2024/02/22 Add
+          this.PMgmtParameterSetWindowRef.close(); // 更新讀取完後，關閉效能參數設定視窗
         },
       });
     }
   
     // 結束處理
-    //this.PMgmtParameterSetWindowRef.close(); // 關閉效能參數設定視窗
+    
     this.PMgmtParameterSetForm.reset();      // 重置效能參數設定表單
 
     console.log("UpdatePMParameterSetting_Submit() - End");
