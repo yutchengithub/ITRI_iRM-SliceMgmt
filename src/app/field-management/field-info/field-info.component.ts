@@ -47,6 +47,7 @@ import { map } from 'rxjs/operators';              // @2023/12/24 Add
 import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
 
 import { ElementRef } from '@angular/core';
+import { Console } from 'console';
 
 export interface SimplifiedBSInfo {
   
@@ -174,17 +175,8 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
-  // @2024/01/05 Add
+  // @2024/02/22 Update
   // ngAfterViewInit 是 Angular 在組件視圖初始化後會呼叫的生命週期事件。
-  // ngAfterViewInit() {
-  //   // 使用 setTimeout 確保地圖元素已經加載完成並存在於 DOM 中。
-  //   // 這樣做可以避免在 Google Maps API 還沒有完全準備好時嘗試操作地圖。
-  //   setTimeout(() => {
-  //     // 呼叫 adjustMapZoom 方法來根據場域的邊界調整地圖的縮放等級。
-  //     this.adjustMapZoom();
-  //   }, 1000); // 設定 1000 ms 的延遲，以確保地圖的初始化過程已經完成。
-  // }
-
   ngAfterViewInit() {
     // 檢查 this.map.googleMap 是否已經被定義。
     // this.map 是通過 ViewChild 獲取的 GoogleMap 實例，
@@ -202,6 +194,8 @@ export class FieldInfoComponent implements OnInit {
     }
     // 如果 this.map.googleMap 尚未定義，可能表示地圖尚未完全初始化。
     // 在這種情況下，可能需要考慮使用其他方法或檢查點以確保地圖已經準備好
+
+    this.getQueryPmFtpInfo();  // 此時先取得"效能管理參數設定"資訊 @2024/02/22 Add
   }
 
 // ↑ Page Init ↑
@@ -2347,15 +2341,20 @@ export class FieldInfoComponent implements OnInit {
 
   measurementType: string = ""; // 用於控制"量測類型"的選擇，預設為 "" ( off ) @2024/02/16 Add
 
+  // @2024/02/22 Add for Progress Spinner
+  getQueryPmFtpInfo_Loading = false; // 用於識別載入"效能管理參數設定"資訊的標誌，初始設置為 false 
+
   // 用於取得"效能管理參數設定"資訊 @2024/02/22 Update
   getQueryPmFtpInfo() {
     console.log('getQueryPmFtpInfo() - Start'); // 獲取效能參數設定資訊 - 啟動
 
-    if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
-      console.log('Fetching PM FTP Info from local files'); // 從本地文件獲取 PM FTP 資訊
+    this.getQueryPmFtpInfo_Loading = true; // 顯示 Loading Progress Spinner @2024/02/22 Add
 
-      this.PmFtpInfo = this.pmFtpInfo_LocalFiles.pmFtpInfo_local; // 賦值本地存儲的 PM FTP 資訊
-      console.log( 'PM FTP Info from Local:', this.PmFtpInfo );   // 輸出本地的 PM FTP 資訊
+    if ( this.commonService.isLocal ) { // 檢查是否為使用 Local files
+      console.log('Fetching PM FTP Info from local files');       // 從 Local files 獲取 PM FTP 資訊
+
+      this.PmFtpInfo = this.pmFtpInfo_LocalFiles.pmFtpInfo_local; // 賦值 Local 存儲的 PM FTP 資訊
+      console.log( 'PM FTP Info from Local:', this.PmFtpInfo );   // 輸出 Local 的 PM FTP 資訊
 
       // @2024/02/22 Update
       if ( this.PmFtpInfo ) { // 確保"效能參數"的設定資訊已獲取
@@ -2377,6 +2376,8 @@ export class FieldInfoComponent implements OnInit {
           this.initializeSelfDefinedParameters( this.PmFtpInfo.metric ); // 如符合該條件即表示量測類型為自定義模式，因此進行初始化自定義參數 
         }
       }  
+
+      this.getQueryPmFtpInfo_Loading = false; // 取得後停止 Loading Progress Spinner @2024/02/22 Add
 
     } else {
       console.log( 'Fetching PM FTP Info from API '); // 從 API 獲取 PM FTP 資訊
@@ -2407,12 +2408,16 @@ export class FieldInfoComponent implements OnInit {
               this.initializeSelfDefinedParameters( this.PmFtpInfo.metric ); // 如符合該條件即表示量測類型為自定義模式，因此進行初始化自定義參數 
             }
           }     
+
+          this.getQueryPmFtpInfo_Loading = false; // 取得後停止 Loading Progress Spinner @2024/02/22 Add
         },
         error: ( error ) => {
           console.error( 'Error fetching PM FTP Info:', error ); // 獲取 PM FTP 資訊出錯
+          this.getQueryPmFtpInfo_Loading = false; // 取得後停止 Loading Progress Spinner @2024/02/22 Add
         },
         complete: () => {
           console.log( 'PM FTP Info fetch completed' );          // PM FTP 資訊獲取完成
+          //this.getQueryPmFtpInfo_Loading = false; // 取得後停止 Loading Progress Spinner @2024/02/22 Add
         }
       });
     }
@@ -2475,14 +2480,14 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  // @2024/02/20 Update
+  // @2024/02/22 Update
   // 用於記錄 Radio Button 選擇的"量測類型"
   logClickMeasurementType( value: string ) {
 
     this.measurementType = value; // 設定當前選擇的量測類型
 
     // 如果選擇的是"selfDefined"，且 PmFtpInfo.metric 有值，初始化輸入欄位
-    if ( value === "selfDefined" && this.PmFtpInfo.metric !== "default" && this.PmFtpInfo.metric !== "" ) {
+    if ( value === "selfDefined" ) {
       this.initializeSelfDefinedParameters( this.PmFtpInfo.metric );
     } else if ( value !== "selfDefined" ) {
       // 如果選擇的不是"selfDefined"，清空所有自定義參數輸入欄位
@@ -2532,6 +2537,8 @@ export class FieldInfoComponent implements OnInit {
     this.measurementType = ""; // 先重置用於控制顯示"自定義參數輸入欄位"的變數
 
     this.getQueryPmFtpInfo();  // 取得"效能管理參數設定"資訊
+    
+    console.log("In openPMgmtParameterSetWindow() - this.PmFtpInfo = ", this.PmFtpInfo);
 
     // 確保"效能參數"的設定資訊已獲取
     if( this.PmFtpInfo ) {
@@ -2544,16 +2551,23 @@ export class FieldInfoComponent implements OnInit {
                        folderPath: this.PmFtpInfo.folderpath,
         MeasurementInterval_pmint: this.PmFtpInfo.pmint,
              UploadInterval_fmint: this.PmFtpInfo.fmint,
-                  //measurementType: this.PmFtpInfo.metric // "量測類型"欄位 @2024/02/16 Add
-                  // 依據傳回值判定，要設定甚麼值給該欄位便於預設選擇的 Radio Button
+                  // "量測類型"欄位，依據傳回值判定，要設定甚麼值給該欄位便於預設選擇的 Radio Button
                   measurementType: this.PmFtpInfo.metric !== "" && this.PmFtpInfo.metric !== "default" ? 'selfDefined' : this.PmFtpInfo.metric
       });
 
-      // 檢測 PmFtpInfo.metric 其值是否同時不為 "default" 與 ""
-      if ( this.PmFtpInfo.metric !== "default" && this.PmFtpInfo.metric !== "" ) { 
-        this.logClickMeasurementType( "selfDefined" ); // 如符合上方條件表為自定義類型，則將 "selfDefined" 傳入該函數，觸發點擊自定義選項時所作的處理
+      // 根據 PmFtpInfo.metric 的值正確設置 measurementType
+      if ( this.PmFtpInfo.metric === "default" || this.PmFtpInfo.metric === "" ) {
+        // 如果是 "default" 或空字符串，則將 measurementType 設置為 PmFtpInfo.metric 的值
+        this.measurementType = this.PmFtpInfo.metric;
+      } else {
+        // 如果有自定義度量值，將 measurementType 設置為 'selfDefined'
+        this.measurementType = 'selfDefined';
       }
 
+      //console.log("In openPMgmtParameterSetWindow() - this.measurementType = ", this.measurementType);
+      
+      // 透過前面取得的 measurementType 值來傳入 logClickMeasurementType()
+      this.logClickMeasurementType( this.measurementType );
     }
 
     // 表單驗證狀態重置
@@ -2604,6 +2618,79 @@ export class FieldInfoComponent implements OnInit {
       this.confirmPMgmtParameterSetWindow_Validated = false;
     });
   }
+
+  // @2024/02/22 Add
+  // 提交 PMgmt Parameter Setting 參數更新用
+  UpdatePMParameterSetting_Submit() {
+    console.log("UpdatePMParameterSetting_Submit() - Start");
+    this.getQueryPmFtpInfo_Loading = true; // 顯示 Loading Progress Spinner @2024/02/22 Add
+  
+    let metricValue; // 宣告變數來儲存將要提交的 metric 值
+
+    // 根據量測類型來決定 metric 值的內容
+    if (this.measurementType === 'selfDefined') {
+      // 收集自定義參數，並將它們轉換為逗號分隔的字符串
+      metricValue = this.selfDefinedParameters.value
+        .map((param: { selfDefinedParameter_input: string }) => param.selfDefinedParameter_input)
+        .join(',');
+    } else {
+      // 如果不是自定義參數，則使用 measurementType 的值作為 metric
+      metricValue = this.measurementType;
+    }
+  
+    // 準備提交的數據，格式化為適合 API 的格式
+    const submitData: any = {
+      // 從 PMgmtParameterSetForm 表單中獲取值
+      ftpip: this.PMgmtParameterSetForm.value.pmIP,
+      ftpid: this.PMgmtParameterSetForm.value.pmID,
+      ftpkey: this.PMgmtParameterSetForm.value.pmKey,
+      folderpath: this.PMgmtParameterSetForm.value.folderPath,
+      pmint: this.PMgmtParameterSetForm.value.MeasurementInterval_pmint,
+      fmint: this.PMgmtParameterSetForm.value.UploadInterval_fmint,
+      metric: metricValue, // 使用條件判斷後的 metric 值
+      
+      // 使用者不能調整但需提交的部分
+      session: this.sessionId,  // 使用當前會話 ID
+      id: this.fieldInfo.id,    // 使用場域的唯一識別符
+    };
+  
+    if ( this.commonService.isLocal ) {
+      // 本地模式下的處理
+      console.log( "本地模擬更新效能參數設定，提交的數據:", submitData );
+
+      // 更新後，重新取得"效能管理參數設定"資訊
+      this.getQueryPmFtpInfo();  
+
+      this.getQueryPmFtpInfo_Loading = false; // 更新完成後停止 Loading Progress Spinner @2024/02/22 Add
+
+    } else {
+
+      console.log( "呼叫實際 API 前，更新效能參數設定所提交的數據:", submitData );
+
+      // 向伺服器發送更新請求
+      this.API_Field.updatePmFtpInfo( submitData ).subscribe({
+        next: ( response ) => {
+          console.log( "效能參數設定更新成功:", response );
+
+          // 更新後，重新取得"效能管理參數設定"資訊
+          this.getQueryPmFtpInfo();  
+
+          this.getQueryPmFtpInfo_Loading = false; // 更新完成後停止 Loading Progress Spinner @2024/02/22 Add
+        },
+        error: ( error ) => {
+          console.error( "更新效能參數設定出錯:", error );
+          this.getQueryPmFtpInfo_Loading = false; // 更新完成後停止 Loading Progress Spinner @2024/02/22 Add
+        },
+      });
+    }
+  
+    // 結束處理
+    //this.PMgmtParameterSetWindowRef.close(); // 關閉效能參數設定視窗
+    this.PMgmtParameterSetForm.reset();      // 重置效能參數設定表單
+
+    console.log("UpdatePMParameterSetting_Submit() - End");
+  }
+  
 
 // For PM Parameter Setting @2024/02/22 Update ↑
 

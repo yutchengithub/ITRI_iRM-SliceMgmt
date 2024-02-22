@@ -143,7 +143,10 @@ export const Enlanguage = {
   'field.default': 'Default',                   // @2024/02/16 Add
   'field.selfDefined': 'Self-defined',          // @2024/02/16 Add
   "field.enterSelfDefinedParam": "Enter self defined parameter",                          // @2024/02/21 Add
-  'field.confirmPMgmtParameterSet': 'Apply Performance Management Parameter changes ?' ,  // @2024/02/15 Add
+  'field.confirmPMgmtParameterSet': 'Confirm apply changes ?' ,  // @2024/02/22 Update
+  'field.apply':'Apply',        // @2024/02/22 Add
+  'field.close':'Close',        // @2024/02/22 Add
+  'field.applyReminder':'Reminder', // @2024/02/22 Add
 
   'field.report':'Field Reports',                   // @12/12 Add
   'field.reportPM':'Performance (PM)',              // @12/12 Add

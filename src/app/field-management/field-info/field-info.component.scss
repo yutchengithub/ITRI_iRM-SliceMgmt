@@ -58,6 +58,14 @@ h5 .mat-icon {
   height: 90px; 
 }
 
+// "效能管理參數設定"視窗用 Spinner @2024/02/22 Add
+.progress-spinner-container-for-getQueryPmFtpInfo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120px; 
+}
+
 // 設定進度調的顏色 @12/28 Add
 ::ng-deep .mat-progress-spinner circle {
   stroke: #78c2ffb9 !important;
