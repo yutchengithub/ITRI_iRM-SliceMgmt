@@ -21,7 +21,7 @@
                 "name": "bs_1x2x4"
             }
             ],
-            "bsNum": 1,
+            "bsNum": 10,
             "ueNum": "fake 0",
             "coverage": "15",
             "accessibility": "DRB Accessibility:14",
@@ -48,9 +48,9 @@
             "alarmWarningNum": 18212
         },
         {
-            "id": "aa520ec8e5074f54b77d",
+            "id": "aa520ec8e5074f54b78d",
             "name": "itri-field2",
-            "phone": "0912345678",
+            "phone": "0987654321",
             "fieldposition1": "[121.044734,24.774227]",
             "fieldposition2": "[121.043587,24.774227]",
             "fieldposition3": "[121.043587,24.773396]",
@@ -61,7 +61,7 @@
                 "name": "bs_1x2x4"
             }
             ],
-            "bsNum": 2,
+            "bsNum": 9,
             "ueNum": "itri 2",
             "coverage": "10",
             "accessibility": "DRB Accessibility:23",
@@ -88,9 +88,9 @@
             "alarmWarningNum": 100
         },
         {
-            "id": "aa520ec8e5074f54b77d",
+            "id": "aa520ec8e5074f54b79d",
             "name": "itri-field3",
-            "phone": "0912345678",
+            "phone": "0911111111",
             "fieldposition1": "[121.044734,24.774227]",
             "fieldposition2": "[121.043587,24.774227]",
             "fieldposition3": "[121.043587,24.773396]",
@@ -101,7 +101,7 @@
                 "name": "bs_1x2x4"
             }
             ],
-            "bsNum": 2,
+            "bsNum": 8,
             "ueNum": "itri 3",
             "coverage": "10",
             "accessibility": "DRB Accessibility:51",

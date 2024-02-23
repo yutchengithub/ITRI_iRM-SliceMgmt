@@ -125,6 +125,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
       // 本地模式: 使用本地文件提供的數據
       this.fieldList = this.fieldList_LocalFiles.fieldList;
+      console.log( 'In local - getQueryFieldList:', this.fieldList );
+
       this.isLoading = false; // 本地模式下，數據加載快速完成，直接設置為 false
 
     } else {

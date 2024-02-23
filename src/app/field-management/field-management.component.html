@@ -92,7 +92,8 @@
     <!-- 欄位標題 - 場域建立 -->
     <h5>{{ languageService.i18n['field.createTitle'] }}</h5>
   </div>  
-  <mat-stepper class="custom-stepper" orientation="vertical" [linear]="true" #stepper> 
+  <!-- <mat-stepper class="custom-stepper" orientation="vertical" [linear]="true" #stepper>  -->
+  <mat-stepper class="custom-stepper" orientation="vertical" [linear]="false" #stepper> <!-- @2024/02/24 - 先改為關閉 linear 模式 -->
     <!-- 定義垂直方向的 mat-stepper，並設置為線性步驟，要求每個步驟完成後才能進行下一步 -->
     <mat-step [stepControl]="firstFormGroup_FieldName">
       <!-- 第一步：設置場域名稱 -->
