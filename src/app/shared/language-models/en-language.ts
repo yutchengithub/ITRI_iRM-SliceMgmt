@@ -125,6 +125,8 @@ export const Enlanguage = {
   
   'field.fieldImageUpload':'Upload Field Image',      // @2024/02/23 Update
   'field.fieldImageNotUploaded': 'Field image not yet uploaded ( e.g., Indoor or outdoor maps )',  // @2024/02/23 Update
+  'field.fieldImageNotUploaded1': 'Field image not yet uploaded',      // @2024/02/23 Add
+  'field.fieldImageNotUploaded2': '( e.g., Indoor or outdoor maps )',  // @2024/02/23 Add
   'field.confirmDeletefieldImage':'Sure to remove the field image ?',  // @2024//02/23 Update
   'field.indoorMap':'Indoor Map',                    // @2024/01/18 Add
   'field.preview':'Preview',                         // @2024/02/04 Add

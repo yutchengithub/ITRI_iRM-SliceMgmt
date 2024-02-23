@@ -127,6 +127,8 @@ export const TwLanguage = {
   'field.fieldImageUpload':'場域圖片上傳',      // @2024/02/23 Update
   'field.fieldImageNone':'未有場域圖片',        // @2024/02/23 Update
   'field.fieldImageNotUploaded': '尚未上傳場域圖片 ( 如室內或室外地圖 )',      // @2024/02/23 Update
+  'field.fieldImageNotUploaded1': '尚未上傳場域圖片',      // @2024/02/23 Add
+  'field.fieldImageNotUploaded2': '( 如室內或室外地圖 )',  // @2024/02/23 Add
   'field.DeletefieldImage':'刪除該場域圖片',              // @2024/02/23 Update
   'field.confirmDeletefieldImage':'確定刪除該場域圖片？',  // @2024/02/23 Update
 
