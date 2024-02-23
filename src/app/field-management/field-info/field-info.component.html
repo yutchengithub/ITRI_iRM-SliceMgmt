@@ -614,27 +614,27 @@
 									<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="35"></mat-progress-spinner>
 								</div>
 							</ng-container>
-							<!-- 顯示室內圖片 -->
+							<!-- 顯示場域圖片 -->
 							<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
 								<!-- For local @2024/01/23 Add -->
 								<div class="preview">
 									<div class="center">{{ languageService.i18n['field.preview'] }}</div>
-									<mat-icon title="{{ languageService.i18n['field.DeleteindoorMap'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon>
-									<img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
-									<img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.indoorMap'] }}" alt="{{ languageService.i18n['field.indoorMap'] }}">
+									<mat-icon title="{{ languageService.i18n['field.DeletefieldImage'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon>
+									<img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}">
+									<img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}">
 								</div>
 								<div id="noImageMessage" style="display: none;">
 									<span class="material-symbols-outlined">
 										error
 										</span>
-									{{ languageService.i18n['field.indoorMapNotUploaded'] }}
+									{{ languageService.i18n['field.fieldImageNotUploaded'] }}
 								</div>
 							</ng-container>
 						</div>
 						<div class="button-container">
 							<!-- 按鈕，用於觸發隱藏的 input 元素 -->
 							<button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()">
-							{{ languageService.i18n['field.indoorMapUpload'] }}
+							{{ languageService.i18n['field.fieldImageUpload'] }}
 							</button>
 							<!-- 隱藏的文件輸入元素，僅接受 PNG 和 JPG 圖片 -->
 							<input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".png, .jpg, .jpeg">
@@ -746,7 +746,7 @@
 			<h5>{{ languageService.i18n['confirm'] }}</h5>
 		</div>  
 		<label class="label-centered">
-			{{ languageService.i18n['field.confirmDeleteindoorMap'] }}
+			{{ languageService.i18n['field.confirmDeletefieldImage'] }}
 		</label>
 		<div class="buttons buttons-centered">
 			<button type="button" (click)="removeIndoorImage()" mat-dialog-close>

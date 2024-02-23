@@ -123,13 +123,13 @@ export const Enlanguage = {
   'field.selectBSs':'Choose BSs in field',          // @2024/01/18 Add
   'field.confirmFieldEditField': "Confirm to make these field changes ?",  // @2024/01/28 Add
   
-  'field.indoorMapUpload':'Upload Indoor Map',      // @2024/01/18 Update
-  'field.indoorMapNotUploaded': 'Indoor map not yet uploaded',      // @2024/01/18 Update
-  'field.confirmDeleteindoorMap':'Sure to remove the indoor map ?',  // @2024/01/19 Add
-  'field.indoorMap':'Indoor Map',                   // @2024/01/18 Add
-  'field.preview':'Preview',                        // @2024/02/04 Add
-  'field.indoorMapNone':'No indoor map available',  // @2024/01/18 Add
-  'field.DeleteindoorMap':'Delete the indoor map',  // @2024/01/18 Add
+  'field.fieldImageUpload':'Upload Field Image',      // @2024/02/23 Update
+  'field.fieldImageNotUploaded': 'Field image not yet uploaded ( e.g., Indoor or outdoor maps )',  // @2024/02/23 Update
+  'field.confirmDeletefieldImage':'Sure to remove the field image ?',  // @2024//02/23 Update
+  'field.indoorMap':'Indoor Map',                    // @2024/01/18 Add
+  'field.preview':'Preview',                         // @2024/02/04 Add
+  'field.fieldImageNone':'No field image available',  // @2024/02/23 Update
+  'field.DeletefieldImage':'Delete the field image',  // @2024/02/23 Update
 
   'field.configPMset':'PM Parameter Setting',  // @12/12 Add
   'field.pmIP': 'PM Server IP Address',        // @2024/02/15 Add

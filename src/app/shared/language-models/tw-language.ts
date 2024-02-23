@@ -124,11 +124,11 @@ export const TwLanguage = {
   'field.selectBSs':'選擇基站',                // @2024/01/18 Add
   'field.confirmFieldEditField': "確認進行場域變更？", // @2024/01/28 Add
 
-  'field.indoorMapUpload':'室內地圖上傳',      // @2024/01/18 Update
-  'field.indoorMapNone':'未有室內地圖',        // @2024/01/18 Add
-  'field.indoorMapNotUploaded': '室內地圖尚未上傳',      // @2024/01/18 Update
-  'field.DeleteindoorMap':'刪除該室內地圖',              // @2024/01/18 Add
-  'field.confirmDeleteindoorMap':'確定刪除該室內地圖？',  // @2024/01/19 Add
+  'field.fieldImageUpload':'場域圖片上傳',      // @2024/02/23 Update
+  'field.fieldImageNone':'未有場域圖片',        // @2024/02/23 Update
+  'field.fieldImageNotUploaded': '尚未上傳場域圖片 ( 如室內或室外地圖 )',      // @2024/02/23 Update
+  'field.DeletefieldImage':'刪除該場域圖片',              // @2024/02/23 Update
+  'field.confirmDeletefieldImage':'確定刪除該場域圖片？',  // @2024/02/23 Update
 
   'field.configPMset':'效能管理參數設定',  // @12/12 Add 
   'field.pmIP': 'PM伺服器IP位址',         // @2024/02/15 Add
