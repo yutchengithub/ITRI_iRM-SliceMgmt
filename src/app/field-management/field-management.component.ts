@@ -637,10 +637,15 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  // 開啟快照功能視窗 @2024/02/03 Update by yuchen
-  openSnapshot( field: Field ){
+
+// For Snapshot @2024/02/25 Add by yuchen ↓
+
+  // 開啟快照功能視窗 @2024/02/25 Add
+  openSnapshotWindow( field: Field ){
     this.selectField = field;
   }
+
+// For Snapshot @2024/02/25 Add by yuchen ↑
 
 }
 

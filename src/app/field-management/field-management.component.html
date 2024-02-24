@@ -33,6 +33,7 @@
             </td>
           </tr>
         </ng-container>
+
         <!-- 加載完成後顯示場域數據 -->
         <ng-container *ngIf="!isLoading">
           <!-- 循環顯示場域列表，並應用分頁 -->
@@ -59,7 +60,7 @@
               <mat-icon tooltip="{{ languageService.i18n['field.alarm'] }}" (click)="viewFieldAlarmInfo( field )">warning</mat-icon>
             </td>
             <td class="icon">
-              <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openSnapshot( field )">camera_alt</mat-icon>
+              <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openSnapshotWindow( field )">camera_alt</mat-icon>
             </td>
             <td class="icon">
               <mat-icon tooltip="{{languageService.i18n['field.delItem']}}" (click)="openDeleteField_ConfirmWindow( field )">delete_forever</mat-icon>
@@ -286,4 +287,8 @@
       {{ languageService.i18n['cancel'] }} <!-- 按鈕文字 -->
     </button>
   </div>
+</ng-template>
+
+<!-- Window of Snapshot @2024/02/25 Add -->
+<ng-template #snapshotWindow>
 </ng-template>
