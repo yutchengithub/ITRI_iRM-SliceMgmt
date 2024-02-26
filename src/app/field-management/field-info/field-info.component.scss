@@ -56,7 +56,7 @@ h5 .mat-icon {
 
 // For Mouseover @2024/02/26 Add
 .bs-info-display li:hover {
-  color: green; /* 當鼠標懸停在 <li> 標籤上時，將文字顏色改變為綠色 */
+  color: #ba5a2a; /* 當鼠標懸停在 <li> 標籤上時，將文字顏色改變為綠色 */
 }
 
 
@@ -68,7 +68,7 @@ h5 .mat-icon {
   transform: translate(-50%, -50%); // 將 spinner 置於容器中心
   z-index: 10; // 確保 spinner 顯示在地圖上方 
 }
-
+F
 // 進度調居中並設定大小 @12/28 Add
 .progress-spinner-container {
   display: flex;
