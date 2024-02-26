@@ -2488,48 +2488,64 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  // @2024/02/22 Update
-  // 用於記錄 Radio Button 選擇的"量測類型"
-  logClickMeasurementType( value: string ) {
+  // 用來暫存自定義參數的值 @2024/02/26 Add
+  temporarySelfDefinedParameters: string = "";
 
-    this.measurementType = value; // 設定當前選擇的量測類型
+  // @2024/02/26 Update
+  // 處理量測類型選擇的變化，並根據選擇的量測類型更新表單狀態
+  logClickMeasurementType(value: string) {
+    this.measurementType = value; // 更新當前選擇的量測類型
 
-    // 如果選擇的是"selfDefined"，且 PmFtpInfo.metric 有值，初始化輸入欄位
-    if ( value === "selfDefined" ) {
-      this.initializeSelfDefinedParameters( this.PmFtpInfo.metric );
-    } else if ( value !== "selfDefined" ) {
-      // 如果選擇的不是"selfDefined"，清空所有自定義參數輸入欄位
-      while ( this.selfDefinedParameters.length !== 0 ) {
-        this.removeSelfDefinedParameterInput( 0 );
+    // 如果用戶選擇了自定義量測類型
+    if (value === "selfDefined") {
+      // 檢查是否已存在自定義參數的輸入框
+      if (this.selfDefinedParameters.length === 0) {
+        // 如果暫存中有自定義參數值，則使用這些值初始化表單
+        if (this.temporarySelfDefinedParameters) {
+          this.initializeSelfDefinedParameters(this.temporarySelfDefinedParameters);
+        } else {
+          // 如果沒有暫存值，則添加一個空的自定義參數輸入框
+          this.addSelfDefinedParameterInput();
+        }
+      } else {
+        // 如果已經有輸入框，並且存在先前的自定義參數值，則重新初始化這些參數
+        this.initializeSelfDefinedParameters(this.PmFtpInfo.metric);
+        // 將當前的自定義參數值保存到暫存變數中
+        this.temporarySelfDefinedParameters = this.PmFtpInfo.metric;
+      }
+    } else if (value !== "selfDefined") {
+      // 如果用戶沒有選擇自定義量測類型，則清空所有自定義參數輸入框
+      while (this.selfDefinedParameters.length !== 0) {
+        this.removeSelfDefinedParameterInput(0);
       }
     }
 
-    // 根據選擇的量測類型輸出不同的日誌
-    if ( this.measurementType === "" ) {
-      console.log( 'Selected Measurement Type: Off' );
+    // 輸出當前選擇的量測類型
+    if (this.measurementType === "") {
+      console.log('Selected Measurement Type: Off');
     } else {
-      console.log( 'Selected Measurement Type:', this.measurementType );
+      console.log('Selected Measurement Type:', this.measurementType);
     }
-
   }
 
-  // 當量測類型為自定義時，新增"自定義參數"時會調用的函數
+  // @2024/02/26 Update
+  // 添加新的自定義參數輸入框
   addSelfDefinedParameterInput() {
-    const selfDefinedParameters = this.PMgmtParameterSetForm.get( 'selfDefinedParameters' ) as FormArray;
-
-    // 為每個新的自定義參數創建一個 FormGroup，並在其中添加一個名為 'SelfDefinedParameter_input' 的 FormControl
+    const selfDefinedParameters = this.PMgmtParameterSetForm.get('selfDefinedParameters') as FormArray;
+    // 創建新的 FormGroup 以保存自定義參數輸入值
     const group = new FormGroup({
-      'selfDefinedParameter_input': new FormControl( '', Validators.required )
+      'selfDefinedParameter_input': new FormControl('', Validators.required)
     });
-
-    selfDefinedParameters.push( group );
+    // 將新的 FormGroup 加入到 FormArray 中
+    selfDefinedParameters.push(group);
   }
 
-  // @2024/02/20 Add
-  // 調用此方法以刪除新增的自定義參數輸入區
-  removeSelfDefinedParameterInput( index: number ) {
-    const selfDefinedParameters = this.PMgmtParameterSetForm.get( 'selfDefinedParameters' ) as FormArray;
-    selfDefinedParameters.removeAt( index ); // 從 selfDefinedParameters FormArray 中移除指定索引的 FormGroup
+  // @2024/02/26 Update
+  // 刪除指定索引的自定義參數輸入框
+  removeSelfDefinedParameterInput(index: number) {
+    const selfDefinedParameters = this.PMgmtParameterSetForm.get('selfDefinedParameters') as FormArray;
+    // 從 FormArray 中移除指定的 FormGroup
+    selfDefinedParameters.removeAt(index);
   }
 
 

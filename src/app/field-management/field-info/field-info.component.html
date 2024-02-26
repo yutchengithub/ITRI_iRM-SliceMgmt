@@ -887,7 +887,7 @@
 		</div>
 	</ng-template>
 
-	<!-- Confirm Window for PM Parameter Setting @2024/02/22 Update -->
+	<!-- Confirm Window for PM Parameter Setting @2024/02/26 Update -->
 	<ng-template #confirmPMgmtParameterSetWindow>
 		<div>
 			<h5><mat-icon>warning_amber</mat-icon>{{ languageService.i18n['field.applyReminder'] }}</h5>
@@ -899,7 +899,7 @@
 		<button type="button" (click)="UpdatePMParameterSetting_Submit()" mat-dialog-close>
 			{{ languageService.i18n['confirm'] }}
 		</button>
-		<button type="button" (click)="resetPMgmtParameterSetForm()" mat-dialog-close>
+		<button type="button" mat-dialog-close>
 			{{ languageService.i18n['cancel'] }}
 		</button>
 		</div>
