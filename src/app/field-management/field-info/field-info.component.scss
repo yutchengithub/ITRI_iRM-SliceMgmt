@@ -41,6 +41,25 @@ h5 .mat-icon {
   height: 900px; /* 設定與地圖相同的高度 */
 }
 
+// For Mouseover @2024/02/26 Add
+.bs-info-display {
+  position: absolute;
+  color: #192c53;
+  top: 10px; /* 或其他合適的值 */
+  left: 10px; /* 或其他合適的值 */
+  width: 300px; /* 或根據需要調整 */
+  background-color: rgba(255, 255, 255, 0.8); /* Translucent background */
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 1000; /* 確保它顯示在地圖上方 */
+}
+
+// For Mouseover @2024/02/26 Add
+.bs-info-display li:hover {
+  color: green; /* 當鼠標懸停在 <li> 標籤上時，將文字顏色改變為綠色 */
+}
+
+
 // @12/28 Add
 .spinner-container {
   position: absolute;

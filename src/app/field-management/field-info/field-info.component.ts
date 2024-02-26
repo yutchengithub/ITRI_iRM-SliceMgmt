@@ -1102,7 +1102,7 @@ export class FieldInfoComponent implements OnInit {
             bsInfo.iconUrl = this.setIconUrl(bsInfo.bstype, bsInfo.status, isSelected, firstBsInfoName, bsInfo.name);
           });
 
-          // 將 allSimplifiedBsInfo 數組中的第一筆基站資訊顯示於「基站資訊」欄位上
+          // 將 allSimplifiedBsInfo 數組中的第一筆基站資訊預設顯示於「基站資訊」欄位上
           this.displayBsInfo = this.allSimplifiedBsInfo[0];
 
           // 當 displayBsInfo 更新後，更新表單 @2024/01/17 Add
@@ -1292,7 +1292,11 @@ export class FieldInfoComponent implements OnInit {
     return basePath + iconName;
   }
 
-  // 用來切換成顯示"當下點擊的基站資訊與基站圖標"
+  // 基站詳細資訊的狀態變量 @2024/02/26 Add for mouseover 
+  selectedBsInfo: SimplifiedBSInfo | null = null;
+  showBsInfoWindow: boolean = false;
+
+  // 用來切換成顯示"當下點擊的基站資訊與基站圖標" @2024/02/26 Update for mouseover 
   onSelectBsInfo( clickbsInfo: SimplifiedBSInfo, clickbsInfoName: string, clickbsInfoBSType: number, clickbsInfoStatus: number ) {
 
     this.ngZone.run(() => {
@@ -1300,6 +1304,7 @@ export class FieldInfoComponent implements OnInit {
 
         // 更新顯示資訊為當前被點擊的基站
         this.displayBsInfo = clickbsInfo;
+        //this.selectedBsInfo = clickbsInfo; // @2024/02/26 Add
 
         // 遍歷所有基站，更新它們的圖標
         this.allSimplifiedBsInfo.forEach((bsInfo) => {
@@ -1319,7 +1324,43 @@ export class FieldInfoComponent implements OnInit {
     // 手動觸發變化檢測以更新界面
     this.cdr.detectChanges();
     // 在控制台輸出當前顯示的基站資訊
-    console.log("After click onSelectBsInfo the displayBsInfo:", this.displayBsInfo)
+    console.log( "After click onSelectBsInfo the displayBsInfo:", this.displayBsInfo )
+  }
+
+  // 滑鼠懸停在基站標記上時的處理函數 @2024/02/26 Add for mouseover 
+  onMouseOverBsInfo( bsInfo: SimplifiedBSInfo ): void {
+    this.displayBsInfo = bsInfo;
+    this.showBsInfoWindow = true;
+  }
+
+  // 滑鼠從基站標記移開時的處理函數 @2024/02/26 Add for mouseover 
+  onMouseOutBsInfo(): void {
+    // 只有當用戶沒有點擊基站時，滑鼠移開才會隱藏詳細資訊
+    if (!this.displayBsInfo) {
+      this.showBsInfoWindow = false;
+    }
+  }
+
+  // 用於關閉基站詳細資訊窗口的方法 @2024/02/26 Add for mouseover 
+  closeBsInfoWindow(): void {
+    this.showBsInfoWindow = false;
+    this.displayBsInfo = null;
+  }
+
+  // @12/25 Add
+  // 用於從當前顯示基站資訊中獲取轉換後的位置對象
+  get displayBsInfoPosition(): google.maps.LatLngLiteral {
+
+    // 如果 displayBsInfo 存在，則調用 parsePosition 方法進行轉換，否則返回預設值
+    return this.displayBsInfo ? this.parsePosition(this.displayBsInfo.position) : { lat: 0, lng: 0 };
+  }
+
+  // @2024/02/26 Add for mouseover 
+  // 用於從當前選到顯示的基站資訊中獲取轉換後的位置對象
+  get selectedBsInfoPosition(): google.maps.LatLngLiteral {
+
+    // 如果 selectedBsInfo 存在，則調用 parsePosition 方法進行轉換，否則返回預設值
+    return this.selectedBsInfo ? this.parsePosition( this.selectedBsInfo.position ) : { lat: 0, lng: 0 };
   }
 
   // @2024/01/09 - Update
@@ -1351,15 +1392,8 @@ export class FieldInfoComponent implements OnInit {
       return { lat: 0, lng: 0 };
     }
   }
-  
 
-  // @12/25 Add
-  // 用於從當前顯示基站資訊中獲取轉換後的位置對象
-  get displayBsInfoPosition(): google.maps.LatLngLiteral {
 
-    // 如果 displayBsInfo 存在，則調用 parsePosition 方法進行轉換，否則返回預設值
-    return this.displayBsInfo ? this.parsePosition(this.displayBsInfo.position) : { lat: 0, lng: 0 };
-  }
 
   //  string -> number (mobility - 換手成功率)
   // @12/18 Update coverage -> mobility by yuchen
