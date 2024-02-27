@@ -43,16 +43,16 @@ h5 .mat-icon {
   height: 900px; /* 設定與地圖相同的高度 */
 }
 
-// @2024/02/27 Update
+// @2024/02/28 Update
 // 自定義 Mouseover 用樣式 ( 非 Google Maps 的)
 .bs-info-display {
   position: absolute;
   color: #192c53;
-  font-size: small;
+  font-size: xx-small;
 
   top: 10px; 
   left: 10px;
-  width: 250px;
+  width: 235px;
 
   background-color: rgba( 255, 255, 255, 0.8 ); // Translucent background
   border: 1px solid #ccc;

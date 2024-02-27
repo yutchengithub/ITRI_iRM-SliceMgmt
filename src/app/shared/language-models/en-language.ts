@@ -97,11 +97,15 @@ export const Enlanguage = {
   'field.accessRate':'Access Success Rate',
   'field.CPU_Utilization':'CPU Utilization',
   'field.Memory_Utilization':'Memory Utilization',
+
   'field.bsInfo':'BS Information',
+  'field.bsNameInMouseOver':'Name',
+  'field.bsTypeInMouseOver':'Type',
   'field.BSname':'Name',
   'field.BStype':'Type',
   'field.Longitude':'Longitude',
   'field.Latitude':'Latitude',
+  
   'field.modifyConfiguration':'Modify Configuration',
   'field.modifySuccess':'Modification Applied',     // @2024/01/10 Add
   'field.modifyError':'Modification Error',         // @2024/01/10 Add

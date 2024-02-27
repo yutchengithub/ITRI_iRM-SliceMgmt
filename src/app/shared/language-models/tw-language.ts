@@ -95,11 +95,15 @@ export const TwLanguage = {
   'field.accessRate':'接入成功率',
   'field.CPU_Utilization':'CPU 使用率',
   'field.Memory_Utilization':'Memory 使用率',
+
   'field.bsInfo':'基站資訊',
+  'field.bsNameInMouseOver':'名稱',
+  'field.bsTypeInMouseOver':'類型',
   'field.BSname':'基站名稱',
   'field.BStype':'基站類型',
   'field.Longitude':'經度',
   'field.Latitude':'緯度',
+  
   'field.modifyConfiguration':'修改配置',
   'field.modifySuccess':'修改已套用',         // @2024/01/10 Add
   'field.modifyError':'修改錯誤',             // @2024/01/10 Add

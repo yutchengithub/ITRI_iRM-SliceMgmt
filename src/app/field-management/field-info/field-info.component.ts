@@ -1293,10 +1293,15 @@ export class FieldInfoComponent implements OnInit {
     return basePath + iconName;
   }
 
-  // 基站詳細資訊的狀態變量 @2024/02/26 Add for mouseover 
+
+  // @2024/02/26 Add for MouseOver 
+  // 用於保存當前選中的基站訊息。如果沒有選中的基站，則為 null。
   selectedBsInfo: SimplifiedBSInfo | null = null;
+
+  // @2024/02/26 Add for MouseOver 
+  // 一個布林值，指示是否應該顯示基站的詳細訊息視窗。
   showBsInfoWindow: boolean = false;
-  
+
   // @2024/02/27 Add
   // 使用 @ViewChild 裝飾器來獲取模板中的 MapInfoWindow 元素的實例。
   // '!' 非空斷言操作符告訴 TypeScript 編譯器該屬性將在代碼的後續部分被賦值，
@@ -1308,96 +1313,115 @@ export class FieldInfoComponent implements OnInit {
   infoContent = "";
 
   // @2024/02/27 Add
-  // 宣告一個變量 `BsInfoDisplayInMapInfoWindow` 用於存儲要顯示在 InfoWindow 中的基站詳細資訊。
+  // 宣告一個變量 `displayBsInfo_for_googleMapInfoWindow` 用於存儲要顯示在 InfoWindow 中的基站詳細資訊。
   // 它的類型是 `SimplifiedBSInfo | null`，這意味著它可以存儲一個 `SimplifiedBSInfo` 對象或者是 `null`。
-  BsInfoDisplayInMapInfoWindow: SimplifiedBSInfo | null = null; 
+  displayBsInfo_for_googleMapInfoWindow: SimplifiedBSInfo | null = null; 
 
   // @2024/02/27 Add
   // 定義一個函數 `openBsInfo`，該函數接收一個 MapMarker 對象和一個 SimplifiedBSInfo 對象作為參數。
   // 這個函數將被用來打開一個 InfoWindow 並顯示基站的詳細資訊。
   openBsInfo( marker: MapMarker, clickbsInfo: SimplifiedBSInfo ) {
-    // 將傳入的基站資訊對象 `clickbsInfo` 賦值給 `BsInfoDisplayInMapInfoWindow`。
+    // 將傳入的基站資訊對象 `clickbsInfo` 賦值給 `displayBsInfo_for_googleMapInfoWindow`。
     // 這將確保 InfoWindow 顯示當前被點擊的基站的資訊。
-    this.BsInfoDisplayInMapInfoWindow = clickbsInfo;
+    this.displayBsInfo_for_googleMapInfoWindow = clickbsInfo;
 
     // 使用 MapInfoWindow 實例的 `open` 方法，傳入一個 MapMarker 對象來打開 InfoWindow。
     // InfoWindow 將顯示在與傳入的 marker 關聯的地圖上的位置。
     this.infoWindow.open( marker );
   }
 
-
-  // @2024/02/27 Add for Mouseover of Google Map APIs
+  // @2024/02/27 Add for MouseOver of Google Map APIs 
   // 用於從當前顯示基站資訊中獲取轉換後的位置對象
-  get BsInfoDisplayInMapInfoWindowPosition(): google.maps.LatLngLiteral {
+  get displayBsInfo_for_googleMapInfoWindowPosition(): google.maps.LatLngLiteral {
 
-    // 如果 BsInfoDisplayInMapInfoWindow 存在，則調用 parsePosition 方法進行轉換，否則返回預設值
-    return this.BsInfoDisplayInMapInfoWindow ? this.parsePosition(this.BsInfoDisplayInMapInfoWindow.position) : { lat: 0, lng: 0 };
+    // 如果 displayBsInfo_for_googleMapInfoWindow 存在，則調用 parsePosition 方法進行轉換，否則返回預設值
+    return this.displayBsInfo_for_googleMapInfoWindow ? this.parsePosition(this.displayBsInfo_for_googleMapInfoWindow.position) : { lat: 0, lng: 0 };
   }
 
-
-  // 用來切換成顯示"當下點擊的基站資訊與基站圖標" @2024/02/27 Update for mouseover 
-  onSelectBsInfo( marker: MapMarker, clickbsInfo: SimplifiedBSInfo, clickbsInfoName: string, clickbsInfoBSType: number, clickbsInfoStatus: number ) {
-
+  // @2024/02/27 Update for MouseOver
+  // 負責處理當地圖上的標記被點擊時的事件，
+  // 用來切換成顯示 "當下點擊的基站資訊與基站圖標"，並顯示對應的資訊於點擊到的基站圖標上"
+  onSelectBsInfo( marker: MapMarker, clickbsInfo: SimplifiedBSInfo, clickbsInfoName: string,
+                   clickbsInfoBSType: number, clickbsInfoStatus: number ) {
+    
+    // 在 Angular 的 NgZone 中執行以保證更新能正確反映在 UI 上
     this.ngZone.run(() => {
-        // 在 Angular 的 ngZone 中執行以保證更新能正確反映在 UI 上
 
-        this.openBsInfo( marker, clickbsInfo );
+      // 開啟訊息窗口並顯示被點擊的基站訊息
+      this.openBsInfo( marker, clickbsInfo );
+      
+      // 更新基站選中狀態
+      if ( this.selectedBsInfo === clickbsInfo ) {
+        // 如果此基站已選中，則取消選中並隱藏訊息窗口
+        this.selectedBsInfo = null;
+        this.showBsInfoWindow = false;
+        this.displayBsInfo = null;
+      } else {
+        // 否則，將此基站設為選中狀態並顯示訊息窗口
+        this.selectedBsInfo = clickbsInfo;
+        this.showBsInfoWindow = true;
+        this.displayBsInfo = clickbsInfo;
+      }
 
-        // @2024/02/27 Add
-        // 依據點擊狀況更新 Mouseover 上顯示基站資訊 
-        if ( this.selectedBsInfo === clickbsInfo ) {
-          // 如果已經選中，則隱藏並清除選中的基站
-          this.selectedBsInfo = null;
-          this.showBsInfoWindow = false;
-          this.displayBsInfo = null; // 也將 displayBsInfo 設為 null
-        } else {
-          // 否則顯示詳細信息
-          this.selectedBsInfo = clickbsInfo;
-          this.showBsInfoWindow = true;
-          this.displayBsInfo = clickbsInfo; // 確保 displayBsInfo 也被設置
-        } 
-
-        // 遍歷所有基站，更新它們的圖標
-        this.allSimplifiedBsInfo.forEach((bsInfo) => {
-
-            // 檢查是否為被點擊的基站
-            const isSelected = (bsInfo === clickbsInfo);
-
-            // 更新圖標URL
-            bsInfo.iconUrl = this.setIconUrl(bsInfo.bstype, bsInfo.status, isSelected, clickbsInfoName, bsInfo.name);
-        });
-
+      // 遍歷所有基站資訊，更新它們的圖標顯示狀態
+      this.allSimplifiedBsInfo.forEach( bsInfo => {
         
-        // 在控制台輸出被點擊的基站名稱、類型和狀態
-        console.log("Marker", clickbsInfoName, "is clicked,\n",
-                      "its type is", clickbsInfoBSType, "its status is", clickbsInfoStatus);
+        // 檢查每個基站是否為當前點擊的基站
+        const isSelected = bsInfo === clickbsInfo;
+        
+        // 更新圖標 URL
+        bsInfo.iconUrl = this.setIconUrl( bsInfo.bstype, bsInfo.status, isSelected, clickbsInfoName, bsInfo.name );
+      });
+
+      // 輸出被點擊的基站訊息到控制台
+      console.log("Marker", clickbsInfoName, "is clicked,\n",
+                    "its type is", clickbsInfoBSType, "its status is", clickbsInfoStatus);
     });
 
-    // 手動觸發變化檢測以更新界面
+    // 觸發變化檢測更新 UI
     this.cdr.detectChanges();
-    // 在控制台輸出當前顯示的基站資訊
-    console.log( "After click onSelectBsInfo the displayBsInfo:", this.displayBsInfo )
+
+    // 輸出當前點擊的基站訊息到控制台
+    console.log("After click onSelectBsInfo the displayBsInfo:", this.displayBsInfo);
   }
 
-  // 滑鼠懸停在基站標記上時的處理函數 @2024/02/27 Add for mouseover 
+  // @2024/02/27 Add for MouseOver 
+  // 當鼠標懸停在地圖上的基站標記上時觸發的事件處理函數
   onMouseOverBsInfo( bsInfo: SimplifiedBSInfo ): void {
+
+    // 將當前懸停的基站訊息設為要顯示的基站詳細訊息
     this.displayBsInfo = bsInfo;
+
+    // 設置顯示基站詳細訊息視窗的標記為 true，使其顯示
     this.showBsInfoWindow = true;
-    // 你可能需要在這裡根據標記的位置計算並設置資訊窗口的位置
+
+    // 註釋提示: 可在此根據需要添加計算並設置資訊窗口位置的邏輯
   }
 
-  // 滑鼠從基站標記移開時的處理函數 @2024/02/27 Add for mouseover 
+  // @2024/02/27 Add for MouseOver 
+  // 當鼠標從地圖上的基站標記移開時觸發的事件處理函數
   onMouseOutBsInfo(): void {
-    // 只有當沒有選中標記時才隱藏資訊窗口
-    if (!this.selectedBsInfo) {
+
+    // 檢查是否有基站被選中
+    if ( !this.selectedBsInfo ) {
+      
+      // 如果沒有基站被選中，則將顯示基站詳細訊息視窗的標記設為 false，使其隱藏
       this.showBsInfoWindow = false;
     }
+    // 如果有基站被選中，則不做任何操作，保持詳細訊息視窗顯示
   }
 
-  // 用於關閉基站詳細資訊窗口的方法 @2024/02/26 Add for mouseover 
+  // @2024/02/26 Add for MouseOver 
+  // 這個方法用於關閉並重置地圖上顯示的基站詳細資訊窗口
   // closeBsInfoWindow(): void {
+
+  //   // 在控制台輸出日誌，表示此函數已被觸發，用於調試
   //   console.log("已觸發 - closeBsInfoWindow()");
+
+  //   // 將控制顯示基站詳細資訊窗口的布爾變數設為 false，使資訊窗口不顯示
   //   this.showBsInfoWindow = false;
+
+  //   // 將當前顯示的基站詳細資訊設為 null，表示沒有基站訊息被選中或顯示
   //   this.displayBsInfo = null;
   // }
 
@@ -1409,7 +1433,7 @@ export class FieldInfoComponent implements OnInit {
     return this.displayBsInfo ? this.parsePosition(this.displayBsInfo.position) : { lat: 0, lng: 0 };
   }
 
-  // @2024/02/26 Add for mouseover 
+  // @2024/02/26 Add for MouseOver 
   // 用於從當前選到顯示的基站資訊中獲取轉換後的位置對象
   get selectedBsInfoPosition(): google.maps.LatLngLiteral {
 
@@ -1516,6 +1540,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
+  
 // BS Modify Configuration Setting @2024/01/05 Add ↓
 
   @ViewChild('modifyConfigWindow') modifyConfigWindow: any;
@@ -1578,7 +1603,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
   modifyConfig_click_NUM: number = 0;
-  // @2024/01/15 Update 
+  // 更新 BS 配置 Submit 時用的函數 @2024/01/15 Update 
   ModifyConfig_Submit( bsName: string ,bsType: number ) {
     console.log( "ModifyConfig_Submit() - Start" );
 
@@ -2142,7 +2167,7 @@ export class FieldInfoComponent implements OnInit {
 
 
   /** @2024/02/01 Update
-   * 提交場域編輯信息。
+   * 提交場域編輯訊息。
    * 如果是本地模式，則模擬數據更新過程；
    * 如果不是本地模式，則向伺服器發送更新請求。
    */
@@ -2157,7 +2182,7 @@ export class FieldInfoComponent implements OnInit {
       fieldposition3: `[${this.fieldEditForm.value.fieldBound_West},${this.fieldEditForm.value.fieldBound_South}]`,
       fieldposition4: `[${this.fieldEditForm.value.fieldBound_East},${this.fieldEditForm.value.fieldBound_South}]`,
       name: this.fieldEditForm.value.fieldName,  // 從表單中獲取場域名稱
-      bsinfo: this.selectedBsInfos,              // 從先前的選擇中獲取基站信息
+      bsinfo: this.selectedBsInfos,              // 從先前的選擇中獲取基站訊息
       phone: this.fieldEditForm.value.phoneNumber, // 從表單中獲取聯絡電話
 
       // 使用者不能調整但需提交的部分
