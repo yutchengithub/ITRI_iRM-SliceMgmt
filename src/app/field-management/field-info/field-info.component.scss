@@ -30,18 +30,21 @@ h5 .mat-icon {
   z-index: 1000;
   color: #000;
 }
+
 .map-legend img {
   display: inline-block;
   vertical-align: bottom;
   margin: 0 0.5em 0 0;
 }
+
 // @12/28 Add
 .map-container {
   position: relative;
   height: 900px; /* 設定與地圖相同的高度 */
 }
 
-// For div of mouseover @2024/02/27 Update
+// @2024/02/27 Update
+// 自定義 Mouseover 用樣式 ( 非 Google Maps 的)
 .bs-info-display {
   position: absolute;
   color: #192c53;
@@ -51,18 +54,18 @@ h5 .mat-icon {
   left: 10px;
   width: 250px;
 
-  background-color: rgba( 255, 255, 255, 0.6 ); // Translucent background
+  background-color: rgba( 255, 255, 255, 0.8 ); // Translucent background
   border: 1px solid #ccc;
   padding: 10px;
 
   z-index: 1000; // 確保它顯示在地圖上層
 }
 
-// For Mouseover @2024/02/26 Add
+// @2024/02/27 Update
+// 自定義 Mouseover 中鼠標懸停在 <li> 標籤上的樣式
 .bs-info-display li:hover {
   color: #ba5a2a; // 當鼠標懸停在 <li> 標籤上時，將文字顏色改變顏色
 }
-
 
 // @12/28 Add
 .spinner-container {

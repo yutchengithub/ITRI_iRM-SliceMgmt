@@ -136,29 +136,80 @@
 				
 				<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
 				<google-map *ngIf="showMapModel" width="100%" height="52em" [center]="center" [options]="mapOptions">
+		
 					<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
 					<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
 					
 					<!-- 使用 *ngFor 指令迭代 bsInfoDetails 陣列中的每個基站資訊 -->
 					<!-- 為每個基站創建一個地圖標記，並將其位置設置為 bsInfo 的位置 -->
-					<!-- 同時綁定 markerClick 事件到 onSelectBsInfo 方法 -->
+					<!-- 同時綁定 mapClick 事件到 onSelectBsInfo 方法 -->
 					<!-- 這意味著當用戶點擊任何標記時，onSelectBsInfo 方法將被調用 -->
 				
-					<!-- <map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
-								[position]="parsePosition( bsInfo.position )" 
-								[title]="bsInfo.name"
-								[icon]="bsInfo.iconUrl"
-								(mapClick)="onSelectBsInfo( bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">	
-					</map-marker> -->
-
-					<!-- 加入 mouseOver 機制顯示對應的基站詳細資訊 @2024/02/26 Add by yuchen  -->
+					<!-- 加入 Mouseover 機制顯示對應的基站詳細資訊 @2024/02/26 Add -->
+					<!-- 在 map-marker 標籤中為每個基站標記添加 #markerElem 模板變量用於顯示 GoogleMap 內建訊息視窗 @2024/02/27 Add -->
 					<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
-								[position]="parsePosition( bsInfo.position )" 
-								[icon]="bsInfo.iconUrl"
-								(mouseOver)="onMouseOverBsInfo( bsInfo )"
-								(mouseOut)="onMouseOutBsInfo()"
-								(mapClick)="onSelectBsInfo( bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">
+						#markerElem="mapMarker" 
+						[position]="parsePosition( bsInfo.position )" 
+						[icon]="bsInfo.iconUrl"
+						(mapMouseover)="onMouseOverBsInfo( bsInfo )"
+            			(mapMouseout)="onMouseOutBsInfo()"
+						(mapClick)="onSelectBsInfo( markerElem, bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">
 					</map-marker>
+
+					<!-- Google Maps APIs Mouseover 視窗 @2024/02/27 Add -->
+					<map-info-window>
+						<h4>{{ languageService.i18n['field.bsInfo'] }}</h4>
+						<!-- 詳細資訊的 ul 列表 -->
+						<ul *ngIf="BsInfoDisplayInMapInfoWindow">
+							<li>
+								<label>{{ languageService.i18n['field.BSname'] }}: </label>
+								<span>{{ BsInfoDisplayInMapInfoWindow.name }}</span>
+							</li>
+							<li>
+								<label>{{languageService.i18n['field.BStype']}}: </label>
+								<span *ngIf="BsInfoDisplayInMapInfoWindow.bstype === 1">All-in-one: [CU + DU + RU]</span>
+								<span *ngIf="BsInfoDisplayInMapInfoWindow.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
+							</li>
+							<li>
+								<label>NCI: </label>
+								<span>{{ BsInfoDisplayInMapInfoWindow.nci }}</span>
+							</li>
+							<li>
+								<label>PCI: </label>
+								<span>{{ BsInfoDisplayInMapInfoWindow.pci }}</span>
+							</li>
+							<li>
+								<label>PLMN ID: </label>
+								<span>
+									{{ BsInfoDisplayInMapInfoWindow['plmn-id'].mcc }}{{ BsInfoDisplayInMapInfoWindow['plmn-id'].mnc }}
+								</span>
+							</li>
+							<li>
+								<label>Tx Power (dBm): </label>
+								<span>{{ BsInfoDisplayInMapInfoWindow['tx-power'] }}</span>
+							</li>
+							<li>
+								<label>NR-ARFCN-UL: </label>
+								<span>{{ BsInfoDisplayInMapInfoWindow['nrarfcn-ul'] }}</span>
+							</li>
+							<li>
+								<label>NR-ARFCN-DL: </label>
+								<span>{{ BsInfoDisplayInMapInfoWindow['nrarfcn-dl'] }}</span>
+							</li>
+
+							<!-- 使用 BsInfoDisplayInMapInfoWindowPosition getter 獲取經度 -->
+							<li>
+								<label>{{languageService.i18n['field.Longitude']}}: </label>
+								<span>{{ BsInfoDisplayInMapInfoWindowPosition.lng }}</span>
+							</li>
+
+							<!-- 使用 BsInfoDisplayInMapInfoWindowPosition getter 獲取緯度 -->
+							<li>
+								<label>{{languageService.i18n['field.Latitude']}}: </label>
+								<span>{{ BsInfoDisplayInMapInfoWindowPosition.lat }}</span>
+							</li>
+						</ul>
+					</map-info-window>
 
 					<!-- 圖例 -->
 					<div class="map-legend">
@@ -173,6 +224,7 @@
 					</div>
 					
 				</google-map>
+
 
 				<!-- 在地圖下方放置進度指示器，當 isMarkersLoading 為 true 時顯示 -->
 				<div *ngIf="isMarkersLoading" class="spinner-container">
@@ -325,50 +377,50 @@
 			<!-- 詳細資訊的 ul 列表 -->
 			<ul *ngIf="displayBsInfo">
 				<li>
-					<label>{{ languageService.i18n['field.BSname'] }} - </label>
+					<label>{{ languageService.i18n['field.BSname'] }}: </label>
 					<span>{{ displayBsInfo.name }}</span>
 				</li>
 				<li>
-					<label>{{languageService.i18n['field.BStype']}} - </label>
+					<label>{{languageService.i18n['field.BStype']}}: </label>
 					<span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
 					<span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
 				</li>
 				<li>
-					<label>NCI - </label>
+					<label>NCI: </label>
 					<span>{{ displayBsInfo.nci }}</span>
 				</li>
 				<li>
-					<label>PCI - </label>
+					<label>PCI: </label>
 					<span>{{ displayBsInfo.pci }}</span>
 				</li>
 				<li>
-					<label>PLMN ID - </label>
+					<label>PLMN ID: </label>
 					<span>
 						{{ displayBsInfo['plmn-id'].mcc }}{{ displayBsInfo['plmn-id'].mnc }}
 					</span>
 				</li>
 				<li>
-					<label>Tx Power (dBm) - </label>
+					<label>Tx Power (dBm): </label>
 					<span>{{ displayBsInfo['tx-power'] }}</span>
 				</li>
 				<li>
-					<label>NR-ARFCN-UL - </label>
+					<label>NR-ARFCN-UL: </label>
 					<span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
 				</li>
 				<li>
-					<label>NR-ARFCN-DL - </label>
+					<label>NR-ARFCN-DL: </label>
 					<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
 				</li>
 
 				<!-- 使用 displayBsInfoPosition getter 獲取經度 -->
 				<li>
-					<label>{{languageService.i18n['field.Longitude']}} - </label>
+					<label>{{languageService.i18n['field.Longitude']}}: </label>
 					<span>{{ displayBsInfoPosition.lng }}</span>
 				</li>
 
 				<!-- 使用 displayBsInfoPosition getter 獲取緯度 -->
 				<li>
-					<label>{{languageService.i18n['field.Latitude']}} - </label>
+					<label>{{languageService.i18n['field.Latitude']}}: </label>
 					<span>{{ displayBsInfoPosition.lat }}</span>
 				</li>
 			</ul>

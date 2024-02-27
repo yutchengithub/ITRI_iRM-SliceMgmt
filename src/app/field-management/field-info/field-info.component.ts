@@ -45,6 +45,7 @@ import { localBSinfo }    from '../../shared/local-files/BS/For_queryBsInfo';   
 
 import { map } from 'rxjs/operators';              // @2023/12/24 Add
 import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
+import { MapMarker, MapInfoWindow } from '@angular/google-maps'; // @2024/02/27 Add
 
 import { ElementRef } from '@angular/core';
 import { Console } from 'console';
@@ -1295,12 +1296,52 @@ export class FieldInfoComponent implements OnInit {
   // 基站詳細資訊的狀態變量 @2024/02/26 Add for mouseover 
   selectedBsInfo: SimplifiedBSInfo | null = null;
   showBsInfoWindow: boolean = false;
+  
+  // @2024/02/27 Add
+  // 使用 @ViewChild 裝飾器來獲取模板中的 MapInfoWindow 元素的實例。
+  // '!' 非空斷言操作符告訴 TypeScript 編譯器該屬性將在代碼的後續部分被賦值，
+  // 因此它在初始化時不會是 null 或 undefined。
+  @ViewChild( MapInfoWindow ) infoWindow!: MapInfoWindow; // @2024/02/27 Add
+
+  // @2024/02/27 Add
+  // 宣告一個字符串變量 `infoContent` 用來儲存要顯示在 InfoWindow 中的內容。
+  infoContent = "";
+
+  // @2024/02/27 Add
+  // 宣告一個變量 `BsInfoDisplayInMapInfoWindow` 用於存儲要顯示在 InfoWindow 中的基站詳細資訊。
+  // 它的類型是 `SimplifiedBSInfo | null`，這意味著它可以存儲一個 `SimplifiedBSInfo` 對象或者是 `null`。
+  BsInfoDisplayInMapInfoWindow: SimplifiedBSInfo | null = null; 
+
+  // @2024/02/27 Add
+  // 定義一個函數 `openBsInfo`，該函數接收一個 MapMarker 對象和一個 SimplifiedBSInfo 對象作為參數。
+  // 這個函數將被用來打開一個 InfoWindow 並顯示基站的詳細資訊。
+  openBsInfo( marker: MapMarker, clickbsInfo: SimplifiedBSInfo ) {
+    // 將傳入的基站資訊對象 `clickbsInfo` 賦值給 `BsInfoDisplayInMapInfoWindow`。
+    // 這將確保 InfoWindow 顯示當前被點擊的基站的資訊。
+    this.BsInfoDisplayInMapInfoWindow = clickbsInfo;
+
+    // 使用 MapInfoWindow 實例的 `open` 方法，傳入一個 MapMarker 對象來打開 InfoWindow。
+    // InfoWindow 將顯示在與傳入的 marker 關聯的地圖上的位置。
+    this.infoWindow.open( marker );
+  }
+
+
+  // @2024/02/27 Add for Mouseover of Google Map APIs
+  // 用於從當前顯示基站資訊中獲取轉換後的位置對象
+  get BsInfoDisplayInMapInfoWindowPosition(): google.maps.LatLngLiteral {
+
+    // 如果 BsInfoDisplayInMapInfoWindow 存在，則調用 parsePosition 方法進行轉換，否則返回預設值
+    return this.BsInfoDisplayInMapInfoWindow ? this.parsePosition(this.BsInfoDisplayInMapInfoWindow.position) : { lat: 0, lng: 0 };
+  }
+
 
   // 用來切換成顯示"當下點擊的基站資訊與基站圖標" @2024/02/27 Update for mouseover 
-  onSelectBsInfo( clickbsInfo: SimplifiedBSInfo, clickbsInfoName: string, clickbsInfoBSType: number, clickbsInfoStatus: number ) {
+  onSelectBsInfo( marker: MapMarker, clickbsInfo: SimplifiedBSInfo, clickbsInfoName: string, clickbsInfoBSType: number, clickbsInfoStatus: number ) {
 
     this.ngZone.run(() => {
         // 在 Angular 的 ngZone 中執行以保證更新能正確反映在 UI 上
+
+        this.openBsInfo( marker, clickbsInfo );
 
         // @2024/02/27 Add
         // 依據點擊狀況更新 Mouseover 上顯示基站資訊 
@@ -1314,7 +1355,7 @@ export class FieldInfoComponent implements OnInit {
           this.selectedBsInfo = clickbsInfo;
           this.showBsInfoWindow = true;
           this.displayBsInfo = clickbsInfo; // 確保 displayBsInfo 也被設置
-        }
+        } 
 
         // 遍歷所有基站，更新它們的圖標
         this.allSimplifiedBsInfo.forEach((bsInfo) => {
@@ -1326,6 +1367,7 @@ export class FieldInfoComponent implements OnInit {
             bsInfo.iconUrl = this.setIconUrl(bsInfo.bstype, bsInfo.status, isSelected, clickbsInfoName, bsInfo.name);
         });
 
+        
         // 在控制台輸出被點擊的基站名稱、類型和狀態
         console.log("Marker", clickbsInfoName, "is clicked,\n",
                       "its type is", clickbsInfoBSType, "its status is", clickbsInfoStatus);
@@ -1337,25 +1379,27 @@ export class FieldInfoComponent implements OnInit {
     console.log( "After click onSelectBsInfo the displayBsInfo:", this.displayBsInfo )
   }
 
-  // 滑鼠懸停在基站標記上時的處理函數 @2024/02/26 Add for mouseover 
+  // 滑鼠懸停在基站標記上時的處理函數 @2024/02/27 Add for mouseover 
   onMouseOverBsInfo( bsInfo: SimplifiedBSInfo ): void {
     this.displayBsInfo = bsInfo;
     this.showBsInfoWindow = true;
+    // 你可能需要在這裡根據標記的位置計算並設置資訊窗口的位置
   }
 
-  // 滑鼠從基站標記移開時的處理函數 @2024/02/26 Add for mouseover 
+  // 滑鼠從基站標記移開時的處理函數 @2024/02/27 Add for mouseover 
   onMouseOutBsInfo(): void {
-    // 只有當用戶沒有點擊基站時，滑鼠移開才會隱藏詳細資訊
-    if (!this.displayBsInfo) {
+    // 只有當沒有選中標記時才隱藏資訊窗口
+    if (!this.selectedBsInfo) {
       this.showBsInfoWindow = false;
     }
   }
 
   // 用於關閉基站詳細資訊窗口的方法 @2024/02/26 Add for mouseover 
-  closeBsInfoWindow(): void {
-    this.showBsInfoWindow = false;
-    this.displayBsInfo = null;
-  }
+  // closeBsInfoWindow(): void {
+  //   console.log("已觸發 - closeBsInfoWindow()");
+  //   this.showBsInfoWindow = false;
+  //   this.displayBsInfo = null;
+  // }
 
   // @12/25 Add
   // 用於從當前顯示基站資訊中獲取轉換後的位置對象
@@ -1402,7 +1446,7 @@ export class FieldInfoComponent implements OnInit {
       return { lat: 0, lng: 0 };
     }
   }
-
+ 
 
 
   //  string -> number (mobility - 換手成功率)
