@@ -1296,15 +1296,25 @@ export class FieldInfoComponent implements OnInit {
   selectedBsInfo: SimplifiedBSInfo | null = null;
   showBsInfoWindow: boolean = false;
 
-  // 用來切換成顯示"當下點擊的基站資訊與基站圖標" @2024/02/26 Update for mouseover 
+  // 用來切換成顯示"當下點擊的基站資訊與基站圖標" @2024/02/27 Update for mouseover 
   onSelectBsInfo( clickbsInfo: SimplifiedBSInfo, clickbsInfoName: string, clickbsInfoBSType: number, clickbsInfoStatus: number ) {
 
     this.ngZone.run(() => {
         // 在 Angular 的 ngZone 中執行以保證更新能正確反映在 UI 上
 
-        // 更新顯示資訊為當前被點擊的基站
-        this.displayBsInfo = clickbsInfo;
-        //this.selectedBsInfo = clickbsInfo; // @2024/02/26 Add
+        // @2024/02/27 Add
+        // 依據點擊狀況更新 Mouseover 上顯示基站資訊 
+        if ( this.selectedBsInfo === clickbsInfo ) {
+          // 如果已經選中，則隱藏並清除選中的基站
+          this.selectedBsInfo = null;
+          this.showBsInfoWindow = false;
+          this.displayBsInfo = null; // 也將 displayBsInfo 設為 null
+        } else {
+          // 否則顯示詳細信息
+          this.selectedBsInfo = clickbsInfo;
+          this.showBsInfoWindow = true;
+          this.displayBsInfo = clickbsInfo; // 確保 displayBsInfo 也被設置
+        }
 
         // 遍歷所有基站，更新它們的圖標
         this.allSimplifiedBsInfo.forEach((bsInfo) => {
@@ -1318,7 +1328,7 @@ export class FieldInfoComponent implements OnInit {
 
         // 在控制台輸出被點擊的基站名稱、類型和狀態
         console.log("Marker", clickbsInfoName, "is clicked,\n",
-                    "its type is", clickbsInfoBSType, "its status is", clickbsInfoStatus);
+                      "its type is", clickbsInfoBSType, "its status is", clickbsInfoStatus);
     });
 
     // 手動觸發變化檢測以更新界面

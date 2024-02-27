@@ -319,56 +319,56 @@
 			</div>
 		</div>
 
-		<!-- 基站詳細資訊顯示窗( Mouseover ) @2024/02/26 Add by yuchen  -->
-		<div *ngIf="displayBsInfo" class="bs-info-display">
+		<!-- BS 詳細資訊顯示窗 ( Mouseover ) @2024/02/27 Update by yuchen  -->
+		<div *ngIf="showBsInfoWindow" class="bs-info-display">
 			<h4>{{ languageService.i18n['field.bsInfo'] }}</h4>
 			<!-- 詳細資訊的 ul 列表 -->
-			<ul>
+			<ul *ngIf="displayBsInfo">
 				<li>
-					<label>{{ languageService.i18n['field.BSname'] }}</label>
+					<label>{{ languageService.i18n['field.BSname'] }} - </label>
 					<span>{{ displayBsInfo.name }}</span>
 				</li>
 				<li>
-					<label>{{languageService.i18n['field.BStype']}}</label>
+					<label>{{languageService.i18n['field.BStype']}} - </label>
 					<span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
 					<span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
 				</li>
 				<li>
-					<label>NCI</label>
+					<label>NCI - </label>
 					<span>{{ displayBsInfo.nci }}</span>
 				</li>
 				<li>
-					<label>PCI</label>
+					<label>PCI - </label>
 					<span>{{ displayBsInfo.pci }}</span>
 				</li>
-					<li>
-					<label>PLMN ID</label>
+				<li>
+					<label>PLMN ID - </label>
 					<span>
-						{{ displayBsInfo['plmn-id'].mcc }} {{ displayBsInfo['plmn-id'].mnc }}
+						{{ displayBsInfo['plmn-id'].mcc }}{{ displayBsInfo['plmn-id'].mnc }}
 					</span>
 				</li>
 				<li>
-					<label>Tx Power (dBm)</label>
+					<label>Tx Power (dBm) - </label>
 					<span>{{ displayBsInfo['tx-power'] }}</span>
 				</li>
 				<li>
-					<label>NR-ARFCN-UL</label>
+					<label>NR-ARFCN-UL - </label>
 					<span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
 				</li>
 				<li>
-					<label>NR-ARFCN-DL</label>
+					<label>NR-ARFCN-DL - </label>
 					<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
 				</li>
 
 				<!-- 使用 displayBsInfoPosition getter 獲取經度 -->
 				<li>
-					<label>{{languageService.i18n['field.Longitude']}}</label>
+					<label>{{languageService.i18n['field.Longitude']}} - </label>
 					<span>{{ displayBsInfoPosition.lng }}</span>
 				</li>
 
 				<!-- 使用 displayBsInfoPosition getter 獲取緯度 -->
 				<li>
-					<label>{{languageService.i18n['field.Latitude']}}</label>
+					<label>{{languageService.i18n['field.Latitude']}} - </label>
 					<span>{{ displayBsInfoPosition.lat }}</span>
 				</li>
 			</ul>
