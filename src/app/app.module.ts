@@ -68,6 +68,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { FormBuilder, FormGroup } from '@angular/forms';      // @2024/01/31 Add
 import { MatInputModule } from '@angular/material/input';     // @2024/01/31 Add
 import { MatStepperModule } from '@angular/material/stepper'; // @2024/01/31 Add
+import { MatExpansionModule } from '@angular/material/expansion'; // 用於縮合效果 @2024/02/29 Add
 
 // import API
 import { apiForField } from './shared/api/For_Field'; // @2024/01/04 Add
@@ -159,7 +160,8 @@ import { localBSList }    from './shared/local-files/BS/For_queryBsList'; // @20
     ToggleButtonModule,            // @12/13 Add by yuchen for Toggle Button
 
     MatStepperModule,   // @2024/01/31 Add by yuchen
-    MatInputModule      // @2024/01/31 Add by yuchen
+    MatInputModule,     // @2024/01/31 Add by yuchen
+    MatExpansionModule  // 用於縮合效果 @2024/02/29 Add by yuchen
   ],
   providers: [
     AuthGuard,

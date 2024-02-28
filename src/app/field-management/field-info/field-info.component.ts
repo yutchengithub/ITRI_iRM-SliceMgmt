@@ -19,6 +19,7 @@ import {
   MatDialogTitle,
   MatDialogContent,
 } from '@angular/material/dialog'; // @2024/01/19 Add
+import { MatExpansionModule } from '@angular/material/expansion'; // 用於縮合效果 @2024/02/29 Add
 
 import { of } from 'rxjs'; // @2024/01/09 Add 
 import { forkJoin, Observable } from 'rxjs';
