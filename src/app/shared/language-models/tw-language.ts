@@ -103,6 +103,7 @@ export const TwLanguage = {
   'field.BStype':'基站類型',
   'field.Longitude':'經度',
   'field.Latitude':'緯度',
+  'field.moreBsInfos':'更多資訊',
   
   'field.modifyConfiguration':'修改配置',
   'field.modifySuccess':'修改已套用',         // @2024/01/10 Add

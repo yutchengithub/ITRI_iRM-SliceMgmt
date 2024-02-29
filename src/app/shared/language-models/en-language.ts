@@ -105,6 +105,7 @@ export const Enlanguage = {
   'field.BStype':'Type',
   'field.Longitude':'Longitude',
   'field.Latitude':'Latitude',
+  'field.moreBsInfos':'More Infos',
   
   'field.modifyConfiguration':'Modify Configuration',
   'field.modifySuccess':'Modification Applied',     // @2024/01/10 Add

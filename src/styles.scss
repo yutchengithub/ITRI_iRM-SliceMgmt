@@ -1310,13 +1310,13 @@ body.en .fault_mgr.table table tbody tr td:nth-child(4) {
 // 定義 Google Maps API 的 InfoWindow 樣式 
 .gm-style .gm-style-iw {
   background: rgba( 255, 255, 255, 0.9 ); // 設定半透明的白色背景
-  color: #192c53;    // 文字顏色
-  font-size: xx-small; // 字體大小
+  color: #192c53;      // 文字顏色
+  font-size: xx-small;   // 字體大小
  // font-weight: bolder; // 字體粗細
 }
 
 // @2024/02/27 Add
-// 定義 Google Maps API 的 InfoWindow中鼠標懸停在 <li> 標籤上的樣式
+// 定義 Google Maps API 的 InfoWindow 中鼠標懸停在 <li> 標籤上的樣式
 .gm-style .gm-style-iw li:hover {
   color: #ba5a2a; // 當鼠標懸停在 <li> 標籤上時，將文字顏色改變顏色
 }

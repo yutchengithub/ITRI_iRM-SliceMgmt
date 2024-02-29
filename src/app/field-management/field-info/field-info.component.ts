@@ -1339,26 +1339,29 @@ export class FieldInfoComponent implements OnInit {
     return this.displayBsInfo_for_googleMapInfoWindow ? this.parsePosition(this.displayBsInfo_for_googleMapInfoWindow.position) : { lat: 0, lng: 0 };
   }
 
-  // @2024/02/27 Update for MouseOver
+  // @2024/02/29 Update for Expansion Panel in MouseOver
   // 負責處理當地圖上的標記被點擊時的事件，
   // 用來切換成顯示 "當下點擊的基站資訊與基站圖標"，並顯示對應的資訊於點擊到的基站圖標上"
   onSelectBsInfo( marker: MapMarker, clickbsInfo: SimplifiedBSInfo, clickbsInfoName: string,
                    clickbsInfoBSType: number, clickbsInfoStatus: number ) {
     
+    // 每次當點擊一個基站都預設不展開摺疊面板 @2024/02/29 Add 
+    this.isPanelExpanded = false;
+    
     // 在 Angular 的 NgZone 中執行以保證更新能正確反映在 UI 上
     this.ngZone.run(() => {
 
-      // 開啟訊息窗口並顯示被點擊的基站訊息
+      // 開啟訊息視窗並顯示被點擊的基站訊息
       this.openBsInfo( marker, clickbsInfo );
       
       // 更新基站選中狀態
       if ( this.selectedBsInfo === clickbsInfo ) {
-        // 如果此基站已選中，則取消選中並隱藏訊息窗口
+        // 如果此基站已選中，則取消選中並隱藏訊息視窗
         this.selectedBsInfo = null;
         this.showBsInfoWindow = false;
         this.displayBsInfo = null;
       } else {
-        // 否則，將此基站設為選中狀態並顯示訊息窗口
+        // 否則，將此基站設為選中狀態並顯示訊息視窗
         this.selectedBsInfo = clickbsInfo;
         this.showBsInfoWindow = true;
         this.displayBsInfo = clickbsInfo;
@@ -1396,7 +1399,7 @@ export class FieldInfoComponent implements OnInit {
     // 設置顯示基站詳細訊息視窗的標記為 true，使其顯示
     this.showBsInfoWindow = true;
 
-    // 註釋提示: 可在此根據需要添加計算並設置資訊窗口位置的邏輯
+    // 註釋提示: 可在此根據需要添加計算並設置資訊視窗位置的邏輯
   }
 
   // @2024/02/27 Add for MouseOver 
@@ -1413,13 +1416,13 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // @2024/02/26 Add for MouseOver 
-  // 這個方法用於關閉並重置地圖上顯示的基站詳細資訊窗口
+  // 這個方法用於關閉並重置地圖上顯示的基站詳細資訊視窗
   // closeBsInfoWindow(): void {
 
   //   // 在控制台輸出日誌，表示此函數已被觸發，用於調試
   //   console.log("已觸發 - closeBsInfoWindow()");
 
-  //   // 將控制顯示基站詳細資訊窗口的布爾變數設為 false，使資訊窗口不顯示
+  //   // 將控制顯示基站詳細資訊視窗的布爾變數設為 false，使資訊視窗不顯示
   //   this.showBsInfoWindow = false;
 
   //   // 將當前顯示的基站詳細資訊設為 null，表示沒有基站訊息被選中或顯示
@@ -1471,18 +1474,37 @@ export class FieldInfoComponent implements OnInit {
       return { lat: 0, lng: 0 };
     }
   }
- 
 
+  // @2024/02/29 Add
+  // 用來追蹤摺疊面板是否展開的狀態變量 ( For Google Map Info Window )
+  isPanelExpanded: boolean = false; // 初始設置為 false，表示摺疊面板在初始狀態下是未展開的
+
+  // @2024/02/29 Add
+  // 此函數用於切換摺疊面板的展開/摺疊狀態 ( For Google Map Info Window )
+  togglePanel() {
+    this.isPanelExpanded = !this.isPanelExpanded; // 將 isPanelExpanded 的值反轉，如果為 true 則變為 false，反之亦然
+    console.log("摺疊面板展開狀態:", this.isPanelExpanded); // 在控制台輸出當前摺疊面板的展開狀態
+  }
+  
+  // @2024/02/29 Add
+  // 用來追蹤是否展示額外資訊的狀態變量 ( For 自製 MouseOver )
+  isAdditionalInfoVisible: boolean = false;
+
+  // @2024/02/29 Add
+  // 切換額外資訊的顯示狀態 ( For 自製 MouseOver )
+  toggleAdditionalInfo() {
+    this.isAdditionalInfoVisible = !this.isAdditionalInfoVisible;
+  }
 
   //  string -> number (mobility - 換手成功率)
   // @12/18 Update coverage -> mobility by yuchen
   get mobilityAsNumber(): number {
-    return parseFloat(this.fieldInfo.mobility);
+    return parseFloat( this.fieldInfo.mobility );
   }
 
   // accessibility - 接入成功率
   get accessibilityAsNumber(): number {
-    return parseFloat(this.fieldInfo.accessibility);
+    return parseFloat( this.fieldInfo.accessibility );
   }
 
   resourceProcess: number = 0;
