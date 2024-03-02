@@ -60,7 +60,7 @@
               <mat-icon tooltip="{{ languageService.i18n['field.alarm'] }}" (click)="viewFieldAlarmInfo( field )">warning</mat-icon>
             </td>
             <td class="icon">
-              <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openSnapshotWindow( field )">camera_alt</mat-icon>
+              <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openfieldSnapshotSetWindow( field )">camera_alt</mat-icon>
             </td>
             <td class="icon">
               <mat-icon tooltip="{{languageService.i18n['field.delItem']}}" (click)="openDeleteField_ConfirmWindow( field )">delete_forever</mat-icon>
@@ -289,6 +289,26 @@
   </div>
 </ng-template>
 
-<!-- Window of Snapshot @2024/02/25 Add -->
-<ng-template #snapshotWindow>
+<!-- Window of Field Snapshot Set @2024/03/03 Update -->
+<ng-template #fieldSnapshotSetWindow>
+  <div>
+    <!-- 視窗標頭 - 場域快照設置 -->
+    <h5>場域快照設置</h5>
+  </div>  
+  <div>
+    <!-- Set Infos of Snapshot  -->
+    <span>
+      <form [formGroup]="fieldSnapshotSetForm">
+        <UL>
+          <li>
+            <label>快照名稱</label>
+            <span>
+              <input type="text" formControlName="snapshotName" placeholder="請輸入快照名稱" required>
+            </span>
+          </li>
+        </UL>
+      </form>
+    </span>
+
+  </div>
 </ng-template>

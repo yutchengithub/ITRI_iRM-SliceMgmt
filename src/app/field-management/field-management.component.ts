@@ -62,7 +62,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     public bsList_LocalFiles:    localBSList,    // bsList_LocalFiles 用於從本地文件獲取基站列表數據
 
   ) {
-    this.createFieldCreationForm(); // 初始化並創建每個場域設置用的 FormGroup @2024/02/02 Add
+    this.createFieldCreationForm();     // 初始化並創建每個場域設置用的 FormGroup @2024/02/02 Add
+    this.createFieldSnapshotSetForm();  // 初始化並創建每個場域快照用的 FormGroup @2024/03/03 Add
   }
  
   // 組件初始化時執行的函數
@@ -638,14 +639,58 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   }
 
 
-// For Snapshot @2024/02/25 Add by yuchen ↓
+// For Field Snapshot Set @2024/03/03 Update by yuchen ↓
 
-  // 開啟快照功能視窗 @2024/02/25 Add
-  openSnapshotWindow( field: Field ){
-    this.selectField = field;
+  // 創建表單組，用於"場域快照設置"
+  fieldSnapshotSetForm!: FormGroup;
+
+  // 用於建立"場域快照設置"用的表單組 @2024/03/03 Add
+  createFieldSnapshotSetForm() {
+    // 初始化表單控件
+    this.fieldSnapshotSetForm = this.fb.group({
+      snapshotName: new FormControl( '', Validators.required )  // 快照名稱，預設值為空字串
+    });
   }
 
-// For Snapshot @2024/02/25 Add by yuchen ↑
+  // 用於重置所有輸入的"場域快照設置"設定 @2024/03/03 Add
+  resetFieldSnapshotSetForm() {
+    console.log("Resetting Field Snapshot form settings.");
+
+    // 重置 FormGroup - fieldSnapshotSetForm
+    this.fieldSnapshotSetForm.reset();
+
+    console.log("Field Snapshot form settings have been reset.");
+  }
+
+  // 引用 "Field Snapshot Set" 視窗組件 @2024/03/03 Add 
+  @ViewChild('fieldSnapshotSetWindow') fieldSnapshotSetWindow: any;  // 使用 ViewChild 裝飾器引用模板中的 'fieldSnapshotSetWindow' 元素
+  fieldSnapshotSetWindowRef!: MatDialogRef<any>; // 用於控制"場域快照設置"視窗的開啟和關閉
+  fieldSnapshotSetFormValidated = false;         // 用於跟踪"場域快照設置"表單的驗證狀態
+
+  // 開啟 "場域快照設置" 視窗用 @2024/03/03 Update
+  openfieldSnapshotSetWindow( field: Field ){
+    this.selectField = field;
+
+    // 表單驗證狀態重置
+    this.fieldSnapshotSetFormValidated = false; 
+
+    // 打開 "場域快照設置" 視窗
+    this.fieldSnapshotSetWindowRef = this.dialog.open( this.fieldSnapshotSetWindow, { 
+          id: 'fieldSnapshotSetWindow',
+          // 自定義視窗寬高設置
+          // width: '800px', 
+          // height: '650px'
+    } );
+
+    // 訂閱視窗關閉事件，並在關閉時重置表單驗證狀態
+    this.fieldSnapshotSetWindowRef.afterClosed().subscribe(() => {
+      this.fieldSnapshotSetFormValidated = false;
+    });
+  }
+
+// For Field Snapshot Set @2024/03/03 Update by yuchen ↑
+
+
 
 }
 
