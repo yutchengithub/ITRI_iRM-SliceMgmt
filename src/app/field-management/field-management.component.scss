@@ -102,7 +102,76 @@ mat-stepper {
   width: 100px;  // 進度調的寬度
   height: 100px; // 進度調的高度
 }
+::ng-deep #fieldCreationWindow .next button {
+  background-color: #4e92ff;
+  color: #fff;
+  margin: 0 0.5em 0 0;
+}
+::ng-deep #fieldCreationWindow .mat-form-field {
+  background-color: transparent;
+  box-shadow: none;
+}
+::ng-deep #fieldCreationWindow .mat-vertical-stepper-header {
+  height: 0;
+/*   border-top: 1px solid rgb(53 119 177 / 40%);
+ */}
+::ng-deep #fieldCreationWindow .mat-step-header .mat-step-icon-selected {
+  background-color: #4e92ff;
+  border: 0;
+  z-index: 999;
+}
+::ng-deep #fieldCreationWindow .custom-stepper .mat-input-element {
+  color: #fff;
+  font-size: 15px;
+}
+::ng-deep #fieldCreationWindow mat-stepper {
+  background-color: transparent;
+}
+::ng-deep #fieldCreationWindow .mat-stepper-horizontal, .mat-stepper-vertical {
+  background-color: transparent;
+}
+::ng-deep #fieldCreationWindow .mat-form-field-label {
+    color: #ffffff;
+    font-family: Microsoft JhengHei;
+}
+::ng-deep #fieldCreationWindow .mat-error {
+    padding: 0.5em;
+}
+::ng-deep .mat-stepper-vertical-line::before {
+  border-left-color: #394a65;
+}
+::ng-deep .mat-step-header .mat-step-icon {
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #919191;
+}
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-underline::before {
+  background-color: #ffffff6b;
+}
 
+::ng-deep #fieldCreationWindow .mat-input-element::placeholder {
+  color: #ffa9a9;
+}
+::ng-deep #fieldCreationWindow .table table th {
+  white-space: nowrap;
+  font-size: 14px;
+}
+::ng-deep #fieldCreationWindow .table table thead tr th:first-child,
+::ng-deep #fieldCreationWindow .table table tbody tr td:first-child {
+  width: 1.5em;
+}
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: transparent;
+}
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-underline::before {
+  background-color: #ffffff6b;
+}
+::ng-deep .mat-step-header .mat-step-label.mat-step-label {
+  font-family: Microsoft JhengHei;
+}
+::ng-deep #fieldCreationWindow .mat-step-text-label {
+  color: #fff;
+}
 // 針對較小的螢幕尺寸進行響應式布局調整
 @media screen and (max-width:1366px) {
   .table th, 

@@ -134,7 +134,7 @@ h6 {
 }
 mat-dialog-container {
   padding: 0 !important;
-  min-width: 37em;
+  min-width: 28em;
   font-size: 16px;
 }
 mat-dialog-container h5 {
@@ -1218,10 +1218,41 @@ body.tw .performanceWindow {
   min-width: 25em;
 }
 body.en #PMgmtParameterSetWindow ul li > label {
+  min-width: 11em;
+}
+body.tw #PMgmtParameterSetWindow ul li > label {
   min-width: 9em;
+}
+#PMgmtParameterSetWindow ul li > span {
+  width: 22em;
 }
 body.en .fault_mgr.table table tbody tr td:nth-child(4) {
   min-width: 9em;
+}
+ #fieldCreationWindow {
+  width: 50em!important;
+}
+#PMgmtParameterSetWindow {
+  width: 50em;
+}
+.pw {
+  position: relative;
+}
+.pw i {
+  vertical-align: middle;
+  margin: 0 0.3em;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  color: #45a0e7;
+  top: 5px;
+}
+#PMgmtParameterSetWindow .mat-radio-button.mat-accent .mat-radio-inner-circle,
+#PMgmtParameterSetWindow .mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
+  background-color: #1d8ee4!important;
+}
+#PMgmtParameterSetWindow .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+  border-color: #1d8ee5!important;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {

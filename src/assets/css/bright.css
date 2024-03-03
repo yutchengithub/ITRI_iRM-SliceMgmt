@@ -23,7 +23,7 @@ div.header button:hover .mat-icon {
 }
 h5 .mat-icon {
   background-color: #2979c6;
-  color: #3190e5;
+ /*  color: #3190e5; */
 }
 .dashboard .leftArea div.w30 > div {
   background-color: #ffffff;
@@ -433,4 +433,25 @@ ul.treeList > li span input[type=text] {
 }
 mat-dialog-container h5 .mat-icon {
   color: #fff!important;
+}
+#fieldCreationWindow .mat-step-text-label {
+  color: #333;
+}
+.mat-form-field-appearance-fill .mat-form-field-underline::before {
+  background-color: #333;
+}
+.mat-step-header .mat-step-icon {
+  background-color: #fff;
+  color: #333;
+  z-index: 999;
+  border: 1px solid #919191;
+}
+#fieldCreationWindow .mat-step-header .mat-step-icon-selected {
+  color: #fff;
+}
+#fieldCreationWindow .custom-stepper .mat-input-element {
+  color: #333;
+}
+#fieldCreationWindow .mat-form-field-label {
+  color: #333;
 }

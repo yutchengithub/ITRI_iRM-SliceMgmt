@@ -950,7 +950,7 @@
 								</li>
 								<li> <!-- @2024/02/15 Add - 加入密碼隱藏/顯示功能 -->
 									<label>{{ languageService.i18n['field.pmKey'] }}</label>
-									<span>
+									<span class="pw">
 									<!-- 使用 span 標籤來群組輸入框和圖標 -->
 									<input [type]="hidePassword ? 'password' : 'text'" formControlName="pmKey" [placeholder]="PmFtpInfo?.ftpkey"
 											[class]="PMgmtParameterSetFormValidated && PMgmtParameterSetForm.controls['pmKey'].invalid ? 'required' : ''">
@@ -986,19 +986,27 @@
 											<mat-radio-button value="default">{{ languageService.i18n['field.default'] }}</mat-radio-button>
 											<mat-radio-button value="selfDefined">{{ languageService.i18n['field.selfDefined'] }}</mat-radio-button>
 										</mat-radio-group>
-									</span>
+									
 
-									<!-- 自定義參數輸入欄位，只有當 'selfDefined' 被選擇時才顯示 -->
-									<div *ngIf="measurementType === 'selfDefined'">
-										<div formArrayName="selfDefinedParameters">
-											<div *ngFor="let selfDefinedParamGroup of selfDefinedParameters.controls; let i = index" [formGroupName]="i">
-												<button type="button" (click)="removeSelfDefinedParameterInput(i)">-</button>
-												<!-- 確保這裡使用 formControlName='selfDefinedParameter_input' 與 FormGroup 中的名稱對應 -->
-												<input type="text" formControlName="selfDefinedParameter_input" placeholder="{{ languageService.i18n['field.enterSelfDefinedParam'] }}">
-											</div>
-											<button type="button" (click)="addSelfDefinedParameterInput()">+</button>
+										<!-- 自定義參數輸入欄位，只有當 'selfDefined' 被選擇時才顯示 -->
+										<div *ngIf="measurementType === 'selfDefined'"  formArrayName="selfDefinedParameters" class="measurement_Type">
+												<div *ngFor="let selfDefinedParamGroup of selfDefinedParameters.controls; let i = index" [formGroupName]="i">
+													<button type="button" (click)="removeSelfDefinedParameterInput(i)" class="delete">
+														<span class="material-symbols-outlined ">
+															check_indeterminate_small
+															</span>
+													</button>
+													<!-- 確保這裡使用 formControlName='selfDefinedParameter_input' 與 FormGroup 中的名稱對應 -->
+													<input type="text" formControlName="selfDefinedParameter_input" placeholder="{{ languageService.i18n['field.enterSelfDefinedParam'] }}">
+													<button type="button" (click)="addSelfDefinedParameterInput()" class="add">
+														<span class="material-symbols-outlined ">
+															add
+															</span>
+													</button>
+												</div>
+												
 										</div>
-									</div>
+									</span>
 								</li>
 							</UL>
 						</form>

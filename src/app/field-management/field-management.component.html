@@ -109,7 +109,7 @@
           <input matInput formControlName="FieldName" required>
           <!-- 輸入欄位綁定到 FormGroup 的 FieldName 控件，並設置為必填 -->
         </mat-form-field>
-        <div>
+        <div class="next">
           <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
           <!-- 下一步按鈕 -->
         </div>
@@ -153,7 +153,7 @@
             </mat-form-field>
           </div>
         </div>
-        <div>
+        <div class="next">
           <!-- 下一步與上一步按鈕，類似於第一步 -->
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
           <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
@@ -172,7 +172,7 @@
           <mat-error *ngIf="thirdFormGroup_PhoneNum.get('PhoneNum')?.hasError('pattern')">{{ languageService.i18n['field.validPhoneNumber'] }}</mat-error>
           <!-- 如果 PhoneNum 控件的 pattern 驗證器失敗，則顯示錯誤提示 -->
         </mat-form-field>
-        <div>
+        <div class="next">
           <!-- 下一步與上一步按鈕，類似於第一步 -->
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
           <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
@@ -231,7 +231,7 @@
           </table>
         </div>
         <!-- 操作按鈕 -->
-        <div>
+        <div class="next">
           <!-- 上一步按鈕 -->
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
           <!-- 下一步按鈕 -->
@@ -246,7 +246,7 @@
       <!-- 完成提示訊息 -->
       <p>{{ languageService.i18n['field.setupComplete'] }}</p>
       <!-- 操作按鈕 -->
-      <div>
+      <div class="next">
         <!-- 上一步按鈕 -->
         <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
         <!-- 重置步驟按鈕 @2024/02/04 Update -->

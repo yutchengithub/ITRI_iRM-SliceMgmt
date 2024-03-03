@@ -1013,7 +1013,62 @@ circle-progress {
   margin-top: auto;
   margin-bottom: 100px;
 }
+input[type="password"] {
+  padding: 5px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+  vertical-align: middle;
+  width: 100%;
+  outline: 0;
+  font-size: 1.03em;
+  color: #2c3340;
+  background-color: #fff;
+  border: 1px solid #4093e6;
+}
+.measurement_Type > div {
+  position: relative;
+  padding: 3px 0;
+  width: 15em;
 
+}
+.measurement_Type > div:last-child {
+  display: inline-block;
+}
+.measurement_Type > div .add {
+  display: none;
+}
+.measurement_Type > div:last-child .add {
+  display: inline-block;
+}
+.measurement_Type > div input {
+  width: 100%;
+}
+.measurement_Type  button {
+  position: absolute;
+  border: 0;
+  background-color: #1d8ee5;
+  color: #fff;
+  border-radius: 5em;
+  font-size: 24px;
+  width: 1em;
+  height: 1em;
+  line-height: 1em;
+  padding: 0;
+  text-align: center;
+  cursor: pointer;
+}
+.measurement_Type  button.delete {
+  right: -33px;
+  top: 8px;
+}
+.measurement_Type  button.add {
+  right: -65px;
+  top: 8px;
+}
+.measurement_Type > div + button {
+  display: inline-block;
+  vertical-align: middle;
+}
 @media screen and (max-width: 1366px) {
   .BOX {
     height: 11em;
