@@ -345,7 +345,6 @@ ul + .buttons button {
   border-right: 7px solid #e2e8eb;
   color: #333;
 }
-
 .collapsible-content > .content-inner .content-inner { 
   background-color: #e9f2ffe8;
   border: none!important;
@@ -374,6 +373,9 @@ ul + .buttons button {
   margin: 0;
   background-color: initial;
   padding: 0 0.5em;
+  }
+  .performanceWindow.collabsible .collapsible-content > .content-inner {
+    background-color: transparent!important;
   }
   .collabsible .content-inner ul li {
     color: #333!important;
