@@ -367,6 +367,17 @@ F
   vertical-align: middle;
   font-size: 20px;
   margin: 0;
+  display: none;
+}
+.ocloudInfo h5 button .material-symbols-outlined {
+  margin: 0;
+  display: none;
+}
+.ocloudInfo h5 button.more .material-symbols-outlined {
+  display: block;
+}
+.ocloudInfo h5 .button-active .material-symbols-outlined {
+  display: inline-block;
 }
 .ocloudInfo h5 button {
   font-family: Microsoft JhengHei;

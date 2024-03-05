@@ -134,8 +134,11 @@ h6 {
 }
 mat-dialog-container {
   padding: 0 !important;
-  min-width: 28em;
+  min-width: 23em;
   font-size: 16px;
+}
+body.en mat-dialog-container {
+  min-width: 28em;
 }
 mat-dialog-container h5 {
   color: #fff;
@@ -498,21 +501,24 @@ input[type="text"].required + .mat-error {
   top: .3em;
 }
 #createModal {
-  min-width: 32em;
-}
-body.en #createModal {
-  min-width: 35em;
+  min-width: 40em;
 }
 #createModal ul li label {
   width: 5em;
   min-width: initial;
   margin: 0;
 }
+body.en #createModal ul li label {
+  width: 7em;
+}
+body.tw #createScheduleModal ul li > label {
+  min-width: 5em;
+}
 body.tw #createModal ul li label {
-  width: 3em;
+  width: 7em;
 }
 #createComponentModal {
-  min-width: 40vw;
+  min-width:25vw;
 }
 #createComponentModal ul li label {
   width: 25%;
@@ -1187,6 +1193,9 @@ body.en .ocloudInfo.bs_mgr .basicInfo ul li label {
 body.tw #itemDetail ul li > label {
   min-width: 6em !important;
 }
+body.tw #itemDetail ul li > span {
+  max-width: 68%!important;
+}
 body.en .ocloudInfo.software .basicInfo ul.Software_info li label {
   width: 7em!important;
 }
@@ -1233,7 +1242,7 @@ body.en .fault_mgr.table table tbody tr td:nth-child(4) {
   width: 50em!important;
 }
 #PMgmtParameterSetWindow {
-  width: 50em;
+  width: 42em;
 }
 .pw {
   position: relative;

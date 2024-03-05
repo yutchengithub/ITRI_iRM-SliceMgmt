@@ -134,7 +134,7 @@ export class AccountManagementComponent implements OnInit {
       'type': new FormControl('0'),
       'sessionid': this.sessionId
     });
-    this.createModalRef = this.dialog.open(this.createModal, { id: 'createModal' });
+    this.createModalRef = this.dialog.open(this.createModal, { id: 'accountCreateModal' });
     this.createModalRef.afterClosed().subscribe(() => {
       this.fileMsg = '';
       this.formValidated = false;

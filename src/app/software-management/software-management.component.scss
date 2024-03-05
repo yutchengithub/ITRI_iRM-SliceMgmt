@@ -56,7 +56,9 @@ select {
 ul li select {
   margin: 0;
 }
-
+.upload {
+  margin: 1em 0;
+}
 @media screen and (max-width:1920px) {
   .table table {
     max-height: 72vh;

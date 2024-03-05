@@ -20,3 +20,6 @@ tbody tr td {
 input[type="file"] {
   outline: 0;
 }
+ul li > label {
+  min-width: 7em;
+}
