@@ -521,7 +521,7 @@ body.tw #createModal ul li label {
   min-width:25vw;
 }
 #createComponentModal ul li label {
-  width: 25%;
+  width: 40%;
   min-width: initial;
   margin: 0;
 }
@@ -1262,6 +1262,45 @@ body.en .fault_mgr.table table tbody tr td:nth-child(4) {
 }
 #PMgmtParameterSetWindow .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
   border-color: #1d8ee5!important;
+}
+#provisionModal ul li span {
+  white-space: nowrap;
+}
+#itemDetail {
+  min-width: 35em;
+}
+.upload > span {
+  outline: 0;
+  padding: 0.3em 2em;
+  border: 0;
+  margin: 0 0.5em 0 0;
+  vertical-align: middle;
+  font-size: 0.9em;
+  border-radius: 50em;
+  cursor: pointer;
+}
+.upload > span input {
+  position: absolute;
+  font-size: 50px;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 27px;
+  opacity: 0;
+  cursor: pointer;
+}
+.upload label {
+  word-wrap: break-word;
+  display: inline-block;
+  max-width: 75%;
+  line-height: 1;
+  vertical-align: middle;
+}
+span.upload {
+  width: 70%;
+}
+body.tw #accountCreateModal ul li > label {
+  min-width: 15%;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {

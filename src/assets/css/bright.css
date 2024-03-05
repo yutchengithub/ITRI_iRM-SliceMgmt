@@ -209,7 +209,7 @@ h5 {
 }
 
 .ocloudInfo,
-.basicInfo ul li span {
+.basicInfo ul > li > span {
   color: #2c2b2b;
 }
 .ocloudInfo .BOX.col-md-3{
@@ -320,7 +320,7 @@ ul + .buttons button {
   min-width: 6em;
 }
 .collabsible {
-  margin: 0!important;
+  /* margin: 0!important; */
 }
 .collapsible-content .content-inner  .content-inner {
   background-color: transparent!important;
@@ -333,10 +333,10 @@ ul + .buttons button {
 }
 .main.collabsible > div > .lbl-toggle {
   background: initial!important;
-  background-color: #ebe8d0!important;
+  /* background-color: #ebe8d0!important; */
   border: 0!important;
-  border-left: 7px solid #46b1d9!important;
-  border-right: 7px solid #46b1d9!important;
+ /*  border-left: 7px solid #46b1d9!important;
+  border-right: 7px solid #46b1d9!important; */
   color: #1e688d!important;
 } 
 .collapsible-content > .content-inner {
@@ -456,4 +456,11 @@ mat-dialog-container h5 .mat-icon {
 }
 #fieldCreationWindow .mat-form-field-label {
   color: #333;
+}
+#provisionModal ul li > span {
+  color: #000;
+}
+.ocloudInfo.software ul h3 {
+  border-bottom: 1px solid #c7dcf1;
+  color: #3471b9;
 }
