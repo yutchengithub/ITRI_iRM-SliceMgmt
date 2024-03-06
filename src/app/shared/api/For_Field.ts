@@ -1,4 +1,4 @@
-// 場域頁面會用到的 API 都於此 ( 還未移動完整 ) @2024/01/29 Update
+// 場域頁面會用到的 API 都於此 ( 還未移動完整 ) @2024/03/06 Update
 
 import { HttpHeaders, HttpClient, HttpParams  } from '@angular/common/http';
 import { Injectable }    from '@angular/core';
@@ -74,6 +74,83 @@ export class apiForField {
   }
 
 
+  // For create a snapshot of specific field  @2024/03/06 Add by yuchen
+  createFieldSnapshot( fieldId: string ): Observable<any> {
+
+    const url = `${this.restPath}/createFieldSnapshot`;
+
+    // 準備請求體，包含所有後端所需的參數
+    const bodyStr = {
+      session: this.sessionId,
+      fieldid: fieldId
+    };
+    
+    return this.http.post( url, bodyStr );
+  }
+
+  // Get Snapshot's list of specific field @2024/03/06 Add by yuchen
+  queryFieldSnapshotList( fieldId: string ): Observable<any> {
+  
+    // 構建 API URL
+    const url = `${this.restPath}/queryFieldSnapshotList/${this.sessionId}/${fieldId}`;
+  
+    // 發起 HTTP GET 請求
+    return this.http.get(url);
+  }
+
+  // Call to remove a snapshot of selection @2024/03/06 Add by yuchen
+  removeFieldSnapshotInfo( fieldId: string ): Observable<any> { 
+  
+    // 構建 API URL
+    const url = `${this.restPath}/removeFieldSnapshotInfo`;
+    
+    // 準備請求體(JSON)，包含所有後端所需的參數
+    const removeFieldSnapshotInfoBody = {
+      fieldid: fieldId,
+      session: this.sessionId
+    };
+
+    // 定義 HTTP 請求選項
+    const httpOptions = {
+      // 設定 HTTP 標頭
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
+      }),
+      body: removeFieldSnapshotInfoBody    // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
+    };
+
+    // 使用 HTTP 客戶端發送 DELETE 請求
+    // 通常 DELETE 請求不會包含正文，因為它們被設計用於刪除資源而不是傳遞資訊
+    // 但如果後端 API 規定需要在 DELETE 請求中包含正文，則必須在發送請求時提供 'body'
+    // 這裏的 'httpOptions' 包含了我們想要隨著請求發送的標頭和正文
+    // 請注意，並非所有的伺服器實現都支持在 DELETE 請求中包含正文
+    // 如果你控制不了伺服器端的實現，那麼你需要確認伺服器支持你的這種做法
+
+    // 發起 HTTP DELETE 請求
+    return this.http.delete( url, httpOptions );
+  }
+
+  // Download the specified snapshot as an .xlsx file @2024/03/06 Add by yuchen
+  getDumpFieldSnapshot( snapshotId: string ): Observable<any> {
+
+    // 構建 API URL
+    const url = `${this.restPath}/getDumpFieldSnapshot/${this.sessionId}/${snapshotId}`;
+  
+    // 發起 HTTP GET 請求
+    return this.http.get(url);
+  }
+
+  // For Saving the current snapshot @2024/03/06 Add by yuchen
+  updateFieldSnapshot( body: {} ): Observable<any> {
+
+    const url = `${this.restPath}/updateFieldSnapshot`;
+    
+    const bodyStr = JSON.stringify( body );
+    
+    return this.http.post( url, bodyStr );
+  }
+
+
   // Get Information of Fields @12/05 Add by yuchen
   queryFieldInfo( fieldId: string ): Observable<any> {
     
@@ -140,7 +217,7 @@ export class apiForField {
     const url = `${this.restPath}/removeFieldImage`;
     
     // 準備請求體(JSON)，包含所有後端所需的參數
-    const removeFieldBody = {
+    const removeFieldImageBody = {
       fieldid: fieldId,
       session: this.sessionId
     };
@@ -151,7 +228,7 @@ export class apiForField {
       headers: new HttpHeaders({
         'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
       }),
-      body: removeFieldBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
+      body: removeFieldImageBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
     };
 
     // 使用 HTTP 客戶端發送 DELETE 請求
