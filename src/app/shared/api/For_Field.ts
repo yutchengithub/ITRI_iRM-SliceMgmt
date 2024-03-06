@@ -21,6 +21,7 @@ export class apiForField {
     private commonService: CommonService 
   ) {}
   
+
   // Get Lists of Field @11/30 Add by yuchen
   queryFieldList(): Observable<any> {
     
@@ -74,7 +75,6 @@ export class apiForField {
   }
 
 
-  
   // For create a snapshot of specific field  @2024/03/06 Add by yuchen
   createFieldSnapshot( fieldId: string ): Observable<any> {
 
@@ -152,7 +152,6 @@ export class apiForField {
   }
 
 
-
   // Get Information of Fields @12/05 Add by yuchen
   queryFieldInfo( fieldId: string ): Observable<any> {
     
@@ -172,7 +171,6 @@ export class apiForField {
     
     return this.http.post( url, bodyStr );
   }
-
 
 
   // 取得指定 id 基站所有資訊 @2024/02/05 Add - 從 commonService.ts 移入
@@ -279,7 +277,6 @@ export class apiForField {
   }
 
 
-
   // For Get PM Parameter Setting @2024/02/04 Add by yuchen
   queryPmFtpInfo( fieldId: string ): Observable< any > { 
   
@@ -301,7 +298,6 @@ export class apiForField {
   }
 
   
-
   // For Updating Configurations of All-in-one BS @2024/01/05 Add by yuchen
   updateBs( body: {} ): Observable<any> {
 
