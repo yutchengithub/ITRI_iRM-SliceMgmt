@@ -76,6 +76,7 @@ import { apiForField } from './shared/api/For_Field'; // @2024/01/04 Add
 // import Local Files
 import { localFieldList } from './shared/local-files/Field/For_queryFieldList';  // @2024/01/29 Add
 import { localPmFTPInfo } from './shared/local-files//Field/For_queryPmFtpInfo'; // @2024/02/04 Add
+import { localFieldSnapshotList } from './shared/local-files/Field/For_queryFieldSnapshotList'; // @2024/03/06 Add
 import { localBSinfo }    from './shared/local-files/BS/For_queryBsInfo'; // @2023/12/27 Add 
 import { localBSList }    from './shared/local-files/BS/For_queryBsList'; // @2024/01/16 Add
 
@@ -170,10 +171,11 @@ import { localBSList }    from './shared/local-files/BS/For_queryBsList'; // @20
 
     apiForField,    // @2024/01/04 Add for import API of Field Management 
 
-    localFieldList, // @2024/01/29 Add for import Local files of Field List
-    localBSinfo,    // @2023/12/27 Add for import Local files of BS Info
-    localBSList,    // @2024/01/16 Add for import Local files of BS List
-    localPmFTPInfo, // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+    localFieldList,         // @2024/01/29 Add for import Local files of Field List
+    localFieldSnapshotList, // @2024/03/06 Add for import Local files of Field Snapshot List
+    localBSinfo,            // @2023/12/27 Add for import Local files of BS Info
+    localBSList,            // @2024/01/16 Add for import Local files of BS List
+    localPmFTPInfo,         // @2024/02/04 Add for import info of PM Parameter Setting Local Files
     
     {
       provide: HTTP_INTERCEPTORS,

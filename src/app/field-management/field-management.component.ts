@@ -27,9 +27,13 @@ import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList'; /
 // For import interfaces of createField
 import { ForCreateOrUpdateField, Bsinfo } from '../shared/interfaces/Field/For_createField_or_updateField'; // @2024/02/01 Add 
 
+// For import interfaces of queryFieldSnapshotList
+import { FieldSnapshotList, FieldSnapshot } from '../shared/interfaces/Field/For_queryFieldSnapshotList'; // @2024/03/06 Add 
+
 // For import local files of Field Management 
 import { localFieldList } from '../shared/local-files/Field/For_queryFieldList';  // @2024/01/29 Add
 import { localBSList } from '../shared/local-files/BS/For_queryBsList';           // @2024/02/01 Add
+import { localFieldSnapshotList } from '../shared/local-files/Field/For_queryFieldSnapshotList';  // @2024/03/06 Add
 
 @Component({
   selector: 'app-field-management',                 // 定義組件的標籤選擇器，用於在其他 HTML 中引用此組件
@@ -44,10 +48,6 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
   refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
 
-  // queryFieldList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
-  queryFieldList!: Subscription;  // @11/30 Add by yuchen
-
-
   // 類的構造函數，注入了多個依賴項目
   constructor(
 
@@ -57,9 +57,10 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     private commonService:  CommonService,   // CommonService 提供通用的服務（如 Session ID 獲取）
     private fb:             FormBuilder,     // FormBuilder 用於建立表單
 
-    public API_Field:            apiForField,    // API_Field 用於場域管理相關的 API 請求
-    public fieldList_LocalFiles: localFieldList, // fieldList_LocalFiles 用於從本地文件獲取場域列表數據
-    public bsList_LocalFiles:    localBSList,    // bsList_LocalFiles 用於從本地文件獲取基站列表數據
+    public                    API_Field: apiForField,             // API_Field 用於場域管理相關的 API 請求
+    public         fieldList_LocalFiles: localFieldList,          // fieldList_LocalFiles 用於從本地文件獲取場域列表數據
+    public            bsList_LocalFiles: localBSList,             // bsList_LocalFiles 用於從本地文件獲取基站列表數據
+    public fieldSnapshotList_LocalFiles: localFieldSnapshotList,  // fieldSnapshotList_LocalFiles 用於從本地文件獲取指定場域內的 Snapshot List 數據 @2024/03/06 Add
 
   ) {
     this.createFieldCreationForm();     // 初始化並創建每個場域設置用的 FormGroup @2024/02/02 Add
@@ -111,6 +112,9 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   fieldList: FieldList = {} as FieldList; // 用於存儲從伺服器或本地文件獲取的場域列表數據 @11/30 Add by yuchen
   selectField!: Field;  // 用於存儲當前選中的場域信息 @2024/02/03 Update by yuchen
   isLoading = true;     // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
+
+  // queryFieldList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
+  queryFieldList!: Subscription;  // @11/30 Add by yuchen
 
   /** @2024/01/29 Update by yuchen
    *  用於獲取場域列表。
@@ -639,7 +643,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   }
 
 
-// For Field Snapshot Set @2024/03/03 Update by yuchen ↓
+// For Field Snapshot Set @2024/03/06 Update by yuchen ↓
 
   // 創建表單組，用於"場域快照設置"
   fieldSnapshotSetForm!: FormGroup;
@@ -667,9 +671,13 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   fieldSnapshotSetWindowRef!: MatDialogRef<any>; // 用於控制"場域快照設置"視窗的開啟和關閉
   fieldSnapshotSetFormValidated = false;         // 用於跟踪"場域快照設置"表單的驗證狀態
 
-  // 開啟 "場域快照設置" 視窗用 @2024/03/03 Update
+  // 開啟 "場域快照設置" 視窗用 @2024/03/06 Update
   openfieldSnapshotSetWindow( field: Field ){
     this.selectField = field;
+
+    // @2024/03/06 Add
+    this.toCreateFieldSnapshot();     // 打開視窗即建立一張當下快照 
+    this.getQueryFieldSnapshotList(); // 接著取得先前有儲存的其它場域快照
 
     // 表單驗證狀態重置
     this.fieldSnapshotSetFormValidated = false; 
@@ -688,7 +696,107 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-// For Field Snapshot Set @2024/03/03 Update by yuchen ↑
+  // @2024/03/06 Add
+  // 呼叫場域快照建立的函數。如果處於本地模式，則模擬建立過程；如果處於生產模式，則向後端 API 發送請求實際建立。
+  toCreateFieldSnapshot() {
+
+    // 在控制台記錄開始執行函數的訊息
+    console.log( "toCreateFieldSnapshot() - Start" );
+
+    // 檢查是否在本地環境下模擬執行
+    if ( this.commonService.isLocal ) {
+
+      // 本地模式下模擬場域快照建立過程
+      console.log( "本地模擬選擇要產生快照的場域 ID 為:", this.selectField.id );
+
+    } else {
+
+      console.log( "選擇要產生快照的場域 ID 為:", this.selectField.id );
+
+      // 生產環境下向後端 API 發送場域快照建立請求
+      this.API_Field.createFieldSnapshot( this.selectField.id ).subscribe({
+        next: ( response ) => {
+
+          // 處理成功響應
+          console.log( "場域快照建立成功:", response );
+        },
+        error: ( error ) => {
+          // 處理失敗響應
+          console.error("場域快照建立失敗:", error);
+          // 例如顯示錯誤訊息給用戶
+        }
+      });
+    }
+    
+    // 在控制台記錄函數執行結束的訊息
+    console.log("toCreateFieldSnapshot() - End");
+  }
+
+  // 用於存儲取得的 Field Snapshot List 數據 @2024/03/06 Add
+  fieldSnapshotList: FieldSnapshotList = {} as FieldSnapshotList;
+  isGetQueryFieldSnapshotLoading = false;     // 用於表示加載 Snapshot List 的 flag，初始設置為 false @2024/03/06 Add for Progress Spinner
+
+  // @2024/03/06 Add 
+  // Get the Snapshot List in specific field
+  getQueryFieldSnapshotList() {
+    console.log('getQueryFieldSnapshotList() - Start');  // 在控制台中記錄開始獲取指定場域內的 Snapshot List 的訊息
+
+    // 使用 clearTimeout 來取消任何已經設定但尚未執行的 setTimeout，
+    // 這可以防止在重新獲取指定場域內的 Snapshot List 前執行之前的延遲任務，確保不會有多餘的執行或資源衝突。
+    clearTimeout( this.refreshTimeout );
+
+    this.isGetQueryFieldSnapshotLoading = true; // 設置加載旗標為 true，表示開始加載
+
+    // 檢查是否在本地測試環境
+    if ( this.commonService.isLocal ) {
+      console.log( 'Fetching Snapshot List in Local' );  // 在控制台中記錄正在本地獲取指定場域內的 Snapshot List 的訊息
+
+      // 從本地文件中讀取 Snapshot List 
+      this.fieldSnapshotList = this.fieldSnapshotList_LocalFiles.fieldSnapshotList_local;
+
+      // 設置加載旗標為 false，表示加載完成
+      this.isGetQueryFieldSnapshotLoading = false;
+
+      console.log( '目前 local 環境中，指定場域內的 Snapshot List:\n', this.fieldSnapshotList ); 
+
+    } else {
+
+      console.log('Fetching Snapshot List from API');  // 在控制台中記錄正在從 API 獲取指定場域內的 Snapshot List 的訊息
+
+      // 從 API 獲取 Snapshot List 
+      this.API_Field.queryFieldSnapshotList( this.selectField.id ).subscribe({
+        next: ( res: FieldSnapshotList ) => {
+
+          // 將 API 返回指定場域內的 Snapshot List 賦值給 fieldSnapshotList 變數
+          this.fieldSnapshotList = res;
+
+          // 設置加載旗標為 false，表示加載完成
+          this.isGetQueryFieldSnapshotLoading = false;
+
+          console.log( '目前指定場域內的 Snapshot List:\n', this.fieldSnapshotList );
+
+        },
+        error: ( error ) => {
+
+          // 在控制台中記錄獲取指定場域內的 Snapshot List 出錯的訊息
+          console.error( 'Error fetching Snapshot List:', error );
+
+          // 設置加載旗標為 false，表示加載出錯
+          this.isGetQueryFieldSnapshotLoading = false;
+        },
+        complete: () => {
+
+          // 在控制台中記錄指定場域內的 Snapshot List 獲取完成的訊息
+          console.log( 'Snapshot List fetch completed' );
+        }
+      });
+    }
+
+    // 在控制台中記錄方法結束的訊息
+    console.log( 'getQueryFieldSnapshotList() - End' );
+  }
+
+// For Field Snapshot Set @2024/03/06 Update by yuchen ↑
 
 
 
