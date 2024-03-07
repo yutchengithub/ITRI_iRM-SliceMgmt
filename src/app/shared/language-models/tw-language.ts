@@ -54,12 +54,7 @@ export const TwLanguage = {
   'field.list':'場域列表',
   'field.name':'場域名稱',
   'field.bsNum':'基站數量',
-  'field.alarm':'場域告警',
-  'field.view':'檢視',
-  'field.viewDetail':'詳細',
-  'field.snapshot':'快照',
-  'field.delTitle':'刪除',
-  'field.delItem':'刪除此場域',
+
   'field.create':'建立場域',        // @2024/01/31 Add
   'field.createNext':'下一步',      // @2024/01/31 Add
   'field.createBack':'上一步',      // @2024/01/31 Add
@@ -76,6 +71,31 @@ export const TwLanguage = {
   'field.validLongitude': '請輸入有效經度 ( -180.0 ~ 180.0 )',  // @2024/02/02 Add
   'field.validLatitude' : '請輸入有效緯度 ( -90.0 ~ 90.0 )',    // @2024/02/02 Add
   'field.validPhoneNumber' : '請輸入有效門號 ( 10 碼 )',        // @2024/02/02 Add
+
+  'field.view':'檢視',
+  'field.viewDetail':'詳細',
+
+  'field.alarm':'場域告警',
+
+  'field.snapshot':'快照',
+  'field.fieldSnapshots': '場域快照',
+  'field.fieldSnapshotSettings': '場域快照設置',
+  'field.setSnapshotName': '設定此快照名稱',
+  'field.setCurrentSnapshotNamePlaceholder': '請為此快照輸入名稱',
+  'field.snapshotsList': '快照列表',
+  'field.totalSaved': '已儲存總數',
+  'field.snapshotNo':'編號',
+  'field.snapshotName':'快照名稱',
+  'field.createdTime': '建立時間',
+  'field.download': '下載',
+  'field.downloadSnapshot': '下載此快照',
+  'field.delete': '刪除',
+  'field.deleteSnapshot': '刪除此快照',
+  'field.confirm_del_fieldSnapshot':'確定要刪除場域快照',
+  'field.closeSnapshot':'關閉',
+
+  'field.delTitle':'刪除',
+  'field.delItem':'刪除此場域',
 
   'field.info':'場域詳細資訊',
   'field.Map':'場域地圖',

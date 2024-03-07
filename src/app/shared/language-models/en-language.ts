@@ -56,12 +56,7 @@ export const Enlanguage = {
   'field.list':'Field List',
   'field.name':'Field Name',
   'field.bsNum':'Number of BSs',
-  'field.view':'View',
-  'field.viewDetail':'Details',
-  'field.alarm':'Field Alarm',
-  'field.snapshot':'Snapshot',
-  'field.delTitle':'Delete',
-  'field.delItem':'Delete this field',
+
   'field.create':'Create field',
   'field.createTitle':'Field Creation',
   'field.createNext': 'Next',                  // @2024/01/31 Add
@@ -78,6 +73,31 @@ export const Enlanguage = {
   'field.validLongitude': 'Please enter a valid longitude ( -180.0 ~ 180.0 )',  // @2024/02/02 Add
   'field.validLatitude' : 'Please enter a valid latitude ( -90.0 ~ 90.0 )',     // @2024/02/02 Add
   'field.validPhoneNumber' : 'Please enter a valid phone number ( 10 digits )', // @2024/02/02 Add
+
+  'field.view':'View',
+  'field.viewDetail':'Details',
+
+  'field.alarm':'Field Alarm',
+
+  'field.snapshot':'Snapshot',
+  'field.fieldSnapshots': 'Field Snapshots',
+  'field.fieldSnapshotSettings': 'Field Snapshot Settings',
+  'field.setSnapshotName': 'Set this snapshot name',
+  'field.setCurrentSnapshotNamePlaceholder': 'Enter name for this snapshot',
+  'field.snapshotsList': 'Snapshots List',
+  'field.totalSaved': 'Total Saved',
+  'field.snapshotNo':'No.',
+  'field.snapshotName':'Snapshot Name',
+  'field.createdTime': 'Created Time',
+  'field.download': 'Download',
+  'field.downloadSnapshot': 'Download this snapshot',
+  'field.delete': 'Delete',
+  'field.deleteSnapshot': 'Delete this snapshot',
+  'field.confirm_del_fieldSnapshot':'Confirm to Delete Snapshot',
+  'field.closeSnapshot':'Close',
+
+  'field.delTitle':'Delete',
+  'field.delItem':'Delete this field',
 
   'field.info':'Field Detailed Information',
   'field.Map':'Field Map',

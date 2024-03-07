@@ -10,16 +10,6 @@ import { LanguageService } from 'src/app/shared/service/language.service';
 
 // Mat Modules
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import { MatCheckboxModule } from '@angular/material/checkbox'; // @2024/01/19 Add
-import { MatDialogModule } from '@angular/material/dialog';     // @2024/01/19 Add
-import { MatButtonModule } from '@angular/material/button';     // @2024/01/19 Add
-import {
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogTitle,
-  MatDialogContent,
-} from '@angular/material/dialog'; // @2024/01/19 Add
-import { MatExpansionModule } from '@angular/material/expansion'; // 用於縮合效果 @2024/02/29 Add
 
 import { of } from 'rxjs'; // @2024/01/09 Add 
 import { forkJoin, Observable } from 'rxjs';
@@ -1479,11 +1469,11 @@ export class FieldInfoComponent implements OnInit {
   // 用來追蹤摺疊面板是否展開的狀態變量 ( For Google Map Info Window )
   isPanelExpanded: boolean = false; // 初始設置為 false，表示摺疊面板在初始狀態下是未展開的
 
-  // @2024/02/29 Add
+  // @2024/03/07 Update
   // 此函數用於切換摺疊面板的展開/摺疊狀態 ( For Google Map Info Window )
   togglePanel() {
     this.isPanelExpanded = !this.isPanelExpanded; // 將 isPanelExpanded 的值反轉，如果為 true 則變為 false，反之亦然
-    console.log("摺疊面板展開狀態:", this.isPanelExpanded); // 在控制台輸出當前摺疊面板的展開狀態
+    console.log( "Google Map Info Window 的摺疊面板展開狀態:", this.isPanelExpanded ); // 在控制台輸出當前摺疊面板的展開狀態
   }
   
   // @2024/02/29 Add

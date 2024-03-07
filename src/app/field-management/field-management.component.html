@@ -272,7 +272,7 @@
   <!-- 標題部分，使用 languageService.i18n['confirm'] 來國際化確認文字 -->
   <h5>{{languageService.i18n['confirm']}}</h5>
   
-  <!-- 確認刪除的提示信息，展示場域名稱-->
+  <!-- 確認刪除的提示信息，展示場域名稱 -->
   <p>{{languageService.i18n['confirm_del_field']}} - {{selectField.name}} ?</p>
   
   <!-- 按鈕容器 -->
@@ -289,26 +289,129 @@
   </div>
 </ng-template>
 
-<!-- Window of Field Snapshot Set @2024/03/03 Update -->
+<!-- Window of Field Snapshot Set @2024/03/07 Update -->
 <ng-template #fieldSnapshotSetWindow>
+
   <div>
-    <!-- 視窗標頭 - 場域快照設置 -->
-    <h5>場域快照設置</h5>
+    <!-- 視窗標頭 - 場域快照 -->
+    <h5>{{ languageService.i18n['field.fieldSnapshots'] }}</h5>
   </div>  
   <div>
-    <!-- Set Infos of Snapshot  -->
+    <ul *ngIf="selectField">
+      <li>
+        <label>{{ languageService.i18n['field.name'] }}:</label>
+        <span>{{ selectField.name }}</span>
+      </li>
+      <li>
+        <label>{{ languageService.i18n['field.bsNum'] }}:</label>
+        <span>{{ selectField.bsNum }}</span>
+      </li>
+    </ul>
+    <!-- Set the name of current snapshot  -->
     <span>
       <form [formGroup]="fieldSnapshotSetForm">
-        <UL>
+        <ul>
           <li>
-            <label>快照名稱</label>
+            <label>{{ languageService.i18n['field.setSnapshotName'] }}:</label>
             <span>
-              <input type="text" formControlName="snapshotName" placeholder="請輸入快照名稱" required>
+              <input type="text" formControlName="snapshotName" required>
             </span>
           </li>
-        </UL>
+        </ul>
       </form>
     </span>
+  </div>
 
+  <!-- Snapshot 列表顯示區 @2024/03/07 Add -->
+  <mat-accordion *ngIf="fieldSnapshotList"> <!-- 判斷是否有 fieldSnapshotList 資訊可顯示 -->
+    <!-- 定義一個摺疊面板，並使用 Angular 屬性綁定來控制其展開狀態 -->
+    <mat-expansion-panel [expanded]="isFieldSnapshotListPanelExpanded">
+      <!-- 點擊面板頭部時觸發 togglePanel 函數，用來切換面板的展開與折疊 -->
+      <mat-expansion-panel-header class="custom-panel-header" (click)="togglePanel()">
+        <mat-panel-title class="custom-panel-title"> <!-- 顯示標題 - 已儲存 Snapshot 列表 -->
+          {{ languageService.i18n['field.snapshotsList'] }}
+        </mat-panel-title>
+        <mat-panel-description class="custom-panel-description"> <!-- 顯示已儲存的 Snapshot 總筆數 -->
+          {{ languageService.i18n['field.totalSaved'] }}: {{ this.totalItems_fieldSnapshotList }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+        
+      <!-- 當面板展開時的顯示資訊 -->
+      <div class="table"> <!-- 表格容器 - 用於列出已儲存的快照 -->
+        <!-- 表格元素 -->
+        <table class="center">
+          <!-- 表格頭部 -->
+          <thead>
+            <tr>
+              <!-- Snapshot 編號表頭 -->
+              <th>{{ languageService.i18n['field.snapshotNo'] }}</th>
+              <!-- Snapshot 名稱表頭 -->
+              <th>{{ languageService.i18n['field.snapshotName'] }}</th>
+              <!-- Snapshot 建立時間表頭 -->
+              <th>{{ languageService.i18n['field.createdTime'] }}</th>
+              <!-- 下載圖標表頭 -->
+              <th>{{ languageService.i18n['field.download'] }}</th>
+              <!-- 刪除圖標表頭 -->
+              <th>{{ languageService.i18n['field.delete'] }}</th>
+            </tr>
+          </thead>
+          <!-- 表格內容，判斷是否有 Snapshot 資訊可顯示 -->
+          <tbody>
+            <!-- 循環顯示所有 Snapshots，並應用分頁  -->
+            <tr *ngFor="let Snapshot of fieldSnapshotList.fieldSnapshot | paginate: { 
+                          itemsPerPage: pageSize_fieldSnapshotList,
+                          currentPage: p_fieldSnapshotList, 
+                          totalItems: totalItems_fieldSnapshotList, 
+                          id: 'PageDisplay_of_fieldSnapshotList' };  
+                        let i = index">
+              <!-- 顯示 Snapshot 編號 -->
+              <td>{{ (p_fieldSnapshotList - 1) * pageSize_fieldSnapshotList + i + 1 }}</td> <!-- 動態生成每條 Snapshot 的編號 -->
+              <!-- 顯示 Snapshot 名稱 -->
+              <td>{{ Snapshot.name }}</td>
+              <!-- 顯示 Snapshot 建立時間 -->
+              <td>{{ Snapshot.createtime }}</td>
+              <!-- 顯示下載圖標 -->
+              <td class="icon">
+                <mat-icon tooltip="{{languageService.i18n['field.downloadSnapshot']}}">download_for_offline</mat-icon>
+              </td>
+              <!-- 顯示刪除圖標 -->
+              <td class="icon" (click)="openDeleteFieldSnapshot_ConfirmWindow( Snapshot )">
+                  <mat-icon tooltip="{{languageService.i18n['field.deleteSnapshot']}}">delete_forever</mat-icon>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- 分頁控制元件，當頁面改變時觸發 pageChanged_fieldSnapshotList 事件 -->
+      <pagination-controls
+          (pageChange)="pageChanged_fieldSnapshotList( $event )"
+          screenReaderPaginationLabel="Pagination_fieldSnapshotList"
+          previousLabel=""
+          nextLabel=""
+          id="PageDisplay_of_fieldSnapshotList"
+      ></pagination-controls>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <div class="buttons">
+    <!-- 關閉按鈕：點擊時呼叫 resetFieldSnapshotSetForm() 方法來重置場域快照的表單，並關閉對話框 -->
+    <button type="button" (click)="resetFieldSnapshotSetForm()" mat-dialog-close>
+      {{ languageService.i18n['field.closeSnapshot'] }}
+    </button>
+  </div>
+
+</ng-template>
+
+<!-- 删除場域快照確認視窗 @2024/03/07 Add -->
+<ng-template #deleteFieldSnapshot_ConfirmWindow>
+  <h5>{{ languageService.i18n['confirm'] }}</h5>
+  <p>{{ languageService.i18n['field.confirm_del_fieldSnapshot'] }} - {{ selectedSnapshot.name }}?</p>
+  <div class="buttons">
+    <button type="button" (click)="confirmDeleteFieldSnapshot()" mat-dialog-close>
+      {{ languageService.i18n['confirm'] }}
+    </button>
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }}
+    </button>
   </div>
 </ng-template>
+

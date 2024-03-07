@@ -99,15 +99,15 @@ export class apiForField {
     return this.http.get(url);
   }
 
-  // Call to remove a snapshot of selection @2024/03/06 Add by yuchen
-  removeFieldSnapshotInfo( fieldId: string ): Observable<any> { 
+  // Call to remove a snapshot of selection @2024/03/07 Update by yuchen
+  removeFieldSnapshotInfo( SnapshotId: string ): Observable<any> { 
   
     // 構建 API URL
     const url = `${this.restPath}/removeFieldSnapshotInfo`;
     
     // 準備請求體(JSON)，包含所有後端所需的參數
     const removeFieldSnapshotInfoBody = {
-      fieldid: fieldId,
+      id: SnapshotId,
       session: this.sessionId
     };
 

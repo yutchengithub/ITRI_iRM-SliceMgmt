@@ -736,7 +736,7 @@
 					<form [formGroup]="fieldEditForm">
 						<UL>
 						<li>
-							<label>{{ languageService.i18n['field.name'] }}</label>
+							<label>{{ languageService.i18n['field.name'] }}:</label>
 							<span>
 								<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
 										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
@@ -744,7 +744,7 @@
 							</span>
 						</li>
 						<li>
-							<label>{{ languageService.i18n['field.northBound'] }}</label>
+							<label>{{ languageService.i18n['field.northBound'] }}:</label>
 							<span>
 								<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
 										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
@@ -752,7 +752,7 @@
 							</span>
 						</li>
 						<li>
-							<label>{{ languageService.i18n['field.southBound'] }}</label>
+							<label>{{ languageService.i18n['field.southBound'] }}:</label>
 							<span>
 								<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
 										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
@@ -760,7 +760,7 @@
 							</span>
 						</li>
 						<li>
-							<label>{{ languageService.i18n['field.westBound'] }}</label>
+							<label>{{ languageService.i18n['field.westBound'] }}:</label>
 							<span>
 								<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
 										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
@@ -768,7 +768,7 @@
 							</span>
 						</li>
 						<li>
-							<label>{{ languageService.i18n['field.eastBound'] }}</label>
+							<label>{{ languageService.i18n['field.eastBound'] }}:</label>
 							<span>
 								<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
 										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
@@ -776,7 +776,7 @@
 							</span>
 						</li>
 						<li>
-							<label>{{ languageService.i18n['field.notificationNum'] }}</label>
+							<label>{{ languageService.i18n['field.notificationNum'] }}:</label>
 							<span>
 								<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
 									class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
@@ -990,28 +990,28 @@
 						<form [formGroup]="PMgmtParameterSetForm">
 							<UL>
 								<li>
-									<label>{{ languageService.i18n['field.pmIP'] }}</label>
+									<label>{{ languageService.i18n['field.pmIP'] }}:</label>
 									<span>
 										<input type="text" formControlName="pmIP" placeholder="{{ PmFtpInfo?.ftpip }}"
 												class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmIP'].invalid?'required':''}}">
 									</span>
 								</li>
 								<li>
-									<label>{{ languageService.i18n['field.folderPath'] }}</label>
+									<label>{{ languageService.i18n['field.folderPath'] }}:</label>
 									<span>
 										<input type="text" formControlName="folderPath" placeholder="{{ PmFtpInfo?.folderpath }}"
 												class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['folderPath'].invalid?'required':'' }}">
 									</span>
 								</li>
 								<li>
-									<label>{{ languageService.i18n['field.pmID'] }}</label>
+									<label>{{ languageService.i18n['field.pmID'] }}:</label>
 									<span>
 										<input type="text" formControlName="pmID" placeholder="{{ PmFtpInfo?.ftpid }}"
 												class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmID'].invalid?'required':'' }}">
 									</span>
 								</li>
 								<li> <!-- @2024/02/15 Add - 加入密碼隱藏/顯示功能 -->
-									<label>{{ languageService.i18n['field.pmKey'] }}</label>
+									<label>{{ languageService.i18n['field.pmKey'] }}:</label>
 									<span class="pw">
 									<!-- 使用 span 標籤來群組輸入框和圖標 -->
 									<input [type]="hidePassword ? 'password' : 'text'" formControlName="pmKey" [placeholder]="PmFtpInfo?.ftpkey"
@@ -1025,14 +1025,14 @@
 									</span>
 								</li> 
 								<li>
-									<label>{{ languageService.i18n['field.MeasurementInterval_pmint'] }}</label>
+									<label>{{ languageService.i18n['field.MeasurementInterval_pmint'] }}:</label>
 									<span>
 										<input type="text" formControlName="MeasurementInterval_pmint" placeholder="{{ PmFtpInfo?.pmint }}"
 												class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].invalid?'required':'' }}">
 									</span>
 								</li>
 								<li>
-									<label>{{ languageService.i18n['field.UploadInterval_fmint'] }}</label>
+									<label>{{ languageService.i18n['field.UploadInterval_fmint'] }}:</label>
 									<span>
 										<input type="text" formControlName="UploadInterval_fmint" placeholder="{{ PmFtpInfo?.fmint }}"
 											class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['UploadInterval_fmint'].invalid?'required':''}}">
@@ -1040,7 +1040,7 @@
 								</li>
 								<li> 
 									<!-- "量測類型"欄位 @2024/02/16 Add -->
-									<label>{{ languageService.i18n['field.measurementType'] }}</label>
+									<label>{{ languageService.i18n['field.measurementType'] }}:</label>
 									<span>
 										<!-- "量測類型"欄位的 Radio Buttons -->
 										<mat-radio-group formControlName="measurementType" (change)="logClickMeasurementType($event.value)" >
@@ -1052,21 +1052,20 @@
 
 										<!-- 自定義參數輸入欄位，只有當 'selfDefined' 被選擇時才顯示 -->
 										<div *ngIf="measurementType === 'selfDefined'"  formArrayName="selfDefinedParameters" class="measurement_Type">
-												<div *ngFor="let selfDefinedParamGroup of selfDefinedParameters.controls; let i = index" [formGroupName]="i">
-													<button type="button" (click)="removeSelfDefinedParameterInput(i)" class="delete">
-														<span class="material-symbols-outlined ">
-															check_indeterminate_small
-															</span>
-													</button>
-													<!-- 確保這裡使用 formControlName='selfDefinedParameter_input' 與 FormGroup 中的名稱對應 -->
-													<input type="text" formControlName="selfDefinedParameter_input" placeholder="{{ languageService.i18n['field.enterSelfDefinedParam'] }}">
-													<button type="button" (click)="addSelfDefinedParameterInput()" class="add">
-														<span class="material-symbols-outlined ">
-															add
-															</span>
-													</button>
-												</div>
-												
+											<div *ngFor="let selfDefinedParamGroup of selfDefinedParameters.controls; let i = index" [formGroupName]="i">
+												<button type="button" (click)="removeSelfDefinedParameterInput(i)" class="delete">
+													<span class="material-symbols-outlined ">
+														check_indeterminate_small
+														</span>
+												</button>
+												<!-- 確保這裡使用 formControlName='selfDefinedParameter_input' 與 FormGroup 中的名稱對應 -->
+												<input type="text" formControlName="selfDefinedParameter_input" placeholder="{{ languageService.i18n['field.enterSelfDefinedParam'] }}">
+												<button type="button" (click)="addSelfDefinedParameterInput()" class="add">
+													<span class="material-symbols-outlined ">
+														add
+														</span>
+												</button>
+											</div>
 										</div>
 									</span>
 								</li>

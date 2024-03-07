@@ -1,13 +1,7 @@
 
 import { Component, OnInit, TemplateRef, ViewChild, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-
-import { MatStepperModule } from '@angular/material/stepper';      // @2024/01/31 Add for Create Field
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // @2024/01/31 Add for Create Field
-import { MatInputModule } from '@angular/material/input';          // @2024/01/31 Add for Create Field
-import { MatFormFieldModule } from '@angular/material/form-field'; // @2024/01/31 Add for Create Field
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -543,7 +537,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
 
   // @2024/01/29 Add
-  // ViewChild 裝飾器用於獲取模板中 #deleteField_ConfirmWindow 的元素引用
+  // ViewChild 裝飾器用於獲取模板中 #deleteField_ConfirmWindow 的元素
   @ViewChild('deleteField_ConfirmWindow') deleteField_ConfirmWindow: any;
 
   // @2024/01/29 Add
@@ -556,7 +550,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     // 將選中的場域賦值給 selectField
     this.selectField = field;
 
-    // 輸出將要刪除的場域名稱，用於記錄和調試
+    // 輸出將要刪除的場域名稱，用於記錄或調整
     console.log( "Deleted field name: ", this.selectField.name );
 
     // 使用 MatDialog 服務開啟確認刪除的對話框
@@ -591,7 +585,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
     } else {
 
-      // 不是 Local 環境，調用後端 API 進行刪除
+      // 非 Local 環境，調用後端 API 進行刪除
       this.API_Field.removeField( this.selectField.id ).subscribe({
         next: ( response ) => {
 
@@ -623,7 +617,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   }
 
   // @2024/01/29 Add by yuchen
-  // 模擬在 Local 環境中刪除場域的函數 ( Local 依據 name 控制刪除 )
+  // 模擬在 Local 環境中刪除場域的函數 ( 依據 name 進行刪除 )
   deleteFieldInLocal( fieldName: string ) {
 
     // 輸出將要刪除的場域名稱，用於記錄和調試
@@ -643,7 +637,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   }
 
 
-// For Field Snapshot Set @2024/03/06 Update by yuchen ↓
+// For Field Snapshot Set @2024/03/07 Update by yuchen ↓
 
   // 創建表單組，用於"場域快照設置"
   fieldSnapshotSetForm!: FormGroup;
@@ -671,13 +665,16 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   fieldSnapshotSetWindowRef!: MatDialogRef<any>; // 用於控制"場域快照設置"視窗的開啟和關閉
   fieldSnapshotSetFormValidated = false;         // 用於跟踪"場域快照設置"表單的驗證狀態
 
-  // 開啟 "場域快照設置" 視窗用 @2024/03/06 Update
+  // 開啟 "場域快照" 視窗用 @2024/03/07 Update
   openfieldSnapshotSetWindow( field: Field ){
     this.selectField = field;
 
     // @2024/03/06 Add
     this.toCreateFieldSnapshot();     // 打開視窗即建立一張當下快照 
     this.getQueryFieldSnapshotList(); // 接著取得先前有儲存的其它場域快照
+
+    // @2024/03/07 Add
+    this.isFieldSnapshotListPanelExpanded = false; // 打開視窗都預設 Snapshot 列表的摺疊面板為非展開
 
     // 表單驗證狀態重置
     this.fieldSnapshotSetFormValidated = false; 
@@ -707,7 +704,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     if ( this.commonService.isLocal ) {
 
       // 本地模式下模擬場域快照建立過程
-      console.log( "本地模擬選擇要產生快照的場域 ID 為:", this.selectField.id );
+      console.log( "本地模擬 - 選擇要產生快照的場域 ID 為:", this.selectField.id );
 
     } else {
 
@@ -736,7 +733,30 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   fieldSnapshotList: FieldSnapshotList = {} as FieldSnapshotList;
   isGetQueryFieldSnapshotLoading = false;     // 用於表示加載 Snapshot List 的 flag，初始設置為 false @2024/03/06 Add for Progress Spinner
 
-  // @2024/03/06 Add 
+  // @2024/03/07 Add
+  // fieldSnapshotList 用分頁控件 
+  p_fieldSnapshotList: number = 1;           // 當前頁數 - 指示分頁控件當前顯示的頁面編號，初始設定為第 1 頁。
+  pageSize_fieldSnapshotList: number = 5;    // 每頁幾筆 - 每頁顯示的數據條目數量，這裡設定為每頁顯示 5 條數據。
+  totalItems_fieldSnapshotList: number = 0;  // 總筆數 - 整個數據集的總條目數，用於計算分頁總數。
+  nullList_fieldSnapshotList: string[] = []; // 給頁籤套件使用 - 用於分頁控件的一個空陣列，通常用於初始化或臨時存儲數據。
+
+  /** @2024/03/07 Add
+   *  fieldSnapshotList 用分頁控件函數
+   *  當分頁控件中的頁面發生變化時被呼叫的函數。
+   *  @param page 這是新選擇的頁面編號。
+   * 
+   * 此函數更新當前頁面編號（ this.p_fieldSnapshotList ），從而觸發應用程式在該頁面上顯示相應的數據。
+   * 這通常會導致對應用程式的狀態或模型中的數據進行分頁處理，以便只顯示當前頁面的數據。
+   * 此方法與分頁管道（ ngFor 與 paginate 管道 ）緊密相連，確保頁面上正確地顯示數據。
+   */
+  pageChanged_fieldSnapshotList( page: number ) {
+
+    this.p_fieldSnapshotList = page; // 更新當前頁面編號
+
+    console.log( "目前 Snapshot List 顯示的頁面為:", this.p_fieldSnapshotList );
+  }
+
+  // @2024/03/07 Update
   // Get the Snapshot List in specific field
   getQueryFieldSnapshotList() {
     console.log('getQueryFieldSnapshotList() - Start');  // 在控制台中記錄開始獲取指定場域內的 Snapshot List 的訊息
@@ -754,10 +774,18 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       // 從本地文件中讀取 Snapshot List 
       this.fieldSnapshotList = this.fieldSnapshotList_LocalFiles.fieldSnapshotList_local;
 
+      // 計算 fieldSnapshot 數組中元素的數量，即場域快照的總數
+      // 使用可選鏈和空值合併運算符來避免 undefined 或 null
+      this.totalItems_fieldSnapshotList = this.fieldSnapshotList.fieldSnapshot?.length || 0;
+      console.log( 'Total items of fieldSnapshot:', this.totalItems_fieldSnapshotList );
+
+      // 定義一個空陣列，長度等於場域快照的總數，用於分頁控制
+      this.nullList_fieldSnapshotList = new Array( this.totalItems_fieldSnapshotList );
+
       // 設置加載旗標為 false，表示加載完成
       this.isGetQueryFieldSnapshotLoading = false;
 
-      console.log( '目前 local 環境中，指定場域內的 Snapshot List:\n', this.fieldSnapshotList ); 
+      console.log( '目前 local 環境中，指定場域內已儲存的 Snapshot List:\n', this.fieldSnapshotList ); 
 
     } else {
 
@@ -770,10 +798,18 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           // 將 API 返回指定場域內的 Snapshot List 賦值給 fieldSnapshotList 變數
           this.fieldSnapshotList = res;
 
+          // 計算 fieldSnapshot 數組中元素的數量，即場域快照的總數
+          // 使用可選鏈和空值合併運算符來避免 undefined 或 null
+          this.totalItems_fieldSnapshotList = this.fieldSnapshotList.fieldSnapshot?.length || 0;
+          console.log( 'Total items of fieldSnapshot:', this.totalItems_fieldSnapshotList );
+
+          // 定義一個空陣列，長度等於場域快照的總數，用於分頁控制
+          this.nullList_fieldSnapshotList = new Array( this.totalItems_fieldSnapshotList );
+
           // 設置加載旗標為 false，表示加載完成
           this.isGetQueryFieldSnapshotLoading = false;
 
-          console.log( '目前指定場域內的 Snapshot List:\n', this.fieldSnapshotList );
+          console.log( '目前指定場域內已儲存的 Snapshot List:\n', this.fieldSnapshotList );
 
         },
         error: ( error ) => {
@@ -796,9 +832,109 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     console.log( 'getQueryFieldSnapshotList() - End' );
   }
 
-// For Field Snapshot Set @2024/03/06 Update by yuchen ↑
+  // @2024/03/07 Add
+  // 用來追蹤摺疊面板是否展開的狀態變量 ( For Field Snapshot List )
+  isFieldSnapshotListPanelExpanded: boolean = false; // 初始設置為 false，表示摺疊面板在初始狀態下是未展開的
+
+  // @2024/03/07 Add
+  // 此函數用於切換摺疊面板的展開/摺疊狀態 ( For Field Snapshot List )
+  togglePanel() {
+    this.isFieldSnapshotListPanelExpanded = !this.isFieldSnapshotListPanelExpanded;               // 將 isFieldSnapshotListPanelExpanded 的值反轉，如果為 true 則變為 false，反之亦然
+    console.log("Field Snapshot List 的摺疊面板展開狀態:", this.isFieldSnapshotListPanelExpanded ); // 在控制台輸出當前摺疊面板的展開狀態
+  }
 
 
+  // @2024/03/07 Add 
+  // ViewChild 裝飾器用於獲取模板中 #deleteFieldSnapshot_ConfirmWindow 的元素
+  @ViewChild('deleteFieldSnapshot_ConfirmWindow') deleteFieldSnapshot_ConfirmWindow: any;
+
+  deleteFieldSnapshot_ConfirmWindowRef!: MatDialogRef<any>;
+
+  // 用於存儲點擊對應到的 Field Snapshot  @2024/03/07 Add
+  selectedSnapshot: FieldSnapshot = {} as FieldSnapshot;
+
+  // 用於開啟删除場域快照確認視窗 @2024/03/07 Add 
+  openDeleteFieldSnapshot_ConfirmWindow( snapshot: FieldSnapshot ) {
+
+    // 將選中的場域快照賦值給 selectedSnapshot
+    this.selectedSnapshot = snapshot;
+
+    // 輸出將要刪除的場域快照名稱，用於記錄或調整
+    console.log( "Deleted snapshot name: ", this.selectedSnapshot.name );
+
+    // 使用 MatDialog 服務開啟確認刪除的對話框
+    this.deleteFieldSnapshot_ConfirmWindowRef = this.dialog.open(
+      this.deleteFieldSnapshot_ConfirmWindow, { id: 'deleteFieldSnapshot_ConfirmWindow' }
+    );
+
+    // 訂閱對話框關閉後的事件
+    this.deleteFieldSnapshot_ConfirmWindowRef.afterClosed().subscribe(confirm => {
+      // 確認刪除處理邏輯
+    });
+  }
+
+  // 用於確認刪除場域快照 @2024/03/07 Add 
+  confirmDeleteFieldSnapshot() {
+
+    // 檢查是否是 Local 環境
+    if ( this.commonService.isLocal ) {
+
+      // 在控制台輸出調試訊息
+      console.log('Local environment - simulate snapshot deletion.');
+
+      // 調用 Local 模式刪除場域的函數，傳入場域快照名稱
+      this.deleteSnapshotInLocal( this.selectedSnapshot.name );
+
+      // 刷新場域快照列表或進行其他更新
+      this.getQueryFieldSnapshotList();
+
+    } else {
+
+      // 非 Local 環境，調用後端 API 進行刪除
+      this.API_Field.removeFieldSnapshotInfo( this.selectedSnapshot.id ).subscribe({
+        next: ( response ) => {
+
+          // 刪除成功的回調，輸出成功訊息和後端響應
+          console.log( 'Snapshot deleted successfully', response );
+
+          // 刷新場域快照列表或進行其他更新
+          this.getQueryFieldSnapshotList();
+        },
+        error: ( error ) => {
+          console.error( 'Failed to delete snapshot:', error );
+        },
+        complete: () => {
+
+          // 請求完成後的回調，不管成功或失敗都會執行
+          // 關閉加載指示器
+          //this.isLoading = false;
+        }
+      });
+    }
+  }
+
+  // @2024/03/07 Add 
+  // 用於模擬 local 環境中刪除場域快照 ( 依據 name 進行刪除 )
+  deleteSnapshotInLocal( snapshotName: string ) {
+
+    // 輸出將要刪除的場域快照名稱，用於記錄和調試
+    console.log( "The delete field name:", snapshotName )
+
+    // 確保 this.fieldSnapshotList_LocalFiles.fieldSnapshotList_local.fieldSnapshot 是一個陣列
+    if ( Array.isArray( this.fieldSnapshotList_LocalFiles.fieldSnapshotList_local.fieldSnapshot ) ) {
+
+      // 從場域快照列表中過濾掉要刪除的場域快照
+      this.fieldSnapshotList_LocalFiles.fieldSnapshotList_local.fieldSnapshot =
+            this.fieldSnapshotList_LocalFiles.fieldSnapshotList_local.fieldSnapshot.filter( snapshot => snapshot.name !== snapshotName );
+    
+    } else {
+
+      // 如果 fieldSnapshotList_LocalFiles.fieldSnapshotList_local.fieldSnapshot 不是陣列，輸出錯誤訊息
+      console.error('fieldSnapshotList_local.fieldSnapshot is not an array or undefined');
+    }
+  }
+
+// For Field Snapshot Set @2024/03/07 Update by yuchen ↑
 
 }
 

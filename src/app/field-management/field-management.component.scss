@@ -63,8 +63,15 @@ mat-stepper {
   color: #3f4e69; 
 }
 
+// 設定 Expansion Panel 標題的樣式 @2024/03/07 Add
+.custom-panel-title {
+  font-size: 15px;
+}
 
-
+// 設定 Expansion Panel 描述的樣式 @2024/03/07 Add
+.custom-panel-description {
+  font-size: 13px;
+}
 
 .table th, 
 .table td {
