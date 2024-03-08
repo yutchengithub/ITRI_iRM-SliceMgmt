@@ -307,6 +307,10 @@
         <span>{{ selectField.bsNum }}</span>
       </li>
     </ul>
+    <!-- 下載按鈕：點擊時呼叫  函數來下載目前建立的快照 @2024/03/08 Add -->
+    <button type="button" (click)="resetFieldSnapshotSetForm()" mat-dialog-close>
+      {{ languageService.i18n['field.downloadCurrentFieldSnapshot'] }}
+    </button>
     <!-- Set the name of current snapshot  -->
     <span>
       <form [formGroup]="fieldSnapshotSetForm">
@@ -314,14 +318,22 @@
           <li>
             <label>{{ languageService.i18n['field.setSnapshotName'] }}:</label>
             <span>
-              <input type="text" formControlName="snapshotName" required>
+              <input matInput 
+                     type="text" 
+                     formControlName="snapshotName" 
+                     placeholder="{{ languageService.i18n['field.snapshotNameRequired'] }}" 
+                     [matTooltip]="languageService.i18n['field.mustContainNonWhitespace']" 
+                     required>
+              <!-- <mat-error *ngIf="fieldSnapshotSetForm.get('snapshotName')?.errors?.['pattern']">
+                {{ languageService.i18n['field.mustContainNonWhitespace'] }}
+              </mat-error> -->
             </span>
           </li>
         </ul>
-      </form>
+      </form>      
     </span>
-    <!-- 儲存按鈕：點擊時呼叫 resetFieldSnapshotSetForm() 方法來重置場域快照的表單，並關閉對話框 -->
-    <button type="button" (click)="resetFieldSnapshotSetForm()" mat-dialog-close>
+    <!-- 儲存按鈕：點擊時呼叫 saveCurrentFieldSnapshot() 函數來儲存剛建立的快照進列表 @2024/03/08 Add -->
+    <button type="button" (click)="saveCurrentFieldSnapshot()">
       {{ languageService.i18n['field.saveFieldSnapshot'] }}
     </button>
   </div>

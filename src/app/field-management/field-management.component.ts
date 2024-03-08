@@ -639,14 +639,21 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
 // For Field Snapshot Set @2024/03/07 Update by yuchen ↓
 
+  // @2024/03/03 Add 
   // 創建表單組，用於"場域快照設置"
   fieldSnapshotSetForm!: FormGroup;
 
-  // 用於建立"場域快照設置"用的表單組 @2024/03/03 Add
+  // @2024/03/08 Update
+  // 用於建立"場域快照設置"用的表單組
   createFieldSnapshotSetForm() {
+
+    // 正則表達式：至少包含一個非空白字符
+    const notOnlyWhitespaceRegex = /\S/;
+
     // 初始化表單控件
     this.fieldSnapshotSetForm = this.fb.group({
-      snapshotName: new FormControl( '', Validators.required )  // 快照名稱，預設值為空字串
+      // 驗證器檢查輸入是否至少包含一個非空白字符
+      snapshotName: new FormControl( '', [ Validators.required, Validators.pattern( notOnlyWhitespaceRegex ) ] )
     });
   }
 
@@ -693,7 +700,10 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  // @2024/03/06 Add
+  // 用於儲存剛建立的快照 ID @2024/03/08 Add
+  currentFieldSnapshotID: string = "";
+
+  // @2024/03/08 Update
   // 呼叫場域快照建立的函數。如果處於本地模式，則模擬建立過程；如果處於生產模式，則向後端 API 發送請求實際建立。
   toCreateFieldSnapshot() {
 
@@ -715,7 +725,11 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
         next: ( response ) => {
 
           // 處理成功響應
-          console.log( "場域快照建立成功:", response );
+          console.log( "場域快照建立成功，此快照 id 為:", response );
+
+          // 儲存剛建立的場域快照 ID 進指定變數
+          this.currentFieldSnapshotID = response.id;
+          console.log( "this.currentFieldSnapshotID:", this.currentFieldSnapshotID );
         },
         error: ( error ) => {
           // 處理失敗響應
@@ -727,6 +741,59 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     
     // 在控制台記錄函數執行結束的訊息
     console.log("toCreateFieldSnapshot() - End");
+  }
+
+
+  // @2024/03/08 Add
+  // 用於儲存剛建立的快照
+  saveCurrentFieldSnapshot() {
+    console.log( "saveCurrentFieldSnapshot() - Start" );
+
+    // 從表單中獲取快照名稱
+    const snapshotName = this.fieldSnapshotSetForm.get('snapshotName')?.value;
+
+    // 構建請求體
+    const body = {
+      session: this.sessionId,
+      name: snapshotName,
+      id: this.currentFieldSnapshotID
+    };
+
+    // 檢查是否在本地環境下模擬執行
+    if ( this.commonService.isLocal ) {
+
+      // 本地模式下模擬儲存快照過程
+      console.log( "本地模擬 - 儲存快照:", body );
+
+      // 刷新場域快照列表
+      this.getQueryFieldSnapshotList();
+
+      // 重置"輸入場域名稱"欄位表單
+      this.resetFieldSnapshotSetForm();
+
+    } else {
+
+      // 生產環境下向後端 API 發送請求儲存快照
+      this.API_Field.updateFieldSnapshot( body ).subscribe({
+        next: ( response ) => {
+          // 處理成功響應
+          console.log( "快照儲存成功:", response );
+
+          // 刷新場域快照列表
+          this.getQueryFieldSnapshotList();
+
+          // 重置"輸入場域名稱"欄位表單
+          this.resetFieldSnapshotSetForm();
+        },
+        error: ( error ) => {
+          // 處理失敗響應
+          console.error( "快照儲存失敗:", error );
+          // 例如顯示錯誤訊息給用戶
+        }
+      });
+    }
+
+    console.log( "saveCurrentFieldSnapshot() - End" );
   }
 
   // 用於存儲取得的 Field Snapshot List 數據 @2024/03/06 Add
