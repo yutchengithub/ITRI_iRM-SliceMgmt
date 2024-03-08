@@ -114,7 +114,7 @@ const routes: Routes = [
           { path: 'info/:cloudId/:cloudName', component: AccountInfoComponent }
         ]
       },
-      {
+      { 
         path: 'nf-mgr', children: [
           { path: '', component: NfManagementComponent },
           { path: 'info/:nfId/:dmsId', component: NfInfoComponent },
