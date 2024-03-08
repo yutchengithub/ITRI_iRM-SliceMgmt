@@ -52,9 +52,9 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     private fb:             FormBuilder,     // FormBuilder 用於建立表單
 
     public                    API_Field: apiForField,             // API_Field 用於場域管理相關的 API 請求
-    public         fieldList_LocalFiles: localFieldList,          // fieldList_LocalFiles 用於從本地文件獲取場域列表數據
-    public            bsList_LocalFiles: localBSList,             // bsList_LocalFiles 用於從本地文件獲取基站列表數據
-    public fieldSnapshotList_LocalFiles: localFieldSnapshotList,  // fieldSnapshotList_LocalFiles 用於從本地文件獲取指定場域內的 Snapshot List 數據 @2024/03/06 Add
+    public         fieldList_LocalFiles: localFieldList,          // fieldList_LocalFiles 用於從 Local 文件獲取場域列表數據
+    public            bsList_LocalFiles: localBSList,             // bsList_LocalFiles 用於從 Local 文件獲取基站列表數據
+    public fieldSnapshotList_LocalFiles: localFieldSnapshotList,  // fieldSnapshotList_LocalFiles 用於從 Local 文件獲取指定場域內的 Snapshot List 數據 @2024/03/06 Add
 
   ) {
     this.createFieldCreationForm();     // 初始化並創建每個場域設置用的 FormGroup @2024/02/02 Add
@@ -103,7 +103,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     this.p = page; // 更新當前頁面編號
   }
   
-  fieldList: FieldList = {} as FieldList; // 用於存儲從伺服器或本地文件獲取的場域列表數據 @11/30 Add by yuchen
+  fieldList: FieldList = {} as FieldList; // 用於存儲從伺服器或 Local 文件獲取的場域列表數據 @11/30 Add by yuchen
   selectField!: Field;  // 用於存儲當前選中的場域信息 @2024/02/03 Update by yuchen
   isLoading = true;     // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
 
@@ -112,7 +112,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
   /** @2024/01/29 Update by yuchen
    *  用於獲取場域列表。
-   *  根據是否處於本地模式，它會從本地文件或通過 API 從伺服器獲取場域資訊。
+   *  根據是否處於 Local 模式，它會從 Local 文件或通過 API 從伺服器獲取場域資訊。
    */
   getQueryFieldList() {
     console.log('getQueryFieldList() - Start');
@@ -122,15 +122,15 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     
     if ( this.commonService.isLocal ) {
 
-      // 本地模式: 使用本地文件提供的數據
+      //  Local 模式: 使用 Local 文件提供的數據
       this.fieldList = this.fieldList_LocalFiles.fieldList;
       console.log( 'In local - getQueryFieldList:', this.fieldList );
 
-      this.isLoading = false; // 本地模式下，數據加載快速完成，直接設置為 false
+      this.isLoading = false; //  Local 模式下，數據加載快速完成，直接設置為 false
 
     } else {
 
-      // 非本地模式: 通過 API 從服務器獲取數據
+      // 非 Local 模式: 通過 API 從服務器獲取數據
       this.API_Field.queryFieldList().subscribe({
         next: ( res ) => {
 
@@ -326,14 +326,14 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       this.displayedBSs = [...this.BSsNotUsedInO1];
     };
 
-    // 檢查是否在本地測試環境
+    // 檢查是否在 Local 測試環境
     if ( this.commonService.isLocal ) {
-      console.log( 'Fetching BS List in Local' );  // 在控制台中記錄正在本地獲取基站列表的訊息
+      console.log( 'Fetching BS List in Local' );  // 在控制台中記錄正在 Local 獲取基站列表的訊息
 
-      // 從本地文件中讀取基站列表
+      // 從 Local 文件中讀取基站列表
       this.bsList = this.bsList_LocalFiles.bsList_local;
 
-      // 對本地的基站列表應用篩選函數
+      // 對 Local 的基站列表應用篩選函數
       filterBSList ( this.bsList );
 
       // 設置加載旗標為 false，表示加載完成
@@ -443,7 +443,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   }
 
   // @2024/02/02 Add
-  // 提交場域建立表單的函數。如果處於本地模式，則模擬提交過程；如果處於生產模式，則向後端 API 發送請求。
+  // 提交場域建立表單的函數。如果處於 Local 模式，則模擬提交過程；如果處於生產模式，則向後端 API 發送請求。
   FieldCreation_Submit() {
 
     // 在控制台記錄開始執行函數的訊息
@@ -466,13 +466,13 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       session: this.sessionId // 會話識別碼
     };
 
-    // 檢查是否在本地環境下模擬執行
+    // 檢查是否在 Local 環境下模擬執行
     if ( this.commonService.isLocal ) {
 
-      // 本地模式下模擬場域建立過程
-      console.log( "本地模擬場域建立，提交的數據:", fieldCreationData );
+      //  Local 模式下模擬場域建立過程
+      console.log( " Local 模擬場域建立，提交的數據:", fieldCreationData );
 
-       // 本地模式建立成功後，刷新場域列表
+       //  Local 模式建立成功後，刷新場域列表
        this.getQueryFieldList();
 
     } else {
@@ -703,18 +703,18 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   // 用於儲存剛建立的快照 ID @2024/03/08 Add
   currentFieldSnapshotID: string = "";
 
-  // @2024/03/08 Update
-  // 呼叫場域快照建立的函數。如果處於本地模式，則模擬建立過程；如果處於生產模式，則向後端 API 發送請求實際建立。
+  // @2024/03/09 Update
+  // 呼叫場域快照建立的函數。如果處於 Local 模式，則模擬建立過程；如果處於生產模式，則向後端 API 發送請求實際建立。
   toCreateFieldSnapshot() {
 
     // 在控制台記錄開始執行函數的訊息
     console.log( "toCreateFieldSnapshot() - Start" );
 
-    // 檢查是否在本地環境下模擬執行
+    // 檢查是否在 Local 環境下模擬執行
     if ( this.commonService.isLocal ) {
 
-      // 本地模式下模擬場域快照建立過程
-      console.log( "本地模擬 - 選擇要產生快照的場域 ID 為:", this.selectField.id );
+      //  Local 模式下模擬場域快照建立過程
+      console.log( "Local 模擬 ( 無法真的建立 )\n - 要產生快照的場域 ID 為:", this.selectField.id );
 
     } else {
 
@@ -745,7 +745,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
 
   // @2024/03/08 Add
-  // 用於儲存剛建立的快照
+  // 用於儲存剛建立的場域快照
   saveCurrentFieldSnapshot() {
     console.log( "saveCurrentFieldSnapshot() - Start" );
 
@@ -759,11 +759,11 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       id: this.currentFieldSnapshotID
     };
 
-    // 檢查是否在本地環境下模擬執行
+    // 檢查是否在 Local 環境下模擬執行
     if ( this.commonService.isLocal ) {
 
-      // 本地模式下模擬儲存快照過程
-      console.log( "本地模擬 - 儲存快照:", body );
+      //  Local 模式下模擬儲存快照過程
+      console.log( " Local 模擬 - 申請儲存的快照資訊為:", body );
 
       // 刷新場域快照列表
       this.getQueryFieldSnapshotList();
@@ -796,19 +796,136 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     console.log( "saveCurrentFieldSnapshot() - End" );
   }
 
+  // @2024/03/09 Add
+  // 用於下載剛建立的場域快照
+  downloadCurrentFieldSnapshot() {
+    console.log( "downloadCurrentFieldSnapshot() - Start" );
+
+    // 檢查是否在 Local 環境下模擬執行
+    if ( this.commonService.isLocal ) {
+
+      //  Local 模式下無法下載快照
+      //console.log( "Local 模式下無法下載快照，此剛建立的場域快照ID為:", this.currentFieldSnapshotID );
+      console.log( "Local 模式下無法真的建立快照，故也無法下載。" );
+
+    } else {
+
+      // 生產環境下向後端 API 發送請求下載快照
+      this.API_Field.getDumpFieldSnapshot( this.currentFieldSnapshotID ).subscribe({
+        next: ( response ) => {
+          
+          // 處理成功的響應
+          console.log( "剛建立的場域快照 -", this.currentFieldSnapshotID, "下載成功:", response );
+
+          // 取得快照所屬場域名稱
+          const fieldName = this.selectField.name;
+
+          // 定義檔名格式為: {fieldName}_currentFieldSnapshot_{此快照ID}.xlsx
+          //          e.g., fieldName_currentFieldSnapshot_e2833d293c8049559ed0.xlsx
+          const fileName = `${fieldName}_currentFieldSnapshot_${this.currentFieldSnapshotID}.xlsx`;
+
+          // 解碼 Base64 字符串並自動下載 .xlsx 文件
+          this.downloadExcelFromBase64( response.data, fileName );
+        },
+        error: ( error ) => {
+          // 處理失敗響應
+          console.error( "下載剛建立的場域快照失敗:", error );
+          // 例如顯示錯誤訊息給用戶
+        }
+      });
+    }
+
+    console.log( "downloadCurrentFieldSnapshot() - End" );
+  }
+
+  // @2024/03/09 Add
+  // 用於下載快照列表裡的指定場域快照
+  downloadSpecificFieldSnapshotInList( snapshot: FieldSnapshot ) {
+    console.log( "downloadSpecificFieldSnapshotInList() - Start" );
+
+    // 檢查是否在 Local 環境下模擬執行
+    if ( this.commonService.isLocal ) {
+
+      //  Local 模式下無法下載快照
+      console.log( "Local 模式下無法真的下載快照，\n 此點選要下載的快照名稱為:", snapshot.name );
+
+    } else {
+
+      // 生產環境下向後端 API 發送請求下載快照
+      this.API_Field.getDumpFieldSnapshot( snapshot.id ).subscribe({
+        next: ( response ) => {
+          
+          // 處理成功的響應
+          console.log( "快照", snapshot.name, "下載成功:", response );
+
+          // 取得快照所屬場域名稱
+          const fieldName = this.selectField.name;
+          
+          // 取得建立的快照名稱
+          const snapshotName = snapshot.name;
+
+          // 使用 JavaScript 的 Date 對象解析出年、月、日、時、分、秒
+          const createdDate = new Date( snapshot.createtime );
+          const year = createdDate.getFullYear();
+          const month = String( createdDate.getMonth() + 1 ).padStart( 2, '0' );
+          const day = String( createdDate.getDate() ).padStart( 2, '0' );
+          const hours = String( createdDate.getHours() ).padStart( 2, '0' );
+          const minutes = String( createdDate.getMinutes() ).padStart( 2, '0' );
+          const seconds = String( createdDate.getSeconds() ).padStart( 2, '0' );
+
+          // 定義的檔名格式: {fieldName}_{snapshotName}_{年月日}_{時分秒}.xlsx
+          //          e.g., fieldName_SnapshotName_20240306_140538.xlsx
+          const fileName = `${fieldName}_${snapshotName}_${year}${month}${day}_${hours}${minutes}${seconds}.xlsx`;
+
+          // 解碼 Base64 字符串並自動下載 .xlsx 文件
+          this.downloadExcelFromBase64( response.data, fileName );
+        },
+        error: ( error ) => {
+          // 處理失敗響應
+          console.error( "快照下載失敗:", error );
+          // 例如顯示錯誤訊息給用戶
+        }
+      });
+    }
+
+    console.log( "downloadSpecificFieldSnapshotInList() - End" );
+  }
+
+  // @2024/03/09 Add
+  // 用於解碼 Base64 字符串並下載 .xlsx 文件
+  downloadExcelFromBase64( base64String: string, fileName: string ) {
+    const link = document.createElement("a");
+
+    if ( link.download !== undefined ) {
+
+      // 支援 HTML5 download 屬性的瀏覽器
+      link.setAttribute( "href", 'data:application/vnd.ms-excel;base64,' + base64String );
+      link.setAttribute( "download", fileName );
+      link.style.visibility = 'hidden';
+      document.body.appendChild( link );
+      link.click();
+      document.body.removeChild( link );
+
+    } else {
+
+      // 不支援 HTML5 download 屬性的舊版瀏覽器時的處理
+      console.error( "您的瀏覽器不支援自動下載文件" );
+    }
+  }
+
   // 用於存儲取得的 Field Snapshot List 數據 @2024/03/06 Add
-  fieldSnapshotList: FieldSnapshotList = {} as FieldSnapshotList;
+  getFieldSnapshotList: FieldSnapshotList = {} as FieldSnapshotList;
   isGetQueryFieldSnapshotLoading = false;     // 用於表示加載 Snapshot List 的 flag，初始設置為 false @2024/03/06 Add for Progress Spinner
 
-  // @2024/03/07 Add
-  // fieldSnapshotList 用分頁控件 
-  p_fieldSnapshotList: number = 1;           // 當前頁數 - 指示分頁控件當前顯示的頁面編號，初始設定為第 1 頁。
-  pageSize_fieldSnapshotList: number = 5;    // 每頁幾筆 - 每頁顯示的數據條目數量，這裡設定為每頁顯示 5 條數據。
-  totalItems_fieldSnapshotList: number = 0;  // 總筆數 - 整個數據集的總條目數，用於計算分頁總數。
-  nullList_fieldSnapshotList: string[] = []; // 給頁籤套件使用 - 用於分頁控件的一個空陣列，通常用於初始化或臨時存儲數據。
+  // @2024/03/09 Update
+  // getFieldSnapshotList 用分頁控件 
+  p_getFieldSnapshotList: number = 1;           // 當前頁數 - 指示分頁控件當前顯示的頁面編號，初始設定為第 1 頁。
+  pageSize_getFieldSnapshotList: number = 5;    // 每頁幾筆 - 每頁顯示的數據條目數量，這裡設定為每頁顯示 5 條數據。
+  totalItems_getFieldSnapshotList: number = 0;  // 總筆數 - 整個數據集的總條目數，用於計算分頁總數。
+  nullList_getFieldSnapshotList: string[] = []; // 給頁籤套件使用 - 用於分頁控件的一個空陣列，通常用於初始化或臨時存儲數據。
 
-  /** @2024/03/07 Add
-   *  fieldSnapshotList 用分頁控件函數
+  /** @2024/03/09 Update
+   *  getFieldSnapshotList 用的分頁控件函數
    *  當分頁控件中的頁面發生變化時被呼叫的函數。
    *  @param page 這是新選擇的頁面編號。
    * 
@@ -818,12 +935,12 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
    */
   pageChanged_fieldSnapshotList( page: number ) {
 
-    this.p_fieldSnapshotList = page; // 更新當前頁面編號
+    this.p_getFieldSnapshotList = page; // 更新當前頁面編號
 
-    console.log( "目前 Snapshot List 顯示的頁面為:", this.p_fieldSnapshotList );
+    console.log( "目前 Snapshot List 顯示的頁面為:", this.p_getFieldSnapshotList );
   }
 
-  // @2024/03/07 Update
+  // @2024/03/09 Update
   // Get the Snapshot List in specific field
   getQueryFieldSnapshotList() {
     console.log('getQueryFieldSnapshotList() - Start');  // 在控制台中記錄開始獲取指定場域內的 Snapshot List 的訊息
@@ -834,25 +951,25 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
     this.isGetQueryFieldSnapshotLoading = true; // 設置加載旗標為 true，表示開始加載
 
-    // 檢查是否在本地測試環境
+    // 檢查是否在 Local 測試環境
     if ( this.commonService.isLocal ) {
-      console.log( 'Fetching Snapshot List in Local' );  // 在控制台中記錄正在本地獲取指定場域內的 Snapshot List 的訊息
+      console.log( 'Fetching Snapshot List in Local' );  // 在控制台中記錄正在 Local 獲取指定場域內的 Snapshot List 的訊息
 
-      // 從本地文件中讀取 Snapshot List 
-      this.fieldSnapshotList = this.fieldSnapshotList_LocalFiles.fieldSnapshotList_local;
+      // 從 Local 文件中讀取 Snapshot List 
+      this.getFieldSnapshotList = this.fieldSnapshotList_LocalFiles.fieldSnapshotList_local;
 
       // 計算 fieldSnapshot 數組中元素的數量，即場域快照的總數
       // 使用可選鏈和空值合併運算符來避免 undefined 或 null
-      this.totalItems_fieldSnapshotList = this.fieldSnapshotList.fieldSnapshot?.length || 0;
-      console.log( 'Total items of fieldSnapshot:', this.totalItems_fieldSnapshotList );
+      this.totalItems_getFieldSnapshotList = this.getFieldSnapshotList.fieldSnapshot?.length || 0;
+      console.log( 'Total items of fieldSnapshot:', this.totalItems_getFieldSnapshotList );
 
       // 定義一個空陣列，長度等於場域快照的總數，用於分頁控制
-      this.nullList_fieldSnapshotList = new Array( this.totalItems_fieldSnapshotList );
+      this.nullList_getFieldSnapshotList = new Array( this.totalItems_getFieldSnapshotList );
 
       // 設置加載旗標為 false，表示加載完成
       this.isGetQueryFieldSnapshotLoading = false;
 
-      console.log( '目前 local 環境中，指定場域內已儲存的 Snapshot List:\n', this.fieldSnapshotList ); 
+      console.log( '目前 local 環境中，指定場域內已儲存的 Snapshot List:\n', this.getFieldSnapshotList ); 
 
     } else {
 
@@ -862,21 +979,21 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       this.API_Field.queryFieldSnapshotList( this.selectField.id ).subscribe({
         next: ( res: FieldSnapshotList ) => {
 
-          // 將 API 返回指定場域內的 Snapshot List 賦值給 fieldSnapshotList 變數
-          this.fieldSnapshotList = res;
+          // 將 API 返回指定場域內的 Snapshot List 賦值給 getFieldSnapshotList 變數
+          this.getFieldSnapshotList = res;
 
           // 計算 fieldSnapshot 數組中元素的數量，即場域快照的總數
           // 使用可選鏈和空值合併運算符來避免 undefined 或 null
-          this.totalItems_fieldSnapshotList = this.fieldSnapshotList.fieldSnapshot?.length || 0;
-          console.log( 'Total items of fieldSnapshot:', this.totalItems_fieldSnapshotList );
+          this.totalItems_getFieldSnapshotList = this.getFieldSnapshotList.fieldSnapshot?.length || 0;
+          console.log( 'Total items of getFieldSnapshotList:', this.totalItems_getFieldSnapshotList );
 
           // 定義一個空陣列，長度等於場域快照的總數，用於分頁控制
-          this.nullList_fieldSnapshotList = new Array( this.totalItems_fieldSnapshotList );
+          this.nullList_getFieldSnapshotList = new Array( this.totalItems_getFieldSnapshotList );
 
           // 設置加載旗標為 false，表示加載完成
           this.isGetQueryFieldSnapshotLoading = false;
 
-          console.log( '目前指定場域內已儲存的 Snapshot List:\n', this.fieldSnapshotList );
+          console.log( '目前指定場域內已儲存的 Snapshot List:\n', this.getFieldSnapshotList );
 
         },
         error: ( error ) => {
@@ -911,17 +1028,17 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   }
 
 
-  // @2024/03/07 Add 
-  // ViewChild 裝飾器用於獲取模板中 #deleteFieldSnapshot_ConfirmWindow 的元素
-  @ViewChild('deleteFieldSnapshot_ConfirmWindow') deleteFieldSnapshot_ConfirmWindow: any;
+  // @2024/03/09 Update
+  // ViewChild 裝飾器用於獲取模板中 #deleteSpecificFieldSnapshot_ConfirmWindow 的元素
+  @ViewChild('deleteSpecificFieldSnapshot_ConfirmWindow') deleteSpecificFieldSnapshot_ConfirmWindow: any;
 
-  deleteFieldSnapshot_ConfirmWindowRef!: MatDialogRef<any>;
+  deleteSpecificFieldSnapshot_ConfirmWindowRef!: MatDialogRef<any>;
 
   // 用於存儲點擊對應到的 Field Snapshot  @2024/03/07 Add
   selectedSnapshot: FieldSnapshot = {} as FieldSnapshot;
 
-  // 用於開啟删除場域快照確認視窗 @2024/03/07 Add 
-  openDeleteFieldSnapshot_ConfirmWindow( snapshot: FieldSnapshot ) {
+  // 用於開啟删除場域快照確認視窗 @2024/03/09 Update 
+  openDeleteSpecificFieldSnapshot_ConfirmWindow( snapshot: FieldSnapshot ) {
 
     // 將選中的場域快照賦值給 selectedSnapshot
     this.selectedSnapshot = snapshot;
@@ -930,19 +1047,21 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     console.log( "Deleted snapshot name: ", this.selectedSnapshot.name );
 
     // 使用 MatDialog 服務開啟確認刪除的對話框
-    this.deleteFieldSnapshot_ConfirmWindowRef = this.dialog.open(
-      this.deleteFieldSnapshot_ConfirmWindow, { id: 'deleteFieldSnapshot_ConfirmWindow' }
+    this.deleteSpecificFieldSnapshot_ConfirmWindowRef = this.dialog.open(
+      this.deleteSpecificFieldSnapshot_ConfirmWindow, { id: 'deleteSpecificFieldSnapshot_ConfirmWindow' }
     );
 
     // 訂閱對話框關閉後的事件
-    this.deleteFieldSnapshot_ConfirmWindowRef.afterClosed().subscribe(confirm => {
+    this.deleteSpecificFieldSnapshot_ConfirmWindowRef.afterClosed().subscribe(confirm => {
       // 確認刪除處理邏輯
     });
   }
 
-  // 用於確認刪除場域快照 @2024/03/07 Add 
-  confirmDeleteFieldSnapshot() {
+  // 用於確認刪除場域快照 @2024/03/09 Update 
+  confirmDeleteSpecificFieldSnapshot() {
 
+    this.isGetQueryFieldSnapshotLoading = true; // 設置加載旗標為 true，表示開始加載刪除
+    
     // 檢查是否是 Local 環境
     if ( this.commonService.isLocal ) {
 
@@ -950,10 +1069,13 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       console.log('Local environment - simulate snapshot deletion.');
 
       // 調用 Local 模式刪除場域的函數，傳入場域快照名稱
-      this.deleteSnapshotInLocal( this.selectedSnapshot.name );
+      this.deleteSpecificSnapshotInLocal( this.selectedSnapshot.name );
 
       // 刷新場域快照列表或進行其他更新
       this.getQueryFieldSnapshotList();
+
+      // 設置加載旗標為 false，表示刪除加載完成
+      this.isGetQueryFieldSnapshotLoading = false;
 
     } else {
 
@@ -966,23 +1088,23 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
           // 刷新場域快照列表或進行其他更新
           this.getQueryFieldSnapshotList();
+
+          // 設置加載旗標為 false，表示刪除加載完成
+          this.isGetQueryFieldSnapshotLoading = false;
         },
         error: ( error ) => {
           console.error( 'Failed to delete snapshot:', error );
-        },
-        complete: () => {
 
-          // 請求完成後的回調，不管成功或失敗都會執行
-          // 關閉加載指示器
-          //this.isLoading = false;
+          // 設置加載旗標為 false，表示刪除加載出錯
+          this.isGetQueryFieldSnapshotLoading = false;
         }
       });
     }
   }
 
   // @2024/03/07 Add 
-  // 用於模擬 local 環境中刪除場域快照 ( 依據 name 進行刪除 )
-  deleteSnapshotInLocal( snapshotName: string ) {
+  // 用於模擬 local 環境中刪除指定場域快照 ( 依據 name 進行刪除 )
+  deleteSpecificSnapshotInLocal( snapshotName: string ) {
 
     // 輸出將要刪除的場域快照名稱，用於記錄和調試
     console.log( "The delete field name:", snapshotName )
