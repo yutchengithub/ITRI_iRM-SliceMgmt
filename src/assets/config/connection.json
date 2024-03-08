@@ -1,5 +1,5 @@
 {
-  "local": true,
+  "local": 1,
   "url": "http://140.96.102.47",
   "port": "",
   "root": "/irm"
