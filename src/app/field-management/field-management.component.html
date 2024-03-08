@@ -320,6 +320,10 @@
         </ul>
       </form>
     </span>
+    <!-- 儲存按鈕：點擊時呼叫 resetFieldSnapshotSetForm() 方法來重置場域快照的表單，並關閉對話框 -->
+    <button type="button" (click)="resetFieldSnapshotSetForm()" mat-dialog-close>
+      {{ languageService.i18n['field.saveFieldSnapshot'] }}
+    </button>
   </div>
 
   <!-- Snapshot 列表顯示區 @2024/03/07 Add -->
