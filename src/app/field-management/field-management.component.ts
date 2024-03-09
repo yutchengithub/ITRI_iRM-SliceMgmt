@@ -31,7 +31,7 @@ import { localFieldSnapshotList } from '../shared/local-files/Field/For_queryFie
 
 // For download snapshot 
 import * as XLSX from 'xlsx';         // @2024/03/09 Add 
-import { saveAs } from 'file-saver';  // @2024/03/09 Add 
+//import { saveAs } from 'file-saver';  // @2024/03/09 Add 
 
 @Component({
   selector: 'app-field-management',                 // 定義組件的標籤選擇器，用於在其他 HTML 中引用此組件
@@ -829,7 +829,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           const fileName = `${fieldName}_currentFieldSnapshot_${this.currentFieldSnapshotID}.xlsx`;
 
           // 解碼 Base64 字符串並自動下載 .xlsx 文件
-          this.downloadExcelFromBase64( response.data, fileName );
+          this.downloadExcelFromBase64( response, fileName );
         },
         error: ( error ) => {
           // 處理失敗響應
@@ -882,7 +882,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           const fileName = `${fieldName}_${snapshotName}_${year}${month}${day}_${hours}${minutes}${seconds}.xlsx`;
 
           // 解碼 Base64 字符串並自動下載 .xlsx 文件
-          this.downloadExcelFromBase64( response.data, fileName );
+          this.downloadExcelFromBase64( response, fileName );
         },
         error: ( error ) => {
           // 處理失敗響應
@@ -916,6 +916,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       console.error( "您的瀏覽器不支援自動下載文件" );
     }
   }
+  
 
   // 用於存儲取得的 Field Snapshot List 數據 @2024/03/06 Add
   getFieldSnapshotList: FieldSnapshotList = {} as FieldSnapshotList;
