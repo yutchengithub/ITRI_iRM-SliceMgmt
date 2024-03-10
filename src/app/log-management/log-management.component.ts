@@ -262,7 +262,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         // 取消之前的 API 訂閱
         if ( this.queryLogList ) this.queryLogList.unsubscribe();
 
-        // 改切割至不傳入時分秒 @2024/03/10 Add
+        // 改只保留傳入日期的部分 @2024/03/10 Add
         const formattedDate = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
         const start = formattedDate.split(' ')[0]; // 獲取日期部分,例如 '2024-03-10'
         
@@ -365,7 +365,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       // 取消之前的任何 API 訂閱
       if ( this.queryUserNetconfLog ) this.queryUserNetconfLog.unsubscribe();
 
-      // 改切割至不傳入時分秒 @2024/03/10 Add
+      // 改只保留傳入日期的部分 @2024/03/10 Add
       const formattedDate = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
       const start = formattedDate.split(' ')[0]; // 獲取日期部分,例如 '2024-03-10'
       
