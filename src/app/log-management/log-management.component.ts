@@ -84,7 +84,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   userLogdetail: UserLogdetail = {} as UserLogdetail; // 用於儲存選擇的 User Log 的詳細訊息 @11/06 Add
   neLogdetail: NELogdetail = {} as NELogdetail;       // 用於儲存選擇的 NE Log 的詳細訊息   @11/06 Add
 
-  /* 用於查找名為'userlogDetail'的 Component  <ng-template>，
+  /* 用於查找名為'userlogDetail'的 Component <ng-template>，
      用於定義 User Log 詳細訊息的彈出視窗內容。 @11/03 Add */
   @ViewChild('userlogDetail') userlogDetail: any;    
 

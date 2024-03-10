@@ -90,7 +90,7 @@ export const Enlanguage = {
   'field.snapshotNameRequired': 'Enter snapshot name (no whitespace only)',
   'field.mustContainNonWhitespace': 'The snapshot name must contain at least one non-whitespace character',
 
-  'field.downloadCurrentFieldSnapshot':'Download Current Snapshot',
+  'field.downloadCurrentFieldSnapshot':'Download This Snapshot',
   'field.snapshotNo':'No.',
   'field.snapshotName':'Snapshot Name',
   'field.createdTime': 'Created Time',
