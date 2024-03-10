@@ -292,7 +292,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
             this.totalItems = this.UserLogsList.logNumber;
             console.log( 'UserLogs Num:', this.UserLogsList.logNumber );
             console.log( 'totalItems:', this.totalItems );
-            this.UserloginfoDeal();   // 調用處理 User Log 訊息的函數
+            //this.UserloginfoDeal();   // 調用處理 User Log 訊息的函數
 
             // 只有在第一頁時才執行搜尋 @12/06 Add
             if (this.p === 1) {   
@@ -395,7 +395,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           this.totalItems = this.NELogsList.logNumber;
           console.log( 'NELogs Num:', this.NELogsList.logNumber );
           console.log( 'totalItems:', this.totalItems );
-          this.NEloginfoDeal();       // 調用處理 NE Log 訊息的函數
+          //this.NEloginfoDeal();       // 調用處理 NE Log 訊息的函數
 
           // 只有在第一頁時才執行搜尋 @12/06 Add
           if ( this.p === 1 ) {   
