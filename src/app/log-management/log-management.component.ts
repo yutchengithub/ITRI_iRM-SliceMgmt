@@ -231,16 +231,19 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   
   
   // Get User Logs @2024/03/10 Update
-  UserLogs_getNum = 0; // 用於記錄取得 User Logs 資訊之次數
+  UserLogs_getNum = 0;              // 用於記錄取得 User Logs 資訊之次數
+  isGetUserLogsInfoLoading = false; // 用於表示加載 User Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
   getUserLogsInfo() {
-    console.log('getUserLogsInfo() - Start');
+    console.log( 'getUserLogsInfo() - Start' );
 
     this.UserLogs_getNum++;
-    console.log('UserLogs_getNum:', this.UserLogs_getNum);
+    console.log( 'UserLogs_getNum:', this.UserLogs_getNum );
 
-    clearTimeout(this.refreshTimeout);
+    clearTimeout( this.refreshTimeout );
 
-    if (this.commonService.isLocal) {
+    this.isGetUserLogsInfoLoading = true; // 設置加載旗標為 true，表示開始加載
+
+    if ( this.commonService.isLocal ) {
 
       // Local Test
       this.UserLogsList = this.commonService.UserLogsList;
@@ -250,10 +253,14 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       if (this.p === 1) {   
         this.search_UserLogs(); 
       }
+
+      // 設置加載旗標為 false，表示加載完成
+      this.isGetUserLogsInfoLoading = false;
+
     } else {
 
         // 取消之前的 API 訂閱
-        if (this.queryLogList) this.queryLogList.unsubscribe();
+        if ( this.queryLogList ) this.queryLogList.unsubscribe();
 
         // 改切割至不傳入時分秒 @2024/03/10 Add
         const formattedDate = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
@@ -291,9 +298,15 @@ export class LogManagementComponent implements OnInit, OnDestroy {
             if (this.p === 1) {   
               this.search_UserLogs(); 
             }
+
+            // 設置加載旗標為 false，表示加載完成
+            this.isGetUserLogsInfoLoading = false;
           },
           error: (error) => {  // 錯誤的 callback
             console.error('Error fetching user logs:', error); // 顯示錯誤訊息
+
+            // 設置加載旗標為 false，表示加載出錯
+            this.isGetUserLogsInfoLoading = false;
           },
           complete: () => {    // 完成的 callback
             console.log('User logs fetch completed');   // 顯示完成訊息
@@ -321,14 +334,17 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   
   // Get NE Logs @2024/03/10 Update
   NELogs_getNum = 0; // 用於記錄取得 NE Logs 資訊之次數
+  isGetNELogsInfoLoading = false; // 用於表示加載 NE Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
   getNELogsInfo() {
-    console.log('getNELogsInfo() - Start');
+    console.log( 'getNELogsInfo() - Start' );
     
     this.NELogs_getNum++;
-    console.log('NELogs_getNum:', this.NELogs_getNum);
+    console.log( 'NELogs_getNum:', this.NELogs_getNum );
 
     // 清除之前設置的定時器以避免重複執行
     clearTimeout( this.refreshTimeout );
+
+    this.isGetNELogsInfoLoading = true; // 設置加載旗標為 true，表示開始加載
 
     if ( this.commonService.isLocal ) {
 
@@ -341,10 +357,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         this.search_NELogs(); 
       }
 
+      // 設置加載旗標為 false，表示加載完成
+      this.isGetNELogsInfoLoading = false;
+
     } else {
 
       // 取消之前的任何 API 訂閱
-      if (this.queryUserNetconfLog) this.queryUserNetconfLog.unsubscribe();
+      if ( this.queryUserNetconfLog ) this.queryUserNetconfLog.unsubscribe();
 
       // 改切割至不傳入時分秒 @2024/03/10 Add
       const formattedDate = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
@@ -382,9 +401,15 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           if ( this.p === 1 ) {   
             this.search_NELogs(); 
           }
+
+          // 設置加載旗標為 false，表示加載完成
+          this.isGetNELogsInfoLoading = false;
         },
         error: ( error ) => {   // 錯誤的 callback
           console.error( 'Error fetching NE logs:', error ); // 顯示錯誤訊息
+
+          // 設置加載旗標為 false，表示加載出錯
+          this.isGetNELogsInfoLoading = false;
         },
         complete: () => {     // 完成的 callback
           console.log( 'NE logs fetch completed' );          // 顯示完成訊息

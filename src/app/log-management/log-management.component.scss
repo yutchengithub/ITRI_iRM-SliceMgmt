@@ -100,6 +100,23 @@ table.neLog tr td:nth-last-child(4) {
 table tbody td.time {
   text-align: left;
 }
+
+// @2024/03/10 Add
+// Spinner 居中並設定大小
+.progress-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90px; 
+}
+
+// @2024/03/10 Add
+// 設定進度調 (Spinner) 的顏色
+::ng-deep .mat-progress-spinner circle {
+  stroke: #7cbaec !important;
+}
+
+
 .filter {
   position: relative;
   padding-left: 15em;

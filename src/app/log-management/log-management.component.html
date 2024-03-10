@@ -100,21 +100,37 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let opt of userLogsToDisplay | paginate: { itemsPerPage: pageSize,
-           currentPage: p, totalItems: UserLogsList.logNumber, id: 'userlogsList' }; let i = index">
-          <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 User log 的編號 @11/14 changed by yuchen-->
-          <td>{{ opt.userid }}</td>
-          <td>{{ opt.logtype }}</td>
-          <td class="center">{{ opt.loglevel }}</td>
-          <td class="logmsg">{{ opt.logmsg }}</td>
-          <td>{{ opt.logtime }}</td>
-          <td><mat-icon tooltip="{{ languageService.i18n['view_detail'] }}" (click)="openUserlogDetail(opt)">remove_red_eye</mat-icon></td>
-        </tr>        
-        <tr class="notFind" *ngIf="userLogsToDisplay.length === 0">
-          <td colspan="7">{{languageService.i18n['no_results']}}</td>
-        </tr> 
+
+        <!-- 當數據正在加載時顯示進度條 @2024/03/10 Add -->
+        <ng-container *ngIf="isGetUserLogsInfoLoading">
+          <tr>
+            <td colspan="6">
+              <div class="progress-spinner-container">
+                <!-- 指示器大小設置 -->
+                <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+
+        <!-- 加載完成後顯示 User Logs 的數據 @2024/03/10 Add -->
+        <ng-container *ngIf="!isGetUserLogsInfoLoading">
+          <tr *ngFor="let opt of userLogsToDisplay | paginate: { itemsPerPage: pageSize,
+            currentPage: p, totalItems: UserLogsList.logNumber, id: 'userlogsList' }; let i = index">
+            <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 User log 的編號 @11/14 changed by yuchen-->
+            <td>{{ opt.userid }}</td>
+            <td>{{ opt.logtype }}</td>
+            <td class="center">{{ opt.loglevel }}</td>
+            <td class="logmsg">{{ opt.logmsg }}</td>
+            <td>{{ opt.logtime }}</td>
+            <td><mat-icon tooltip="{{ languageService.i18n['view_detail'] }}" (click)="openUserlogDetail(opt)">remove_red_eye</mat-icon></td>
+          </tr>        
+          <tr class="notFind" *ngIf="userLogsToDisplay.length === 0">
+            <td colspan="7">{{languageService.i18n['no_results']}}</td>
+          </tr>
+        </ng-container>
       </tbody>
-      </table>
+    </table>
       <!-- pagination @11/01 Add by yuchen --> 
       <!-- <span class="total">{{languageService.i18n['UserLog.total1']}} {{userLogsToDisplay.length}} {{languageService.i18n['UserLog.total2']}}</span> -->
       <!-- 使用 getTotalLogsText 函數來決定顯示 'User Log' 還是 'User Logs' @11/21 Add by yuchen -->
@@ -223,24 +239,40 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let opt of neLogsToDisplay | paginate: { itemsPerPage: pageSize,
-           currentPage: p, totalItems: NELogsList.logNumber, id: 'nelogsList' }; let i = index">
-          <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 NE log 的編號 @11/14 changed by yuchen-->
-          <td>{{opt.userid}}</td>
-          <td>{{opt.comp_name}}</td>
-          <td>{{opt.operation}}</td>
-          <td class="truncate">
-            {{ opt.req_data | truncate:118 }}
-          </td>
-          <td>
-            {{ opt.resp_data | truncate:118 }}
-          </td>          
-          <td>{{opt.logtime}}</td>
-          <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openNElogDetail(opt)">remove_red_eye</mat-icon></td>
-        </tr>
-        <tr class="notFind" *ngIf="NELogsList.logNumber === 0">
-          <td colspan="7">{{languageService.i18n['no_results']}}</td>
-        </tr> 
+
+        <!-- 當數據正在加載時顯示進度條 @2024/03/10 Add -->
+        <ng-container *ngIf="isGetNELogsInfoLoading">
+          <tr>
+            <td colspan="6">
+              <div class="progress-spinner-container">
+                <!-- 指示器大小設置 -->
+                <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+
+        <!-- 加載完成後顯示 NE Logs 的數據 @2024/03/10 Add -->
+        <ng-container *ngIf="!isGetNELogsInfoLoading">
+          <tr *ngFor="let opt of neLogsToDisplay | paginate: { itemsPerPage: pageSize,
+              currentPage: p, totalItems: NELogsList.logNumber, id: 'nelogsList' }; let i = index">
+            <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 NE log 的編號 @11/14 changed by yuchen-->
+            <td>{{opt.userid}}</td>
+            <td>{{opt.comp_name}}</td>
+            <td>{{opt.operation}}</td>
+            <td class="truncate">
+              {{ opt.req_data | truncate:118 }}
+            </td>
+            <td>
+              {{ opt.resp_data | truncate:118 }}
+            </td>          
+            <td>{{opt.logtime}}</td>
+            <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openNElogDetail(opt)">remove_red_eye</mat-icon></td>
+          </tr>
+          <tr class="notFind" *ngIf="NELogsList.logNumber === 0">
+            <td colspan="7">{{languageService.i18n['no_results']}}</td>
+          </tr> 
+        </ng-container>
       </tbody>
     </table>
     
