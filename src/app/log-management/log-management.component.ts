@@ -273,8 +273,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         // 從 searchForm 中獲取篩選條件
         const params = {
           userid: this.searchForm.get('UserID')?.value || '',     // 取得 userid，如不存在設為空字串
-          start, // 取得開始日期
-          end,   // 取得結束日期
+          start, // 取得開始日期 - 目前後端無法篩選時分秒
+          end,   // 取得結束日期 - 目前後端無法篩選時分秒
           //logType: this.searchForm.get('UserLogType')?.value,    // 取得 User Log 類型
           //keyword: this.searchForm.get('keyword')?.value || '',  // 取得想搜尋的關鍵字
           offset: (this.p - 1) * this.pageSize,                    // 計算分頁的 offset
@@ -377,8 +377,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       const params = {
         userid: this.searchForm.get('UserID')?.value || '',     // 取得 userid，如不存在設為空字串
         nEname: this.searchForm.get('neName')?.value || '',     // 取得 nEname，如不存在設為空字串
-        start, // 取得開始日期
-        end,   // 取得結束日期
+        start, // 取得開始日期 - 目前後端無法篩選時分秒
+        end,   // 取得結束日期 - 目前後端無法篩選時分秒
         neLogType: this.searchForm.get('NELogType')?.value,     // 取得 NE Log 類型
         keyword: this.searchForm.get('keyword')?.value || '',   // 取得想搜尋的關鍵字
         offset: (this.p - 1) * this.pageSize,                   // 計算分頁的 offset，以便從正確的記錄開始獲取 Log
