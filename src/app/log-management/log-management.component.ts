@@ -230,7 +230,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
   
   
-  // Get User Logs @2024/03/10 Update
+  // Get User Logs @2024/03/11 Update
   UserLogs_getNum = 0;              // 用於記錄取得 User Logs 資訊之次數
   isGetUserLogsInfoLoading = false; // 用於表示加載 User Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
   getUserLogsInfo() {
@@ -247,7 +247,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       // Local Test
       this.UserLogsList = this.commonService.UserLogsList;
-      this.UserloginfoDeal();
+      this.totalItems = this.UserLogsList.logNumber;
+      //this.UserloginfoDeal();
 
       // 只有在第一頁時才執行搜尋 @12/06 Add
       if (this.p === 1) {   
@@ -350,7 +351,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       // Local Test
       this.NELogsList = this.commonService.NELogsList;
-      this.NEloginfoDeal();
+      this.totalItems = this.NELogsList.logNumber;
+      //this.NEloginfoDeal();
 
       // 只有在第一頁時才執行搜尋 @12/06 Add
       if ( this.p === 1 ) {   
