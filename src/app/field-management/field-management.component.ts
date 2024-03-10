@@ -30,7 +30,7 @@ import { localBSList } from '../shared/local-files/BS/For_queryBsList';         
 import { localFieldSnapshotList } from '../shared/local-files/Field/For_queryFieldSnapshotList';  // @2024/03/06 Add
 
 // For download snapshot 
-import * as XLSX from 'xlsx';         // @2024/03/09 Add 
+import * as XLSX from 'xlsx';           // @2024/03/09 Add 
 //import { saveAs } from 'file-saver';  // @2024/03/09 Add 
 
 @Component({

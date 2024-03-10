@@ -76,8 +76,9 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   NELogsList: NELogsList = {} as NELogsList;
   type: string = 'User_Logs';   // 預設選擇 "User Logs" @10/31 Add  
   //type: string = 'NE_Logs';   // 預設選擇 "NE Logs"   @11/01 Add 
-  UserLogTypes: string[];       // @11/01 Add 
-  NELogTypes: string[];         // @11/01 Add 
+
+  UserLogTypes: string[] = ['GET', 'POST', 'DELETE'];             // @2024/03/10 Update
+  NELogTypes:   string[] = ['get', 'get-config', 'edit-config'];  // @2024/03/10 Update
 
 
   // For click View Page
@@ -161,8 +162,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     });
     
     this.createSearchForm();
-    this.UserLogTypes = this.commonService.UserLogType; // @11/01 Add by yuchen
-    this.NELogTypes = this.commonService.NELogType;     // @11/01 Add by yuchen
+    //this.UserLogTypes = this.commonService.UserLogType; // @11/01 Add by yuchen
+    //this.NELogTypes = this.commonService.NELogType;     // @11/01 Add by yuchen
   }
 
 
@@ -228,17 +229,21 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }
 
   
-  // Get User Logs @12/06 Updated by yuchen
-  UserLogs_getNum = 0; // 用於記錄取得 User Logs 資訊之次數
+  
+  // Get User Logs @2024/03/10 Update
+  UserLogs_getNum = 0;              // 用於記錄取得 User Logs 資訊之次數
+  isGetUserLogsInfoLoading = false; // 用於表示加載 User Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
   getUserLogsInfo() {
-    console.log('getUserLogsInfo() - Start');
+    console.log( 'getUserLogsInfo() - Start' );
 
     this.UserLogs_getNum++;
-    console.log('UserLogs_getNum:', this.UserLogs_getNum);
+    console.log( 'UserLogs_getNum:', this.UserLogs_getNum );
 
-    clearTimeout(this.refreshTimeout);
+    clearTimeout( this.refreshTimeout );
 
-    if (this.commonService.isLocal) {
+    this.isGetUserLogsInfoLoading = true; // 設置加載旗標為 true，表示開始加載
+
+    if ( this.commonService.isLocal ) {
 
       // Local Test
       this.UserLogsList = this.commonService.UserLogsList;
@@ -248,38 +253,60 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       if (this.p === 1) {   
         this.search_UserLogs(); 
       }
+
+      // 設置加載旗標為 false，表示加載完成
+      this.isGetUserLogsInfoLoading = false;
+
     } else {
 
         // 取消之前的 API 訂閱
-        if (this.queryLogList) this.queryLogList.unsubscribe();
+        if ( this.queryLogList ) this.queryLogList.unsubscribe();
 
-        // @11/30 Add by yuchen
+        // 改只保留傳入日期的部分 @2024/03/10 Add
+        const formattedDate = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
+        const start = formattedDate.split(' ')[0]; // 獲取日期部分,例如 '2024-03-10'
+        
+        const formattedEnd = this.commonService.dealPostDate(this.searchForm.controls['to'].value);  
+        const end = formattedEnd.split(' ')[0];    // 獲取日期部分,例如 '2024-03-10'
+
+        // @2024/03/10 Update
         // 從 searchForm 中獲取篩選條件
         const params = {
-          //userid: this.searchForm.get('UserID')?.value || '',     // 取得 userid，如不存在設為空字串
-          //start: this.commonService.dealPostDate(this.searchForm.controls['from'].value), // 取得開始日期
-          //end: this.commonService.dealPostDate(this.searchForm.controls['to'].value),     // 取得結束日期
+          userid: this.searchForm.get('UserID')?.value || '',     // 取得 userid，如不存在設為空字串
+          start, // 取得開始日期 - 目前後端無法篩選時分秒
+          end,   // 取得結束日期 - 目前後端無法篩選時分秒
           //logType: this.searchForm.get('UserLogType')?.value,    // 取得 User Log 類型
           //keyword: this.searchForm.get('keyword')?.value || '',  // 取得想搜尋的關鍵字
-          offset: (this.p - 1) * this.pageSize,                  // 計算分頁的 offset
-          limit: 10                                           // 設定顯示的 Log 數量限制
+          offset: (this.p - 1) * this.pageSize,                    // 計算分頁的 offset
+          limit: 10                                                // 設定每頁顯示的 Log 數量限制
         };
 
         // @11/30 Add by yuchen
         // 使用 commonService 中的 queryLogList() 發起 HTTP GET 請求
         this.commonService.queryLogList(params).subscribe({
           next: (res) => {    // 成功的 callback
+
             console.log('getUserLogsInfo:', res);
             this.UserLogsList = res;  // 直接賦值響應至 UserLogsList
-            this.UserloginfoDeal();   // 調用處理 User Log 訊息的函數
+            console.log( 'UserLogsList:', this.UserLogsList );
+            this.totalItems = this.UserLogsList.logNumber;
+            console.log( 'UserLogs Num:', this.UserLogsList.logNumber );
+            console.log( 'totalItems:', this.totalItems );
+            //this.UserloginfoDeal();   // 調用處理 User Log 訊息的函數
 
             // 只有在第一頁時才執行搜尋 @12/06 Add
             if (this.p === 1) {   
               this.search_UserLogs(); 
             }
+
+            // 設置加載旗標為 false，表示加載完成
+            this.isGetUserLogsInfoLoading = false;
           },
           error: (error) => {  // 錯誤的 callback
             console.error('Error fetching user logs:', error); // 顯示錯誤訊息
+
+            // 設置加載旗標為 false，表示加載出錯
+            this.isGetUserLogsInfoLoading = false;
           },
           complete: () => {    // 完成的 callback
             console.log('User logs fetch completed');   // 顯示完成訊息
@@ -305,63 +332,87 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }
 
   
-  // Get NE Logs @12/06 Updated by yuchen
+  // Get NE Logs @2024/03/10 Update
   NELogs_getNum = 0; // 用於記錄取得 NE Logs 資訊之次數
+  isGetNELogsInfoLoading = false; // 用於表示加載 NE Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
   getNELogsInfo() {
-    console.log('getNELogsInfo() - Start');
+    console.log( 'getNELogsInfo() - Start' );
     
     this.NELogs_getNum++;
-    console.log('NELogs_getNum:', this.NELogs_getNum);
+    console.log( 'NELogs_getNum:', this.NELogs_getNum );
 
     // 清除之前設置的定時器以避免重複執行
-    clearTimeout(this.refreshTimeout);
+    clearTimeout( this.refreshTimeout );
 
-    if (this.commonService.isLocal) {
+    this.isGetNELogsInfoLoading = true; // 設置加載旗標為 true，表示開始加載
+
+    if ( this.commonService.isLocal ) {
 
       // Local Test
       this.NELogsList = this.commonService.NELogsList;
       this.NEloginfoDeal();
 
       // 只有在第一頁時才執行搜尋 @12/06 Add
-      if (this.p === 1) {   
+      if ( this.p === 1 ) {   
         this.search_NELogs(); 
       }
+
+      // 設置加載旗標為 false，表示加載完成
+      this.isGetNELogsInfoLoading = false;
+
     } else {
 
       // 取消之前的任何 API 訂閱
-      if (this.queryUserNetconfLog) this.queryUserNetconfLog.unsubscribe();
+      if ( this.queryUserNetconfLog ) this.queryUserNetconfLog.unsubscribe();
+
+      // 改只保留傳入日期的部分 @2024/03/10 Add
+      const formattedDate = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
+      const start = formattedDate.split(' ')[0]; // 獲取日期部分,例如 '2024-03-10'
+      
+      const formattedEnd = this.commonService.dealPostDate(this.searchForm.controls['to'].value);  
+      const end = formattedEnd.split(' ')[0];    // 獲取日期部分,例如 '2024-03-10'
    
-      // @11/30 Add by yuchen
+      // @2024/03/10 Update
       // 從 searchForm 中獲取篩選條件
       const params = {
         userid: this.searchForm.get('UserID')?.value || '',     // 取得 userid，如不存在設為空字串
         nEname: this.searchForm.get('neName')?.value || '',     // 取得 nEname，如不存在設為空字串
-        start: this.commonService.dealPostDate(this.searchForm.controls['from'].value),    // 取得開始日期
-        end: this.commonService.dealPostDate(this.searchForm.controls['to'].value),        // 取得結束日期
+        start, // 取得開始日期 - 目前後端無法篩選時分秒
+        end,   // 取得結束日期 - 目前後端無法篩選時分秒
         neLogType: this.searchForm.get('NELogType')?.value,     // 取得 NE Log 類型
         keyword: this.searchForm.get('keyword')?.value || '',   // 取得想搜尋的關鍵字
         offset: (this.p - 1) * this.pageSize,                   // 計算分頁的 offset，以便從正確的記錄開始獲取 Log
-        limit: 10                                            // 設定顯示的 Log 數量限制
+        limit: 10                                               // 設定每頁顯示的 Log 數量限制
       };
 
-      // @11/30 Add by yuchen
+      // @2024/03/10 Update
       // 使用 commonService 中的 queryUserNetconfLog() 發起 HTTP GET 請求 
-      this.commonService.queryUserNetconfLog(params).subscribe({
-        next: (response) => { // 成功的 callback
-          console.log('getNELogsInfo:', response);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+      this.commonService.queryUserNetconfLog( params ).subscribe({
+        next: ( response ) => { // 成功的 callback
+          console.log( 'getNELogsInfo:', response );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
           this.NELogsList = response; // 直接賦值響應至 NELogsList
-          this.NEloginfoDeal();       // 調用處理 NE Log 訊息的函數
+          console.log( 'NELogsList:', this.NELogsList );
+          this.totalItems = this.NELogsList.logNumber;
+          console.log( 'NELogs Num:', this.NELogsList.logNumber );
+          console.log( 'totalItems:', this.totalItems );
+          //this.NEloginfoDeal();       // 調用處理 NE Log 訊息的函數
 
           // 只有在第一頁時才執行搜尋 @12/06 Add
-          if (this.p === 1) {   
+          if ( this.p === 1 ) {   
             this.search_NELogs(); 
           }
+
+          // 設置加載旗標為 false，表示加載完成
+          this.isGetNELogsInfoLoading = false;
         },
-        error: (error) => {   // 錯誤的 callback
-          console.error('Error fetching NE logs:', error); // 顯示錯誤訊息
+        error: ( error ) => {   // 錯誤的 callback
+          console.error( 'Error fetching NE logs:', error ); // 顯示錯誤訊息
+
+          // 設置加載旗標為 false，表示加載出錯
+          this.isGetNELogsInfoLoading = false;
         },
         complete: () => {     // 完成的 callback
-          console.log('NE logs fetch completed');          // 顯示完成訊息
+          console.log( 'NE logs fetch completed' );          // 顯示完成訊息
         }
       });
     }
@@ -486,7 +537,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-
+  // @2024/03/10 Update
   // 用於點擊對應之頁數 Button 時進行頁面切換
   pageChanged(page: number) {
     this.p = page;
@@ -494,7 +545,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     // @12/06 add by yuchen
     // 如點擊頁數為 1 ，即刷新對應之 Logs 數據
-    if(this.p === 1){
+    //if(this.p === 1){
 
       if (this.type === 'User_Logs') { // 如為 User Logs 頁面
         this.getUserLogsInfo();
@@ -502,7 +553,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       } else if (this.type === 'NE_Logs') { // 如為 NE Logs 頁面
         this.getNELogsInfo();
       }
-    }
+    //}
   }
 
   // 用於點擊至對應的 Button 時，進行頁面的切換 
@@ -562,7 +613,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     '\nLog type displayed after tab switch:', this.type);
   }
 
-  // @11/21 Add by yuchen
+  // @2024/03/10 Update
   // 該函數接受一個 log 矩陣和單數形式的 log 名稱，根據矩陣長度返回單數或複數形式的文本。
   getTotalLogsText(logType: 'user' | 'ne'): string {
     
@@ -570,10 +621,10 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     let logText: string;
   
     if (logType === 'user') {
-      totalLogs = this.userLogsToDisplay.length;
+      totalLogs = this.UserLogsList.logNumber;
       logText = totalLogs === 1 ? this.languageService.i18n['UserLog.single'] : this.languageService.i18n['UserLog.total'];
     } else {
-      totalLogs = this.neLogsToDisplay.length;
+      totalLogs = this.NELogsList.logNumber;
       logText = totalLogs === 1 ? this.languageService.i18n['NElog.single'] : this.languageService.i18n['NElog.total'];
     }
   
