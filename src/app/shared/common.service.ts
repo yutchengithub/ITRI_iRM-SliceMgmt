@@ -592,13 +592,13 @@ export class CommonService {
   }
 
   // Log Management API  @11/30 Update by yuchen
-  queryLogList(params?: any): Observable<any> {
+  queryLogList( params?: any ): Observable<any> {
     const url = `${this.restPath}/queryLogList/${this.getSessionId()}`;
-    return this.http.get(url, { params });  // 將參數物件傳遞給 HTTP GET 請求
+    return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
   }
-  queryUserNetconfLog(params?: any): Observable<any> { 
+  queryUserNetconfLog( params?: any ): Observable<any> { 
     const url = `${this.restPath}/queryUserNetconfLog/${this.getSessionId()}`;
-    return this.http.get(url, { params });  // 將參數物件傳遞給 HTTP GET 請求
+    return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
   }
 
 
