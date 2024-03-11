@@ -4601,7 +4601,7 @@ export class CommonService {
   // User logs files @12/21 Update by yutchen add 5 files
   UserLogsList: UserLogsList = {
   
-    logNumber: 21,  // number
+    logNumber: 20,  // number
     loginfo: [
       {
         userid: "k200",   // string
