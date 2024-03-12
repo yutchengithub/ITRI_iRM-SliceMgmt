@@ -591,13 +591,29 @@ export class CommonService {
     return this.http.get(url);
   }
 
-  // Log Management API  @11/30 Update by yuchen
-  queryLogList( params?: any ): Observable<any> {
+  // Log Management API @2024/03/12 Update by yuchen
+
+  // 取得 User Logs 用
+  queryLogList( params: any ): Observable<any> {
     const url = `${this.restPath}/queryLogList/${this.getSessionId()}`;
     return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
   }
-  queryUserNetconfLog( params?: any ): Observable<any> { 
+
+  // 下載 User Logs 用 @2024/03/12 Add
+  getDumpLogList( params: any ): Observable<any> {
+    const url = `${this.restPath}/getDumpLogList/${this.getSessionId()}`;
+    return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
+  }
+
+  // 取得 NE Logs 用
+  queryUserNetconfLog( params: any ): Observable<any> { 
     const url = `${this.restPath}/queryUserNetconfLog/${this.getSessionId()}`;
+    return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
+  }
+
+  // 下載 NE Logs 用 @2024/03/12 Add
+  getDumpUserNetconfLog( params: any ): Observable<any> {
+    const url = `${this.restPath}/getDumpUserNetconfLog/${this.getSessionId()}`;
     return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
   }
 
