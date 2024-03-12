@@ -61,7 +61,7 @@ import { LanguageService } from './shared/service/language.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { GoogleMapsModule } from '@angular/google-maps';        // @12/10 Add by yuchen for google maps
-import { NgCircleProgressModule } from 'ng-circle-progress';    // @12/11 Add by yuchen for 圓形進度條
+//import { NgCircleProgressModule } from 'ng-circle-progress';    // @12/11 Add by yuchen for 圓形進度條
 import { MatButtonModule } from '@angular/material/button';     // @12/12 Add by yuchen for Button 樣式
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
@@ -140,23 +140,23 @@ import { localBSList }    from './shared/local-files/BS/For_queryBsList'; // @20
     ChartModule,
     MatSlideToggleModule,
     GoogleMapsModule,                 // @12/10 Add by yuchen for google maps
-    NgCircleProgressModule.forRoot({  // @12/11 Add by yuchen for 圓形進度條
-      maxPercent: 100,
-      radius: 45,                  // 圓的半徑，單位:像素(px)。這會影響到圓形進度條的大小。
-      outerStrokeWidth: 8,         // 圓形進度條外圈的線條寬度，單位:像素(px)。
-      space: -8,
-      innerStrokeWidth: 8,         // 圓形進度條內圈的線條寬度，單位:像素(px)。
-      outerStrokeColor: "#39b3fe", // 定義圓形進度條外圈線條的顏色，可是任何合法的 CSS 顏色值。
-      innerStrokeColor: "#b6d8fb", // 定義圓形進度條內圈線條的顏色，可是任何合法的 CSS 顏色值。
-      animationDuration: 300,      // 定義動畫從 0% 到指定百分比的過渡時間，單位: 毫秒(ms)。
-      titleColor: '#a3bfff',       // 標題文字顏色
-      unitsColor: '#a3bfff',       // 單位文字顏色
-      titleFontSize: '24',         // 標題文字大小
-      unitsFontSize: '18',         // 單位文字大小 
-      titleFontWeight: '750',      // 標題文字粗度
-      unitsFontWeight: '900',      // 單位文字粗度
-      showSubtitle: false          // 設定是否顯示副標題，true:顯示，false:隱藏。
-    }),
+    // NgCircleProgressModule.forRoot({  // @12/11 Add by yuchen for 圓形進度條
+    //   maxPercent: 100,
+    //   radius: 45,                  // 圓的半徑，單位:像素(px)。這會影響到圓形進度條的大小。
+    //   outerStrokeWidth: 8,         // 圓形進度條外圈的線條寬度，單位:像素(px)。
+    //   space: -8,
+    //   innerStrokeWidth: 8,         // 圓形進度條內圈的線條寬度，單位:像素(px)。
+    //   outerStrokeColor: "#39b3fe", // 定義圓形進度條外圈線條的顏色，可是任何合法的 CSS 顏色值。
+    //   innerStrokeColor: "#b6d8fb", // 定義圓形進度條內圈線條的顏色，可是任何合法的 CSS 顏色值。
+    //   animationDuration: 300,      // 定義動畫從 0% 到指定百分比的過渡時間，單位: 毫秒(ms)。
+    //   titleColor: '#a3bfff',       // 標題文字顏色
+    //   unitsColor: '#a3bfff',       // 單位文字顏色
+    //   titleFontSize: '24',         // 標題文字大小
+    //   unitsFontSize: '18',         // 單位文字大小 
+    //   titleFontWeight: '750',      // 標題文字粗度
+    //   unitsFontWeight: '900',      // 單位文字粗度
+    //   showSubtitle: false          // 設定是否顯示副標題，true:顯示，false:隱藏。
+    // }),
     MatButtonModule,               // @12/12 Add by yuchen for Button 樣式
     MatListModule,                 // @12/12 Add by yuchen
     MatDividerModule,              // @12/12 Add by yuchen for Divider 
