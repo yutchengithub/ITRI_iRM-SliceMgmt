@@ -115,7 +115,7 @@
 
         <!-- 加載完成後顯示 User Logs 的數據 @2024/03/10 Add -->
         <ng-container *ngIf="!isGetUserLogsInfoLoading">
-          <tr *ngFor="let opt of UserLogsList.loginfo | paginate: { itemsPerPage: pageSize,
+          <tr *ngFor="let opt of userLogsToDisplay | paginate: { itemsPerPage: pageSize,
                                     currentPage: p, totalItems: UserLogsList.logNumber, id: 'userlogsList' }; let i = index">
             <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 User log 的編號 @11/14 changed by yuchen-->
             <td>{{ opt.userid }}</td>
@@ -218,8 +218,8 @@
         </span>
         <span *ngIf="afterSearchForm.controls['from'].value || afterSearchForm.controls['to'].value">
           <label>{{ languageService.i18n['NElog.logtime'] }}:&nbsp;</label>
-          {{ afterSearchForm.controls['from'].value ? (commonService.dealPostDate(afterSearchForm.controls['from'].value) + ' ~ ') : '' }}
-          {{ afterSearchForm.controls['to'].value ? commonService.dealPostDate(afterSearchForm.controls['to'].value) : '' }}
+              {{ afterSearchForm.controls['from'].value ? (commonService.dealPostDate(afterSearchForm.controls['from'].value) + ' ~ ') : '' }}
+              {{ afterSearchForm.controls['to'].value ? commonService.dealPostDate(afterSearchForm.controls['to'].value) : '' }}
         </span>
       </div>
 
@@ -254,7 +254,7 @@
 
         <!-- 加載完成後顯示 NE Logs 的數據 @2024/03/10 Add -->
         <ng-container *ngIf="!isGetNELogsInfoLoading">
-          <tr *ngFor="let opt of NELogsList.loginfo | paginate: { itemsPerPage: pageSize,
+          <tr *ngFor="let opt of neLogsToDisplay | paginate: { itemsPerPage: pageSize,
                                   currentPage: p, totalItems: NELogsList.logNumber, id: 'nelogsList' }; let i = index">
             <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 NE log 的編號 @11/14 changed by yuchen-->
             <td>{{opt.userid}}</td>
@@ -317,30 +317,30 @@
 <!-- View of NE Logs @11/06 changed by yuchen -->
 <ng-template #nelogDetail>
 
-  <div><h5>{{languageService.i18n['NElog.detail']}}</h5></div>
+  <div><h5>{{ languageService.i18n['NElog.detail'] }}</h5></div>
   <div style="max-height: calc(100vh - 195px); overflow-y: auto;">
     <ul>
       <li>
-        <span>{{languageService.i18n['NElog.userid']}}: </span><span>{{neLogdetail.userid}}</span>
+        <span>{{ languageService.i18n['NElog.userid'] }}: </span><span>{{ neLogdetail.userid }}</span>
       </li>
       <li> <!-- @11/14 Add by yuchen-->
-        <span>{{languageService.i18n['NElog.comp_name']}}: </span><span>{{neLogdetail.comp_name}}</span>
+        <span>{{ languageService.i18n['NElog.comp_name'] }}: </span><span>{{ neLogdetail.comp_name }}</span>
       </li>
       <li>
-        <span>{{languageService.i18n['NElog.operation']}}: </span><span>{{neLogdetail.operation}}</span>
+        <span>{{ languageService.i18n['NElog.operation'] }}: </span><span>{{ neLogdetail.operation }}</span>
       </li>
       <li>
-        <span>{{languageService.i18n['NElog.req_data']}}: </span><span>{{neLogdetail.req_data}}</span>
+        <span>{{ languageService.i18n['NElog.req_data'] }}: </span><span>{{ neLogdetail.req_data }}</span>
       </li>
       <li>
-        <span>{{languageService.i18n['NElog.resp_data']}}: </span><span>{{neLogdetail.resp_data}}</span>
+        <span>{{ languageService.i18n['NElog.resp_data'] }}: </span><span>{{ neLogdetail.resp_data }}</span>
       </li>
       <li>
-        <span>{{languageService.i18n['NElog.logtime']}}: </span><span>{{neLogdetail.logtime}}</span>
+        <span>{{ languageService.i18n['NElog.logtime'] }}: </span><span>{{ neLogdetail.logtime }}</span>
       </li>
     </ul>
   </div>
   <div class="buttons">
-    <button type="button" mat-dialog-close>{{languageService.i18n['NElog.detailclose']}}</button>
+    <button type="button" mat-dialog-close>{{ languageService.i18n['NElog.detailclose'] }}</button>
   </div>
 </ng-template>
