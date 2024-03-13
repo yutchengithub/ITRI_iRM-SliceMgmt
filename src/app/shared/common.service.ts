@@ -57,8 +57,8 @@ import { AccountInfo } from '../account-management/account-info/account-info.com
 // Interfaces of Schedule Management
 
 // Interfaces of Log Management
-import { UserLogsList } from '../log-management/log-management.component'; // Add by yutchen @10/27
-import { NELogsList } from '../log-management/log-management.component';   // Add by yutchen @10/27
+import { UserLogsList } from '../shared/interfaces/Log/For_queryLogList';        // Update by yutchen @2024/03/13
+import { NELogsList } from '../shared/interfaces/Log/For_queryUserNetconfLog';   // Update by yutchen @2024/03/13
 
 
 export interface NowTime {

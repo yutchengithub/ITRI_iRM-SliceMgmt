@@ -12,30 +12,11 @@ import * as _ from 'lodash';
 import * as XLSX from 'xlsx';         // @11/23 Add by yuchen 
 //import { saveAs } from 'file-saver';  // @11/23 Add by yuchen 
 
+// 引入儲存各個資訊所需的 interfaces
+import { UserLogsList, UserLogsInfo, UserLogDetail }  from '../shared/interfaces/Log/For_queryLogList';          
+import { NELogsList, NELogsInfo, NELogDetail }        from '../shared/interfaces/Log/For_queryUserNetconfLog';  
+import { ComponentList, Components }                  from '../shared/interfaces/NE/For_queryBsComponentList';  
 
-// @10/30 Add by yuchen
-export interface UserLogsList {   
-  logNumber: number; 
-  loginfo: UserLogsinfo[];
-}
-
-// @10/30 Add by yuchen 
-export interface UserLogsinfo { 
-  userid: string;    
-  logtype: string;
-  loglevel: number;
-  logmsg: string; 
-  logtime: string;  
-}
-
-// For click View User Log Detail Page @11/06 Add by yuchen 
-export interface UserLogdetail {
-  userid: string;
-  logtype: string;
-  loglevel: number;
-  logtime: string;
-  logmsg: string;
-}
 
 // @2024/03/11 Add
 // 用於儲存 User Logs 的篩選條件 
@@ -59,31 +40,6 @@ interface downloadUserLogsParams {
   logtype?: string; // 可選
 }
 
-// @10/30 Add by yuchen 
-export interface NELogsList { 
-  logNumber: number;       
-  loginfo: NELogsinfo[];             
-}
-
-// @10/30 Add by yuchen 
-export interface NELogsinfo { 
-  userid: string;    
-  operation: string;   
-  req_data: string;  
-  resp_data: string;   
-  logtime: string;    
-  comp_name: string;  // @11/22 Add by yuchen 
-}
-
-// For click View NE Log Detail Page @11/06 Add by yuchen 
-export interface NELogdetail {
-  userid: string;
-  operation: string;
-  req_data: string;
-  resp_data: string;
-  logtime: string;
-  comp_name: string;  // @11/22 Add by yuchen 
-}
 
 // @2024/03/11 Add
 // 用於儲存 NE Logs 的篩選條件 
@@ -710,7 +666,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 // ↓ For control display "View Page" ↓ 
 
   // 用於儲存選擇的 User Log 的詳細訊息 @11/06 Add
-  userLogdetail: UserLogdetail = {} as UserLogdetail;
+  userLogdetail: UserLogDetail = {} as UserLogDetail;
 
   /* 用於查找名為'userlogDetail'的 Component <ng-template>，
      用於定義 User Log 詳細訊息的彈出視窗內容。 @11/03 Add  */
@@ -719,7 +675,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
   // Add by yuchen @11/06
   // 當使用者點擊 User Logs 的 "View" 時
-  openUserlogDetail( UserLogsinfo: UserLogsinfo ) {
+  openUserlogDetail( UserLogsinfo: UserLogsInfo ) {
 
     // 複製 User Log 的詳細資訊以供顯示
     this.userLogdetail = {
@@ -752,7 +708,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }
 
   // 用於儲存選擇的 NE Log 的詳細訊息 @11/06 Add
-  neLogdetail: NELogdetail = {} as NELogdetail;       
+  neLogdetail: NELogDetail = {} as NELogDetail;       
 
   /* 用於查找名為'nelogDetail'的 Component  (ng-template)，
      通常用於定義 NE Log 訊息的彈出視窗內容。 @11/03 Add   */
@@ -761,7 +717,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
   // Add by yuchen @11/06
   // 當使用者點擊 NE Logs 的 "View" 時
-  openNElogDetail( NELogsinfo: NELogsinfo ) {
+  openNElogDetail( NELogsinfo: NELogsInfo ) {
 
     // 複製 NE Log 的詳細資訊以供顯示
     this.neLogdetail = {
@@ -800,7 +756,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 // ↓ For click "Search" ↓
 
   // For search User Logs @2024/03/12 Update
-  filtered_UserLogs: UserLogsinfo[] = [];
+  filtered_UserLogs: UserLogsInfo[] = [];
   isSearch_userLogs: boolean = false;
   search_UserLogs() {
     console.log( 'search_UserLogs() - Start' );
@@ -956,7 +912,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }  
 
   // For search NE Logs @2024/03/13 Update
-  filtered_NELogs: NELogsinfo[] = [];
+  filtered_NELogs: NELogsInfo[] = [];
   isSearch_neLogs: boolean = false;
   search_NELogs() {
     console.log( 'search_NELogs() - Start' );
@@ -1127,7 +1083,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 // ↓ For control Dispaly logInfos on .html ↓
 
   // 用於顯示的 User Logs 數據 @11/27
-  get userLogsToDisplay(): UserLogsinfo[] {
+  get userLogsToDisplay(): UserLogsInfo[] {
 
     // 檢查 this.UserLogsList 是否存在，以及 this.UserLogsList.loginfo 是否為非空數組
     if ( this.UserLogsList && Array.isArray( this.UserLogsList.loginfo ) ) {
@@ -1137,7 +1093,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   }
 
   // 用於顯示的 NE Logs 數據 @11/27
-  get neLogsToDisplay(): NELogsinfo[] {
+  get neLogsToDisplay(): NELogsInfo[] {
     // 確保 NELogsList 和 NELogsList.loginfo 存在
     if ( this.NELogsList && Array.isArray( this.NELogsList.loginfo ) ) {
       return this.isSearch_neLogs ? this.filtered_NELogs : this.NELogsList.loginfo;
@@ -1159,8 +1115,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     // 如是在 Local 環境測試
     if ( this.commonService.isLocal ) {
 
-      // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsinfo 矩陣或是 NELogsinfo 矩陣
-      let dataToExport: UserLogsinfo[] | NELogsinfo[] = [];
+      // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsInfo 矩陣或是 NELogsInfo 矩陣
+      let dataToExport: UserLogsInfo[] | NELogsInfo[] = [];
 
       // 依據使用者選擇的 dataType 確定是使用 UserLogType 還是 NELogType
       // 從 searchForm 獲取使用者選擇的日誌類型，如無選擇則默認為 'All'
@@ -1427,8 +1383,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     // // 用於將指定 Log 匯出成 .csv 檔案  @11/07 Add by yuchen 
     // exportToCSV(dataType: string) {
       
-    //   // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsinfo 矩陣或是 NELogsinfo 矩陣
-    //   let dataToExport: UserLogsinfo[] | NELogsinfo[] = [];
+    //   // 宣告一個變數來存儲要匯出的資料，結構可是 UserLogsInfo 矩陣或是 NELogsInfo 矩陣
+    //   let dataToExport: UserLogsInfo[] | NELogsInfo[] = [];
 
     //   // 依據使用者選擇的 dataType 確定是使用 UserLogType 還是 NELogType
     //   // 從 searchForm 獲取使用者選擇的日誌類型，如無選擇則默認為 'All'
