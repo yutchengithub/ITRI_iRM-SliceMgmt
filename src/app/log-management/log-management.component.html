@@ -53,7 +53,7 @@
 
         <!-- Button of Export User logs to XLSX @11/23 Add by yuchen -->
         <!-- <span tooltip="{{languageService.i18n['UserLog.ExportXLSX']}}" class="material-icons" (click)="exportToExcel('UserLogs')">assignment_returned</span> -->
-        <span tooltip="{{languageService.i18n['UserLog.ExportXLSX']}}" class="material-icons" (click)="exportToExcel('UserLogs')">
+        <span tooltip="{{languageService.i18n['UserLog.Export']}}" class="material-icons" (click)="exportLogsToFile('UserLogs')">
           <mat-icon svgIcon="export_to_xlsx"></mat-icon>
         </span>
         
@@ -66,8 +66,9 @@
       </div>
 
       
-      <!-- Search Criteria Summary of User Logs @12/04 Update by yuchen - added &nbsp;(non-breaking space HTML entity) -->
-      <div *ngIf="isSearch_userLogs" class="filterBY">
+      <!-- Search Criteria Summary of User Logs @2024/03/13 Update -->
+      <!-- <div *ngIf="isSearch_userLogs" class="filterBY"> -->
+      <div class="filterBY"> <!-- 改成常駐顯示 @2024/03/13 Update -->
         <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
         <span *ngIf="afterSearchForm.controls['UserID'].value">
           <label>{{ languageService.i18n['UserLog.userid'] }}:&nbsp;</label>{{ afterSearchForm.controls['UserID'].value }}
@@ -116,7 +117,7 @@
         <!-- 加載完成後顯示 User Logs 的數據 @2024/03/10 Add -->
         <ng-container *ngIf="!isGetUserLogsInfoLoading">
           <tr *ngFor="let opt of userLogsToDisplay | paginate: { itemsPerPage: pageSize,
-                                    currentPage: p, totalItems: UserLogsList.logNumber, id: 'userlogsList' }; let i = index">
+                                    currentPage: p, totalItems: totalLogs, id: 'userlogsList' }; let i = index">
             <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 User log 的編號 @11/14 changed by yuchen-->
             <td>{{ opt.userid }}</td>
             <td>{{ opt.logtype }}</td>
@@ -190,7 +191,7 @@
 
         <!-- Button of Export NE logs to XLSX @11/23 add by yuchen -->
         <!-- <span tooltip="{{languageService.i18n['NElog.ExportXLSX']}}" class="material-icons" (click)="exportToExcel('NELogs')">assignment_returned</span> -->
-        <span tooltip="{{languageService.i18n['NElog.ExportXLSX']}}" class="material-icons" (click)="exportToExcel('NELogs')">
+        <span tooltip="{{languageService.i18n['NElog.Export']}}" class="material-icons" (click)="exportLogsToFile('NELogs')">
           <mat-icon svgIcon="export_to_xlsx"></mat-icon>
         </span>
 
@@ -201,8 +202,9 @@
         </span> -->
       </div>
 
-      <!-- Search Criteria Summary of NE Logs @12/04 Add by yuchen  -->
-      <div *ngIf="isSearch_neLogs" class="filterBY">
+      <!-- Search Criteria Summary of NE Logs @2024/03/13 Update -->
+      <!-- <div *ngIf="isSearch_neLogs" class="filterBY"> -->
+      <div class="filterBY"> <!-- 改成常駐顯示 @2024/03/13 Update -->
         <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
         <span *ngIf="afterSearchForm.controls['UserID'].value">
           <label>{{ languageService.i18n['NElog.userid'] }}:&nbsp;</label>{{ afterSearchForm.controls['UserID'].value }}
@@ -255,7 +257,7 @@
         <!-- 加載完成後顯示 NE Logs 的數據 @2024/03/10 Add -->
         <ng-container *ngIf="!isGetNELogsInfoLoading">
           <tr *ngFor="let opt of neLogsToDisplay | paginate: { itemsPerPage: pageSize,
-                                  currentPage: p, totalItems: NELogsList.logNumber, id: 'nelogsList' }; let i = index">
+                                  currentPage: p, totalItems: totalLogs, id: 'nelogsList' }; let i = index">
             <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條 NE log 的編號 @11/14 changed by yuchen-->
             <td>{{opt.userid}}</td>
             <td>{{opt.comp_name}}</td>

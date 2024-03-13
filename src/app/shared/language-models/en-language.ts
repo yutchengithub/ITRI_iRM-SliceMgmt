@@ -383,6 +383,7 @@ export const Enlanguage = {
   'UserLog.detailclose':'Close',      // @11/03 Add by yuchen
   'UserLog.ExportCSV':'Export User Logs to .csv',    // @11/07 Add by yuchen
   'UserLog.ExportXLSX':'Export User Logs to .xlsx',  // @11/23 Add by yuchen
+  'UserLog.Export':'Export User Logs',               // @2024/03/13 Add by yuchen
 
   'NElog.No':'No.',
   'NElog.userid':'User',
@@ -398,5 +399,6 @@ export const Enlanguage = {
   'NElog.detail':'NE Log Detail',  // @11/03 Add by yuchen
   'NElog.detailclose':'Close',     // @11/03 Add by yuchen
   'NElog.ExportCSV':'Export NE Logs to .csv',   // @11/07 Add by yuchen
-  'NElog.ExportXLSX':'Export NE Logs to .xlsx'  // @11/23 Add by yuchen
+  'NElog.ExportXLSX':'Export NE Logs to .xlsx',  // @11/23 Add by yuchen
+  'NElog.Export':'Export NE Logs'                // @2024/03/13 Add by yuchen
 }

@@ -382,6 +382,7 @@ export const TwLanguage = {
   'UserLog.detailclose':'關閉',                 // @11/03 add by yuchen
   'UserLog.ExportCSV':'匯出使用者日誌為 .csv',    // @11/07 add by yuchen
   'UserLog.ExportXLSX':'匯出使用者日誌為 .xlsx',  // @11/23 Add by yuchen
+  'UserLog.Export':'匯出使用者日誌',              // @2024/03/13 Add by yuchen
 
   'NElog.No':'編號',
   'NElog.userid':'使用者',
@@ -398,4 +399,5 @@ export const TwLanguage = {
   'NElog.detailclose':'關閉',                 // @11/03 add by yuchen
   'NElog.ExportCSV':'匯出網元日誌為 .csv',      // @11/07 add by yuchen
   'NElog.ExportXLSX':'匯出網元日誌為 .xlsx',    // @11/23 Add by yuchen
+  'NElog.Export':'匯出網元日誌'                 // @2024/03/13 Add by yuchen
 }
