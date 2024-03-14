@@ -250,11 +250,16 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.filtered_UserLogs = [];
     this.filtered_NELogs = [];
 
+    // 重製搜尋用表單 @2024/03/14 Add
+    this.searchForm.reset();
+    this.createSearchForm();
+    this.afterSearchForm = _.cloneDeep( this.searchForm );
+
     // 根據當前選擇的 Log 類型載入數據
     if ( e.value === 'User_Logs' ) {
 
       this.type = 'User_Logs';
-      this.getUserLogsInfo();  // 取得 User Logs 數據 ( Local 模式下會獲取未經篩選的 User Logs )
+      this.getUserLogsInfo();       // 取得 User Logs 數據 ( Local 模式下會獲取未經篩選的 User Logs )
 
     } else if ( e.value === 'NE_Logs' ) {
 
