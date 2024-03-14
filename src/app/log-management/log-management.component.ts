@@ -15,7 +15,7 @@ import * as XLSX from 'xlsx';         // @11/23 Add by yuchen
 // 引入儲存各個資訊所需的 interfaces
 import { UserLogsList, UserLogsInfo, UserLogDetail }  from '../shared/interfaces/Log/For_queryLogList';          
 import { NELogsList, NELogsInfo, NELogDetail }        from '../shared/interfaces/Log/For_queryUserNetconfLog';  
-import { ComponentList, Components }                  from '../shared/interfaces/NE/For_queryBsComponentList';  
+import { NEList, NE }                                 from '../shared/interfaces/NE/For_queryBsComponentList';  
 
 
 // @2024/03/11 Add
