@@ -17,8 +17,8 @@ import { ChangeDetectorRef } from '@angular/core';          // @2023/12/13 Add f
 import { environment } from 'src/environments/environment'; // @2023/12/20 Add for import Google Maps API Key
 import { NgZone } from '@angular/core';
 
-// import APIs of Field Management @2024/01/04 Add 
-import { apiForField } from '../../shared/api/For_Field'; 
+// import APIs of Field Management @2024/03/14 Update 
+import { apiForFieldMgmt } from '../../shared/api/For_Field';
 
 // 引入儲存各個資訊所需的 interfaces
 import { FieldInfo }                      from '../../shared/interfaces/Field/For_queryFieldInfo';                     // @2023/12/21 Add
@@ -30,6 +30,7 @@ import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS/For_queryBsInfo_
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
 
 // 引入所需 Local Files
+import { localFieldInfo } from '../../shared/local-files/Field/For_queryFieldInfo'; // @2024/03/14 Add
 import { localPmFTPInfo } from '../../shared/local-files/Field/For_queryPmFtpInfo'; // @2024/02/04 Add
 import { localBSList }    from '../../shared/local-files/BS/For_queryBsList';       // @2024/01/16 Add
 import { localBSinfo }    from '../../shared/local-files/BS/For_queryBsInfo';       // @2023/12/27 Add
@@ -140,10 +141,13 @@ export class FieldInfoComponent implements OnInit {
 
     public      languageService: LanguageService,
     public        commonService: CommonService,
-    public            API_Field: apiForField,     // @2024/01/04 Add for import API of Field Management 
-    public     bsInfoLocalFiles: localBSinfo,     // @2023/12/27 Add for import BS Info Local Files
-    public    bsList_LocalFiles: localBSList,     // @2024/01/16 Add for import BS List Local Files 
-    public pmFtpInfo_LocalFiles: localPmFTPInfo,  // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+
+    public            API_Field: apiForFieldMgmt, // @2024/03/14 Update for import API of Field Management
+
+    public  fieldInfo_LocalFiles: localFieldInfo,  // @2024/03/14 Add for import Field Info Local Files
+    public     bsInfo_LocalFiles: localBSinfo,     // @2023/12/27 Add for import BS Info Local Files
+    public     bsList_LocalFiles: localBSList,     // @2024/01/16 Add for import BS List Local Files 
+    public  pmFtpInfo_LocalFiles: localPmFTPInfo,  // @2024/02/04 Add for import info of PM Parameter Setting Local Files
   ) {
     
     const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
@@ -797,7 +801,7 @@ export class FieldInfoComponent implements OnInit {
 
       // For testing with local files
       console.log( 'Start fetching field info in Local' );   // 開始獲取 local 場域資訊
-      this.fieldInfo = this.commonService.fieldInfo;
+      this.fieldInfo = this.fieldInfo_LocalFiles.fieldInfo_local;
       console.log( 'Local field info in Local:', this.fieldInfo );
 
       this.updateResourceUtilization();
@@ -953,19 +957,19 @@ export class FieldInfoComponent implements OnInit {
     
       console.log('Start fetching BS info in Local');   // 開始獲取 Local BS 資訊
 
-      console.log( 'Local BS info in Local:', this.bsInfoLocalFiles.bsInfo_local );
-      console.log( 'Local Dist_BS info in Local:', this.bsInfoLocalFiles.dist_bsInfo_local );
+      console.log( 'Local BS info in Local:', this.bsInfo_LocalFiles.bsInfo_local );
+      console.log( 'Local Dist_BS info in Local:', this.bsInfo_LocalFiles.dist_bsInfo_local );
 
       // 初始化一個新數組用於存放所有轉換後的 SimplifiedBSInfo 對象
       const allSimplifiedData: SimplifiedBSInfo[] = [];
 
       // 遍歷 dist_bsInfo_local 數組並處理每一筆數據
-      this.bsInfoLocalFiles.dist_bsInfo_local.forEach( ( distBsInfo: BSInfo_dist ) => {
+      this.bsInfo_LocalFiles.dist_bsInfo_local.forEach( ( distBsInfo: BSInfo_dist ) => {
         allSimplifiedData.push( ...this.convertDistBsInfoToSimplifiedFormat( distBsInfo ));
       });
 
       // 遍歷 bsInfo_local 數組並處理每一筆數據
-      this.bsInfoLocalFiles.bsInfo_local.forEach( ( bsInfo: BSInfo ) => {
+      this.bsInfo_LocalFiles.bsInfo_local.forEach( ( bsInfo: BSInfo ) => {
         allSimplifiedData.push( this.convertBsInfoToSimplifiedFormat( bsInfo )) ;
       });
       

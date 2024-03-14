@@ -12,11 +12,17 @@ import * as _ from 'lodash';
 import * as XLSX from 'xlsx';         // @11/23 Add by yuchen 
 //import { saveAs } from 'file-saver';  // @11/23 Add by yuchen 
 
-// 引入儲存各個資訊所需的 interfaces
+// For import APIs of Field Management @2024/03/14 Add 
+import { apiForLogMgmt } from '../shared/api/For_Log';
+
+// 引入儲存各個資訊所需的 interfaces @2024/03/14 Add 
 import { UserLogsList, UserLogsInfo, UserLogDetail }  from '../shared/interfaces/Log/For_queryLogList';          
 import { NELogsList, NELogsInfo, NELogDetail }        from '../shared/interfaces/Log/For_queryUserNetconfLog';  
 import { NEList, NE }                                 from '../shared/interfaces/NE/For_queryBsComponentList';  
 
+// For import local files of Field Management @2024/03/14 Add 
+import { localUserLogsList } from '../shared/local-files/Log/For_queryLogList';
+import { localNELogsList } from '../shared/local-files/Log/For_queryUserNetconfLog';
 
 // @2024/03/11 Add
 // 用於儲存 User Logs 的篩選條件 
@@ -39,7 +45,6 @@ interface downloadUserLogsParams {
   keyword?: string; // 可選
   logtype?: string; // 可選
 }
-
 
 // @2024/03/11 Add
 // 用於儲存 NE Logs 的篩選條件 
@@ -84,6 +89,113 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   
   show200Msg = false;
   show500Msg = false;
+
+
+// ↓ For Page Init, Destroy ↓
+
+  constructor(
+
+    private http: HttpClient,
+    public commonService: CommonService,
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    public languageService: LanguageService,
+    private dialog: MatDialog,
+
+    public  API_Log: apiForLogMgmt, // API_Log 用於日誌管理相關的 API 請求
+
+    public  userLogsList_LocalFiles: localUserLogsList,  // userLogsList_LocalFiles 用於從 Local 文件獲取 User Logs 列表數據
+    public    neLogsList_LocalFiles: localNELogsList,    //   neLogsList_LocalFiles 用於從 Local 文件獲取 NE Logs 列表數據
+
+  ) {
+
+    // @11/28 Updated - 調整為格式化當前時間往回推一個月的時間
+
+    // 取得現在時間
+    const nowTime = this.commonService.getNowTime();
+    console.log("getNowTime: ", nowTime);
+    
+    // 創建一個新的 Date 物件，代表當前時間
+    const currentDate = new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`);
+    
+    // 創建一個新的 Date 物件，並將月份往回設置一個月
+    const oneMonthAgoDate = new Date(currentDate);
+    oneMonthAgoDate.setMonth(oneMonthAgoDate.getMonth() - 1);
+    
+    // 確保月份和日期是兩位數的格式，如 "02" 代表 2 月
+    const formattedMonth = ('0' + (oneMonthAgoDate.getMonth() + 1)).slice(-2);
+    const formattedDay = ('0' + oneMonthAgoDate.getDate()).slice(-2);
+    const formattedHour = ('0' + oneMonthAgoDate.getHours()).slice(-2);
+    const formattedMinute = ('0' + oneMonthAgoDate.getMinutes()).slice(-2);
+    
+    // 使用這些格式化後的值來更新 searchForm 控件的值
+    this.searchForm = this.fb.group({
+      'UserID': new FormControl(''),
+      'neName': new FormControl(''), // Only for NE Logs
+      'from': new FormControl( `${oneMonthAgoDate.getFullYear()}-${formattedMonth}-${formattedDay} ${formattedHour}:${formattedMinute}` ), 
+      'to': new FormControl( `${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}` ),
+      'UserLogType': new FormControl( 'All' ), // Only for User Logs
+      'NELogType': new FormControl( 'All' ),   // Only for NE Logs
+    });
+
+    this.createSearchForm(); // 初始化並創建篩選 Logs 用的 FormGroup
+  }
+
+  /**
+   * 當 Component 初始化完成後執行的 Lifecycle Hook。
+   * 主要用於設定 Component 的初始狀態，包括預設的 Log 類型、sessionId、以及設定路由參數相關的應對處理。
+   */
+  ngOnInit(){
+
+    // 設定預設的 Log 類型，用於 Component 初次載入時顯示相應的 Log Lists
+    this.type = 'User_Logs';
+    // this.type = 'NE_Logs';
+
+    // 從 commonService 中獲取當前 Session 的 ID，確保在進行 API 請求前 Session ID 已準備就緒。
+    // 選擇於 ngOnInit() 中獲取是由於它提供了一個合適的時機點，來確保所有相依的服務都已初始化完畢，
+    // 且如 sessionId 的值依賴於異步(非同步)操作或 Component 的輸入屬性，這可確保這些操作於獲取 sessionId 前完成。
+    // 這樣做也有助於測試和管理 Component 的生命週期。
+    this.sessionId = this.commonService.getSessionId();
+
+    // 建立一個 subscribe 來監聽來自路由參數的變化，並更新 searchForm 的值
+    this.route.params.subscribe( ( params ) => {
+      if ( params['UserLogType'] && params['UserLogType'] !== 'All' ) {
+        this.searchForm.controls['UserLogType'].setValue( params['UserLogType'] );
+      }
+      if ( params['NELogType'] && params['NELogType'] !== 'All' ) {
+        this.searchForm.controls['NELogType'].setValue( params['NELogType'] );
+      }
+    } );
+
+    // 建立 searchForm 的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。
+    this.afterSearchForm = _.cloneDeep( this.searchForm );
+
+    // 根據 Component 的類型 ( User Logs 或 NE Logs )，載入相應的 Log 資訊
+    if ( this.type === 'User_Logs' ) {
+
+      this.getUserLogsInfo(); // 預設初始化時取得 User Logs 資訊
+
+    } else {
+
+      this.getNELogsInfo();   // 預設初始化時取得 NE Logs 資訊
+    }
+
+  }
+
+  // 銷毀 Component 時的清理工作
+  ngOnDestroy() {
+
+    // 清除可能存在的定時器，以免造成內存洩漏或不必要的操作執行
+    clearTimeout( this.refreshTimeout );
+
+    // 如存在對 User Logs 的 API 請求訂閱，則取消訂閱以避免內存洩漏
+    if ( this.queryLogList ) this.queryLogList.unsubscribe();
+    
+    // 如存在對 NE Logs 的 API 請求訂閱，同樣取消訂閱
+    if ( this.queryUserNetconfLog ) this.queryUserNetconfLog.unsubscribe();
+  }
+
+// ↑ For Page Init, Destroy ↑
 
 
 // ↓ For Page Control ↓ 
@@ -237,108 +349,6 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
 // ↑ For Create FormGroup ↑ 
 
-
-// ↓ For Page Init, Destroy ↓
-  constructor(
-
-    private http: HttpClient,
-    public commonService: CommonService,
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    public languageService: LanguageService,
-    private dialog: MatDialog
-
-  ) {
-
-    // @11/28 Updated - 調整為格式化當前時間往回推一個月的時間
-
-    // 取得現在時間
-    const nowTime = this.commonService.getNowTime();
-    console.log("getNowTime: ", nowTime);
-    
-    // 創建一個新的 Date 物件，代表當前時間
-    const currentDate = new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`);
-    
-    // 創建一個新的 Date 物件，並將月份往回設置一個月
-    const oneMonthAgoDate = new Date(currentDate);
-    oneMonthAgoDate.setMonth(oneMonthAgoDate.getMonth() - 1);
-    
-    // 確保月份和日期是兩位數的格式，如 "02" 代表 2 月
-    const formattedMonth = ('0' + (oneMonthAgoDate.getMonth() + 1)).slice(-2);
-    const formattedDay = ('0' + oneMonthAgoDate.getDate()).slice(-2);
-    const formattedHour = ('0' + oneMonthAgoDate.getHours()).slice(-2);
-    const formattedMinute = ('0' + oneMonthAgoDate.getMinutes()).slice(-2);
-    
-    // 使用這些格式化後的值來更新 searchForm 控件的值
-    this.searchForm = this.fb.group({
-      'UserID': new FormControl(''),
-      'neName': new FormControl(''), // Only for NE Logs
-      'from': new FormControl( `${oneMonthAgoDate.getFullYear()}-${formattedMonth}-${formattedDay} ${formattedHour}:${formattedMinute}` ), 
-      'to': new FormControl( `${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}` ),
-      'UserLogType': new FormControl( 'All' ), // Only for User Logs
-      'NELogType': new FormControl( 'All' ),   // Only for NE Logs
-    });
-
-    this.createSearchForm(); // 初始化並創建篩選 Logs 用的 FormGroup
-  }
-
-  /**
-   * 當 Component 初始化完成後執行的 Lifecycle Hook。
-   * 主要用於設定 Component 的初始狀態，包括預設的 Log 類型、sessionId、以及設定路由參數相關的應對處理。
-   */
-  ngOnInit(){
-
-    // 設定預設的 Log 類型，用於 Component 初次載入時顯示相應的 Log Lists
-    this.type = 'User_Logs';
-    // this.type = 'NE_Logs';
-  
-    // 從 commonService 中獲取當前 Session 的 ID，確保在進行 API 請求前 Session ID 已準備就緒。
-    // 選擇於 ngOnInit() 中獲取是由於它提供了一個合適的時機點，來確保所有相依的服務都已初始化完畢，
-    // 且如 sessionId 的值依賴於異步(非同步)操作或 Component 的輸入屬性，這可確保這些操作於獲取 sessionId 前完成。
-    // 這樣做也有助於測試和管理 Component 的生命週期。
-    this.sessionId = this.commonService.getSessionId();
-  
-    // 建立一個 subscribe 來監聽來自路由參數的變化，並更新 searchForm 的值
-    this.route.params.subscribe( ( params ) => {
-      if ( params['UserLogType'] && params['UserLogType'] !== 'All' ) {
-        this.searchForm.controls['UserLogType'].setValue( params['UserLogType'] );
-      }
-      if ( params['NELogType'] && params['NELogType'] !== 'All' ) {
-        this.searchForm.controls['NELogType'].setValue( params['NELogType'] );
-      }
-    } );
-  
-    // 建立 searchForm 的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。
-    this.afterSearchForm = _.cloneDeep( this.searchForm );
-  
-    // 根據 Component 的類型 ( User Logs 或 NE Logs )，載入相應的 Log 資訊
-    if ( this.type === 'User_Logs' ) {
-
-      this.getUserLogsInfo(); // 預設初始化時取得 User Logs 資訊
-
-    } else {
-
-      this.getNELogsInfo();   // 預設初始化時取得 NE Logs 資訊
-    }
-
-  }
-
-  // 銷毀 Component 時的清理工作
-  ngOnDestroy() {
-
-    // 清除可能存在的定時器，以免造成內存洩漏或不必要的操作執行
-    clearTimeout( this.refreshTimeout );
-
-    // 如存在對 User Logs 的 API 請求訂閱，則取消訂閱以避免內存洩漏
-    if ( this.queryLogList ) this.queryLogList.unsubscribe();
-    
-    // 如存在對 NE Logs 的 API 請求訂閱，同樣取消訂閱
-    if ( this.queryUserNetconfLog ) this.queryUserNetconfLog.unsubscribe();
-  }
-
-// ↑ For Page Init, Destroy ↑
-
-
 // ↓ For Get Log Info ↓
 
   /* queryLogList 是用來保存對 HTTP 的訂閱請求引用。
@@ -346,7 +356,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
      於各 Component 的生命週期中管理該訂閱，特別於銷毀 Component 時取消訂閱，以避免內存洩漏。 */
   queryLogList!: Subscription;
   
-  // Get User Logs @2024/03/11 Update
+  // Get User Logs @2024/03/14 Update
   UserLogsList: UserLogsList = {} as UserLogsList; 
   UserLogs_getNum = 0;              // 用於記錄取得 User Logs 資訊之次數
   isGetUserLogsInfoLoading = false; // 用於表示加載 User Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
@@ -367,7 +377,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     if ( this.commonService.isLocal ) {
       // Local Test
 
-      this.UserLogsList = this.commonService.UserLogsList;
+      this.UserLogsList = this.userLogsList_LocalFiles.userLogsList_local;
       console.log( 'UserLogsList:', this.UserLogsList );
 
       this.totalLogs = this.UserLogsList.logNumber;
@@ -425,9 +435,9 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           params.keyword = keyWordControl.value;
         }
 
-        // @11/30 Add by yuchen
-        // 使用 commonService 中的 queryLogList() 發起 HTTP GET 請求
-        this.commonService.queryLogList( params ).subscribe({
+        // @2024/03/14 Update
+        // 使用 API_Log 中的 queryLogList() 發起 HTTP GET 請求
+        this.API_Log.queryLogList( params ).subscribe({
           next: ( res ) => {    // 成功的 callback
 
             if ( !this.isSearch_userLogs ) {
@@ -520,7 +530,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     if ( this.commonService.isLocal ) {
       // Local Test
 
-      this.NELogsList = this.commonService.NELogsList;
+      this.NELogsList = this.neLogsList_LocalFiles.neLogsList_local;
       console.log( 'NELogsList:', this.NELogsList );
 
       this.totalLogs = this.NELogsList.logNumber;
@@ -588,9 +598,9 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         params.keyword = keyWordControl.value;
       }
 
-      // @2024/03/13 Update
-      // 使用 commonService 中的 queryUserNetconfLog() 發起 HTTP GET 請求 
-      this.commonService.queryUserNetconfLog( params ).subscribe({
+      // @2024/03/14 Update
+      // 使用 API_Log 中的 queryUserNetconfLog() 發起 HTTP GET 請求 
+      this.API_Log.queryUserNetconfLog( params ).subscribe({
         next: ( res ) => { // 成功的 callback
 
           if ( !this.isSearch_neLogs ) {
@@ -863,8 +873,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         params.keyword = keyWordControl.value;
       }
 
-      // 使用 commonService 中的 queryLogList() 發起 HTTP GET 請求
-      this.commonService.queryLogList( params ).subscribe({
+      // 使用 API_Log 中的 queryLogList() 發起 HTTP GET 請求
+      this.API_Log.queryLogList( params ).subscribe({
         next: ( res ) => {    // 成功的 callback
   
           console.log( 'In search_UserLogs() - res:', res );
@@ -1030,8 +1040,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         params.keyword = keyWordControl.value;
       }
 
-      // 使用 commonService 中的 queryUserNetconfLog() 發起 HTTP GET 請求 
-      this.commonService.queryUserNetconfLog( params ).subscribe({
+      // 使用 API_Log 中的 queryUserNetconfLog() 發起 HTTP GET 請求 
+      this.API_Log.queryUserNetconfLog( params ).subscribe({
         next: ( res ) => { // 成功的 callback
 
           console.log( 'In search_NELogs() - res:', res );
@@ -1167,7 +1177,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         });
 
         // 根據欄位順序格式化數據
-        return fields.reduce((obj, field) => {
+        return fields.reduce(( obj, field ) => {
           obj[field] = record[field];
           return obj;
         }, {} as Record<string, any>);
@@ -1237,8 +1247,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           userLogsParams.keyword = keyWordControl.value;
         }
 
-        // 使用 commonService 中的 getDumpLogList() 發起 HTTP GET 請求
-        this.commonService.getDumpLogList( userLogsParams ).subscribe({
+        // 使用 API_Log 中的 getDumpLogList() 發起 HTTP GET 請求
+        this.API_Log.getDumpLogList( userLogsParams ).subscribe({
           next: ( res ) => { // 成功的 callback
 
             // 顯示下載處理成功的響應訊息
@@ -1315,8 +1325,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           neLogsParams.keyword = keyWordControl.value;
         }
 
-        // 使用 commonService 中的 getDumpUserNetconfLog() 發起 HTTP GET 請求 
-        this.commonService.getDumpUserNetconfLog( neLogsParams ).subscribe({
+        // 使用 API_Log 中的 getDumpUserNetconfLog() 發起 HTTP GET 請求 
+        this.API_Log.getDumpUserNetconfLog( neLogsParams ).subscribe({
           next: ( res ) => { // 成功的 callback
 
             // 顯示下載處理成功的響應訊息

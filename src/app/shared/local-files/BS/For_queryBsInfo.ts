@@ -1,7 +1,7 @@
   
   // Interfaces of BSInfo
-  import { BSInfo } from '../../interfaces/BS/For_queryBsInfo_BS';   // @12/27 Add by yuchen
-  import { BSInfo_dist } from '../../interfaces/BS/For_queryBsInfo_dist_BS';   // @12/27 Add by yuchen
+  import { BSInfo }      from '../../interfaces/BS/For_queryBsInfo_BS';       // @12/27 Add by yuchen
+  import { BSInfo_dist } from '../../interfaces/BS/For_queryBsInfo_dist_BS';  // @12/27 Add by yuchen
 
   // Local Files for general BS @12/27 Add by yuchen 
   export class localBSinfo {

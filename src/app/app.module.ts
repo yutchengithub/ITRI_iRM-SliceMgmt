@@ -36,7 +36,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip'; // @2024/03/08 Add 
 
-
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Spinner
 import { MatRadioModule } from '@angular/material/radio';
@@ -61,7 +60,7 @@ import { LanguageService } from './shared/service/language.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { GoogleMapsModule } from '@angular/google-maps';        // @12/10 Add by yuchen for google maps
-//import { NgCircleProgressModule } from 'ng-circle-progress';    // @12/11 Add by yuchen for 圓形進度條
+//import { NgCircleProgressModule } from 'ng-circle-progress';  // @12/11 Add by yuchen for 圓形進度條
 import { MatButtonModule } from '@angular/material/button';     // @12/12 Add by yuchen for Button 樣式
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
@@ -73,14 +72,21 @@ import { MatStepperModule } from '@angular/material/stepper'; // @2024/01/31 Add
 import { MatExpansionModule } from '@angular/material/expansion'; // 用於縮合效果 @2024/02/29 Add
 
 // import API
-import { apiForField } from './shared/api/For_Field'; // @2024/01/04 Add
+import { apiForFieldMgmt }    from './shared/api/For_Field';     // @2024/03/14 Update
+import { apiForBSMgmt }       from './shared/api/For_BS';        // @2024/03/14 Add
+import { apiForScheduleMgmt } from './shared/api/For_Schedule';  // @2024/03/14 Add
+import { apiForLogMgmt }      from './shared/api/For_Log';       // @2024/03/14 Add
 
 // import Local Files
-import { localFieldList } from './shared/local-files/Field/For_queryFieldList';  // @2024/01/29 Add
-import { localPmFTPInfo } from './shared/local-files//Field/For_queryPmFtpInfo'; // @2024/02/04 Add
-import { localFieldSnapshotList } from './shared/local-files/Field/For_queryFieldSnapshotList'; // @2024/03/06 Add
-import { localBSinfo }    from './shared/local-files/BS/For_queryBsInfo'; // @2023/12/27 Add 
-import { localBSList }    from './shared/local-files/BS/For_queryBsList'; // @2024/01/16 Add
+import { localFieldSummaryInfo }  from './shared/local-files/Field/For_queryFieldSummaryInfo';    // @2024/03/14 Add
+import { localFieldList }         from './shared/local-files/Field/For_queryFieldList';           // @2024/01/29 Add
+import { localFieldInfo }         from './shared/local-files/Field/For_queryFieldInfo';           // @2024/03/14 Add
+import { localPmFTPInfo }         from './shared/local-files//Field/For_queryPmFtpInfo';          // @2024/02/04 Add
+import { localFieldSnapshotList } from './shared/local-files/Field/For_queryFieldSnapshotList';   // @2024/03/06 Add
+import { localBSinfo }            from './shared/local-files/BS/For_queryBsInfo';                 // @2023/12/27 Add 
+import { localBSList }            from './shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
+import { localUserLogsList }      from './shared/local-files/Log/For_queryLogList';               // @2024/03/14 Add 
+import { localNELogsList }        from './shared/local-files/Log/For_queryUserNetconfLog';        // @2024/03/14 Add
 
 @NgModule({
   declarations: [
@@ -89,19 +95,28 @@ import { localBSList }    from './shared/local-files/BS/For_queryBsList'; // @20
 
     LoginComponent,
     DashboardComponent,
+
     FieldManagementComponent,
     FieldInfoComponent,           // @11/30 Add by yuchen
+
     BSManagementComponent,        // @12/27 Add by yuchen 
     BSInfoComponent,              // @12/27 Add by yuchen
+
     ComponentManagementComponent,
     ComponentInfoComponent,
+
     FaultManagementComponent,
+
     PerformanceManagementComponent,
+
     SoftwareManagementComponent,
     SoftwareInfoComponent,
+
     ScheduleManagementComponent,  // @11/20 Add by yuchen 
     ScheduleInfoComponent,        // @11/20 Add by yuchen
+
     LogManagementComponent,       // @10/25 Add by yuchen 
+
     AccountManagementComponent,
     AccountInfoComponent,
 
@@ -172,14 +187,21 @@ import { localBSList }    from './shared/local-files/BS/For_queryBsList'; // @20
     LanguageService,
     CommonService,
 
-    apiForField,    // @2024/01/04 Add for import API of Field Management 
+    apiForFieldMgmt,    // @2024/03/14 Update for import API of Field Management
+    apiForBSMgmt,       // @2024/03/14 Add for import API of BS Management
+    apiForScheduleMgmt, // @2024/03/14 Add for import API of Schedule Management
+    apiForLogMgmt,      // @2024/03/14 Add for import API of Log Management 
 
+    localFieldSummaryInfo,  // @2024/03/14 Add for import Local files of Field Summary Info
     localFieldList,         // @2024/01/29 Add for import Local files of Field List
+    localFieldInfo,         // @2024/03/14 Add for import Local files of Field Info
     localFieldSnapshotList, // @2024/03/06 Add for import Local files of Field Snapshot List
     localBSinfo,            // @2023/12/27 Add for import Local files of BS Info
     localBSList,            // @2024/01/16 Add for import Local files of BS List
     localPmFTPInfo,         // @2024/02/04 Add for import info of PM Parameter Setting Local Files
-    
+    localUserLogsList,      // @2024/03/14 Add
+    localNELogsList,        // @2024/03/14 Add
+
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
@@ -188,13 +210,13 @@ import { localBSList }    from './shared/local-files/BS/For_queryBsList'; // @20
     {
       provide: APP_INITIALIZER,
       multi: true,
-      deps: [CommonService],
-      useFactory: (commonService: CommonService) => {
+      deps: [ CommonService ],
+      useFactory: ( commonService: CommonService ) => {
         return () => commonService.loadConfig();
       }
     },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [ AppComponent ]
 })
 export class AppModule { 
 

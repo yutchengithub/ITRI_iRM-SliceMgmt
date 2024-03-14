@@ -10,7 +10,7 @@ import { CommonService } from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
 
 // For import APIs of Field Management 
-import { apiForField } from '../shared/api/For_Field';  // @2024/01/29 Add 
+import { apiForFieldMgmt } from '../shared/api/For_Field';  // @2024/01/29 Add 
 
 // For import interface of queryFieldList
 import { FieldList, Field } from '../shared/interfaces/Field/For_queryFieldList'; // @2024/01/29 Add 
@@ -39,7 +39,6 @@ import * as XLSX from 'xlsx';           // @2024/03/09 Add
   styleUrls: ['./field-management.component.scss']  // 指定組件專用的樣式表(SCSS)文件
 })
 
-
 export class FieldManagementComponent implements OnInit, OnDestroy {
 
   sessionId: string = '';   // sessionId 用於存儲當前會話 ID
@@ -55,7 +54,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     private commonService:  CommonService,   // CommonService 提供通用的服務（如 Session ID 獲取）
     private fb:             FormBuilder,     // FormBuilder 用於建立表單
 
-    public                    API_Field: apiForField,             // API_Field 用於場域管理相關的 API 請求
+    public                    API_Field: apiForFieldMgmt,         // API_Field 用於場域管理相關的 API 請求
     public         fieldList_LocalFiles: localFieldList,          // fieldList_LocalFiles 用於從 Local 文件獲取場域列表數據
     public            bsList_LocalFiles: localBSList,             // bsList_LocalFiles 用於從 Local 文件獲取基站列表數據
     public fieldSnapshotList_LocalFiles: localFieldSnapshotList,  // fieldSnapshotList_LocalFiles 用於從 Local 文件獲取指定場域內的 Snapshot List 數據 @2024/03/06 Add
@@ -127,7 +126,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     if ( this.commonService.isLocal ) {
 
       //  Local 模式: 使用 Local 文件提供的數據
-      this.fieldList = this.fieldList_LocalFiles.fieldList;
+      this.fieldList = this.fieldList_LocalFiles.fieldList_local;
       console.log( 'In local - getQueryFieldList:', this.fieldList );
 
       this.isLoading = false; //  Local 模式下，數據加載快速完成，直接設置為 false
@@ -628,15 +627,15 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     console.log( "The delete field name:", fieldName )
 
     // 確保 fieldList_LocalFiles.fieldList.fields 是一個陣列
-    if ( Array.isArray( this.fieldList_LocalFiles.fieldList.fields ) ) {
+    if ( Array.isArray( this.fieldList_LocalFiles.fieldList_local.fields ) ) {
 
       // 從場域列表中過濾掉要刪除的場域
-      this.fieldList_LocalFiles.fieldList.fields = this.fieldList_LocalFiles.fieldList.fields.filter( field => field.name !== fieldName );
+      this.fieldList_LocalFiles.fieldList_local.fields = this.fieldList_LocalFiles.fieldList_local.fields.filter( field => field.name !== fieldName );
     
     } else {
 
       // 如果 fieldList_LocalFiles.fieldList.fields 不是陣列，輸出錯誤訊息
-      console.error( 'fieldList.fields 不是陣列或為 undefined' );
+      console.error( 'fieldList_local.fields 不是陣列或為 undefined' );
     }
   }
 
