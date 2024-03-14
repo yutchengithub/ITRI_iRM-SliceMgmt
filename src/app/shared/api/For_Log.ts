@@ -42,4 +42,10 @@ export class apiForLogMgmt {
     return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
   }
 
+  // 取得 NE 列表用
+  queryBsComponentList(): Observable<any> {
+    const url = `${this.restPath}/queryBsComponentList/${this.sessionId}`;
+    return this.http.get( url );
+  }
+
 }

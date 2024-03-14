@@ -227,6 +227,20 @@
     width: 97%;
     margin: 0 0 0 2.5%;
   }
+
+// Spinner 居中並設定大小 @2024/03/14 Add
+.progress-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90px; 
+}
+
+// 設定進度調 ( Spinner ) 的顏色 @2024/03/14 Add
+::ng-deep .mat-progress-spinner circle {
+    stroke: #7cbaec !important;
+}
+
 @media screen and (max-width:1920px) {
     .dashboard .leftArea > span img {
         height: 7em;

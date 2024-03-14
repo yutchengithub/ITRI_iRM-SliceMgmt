@@ -20,9 +20,17 @@ import { UserLogsList, UserLogsInfo, UserLogDetail }  from '../shared/interfaces
 import { NELogsList, NELogsInfo, NELogDetail }        from '../shared/interfaces/Log/For_queryUserNetconfLog';  
 import { NEList, NE }                                 from '../shared/interfaces/NE/For_queryBsComponentList';  
 
-// For import local files of Field Management @2024/03/14 Add 
+// For import local files @2024/03/14 Add 
 import { localUserLogsList } from '../shared/local-files/Log/For_queryLogList';
-import { localNELogsList } from '../shared/local-files/Log/For_queryUserNetconfLog';
+import { localNELogsList }   from '../shared/local-files/Log/For_queryUserNetconfLog';
+import { localNEList }       from '../shared/local-files/NE/For_queryBsComponentList';
+
+// @2024/03/14 Add
+// 用於儲存 NE 名稱與 id 的對應關係
+export interface NEidNamePair {
+  id: string;
+  name: string;
+}
 
 // @2024/03/11 Add
 // 用於儲存 User Logs 的篩選條件 
@@ -106,6 +114,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     public  userLogsList_LocalFiles: localUserLogsList,  // userLogsList_LocalFiles 用於從 Local 文件獲取 User Logs 列表數據
     public    neLogsList_LocalFiles: localNELogsList,    //   neLogsList_LocalFiles 用於從 Local 文件獲取 NE Logs 列表數據
+    public        neList_LocalFiles: localNEList,        //       neList_LocalFiles 用於從 Local 文件獲取 NE 列表數據
 
   ) {
 
@@ -203,8 +212,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   type: string = 'User_Logs';   // 預設選擇 "User Logs" @10/31 Add  
   //type: string = 'NE_Logs';   // 預設選擇 "NE Logs"   @11/01 Add 
 
+  // @2024/03/14 Update
   // 用於點擊至對應的 Button 時，進行頁面的切換 
-  // @11/28 Updated - 調整重置為顯示當前時間往回推一個月的時間
   changeType( e: MatButtonToggleChange ) {
 
     this.p = 1;  // 將頁數重置為 1
@@ -245,12 +254,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     if ( e.value === 'User_Logs' ) {
 
       this.type = 'User_Logs';
-      this.getUserLogsInfo();  // 載入 User Logs 數據 ( 這將獲取未經篩選的 User Logs )
+      this.getUserLogsInfo();  // 取得 User Logs 數據 ( Local 模式下會獲取未經篩選的 User Logs )
 
     } else if ( e.value === 'NE_Logs' ) {
 
       this.type = 'NE_Logs';
-      this.getNELogsInfo();    // 載入 NE Logs 數據 ( 這將獲取未經篩選的 NE Logs )
+      this.getNELogsInfo();    // 取得 NE Logs 數據 ( Local 模式下會獲取未經篩選的 NE Logs )
+      this.getNEList();        // 取得 NE List 數據，並將 NE 的 name 和 id 製成對應表 
     }
 
     // 更新當前類型，以便知道哪個 Log 類型被選中
@@ -516,6 +526,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   NELogs_getNum = 0; // 用於記錄取得 NE Logs 資訊之次數
   isGetNELogsInfoLoading = false; // 用於表示加載 NE Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
   
+  // Get NE Logs @2024/03/14 Update
   getNELogsInfo() {
     console.log( 'getNELogsInfo() - Start' );
     
@@ -547,10 +558,10 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       if ( this.queryUserNetconfLog ) this.queryUserNetconfLog.unsubscribe();
 
       // 改只保留傳入日期的部分 @2024/03/10 Add
-      const formattedDate = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
+      const formattedDate = this.commonService.dealPostDate( this.searchForm.controls['from'].value );
       const start = formattedDate.split(' ')[0]; // 獲取日期部分,例如 '2024-03-10'
       
-      const formattedEnd = this.commonService.dealPostDate(this.searchForm.controls['to'].value);  
+      const formattedEnd = this.commonService.dealPostDate( this.searchForm.controls['to'].value );  
       const end = formattedEnd.split(' ')[0];    // 獲取日期部分,例如 '2024-03-10'
 
       // @2024/03/11 Update
@@ -562,28 +573,36 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         end,                                                      // 取得結束日期 - 目前後端無法篩選時分秒
         //keyword: this.searchForm.get('keyword')?.value || '',   // 取得想搜尋的關鍵字
               
-        offset: (this.p - 1) * this.pageSize,                     // 計算分頁的 offset
+        offset: ( this.p - 1 ) * this.pageSize,                     // 計算分頁的 offset
         limit: 10                                                 // 設定每頁顯示的 Logs 數量限制
       };
 
       // 獲取 userid 的控制元件
-      const userIdControl = this.searchForm.get('UserID');
+      const userIdControl = this.searchForm.get( 'UserID' );
 
       // 判斷 keyword 控制元件是否存在且有值
       if ( userIdControl && userIdControl.value !== '' ) {
         params.userid = userIdControl.value;
       }
 
+      // @2024/03/14 Add
       // 獲取 neName 的控制元件
-      const neNameControl = this.searchForm.get('neName');
+      const neNameControl = this.searchForm.get( 'neName' );
 
+      // @2024/03/14 Add
       // 判斷 neName 控制元件是否存在且有值
       if ( neNameControl && neNameControl.value !== '' ) {
-        params.compid = neNameControl.value;
+        // 從 neidNamePairs 中查找與輸入的網元名稱相對應的 id
+        const matchedPair = this.neidNamePairs.find( pair => pair.name === neNameControl.value );
+        if ( matchedPair ) {
+          params.compid = matchedPair.id;
+        } else {
+          console.warn( `No matching id found for the entered NE name: ${ neNameControl.value }` );
+        }
       }
 
       // 獲取 NELogType 的控制元件
-      const neLogTypeControl = this.searchForm.get('NELogType');
+      const neLogTypeControl = this.searchForm.get( 'NELogType' );
 
       // 判斷 NELogType 控制元件是否存在且有值
       if ( neLogTypeControl && neLogTypeControl.value !== 'All' ) {
@@ -591,7 +610,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       }
 
       // 獲取 keyword 的控制元件
-      const keyWordControl = this.searchForm.get('keyword');
+      const keyWordControl = this.searchForm.get( 'keyword' );
 
       // 判斷 keyword 控制元件是否存在且有值
       if ( keyWordControl && keyWordControl.value !== '' ) {
@@ -600,7 +619,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       // @2024/03/14 Update
       // 使用 API_Log 中的 queryUserNetconfLog() 發起 HTTP GET 請求 
-      this.API_Log.queryUserNetconfLog( params ).subscribe({
+      this.API_Log.queryUserNetconfLog( params ).subscribe( {
         next: ( res ) => { // 成功的 callback
 
           if ( !this.isSearch_neLogs ) {
@@ -648,7 +667,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   NEloginfoDeal() {
     // this.p = 1;
     this.totalLogs = this.NELogsList.logNumber;
-    this.nullList = new Array(this.totalLogs);
+    this.nullList = new Array( this.totalLogs );
     // this.refreshTimeout = window.setTimeout(() => {
     //   if (this.p === 1) {
         
@@ -670,6 +689,72 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     } as NELogsList;
   }
 
+  // @2024/03/14 Add
+  // 定義 NEList 物件，並使用類型斷言將其初始化為空物件
+  NEList: NEList = {} as NEList;
+
+  // 定義 neidNamePairs 陣列，用於儲存網元 id 與 name 的對應關係
+  neidNamePairs: NEidNamePair[] = []; // 存儲 id 和 name 的對應關係
+
+  // @2024/03/14 Add
+  // 用於取得 NE 列表資訊的函數
+  getNEList() {
+    console.log( 'getNEList() - Start' ); // 輸出開始取得 NE 列表的日誌
+
+    if ( this.commonService.isLocal ) {
+
+      // 如果是本地模式
+      // 從本地文件中獲取 NE 列表
+      this.NEList = this.neList_LocalFiles.neList_local;
+
+      // 處理獲取的 NE 列表,將 id 和 name 存儲到 neidNamePairs 中
+      this.processNEList( this.NEList );
+
+    } else {
+
+      // 如果非本地模式
+      // 從後端 API 獲取 NE 列表
+      this.API_Log.queryBsComponentList().subscribe({
+        next: ( res ) => {
+
+          // 成功獲取 NE 列表
+          this.NEList = res; // 將獲取到的 NE 列表賦值給 NEList 屬性
+          this.processNEList( this.NEList ); // 處理獲取的 NE 列表
+
+        },
+        error: ( error ) => {
+
+          // 獲取 NE 列表出錯
+          console.error( 'Error fetching NE list:', error ); // 輸出錯誤日誌
+        },
+        complete: () => {
+
+          // 獲取 NE 列表完成
+          console.log( 'NE list fetch completed' ); // 輸出完成日誌
+        }
+      });
+    }
+
+    console.log( 'getNEList() - End' ); // 輸出結束取得 NE 列表的日誌
+  }
+
+  // @2024/03/14 Add
+  // 私有函數,用於處理獲取的 NE 列表,將每個網元的 id 與 name 存儲到 neidNamePairs 中
+  private processNEList( neList: NEList ) {
+
+    // 清空之前儲存的對應關係
+    this.neidNamePairs = [];
+
+    // 遍歷 NE 列表中的每個網元
+    neList.components.forEach( ( ne ) => {
+      // 從每個網元中獲取 id 和 name,並將它們作為 IdNamePair 對象添加到 neidNamePairs 中
+      this.neidNamePairs.push( { id: ne.id, name: ne.name } );
+    } );
+
+    // 輸出處理後的 neidNamePairs 數組
+    console.log( 'neidNamePairs:', this.neidNamePairs );
+  }
+  
 // ↑ For Get Log Info ↑
 
 
@@ -680,8 +765,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
   /* 用於查找名為'userlogDetail'的 Component <ng-template>，
      用於定義 User Log 詳細訊息的彈出視窗內容。 @11/03 Add  */
-  @ViewChild('userlogDetail') userlogDetail: any;    
-  UserlogDetailRef!: MatDialogRef<any>;   // 用於記錄 User Log 詳細資訊的對照視窗，以便在需要時操作和控制 User Log 詳細資訊的彈出視窗。 @11/06 Add 
+  @ViewChild( 'userlogDetail' ) userlogDetail: any;    
+  UserlogDetailRef!: MatDialogRef< any >;   // 用於記錄 User Log 詳細資訊的對照視窗，以便在需要時操作和控制 User Log 詳細資訊的彈出視窗。 @11/06 Add 
 
   // Add by yuchen @11/06
   // 當使用者點擊 User Logs 的 "View" 時
@@ -703,18 +788,15 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.show500Msg = false;
 
     // 開啟 User Log 詳細資訊的視窗
-    //this.UserlogDetailRef = this.dialog.open(this.userlogDetail, { id: 'userlogDetail' });
-
-    // 開啟 User Log 詳細資訊的視窗
-    this.UserlogDetailRef = this.dialog.open(this.userlogDetail, {
+    this.UserlogDetailRef = this.dialog.open( this.userlogDetail, {
       id: 'userlogDetail',
       panelClass: 'custom-scroll' // 添加自定義滾動條類別
-    });
+    } );
 
     // 監聽視窗關閉事件
-    this.UserlogDetailRef.afterClosed().subscribe(() => {
+    this.UserlogDetailRef.afterClosed().subscribe( () => {
 
-    });
+    } );
   }
 
   // 用於儲存選擇的 NE Log 的詳細訊息 @11/06 Add
@@ -745,19 +827,16 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     // 隱藏 500 訊息
     this.show500Msg = false;
 
-    // 開啟 NE Log 詳細資訊的視窗
-    //this.NElogDetailRef = this.dialog.open(this.nelogDetail, { id: 'nelogDetail' });
-
     // 打開 NE Log 詳細資訊的視窗時
-    this.NElogDetailRef = this.dialog.open(this.nelogDetail, {
+    this.NElogDetailRef = this.dialog.open( this.nelogDetail, {
       id: 'nelogDetail',
       panelClass: 'custom-scroll' // 添加自定義滾動條類別
-    });
+    } );
 
     // 監聽視窗關閉事件
-    this.NElogDetailRef.afterClosed().subscribe(() => {
+    this.NElogDetailRef.afterClosed().subscribe( () => {
 
-    });
+    } );
   }
 
 // ↑ For control display "View Page" ↑
@@ -906,7 +985,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     console.log( "search_UserLogs() - End" );
   }
 
-  // 重置 NE Logs 搜尋 @2024/03/13 Update
+  // 重置 User Logs 搜尋 @2024/03/13 Update
   clear_search_UserLogs() {
 
     this.isSearch_userLogs = false;
@@ -921,7 +1000,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     
   }  
 
-  // For search NE Logs @2024/03/13 Update
+  // For search NE Logs @2024/03/14 Update
   filtered_NELogs: NELogsInfo[] = [];
   isSearch_neLogs: boolean = false;
   search_NELogs() {
@@ -1009,23 +1088,32 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       };
 
       // 獲取 userid 的控制元件
-      const userIdControl = this.searchForm.get('UserID');
+      const userIdControl = this.searchForm.get( 'UserID' );
 
       // 判斷 keyword 控制元件是否存在且有值
       if ( userIdControl && userIdControl.value !== '' ) {
         params.userid = userIdControl.value;
       }
 
+      // @2024/03/14 Add
       // 獲取 neName 的控制元件
-      const neNameControl = this.searchForm.get('neName');
+      const neNameControl = this.searchForm.get( 'neName' );
 
+      // @2024/03/14 Add
       // 判斷 neName 控制元件是否存在且有值
       if ( neNameControl && neNameControl.value !== '' ) {
-        params.compid = neNameControl.value;
+
+        // 從 neidNamePairs 中查找與輸入的網元名稱相對應的 id
+        const matchedPair = this.neidNamePairs.find( pair => pair.name === neNameControl.value );
+        if ( matchedPair ) {
+          params.compid = matchedPair.id;
+        } else {
+          console.warn( `No matching id found for the entered NE name: ${ neNameControl.value }` );
+        }
       }
 
       // 獲取 NELogType 的控制元件
-      const neLogTypeControl = this.searchForm.get('NELogType');
+      const neLogTypeControl = this.searchForm.get( 'NELogType' );
 
       // 判斷 NELogType 控制元件是否存在且有值
       if ( neLogTypeControl && neLogTypeControl.value !== 'All' ) {
@@ -1033,7 +1121,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       }
 
       // 獲取 keyword 的控制元件
-      const keyWordControl = this.searchForm.get('keyword');
+      const keyWordControl = this.searchForm.get( 'keyword' );
 
       // 判斷 keyword 控制元件是否存在且有值
       if ( keyWordControl && keyWordControl.value !== '' ) {
@@ -1041,7 +1129,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       }
 
       // 使用 API_Log 中的 queryUserNetconfLog() 發起 HTTP GET 請求 
-      this.API_Log.queryUserNetconfLog( params ).subscribe({
+      this.API_Log.queryUserNetconfLog( params ).subscribe( {
         next: ( res ) => { // 成功的 callback
 
           console.log( 'In search_NELogs() - res:', res );
