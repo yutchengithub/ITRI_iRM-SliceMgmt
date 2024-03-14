@@ -2,59 +2,108 @@
   <div class="leftArea">
     <span>
       <img src="assets/img/fields.svg">
-      <label class="boxTitle">{{languageService.i18n['num_fields']}}
-        <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{field.fieldNum}}</span>
+      <label class="boxTitle">{{ languageService.i18n['num_fields'] }}
+
+        <!-- 當數據正在加載時顯示進度條 @2024/03/14 Add -->
+        <ng-container *ngIf="isFieldSummaryLoading">
+          <!-- 指示器大小設置 -->
+          <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="70"></mat-progress-spinner>
+        </ng-container>
+
+        <!-- 加載完成後顯示場域數量 @2024/03/14 Add -->
+        <ng-container *ngIf="!isFieldSummaryLoading">
+          <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{ field.fieldNum }}</span>
+        </ng-container>
+
       </label>
     </span>
 
     <span>
       <img src="assets/img/gNB01.svg">
-      <label class="boxTitle">{{languageService.i18n['num_BSs']}}
-        <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{field.bsNum}}</span>
+      <label class="boxTitle">{{ languageService.i18n['num_BSs'] }}
+        
+        <!-- 當數據正在加載時顯示進度條 @2024/03/14 Add -->
+        <ng-container *ngIf="isFieldSummaryLoading">
+          <!-- 指示器大小設置 -->
+          <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="70"></mat-progress-spinner>
+        </ng-container>
+
+        <!-- 加載完成後顯示 BS 數量 @2024/03/14 Add -->
+        <ng-container *ngIf="!isFieldSummaryLoading">
+          <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{ field.bsNum }}</span>
+        </ng-container>
+
       </label>
     </span>
 
     <span>
       <img src="assets/img/ues.svg">
       <label class="boxTitle">{{languageService.i18n['num_UEs']}}
-        <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{ueNum}}</span>
+              
+        <!-- 當數據正在加載時顯示進度條 @2024/03/14 Add -->
+        <ng-container *ngIf="isFieldSummaryLoading">
+          <!-- 指示器大小設置 -->
+          <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="60"></mat-progress-spinner>
+        </ng-container>
+
+        <!-- 加載完成後顯示 UE 數量 @2024/03/14 Add -->
+        <ng-container *ngIf="!isFieldSummaryLoading">
+          <span class="bigValue" *ngFor="let field of fieldSummary.fieldSummaryInfo;">{{ ueNum }}</span>
+        </ng-container>
+
       </label>
     </span>
   </div>
  
   <div class="rightArea">
     <div class="table">
-      <h5>{{languageService.i18n['field_list']}}</h5>
+      <h5>{{ languageService.i18n['field_list'] }}</h5>
       <table>
         <thead>
           <tr>
-            <th>{{languageService.i18n['fm.field']}}</th>
-            <th>{{languageService.i18n['num_BSs']}}</th>
-            <th>{{languageService.i18n['num_UEs']}}</th>
-            <th>{{languageService.i18n['coverage']}}</th>
-            <th>{{languageService.i18n['critical_Alarm']}}</th>
-            <th>{{languageService.i18n['major_Alarm']}}</th>
-            <th>{{languageService.i18n['minor_Alarm']}}</th>
-            <th>{{languageService.i18n['warning_Alarm']}}</th>
-            <th>{{languageService.i18n['dashboard.view']}}</th>
+            <th>{{ languageService.i18n['fm.field'] }}</th>
+            <th>{{ languageService.i18n['num_BSs'] }}</th>
+            <th>{{ languageService.i18n['num_UEs'] }}</th>
+            <th>{{ languageService.i18n['coverage'] }}</th>
+            <th>{{ languageService.i18n['critical_Alarm'] }}</th>
+            <th>{{ languageService.i18n['major_Alarm'] }}</th>
+            <th>{{ languageService.i18n['minor_Alarm'] }}</th>
+            <th>{{ languageService.i18n['warning_Alarm'] }}</th>
+            <th>{{ languageService.i18n['dashboard.view'] }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let opt of fieldList.fields">
-            <td>{{opt.name}}</td>
-            <td>{{opt.bsNum}}</td>
-            <td>{{numUes(opt.ueNum) }}</td>
-            <td *ngIf="opt.coverage">{{opt.coverage}} %</td>
-            <td *ngIf="!opt.coverage">0 %</td>
-            <td>{{opt.alarmCriticalNum}}</td>
-            <td>{{opt.alarmMajorNum}}</td>
-            <td>{{opt.alarmMinorNum}}</td>
-            <td>{{opt.alarmWarningNum}}</td>
-            <td (click)="view(opt)">
-              <mat-icon tooltip="{{languageService.i18n['view_detail']}}" >remove_red_eye</mat-icon>
-            </td>
-          </tr>
 
+          <!-- 當數據正在加載時顯示進度條 @2024/03/14 Add -->
+          <ng-container *ngIf="isFieldListLoading">
+            <tr>
+              <td colspan="6">
+                <div class="progress-spinner-container">
+                  <!-- 指示器大小設置 -->
+                  <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+
+          <!-- 加載完成後顯示場域數據 @2024/03/14 Add -->
+          <ng-container *ngIf="!isFieldListLoading">
+            <!-- 循環顯示場域列表，並應用分頁 -->
+            <tr *ngFor="let opt of fieldList.fields">
+              <td>{{opt.name}}</td>
+              <td>{{opt.bsNum}}</td>
+              <td>{{numUes(opt.ueNum) }}</td>
+              <td *ngIf="opt.coverage">{{opt.coverage}} %</td>
+              <td *ngIf="!opt.coverage">0 %</td>
+              <td>{{opt.alarmCriticalNum}}</td>
+              <td>{{opt.alarmMajorNum}}</td>
+              <td>{{opt.alarmMinorNum}}</td>
+              <td>{{opt.alarmWarningNum}}</td>
+              <td (click)="view(opt)">
+                <mat-icon tooltip="{{languageService.i18n['view_detail']}}" >remove_red_eye</mat-icon>
+              </td>
+            </tr>
+          </ng-container>
         </tbody>
       </table>
     </div>

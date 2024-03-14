@@ -66,8 +66,11 @@ export class DashboardComponent implements OnInit {
   }
   
   ueNum: string = '0';
+  isFieldSummaryLoading = false; // 加載狀態的標誌，初始設置為 false @2024/03/14 Add for Progress Spinner
   fieldSummary: FieldSummary = {} as FieldSummary;
   getfieldSummaryInfo() {
+
+    this.isFieldSummaryLoading = true; // 開始加載數據，顯示進度指示器
 
     if ( this.commonService.isLocal ) {
       // local file test
@@ -82,6 +85,8 @@ export class DashboardComponent implements OnInit {
 
       console.log( 'fieldSummaryInfo:', this.fieldSummary );		
 
+      this.isFieldSummaryLoading = false; //  Local 模式下，數據加載快速完成，直接設置為 false
+
     } else {
 
       const url = `${this.commonService.restPath}/queryFieldSummaryInfo/${this.sessionId}`;
@@ -90,26 +95,37 @@ export class DashboardComponent implements OnInit {
         res => {
           console.log( 'queryFieldSummaryInfo:', res );
           this.fieldSummary = res as FieldSummary;
+
+          this.isFieldSummaryLoading = false; // 數據加載完成
         }
       );
     }
   }
 
+  isFieldListLoading = false; // 加載狀態的標誌，初始設置為 false @2024/03/14 Add for Progress Spinner
   fieldList: FieldList = {} as FieldList;
   getfieldListInfo() {
+
+    this.isFieldListLoading = true; // 開始加載數據，顯示進度指示器
 
     if ( this.commonService.isLocal ) {
       /* local file test */
 
       this.fieldList = this.fieldList_LocalFiles.fieldList_local;
+
+      this.isFieldListLoading = false; //  Local 模式下，數據加載快速完成，直接設置為 false
+
     } else {
 
       const url = `${this.commonService.restPath}/queryFieldList/${this.sessionId}`;
 
       this.http.get( url ).subscribe(
         res => {
+
           console.log( 'queryFieldList:', res );
           this.fieldList = res as FieldList;
+
+          this.isFieldListLoading = false; // 數據加載完成
         }
       );
     }

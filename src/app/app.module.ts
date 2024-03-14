@@ -87,6 +87,7 @@ import { localBSinfo }            from './shared/local-files/BS/For_queryBsInfo'
 import { localBSList }            from './shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
 import { localUserLogsList }      from './shared/local-files/Log/For_queryLogList';               // @2024/03/14 Add 
 import { localNELogsList }        from './shared/local-files/Log/For_queryUserNetconfLog';        // @2024/03/14 Add
+import { localNEList }            from './shared/local-files/NE/For_queryBsComponentList';        // @2024/03/14 Add
 
 @NgModule({
   declarations: [
@@ -199,8 +200,9 @@ import { localNELogsList }        from './shared/local-files/Log/For_queryUserNe
     localBSinfo,            // @2023/12/27 Add for import Local files of BS Info
     localBSList,            // @2024/01/16 Add for import Local files of BS List
     localPmFTPInfo,         // @2024/02/04 Add for import info of PM Parameter Setting Local Files
-    localUserLogsList,      // @2024/03/14 Add
-    localNELogsList,        // @2024/03/14 Add
+    localUserLogsList,      // @2024/03/14 Add for import Local files of User Logs List
+    localNELogsList,        // @2024/03/14 Add for import Local files of NE Logs List
+    localNEList,            // @2024/03/14 Add for import Local files of NE List
 
     {
       provide: HTTP_INTERCEPTORS,
