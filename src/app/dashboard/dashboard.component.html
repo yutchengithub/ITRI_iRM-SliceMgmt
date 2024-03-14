@@ -43,7 +43,7 @@
           <tr *ngFor="let opt of fieldList.fields">
             <td>{{opt.name}}</td>
             <td>{{opt.bsNum}}</td>
-            <td>{{NumUes(opt.ueNum) }}</td>
+            <td>{{numUes(opt.ueNum) }}</td>
             <td *ngIf="opt.coverage">{{opt.coverage}} %</td>
             <td *ngIf="!opt.coverage">0 %</td>
             <td>{{opt.alarmCriticalNum}}</td>

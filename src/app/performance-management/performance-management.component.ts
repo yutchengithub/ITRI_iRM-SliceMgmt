@@ -12,48 +12,11 @@ import { NfPerformanceComponent } from './nf-performance/nf-performance.componen
 import { LanguageService } from '../shared/service/language.service';
 import * as _ from 'lodash';
 
-export interface FieldList {
-  fields: Fields[];
-}
+// For import interfaces
+import { FieldList, Field } from '../shared/interfaces/Field/For_queryFieldList';       // @2024/03/14 Add by yuchen
 
-export interface Fields {
-  id: string;
-  name: string;
-  phone: string;
-  fieldposition1: string;
-  fieldposition2: string;
-  fieldposition3: string;
-  fieldposition4: string;
-  bsNum: number;
-  ueNum: string;
-  coverage: string;
-  accessibility: string;
-  availability: string;
-  mobility: string;
-  retainability: string;
-  energy: string;
-  integrity: Integrity;
-  utilization: Utilization;
-  alarmCriticalNum: number;
-  alarmMajorNum: number;
-  alarmMinorNum: number;
-  alarmWarningNum: number;
-}
-
-export interface Integrity {
-  downlinkDelay: string;
-  uplinkDelay: string;
-  downlinkThrouthput: string;
-  uplinkThrouthput: string;
-}
-
-export interface Utilization {
-  pdu: string;
-  resourceProcess: string;
-  resourceMemory: string;
-  resourceDisk: string;
-  maxPdu: string;
-}
+// For import local files
+import { localFieldList }        from '../shared/local-files/Field/For_queryFieldList'; // @2024/03/14 Add by yuchen
 
 @Component({
   selector: 'app-performance-management',
@@ -86,12 +49,15 @@ export class PerformanceManagementComponent implements OnInit {
   isSettingAdvanced = false;
 
   constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private commonService: CommonService,
-    private route: ActivatedRoute,
-    public languageService: LanguageService,
-    private dialog: MatDialog,
+    private                 http: HttpClient,
+    private                   fb: FormBuilder,
+    private        commonService: CommonService,
+    private               route: ActivatedRoute,
+    public      languageService: LanguageService,
+    private              dialog: MatDialog,
+    
+    public fieldList_LocalFiles: localFieldList,  // fieldList_LocalFiles 用於從 Local 文件獲取場域列表數據
+
   ) {
     this.searchForm = this.fb.group({
       'type': new FormControl('ocloud'),
@@ -100,8 +66,8 @@ export class PerformanceManagementComponent implements OnInit {
       'nf': new FormControl(''),
       'nfName': new FormControl('')
     });
-    this.createAdvancedForm();
 
+    this.createAdvancedForm();
   }
 
   ngOnInit(): void {
@@ -136,13 +102,13 @@ export class PerformanceManagementComponent implements OnInit {
   getfieldListInfo() {
     if (this.commonService.isLocal) {
       /* local file test */
-      this.fieldList = this.commonService.fieldList;
+      this.fieldList = this.fieldList_LocalFiles.fieldList_local;
     } else {
       const url = `${this.commonService.restPath}/queryFieldList/${this.sessionId}`;
       this.http.get(url).subscribe(
         res => {
-          console.log('queryFieldList:');
-          console.log(res);
+          
+          console.log( 'queryFieldList:', res );
           this.fieldList = res as FieldList;
         }
       );

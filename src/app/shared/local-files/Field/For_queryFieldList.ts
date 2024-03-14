@@ -5,7 +5,7 @@
  // Local Files for general FieldList @2024/01/29 Add by yuchen 
  export class localFieldList {
 
-    fieldList: FieldList = {
+    fieldList_local: FieldList = {
         fields: [
         {
             "id": "aa520ec8e5074f54b77d",
