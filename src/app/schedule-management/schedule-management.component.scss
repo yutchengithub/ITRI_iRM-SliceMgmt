@@ -17,6 +17,26 @@ tbody tr td {
   text-align: center;
 }
 
+.greenLight {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border-radius: 50em;
+  background-color: #89d135;
+}
+
+.redLight {
+  display: inline-block;
+}
+
+.grayLight {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border-radius: 50em;
+  background-color: #7e7e7e;
+}
+
 input[type="file"] {
   outline: 0;
 }

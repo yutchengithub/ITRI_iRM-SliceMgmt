@@ -25,11 +25,11 @@ import { ForCreateOrUpdateField, Bsinfo } from '../shared/interfaces/Field/For_c
 import { FieldSnapshotList, FieldSnapshot } from '../shared/interfaces/Field/For_queryFieldSnapshotList'; // @2024/03/06 Add 
 
 // For import local files of Field Management 
-import { localFieldList } from '../shared/local-files/Field/For_queryFieldList';  // @2024/01/29 Add
-import { localBSList } from '../shared/local-files/BS/For_queryBsList';           // @2024/02/01 Add
+import { localFieldList }         from '../shared/local-files/Field/For_queryFieldList';          // @2024/01/29 Add
+import { localBSList }            from '../shared/local-files/BS/For_queryBsList';                // @2024/02/01 Add
 import { localFieldSnapshotList } from '../shared/local-files/Field/For_queryFieldSnapshotList';  // @2024/03/06 Add
 
-// For download snapshot 
+// For download snapshot ( local mode )
 import * as XLSX from 'xlsx';           // @2024/03/09 Add 
 //import { saveAs } from 'file-saver';  // @2024/03/09 Add 
 
