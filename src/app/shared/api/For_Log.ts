@@ -24,7 +24,7 @@ export class apiForLogMgmt {
     return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
   }
 
-  // 下載 User Logs 用
+  // 下載 User Logs 用 ( 後端無 keyword 選項可篩選下載 )
   getDumpLogList( params: any ): Observable<any> {
     const url = `${this.restPath}/getDumpLogList/${this.sessionId}`;
     return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
