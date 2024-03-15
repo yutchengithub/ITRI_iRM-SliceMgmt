@@ -9,6 +9,15 @@ import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
 
+// For import APIs of Schedule Management 
+import { apiForScheduleMgmt }     from '../../shared/api/For_Schedule';  // @2024/03/15 Add
+
+// 引入儲存各個資訊所需的 interfaces of Schedule Management
+import { ScheduleInfo }           from '../../shared/interfaces/Schedule/For_queryJobTicketInfo';  // @2024/03/15 Add
+
+// For import local files of Schedule Management 
+import { localScheduleInfo }      from '../../shared/local-files/Schedule/For_queryJobTicketInfo'; // @2024/03/15 Add
+
 export interface OcloudInfo {
   id: string;
   name: string;
@@ -148,45 +157,23 @@ interface SoftwareSlot {
 })
 
 export class ScheduleInfoComponent implements OnInit {
-  sessionId: string = '';
-  cloudId: string = '';
-  cloudName: string = '';
-  newip: string = '';
-  // utilizationPercent: number = 0;
-  bsComponentInfo: BsComponentInfo = {} as BsComponentInfo;
-  ocloudInfo: OcloudInfo = {} as OcloudInfo;
-  ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
-  softwareList: SoftwareList[] = [];
-  systemSummary: SystemSummary = {} as SystemSummary;;
-  fileNameMapSoftware: Map<string, SoftwareList> = new Map();
-  faultColors: string[] = ['#FF0000', '#FFA042', '	#FFFF37', '#00FFFF'];
-  showTooltipCpu: any = {};
-  showTooltipStorage: any = {};
-  showTooltipNic: any = {};
-  RunRefreshTimeout!: any;
-  RunRefreshTime: number = 3;
-  refreshTimeout!: any;
-  @ViewChild('updateModal') updateModal: any;
-  @ViewChild('updateIPModal') updateIPModal: any;
-  updateModalRef!: MatDialogRef<any>;
-  updateIPModalRef!: MatDialogRef<any>;
-  updateForm!: FormGroup;
-  formValidated = false;
-  /* CRITICAL,MAJOR,MINOR,WARNING */
-  severitys: string[];
 
-  tooltipOptions = {
-    theme: 'light',     // 'dark' | 'light'
-    hideDelay: 250
-  };
+  sessionId: string = '';   // sessionId 用於存儲當前會話 ID
+  refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
+  refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    public commonService: CommonService,
-    private fb: FormBuilder,
-    private dialog: MatDialog,
-    public languageService: LanguageService
+  
+    private             fb: FormBuilder,
+    private         router: Router,
+    private          route: ActivatedRoute,
+    private         dialog: MatDialog,
+    public   commonService: CommonService,
+    public languageService: LanguageService,
+
+    public             API_Schedule: apiForScheduleMgmt,  // API_Schedule 用於排程管理相關的 API 請求
+    public  scheduleInfo_LocalFiles: localScheduleInfo,   // scheduleInfo_LocalFiles 用於從 Local Files 獲取排程資訊
+  
   ) {
     this.severitys = this.commonService.severitys;
   }
@@ -205,6 +192,36 @@ export class ScheduleInfoComponent implements OnInit {
   ngOnDestroy() {
     clearTimeout(this.refreshTimeout);
   }
+
+  cloudId: string = '';
+  cloudName: string = '';
+  newip: string = '';
+  // utilizationPercent: number = 0;
+  bsComponentInfo: BsComponentInfo = {} as BsComponentInfo;
+  ocloudInfo: OcloudInfo = {} as OcloudInfo;
+  ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
+  softwareList: SoftwareList[] = [];
+  systemSummary: SystemSummary = {} as SystemSummary;;
+  fileNameMapSoftware: Map<string, SoftwareList> = new Map();
+  faultColors: string[] = ['#FF0000', '#FFA042', '	#FFFF37', '#00FFFF'];
+  showTooltipCpu: any = {};
+  showTooltipStorage: any = {};
+  showTooltipNic: any = {};
+  RunRefreshTimeout!: any;
+  RunRefreshTime: number = 3;
+  @ViewChild('updateModal') updateModal: any;
+  @ViewChild('updateIPModal') updateIPModal: any;
+  updateModalRef!: MatDialogRef<any>;
+  updateIPModalRef!: MatDialogRef<any>;
+  updateForm!: FormGroup;
+  formValidated = false;
+  /* CRITICAL,MAJOR,MINOR,WARNING */
+  severitys: string[];
+
+  tooltipOptions = {
+    theme: 'light',     // 'dark' | 'light'
+    hideDelay: 250
+  };
 
   getScheduleInfo() {
     if (this.commonService.isLocal) {

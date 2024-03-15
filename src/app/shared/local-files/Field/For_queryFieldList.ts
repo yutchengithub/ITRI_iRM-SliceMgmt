@@ -6,7 +6,7 @@
  export class localFieldList {
 
     fieldList_local: FieldList = {
-        fields: [
+        "fields": [
         {
             "id": "aa520ec8e5074f54b77d",
             "name": "itri-field1",

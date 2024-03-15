@@ -10,6 +10,16 @@ import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
+// For import APIs of Schedule Management 
+import { apiForScheduleMgmt }     from '../shared/api/For_Schedule';  // @2024/03/15 Add
+
+// 引入儲存各個資訊所需的 interfaces of Schedule Management
+import { ScheduleList, Schedule } from '../shared/interfaces/Schedule/For_queryJobTicketList'; // @2024/03/15 Add
+
+// For import local files of Schedule Management 
+import { localScheduleList }      from '../shared/local-files/Schedule/For_queryJobTicketList'; // @2024/03/15 Add
+
+
 export interface ComponentLists {
   components: Components[];
 }
@@ -51,17 +61,12 @@ export interface Uploadinfos {
   styleUrls: ['./schedule-management.component.scss'],
 })
 export class ScheduleManagementComponent implements OnInit {
-  sessionId: string = '';
-  softwareLists: SoftwareLists = {} as SoftwareLists;
-  componentList: ComponentLists = {} as ComponentLists;
-  @ViewChild('createScheduleModal') createScheduleModal: any;
-  @ViewChild('deleteModal') deleteModal: any;
-  @ViewChild('provisionModal') provisionModal: any;
-  @ViewChild('advancedModal') advancedModal: any;
-  advancedModalRef!: MatDialogRef<any>;
-  advancedForm!: FormGroup;
-  afterAdvancedForm!: FormGroup;
-  refreshTimeout!: any;
+  
+  sessionId: string = '';   // sessionId 用於存儲當前會話 ID
+  refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
+  refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
+
+  
   isSettingAdvanced = true;
   createModalRef!: MatDialogRef<any>;
   deleteModalRef!: MatDialogRef<any>;
@@ -93,16 +98,23 @@ export class ScheduleManagementComponent implements OnInit {
   ];
 
   constructor(
-    private dialog: MatDialog,
-    private router: Router,
-    private commonService: CommonService,
-    private http: HttpClient,
-    private fb: FormBuilder,
-    public languageService: LanguageService
+    
+    private           http: HttpClient,
+    private             fb: FormBuilder,
+    private         dialog: MatDialog,
+    private         router: Router,
+    private  commonService: CommonService,
+    public languageService: LanguageService,
+
+    public             API_Schedule: apiForScheduleMgmt,  // API_Schedule 用於排程管理相關的 API 請求
+    public  scheduleList_LocalFiles: localScheduleList,   // scheduleList_LocalFiles 用於從 Local Files 獲取排程列表數據
+  
   ) {
-    this.comtype.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
+
+    this.comtype.forEach( ( row ) => this.typeMap.set( Number( row.value ), row.displayName ) );
     this.createSearchForm();
     this.createAdvancedForm();
+
   }
 
   ngOnInit(): void {
@@ -110,6 +122,26 @@ export class ScheduleManagementComponent implements OnInit {
     this.afterSearchForm = _.cloneDeep(this.searchForm);
     this.getScheduleList();
   }
+
+  ngOnDestroy() {
+    clearTimeout(this.refreshTimeout);
+    if (this.querySoftwareScpt) this.querySoftwareScpt.unsubscribe();
+    if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
+  }
+
+
+  softwareLists: SoftwareLists = {} as SoftwareLists;
+  componentList: ComponentLists = {} as ComponentLists;
+  @ViewChild('createScheduleModal') createScheduleModal: any;
+  @ViewChild('deleteModal') deleteModal: any;
+  @ViewChild('provisionModal') provisionModal: any;
+  @ViewChild('advancedModal') advancedModal: any;
+  advancedModalRef!: MatDialogRef<any>;
+  advancedForm!: FormGroup;
+  afterAdvancedForm!: FormGroup;
+
+
+
 
   getScheduleList() {
     const firm = this.searchForm.controls['firm'].value;
@@ -142,11 +174,7 @@ export class ScheduleManagementComponent implements OnInit {
     this.totalItems = this.componentList.components.length;
   }
 
-  ngOnDestroy() {
-    clearTimeout(this.refreshTimeout);
-    if (this.querySoftwareScpt) this.querySoftwareScpt.unsubscribe();
-    if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
-  }
+
 
   createSearchForm() {
     const nowTime = this.commonService.getNowTime();

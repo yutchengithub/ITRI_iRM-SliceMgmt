@@ -6,7 +6,7 @@
  export class localFieldSummaryInfo {
 
     fieldSummary_local: FieldSummary = {
-        fieldSummaryInfo: [
+        "fieldSummaryInfo": [
           {
             "bsNum": 1,
             "fieldNum": 2,

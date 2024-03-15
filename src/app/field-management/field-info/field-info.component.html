@@ -343,6 +343,7 @@
 										<label>{{ opt.position }}</label>
 									</td>
 									<td class="icon">
+										<label *ngIf="opt.status === 0" class="grayLight"></label>
 										<label *ngIf="opt.status === 1" class="redLight"></label>
 										<label *ngIf="opt.status === 2" class="greenLight"></label>
 									</td>

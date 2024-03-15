@@ -30,8 +30,9 @@
         <td>2023-11-25 03:00:00</td>
         <td>{{languageService.i18n['sm.pmReport']}}</td>
         <td class="icon">
-          <label *ngIf="opt.status === 0" class="greenLight"></label>
+          <label *ngIf="opt.status === 0" class="grayLight"></label>
           <label *ngIf="opt.status === 1" class="redLight"></label>
+          <label *ngIf="opt.status === 2" class="greenLight"></label>
         </td>
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['sm.smDownload']}}" (click)="openProvisionModal(opt)">download_for_offline</mat-icon>
