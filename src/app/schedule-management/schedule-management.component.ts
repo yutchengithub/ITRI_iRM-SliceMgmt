@@ -62,7 +62,7 @@ export interface Uploadinfos {
 })
 export class ScheduleManagementComponent implements OnInit {
   
-  sessionId: string = ''; // sessionId 用於存儲當前會話 ID
+  sessionId: string = '';   // sessionId 用於存儲當前會話 ID
   refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
   refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
 
@@ -109,7 +109,6 @@ export class ScheduleManagementComponent implements OnInit {
     public             API_Schedule: apiForScheduleMgmt,  // API_Schedule 用於排程管理相關的 API 請求
     public  scheduleList_LocalFiles: localScheduleList,   // scheduleList_LocalFiles 用於從 Local Files 獲取排程列表數據
   
-
   ) {
 
     this.comtype.forEach( ( row ) => this.typeMap.set( Number( row.value ), row.displayName ) );

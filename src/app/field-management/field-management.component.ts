@@ -142,6 +142,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
           this.fieldList = res; // 更新場域列表數據
           this.FieldListDeal(); // 調用處理函數，進行數據處理（如分頁）
+          
         },
         error: ( error ) => {
 
