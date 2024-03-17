@@ -348,7 +348,7 @@ export const Enlanguage = {
   'delaccount':'Delete Account',
   'confirm_del_acc':'Confirm to Delete Account',
 
-  // Schedule Management @11/24 Add by yuchen
+  // Schedule Management @2024/03/18 Update
   'sm.select_type':'Schedule Type',
   'sm.select_field':'Field',
   'sm.th_create':'Create Schedule',
@@ -366,6 +366,11 @@ export const Enlanguage = {
   'sm.pmReport':'Performance Management Report', // 2
   'sm.caReport':'Config Audit Report',           // 1
   'sm.sfUpdate':'Software Update',               // 0
+
+  'sm.info':'Schedule Information', 
+
+
+
 
   // Log Management @10/31 add by yuchen
   'LogLists': 'Log Lists',
