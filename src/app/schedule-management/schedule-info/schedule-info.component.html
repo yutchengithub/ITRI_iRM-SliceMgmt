@@ -3,7 +3,12 @@
     <button (click)="back()">
       <span class="material-icons">arrow_back</span>Back
     </button>
-    O-Cloud {{languageService.i18n['information']}} – {{ocloudInfo.name}}
+    {{languageService.i18n['sm.info']}} – 
+      <label *ngIf=" scheduleType === '0' ">{{ languageService.i18n['sm.sfUpdate'] }}</label>
+      <label *ngIf=" scheduleType === '1' ">{{ languageService.i18n['sm.caReport'] }}</label>
+      <label *ngIf=" scheduleType === '2' ">{{ languageService.i18n['sm.pmReport'] }}</label>
+      <label *ngIf=" scheduleType === '3' ">{{ languageService.i18n['sm.fmReport'] }}</label>
+      <label *ngIf=" scheduleType === '4' ">{{ languageService.i18n['sm.sfReport'] }}</label>
   </h5>
 
 

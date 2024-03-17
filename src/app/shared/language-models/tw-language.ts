@@ -345,7 +345,7 @@ export const TwLanguage = {
   'delaccount':'帳號刪除',
   'confirm_del_acc':'確定帳號刪除',
 
-  // Schedule Management (排程管理) @11/24 Add by yuchen
+  // Schedule Management (排程管理) @2024/03/18 Update
   'sm.select_type':'排程類型',
   'sm.select_field':'場域',
   'sm.create_type':'排程類型',
@@ -364,6 +364,8 @@ export const TwLanguage = {
   'sm.pmReport':'產出效能管理報表', // 2
   'sm.caReport':'產出配置稽核報表', // 1
   'sm.sfUpdate':'軟體更新',        // 0
+
+  'sm.info':'排程資訊', 
   
   // Log Management (日誌管理)  @10/31 add by yuchen
   'LogLists': '日誌列表',
