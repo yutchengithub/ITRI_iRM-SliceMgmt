@@ -74,7 +74,7 @@ export class ScheduleManagementComponent implements OnInit {
   createForm!: FormGroup;
   provisionForm!: FormGroup;
   selectSoftware!: Uploadinfos;
-  selectSchedule!: Components;
+  
   schedulestatus: number=-1;
   nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
   file: any;
@@ -119,8 +119,8 @@ export class ScheduleManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.sessionId = this.commonService.getSessionId();
-    this.afterSearchForm = _.cloneDeep(this.searchForm);
-    this.getScheduleList();
+    this.afterSearchForm = _.cloneDeep( this.searchForm );
+    this.getQueryJobTicketList();
   }
 
   ngOnDestroy() {
@@ -141,39 +141,76 @@ export class ScheduleManagementComponent implements OnInit {
   afterAdvancedForm!: FormGroup;
 
 
+  scheduleList: ScheduleList = {} as ScheduleList; // 用於存儲從伺服器或 Local 文件獲取的排程列表數據
+  isLoadingScheduleList = true; // 加載狀態的標誌, 初始設置為 true
 
+  // queryJobTicketList 用於管理 HTTP 的訂閱請求,'!' 確保在使用前已賦值。
+  queryJobTicketList!: Subscription; // @2024/03/15 Add
 
-  getScheduleList() {
-    const firm = this.searchForm.controls['firm'].value;
-    const uploadtype = this.searchForm.controls['uploadtype'].value;
-    const model = this.searchForm.controls['model'].value;
-    console.log('querySoftwareList params:')
-    console.log(`fileName=${firm}`);
-    console.log(`uploadtype=${uploadtype}`);
-    console.log(`model=${model}`);
-    clearTimeout(this.refreshTimeout);
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.componentList = this.commonService.componentList;
-      console.log(this.componentList);
-      this.scheduleListDeal();
+  /** @2024/03/17 Add
+   * 用於獲取排程列表。
+   * 根據是否處於 Local 模式,它會從 Local 文件或通過 API 從伺服器獲取排程資訊。
+   */
+  getQueryJobTicketList() {
+    console.log( 'getQueryJobTicketList() - Start' );
+    this.isLoadingScheduleList = true; // 開始加載數據,顯示進度指示器
+
+    clearTimeout( this.refreshTimeout ); // 取消之前設定的超時,避免重複或不必要的操作
+
+    if ( this.commonService.isLocal ) {
+      // Local 模式: 使用 Local 文件提供的數據
+      this.scheduleList = this.scheduleList_LocalFiles.scheduleList_local;
+      console.log( 'In local - Get the ScheduleList:', this.scheduleList );
+
+      this.isLoadingScheduleList = false; // Local 模式下,數據加載快速完成,直接設置為 false
     } else {
-      this.commonService.queryBsComponentList().subscribe(
-        res => {
-          console.log('getBsComponent List:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.componentList = JSON.parse(str);
+      // 非 Local 模式: 通過 API 從服務器獲取數據
+      this.queryJobTicketList = this.API_Schedule.queryJobTicketList().subscribe({
+        next: ( res ) => {
+
+          // 請求成功,獲得排程列表數據
+          console.log( 'Get the ScheduleList:', res );
+
+          this.scheduleList = res; // 更新排程列表數據
+
           this.scheduleListDeal();
+        },
+        error: ( error ) => {
+          // 請求出現錯誤
+          console.error('Error fetching schedule list:', error);
+          this.isLoadingScheduleList = false; // 出錯時設置加載標誌為 false
+        },
+        complete: () => {
+          // 數據流處理完成（無論成功或失敗）
+          console.log('Schedule list fetch completed');
+          this.isLoadingScheduleList = false; // 數據加載完成
         }
-      );
+      });
     }
+
+    console.log( 'getQueryJobTicketList() - End' );
   }
 
   scheduleListDeal() {
-    this.totalItems = this.componentList.components.length;
+    this.totalItems = this.scheduleList.jobticket.length;
   }
 
+
+  selectSchedule!: Schedule;  // 用於存儲當前選中的排程訊息 @2024/03/17 Add
+  /** @2024/03/17 Add
+   *  導航到選定的排程詳細資訊頁面。
+   *  @param schedule 從排程列表中選擇的排程物件。
+   */
+  viewScheduleDetailInfo( schedule: Schedule  ) {
+
+    this.selectSchedule = schedule; // 設定當前選擇的排程。
+
+    // 輸出選擇的排程 ID 和 類型。
+    console.log( "View Detail of the schedule id:", this.selectSchedule.id, "and the schedule type: ", this.selectSchedule.tickettype ); 
+    
+    // 導航到排程管理的詳細資訊頁面，帶上排程的 ID 和排程的 ID 類型 作為路由參數。
+    this.router.navigate( ['/main/schedule-mgr/info', this.selectSchedule.id, this.selectSchedule.tickettype] );
+  }
 
 
   createSearchForm() {
@@ -254,7 +291,7 @@ export class ScheduleManagementComponent implements OnInit {
         }
       );
       this.createModalRef.close();
-      this.getScheduleList();
+      this.getQueryJobTicketList();
 
     } else {
       const body = this.createForm.value;
@@ -273,20 +310,20 @@ export class ScheduleManagementComponent implements OnInit {
           console.log('createBsComponent:');
           console.log(res);
           this.createModalRef.close();
-          this.getScheduleList();
+          this.getQueryJobTicketList();
         }
       );
     }
   }
 
-  openDeleteModal(scheduleList: Components) {
+  openDeleteModal(scheduleList: Schedule) {
     this.selectSchedule = scheduleList;
-    this.schedulestatus = scheduleList.status;
+    //this.schedulestatus = scheduleList.status;
     console.log("test "+this.schedulestatus);
     this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
   }
 
-  openProvisionModal(scheduleList: Components) {
+  openProvisionModal( scheduleList: Schedule)  {
     this.formValidated = false;
     this.provisionForm = this.fb.group({
       'fileName': new FormControl('', [Validators.required])
@@ -309,12 +346,12 @@ export class ScheduleManagementComponent implements OnInit {
         }
       }
       this.deleteModalRef.close();
-      this.getScheduleList();
+      this.getQueryJobTicketList();
     } else {
       this.commonService.deleteSoftware(this.selectSchedule.id).subscribe(
         res => {
           this.deleteModalRef.close();
-          this.getScheduleList();
+          this.getQueryJobTicketList();
         }
       );
     }
@@ -417,7 +454,7 @@ export class ScheduleManagementComponent implements OnInit {
   }
 
   search() {
-    this.getScheduleList();
+    this.getQueryJobTicketList();
   }
 
   debug() {
@@ -435,16 +472,12 @@ export class ScheduleManagementComponent implements OnInit {
     console.log(body);
   }
 
-  viewPage(scheduleList: Components) {
-    this.router.navigate(['/main/schedule-mgr/info', scheduleList.id, scheduleList.bsId]);
-  }
-
   clearSetting() {
     this.isSearch = false;
     this.createSearchForm();
     this.createAdvancedForm();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
-    this.getScheduleList();
+    this.getQueryJobTicketList();
   }
 
 }
