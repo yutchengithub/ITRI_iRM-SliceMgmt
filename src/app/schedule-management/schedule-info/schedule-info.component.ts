@@ -178,19 +178,26 @@ export class ScheduleInfoComponent implements OnInit {
     this.severitys = this.commonService.severitys;
   }
 
+  // @2024/03/17 Add
+  scheduleId:   string = '';      // 用於存儲當前選中的排程 ID
+  scheduleType: string = '';      // 用於存儲當前選中的排程類型
+
+  // @2024/03/17 Update
   ngOnInit(): void {
+
     this.sessionId = this.commonService.getSessionId();
+
     this.route.params.subscribe((params) => {
-      this.cloudId = params['cloudId'];
-      this.cloudName = params['cloudName'];
-      console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
-      this.getScheduleInfo();
-      this.getOcloudPerformance();
-      this.getSoftwareList();
+      this.scheduleId = params['id'];
+      this.scheduleType = params['type'];
+      console.log('scheduleId: ' + this.scheduleId + ', scheduleType: ' + this.scheduleType + ',\nsend from /main/schedule-mgr');
+      this.getQueryJobTicketInfo();
     });
+
   }
+
   ngOnDestroy() {
-    clearTimeout(this.refreshTimeout);
+    clearTimeout( this.refreshTimeout );
   }
 
   cloudId: string = '';
@@ -223,28 +230,61 @@ export class ScheduleInfoComponent implements OnInit {
     hideDelay: 250
   };
 
-  getScheduleInfo() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.bsComponentInfo = this.commonService.bsComponentInfo;
-      this.ocloudInfoDeal();
+
+
+  scheduleInfo: ScheduleInfo = {} as ScheduleInfo; // 用於存儲從伺服器或 Local 文件獲取的排程資訊
+  isLoadingScheduleInfo = true; // 加載狀態的標誌，初始設置為 true
+  /** @2024/03/17 Add
+   *  用於獲取排程資訊。
+   *  根據是否處於 Local 模式，它會從 Local 文件或通過 API 從伺服器獲取排程資訊。
+   */
+  getQueryJobTicketInfo() {
+    console.log( 'getQueryJobTicketInfo() - Start' );
+    this.isLoadingScheduleInfo = true;   // 開始加載數，顯示進度指示器
+
+    clearTimeout( this.refreshTimeout ); // 取消之前設定的超時，避免重複或不必要的操作
+
+    if ( this.commonService.isLocal ) {
+
+      // Local 模式: 使用 Local 文件提供的數據
+      this.scheduleInfo = this.scheduleInfo_LocalFiles.scheduleInfo_local.find( info => info.id === this.scheduleId ) || {} as ScheduleInfo;
+      console.log( 'In local - Get the ScheduleInfo:', this.scheduleInfo );
+
+      this.isLoadingScheduleInfo = false; // Local 模式下，數據加載快速完成,直接設置為 false
+
     } else {
-      this.commonService.queryOcloudInfo(this.cloudId).subscribe(
-        res => {
-          console.log('getOcloudInfo:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.ocloudInfo = JSON.parse(str);
-          this.ocloudInfo = res as OcloudInfo;
-          this.ocloudInfoDeal();
+
+      // 非 Local 模式: 通過 API 從服務器獲取數據
+      this.API_Schedule.queryJobTicketInfo( this.scheduleId ).subscribe({
+        next: ( res ) => {
+
+          // 請求成功，獲得排程資訊
+          console.log( 'Get the ScheduleInfo:', res );
+
+          this.scheduleInfo = res; // 更新排程資訊
+        },
+        error: ( error ) => {
+          // 請求出現錯誤
+          console.error( 'Error fetching job ticket info:', error );
+          this.isLoadingScheduleInfo = false; // 出錯時設置加載標誌為 false
+        },
+        complete: () => {
+          // 數據流處理完成（ 無論成功或失敗 ）
+          console.log( 'Job ticket info fetch completed' );
+          this.isLoadingScheduleInfo = false; // 數據加載完成
         }
-      );
+      });
     }
   }
+
+
+
+
+
   nfRunRefresh() {
     clearTimeout(this.refreshTimeout);
     this.RunRefreshTimeout = window.setTimeout(() => this.getOcloudPerformance(), this.RunRefreshTime * 1000);
-    this.RunRefreshTimeout = window.setTimeout(() => this.getScheduleInfo(), this.RunRefreshTime * 1000);
+    this.RunRefreshTimeout = window.setTimeout(() => this.getQueryJobTicketInfo(), this.RunRefreshTime * 1000);
   }
   getOcloudPerformance() {
     if (this.commonService.isLocal) {
@@ -352,8 +392,9 @@ export class ScheduleInfoComponent implements OnInit {
     }
   }
 
+  // 返回 Schedule Management 主頁
   back() {
-    this.router.navigate(['/main/component-mgr']);
+    this.router.navigate(['/main/schedule-mgr']);
   }
 
 
@@ -426,9 +467,9 @@ export class ScheduleInfoComponent implements OnInit {
         () => console.log('Update Successful.')
       );
       this.updateModalRef.close();
-      this.getScheduleInfo();
+      this.getQueryJobTicketInfo();
     }
-    this.getScheduleInfo();
+    this.getQueryJobTicketInfo();
   }
 
   updateNFSuccessful: boolean | null = null; 
@@ -461,7 +502,7 @@ export class ScheduleInfoComponent implements OnInit {
         this.updateNFSuccessful = true;
         this.hideUpdateIcon();
         this.updateIPModalRef.close();
-        this.getScheduleInfo();
+        this.getQueryJobTicketInfo();
       } else {
         // Form validation failed, set the error flag
         this.updateNFSuccessful = false;
@@ -469,7 +510,7 @@ export class ScheduleInfoComponent implements OnInit {
         this.updateBasicError = true;
       }
     }
-    this.getScheduleInfo();
+    this.getQueryJobTicketInfo();
   }
 
   veiw(opt: Nf) {

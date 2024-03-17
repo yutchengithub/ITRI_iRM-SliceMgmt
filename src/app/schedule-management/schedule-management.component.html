@@ -16,40 +16,48 @@
   <table>
     <thead>
       <tr>
-        <th>{{languageService.i18n['sm.th_time']}}</th>
-        <th>{{languageService.i18n['sm.th_type']}}</th>
-        <th class="icon">{{languageService.i18n['sm.th_state']}}</th>
-        <th class="icon">{{languageService.i18n['sm.th_download']}}</th>
-        <th class="icon">{{languageService.i18n['sm.th_view']}}</th>
-        <th class="icon">{{languageService.i18n['sm.th_delete']}}</th>
+        <th>{{ languageService.i18n['sm.th_time'] }}</th>
+        <th>{{ languageService.i18n['sm.th_type'] }}</th>
+        <th class="icon">{{ languageService.i18n['sm.th_state'] }}</th>
+        <th class="icon">{{ languageService.i18n['sm.th_download'] }}</th>
+        <th class="icon">{{ languageService.i18n['sm.th_view'] }}</th>
+        <th class="icon">{{ languageService.i18n['sm.th_delete'] }}</th>
       </tr>
     </thead>
     <tbody>
-      <tr
-        *ngFor="let opt of componentList.components | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-        <td>2023-11-25 03:00:00</td>
-        <td>{{languageService.i18n['sm.pmReport']}}</td>
+      <tr *ngFor="let schedule of scheduleList.jobticket | paginate: { 
+                    itemsPerPage: pageSize,
+                     currentPage: p, 
+                      totalItems: totalItems, 
+                              id: 'PageDisplay_of_scheduleList'
+        };">
+        <td>{{ schedule.executedtime }}</td>
+        <td>{{ schedule.tickettype }}</td>
         <td class="icon">
-          <label *ngIf="opt.status === 0" class="grayLight"></label>
-          <label *ngIf="opt.status === 1" class="redLight"></label>
-          <label *ngIf="opt.status === 2" class="greenLight"></label>
+          <label *ngIf=" schedule.ticketstatus === '0' " class="grayLight"></label>
+          <label *ngIf=" schedule.ticketstatus === '1' " class="redLight"></label>
+          <label *ngIf=" schedule.ticketstatus === '2' " class="greenLight"></label>
         </td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['sm.smDownload']}}" (click)="openProvisionModal(opt)">download_for_offline</mat-icon>
+          <mat-icon tooltip="{{ languageService.i18n['sm.smDownload'] }}" (click)="openProvisionModal( schedule )"> download_for_offline </mat-icon>
         </td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['sm.view_detail']}}" (click)="viewPage(opt)">remove_red_eye</mat-icon>
+          <mat-icon tooltip="{{ languageService.i18n['sm.view_detail'] }}" (click)="viewScheduleDetailInfo( schedule )"> remove_red_eye </mat-icon>
         </td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['sm.delItem']}}" (click)="openDeleteModal(opt)">delete_forever</mat-icon>
+          <mat-icon tooltip="{{ languageService.i18n['sm.delItem'] }}" (click)="openDeleteModal( schedule )"> delete_forever </mat-icon>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
-<pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
-  nextLabel="" id="display">
-</pagination-controls>
+<pagination-controls
+   (pageChange)="pageChanged( $event )"
+    screenReaderPaginationLabel="Pagination"
+    previousLabel=""
+    nextLabel=""
+    id="PageDisplay_of_scheduleList"
+></pagination-controls>
 
 
 <ng-template #createScheduleModal>
@@ -85,21 +93,18 @@
 </ng-template>
 
 <ng-template #deleteModal>
-  <h5 *ngIf="selectSchedule.status === 1">{{languageService.i18n['cm.delete']}}</h5>
-  <h5 *ngIf="selectSchedule.status === 0"><mat-icon class="error-icon">warning</mat-icon>{{languageService.i18n['cm.error']}}</h5>
-  <p>
-    {{selectSchedule.status === 1 ? languageService.i18n['cm.confirm_del'] : languageService.i18n['cm.unable_del']}}
-    – {{selectSchedule.name}}
-  </p>
+  <h5 >{{languageService.i18n['cm.delete']}}</h5>
+  <h5 ><mat-icon class="error-icon">warning</mat-icon>{{languageService.i18n['cm.error']}}</h5>
+  
   <div class="buttons">
     <button type="button" mat-dialog-close>Cancel</button>
-    <button *ngIf="selectSchedule.status === 1" type="button" (click)="delete()">Delete</button>
+    <button type="button" (click)="delete()">Delete</button>
   </div>
 </ng-template>
 
 
 <ng-template #provisionModal>
-<h5>{{languageService.i18n['cm.provision']}} - {{selectSchedule.name}}</h5>
+<h5>{{languageService.i18n['cm.provision']}} - {{selectSchedule.tickettype}}</h5>
   <form [formGroup]="provisionForm">
     <ul>
       <li>

@@ -100,7 +100,7 @@ const routes: Routes = [
         path: 'schedule-mgr',
         children: [
           { path: '', component: ScheduleManagementComponent },
-          { path: 'info/:cloudId/:cloudName', component: ScheduleInfoComponent }
+          { path: 'info/:id/:type', component: ScheduleInfoComponent }
         ]
       },
       { 
