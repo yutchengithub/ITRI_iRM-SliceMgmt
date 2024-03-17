@@ -178,7 +178,6 @@ export const TwLanguage = {
   'field.close':'關閉', // @2024/02/22 Add
   'field.applyReminder': '提醒', // @2024/02/22 Add
   
-  
   'field.report':'場域報表',                        // @12/12 Add
   'field.reportPM':'場域效能 (PM)',                 // @12/12 Add
   'field.reportFM':'告警資訊 (FM)',                 // @12/12 Add
@@ -191,6 +190,10 @@ export const TwLanguage = {
   'field.bsAlarm':'告警',                          // @12/13 Add
   'field.legend_all-in-one_bs':'一體式基站',        // @12/28 Add
   'field.legend_dist_bs':'O-RAN基站',              // @12/28 Add
+
+  // BS Management ( 基站管理 )
+  'BS.list':'基站列表',
+  'BS.name':'基站名稱',
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',
@@ -356,9 +359,11 @@ export const TwLanguage = {
   'sm.smDownload':'下載此排程報表',
   'sm.view_detail':'詳細查看此排程',
   'sm.delItem':'刪除此排程',
-  'sm.fmReport':'產出故障管理報表',
-  'sm.pmReport':'產出效能管理報表',
-  'sm.sfUpdate':'軟體更新',
+  'sm.sfReport':'產出軟體管理報表', // 4
+  'sm.fmReport':'產出故障管理報表', // 3
+  'sm.pmReport':'產出效能管理報表', // 2
+  'sm.caReport':'產出配置稽核報表', // 1
+  'sm.sfUpdate':'軟體更新',        // 0
   
   // Log Management (日誌管理)  @10/31 add by yuchen
   'LogLists': '日誌列表',

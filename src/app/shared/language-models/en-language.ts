@@ -52,7 +52,7 @@ export const Enlanguage = {
   'close': 'Close',                // @2024/01/22 Add
   
 
-  // Field Management (場域管理) @11/30 Add by yuchen
+  // Field Management ( 場域管理 ) @11/30 Add by yuchen
   'field.list':'Field List',
   'field.name':'Field Name',
   'field.bsNum':'Number of BSs',
@@ -193,6 +193,10 @@ export const Enlanguage = {
   'field.legend_all-in-one_bs':'All-in-one BS',     // @12/28 Add
   'field.legend_dist_bs':'O-RAN BS',                // @12/28 Add
   
+  // BS Management ( 基站管理 )
+  'BS.list':'BS List',
+  'BS.name':'BS Name',
+
 
   // Fault Management
   'fm.start':'StartTime',
@@ -357,9 +361,11 @@ export const Enlanguage = {
   'sm.smDownload':'Download report of this schedule',
   'sm.view_detail':'View this schedule in detail',
   'sm.delItem':'Delete this schedule',
-  'sm.fmReport':'Fault Management Report',
-  'sm.pmReport':'Performance Management Report',
-  'sm.sfUpdate':'Software update',
+  'sm.sfReport':'Software Management Report',    // 4
+  'sm.fmReport':'Fault Management Report',       // 3
+  'sm.pmReport':'Performance Management Report', // 2
+  'sm.caReport':'Config Audit Report',           // 1
+  'sm.sfUpdate':'Software Update',               // 0
 
   // Log Management @10/31 add by yuchen
   'LogLists': 'Log Lists',

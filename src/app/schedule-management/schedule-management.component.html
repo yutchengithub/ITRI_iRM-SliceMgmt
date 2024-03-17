@@ -32,7 +32,13 @@
                               id: 'PageDisplay_of_scheduleList'
         };">
         <td>{{ schedule.executedtime }}</td>
-        <td>{{ schedule.tickettype }}</td>
+        <td>
+          <label *ngIf=" schedule.tickettype === '0' ">{{ languageService.i18n['sm.sfUpdate'] }}</label>
+          <label *ngIf=" schedule.tickettype === '1' ">{{ languageService.i18n['sm.caReport'] }}</label>
+          <label *ngIf=" schedule.tickettype === '2' ">{{ languageService.i18n['sm.pmReport'] }}</label>
+          <label *ngIf=" schedule.tickettype === '3' ">{{ languageService.i18n['sm.fmReport'] }}</label>
+          <label *ngIf=" schedule.tickettype === '4' ">{{ languageService.i18n['sm.sfReport'] }}</label>
+        </td>
         <td class="icon">
           <label *ngIf=" schedule.ticketstatus === '0' " class="grayLight"></label>
           <label *ngIf=" schedule.ticketstatus === '1' " class="redLight"></label>
