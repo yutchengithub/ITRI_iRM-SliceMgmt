@@ -464,3 +464,19 @@ mat-dialog-container h5 .mat-icon {
   border-bottom: 1px solid #c7dcf1;
   color: #3471b9;
 }
+#fieldSnapshotSetWindow .mat-expansion-indicator::after,
+#fieldSnapshotSetWindow .mat-expansion-panel-header-title,
+#fieldSnapshotSetWindow .mat-expansion-panel-header-description,
+#fieldSnapshotSetWindow .mat-expansion-panel table th,
+#fieldSnapshotSetWindow .mat-expansion-panel table td {
+  color: #333!important;
+}
+#fieldSnapshotSetWindow .mat-expansion-panel {
+  border: 1px solid #afc1e1!important;
+}
+#fieldSnapshotSetWindow .Snapshot_UI02 li {
+  color: #000!important;
+}
+#fieldSnapshotSetWindow .Snapshot_UI02 {
+  background-color: #a4d1f5db;
+}

@@ -1241,9 +1241,7 @@ body.en .fault_mgr.table table tbody tr td:nth-child(4) {
  #fieldCreationWindow {
   width: 50em!important;
 }
-#PMgmtParameterSetWindow {
-  width: 42em;
-}
+
 .pw {
   position: relative;
 }
@@ -1256,6 +1254,9 @@ body.en .fault_mgr.table table tbody tr td:nth-child(4) {
   color: #45a0e7;
   top: 5px;
 }
+#PMgmtParameterSetWindow {
+  width: 44em;
+}
 #PMgmtParameterSetWindow .mat-radio-button.mat-accent .mat-radio-inner-circle,
 #PMgmtParameterSetWindow .mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
   background-color: #1d8ee4!important;
@@ -1263,6 +1264,12 @@ body.en .fault_mgr.table table tbody tr td:nth-child(4) {
 #PMgmtParameterSetWindow .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
   border-color: #1d8ee5!important;
 }
+#PMgmtParameterSetWindow .content {
+  max-height: 53vh;
+  overflow: auto;
+  display: block;
+}
+
 #provisionModal ul li span {
   white-space: nowrap;
 }
@@ -1301,6 +1308,25 @@ span.upload {
 }
 body.tw #accountCreateModal ul li > label {
   min-width: 15%;
+}
+#fieldSnapshotSetWindow {
+  min-width: 38em;
+}
+#fieldSnapshotSetWindow .mat-expansion-panel {
+  background: transparent;
+}
+#fieldSnapshotSetWindow .mat-expansion-panel table th,
+#fieldSnapshotSetWindow .mat-expansion-panel table td {
+  white-space: nowrap;
+  color: #fff;
+}
+body.tw #fieldSnapshotSetWindow .Snapshot_UI02 .save_name input {
+  width: 20.5em !important;
+  margin: -5px 0 0;
+  padding: 7px 8px;
+}
+body.tw .Snapshot_UI02 + .mat-accordion {
+  margin: 3.8em 1em 0!important;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {

@@ -179,6 +179,135 @@ mat-stepper {
 ::ng-deep #fieldCreationWindow .mat-step-text-label {
   color: #fff;
 }
+::ng-deep #fieldSnapshotSetWindow {
+  min-width: 40em;
+}
+::ng-deep #fieldSnapshotSetWindow .time {
+  float: right;
+  color: #7aa9e3;
+  font-size: 14px;
+}
+::ng-deep #fieldSnapshotSetWindow ul {
+  margin: 0;
+  padding: 0;
+}
+
+::ng-deep #fieldSnapshotSetWindow .content {
+  margin: 0 1em;
+}
+::ng-deep #fieldSnapshotSetWindow  button {
+  background-color: #4e92ff;
+  color: #fff;
+  border-radius: 4px;
+  border: 0;
+  padding: .3em .6em;
+  margin: 0 0.5em 0 0;
+  cursor: pointer;
+}
+::ng-deep #fieldSnapshotSetWindow h3 {
+  font-size: 1em;
+  margin: -5px 0 5px 5px;
+  display: inline-block;
+}
+::ng-deep #fieldSnapshotSetWindow ul li > label {
+  min-width: 7em;
+}
+::ng-deep #fieldSnapshotSetWindow .name input {
+  width: 20em;
+  font-size: 1em;
+}
+::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel {
+  background: transparent;
+  border: 1px solid #293f66;
+  margin: 0 1em;
+}
+::ng-deep #fieldSnapshotSetWindow .mat-expansion-indicator::after ,
+::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel-header-title,
+::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel-header-description,
+::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel table th,
+::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel table td {
+  white-space: nowrap;
+  color: #fff;
+}
+::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel:not([class*=mat-elevation-z]) {
+  box-shadow: none;
+}
+::ng-deep body.tw #fieldSnapshotSetWindow ul li > label {
+  min-width: 4em;
+}
+::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel table {
+  margin: -20px 0 0 0;
+}
+.Snapshot_UI02 {
+  position: relative;
+  margin: 2em 2em 0 !important;
+  display: block;
+  background-color: #449fe9db;
+  padding: 1em 1em 0.5em;
+  border-radius: 10px;
+}
+.Snapshot_UI02 .time {
+  position: absolute;
+  top: -23px;
+  right: 0;
+  color: #7aa9e3;
+  font-size: 14px;
+}
+.Snapshot_UI02 h3 {
+  position: absolute;
+  top: -1.5em;
+  left: 0;
+  color: #6ca9db;
+  font-size: 15px !important;
+}
+.Snapshot_UI02 li {
+  color: #fff;
+}
+.Snapshot_UI02 .save_name {
+  position: absolute;
+  top: 6.2em;
+  width: 100%;
+}
+.Snapshot_UI02 .buttons .download {
+  position: absolute;
+  top: -60px;
+  right: 22px;
+  border-radius: 5em !important;
+  background-color: transparent !important;
+  color: #000 !important;
+  border: 1px solid #2485d9 !important;
+  padding: 7px 13px !important;
+  font-size: 14px;
+  background: linear-gradient(0deg, #86bbfd, #ffffff);
+}
+.Snapshot_UI02 + .mat-accordion {
+  margin: 3.4em 1em 0;
+  display: block;
+}
+.arrow3 {
+  display: none;
+}
+.Snapshot_UI02 .arrow3 {
+  display: inline-block;
+  position: absolute;
+  color: #4ea4ff;
+}
+.Snapshot_UI02 .save_name ul {
+  list-style: none;
+}
+.Snapshot_UI02 .save_name input {
+  width: 17em!important;
+  margin: -5px 0 0;
+}
+.Snapshot_UI02 .buttons .save {
+  position: absolute;
+  top: -5px;
+  right: 26px;
+  font-size: 14px;
+  min-width: initial;
+  padding: 9px 12px !important;
+}
+
 // 針對較小的螢幕尺寸進行響應式布局調整
 @media screen and (max-width:1366px) {
   .table th, 

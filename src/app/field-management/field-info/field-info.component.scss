@@ -26,11 +26,15 @@ h5 .mat-icon {
   bottom: 0;
   left: 0;
   background: #d7be78cf;
-  padding: 8px;
+  padding: 8px 12px 2px 5px;
   z-index: 1000;
   color: #000;
 }
-
+.map-legend > div {
+  display: inline-block;
+  vertical-align: middle;
+  margin: -11px 0.4em 0.3em 0.8em;
+}
 .map-legend img {
   display: inline-block;
   vertical-align: bottom;
@@ -69,12 +73,12 @@ h5 .mat-icon {
 
 // 定義 Expansion Accordion 樣式 @2024/02/29 Add
 ::ng-deep .mat-accordion {
-  background-color: rgba(255, 255, 255, 0.1);
+  /* background-color: rgba(255, 255, 255, 0.1); */
 }
 
 // 定義 Expansion Panel 樣式 @2024/02/29 Add
 ::ng-deep .mat-expansion-panel {
-  background-color: rgba(255, 255, 255, 0.1);
+  /* background-color: rgba(255, 255, 255, 0.1); */
 }
 
 // 設定 Expansion Panel 標題區的樣式 @2024/02/29 Add
@@ -95,7 +99,7 @@ h5 .mat-icon {
 
 // 設定 Expansion Panel 展開內容的樣式 @2024/02/29 Add
 .custom-panel-content {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 
@@ -1036,6 +1040,9 @@ input[type="password"] {
   background-color: #fff;
   border: 1px solid #4093e6;
 }
+.measurement_Type {
+  margin: .3em 0 0;
+}
 .measurement_Type > div {
   position: relative;
   padding: 3px 0;
@@ -1352,4 +1359,24 @@ h3 {
 }
 .BS_List th {
   white-space: nowrap;
+}
+:host ::ng-deep map-info-window .mat-expansion-panel {
+  background-color: #bfdbfeed;
+}
+:host ::ng-deep map-info-window .mat-expansion-panel-header-title {
+  color: #000;
+}
+:host ::ng-deep map-info-window .mat-expansion-panel-header-description {
+  color: #666;
+}
+:host ::ng-deep map-info-window .mat-expansion-panel-body {
+  padding: 16px 0 16px 39px;
+  background: #eee;
+}
+:host ::ng-deep map-info-window .mat-expansion-panel-body ul li label {
+  width: 8em;
+  display: inline-block;
+}
+:host ::ng-deep map-info-window  .mat-expansion-panel-body ul li:hover {
+  color: #3b95f6!important;
 }

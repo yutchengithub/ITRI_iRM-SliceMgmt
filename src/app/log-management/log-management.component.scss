@@ -67,7 +67,7 @@ table {
 table thead th, table tbody td {
   text-align: center;
   padding: 8px;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   // width: 14.28%; // 平均分配列寬，有 7 個欄位: 100 % / 7 ≈ 14.28% 
   vertical-align: top;
   //text-overflow: ellipsis;
