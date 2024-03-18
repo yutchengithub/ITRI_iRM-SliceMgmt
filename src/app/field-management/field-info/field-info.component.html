@@ -118,9 +118,9 @@
 				<!-- 循環遍歷每種嚴重程度的告警並顯示其百分比和數量 -->
 				<span class="percent {{ severityText_forCSS(severity) }}" *ngFor="let severity of severitys; let i = index">
 					<!-- 顯示告警種類的文字 -->
-					<label>{{ severityText(severity) }}</label>
+					<label>{{ severityText( severity ) }}</label>
 					<!-- 顯示對應告警種類的數量 -->
-					<span>{{ severityCount(severity) }}</span>
+					<span>{{ severityCount( severity ) }}</span>
 				</span>
 				</div>
 			</span>
@@ -139,7 +139,7 @@
 				</label>
 				
 				<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
-				<google-map *ngIf="showMapModel" width="100%" height="52em" [center]="center" [options]="mapOptions">
+				<google-map *ngIf="showMapModel" width="100%" height="52em" [center]="center" [options]="mapOptions" id="google-map-container" #For_IRM_FieldMap>
 		
 					<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
 					<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
@@ -153,13 +153,20 @@
 					<!-- (mapMouseover) - 滑鼠懸停時顯示基站資訊 -->
 					<!--  (mapMouseout) - 滑鼠移出時隱藏基站資訊 -->
 					<!--  	 (mapClick) - 點擊標記時觸發選擇基站資訊的函數 -->
-					<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
+					<!-- <map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
 								#markerElem="mapMarker"  
 								[position]="parsePosition(bsInfo.position)"  
 								[icon]="bsInfo.iconUrl"
 								(mapMouseover)="onMouseOverBsInfo(bsInfo)"
 								(mapMouseout)="onMouseOutBsInfo()"
 								(mapClick)="onSelectBsInfo(markerElem, bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status)">
+					</map-marker> -->
+
+					<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
+								#markerElem="mapMarker"  
+								[position]="parsePosition( bsInfo.position )" 
+								[icon]="bsInfo.iconUrl"
+								(mapClick)="onSelectBsInfo( markerElem, bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">
 					</map-marker>
 
 					<!-- Google Maps APIs Mouseover 視窗 @2024/02/29 Update -->	
@@ -390,7 +397,7 @@
 			</div>
 		</ng-template>	  
 	
-		<!-- Field Alarms Information (場域告警資訊) -->
+		<!-- Field Alarms Information ( 場域告警資訊 ) -->
 		<!-- <div class="BOX">
 			<label class="boxTitle">{{ languageService.i18n['field.faultInfo'] }}
 				<a href="javascript:void(0)" (click)="goFaultMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
@@ -399,7 +406,7 @@
 				<br>{{ severityCount(severity) }} </div>
 		</div> -->
 
-		<!-- Field Performance Information (場域效能資訊) -->
+		<!-- Field Performance Information ( 場域效能資訊 ) -->
 		<div class="performanceWindow" style="display: none;">
 			<label class="boxTitle collabsible">{{languageService.i18n['field.performanceInfo']}}
 				<a class="viewmore" href="javascript:void(0)" (click)="goPerformanceMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
@@ -449,7 +456,7 @@
 
 		<div class="performanceWindow collabsible">
 		<div class="baseInfo">
-			<span>{{languageService.i18n['field.performanceInfo']}}
+			<span>{{ languageService.i18n['field.performanceInfo'] }}
 				<a class="viewmore" href="javascript:void(0)" (click)="goPerformanceMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
 			</span>
 			<input id="baseInfo" class="toggle" type="checkbox">
@@ -993,21 +1000,21 @@
 								<li>
 									<label>{{ languageService.i18n['field.pmIP'] }}:</label>
 									<span>
-										<input type="text" formControlName="pmIP" placeholder="{{ PmFtpInfo?.ftpip }}"
+										<input type="text" formControlName="pmIP" placeholder="{{ PmFtpInfo.ftpip }}"
 												class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmIP'].invalid?'required':''}}">
 									</span>
 								</li>
 								<li>
 									<label>{{ languageService.i18n['field.folderPath'] }}:</label>
 									<span>
-										<input type="text" formControlName="folderPath" placeholder="{{ PmFtpInfo?.folderpath }}"
+										<input type="text" formControlName="folderPath" placeholder="{{ PmFtpInfo.folderpath }}"
 												class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['folderPath'].invalid?'required':'' }}">
 									</span>
 								</li>
 								<li>
 									<label>{{ languageService.i18n['field.pmID'] }}:</label>
 									<span>
-										<input type="text" formControlName="pmID" placeholder="{{ PmFtpInfo?.ftpid }}"
+										<input type="text" formControlName="pmID" placeholder="{{ PmFtpInfo.ftpid }}"
 												class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmID'].invalid?'required':'' }}">
 									</span>
 								</li>
@@ -1015,7 +1022,7 @@
 									<label>{{ languageService.i18n['field.pmKey'] }}:</label>
 									<span class="pw">
 									<!-- 使用 span 標籤來群組輸入框和圖標 -->
-									<input [type]="hidePassword ? 'password' : 'text'" formControlName="pmKey" [placeholder]="PmFtpInfo?.ftpkey"
+									<input [type]="hidePassword ? 'password' : 'text'" formControlName="pmKey" [placeholder]="PmFtpInfo.ftpkey"
 											[class]="PMgmtParameterSetFormValidated && PMgmtParameterSetForm.controls['pmKey'].invalid ? 'required' : ''">
 									<!-- 密碼輸入框，輸入類型根據 hidePassword 變數來切換 password 和 text -->
 									<i class="material-icons" (click)="togglePasswordVisibility()">
@@ -1028,14 +1035,14 @@
 								<li>
 									<label>{{ languageService.i18n['field.MeasurementInterval_pmint'] }}:</label>
 									<span>
-										<input type="text" formControlName="MeasurementInterval_pmint" placeholder="{{ PmFtpInfo?.pmint }}"
+										<input type="text" formControlName="MeasurementInterval_pmint" placeholder="{{ PmFtpInfo.pmint }}"
 												class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].invalid?'required':'' }}">
 									</span>
 								</li>
 								<li>
 									<label>{{ languageService.i18n['field.UploadInterval_fmint'] }}:</label>
 									<span>
-										<input type="text" formControlName="UploadInterval_fmint" placeholder="{{ PmFtpInfo?.fmint }}"
+										<input type="text" formControlName="UploadInterval_fmint" placeholder="{{ PmFtpInfo.fmint }}"
 											class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['UploadInterval_fmint'].invalid?'required':''}}">
 									</span>
 								</li>
