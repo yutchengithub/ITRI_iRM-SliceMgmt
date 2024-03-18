@@ -38,6 +38,8 @@ import { localBSinfo }    from '../../shared/local-files/BS/For_queryBsInfo';   
 import { map } from 'rxjs/operators';              // @2023/12/24 Add
 import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
 import { MapMarker, MapInfoWindow } from '@angular/google-maps'; // @2024/02/27 Add
+import { Input } from '@angular/core';
+
 
 import { ElementRef } from '@angular/core';
 import { Console } from 'console';
@@ -171,9 +173,10 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
-  // @2024/02/22 Update
+  // @2024/03/18 Update
   // ngAfterViewInit 是 Angular 在組件視圖初始化後會呼叫的生命週期事件。
   ngAfterViewInit() {
+    
     // 檢查 this.map.googleMap 是否已經被定義。
     // this.map 是通過 ViewChild 獲取的 GoogleMap 實例，
     // 而 googleMap 是實際的 Google Maps JavaScript API 地圖對象。
@@ -190,6 +193,20 @@ export class FieldInfoComponent implements OnInit {
     }
     // 如果 this.map.googleMap 尚未定義，可能表示地圖尚未完全初始化。
     // 在這種情況下，可能需要考慮使用其他方法或檢查點以確保地圖已經準備好
+
+    // @2024/03/18 Add
+    // 監聽 <map-info-window> 窗口的 closeclick 事件
+    if ( this.infoWindow ) {
+
+      this.infoWindow.closeclick.subscribe(() => {
+
+        // 重置基站資訊摺疊面板展開狀態
+        this.isPanelExpanded = false;
+
+        // 重置地圖回一開始的中心縮放位置
+        this.adjustMapZoom();
+      });
+    }
 
     this.getQueryPmFtpInfo();  // 此時先取得"效能管理參數設定"資訊 @2024/02/22 Add
   }
@@ -254,9 +271,15 @@ export class FieldInfoComponent implements OnInit {
   // 用於儲存場域多邊形的邊界點 @2024/01/02 Add
   fieldBounds!: google.maps.LatLngBoundsLiteral;    // 用於儲存放置 GroundOverlay 的場域邊界資訊
   
-  // @2024/01/05 Add
+  // @2024/03/18 Update
   // adjustMapZoom 方法用於根據場域邊界自動調整地圖的縮放等級和視角。
   adjustMapZoom() {
+
+    // 在 <map-info-window> 已展開的情況下不進行調整
+    if ( this.isPanelExpanded ) {
+        return;
+    }
+
     // 先檢查地圖實例和場域邊界是否都已經被正確設定。
     if ( this.map.googleMap && this.fieldBounds ) {
       // 如果都設定好了，就利用 Google Maps API 的 fitBounds 方法，
@@ -1333,7 +1356,7 @@ export class FieldInfoComponent implements OnInit {
     return this.displayBsInfo_for_googleMapInfoWindow ? this.parsePosition(this.displayBsInfo_for_googleMapInfoWindow.position) : { lat: 0, lng: 0 };
   }
 
-  // @2024/02/29 Update for Expansion Panel in MouseOver
+  // @2024/03/18 Update for Expansion Panel in MouseOver
   // 負責處理當地圖上的標記被點擊時的事件，
   // 用來切換成顯示 "當下點擊的基站資訊與基站圖標"，並顯示對應的資訊於點擊到的基站圖標上"
   onSelectBsInfo( marker: MapMarker, clickbsInfo: SimplifiedBSInfo, clickbsInfoName: string,
@@ -1342,6 +1365,9 @@ export class FieldInfoComponent implements OnInit {
     // 每次當點擊一個基站都預設不展開摺疊面板 @2024/02/29 Add 
     this.isPanelExpanded = false;
     
+    // 每次當點擊一個基站都重置地圖回一開始的中心縮放位置 @2024/03/18 Add
+    this.adjustMapZoom();
+
     // 在 Angular 的 NgZone 中執行以保證更新能正確反映在 UI 上
     this.ngZone.run(() => {
 
@@ -1428,7 +1454,7 @@ export class FieldInfoComponent implements OnInit {
   get displayBsInfoPosition(): google.maps.LatLngLiteral {
 
     // 如果 displayBsInfo 存在，則調用 parsePosition 方法進行轉換，否則返回預設值
-    return this.displayBsInfo ? this.parsePosition(this.displayBsInfo.position) : { lat: 0, lng: 0 };
+    return this.displayBsInfo ? this.parsePosition( this.displayBsInfo.position ) : { lat: 0, lng: 0 };
   }
 
   // @2024/02/26 Add for MouseOver 
@@ -1445,7 +1471,7 @@ export class FieldInfoComponent implements OnInit {
     try {
 
       // 檢查字符串中是否包含 'NaN'
-      if (positionStr.includes('NaN')) {
+      if ( positionStr.includes('NaN') ) {
         throw new Error('Position contains NaN');
       }
 
@@ -1469,17 +1495,65 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
+
   // @2024/02/29 Add
-  // 用來追蹤摺疊面板是否展開的狀態變量 ( For Google Map Info Window )
+  // 追蹤 Info Window 裡的摺疊面板是否為展開的狀態 ( For Google Map Info Window )
   isPanelExpanded: boolean = false; // 初始設置為 false，表示摺疊面板在初始狀態下是未展開的
 
-  // @2024/03/07 Update
-  // 此函數用於切換摺疊面板的展開/摺疊狀態 ( For Google Map Info Window )
+  // @2024/03/18 Update
+  // 切換 Info Window 摺疊面板展開或收起的狀態
   togglePanel() {
-    this.isPanelExpanded = !this.isPanelExpanded; // 將 isPanelExpanded 的值反轉，如果為 true 則變為 false，反之亦然
-    console.log( "Google Map Info Window 的摺疊面板展開狀態:", this.isPanelExpanded ); // 在控制台輸出當前摺疊面板的展開狀態
+    this.isPanelExpanded = !this.isPanelExpanded; // 反轉 isPanelExpanded 的值
+
+    if ( this.isPanelExpanded ) {
+      // 如果面板展開，則調整地圖視野以適應訊息窗口
+      this.expandMapInfoWindow_adjustMapView();
+    } else {
+      // 如果面板收起，則重置地圖視野到原始中心
+      this.adjustMapZoom();
+    }
+
+    console.log( "Info Window 摺疊面板展開狀態:", this.isPanelExpanded );
   }
-  
+
+  // @2024/03/18 Add
+  // 調整地圖視野，以保證訊息窗口在面板展開時完全可見
+  expandMapInfoWindow_adjustMapView() {
+    if ( !this.map.googleMap || !this.selectedBsInfo ) {
+      // 如果地圖未準備好或沒有選中的基站資訊，則不進行任何操作
+      return;
+    }
+
+    const infoWindowHeight = 1; // 設置訊息窗口的高度，這裡是假定值
+
+    // 獲取地圖容器元素，並得到其高度
+    const mapContainer = document.getElementById('google-map-container');
+    const mapHeight = mapContainer ? mapContainer.offsetHeight : 0;
+    const latLng = this.parsePosition( this.selectedBsInfo.position );
+    const latLngBounds = this.map.googleMap.getBounds();
+
+    if ( latLngBounds && latLng ) {
+      const northEast = latLngBounds.getNorthEast(); // 獲取地圖視界的東北角
+      const southWest = latLngBounds.getSouthWest(); // 獲取地圖視界的西南角
+
+      // 計算每像素的緯度單位
+      const latPerPx = ( northEast.lat() - southWest.lat() ) / mapHeight;
+
+      // 根據訊息窗口高度計算相應的緯度增量
+      const additionalLat = infoWindowHeight * latPerPx;
+
+      // 創建一個新的地圖中心點，向上偏移以使訊息窗口完全顯示
+      const newCenter = {
+        lat: latLng.lat + additionalLat,
+        lng: latLng.lng,
+      };
+
+      // 將地圖中心移動到新的位置
+      this.map.googleMap.panTo( newCenter );
+    }
+  }
+
+
   // @2024/02/29 Add
   // 用來追蹤是否展示額外資訊的狀態變量 ( For 自製 MouseOver )
   isAdditionalInfoVisible: boolean = false;
