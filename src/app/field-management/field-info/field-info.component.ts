@@ -173,7 +173,7 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
-  // @2024/03/18 Update
+  // @2024/03/19 Update
   // ngAfterViewInit 是 Angular 在組件視圖初始化後會呼叫的生命週期事件。
   ngAfterViewInit() {
     
@@ -194,17 +194,22 @@ export class FieldInfoComponent implements OnInit {
     // 如果 this.map.googleMap 尚未定義，可能表示地圖尚未完全初始化。
     // 在這種情況下，可能需要考慮使用其他方法或檢查點以確保地圖已經準備好
 
-    // @2024/03/18 Add
+    // @2024/03/19 Update
     // 監聽 <map-info-window> 窗口的 closeclick 事件
     if ( this.infoWindow ) {
 
-      this.infoWindow.closeclick.subscribe(() => {
+      // 確保在 Angular 的 NgZone 內註冊事件監聽器
+      this.ngZone.run(() => {
 
-        // 重置基站資訊摺疊面板展開狀態
-        this.isPanelExpanded = false;
+        this.infoWindow.closeclick.subscribe(() => {
 
-        // 重置地圖回一開始的中心縮放位置
-        this.adjustMapZoom();
+          // 重置基站資訊摺疊面板展開狀態
+          this.isPanelExpanded = false;
+
+          // 重置地圖回一開始的中心縮放位置
+          this.adjustMapZoom();
+
+        });
       });
     }
 
