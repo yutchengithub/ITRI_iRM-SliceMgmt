@@ -111,6 +111,9 @@ export class BSManagementComponent implements OnInit {
     this.getBSList();
   }
 
+
+
+  
   getBSList() {
     const firm = this.searchForm.controls['firm'].value;
     const uploadtype = this.searchForm.controls['uploadtype'].value;

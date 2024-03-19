@@ -16,25 +16,28 @@
   <table>
     <thead>
       <tr>
-        <th>{{languageService.i18n['sm.th_time']}}</th>
-        <th>{{languageService.i18n['sm.th_type']}}</th>
-        <th class="icon">{{languageService.i18n['sm.th_state']}}</th>
-        <th class="icon">{{languageService.i18n['sm.th_download']}}</th>
-        <th class="icon">{{languageService.i18n['sm.th_view']}}</th>
-        <th class="icon">{{languageService.i18n['sm.th_delete']}}</th>
+        <th>{{ languageService.i18n['BS.name'] }}</th>
+        <th>{{ languageService.i18n['BS.type'] }}</th>
+        <th>{{ languageService.i18n['BS.cellCount'] }}</th>
+        <th>{{ languageService.i18n['BS.description'] }}</th>
+        <th class="icon">{{ languageService.i18n['BS.belongField'] }}</th>
+        <th class="icon">{{ languageService.i18n['BS.status'] }}</th>
+        <th class="icon">{{ languageService.i18n['BS.view'] }}</th>
+        <th class="icon">{{ languageService.i18n['BS.delete'] }}</th>
       </tr>
     </thead>
     <tbody>
       <tr
         *ngFor="let opt of componentList.components | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-        <td>2023-11-25 03:00:00</td>
-        <td>{{languageService.i18n['sm.pmReport']}}</td>
+        <td>BS11</td>
+        <td>A</td>
+        <td>1</td>
+        <td>BS11</td>
+        <td>ITRI</td>
         <td class="icon">
-          <label *ngIf="opt.status === 0" class="greenLight"></label>
-          <label *ngIf="opt.status === 1" class="redLight"></label>
-        </td>
-        <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['sm.smDownload']}}" (click)="openProvisionModal(opt)">download_for_offline</mat-icon>
+          <label *ngIf=" opt.status === 0 " class="grayLight"></label>
+          <label *ngIf=" opt.status === 1 " class="redLight"></label>
+          <label *ngIf=" opt.status === 2 " class="greenLight"></label>
         </td>
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['sm.view_detail']}}" (click)="viewPage(opt)">remove_red_eye</mat-icon>
