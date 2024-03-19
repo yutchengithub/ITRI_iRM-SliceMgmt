@@ -165,12 +165,14 @@ export class FieldInfoComponent implements OnInit {
   ngOnInit(){
     this.sessionId = this.commonService.getSessionId();
     console.log( 'The sessionId is', this.sessionId ); // @2024/01/05 Add 
-    this.route.params.subscribe((params) => {
+
+    this.route.params.subscribe(( params ) => {
       this.fieldId = params['id'];
       this.fieldName = params['name'];
-      console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
+      console.log( 'fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr' );
       this.getQueryFieldInfo();
     });
+
   }
 
   // @2024/03/19 Update
@@ -181,10 +183,12 @@ export class FieldInfoComponent implements OnInit {
     // this.map 是通過 ViewChild 獲取的 GoogleMap 實例，
     // 而 googleMap 是實際的 Google Maps JavaScript API 地圖對象。
     if ( this.map.googleMap ) {
+
       // 如果 googleMap 對象存在，則向它添加一個事件監聽器。
       // 'tilesloaded' 事件會在地圖上的所有可見瓦片都已加載完成後觸發。
       // 這是一個好時機來調整地圖的視角和縮放等級，因為它表明地圖已經準備好了。
-      this.map.googleMap.addListener('tilesloaded', () => {
+      this.map.googleMap.addListener( 'tilesloaded', () => {
+
         // 當 'tilesloaded' 事件觸發時，調用 adjustMapZoom 方法。
         // 此方法將根據場域的邊界值調整地圖的縮放等級，
         // 確保用戶可以看到完整的場域範圍。
@@ -208,6 +212,22 @@ export class FieldInfoComponent implements OnInit {
 
           // 重置地圖回一開始的中心縮放位置
           this.adjustMapZoom();
+
+          // 重置被選中的 BS 
+          this.selectedBsInfo = null;
+
+          // 關閉顯示自製的 "BS 詳細資訊 " 視窗 ( Mouseover )
+          this.showBsInfoWindow = false;
+
+          // 遍歷所有基站資訊，重置所有 BS 的顯示圖標狀態
+          this.allSimplifiedBsInfo.forEach( bsInfo => {
+            
+            // 將每個基站都設為未點擊
+            const isSelected = false;
+            
+            // 更新圖標 URL
+            bsInfo.iconUrl = this.setIconUrl( bsInfo.bstype, bsInfo.status, isSelected, "", bsInfo.name );
+          });
 
         });
       });
@@ -311,8 +331,8 @@ export class FieldInfoComponent implements OnInit {
 
       // 創建並顯示 overlay
       this.overlay = new google.maps.GroundOverlay( imageSrc, this.fieldBounds ); // 使用場域圖片和邊界創建一個 GroundOverlay 實例
-      this.overlay.setMap(this.map.googleMap);   // 將創建的 GroundOverlay 添加到 Google 地圖實例上
-      this.overlay.setOpacity( 0.5 );            // 設定 GroundOverlay 的透明度
+      this.overlay.setMap( this.map.googleMap );   // 將創建的 GroundOverlay 添加到 Google 地圖實例上
+      this.overlay.setOpacity( 0.5 );              // 設定 GroundOverlay 的透明度
       
       console.log( 'Display', this.currentOverlayType, 'Overlay:', this.overlay );
     }
@@ -550,7 +570,7 @@ export class FieldInfoComponent implements OnInit {
     } else {
       // 移除線條
       this.nrLines.forEach( polyline => {
-        this.removePolylineFromMap(polyline);
+        this.removePolylineFromMap( polyline );
       });
       // 清空儲存線條的矩陣
       this.nrLines = [];
@@ -570,7 +590,7 @@ export class FieldInfoComponent implements OnInit {
 
   /** @2024/01/04 Add
    * 從地圖上移除 Polyline 的方法
-   * @param {google.maps.Polyline} polyline - 要從地圖上移除的 Polyline 對象
+   * @param { google.maps.Polyline } polyline - 要從地圖上移除的 Polyline 對象
    */
   removePolylineFromMap( polyline: google.maps.Polyline ) {
     // 將 Polyline 的地圖屬性設置為 null，從而將其從地圖上移除
@@ -587,7 +607,7 @@ export class FieldInfoComponent implements OnInit {
 
   // @2024/01/03 Update
   toggleColorbar( type: 'RSRP' | 'SINR' ) {
-    console.log("The click button is:", type);
+    console.log( "The click button is:", type );
 
     // 切換 Colorbar 狀態
     if ( this.currentColorbar === null ) {
@@ -608,7 +628,7 @@ export class FieldInfoComponent implements OnInit {
 
   // @2024/01/03 Update
   setActiveButton_rsrp_sinr( buttonId: string ) {
-    console.log("The click button is:", buttonId);
+    console.log( "The click button is:", buttonId );
     
     // 切換 RSRP/SINR 圖示按鈕狀態
     if ( this.activeButton_rsrp_sinr === null ) {
@@ -644,10 +664,10 @@ export class FieldInfoComponent implements OnInit {
         // 設定本地 SINR 或 RSRP 圖片的路徑
         if ( overlayType === OverlayType.SINR ) {
           imageSrc_localPath = './assets/img/sinrMap_local.png'; // 定義本地 SINR 圖片路徑
-          console.log("The local path of image is:", imageSrc_localPath);
+          console.log( "The local path of image is:", imageSrc_localPath );
         } else {
           imageSrc_localPath = './assets/img/rsrpMap_local.png'; // 定義本地 RSRP 圖片路徑
-          console.log("The local path of image is:", imageSrc_localPath);
+          console.log( "The local path of image is:", imageSrc_localPath );
         }
 
         // 如果本地路徑存在，則在地圖上顯示本地圖片
@@ -666,16 +686,16 @@ export class FieldInfoComponent implements OnInit {
         // 調用後端 API 獲取 SINR 或 RSRP 圖片
         this.API_Field.bsHeatMap( this.fieldId, leftLongitude, leftLatitude,
                                        rightLongitude, rightLatitude, mapType ).subscribe({
-          next: (response) => {
+          next: ( response ) => {
             const imageSrc = 'data:image/png;base64,' + response.heatMap; // 從後端回應中獲取圖片
             this.displayImageOnMap( imageSrc, overlayType );
           },
-          error: (error) => {
-            console.error("Error fetching SINR/RSRP image:", error);
+          error: ( error ) => {
+            console.error( "Error fetching SINR/RSRP image:", error );
             this.isfieldImage_or_RsrpSinrMapLoading = false; // 出錯時，也隱藏 Spinner
           },
           complete: () => {
-            console.log("SINR/RSRP image fetch completed");
+            console.log( "SINR/RSRP image fetch completed" );
             this.isfieldImage_or_RsrpSinrMapLoading = false; // 加載完成，隱藏 Spinner
           }
         });
@@ -976,7 +996,7 @@ export class FieldInfoComponent implements OnInit {
     }
   }
   
-  // @12/27 Update - Add Local Files Processing
+  // @2024/03/19 Update - 關閉預設顯示第一筆 BS 資訊為預設點擊 icon 
   // 處理場域資訊並調用 getQueryBsInfoForAll
   // Process field info and call getQueryBsInfoForAll
   processFieldInfo() {
@@ -1010,12 +1030,14 @@ export class FieldInfoComponent implements OnInit {
         // 有就遍歷 allSimplifiedBsInfo 並為每個基站設置圖標 URL
         this.allSimplifiedBsInfo.forEach((bsInfo, index) => {
           // 獲取 allSimplifiedBsInfo 數組中第一筆資料的名稱
-          const firstBsInfoName = this.allSimplifiedBsInfo[0].name;
+          // const firstBsInfoName = this.allSimplifiedBsInfo[0].name;
+          const firstBsInfoName = "";
 
           // 判斷當前處理的基站是否為數組中的第一個元素（即索引為 0 的元素）
           // 如果是第一個元素（index === 0），則 isSelected 為 true，否則為 false
           // isSelected 用於確定當前基站是否應該顯示為「被選中」狀態的圖標
-          const isSelected = ( index === 0 );
+          // const isSelected = (index === 0);
+          const isSelected = false;
 
           // 為當前基站設置圖標 URL，根據基站的類型、狀態、是否被選中以及是否是數組中的第一個基站
           bsInfo.iconUrl = this.setIconUrl( bsInfo.bstype, bsInfo.status, isSelected, firstBsInfoName, bsInfo.name );
@@ -1055,7 +1077,7 @@ export class FieldInfoComponent implements OnInit {
   // 用於存儲當前選中的基站簡化資訊，以便在前端的「基站資訊」欄位中顯示
   displayBsInfo: SimplifiedBSInfo | null = null;
 
-  // 用於獲取場地內所有 BS 的資訊 @12/26 Update
+  // 用於獲取場地內所有 BS 的資訊 @2024/03/19 Update - 關閉預設顯示第一筆 BS 資訊為預設點擊 icon 
   // Get the All infos of BSs in the field 
   getQueryBsInfoForAll( bsNum: number, bsinfo_Infield: BsInfoInField[] ) {
 
@@ -1086,23 +1108,23 @@ export class FieldInfoComponent implements OnInit {
     });
 
     // 使用 forkJoin 等待所有 Observable 完成，然後處理它們的結果
-    forkJoin(observables).subscribe({
-      next: (results: (BSInfo | BSInfo_dist)[]) => {
+    forkJoin( observables ).subscribe({
+      next: ( results: ( BSInfo | BSInfo_dist )[] ) => {
 
         // 初始化一個新數組用於存放所有轉換後的 SimplifiedBSInfo 對象
         const allSimplifiedData: SimplifiedBSInfo[] = [];
 
         // 遍歷每個異步請求的結果
-        results.forEach(result => {
-          if (result.bstype === 2) {
+        results.forEach( result => {
+          if ( result.bstype === 2 ) {
 
             // 如果結果為 BSInfo_dist 類型，則處理每個子基站資訊
             // 使用展開運算符...將每個子基站轉換函數返回的數組元素加入到 allSimplifiedData 數組中
-            allSimplifiedData.push(...this.convertDistBsInfoToSimplifiedFormat(result as BSInfo_dist));
+            allSimplifiedData.push( ...this.convertDistBsInfoToSimplifiedFormat( result as BSInfo_dist ) );
           } else {
 
             // 如果結果為 BSInfo 類型，則直接將轉換後的對象加入到 allSimplifiedData 數組
-            allSimplifiedData.push(this.convertBsInfoToSimplifiedFormat(result as BSInfo));
+            allSimplifiedData.push( this.convertBsInfoToSimplifiedFormat( result as BSInfo ) );
           }
         });
 
@@ -1113,17 +1135,19 @@ export class FieldInfoComponent implements OnInit {
         if ( this.allSimplifiedBsInfo.length > 0 ) {
 
           // 有就遍歷 allSimplifiedBsInfo 並為每個基站設置圖標 URL
-          this.allSimplifiedBsInfo.forEach((bsInfo, index) => {
+          this.allSimplifiedBsInfo.forEach( ( bsInfo, index ) => {
             // 獲取 allSimplifiedBsInfo 數組中第一筆資料的名稱
-            const firstBsInfoName = this.allSimplifiedBsInfo[0].name;
+            // const firstBsInfoName = this.allSimplifiedBsInfo[0].name;
+            const firstBsInfoName = "";
 
             // 判斷當前處理的基站是否為數組中的第一個元素（即索引為 0 的元素）
             // 如果是第一個元素（index === 0），則 isSelected 為 true，否則為 false
             // isSelected 用於確定當前基站是否應該顯示為「被選中」狀態的圖標
-            const isSelected = (index === 0);
+            // const isSelected = (index === 0);
+            const isSelected = false;
 
             // 為當前基站設置圖標 URL，根據基站的類型、狀態、是否被選中以及是否是數組中的第一個基站
-            bsInfo.iconUrl = this.setIconUrl(bsInfo.bstype, bsInfo.status, isSelected, firstBsInfoName, bsInfo.name);
+            bsInfo.iconUrl = this.setIconUrl( bsInfo.bstype, bsInfo.status, isSelected, firstBsInfoName, bsInfo.name);
           });
 
           // 將 allSimplifiedBsInfo 數組中的第一筆基站資訊預設顯示於「基站資訊」欄位上
@@ -1296,17 +1320,17 @@ export class FieldInfoComponent implements OnInit {
       if ( bsInfoBSType === 2 && currentBsInfoName === firstORclickBsInfoName ) {
       
         // 符合就選擇分布式基站的非選中圖標
-        iconName = (bsInfoStatus === 1) ? 'dist_gnb_offline_nonselected.png' : 'dist_gnb_online_nonselected.png';
+        iconName = ( bsInfoStatus === 1 ) ? 'dist_gnb_offline_nonselected.png' : 'dist_gnb_online_nonselected.png';
         
       } else { // 其他情況選擇預設圖標
 
-        if (bsInfoBSType === 2 && bsInfoStatus === 1) {
+        if ( bsInfoBSType === 2 && bsInfoStatus === 1 ) {
           iconName = 'dist_gnb_offline_default.png'; // 分布式基站離線的預設圖標
-        } else if (bsInfoBSType === 2 && bsInfoStatus === 2) {
+        } else if ( bsInfoBSType === 2 && bsInfoStatus === 2 ) {
           iconName = 'dist_gnb_online_default.png';  // 分布式基站在線的預設圖標
-        } else if (bsInfoBSType === 1 && bsInfoStatus === 1) {
+        } else if ( bsInfoBSType === 1 && bsInfoStatus === 1 ) {
           iconName = 'gnb_offline_nonselected.png';  // 通用基站離線的非選中圖標
-        } else if (bsInfoBSType === 1 && bsInfoStatus === 2) {
+        } else if ( bsInfoBSType === 1 && bsInfoStatus === 2 ) {
           iconName = 'gnb_online_nonselected.png';   // 通用基站在線的非選中圖標
         }
       }
@@ -1361,7 +1385,8 @@ export class FieldInfoComponent implements OnInit {
     return this.displayBsInfo_for_googleMapInfoWindow ? this.parsePosition(this.displayBsInfo_for_googleMapInfoWindow.position) : { lat: 0, lng: 0 };
   }
 
-  // @2024/03/18 Update for Expansion Panel in MouseOver
+
+  // @2024/03/19 Update for control mouseover
   // 負責處理當地圖上的標記被點擊時的事件，
   // 用來切換成顯示 "當下點擊的基站資訊與基站圖標"，並顯示對應的資訊於點擊到的基站圖標上"
   onSelectBsInfo( marker: MapMarker, clickbsInfo: SimplifiedBSInfo, clickbsInfoName: string,
@@ -1381,63 +1406,81 @@ export class FieldInfoComponent implements OnInit {
       
       // 更新基站選中狀態
       if ( this.selectedBsInfo === clickbsInfo ) {
+
         // 如果此基站已選中，則取消選中並隱藏訊息視窗
-        this.selectedBsInfo = null;
+          this.selectedBsInfo = null;
         this.showBsInfoWindow = false;
-        this.displayBsInfo = null;
+           this.displayBsInfo = null;
+
       } else {
+
         // 否則，將此基站設為選中狀態並顯示訊息視窗
-        this.selectedBsInfo = clickbsInfo;
+          this.selectedBsInfo = clickbsInfo;
         this.showBsInfoWindow = true;
-        this.displayBsInfo = clickbsInfo;
+           this.displayBsInfo = clickbsInfo;
       }
 
       // 遍歷所有基站資訊，更新它們的圖標顯示狀態
       this.allSimplifiedBsInfo.forEach( bsInfo => {
         
         // 檢查每個基站是否為當前點擊的基站
-        const isSelected = bsInfo === clickbsInfo;
+        const isSelected = bsInfo === this.selectedBsInfo;
         
         // 更新圖標 URL
         bsInfo.iconUrl = this.setIconUrl( bsInfo.bstype, bsInfo.status, isSelected, clickbsInfoName, bsInfo.name );
       });
 
       // 輸出被點擊的基站訊息到控制台
-      console.log("Marker", clickbsInfoName, "is clicked,\n",
-                    "its type is", clickbsInfoBSType, "its status is", clickbsInfoStatus);
+      console.log( "Marker", clickbsInfoName, "is clicked,\n",
+                    "its type is", clickbsInfoBSType, "its status is", clickbsInfoStatus );
     });
 
     // 觸發變化檢測更新 UI
     this.cdr.detectChanges();
 
     // 輸出當前點擊的基站訊息到控制台
-    console.log("After click onSelectBsInfo the displayBsInfo:", this.displayBsInfo);
+    console.log( "After click onSelectBsInfo() the displayBsInfo:", this.displayBsInfo );
   }
 
-  // @2024/02/27 Add for MouseOver 
+
+  // Mouse Over @2024/03/19 Update  
   // 當鼠標懸停在地圖上的基站標記上時觸發的事件處理函數
-  onMouseOverBsInfo( bsInfo: SimplifiedBSInfo ): void {
+  onMouseOverBsInfo( marker: MapMarker, bsInfoInMouseover: SimplifiedBSInfo ): void {
 
     // 將當前懸停的基站訊息設為要顯示的基站詳細訊息
-    this.displayBsInfo = bsInfo;
+    // this.displayBsInfo = bsInfoInMouseover;
 
     // 設置顯示基站詳細訊息視窗的標記為 true，使其顯示
-    this.showBsInfoWindow = true;
+    // this.showBsInfoWindow = true;
 
-    // 註釋提示: 可在此根據需要添加計算並設置資訊視窗位置的邏輯
+    // 如沒有 BS 被點擊過
+    if ( !this.selectedBsInfo ) {
+
+      // 就顯示出鼠標碰到的對應 BS 資訊上 <map-info-window> 中
+      this.displayBsInfo_for_googleMapInfoWindow = bsInfoInMouseover;
+      this.infoWindow.open( marker );
+    }
   }
 
-  // @2024/02/27 Add for MouseOver 
+  // Mouse Out @2024/03/19 Update
   // 當鼠標從地圖上的基站標記移開時觸發的事件處理函數
   onMouseOutBsInfo(): void {
 
     // 檢查是否有基站被選中
+    // if ( !this.selectedBsInfo ) {
+      
+    //   // 如果沒有基站被選中，則將顯示基站詳細訊息視窗的標記設為 false，使其隱藏
+    //   this.showBsInfoWindow = false;
+    // }
+    // 如果有基站被選中，則不做任何操作，保持詳細訊息視窗顯示
+
+    // 如沒有 BS 被點擊過
     if ( !this.selectedBsInfo ) {
       
-      // 如果沒有基站被選中，則將顯示基站詳細訊息視窗的標記設為 false，使其隱藏
-      this.showBsInfoWindow = false;
+      // 鼠標離開碰到的 BS 就取消顯示 <map-info-window> 
+      this.infoWindow.close();
     }
-    // 如果有基站被選中，則不做任何操作，保持詳細訊息視窗顯示
+    
   }
 
   // @2024/02/26 Add for MouseOver 
@@ -1472,7 +1515,7 @@ export class FieldInfoComponent implements OnInit {
 
   // @2024/01/09 - Update
   // 此方法用於將位置訊息的字串轉換為 Google 地圖所需的 LatLngLiteral 對象
-  parsePosition( positionStr: string): google.maps.LatLngLiteral {
+  parsePosition( positionStr: string ): google.maps.LatLngLiteral {
     try {
 
       // 檢查字符串中是否包含 'NaN'
@@ -1521,10 +1564,10 @@ export class FieldInfoComponent implements OnInit {
     console.log( "Info Window 摺疊面板展開狀態:", this.isPanelExpanded );
   }
 
-  // @2024/03/18 Add
+  // @2024/03/19 Update
   // 調整地圖視野，以保證訊息窗口在面板展開時完全可見
   expandMapInfoWindow_adjustMapView() {
-    if ( !this.map.googleMap || !this.selectedBsInfo ) {
+    if ( !this.map.googleMap || !this.displayBsInfo_for_googleMapInfoWindow ) {
       // 如果地圖未準備好或沒有選中的基站資訊，則不進行任何操作
       return;
     }
@@ -1532,9 +1575,9 @@ export class FieldInfoComponent implements OnInit {
     const infoWindowHeight = 1; // 設置訊息窗口的高度，這裡是假定值
 
     // 獲取地圖容器元素，並得到其高度
-    const mapContainer = document.getElementById('google-map-container');
+    const mapContainer = document.getElementById( 'google-map-container' );
     const mapHeight = mapContainer ? mapContainer.offsetHeight : 0;
-    const latLng = this.parsePosition( this.selectedBsInfo.position );
+    const latLng = this.parsePosition( this.displayBsInfo_for_googleMapInfoWindow.position );
     const latLngBounds = this.map.googleMap.getBounds();
 
     if ( latLngBounds && latLng ) {
