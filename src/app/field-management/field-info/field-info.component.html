@@ -4,10 +4,13 @@
 		<button (click)="back()">
 		  <span class="material-icons">arrow_back</span>Back
 		</button>
+
 		<!-- <span>{{languageService.i18n['field.info']}} – {{fieldName}}</span> -->
 		<span>{{ fieldName }}</span>
+
 		<!-- 按鈕容器，根據 showMapModel 的值顯示或隱藏按鈕 -->
 		<span class="fieldMap-button-container">
+
 			<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
 			<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': activeButton_fieldImage === 'fieldImage', 
 																	'button-inactive': activeButton_fieldImage !== 'fieldImage'}" (click)="setActiveButton_fieldImage('fieldImage')">
@@ -15,21 +18,24 @@
 				<span class="material-symbols-outlined">done</span>
 				{{ languageService.i18n['field.image'] }}
 			</button>
-			<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
+
+			<!-- 如非地圖模式，就隱藏 @12/13 Add *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
 			<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': activeButton_NR === 'NR', 
 																'button-inactive': activeButton_NR !== 'NR'}" (click)="setActiveButton_NR('NR')">
 				<mat-icon>timeline</mat-icon>
 				<span class="material-symbols-outlined">done</span>
 				NR
 			</button>
-			<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
+
+			<!-- 如非地圖模式，就隱藏 @12/13 Add *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
 			<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': currentColorbar === 'RSRP', 
 																'button-inactive': currentColorbar !== 'RSRP'}" (click)="toggleColorbar('RSRP')">
 				<mat-icon>signal_cellular_alt</mat-icon>
 				<span class="material-symbols-outlined">done</span>
 				{{ languageService.i18n['field.rsrpMap'] }}
 			</button>
-			<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
+
+			<!-- 如非地圖模式，就隱藏 @12/13 Add *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
 			<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': currentColorbar === 'SINR', 
 																'button-inactive': currentColorbar !== 'SINR'}" (click)="toggleColorbar('SINR')">
 				<mat-icon>signal_cellular_alt</mat-icon>
@@ -124,6 +130,7 @@
 				</span>
 				</div>
 			</span>
+
 		</span>
 	</h5>
 	
@@ -153,19 +160,12 @@
 					<!-- (mapMouseover) - 滑鼠懸停時顯示基站資訊 -->
 					<!--  (mapMouseout) - 滑鼠移出時隱藏基站資訊 -->
 					<!--  	 (mapClick) - 點擊標記時觸發選擇基站資訊的函數 -->
-					<!-- <map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
+					<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
 								#markerElem="mapMarker"  
 								[position]="parsePosition(bsInfo.position)"  
 								[icon]="bsInfo.iconUrl"
-								(mapMouseover)="onMouseOverBsInfo(bsInfo)"
+								(mapMouseover)="onMouseOverBsInfo( markerElem, bsInfo )"
 								(mapMouseout)="onMouseOutBsInfo()"
-								(mapClick)="onSelectBsInfo(markerElem, bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status)">
-					</map-marker> -->
-
-					<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
-								#markerElem="mapMarker"  
-								[position]="parsePosition( bsInfo.position )" 
-								[icon]="bsInfo.iconUrl"
 								(mapClick)="onSelectBsInfo( markerElem, bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">
 					</map-marker>
 
@@ -455,59 +455,59 @@
 		</div>
 
 		<div class="performanceWindow collabsible">
-		<div class="baseInfo">
-			<span>{{ languageService.i18n['field.performanceInfo'] }}
-				<a class="viewmore" href="javascript:void(0)" (click)="goPerformanceMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
-			</span>
-			<input id="baseInfo" class="toggle" type="checkbox">
-			<label for="baseInfo" class="lbl-toggle"></label>
-			<div class="collapsible-content">
-			  <div class="content-inner">
-				
-				<div class="performance_percent">
-					<div class="item">
-						<!-- @12/10 update to get fieldInfo.handoverRate -->
-						<img src="assets/img/access.svg">
-						<span class="label-container">
-							{{ languageService.i18n['field.handoverRate'] }}
-							<span>{{ mobilityAsNumber }}%</span>
-						</span>
-						<!-- @12/18 Update coverage -> mobility -->
-						<!-- <circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress> -->
+			<div class="baseInfo">
+				<span>{{ languageService.i18n['field.performanceInfo'] }}
+					<a class="viewmore" href="javascript:void(0)" (click)="goPerformanceMgr()"> <span class="material-icons" tooltip="{{languageService.i18n['index.viewMore']}}">more_horiz</span> </a>
+				</span>
+				<input id="baseInfo" class="toggle" type="checkbox">
+				<label for="baseInfo" class="lbl-toggle"></label>
+				<div class="collapsible-content">
+				<div class="content-inner">
+					
+					<div class="performance_percent">
+						<div class="item">
+							<!-- @12/10 update to get fieldInfo.handoverRate -->
+							<img src="assets/img/access.svg">
+							<span class="label-container">
+								{{ languageService.i18n['field.handoverRate'] }}
+								<span>{{ mobilityAsNumber }}%</span>
+							</span>
+							<!-- @12/18 Update coverage -> mobility -->
+							<!-- <circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress> -->
+						</div>
+						<div class="item">
+							<!-- @12/10 update to get fieldInfo.accessibility -->
+							<img src="assets/img/handover.svg">
+							<span class="label-container">
+								{{ languageService.i18n['field.accessRate'] }}
+								<span>{{ accessibilityAsNumber }}%</span>
+							</span>
+							<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
+						</div>
+						<hr>
+						<div class="item">
+							<!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
+							<img src="assets/img/cpu.png">
+							<span class="label-container">
+								{{ languageService.i18n['field.CPU_Utilization'] }}
+								<span>{{ resourceProcess }}%</span>
+							</span>
+							<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
+						</div>
+						<div class="item">
+							<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
+							<img src="assets/img/memory.png">
+							<span class="label-container">
+								{{ languageService.i18n['field.Memory_Utilization'] }}
+								<span>{{ resourceMemory }}%</span>
+							</span>
+							<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
+						</div>
 					</div>
-					<div class="item">
-						<!-- @12/10 update to get fieldInfo.accessibility -->
-						<img src="assets/img/handover.svg">
-						<span class="label-container">
-							{{ languageService.i18n['field.accessRate'] }}
-							<span>{{ accessibilityAsNumber }}%</span>
-						</span>
-						<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
-					</div>
-					<hr>
-					<div class="item">
-						<!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
-						<img src="assets/img/cpu.png">
-						<span class="label-container">
-							{{ languageService.i18n['field.CPU_Utilization'] }}
-							<span>{{ resourceProcess }}%</span>
-						</span>
-						<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
-					</div>
-					<div class="item">
-						<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
-						<img src="assets/img/memory.png">
-						<span class="label-container">
-							{{ languageService.i18n['field.Memory_Utilization'] }}
-							<span>{{ resourceMemory }}%</span>
-						</span>
-						<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
-					</div>
+					
 				</div>
-				
-			  </div>
+				</div>
 			</div>
-		  </div>
 		</div>
 
 
