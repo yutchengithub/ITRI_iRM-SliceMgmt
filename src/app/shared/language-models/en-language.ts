@@ -195,7 +195,15 @@ export const Enlanguage = {
   
   // BS Management ( 基站管理 )
   'BS.list':'BS List',
+
   'BS.name':'BS Name',
+  'BS.type':'BS Type',
+  'BS.cellCount':'Cell Count',
+  'BS.description':'Description',
+  'BS.belongField':'Field',
+  'BS.status':'Status',
+  'BS.view':'View',
+  'BS.delete':'Delete',
 
 
   // Fault Management
