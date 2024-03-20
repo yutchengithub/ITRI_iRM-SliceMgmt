@@ -28,22 +28,22 @@
     </thead>
     <tbody>
       <tr
-        *ngFor="let opt of componentList.components | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-        <td>BS11</td>
-        <td>A</td>
+        *ngFor="let BS of bsList.basestation | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+        <td>{{ BS.name }}</td>
+        <td>{{ BS.bstype === 1 ? 'A' : 'D' }}</td>
         <td>1</td>
-        <td>BS11</td>
-        <td>ITRI</td>
+        <td>{{ BS.description }}</td>
+        <td>{{ BS.fieldName }}</td>
         <td class="icon">
-          <label *ngIf=" opt.status === 0 " class="grayLight"></label>
-          <label *ngIf=" opt.status === 1 " class="redLight"></label>
-          <label *ngIf=" opt.status === 2 " class="greenLight"></label>
+          <label *ngIf=" BS.status === 0 " class="grayLight"></label>
+          <label *ngIf=" BS.status === 1 " class="redLight"></label>
+          <label *ngIf=" BS.status === 2 " class="greenLight"></label>
         </td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['sm.view_detail']}}" (click)="viewPage(opt)">remove_red_eye</mat-icon>
+          <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}" (click)="viewPage( BS )">remove_red_eye</mat-icon>
         </td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['sm.delItem']}}" (click)="openDeleteModal(opt)">delete_forever</mat-icon>
+          <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}" (click)="openDeleteModal( BS )">delete_forever</mat-icon>
         </td>
       </tr>
     </tbody>
