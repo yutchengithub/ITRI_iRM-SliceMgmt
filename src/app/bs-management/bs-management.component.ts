@@ -10,6 +10,15 @@ import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
+// import APIs of BS Management @2024/03/19 Add 
+import { apiForBSMgmt } from '../shared/api/For_BS';
+
+// 引入儲存各個資訊所需的 interfaces @2024/03/19 Add 
+import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList';
+
+// 引入所需 Local Files @2024/03/19 Add 
+import { localBSList } from '../shared/local-files/BS/For_queryBsList';
+
 export interface ComponentLists {
   components: Components[];
 }
@@ -95,10 +104,15 @@ export class BSManagementComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private router: Router,
-    private commonService: CommonService,
     private http: HttpClient,
     private fb: FormBuilder,
-    public languageService: LanguageService
+    private  commonService: CommonService,
+    public languageService: LanguageService,
+
+    public  API_BS: apiForBSMgmt,           // @2024/03/19 Add for import API of BS Management
+    
+    public  bsList_LocalFiles: localBSList, // @2024/03/19 Add for import BS List Local Files 
+
   ) {
     this.comtype.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
     this.createSearchForm();
@@ -108,41 +122,8 @@ export class BSManagementComponent implements OnInit {
   ngOnInit(): void {
     this.sessionId = this.commonService.getSessionId();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
-    this.getBSList();
-  }
 
-
-
-  
-  getBSList() {
-    const firm = this.searchForm.controls['firm'].value;
-    const uploadtype = this.searchForm.controls['uploadtype'].value;
-    const model = this.searchForm.controls['model'].value;
-    console.log('querySoftwareList params:')
-    console.log(`fileName=${firm}`);
-    console.log(`uploadtype=${uploadtype}`);
-    console.log(`model=${model}`);
-    clearTimeout(this.refreshTimeout);
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.componentList = this.commonService.componentList;
-      console.log(this.componentList);
-      this.BSListDeal();
-    } else {
-      this.commonService.queryBsComponentList().subscribe(
-        res => {
-          console.log('getBsComponent List:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.componentList = JSON.parse(str);
-          this.BSListDeal();
-        }
-      );
-    }
-  }
-
-  BSListDeal() {
-    this.totalItems = this.componentList.components.length;
+    this.getQueryBsList(); // @2024/03/19 Add for getting BS List
   }
 
   ngOnDestroy() {
@@ -150,6 +131,67 @@ export class BSManagementComponent implements OnInit {
     if (this.querySoftwareScpt) this.querySoftwareScpt.unsubscribe();
     if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
   }
+
+
+
+  bsList: BSList = {} as BSList;   // @2024/03/19 Add
+  isGetQueryBsListLoading = false; // 用於表示加載 BS List 的 flag，初始設置為 false @2024/03/19 Add for Progress Spinner
+
+  // @2024/03/19 Add
+  // Get the BS List in the O1 System
+  getQueryBsList() {
+    console.log( 'getQueryBsList() - Start' );       // getQueryBsList() 啟動 
+    console.log( 'Start fetching info of Bs List' ); // 開始獲取 BS List 資訊
+    clearTimeout( this.refreshTimeout );
+
+    this.isGetQueryBsListLoading = true; // 開始顯示 Spinner 表載入 BS List 數據中
+
+    // 檢查是否為 local 環境
+    if ( this.commonService.isLocal ) { 
+
+      // For testing with local files
+      console.log( 'Start fetching BS List in Local' ); // 開始獲取 Local BS List 資訊
+
+      // 模擬從 Local files 獲取數據並初始化 selected 屬性
+      this.bsList = this.bsList_LocalFiles.bsList_local;
+      this.queryBsListDeal();
+      console.log( 'BS List in Local:', this.bsList );
+      
+      this.isGetQueryBsListLoading = false; // 加載完成，隱藏 spinner
+
+    } else {
+      console.log('Start fetching BS List from API'); // 開始獲取 BS List 資訊
+
+      // Use API_BS's queryBsList() to make an HTTP GET request
+      this.API_BS.queryBsList().subscribe({
+        next: ( res: BSList ) => {
+
+          this.bsList = res;
+          this.queryBsListDeal();
+          console.log( '基站列表資訊\n( BS List ):', this.bsList ); // 取得的 BS List 資訊 ( Obtained BS List information )
+          
+          this.isGetQueryBsListLoading = false; // 取得後隱藏 spinner
+        },
+        error: ( error ) => {
+          console.error( '獲取基站列表資訊出錯:', error );
+          console.error( 'Error fetching - BS List:', error );
+          this.isGetQueryBsListLoading = false; // 出錯時也應隱藏 spinner
+        },
+        complete: () => {
+          console.log('基站列表資訊獲取完成');
+          console.log( 'BS List - fetch completed' );
+        }
+      });
+    }
+
+    console.log( 'getQueryBsList() - End' ); // getQueryBsList() end
+  }
+
+  queryBsListDeal() {
+    this.totalItems = this.bsList.basestation.length;
+  }
+
+
 
   createSearchForm() {
     const nowTime = this.commonService.getNowTime();
@@ -229,7 +271,6 @@ export class BSManagementComponent implements OnInit {
         }
       );
       this.createModalRef.close();
-      this.getBSList();
 
     } else {
       const body = this.createForm.value;
@@ -248,16 +289,12 @@ export class BSManagementComponent implements OnInit {
           console.log('createBsComponent:');
           console.log(res);
           this.createModalRef.close();
-          this.getBSList();
         }
       );
     }
   }
 
-  openDeleteModal(BSList: Components) {
-    this.selectBS = BSList;
-    this.BSstatus = BSList.status;
-    console.log("test "+this.BSstatus);
+  openDeleteModal( BS: Basestation ) {
     this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
   }
 
@@ -284,12 +321,10 @@ export class BSManagementComponent implements OnInit {
         }
       }
       this.deleteModalRef.close();
-      this.getBSList();
     } else {
       this.commonService.deleteSoftware(this.selectBS.id).subscribe(
         res => {
           this.deleteModalRef.close();
-          this.getBSList();
         }
       );
     }
@@ -361,7 +396,7 @@ export class BSManagementComponent implements OnInit {
       /* local file test */
       this.softwareLists = this.commonService.softwareLists;
       console.log(this.softwareLists);
-      this.BSListDeal();
+      this.queryBsListDeal();
     } else {
       const firm = this.afterAdvancedForm.controls['firm'].value;
       const model = encodeURIComponent(this.afterAdvancedForm.controls['model'].value);
@@ -392,7 +427,6 @@ export class BSManagementComponent implements OnInit {
   }
 
   search() {
-    this.getBSList();
   }
 
   debug() {
@@ -410,8 +444,8 @@ export class BSManagementComponent implements OnInit {
     console.log(body);
   }
 
-  viewPage(BSList: Components) {
-    this.router.navigate(['/main/bs-mgr/info', BSList.id, BSList.bsId]);
+  viewPage( BS: Basestation ) {
+    this.router.navigate( ['/main/bs-mgr/info', BS.id, BS.fieldName] );
   }
 
   clearSetting() {
@@ -419,7 +453,6 @@ export class BSManagementComponent implements OnInit {
     this.createSearchForm();
     this.createAdvancedForm();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
-    this.getBSList();
   }
 
 }
