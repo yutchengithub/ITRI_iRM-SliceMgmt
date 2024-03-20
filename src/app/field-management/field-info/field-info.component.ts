@@ -217,7 +217,7 @@ export class FieldInfoComponent implements OnInit {
           this.selectedBsInfo = null;
 
           // 關閉顯示自製的 "BS 詳細資訊 " 視窗 ( Mouseover )
-          this.showBsInfoWindow = false;
+          //this.showBsInfoWindow = false;
 
           // 遍歷所有基站資訊，重置所有 BS 的顯示圖標狀態
           this.allSimplifiedBsInfo.forEach( bsInfo => {
@@ -1409,14 +1409,14 @@ export class FieldInfoComponent implements OnInit {
 
         // 如果此基站已選中，則取消選中並隱藏訊息視窗
           this.selectedBsInfo = null;
-        this.showBsInfoWindow = false;
+        //this.showBsInfoWindow = false;
            this.displayBsInfo = null;
 
       } else {
 
         // 否則，將此基站設為選中狀態並顯示訊息視窗
           this.selectedBsInfo = clickbsInfo;
-        this.showBsInfoWindow = true;
+        //this.showBsInfoWindow = true;
            this.displayBsInfo = clickbsInfo;
       }
 
