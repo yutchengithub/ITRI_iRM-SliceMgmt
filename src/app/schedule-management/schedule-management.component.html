@@ -93,7 +93,7 @@
             <mat-icon tooltip="{{ languageService.i18n['sm.delItem'] }}" (click)="openDeleteModal( schedule )"> delete_forever </mat-icon>
           </td>
         </tr>
-        <tr class="notFind" *ngIf="totalItems === 0">
+        <tr class="notFind" *ngIf="scheduleListToDisplay.length === 0">
           <td colspan="7">{{ languageService.i18n['no_results'] }}</td>
         </tr> 
       </ng-container>
