@@ -78,7 +78,6 @@ export class BSManagementComponent implements OnInit {
   createForm!: FormGroup;
   provisionForm!: FormGroup;
   selectSoftware!: Uploadinfos;
-  selectBS!: Components;
   BSstatus: number=-1;
   nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
   file: any;
@@ -131,8 +130,6 @@ export class BSManagementComponent implements OnInit {
     if (this.querySoftwareScpt) this.querySoftwareScpt.unsubscribe();
     if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
   }
-
-
 
   bsList: BSList = {} as BSList;   // @2024/03/19 Add
   isGetQueryBsListLoading = false; // 用於表示加載 BS List 的 flag，初始設置為 false @2024/03/19 Add for Progress Spinner
@@ -223,7 +220,61 @@ export class BSManagementComponent implements OnInit {
     }, 10000 ); // 設定 10000 ms 後執行
   }
 
+  selectBS!: Basestation;  // 用於存儲當前選中的 BS 訊息 @2024/03/22 Add
 
+  /** @2024/03/22 Add
+   * 導航到選定基站的詳細資訊頁面。
+   * @param BS 從 BS 列表中選擇的 BS 物件。
+   */
+  viewBSDetailInfo( BS: Basestation ) {
+
+    this.selectBS = BS; // 設定當前選擇的 BS。
+    console.log( "View Detail of the BS id:", this.selectBS.id, "and the BS name: ", this.selectBS.name ); // 輸出選擇的基站 ID 和名稱。
+    
+    // 導航到 BS 管理的詳細資訊頁面，帶上 BS 的 ID 和名稱作為路由參數。
+    this.router.navigate( ['/main/bs-mgr/info', this.selectBS.id, this.selectBS.name] );
+  }
+
+  // @2024/03/22 Add
+  // ViewChild 裝飾器用於獲取模板中 #deleteBS_ConfirmWindow 的元素
+  @ViewChild('deleteBS_ConfirmWindow') deleteBS_ConfirmWindow: any;
+
+  // @2024/03/22 Add
+  // MatDialogRef 用於控制打開的對話框
+  deleteBS_ConfirmWindowRef!: MatDialogRef<any>;
+
+  // 開啟選擇的 BS 刪除確認對話框 @2024/03/22 Add
+  openDeleteBS_ConfirmWindow( BS: Basestation ) {
+
+    // 將選中的 BS 賦值給 selectBS
+    this.selectBS = BS;
+
+    // 輸出將要刪除的 BS 名稱，用於記錄或調整
+    console.log( "Deleted BS name: ", this.selectBS.name );
+
+    // 使用 MatDialog 服務開啟確認刪除的對話框
+    this.deleteBS_ConfirmWindowRef = this.dialog.open( 
+        this.deleteBS_ConfirmWindow, { id: 'deleteBS_ConfirmWindow' }
+    );
+
+    // 訂閱對話框關閉後的事件
+    this.deleteBS_ConfirmWindowRef.afterClosed().subscribe( confirm => {
+      // 這裡可以根據用戶在對話框中的操作進行相應的處理
+    });
+  }
+
+  // @2024/03/22 Add
+  // 確認刪除 BS 的操作
+  confirmDeleteBS() {
+
+    // 關閉對話框
+    this.deleteBS_ConfirmWindowRef.close();
+  }
+
+
+
+
+  
 
   createSearchForm() {
     const nowTime = this.commonService.getNowTime();
@@ -326,22 +377,7 @@ export class BSManagementComponent implements OnInit {
     }
   }
 
-  openDeleteModal( BS: Basestation ) {
-    this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
-  }
 
-  openProvisionModal(BSList: Components) {
-    this.formValidated = false;
-    this.provisionForm = this.fb.group({
-      'fileName': new FormControl('', [Validators.required])
-    });
-    this.selectBS = BSList;
-    this.provisionModalRef = this.dialog.open(this.provisionModal, { id: 'provisionModal' });
-    this.provisionModalRef.afterClosed().subscribe(() => {
-      this.fileMsg = '';
-      this.formValidated = false;
-    });
-  }
 
   delete() {
     if (this.commonService.isLocal) {
@@ -476,9 +512,7 @@ export class BSManagementComponent implements OnInit {
     console.log(body);
   }
 
-  viewPage( BS: Basestation ) {
-    this.router.navigate( ['/main/bs-mgr/info', BS.id, BS.fieldName] );
-  }
+
 
   clearSetting() {
     this.isSearch = false;

@@ -202,6 +202,7 @@ export const TwLanguage = {
   'BS.status':'連線狀態',
   'BS.view':'檢視',
   'BS.delete':'刪除',
+  'BS.confirm_del':'確定要刪除基站',
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',
@@ -353,7 +354,7 @@ export const TwLanguage = {
   'delaccount':'帳號刪除',
   'confirm_del_acc':'確定帳號刪除',
 
-  // Schedule Management (排程管理) @2024/03/18 Update
+  // Schedule Management (排程管理) @2024/03/22 Update
   'sm.select_type':'排程類型',
   'sm.select_field':'場域',
   'sm.create_type':'排程類型',
@@ -382,8 +383,11 @@ export const TwLanguage = {
   'sm.jobWeeklyString':'每週',             // executedtype = 2
   'sm.jobMonthlyString':'每月',            // executedtype = 3
 
+  'sm.confirm_del':'確定要刪除排程',
+
   'sm.info':'排程資訊', 
   
+
   // Log Management (日誌管理)  @10/31 add by yuchen
   'LogLists': '日誌列表',
   'UserLogs': '使用者日誌',

@@ -25,7 +25,6 @@ interface State {
   displayName: string;
   value: string;
 }
-
 @Component({
   selector: 'app-schedule-management',
   templateUrl: './schedule-management.component.html',
@@ -333,12 +332,12 @@ export class ScheduleManagementComponent implements OnInit {
     return []; // If the data has not yet been loaded, return an empty array
   }
   
-// ↑ For Create FormGroup @2024/03/21 Add ↑ 
+// ↑ For Create FormGroup @2024/03/21 Add ↑
 
 
-
-
-  selectSchedule!: Schedule;  // 用於存儲當前選中的排程訊息 @2024/03/17 Add
+  // @2024/03/17 Add
+  // 用於存儲當前選中的 Schedule 訊息
+  selectSchedule!: Schedule;  
   
   /** @2024/03/17 Add
    *  導航到選定的排程詳細資訊頁面。
@@ -355,9 +354,43 @@ export class ScheduleManagementComponent implements OnInit {
     this.router.navigate( ['/main/schedule-mgr/info', this.selectSchedule.id, this.selectSchedule.tickettype] );
   }
 
+  // @2024/03/22 Add
+  // @ViewChild 裝飾器用於獲取模板中 #deleteSchedule_ConfirmWindow 的元素
+  @ViewChild('deleteSchedule_ConfirmWindow') deleteSchedule_ConfirmWindow: any;
 
+  // @2024/03/22 Add
+  // MatDialogRef 用於控制打開的對話框
+  deleteSchedule_ConfirmWindowRef!: MatDialogRef<any>;
 
+  // 開啟選擇的 Schedule 刪除確認對話框
+  openDeleteSchedule_ConfirmWindow( schedule: Schedule ) {
 
+    // 將選中的 Schedule 賦值給 selectSchedule
+    this.selectSchedule = schedule;
+
+    // 輸出將要刪除的 Schedule 相關資訊，用於記錄或調整
+    console.log( "Time of Schedule Deleted: ", this.selectSchedule.executedtime );
+
+    // 使用 MatDialog 服務開啟確認刪除的對話框
+    this.deleteSchedule_ConfirmWindowRef = this.dialog.open(
+      this.deleteSchedule_ConfirmWindow, { id: 'deleteSchedule_ConfirmWindow' }
+    );
+
+    // 訂閱對話框關閉後的事件
+    this.deleteSchedule_ConfirmWindowRef.afterClosed().subscribe( confirm => {
+      // 這裡可以根據用戶在對話框中的操作進行相應的處理
+    });
+  }
+
+  // @2024/03/22 Add
+  // 確認刪除 Schedule 的方法
+  confirmDeleteSchedule() {
+    // 在這裡實作刪除 Schedule 的邏輯
+    // ...
+
+    // 關閉對話框
+    this.deleteSchedule_ConfirmWindowRef.close();
+  }
 
 
 

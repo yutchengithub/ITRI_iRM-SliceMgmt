@@ -584,6 +584,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
       // 刷新場域列表或進行其他更新
       this.getQueryFieldList();
+      
       // 關閉加載指示器
       this.isLoading = false;
 
