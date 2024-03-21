@@ -360,7 +360,7 @@ export const TwLanguage = {
   'sm.th_create':'建立排程',
   'sm.th_time':'排程時間',
   'sm.th_type':'類型',
-  'sm.th_state':'狀態',
+  'sm.th_state':'執行狀態',
   'sm.th_download':'報表下載',
   'sm.th_view':'檢視',
   'sm.th_delete':'刪除',

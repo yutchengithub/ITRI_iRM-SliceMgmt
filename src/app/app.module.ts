@@ -35,6 +35,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip'; // @2024/03/08 Add 
+import { MatSelectModule } from '@angular/material/select';   // @2024/03/21 Add 
 
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Spinner
@@ -182,11 +183,12 @@ import { localNEList }            from './shared/local-files/NE/For_queryBsCompo
     MatListModule,                 // @12/12 Add by yuchen
     MatDividerModule,              // @12/12 Add by yuchen for Divider 
     ToggleButtonModule,            // @12/13 Add by yuchen for Toggle Button
-
+    
     MatStepperModule,   // @2024/01/31 Add by yuchen
     MatInputModule,     // @2024/01/31 Add by yuchen
     MatExpansionModule, // 用於縮合效果 @2024/02/29 Add by yuchen
-    MatTooltipModule    // @2024/03/08 Add 
+    MatTooltipModule,   // @2024/03/08 Add 
+    MatSelectModule,    // @2024/03/21 Add
   ],
   providers: [
     AuthGuard,

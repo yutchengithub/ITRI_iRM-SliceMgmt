@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, SimpleChanges , TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { CommonService } from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
@@ -19,40 +20,10 @@ import { ScheduleList, Schedule } from '../shared/interfaces/Schedule/For_queryJ
 // For import local files of Schedule Management 
 import { localScheduleList }      from '../shared/local-files/Schedule/For_queryJobTicketList'; // @2024/03/15 Add
 
-
-export interface ComponentLists {
-  components: Components[];
-}
-
-export interface Components {
-  id: string;
-  bsId: string;
-  bsName: string;
-  name: string;
-  ip: string;
-  port: string;
-  account: string;
-  key: string;
-  comtype: number;
-  firm: string;
-  modelname: string;
-  status: number;
-}
-
-export interface SoftwareLists {
-  uploadinfos: Uploadinfos[];
-}
-
-export interface Uploadinfos {
-  id: string;
-  firm: string;
-  modelname: string;
-  uploadtime: string;
-  uploadtype: number;
-  uploadversion: string;
-  description: string;
-  uploadinfo: string;
-  uploadurl: string;
+// 定義 State 類型
+interface State {
+  displayName: string;
+  value: string;
 }
 
 @Component({
@@ -66,41 +37,11 @@ export class ScheduleManagementComponent implements OnInit {
   refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
   refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
 
-  
-  isSettingAdvanced = true;
-  createModalRef!: MatDialogRef<any>;
-  deleteModalRef!: MatDialogRef<any>;
-  provisionModalRef!: MatDialogRef<any>;
-  createForm!: FormGroup;
-  provisionForm!: FormGroup;
-  selectSoftware!: Uploadinfos;
-  
-  schedulestatus: number=-1;
-  nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
-  file: any;
-  typeMap: Map<number, string> = new Map();
-  p: number = 1;            // 當前頁數
-  pageSize: number = 10;    // 每頁幾筆
-  totalItems: number = 0;   // 總筆數
-  fileMsg: string = '';
-  formValidated = false;
-  searchForm!: FormGroup;
-  afterSearchForm!: FormGroup;
-  updateForm!: FormGroup;
-  isSearch: boolean = false;
-  querySoftwareScpt!: Subscription;
-  querySWAdvanceSearchScpt!: Subscription;
-
-  comtype: Item[] = [
-    { displayName: 'CU', value: '1' },
-    { displayName: `DU`, value: '2' },
-    { displayName: `CU+DU+RU`, value: '3' }
-  ];
-
   constructor(
     
     private           http: HttpClient,
     private             fb: FormBuilder,
+    private          route: ActivatedRoute,
     private         dialog: MatDialog,
     private         router: Router,
     private  commonService: CommonService,
@@ -111,37 +52,52 @@ export class ScheduleManagementComponent implements OnInit {
   
   ) {
 
-    this.comtype.forEach( ( row ) => this.typeMap.set( Number( row.value ), row.displayName ) );
-    this.createSearchForm();
-    this.createAdvancedForm();
+    // 使用這些格式化後的值來更新 searchForm 控件的值
+    this.searchForm = this.fb.group({  
+      'State': new FormControl( 'All' ),   // Only for Schedule List
+    });
 
+    this.createSearchForm(); // 初始化並創建篩選 Schedule List 用的 FormGroup
+
+    // 建立 searchForm 的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。
+    this.afterSearchForm = _.cloneDeep( this.searchForm );
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
+
+    // 取得 Session ID
     this.sessionId = this.commonService.getSessionId();
+
+    // 建立一個 subscribe 來監聽來自路由參數的變化，並更新 searchForm 的值
+    this.route.params.subscribe( ( params ) => {
+      if ( params['State'] && params['State'] !== 'All' ) {
+        this.searchForm.controls['State'].setValue( params['State'] );
+      }
+    } );
+
+    // 建立 searchForm 的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。
     this.afterSearchForm = _.cloneDeep( this.searchForm );
+
     this.getQueryJobTicketList();
 
     this.languageService.languageChanged.subscribe(
-      (language) => this.updateTicketStatusInfo()
+      ( language ) => this.updateTicketStatusInfo()
     );
   }
 
   ngOnDestroy() {
-    clearTimeout(this.refreshTimeout);
-    if (this.querySoftwareScpt) this.querySoftwareScpt.unsubscribe();
-    if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
+    clearTimeout( this.refreshTimeout );
   }
 
-  softwareLists: SoftwareLists = {} as SoftwareLists;
-  componentList: ComponentLists = {} as ComponentLists;
-  @ViewChild('createScheduleModal') createScheduleModal: any;
-  @ViewChild('deleteModal') deleteModal: any;
-  @ViewChild('provisionModal') provisionModal: any;
-  @ViewChild('advancedModal') advancedModal: any;
-  advancedModalRef!: MatDialogRef<any>;
-  advancedForm!: FormGroup;
-  afterAdvancedForm!: FormGroup;
+  p: number = 1;            // 當前頁數
+  pageSize: number = 10;    // 每頁幾筆
+  totalItems: number = 0;   // 總筆數
+
+  pageChanged( page: number ) {
+    this.p = page;
+  }
+
+
 
 
   scheduleList: ScheduleList = {} as ScheduleList; // 用於存儲從伺服器或 Local 文件獲取的排程列表數據
@@ -151,7 +107,7 @@ export class ScheduleManagementComponent implements OnInit {
   queryJobTicketList!: Subscription; // @2024/03/15 Add
 
   /** @2024/03/17 Add
-   * 用於獲取排程列表。
+   * 用於獲取 Schedule List。
    * 根據是否處於 Local 模式,它會從 Local 文件或通過 API 從伺服器獲取排程資訊。
    */
   getQueryJobTicketList() {
@@ -195,7 +151,7 @@ export class ScheduleManagementComponent implements OnInit {
 
     console.log( 'getQueryJobTicketList() - End' );
   }
-
+  // 進一步處理 Schedule List @2024/03/21 Add
   scheduleListDeal() {
     this.totalItems = this.scheduleList.jobticket.length;
 
@@ -214,42 +170,51 @@ export class ScheduleManagementComponent implements OnInit {
     }, 10000 ); // 設定 10000 ms 後執行
   }
 
-
 // 控制顯示排程狀態的 icon 與訊息 ↓
 
   // @2024/03/21 Add
   // 用於存儲排程狀態對應的 icon 和訊息
   ticketStatusInfo = [
-    { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] },
-    { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobDailyString'] + ')' },
-    { icon: 'blueLight', message: this.languageService.i18n['sm.jobOnGoingString'] },
-    { icon: 'greenLight', message: this.languageService.i18n['sm.jobSuccessString'] },
-    { icon: 'redLight', message: this.languageService.i18n['sm.jobFailString'] },
+    { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] },
+    { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobDailyString'] + ')' },
+    { icon: 'blueLight',   message: this.languageService.i18n['sm.jobOnGoingString'] },
+    { icon: 'greenLight',  message: this.languageService.i18n['sm.jobSuccessString'] },
+    { icon: 'redLight',    message: this.languageService.i18n['sm.jobFailString'] },
     { icon: 'yellowLight', message: this.languageService.i18n['sm.jobPartialSuccessString'] }
   ];
 
   // @2024/03/21 Add
-  // 根據排程狀態獲取對應的 icon 和訊息
+  // 根據排程狀態獲取對應的圖示和訊息
   getTicketStatusInfo( schedule: Schedule ) {
+    // 將 schedule.ticketstatus 從字符串轉換為數字
     const ticketStatus = parseInt( schedule.ticketstatus );
+    // 將 schedule.executedtype 從字符串轉換為數字
     const executedType = parseInt( schedule.executedtype );
 
+    // 如果 ticketStatus 為 0 或 1
     if ( ticketStatus === 0 || ticketStatus === 1 ) {
+      // 如果 executedType 為 1
       if ( executedType === 1 ) {
+        // 返回 ticketStatusInfo 中索引為 1 的項目
         return this.ticketStatusInfo[1];
       } else if ( executedType === 2 ) {
+        // 返回一個自定義的對象,包含圖示和消息
         return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobWeeklyString'] + ')' };
       } else if ( executedType === 3 ) {
+        // 返回一個自定義的對象,包含圖示和消息
         return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobMonthlyString'] + ')' };
       }
     }
 
+    // 如果上述條件都不滿足,則返回 ticketStatusInfo 中與 ticketStatus 相對應的項目
     return this.ticketStatusInfo[ticketStatus];
   }
 
   // @2024/03/21 Add
-  // 用於更新根據排程狀態獲取對應的 icon 和訊息
+  // 用於控制當語系切換時根據排程狀態，顯示對應的 icon 或中英文字訊息
   updateTicketStatusInfo() {
+
+    // 重新初始化 ticketStatusInfo 數組，以正確顯示對應的語言訊息於表格的狀態欄中
     this.ticketStatusInfo = [
       { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] },
       { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobDailyString'] + ')' },
@@ -258,9 +223,118 @@ export class ScheduleManagementComponent implements OnInit {
       { icon: 'redLight', message: this.languageService.i18n['sm.jobFailString'] },
       { icon: 'yellowLight', message: this.languageService.i18n['sm.jobPartialSuccessString'] }
     ];
+
+    // 重新初始化 States 數組，以正確顯示對應的語言於下拉式選單中
+    this.States = [
+      { displayName: 'All', value: 'All' },
+      { displayName: this.languageService.i18n['sm.jobSchedulingString'],     value: '0' }, // 假設 '0' 和 '1' 都代表 'Scheduling'
+      { displayName: this.languageService.i18n['sm.jobOnGoingString'],        value: '2' },
+      { displayName: this.languageService.i18n['sm.jobSuccessString'],        value: '3' },
+      { displayName: this.languageService.i18n['sm.jobFailString'],           value: '4' },
+      { displayName: this.languageService.i18n['sm.jobPartialSuccessString'], value: '5' }
+    ];
   }
 
 // 控制顯示排程狀態的 icon 與訊息 ↑
+
+
+// ↓ For Create FormGroup @2024/03/21 Add ↓
+
+  searchForm!: FormGroup;      // 用於儲存篩選條件
+  afterSearchForm!: FormGroup; // 用於儲存並顯示出篩選條件
+
+  // @2024/03/21 Add
+  // 定義所有可能的狀態及其對應的 ticketstatus
+  States: State[] = [
+    { displayName: 'All', value: 'All' },
+    { displayName: this.languageService.i18n['sm.jobSchedulingString'],     value: '0' }, // 假設 '0' 和 '1' 都代表 'Scheduling'
+    { displayName: this.languageService.i18n['sm.jobOnGoingString'],        value: '2' },
+    { displayName: this.languageService.i18n['sm.jobSuccessString'],        value: '3' },
+    { displayName: this.languageService.i18n['sm.jobFailString'],           value: '4' },
+    { displayName: this.languageService.i18n['sm.jobPartialSuccessString'], value: '5' }
+  ];
+
+  // 建立搜尋表單 @2024/03/21 Add
+  // 使用 States 更新建立表單控件的選項
+  createSearchForm() {
+    this.searchForm = this.fb.group({
+      'State': new FormControl( this.States[0].value ), // 使用預設值 'All'
+    });
+    this.afterSearchForm = _.cloneDeep( this.searchForm ); // Ensure afterSearchForm is also initialized
+  }
+
+  filtered_ScheduleList: Schedule[] = []; 
+  isSearch_scheduleList: boolean = false;
+
+  // @2024/03/21 Add
+  // For search Schedule List
+  search_ScheduleList() {
+    console.log('search_ScheduleList() - Start');
+    
+    // 確認 scheduleList 是否已加載
+    if ( !this.scheduleList || !this.scheduleList.jobticket ) {
+      console.error('scheduleList.jobticket is not loaded yet.');
+      return;
+    }
+  
+    // 更新顯示的搜尋條件，使用 Deep Copy
+    this.afterSearchForm = _.cloneDeep( this.searchForm ); 
+    this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
+    
+    // 清除以前的搜尋結果
+    this.filtered_ScheduleList = []; // 存儲篩選結果的陣列
+    this.isSearch_scheduleList = false;
+    
+    const selectedStateValue = this.searchForm.get('State')?.value || 'All';
+
+    this.filtered_ScheduleList = this.scheduleList.jobticket.filter( schedule => {
+      if ( selectedStateValue === 'All' ) {
+        return true; // 如果選擇 "All"，則不過濾任何任務
+      } else if ( selectedStateValue === '0' ) {
+        return schedule.ticketstatus.toString() === '0' || schedule.ticketstatus.toString() === '1';
+        // 當選擇 "Scheduling" 時，接受 ticketstatus 為 0 或 1 的任務
+      } else {
+        return schedule.ticketstatus.toString() === selectedStateValue;
+        // 對於其他選擇，直接比較 ticketstatus 和選擇的值
+      }
+    });
+    
+    console.log("篩選後的 filtered_ScheduleList :", this.filtered_ScheduleList );
+
+    this.isSearch_scheduleList = true; // 標記搜尋完成
+
+    this.totalItems = this.filtered_ScheduleList.length; // 確保更新 totalItems 以反映搜尋結果的數量
+
+    console.log("search_ScheduleList() - End");
+  }
+
+  // @2024/03/21 Add
+  // 重置 Schedule List 搜尋
+  clear_search_ScheduleList() {
+
+    this.isSearch_scheduleList = false;
+
+    this.searchForm.reset();
+    this.createSearchForm();
+    this.afterSearchForm = _.cloneDeep( this.searchForm );
+    
+    this.p = 1; // 當點擊重置搜尋時，將顯示頁數預設為 1
+
+    this.getQueryJobTicketList();
+    
+  } 
+
+  // 用於顯示 ScheduleList 數據 @2024/03/21 Add
+  get scheduleListToDisplay(): Schedule[] {
+    // Check if this.scheduleList exists and if this.scheduleList.jobticket is a non-empty array
+    if (this.scheduleList && Array.isArray(this.scheduleList.jobticket)) {
+      return this.isSearch_scheduleList ? this.filtered_ScheduleList : this.scheduleList.jobticket;
+    }
+    return []; // If the data has not yet been loaded, return an empty array
+  }
+  
+// ↑ For Create FormGroup @2024/03/21 Add ↑ 
+
 
 
 
@@ -282,16 +356,14 @@ export class ScheduleManagementComponent implements OnInit {
   }
 
 
-  createSearchForm() {
-    const nowTime = this.commonService.getNowTime();
-    this.searchForm = this.fb.group({
-      'firm': new FormControl(''),
-      'model': new FormControl(''),
-      'uploadtype': new FormControl('All'),
-      'version': new FormControl(''),
-      'fileName': new FormControl(''),
-    });
-  }
+
+
+
+
+
+
+
+
   openCreateModal() {
     this.formValidated = false;
     this.createForm = this.fb.group({
@@ -425,32 +497,7 @@ export class ScheduleManagementComponent implements OnInit {
       );
     }
   }
-  changeType(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    if (e.value === 'imageUrl') {
-      this.updateForm.controls['imageUrl'].setValidators([Validators.required]);
-      this.updateForm.controls['fileName'].setValidators(null);
-      this.updateForm.controls['fileName'].setValue('');
-    } else {
-      this.updateForm.controls['imageUrl'].setValidators(null);
-      this.updateForm.controls['imageUrl'].setValue('');
-      this.updateForm.controls['fileName'].setValidators([Validators.required]);
-    }
-    this.updateForm.controls['imageUrl'].updateValueAndValidity();
-    this.updateForm.controls['fileName'].updateValueAndValidity();
-  }
 
-  createAdvancedForm() {
-    this.advancedForm = this.fb.group({
-      'firm': new FormControl(''),
-      'model': new FormControl(''),
-      'uploadtype': new FormControl(''),
-      'version': new FormControl(''),
-      'from': new FormControl(''),
-      'to': new FormControl(''),
-      'fileName': new FormControl('')
-    });
-  }
   openAdvancedModal() {
     const orgAdvancedForm = _.cloneDeep(this.advancedForm);
     this.advancedForm.controls['firm'].setValue(this.searchForm.controls['firm'].value);
@@ -518,9 +565,6 @@ export class ScheduleManagementComponent implements OnInit {
     return this.typeMap.get(type) as string;
   }
 
-  pageChanged(page: number) {
-    this.p = page;
-  }
 
   search() {
     this.getQueryJobTicketList();
@@ -544,9 +588,87 @@ export class ScheduleManagementComponent implements OnInit {
   clearSetting() {
     this.isSearch = false;
     this.createSearchForm();
-    this.createAdvancedForm();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
     this.getQueryJobTicketList();
   }
 
+
+
+  softwareLists: SoftwareLists = {} as SoftwareLists;
+  componentList: ComponentLists = {} as ComponentLists;
+  @ViewChild('createScheduleModal') createScheduleModal: any;
+  @ViewChild('deleteModal') deleteModal: any;
+  @ViewChild('provisionModal') provisionModal: any;
+  @ViewChild('advancedModal') advancedModal: any;
+  advancedModalRef!: MatDialogRef<any>;
+  advancedForm!: FormGroup;
+  afterAdvancedForm!: FormGroup;
+
+  isSettingAdvanced = true;
+  createModalRef!: MatDialogRef<any>;
+  deleteModalRef!: MatDialogRef<any>;
+  provisionModalRef!: MatDialogRef<any>;
+  createForm!: FormGroup;
+  provisionForm!: FormGroup;
+  selectSoftware!: Uploadinfos;
+  
+  schedulestatus: number=-1;
+  nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
+  file: any;
+  typeMap: Map<number, string> = new Map();
+
+  fileMsg: string = '';
+  formValidated = false;
+  updateForm!: FormGroup;
+  isSearch: boolean = false;
+  querySoftwareScpt!: Subscription;
+  querySWAdvanceSearchScpt!: Subscription;
+
+  comtype: Item[] = [
+    { displayName: 'CU', value: '1' },
+    { displayName: `DU`, value: '2' },
+    { displayName: `CU+DU+RU`, value: '3' }
+  ];
+
+}
+
+
+
+
+
+
+
+export interface ComponentLists {
+  components: Components[];
+}
+
+export interface Components {
+  id: string;
+  bsId: string;
+  bsName: string;
+  name: string;
+  ip: string;
+  port: string;
+  account: string;
+  key: string;
+  comtype: number;
+  firm: string;
+  modelname: string;
+  status: number;
+}
+
+export interface SoftwareLists {
+  uploadinfos: Uploadinfos[];
+}
+
+export interface Uploadinfos {
+  id: string;
+  firm: string;
+  modelname: string;
+  uploadtime: string;
+  uploadtype: number;
+  uploadversion: string;
+  description: string;
+  uploadinfo: string;
+  uploadurl: string;
 }

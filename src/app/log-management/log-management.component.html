@@ -126,8 +126,8 @@
             <td>{{ opt.logtime }}</td>
             <td><mat-icon tooltip="{{ languageService.i18n['view_detail'] }}" (click)="openUserlogDetail(opt)">remove_red_eye</mat-icon></td>
           </tr>        
-          <tr class="notFind" *ngIf="UserLogsList.logNumber === 0">
-            <td colspan="7">{{languageService.i18n['no_results']}}</td>
+          <tr class="notFind" *ngIf="totalLogs === 0">
+            <td colspan="7">{{ languageService.i18n['no_results'] }}</td>
           </tr>
         </ng-container>
       </tbody>
@@ -271,8 +271,8 @@
             <td>{{opt.logtime}}</td>
             <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openNElogDetail(opt)">remove_red_eye</mat-icon></td>
           </tr>
-          <tr class="notFind" *ngIf="NELogsList.logNumber === 0">
-            <td colspan="7">{{languageService.i18n['no_results']}}</td>
+          <tr class="notFind" *ngIf="totalLogs === 0">
+            <td colspan="7">{{ languageService.i18n['no_results'] }}</td>
           </tr> 
         </ng-container>
       </tbody>

@@ -220,7 +220,7 @@ export class BSManagementComponent implements OnInit {
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
       }
-    }, 10000); // 設定 10000 ms 後執行
+    }, 10000 ); // 設定 10000 ms 後執行
   }
 
 
