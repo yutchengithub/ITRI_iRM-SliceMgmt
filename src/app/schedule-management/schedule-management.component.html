@@ -55,12 +55,11 @@
             <label *ngIf=" schedule.tickettype === '4' ">{{ languageService.i18n['sm.sfReport'] }}</label>
           </td>
           <td class="icon">
-            <label *ngIf=" schedule.ticketstatus === '0' " class="grayLight"></label>
-            <label *ngIf=" schedule.ticketstatus === '1' " class="redLight"></label>
-            <label *ngIf=" schedule.ticketstatus === '2' " class="greenLight"></label>
+            <label [class]="getTicketStatusInfo( schedule ).icon"></label>
+            <label>{{ getTicketStatusInfo( schedule ).message }}</label>
           </td>
           <td class="icon">
-            <mat-icon tooltip="{{ languageService.i18n['sm.smDownload'] }}" (click)="openProvisionModal( schedule )"> download_for_offline </mat-icon>
+            <mat-icon *ngIf="schedule.ticketresult" tooltip="{{ languageService.i18n['sm.smDownload'] }}" (click)="openProvisionModal(schedule)">download_for_offline</mat-icon>
           </td>
           <td class="icon">
             <mat-icon tooltip="{{ languageService.i18n['sm.view_detail'] }}" (click)="viewScheduleDetailInfo( schedule )"> remove_red_eye </mat-icon>

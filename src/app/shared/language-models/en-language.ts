@@ -369,11 +369,20 @@ export const Enlanguage = {
   'sm.smDownload':'Download report of this schedule',
   'sm.view_detail':'View this schedule in detail',
   'sm.delItem':'Delete this schedule',
-  'sm.sfReport':'Software Management Report',    // 4
-  'sm.fmReport':'Fault Management Report',       // 3
-  'sm.pmReport':'Performance Management Report', // 2
-  'sm.caReport':'Config Audit Report',           // 1
-  'sm.sfUpdate':'Software Update',               // 0
+  'sm.sfReport':'Software Management Report',    // tickettype = 4
+  'sm.fmReport':'Fault Management Report',       // tickettype = 3
+  'sm.pmReport':'Performance Management Report', // tickettype = 2
+  'sm.caReport':'Config Audit Report',           // tickettype = 1
+  'sm.sfUpdate':'Software Update',               // tickettype = 0
+
+  'sm.jobPartialSuccessString':'Partially Success', // ticketstatus = 5
+  'sm.jobFailString':'Failed',                      // ticketstatus = 4
+  'sm.jobSuccessString':'Success',                  // ticketstatus = 3
+  'sm.jobOnGoingString':'On Going',                 // ticketstatus = 2
+  'sm.jobSchedulingString':'Scheduling',            // ticketstatus = 1 | 0
+  'sm.jobDailyString':'Daily',                      // executedtype = 1
+  'sm.jobWeeklyString':'Weekly',                    // executedtype = 2
+  'sm.jobMonthlyString':'Monthly',                  // executedtype = 3
 
   'sm.info':'Schedule Information', 
 

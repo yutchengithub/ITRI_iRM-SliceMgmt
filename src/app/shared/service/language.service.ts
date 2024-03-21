@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+// LanguageService
+import { EventEmitter, Injectable, Output } from '@angular/core';
 import { Enlanguage } from '../language-models/en-language';
 import { TwLanguage } from '../language-models/tw-language';
 
@@ -6,6 +7,9 @@ import { TwLanguage } from '../language-models/tw-language';
   providedIn: 'root'
 })
 export class LanguageService {
+
+  @Output() languageChanged = new EventEmitter<string>();
+  
   language = 'TW';   // 'EN' | 'TW'
   i18n: any = {};
 
@@ -43,9 +47,11 @@ export class LanguageService {
      this.updateBodyLanguageClass(this.language); // @2024/01/26 Add
   }
 
+  // @2024/03/21 Add
   changeI18n( language: string ) {
     this.language = language;
     this.setLanguage();
+    this.languageChanged.emit( language );
   }
 
   toggleChange() {

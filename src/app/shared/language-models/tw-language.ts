@@ -367,11 +367,20 @@ export const TwLanguage = {
   'sm.smDownload':'下載此排程報表',
   'sm.view_detail':'詳細查看此排程',
   'sm.delItem':'刪除此排程',
-  'sm.sfReport':'產出軟體管理報表', // 4
-  'sm.fmReport':'產出故障管理報表', // 3
-  'sm.pmReport':'產出效能管理報表', // 2
-  'sm.caReport':'產出配置稽核報表', // 1
-  'sm.sfUpdate':'軟體更新',        // 0
+  'sm.sfReport':'產出軟體管理報表', // tickettype = 4
+  'sm.fmReport':'產出故障管理報表', // tickettype = 3
+  'sm.pmReport':'產出效能管理報表', // tickettype = 2
+  'sm.caReport':'產出配置稽核報表', // tickettype = 1
+  'sm.sfUpdate':'軟體更新',         // tickettype = 0
+
+  'sm.jobPartialSuccessString':'部份成功', // ticketstatus = 5
+  'sm.jobFailString':'失敗',               // ticketstatus = 4
+  'sm.jobSuccessString':'成功',            // ticketstatus = 3
+  'sm.jobOnGoingString':'進行中',          // ticketstatus = 2
+  'sm.jobSchedulingString':'排程中',       // ticketstatus = 1 | 0
+  'sm.jobDailyString':'每天',              // executedtype = 1
+  'sm.jobWeeklyString':'每週',             // executedtype = 2
+  'sm.jobMonthlyString':'每月',            // executedtype = 3
 
   'sm.info':'排程資訊', 
   

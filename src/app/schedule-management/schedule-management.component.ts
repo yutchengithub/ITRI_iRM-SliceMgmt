@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, SimpleChanges , TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -121,6 +121,10 @@ export class ScheduleManagementComponent implements OnInit {
     this.sessionId = this.commonService.getSessionId();
     this.afterSearchForm = _.cloneDeep( this.searchForm );
     this.getQueryJobTicketList();
+
+    this.languageService.languageChanged.subscribe(
+      (language) => this.updateTicketStatusInfo()
+    );
   }
 
   ngOnDestroy() {
@@ -128,7 +132,6 @@ export class ScheduleManagementComponent implements OnInit {
     if (this.querySoftwareScpt) this.querySoftwareScpt.unsubscribe();
     if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
   }
-
 
   softwareLists: SoftwareLists = {} as SoftwareLists;
   componentList: ComponentLists = {} as ComponentLists;
@@ -164,7 +167,7 @@ export class ScheduleManagementComponent implements OnInit {
 
       this.isLoadingScheduleList = false; // Local 模式下,數據加載快速完成,直接設置為 false
     } else {
-      
+
       // 非 Local 模式: 通過 API 從服務器獲取數據
       this.queryJobTicketList = this.API_Schedule.queryJobTicketList().subscribe({
         next: ( res ) => {
@@ -213,7 +216,57 @@ export class ScheduleManagementComponent implements OnInit {
   }
 
 
+// 控制顯示排程狀態的圖案與訊息 ↓
+
+  // @2024/03/21 Add
+  // 用於存儲排程狀態對應的圖示和訊息
+  ticketStatusInfo = [
+    { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] },
+    { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobDailyString'] + ')' },
+    { icon: 'blueLight', message: this.languageService.i18n['sm.jobOnGoingString'] },
+    { icon: 'greenLight', message: this.languageService.i18n['sm.jobSuccessString'] },
+    { icon: 'redLight', message: this.languageService.i18n['sm.jobFailString'] },
+    { icon: 'yellowLight', message: this.languageService.i18n['sm.jobPartialSuccessString'] }
+  ];
+
+  // @2024/03/21 Add
+  // 根據排程狀態獲取對應的圖示和訊息
+  getTicketStatusInfo( schedule: Schedule ) {
+    const ticketStatus = parseInt( schedule.ticketstatus );
+    const executedType = parseInt( schedule.executedtype );
+
+    if ( ticketStatus === 0 || ticketStatus === 1 ) {
+      if ( executedType === 1 ) {
+        return this.ticketStatusInfo[1];
+      } else if ( executedType === 2 ) {
+        return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobWeeklyString'] + ')' };
+      } else if ( executedType === 3 ) {
+        return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobMonthlyString'] + ')' };
+      }
+    }
+
+    return this.ticketStatusInfo[ticketStatus];
+  }
+
+  // @2024/03/21 Add
+  // 用於更新根據排程狀態獲取對應的圖示和訊息
+  updateTicketStatusInfo() {
+    this.ticketStatusInfo = [
+      { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] },
+      { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobDailyString'] + ')' },
+      { icon: 'blueLight', message: this.languageService.i18n['sm.jobOnGoingString'] },
+      { icon: 'greenLight', message: this.languageService.i18n['sm.jobSuccessString'] },
+      { icon: 'redLight', message: this.languageService.i18n['sm.jobFailString'] },
+      { icon: 'yellowLight', message: this.languageService.i18n['sm.jobPartialSuccessString'] }
+    ];
+  }
+
+// 控制顯示排程狀態的圖案與訊息 ↑
+
+
+
   selectSchedule!: Schedule;  // 用於存儲當前選中的排程訊息 @2024/03/17 Add
+  
   /** @2024/03/17 Add
    *  導航到選定的排程詳細資訊頁面。
    *  @param schedule 從排程列表中選擇的排程物件。

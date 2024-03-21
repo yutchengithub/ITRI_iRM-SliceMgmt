@@ -16,6 +16,7 @@ tbody tr td {
   text-align: center;
 }
 
+// 成功 - ticketstatus = 3
 .greenLight {
   display: inline-block;
   width: 1em;
@@ -24,16 +25,36 @@ tbody tr td {
   background-color: #89d135;
 }
 
+// 失敗 - ticketstatus = 4
 .redLight {
   display: inline-block;
 }
 
+// 排程中、排程中(每天) - ticketstatus = 1
 .grayLight {
   display: inline-block;
   width: 1em;
   height: 1em;
   border-radius: 50em;
   background-color: #7e7e7e;
+}
+
+// 部份成功 - ticketstatus = 5
+.yellowLight {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border-radius: 50em;
+  background-color: rgb(243, 192, 73);
+}
+
+// 進行中 - ticketstatus = 2
+.blueLight {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border-radius: 50em;
+  background-color: rgb(0, 67, 200);
 }
 
 // Spinner 居中並設定大小
