@@ -1,9 +1,9 @@
-<h5>{{languageService.i18n['index.menu_scheduleMgr']}}
-  <mat-icon tooltip="{{languageService.i18n['sm.create']}}" (click)="openCreateModal()">add</mat-icon>
+<h5>{{ languageService.i18n['index.menu_scheduleMgr'] }}
+  <mat-icon tooltip="{{ languageService.i18n['sm.create'] }}" (click)="openCreateModal()">add</mat-icon>
 </h5>
   <form [formGroup]="searchForm">
     <div class="filter">
-      <span><label>{{languageService.i18n['sm.th_state']}}</label>
+      <span><label>{{ languageService.i18n['sm.th_state'] }}</label>
         <input type="text"formControlName="firm">
       </span>
 
@@ -25,36 +25,52 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let schedule of scheduleList.jobticket | paginate: { 
-                    itemsPerPage: pageSize,
-                     currentPage: p, 
-                      totalItems: totalItems, 
-                              id: 'PageDisplay_of_scheduleList'
-        };">
-        <td>{{ schedule.executedtime }}</td>
-        <td>
-          <label *ngIf=" schedule.tickettype === '0' ">{{ languageService.i18n['sm.sfUpdate'] }}</label>
-          <label *ngIf=" schedule.tickettype === '1' ">{{ languageService.i18n['sm.caReport'] }}</label>
-          <label *ngIf=" schedule.tickettype === '2' ">{{ languageService.i18n['sm.pmReport'] }}</label>
-          <label *ngIf=" schedule.tickettype === '3' ">{{ languageService.i18n['sm.fmReport'] }}</label>
-          <label *ngIf=" schedule.tickettype === '4' ">{{ languageService.i18n['sm.sfReport'] }}</label>
-        </td>
-        <td class="icon">
-          <label *ngIf=" schedule.ticketstatus === '0' " class="grayLight"></label>
-          <label *ngIf=" schedule.ticketstatus === '1' " class="redLight"></label>
-          <label *ngIf=" schedule.ticketstatus === '2' " class="greenLight"></label>
-        </td>
-        <td class="icon">
-          <mat-icon tooltip="{{ languageService.i18n['sm.smDownload'] }}" (click)="openProvisionModal( schedule )"> download_for_offline </mat-icon>
-        </td>
-        <td class="icon">
-          <mat-icon tooltip="{{ languageService.i18n['sm.view_detail'] }}" (click)="viewScheduleDetailInfo( schedule )"> remove_red_eye </mat-icon>
-        </td>
-        <td class="icon">
-          <mat-icon tooltip="{{ languageService.i18n['sm.delItem'] }}" (click)="openDeleteModal( schedule )"> delete_forever </mat-icon>
-        </td>
-      </tr>
+
+      <!-- 當數據正在加載時顯示進度條 -->
+      <ng-container *ngIf="isLoadingScheduleList">
+        <tr>
+          <td colspan="6">
+            <div class="progress-spinner-container">
+              <!-- 指示器大小設置 -->
+              <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+
+      <!-- 加載完成後顯示 排程列表 數據 -->
+      <ng-container *ngIf="!isLoadingScheduleList">
+        <tr *ngFor="let schedule of scheduleList.jobticket | paginate: { 
+                      itemsPerPage: pageSize,
+                      currentPage: p, 
+                        totalItems: totalItems, 
+                                id: 'PageDisplay_of_scheduleList'
+          };">
+          <td>{{ schedule.executedtime }}</td>
+          <td>
+            <label *ngIf=" schedule.tickettype === '0' ">{{ languageService.i18n['sm.sfUpdate'] }}</label>
+            <label *ngIf=" schedule.tickettype === '1' ">{{ languageService.i18n['sm.caReport'] }}</label>
+            <label *ngIf=" schedule.tickettype === '2' ">{{ languageService.i18n['sm.pmReport'] }}</label>
+            <label *ngIf=" schedule.tickettype === '3' ">{{ languageService.i18n['sm.fmReport'] }}</label>
+            <label *ngIf=" schedule.tickettype === '4' ">{{ languageService.i18n['sm.sfReport'] }}</label>
+          </td>
+          <td class="icon">
+            <label [class]="getTicketStatusInfo( schedule ).icon"></label>
+            <label>{{ getTicketStatusInfo( schedule ).message }}</label>
+          </td>
+          <td class="icon">
+            <mat-icon *ngIf="schedule.ticketresult" tooltip="{{ languageService.i18n['sm.smDownload'] }}" (click)="openProvisionModal(schedule)">download_for_offline</mat-icon>
+          </td>
+          <td class="icon">
+            <mat-icon tooltip="{{ languageService.i18n['sm.view_detail'] }}" (click)="viewScheduleDetailInfo( schedule )"> remove_red_eye </mat-icon>
+          </td>
+          <td class="icon">
+            <mat-icon tooltip="{{ languageService.i18n['sm.delItem'] }}" (click)="openDeleteModal( schedule )"> delete_forever </mat-icon>
+          </td>
+        </tr>
+      </ng-container>
     </tbody>
+    
   </table>
 </div>
 <pagination-controls

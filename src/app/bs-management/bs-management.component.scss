@@ -17,6 +17,19 @@ tbody tr td {
   text-align: center;
 }
 
+// Spinner 居中並設定大小
+.progress-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90px; 
+}
+
+// 設定進度調 (Spinner) 的顏色
+::ng-deep .mat-progress-spinner circle {
+  stroke: #7cbaec !important;
+}
+
 input[type="file"] {
   outline: 0;
 }
