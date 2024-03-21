@@ -33,7 +33,12 @@
       <!-- 加載完成後顯示 BS 列表 數據 -->
       <ng-container *ngIf="!isGetQueryBsListLoading">
         <tr
-          *ngFor="let BS of bsList.basestation | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'PageDisplay_of_bsList' } ">
+          *ngFor="let BS of bsList.basestation | paginate: { 
+            itemsPerPage: pageSize, 
+            currentPage: p, 
+            totalItems: totalItems, 
+            id: 'PageDisplay_of_bsList' 
+          };">
           <td>{{ BS.name }}</td>
           <td>{{ BS.bstype === 1 ? 'A' : 'D' }}</td>
           <td>{{ BS.cellCount }}</td>
@@ -45,22 +50,50 @@
             <label *ngIf=" BS.status === 2 " class="greenLight"></label>
           </td>
           <td class="icon">
-            <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}" (click)="viewPage( BS )">remove_red_eye</mat-icon>
+            <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}" (click)="viewBSDetailInfo( BS )">remove_red_eye</mat-icon>
           </td>
-          <td class="icon">
-            <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}" (click)="openDeleteModal( BS )">delete_forever</mat-icon>
+          <td class="icon"><!-- 刪除按鈕 -->
+            <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}" (click)="openDeleteBS_ConfirmWindow( BS )">delete_forever</mat-icon>
           </td>
         </tr>
       </ng-container>
     </tbody>
   </table>
 </div>
-<pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
-  nextLabel="" id="PageDisplay_of_bsList">
-</pagination-controls>
+<pagination-controls
+  (pageChange)="pageChanged( $event )"
+   screenReaderPaginationLabel="Pagination"
+   previousLabel=""
+   nextLabel=""
+   id="PageDisplay_of_bsList"
+></pagination-controls>
+
+<!-- Confirm Window of Delete BS @2024/03/22 Add -->
+<ng-template #deleteBS_ConfirmWindow>
+
+  <h5>{{languageService.i18n['confirm']}}</h5>
+  
+  <!-- 確認刪除的提示信息，展示 BS 名稱 -->
+  <p>{{ languageService.i18n['BS.confirm_del'] }} - {{ selectBS.name }} ?</p>
+  
+  <!-- 按鈕容器 -->
+  <div class="buttons">
+    <!-- 確認按鈕，點擊時呼叫 confirmDeleteBS() 函數處理確認邏輯，並且關閉視窗 -->
+    <button type="button" (click)="confirmDeleteBS()" mat-dialog-close>
+      {{ languageService.i18n['confirm'] }} <!-- 按鈕文字 -->
+    </button>
+    
+    <!-- 取消按鈕，點擊時不進行任何操作，直接關閉視窗 -->
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }} <!-- 按鈕文字 -->
+    </button>
+  </div>
+</ng-template>
+
+
 
 <ng-template #createBSModal>
-  <h5>{{languageService.i18n['sm.th_create']}}</h5>
+  <h5>{{ languageService.i18n['sm.th_create'] }}</h5>
   <form [formGroup]="createForm" >
     <ul class="addBS-ul-li-label">
       <li>
@@ -68,13 +101,13 @@
         <span>
           <select formControlName="comtype" class="{{formValidated&&createForm.controls['comtype'].invalid?'required':''}}">
             <option value="" ></option>
-            <option *ngFor="let opt of comtype" [value]="opt.value">{{opt.displayName}}</option>
+            <option *ngFor="let opt of comtype" [value]="opt.value">{{ opt.displayName }}</option>
           </select>
           <mat-error *ngIf="formValidated&&createForm.controls['comtype'].invalid">Required</mat-error>
         </span>
       </li>
       <li>
-        <label>{{languageService.i18n['sm.select_field']}}</label>
+        <label>{{ languageService.i18n['sm.select_field'] }}</label>
         <span>
           <select formControlName="comtype" class="{{formValidated&&createForm.controls['comtype'].invalid?'required':''}}">
             <option value="" ></option>

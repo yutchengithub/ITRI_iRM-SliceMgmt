@@ -204,7 +204,7 @@ export const Enlanguage = {
   'BS.status':'Status',
   'BS.view':'View',
   'BS.delete':'Delete',
-
+  'BS.confirm_del':'Confirm to Delete Basestation',
 
   // Fault Management
   'fm.start':'StartTime',
@@ -384,11 +384,11 @@ export const Enlanguage = {
   'sm.jobWeeklyString':'Weekly',                    // executedtype = 2
   'sm.jobMonthlyString':'Monthly',                  // executedtype = 3
 
+  'sm.confirm_del':'Confirm to Delete Schedule',
+
   'sm.info':'Schedule Information', 
 
-
-
-
+  
   // Log Management @10/31 add by yuchen
   'LogLists': 'Log Lists',
   'UserLogs': 'User Logs',
