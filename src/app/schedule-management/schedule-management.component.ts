@@ -179,7 +179,6 @@ export class ScheduleManagementComponent implements OnInit {
           this.scheduleListDeal();
           console.log( '排程列表資訊\n( BS List ):', this.scheduleList ); // 取得的 Schedule List 資訊 ( Obtained Schedule List information )
           
-
           this.isLoadingScheduleList = false; // 數據加載完成
         },
         error: ( error ) => {
@@ -205,21 +204,21 @@ export class ScheduleManagementComponent implements OnInit {
     this.refreshTimeout = window.setTimeout(() => {
       if ( this.p === 1 ) {
 
-        console.log(`page[${this.p}] ===> refresh.`);
+        console.log(`page[${ this.p }] ===> refresh.`);
         this.getQueryJobTicketList(); // 更新排程訊息( 可選 )
 
       } else {
 
-        console.log(`page[${this.p}] ===> no refresh.`);
+        console.log(`page[${ this.p }] ===> no refresh.`);
       }
     }, 10000 ); // 設定 10000 ms 後執行
   }
 
 
-// 控制顯示排程狀態的圖案與訊息 ↓
+// 控制顯示排程狀態的 icon 與訊息 ↓
 
   // @2024/03/21 Add
-  // 用於存儲排程狀態對應的圖示和訊息
+  // 用於存儲排程狀態對應的 icon 和訊息
   ticketStatusInfo = [
     { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] },
     { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobDailyString'] + ')' },
@@ -230,7 +229,7 @@ export class ScheduleManagementComponent implements OnInit {
   ];
 
   // @2024/03/21 Add
-  // 根據排程狀態獲取對應的圖示和訊息
+  // 根據排程狀態獲取對應的 icon 和訊息
   getTicketStatusInfo( schedule: Schedule ) {
     const ticketStatus = parseInt( schedule.ticketstatus );
     const executedType = parseInt( schedule.executedtype );
@@ -249,7 +248,7 @@ export class ScheduleManagementComponent implements OnInit {
   }
 
   // @2024/03/21 Add
-  // 用於更新根據排程狀態獲取對應的圖示和訊息
+  // 用於更新根據排程狀態獲取對應的 icon 和訊息
   updateTicketStatusInfo() {
     this.ticketStatusInfo = [
       { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] },
@@ -261,7 +260,7 @@ export class ScheduleManagementComponent implements OnInit {
     ];
   }
 
-// 控制顯示排程狀態的圖案與訊息 ↑
+// 控制顯示排程狀態的 icon 與訊息 ↑
 
 
 
