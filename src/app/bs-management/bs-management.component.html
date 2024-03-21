@@ -27,25 +27,41 @@
       </tr>
     </thead>
     <tbody>
-      <tr
-        *ngFor="let BS of bsList.basestation | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-        <td>{{ BS.name }}</td>
-        <td>{{ BS.bstype === 1 ? 'A' : 'D' }}</td>
-        <td>1</td>
-        <td>{{ BS.description }}</td>
-        <td>{{ BS.fieldName }}</td>
-        <td class="icon">
-          <label *ngIf=" BS.status === 0 " class="grayLight"></label>
-          <label *ngIf=" BS.status === 1 " class="redLight"></label>
-          <label *ngIf=" BS.status === 2 " class="greenLight"></label>
-        </td>
-        <td class="icon">
-          <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}" (click)="viewPage( BS )">remove_red_eye</mat-icon>
-        </td>
-        <td class="icon">
-          <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}" (click)="openDeleteModal( BS )">delete_forever</mat-icon>
-        </td>
-      </tr>
+
+      <!-- 當數據正在加載時顯示進度條 -->
+      <ng-container *ngIf="isGetQueryBsListLoading">
+        <tr>
+          <td colspan="6">
+            <div class="progress-spinner-container">
+              <!-- 指示器大小設置 -->
+              <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+
+      <!-- 加載完成後顯示 BS 列表 數據 -->
+      <ng-container *ngIf="!isGetQueryBsListLoading">
+        <tr
+          *ngFor="let BS of bsList.basestation | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+          <td>{{ BS.name }}</td>
+          <td>{{ BS.bstype === 1 ? 'A' : 'D' }}</td>
+          <td>{{ BS.cellCount }}</td>
+          <td>{{ BS.description }}</td>
+          <td>{{ BS.fieldName }}</td>
+          <td class="icon">
+            <label *ngIf=" BS.status === 0 " class="grayLight"></label>
+            <label *ngIf=" BS.status === 1 " class="redLight"></label>
+            <label *ngIf=" BS.status === 2 " class="greenLight"></label>
+          </td>
+          <td class="icon">
+            <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}" (click)="viewPage( BS )">remove_red_eye</mat-icon>
+          </td>
+          <td class="icon">
+            <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}" (click)="openDeleteModal( BS )">delete_forever</mat-icon>
+          </td>
+        </tr>
+      </ng-container>
     </tbody>
   </table>
 </div>

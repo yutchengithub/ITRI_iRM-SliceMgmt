@@ -137,7 +137,7 @@ export class BSManagementComponent implements OnInit {
   bsList: BSList = {} as BSList;   // @2024/03/19 Add
   isGetQueryBsListLoading = false; // 用於表示加載 BS List 的 flag，初始設置為 false @2024/03/19 Add for Progress Spinner
 
-  // @2024/03/19 Add
+  // @2024/03/21 Update
   // Get the BS List in the O1 System
   getQueryBsList() {
     console.log( 'getQueryBsList() - Start' );       // getQueryBsList() 啟動 
@@ -189,6 +189,38 @@ export class BSManagementComponent implements OnInit {
 
   queryBsListDeal() {
     this.totalItems = this.bsList.basestation.length;
+  
+    // 遍歷 basestation 陣列
+    this.bsList.basestation.forEach(bs => {
+      // 如果 bstype 為 1
+      if ( bs.bstype === 1 ) {
+        // 設置 cellCount 為 1
+        bs.cellCount = 1;
+      } else if ( bs.bstype === 2 ) {
+        // 如果 bstype 為 2，需要遍歷 components 物件
+        let cellCount = 0;
+        for ( const compKey in bs.components ) {
+          const compVal = bs.components[compKey];
+          for ( const innerKey in compVal ) {
+            // 取得內層陣列的長度,即 cell 數量
+            cellCount += compVal[innerKey].length;
+          }
+        }
+        // 設置 cellCount
+        bs.cellCount = cellCount;
+      }
+    });
+  
+    // 使用 setTimeout 設定一個定時刷新
+    // 如當前頁面是第一頁，則定時刷新 BS 列表
+    this.refreshTimeout = window.setTimeout(() => {
+      if (this.p === 1) {
+        console.log(`page[${this.p}] ===> refresh.`);
+        this.getQueryBsList(); // 刷新 BS 列表
+      } else {
+        console.log(`page[${this.p}] ===> no refresh.`);
+      }
+    }, 10000); // 設定 10000 ms 後執行
   }
 
 

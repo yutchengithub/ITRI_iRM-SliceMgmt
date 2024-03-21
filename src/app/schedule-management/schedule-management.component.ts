@@ -164,6 +164,7 @@ export class ScheduleManagementComponent implements OnInit {
 
       this.isLoadingScheduleList = false; // Local 模式下,數據加載快速完成,直接設置為 false
     } else {
+      
       // 非 Local 模式: 通過 API 從服務器獲取數據
       this.queryJobTicketList = this.API_Schedule.queryJobTicketList().subscribe({
         next: ( res ) => {
@@ -172,18 +173,20 @@ export class ScheduleManagementComponent implements OnInit {
           console.log( 'Get the ScheduleList:', res );
 
           this.scheduleList = res; // 更新排程列表數據
-
           this.scheduleListDeal();
+          console.log( '排程列表資訊\n( BS List ):', this.scheduleList ); // 取得的 Schedule List 資訊 ( Obtained Schedule List information )
+          
+
+          this.isLoadingScheduleList = false; // 數據加載完成
         },
         error: ( error ) => {
           // 請求出現錯誤
-          console.error('Error fetching schedule list:', error);
+          console.error( 'Error fetching schedule list:', error );
           this.isLoadingScheduleList = false; // 出錯時設置加載標誌為 false
         },
         complete: () => {
           // 數據流處理完成（無論成功或失敗）
-          console.log('Schedule list fetch completed');
-          this.isLoadingScheduleList = false; // 數據加載完成
+          console.log( 'Schedule list fetch completed' );
         }
       });
     }
@@ -193,6 +196,20 @@ export class ScheduleManagementComponent implements OnInit {
 
   scheduleListDeal() {
     this.totalItems = this.scheduleList.jobticket.length;
+
+    // 使用 setTimeout 設定一個定時刷新
+    // 如當前頁面是第一頁，則定時刷新排程列表
+    this.refreshTimeout = window.setTimeout(() => {
+      if ( this.p === 1 ) {
+
+        console.log(`page[${this.p}] ===> refresh.`);
+        this.getQueryJobTicketList(); // 更新排程訊息( 可選 )
+
+      } else {
+
+        console.log(`page[${this.p}] ===> no refresh.`);
+      }
+    }, 10000 ); // 設定 10000 ms 後執行
   }
 
 

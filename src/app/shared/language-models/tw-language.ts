@@ -196,7 +196,7 @@ export const TwLanguage = {
 
   'BS.name':'基站名稱',
   'BS.type':'基站類型',
-  'BS.cellCount':'Cell數',
+  'BS.cellCount':'Cell 數',
   'BS.description':'基站地點說明',
   'BS.belongField':'隸屬場域',
   'BS.status':'連線狀態',
