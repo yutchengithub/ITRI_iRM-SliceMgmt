@@ -1,16 +1,6 @@
 <h5>{{languageService.i18n['index.menu_BSMgr']}}
   <mat-icon tooltip="{{languageService.i18n['sm.create']}}" (click)="openCreateModal()">add</mat-icon>
 </h5>
-  <form [formGroup]="searchForm">
-    <div class="filter">
-      <span><label>{{languageService.i18n['sm.th_state']}}</label>
-        <input type="text"formControlName="firm">
-      </span>
-
-      <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-      <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSetting()">clear</span>
-    </div>
-  </form>
 
 <div class="table">
   <table>
@@ -68,7 +58,6 @@
 <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
   nextLabel="" id="PageDisplay_of_bsList">
 </pagination-controls>
-
 
 <ng-template #createBSModal>
   <h5>{{languageService.i18n['sm.th_create']}}</h5>

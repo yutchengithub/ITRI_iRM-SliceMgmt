@@ -1,16 +1,41 @@
 <h5>{{ languageService.i18n['index.menu_scheduleMgr'] }}
   <mat-icon tooltip="{{ languageService.i18n['sm.create'] }}" (click)="openCreateModal()">add</mat-icon>
 </h5>
-  <form [formGroup]="searchForm">
-    <div class="filter">
-      <span><label>{{ languageService.i18n['sm.th_state'] }}</label>
-        <input type="text"formControlName="firm">
-      </span>
+<form [formGroup]="searchForm" style="padding-bottom: 10px;">
+  <div class="filter">
+    <span><label>{{ languageService.i18n['sm.th_state'] }}</label>
+      <select formControlName="State">
+        <option *ngFor="let state of States" [ngValue]="state.value">
+          {{ state.displayName }}
+        </option>
+      </select>
+      <mat-error *ngIf="searchForm.controls['State'].invalid">Required</mat-error>
+    </span>
 
-      <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-      <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSetting()">clear</span>
-    </div>
-  </form>
+    <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="search_ScheduleList()" >search</span>
+
+    <!-- Button of clear_search_ScheduleList -->
+    <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="clear_search_ScheduleList()">clear</span>
+  </div>
+  
+  <!-- Search Criteria Summary of Schedule List -->
+  <div class="filterBY">
+    <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
+    <span *ngIf="afterSearchForm && afterSearchForm.controls['State'] && afterSearchForm.controls['State'].value">
+      <label>{{ languageService.i18n['sm.th_state'] }}:&nbsp;</label>
+      <label *ngIf="afterSearchForm.controls['State'].value === 'All'">All</label>
+      <span *ngIf="afterSearchForm.controls['State'].value === '0' || afterSearchForm.controls['State'].value === '1'">
+        {{ languageService.i18n['sm.jobSchedulingString'] }}
+      </span>
+      <label *ngIf="afterSearchForm.controls['State'].value === '2'">{{ languageService.i18n['sm.jobOnGoingString'] }}</label>
+      <label *ngIf="afterSearchForm.controls['State'].value === '3'">{{ languageService.i18n['sm.jobSuccessString'] }}</label>
+      <label *ngIf="afterSearchForm.controls['State'].value === '4'">{{ languageService.i18n['sm.jobFailString'] }}</label>
+      <label *ngIf="afterSearchForm.controls['State'].value === '5'">{{ languageService.i18n['sm.jobPartialSuccessString'] }}</label>
+    </span>
+  </div>
+</form>
+  
+
 
 <div class="table">
   <table>
@@ -40,7 +65,7 @@
 
       <!-- 加載完成後顯示 排程列表 數據 -->
       <ng-container *ngIf="!isLoadingScheduleList">
-        <tr *ngFor="let schedule of scheduleList.jobticket | paginate: { 
+        <tr *ngFor="let schedule of scheduleListToDisplay | paginate: { 
                       itemsPerPage: pageSize,
                       currentPage: p, 
                         totalItems: totalItems, 
@@ -68,6 +93,9 @@
             <mat-icon tooltip="{{ languageService.i18n['sm.delItem'] }}" (click)="openDeleteModal( schedule )"> delete_forever </mat-icon>
           </td>
         </tr>
+        <tr class="notFind" *ngIf="totalItems === 0">
+          <td colspan="7">{{ languageService.i18n['no_results'] }}</td>
+        </tr> 
       </ng-container>
     </tbody>
     
