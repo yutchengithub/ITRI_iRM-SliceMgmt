@@ -169,7 +169,8 @@ export class ScheduleManagementComponent implements OnInit {
     }, 10000 ); // 設定 10000 ms 後執行
   }
 
-// 控制顯示排程狀態的 icon 與訊息 ↓
+
+// ↓ 控制顯示排程狀態的 icon 與訊息 ↓
 
   // @2024/03/21 Add
   // 用於存儲排程狀態對應的 icon 和訊息
@@ -234,7 +235,7 @@ export class ScheduleManagementComponent implements OnInit {
     ];
   }
 
-// 控制顯示排程狀態的 icon 與訊息 ↑
+// ↑ 控制顯示排程狀態的 icon 與訊息 ↑
 
 
 // ↓ For Create FormGroup @2024/03/21 Add ↓
@@ -354,6 +355,9 @@ export class ScheduleManagementComponent implements OnInit {
     this.router.navigate( ['/main/schedule-mgr/info', this.selectSchedule.id, this.selectSchedule.tickettype] );
   }
 
+
+// ↓ For Delete Schedule @2024/03/22 Add ↓
+
   // @2024/03/22 Add
   // @ViewChild 裝飾器用於獲取模板中 #deleteSchedule_ConfirmWindow 的元素
   @ViewChild('deleteSchedule_ConfirmWindow') deleteSchedule_ConfirmWindow: any;
@@ -383,16 +387,81 @@ export class ScheduleManagementComponent implements OnInit {
   }
 
   // @2024/03/22 Add
-  // 確認刪除 Schedule 的方法
+  // 確認刪除 Schedule 的操作
   confirmDeleteSchedule() {
-    // 在這裡實作刪除 Schedule 的邏輯
-    // ...
 
-    // 關閉對話框
-    this.deleteSchedule_ConfirmWindowRef.close();
+    // 顯示加載指示器
+    this.isLoadingScheduleList = true;
+
+    // 檢查是否是 Local 環境
+    if ( this.commonService.isLocal ) {
+
+      // 在控制台輸出調試訊息
+      console.log( 'Remove Schedule in local environment.' );
+
+      // 調用刪除 Schedule 的函數,傳入 Schedule ID
+      this.deleteScheduleInLocal( this.selectSchedule.id );
+
+      // 刷新 Schedule 列表或進行其他更新
+      this.getQueryJobTicketList();
+
+      // 關閉加載指示器
+      this.isLoadingScheduleList = false;
+
+    } else {
+
+      // 非 Local 環境,調用後端 API 進行刪除
+      this.API_Schedule.removeJobTicket( this.selectSchedule.id ).subscribe({
+
+        next: ( response ) => {
+
+          // 刪除成功的回調,輸出成功訊息和後端響應
+          console.log( 'Schedule removed successfully', response );
+
+          // 刷新 Schedule 列表或進行其他更新
+          this.getQueryJobTicketList();
+
+          // 關閉加載指示器
+          this.isLoadingScheduleList = false;
+        },
+        error: ( error ) => {
+          // 刪除失敗的回調,輸出錯誤訊息
+          console.error( 'Failed to remove Schedule:', error );
+
+          // 關閉加載指示器
+          this.isLoadingScheduleList = false;
+        },
+        complete: () => {
+          // 請求完成後的回調,不管成功或失敗都會執行
+          // 關閉加載指示器
+          this.isLoadingScheduleList = false;
+        }
+      });
+    }
+  }
+  
+  // @2024/03/22 Add
+  // 模擬在 Local 環境中刪除 Schedule 的函數 ( 依據 id 進行刪除 )
+  deleteScheduleInLocal( scheduleId: string ) {
+
+    // 輸出將要刪除的 Schedule ID,用於記錄和調試
+    console.log( "The delete Schedule id:", scheduleId )
+
+    // 確保 scheduleList_LocalFiles.scheduleList_local.jobticket 是一個陣列
+    if ( Array.isArray( this.scheduleList_LocalFiles.scheduleList_local.jobticket ) ) {
+      
+      // 從 Schedule 列表中過濾掉要刪除的 Schedule
+      this.scheduleList_LocalFiles.scheduleList_local.jobticket = this.scheduleList_LocalFiles.scheduleList_local.jobticket.filter(schedule => schedule.id !== scheduleId);
+    
+    } else {
+
+      // 如果 scheduleList_LocalFiles.scheduleList_local.jobticket 不是陣列,輸出錯誤訊息
+      console.error('scheduleList_local.jobticket 不是陣列或為 undefined');
+    }
   }
 
 
+// ↑ For Delete Schedule @2024/03/22 Add ↑
 
 
 
