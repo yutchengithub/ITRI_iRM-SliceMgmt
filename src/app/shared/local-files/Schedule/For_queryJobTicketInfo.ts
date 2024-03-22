@@ -496,6 +496,42 @@
           }
         ],
         "ticketresult": ""
+      },
+      {
+        "id": "6a8d961f6b9c4f8d9492",
+        "fieldid": "e6700d701f8b41f8950e",
+        "fieldname": "ITRI",
+        "tickettype": "2",
+        "ticketstatus": "2",
+        "executedtype": "0",
+        "executedtime": "2024-03-23 04:00:00",
+        "jobticket": "0",
+        "ticketinfo": [
+          {
+            "fieldId": "e6700d701f8b41f8950e",
+            "start": "2024-03-13 00:00",
+            "end": "2024-03-19 00:00",
+            "iscustomized": 1,
+            "customizedkpi": {
+              "0": {
+                "name": "2222222222222",
+                "describe": "22222222222222",
+                "kpi": "44444444444444444444444"
+              },
+              "1": {
+                "name": "44444444444444",
+                "describe": "444444444",
+                "kpi": "4444444444"
+              },
+              "2": {
+                "name": "1343RFSFS",
+                "describe": "EFSEFSEFSE",
+                "kpi": "FSFESEFESFS"
+              }
+            }
+          }
+        ],
+        "ticketresult": ""
       }
     ];
 
