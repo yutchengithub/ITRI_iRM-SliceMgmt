@@ -134,7 +134,7 @@ export class ScheduleInfoComponent implements OnInit {
     // 用於存儲排程狀態對應的 icon 和訊息
     ticketStatusInfo = [
       { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] },
-      { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobDailyString'] + ')' },
+      { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobDailyString'] + ' )' },
       { icon: 'blueLight',   message: this.languageService.i18n['sm.jobOnGoingString'] },
       { icon: 'greenLight',  message: this.languageService.i18n['sm.jobSuccessString'] },
       { icon: 'redLight',    message: this.languageService.i18n['sm.jobFailString'] },
@@ -159,10 +159,10 @@ export class ScheduleInfoComponent implements OnInit {
           return this.ticketStatusInfo[1];
         } else if ( executedType === 2 ) {
           // 返回一個自定義的對象,包含圖示和消息
-          return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobWeeklyString'] + ')' };
+          return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobWeeklyString'] + ' )' };
         } else if ( executedType === 3 ) {
           // 返回一個自定義的對象,包含圖示和消息
-          return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobMonthlyString'] + ')' };
+          return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobMonthlyString'] + ' )' };
         }
       }
 
@@ -177,7 +177,7 @@ export class ScheduleInfoComponent implements OnInit {
       // 重新初始化 ticketStatusInfo 數組，以正確顯示對應的語言訊息於表格的狀態欄中
       this.ticketStatusInfo = [
         { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] },
-        { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobDailyString'] + ')' },
+        { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobDailyString'] + ' )' },
         { icon: 'blueLight',   message: this.languageService.i18n['sm.jobOnGoingString'] },
         { icon: 'greenLight',  message: this.languageService.i18n['sm.jobSuccessString'] },
         { icon: 'redLight',    message: this.languageService.i18n['sm.jobFailString'] },
