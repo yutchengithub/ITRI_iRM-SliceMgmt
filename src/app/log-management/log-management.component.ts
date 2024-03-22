@@ -13,7 +13,7 @@ import * as XLSX from 'xlsx';         // @11/23 Add by yuchen
 //import { saveAs } from 'file-saver';  // @11/23 Add by yuchen 
 
 // For import APIs of Field Management @2024/03/14 Add 
-import { apiForLogMgmt } from '../shared/api/For_Log';
+import { apiForLogMgmt } from '../shared/api/For_Log_Mgmt';
 
 // 引入儲存各個資訊所需的 interfaces @2024/03/14 Add 
 import { UserLogsList, UserLogsInfo, UserLogDetail }  from '../shared/interfaces/Log/For_queryLogList';          
@@ -1233,8 +1233,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       const endDate = new Date( this.searchForm.get('to')?.value );     // 取得日期部分(至)
 
       // 將日期轉換為 'YYYYMMDD_HHmm' 的格式
-      const formattedStartDate = this.formatDateForFileName( startDate );
-      const formattedEndDate = this.formatDateForFileName( endDate );
+      const formattedStartDate = this.commonService.formatDateForFileName( startDate );
+      const formattedEndDate = this.commonService.formatDateForFileName( endDate );
 
       // 定義欄位順序
       const fields = dataType === 'UserLogs' ? 
@@ -1352,7 +1352,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
             const userLogsfileName = `${dataType}_${formattedLogType}_${start}_to_${end}.xlsx`;
 
             // 解碼 Base64 字符串並自動下載 .xlsx 文件
-            this.downloadExcelFromBase64( res, userLogsfileName );
+            this.commonService.downloadExcelFromBase64( res, userLogsfileName );
 
             // 設置加載旗標為 false，表示加載完成
             this.isGetUserLogsInfoLoading = false;
@@ -1430,7 +1430,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
             const neLogsfileName = `${dataType}_${formattedLogType}_${start}_to_${end}.zip`;
 
             // 解碼 Base64 字符串並自動下載 .zip 文件
-            this.downloadExcelFromBase64( res, neLogsfileName );
+            this.commonService.downloadExcelFromBase64( res, neLogsfileName );
 
             // 設置加載旗標為 false，表示加載完成
             this.isGetNELogsInfoLoading = false;
@@ -1448,38 +1448,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     console.log( "exportLogsToFile() - End" );
   }
 
-  //  @11/29 Add by yuchen
-  // 格式化日期時間至 'YYYYMMDD_HHmm' 該格式
-  formatDateForFileName( date: Date ): string {
-    
-    return date.getFullYear().toString() +
-            (date.getMonth() + 1).toString().padStart(2, '0') +
-            date.getDate().toString().padStart(2, '0') + '_' +
-            date.getHours().toString().padStart(2, '0') +
-            date.getMinutes().toString().padStart(2, '0');
-  }
 
-  // @2024/03/12 Add
-  // 用於解碼 Base64 字符串並下載 .xlsx 或 .zip 文件
-  downloadExcelFromBase64( base64String: string, fileName: string ) {
-    const link = document.createElement("a");
-
-    if ( link.download !== undefined ) {
-
-      // 支援 HTML5 download 屬性的瀏覽器
-      link.setAttribute( "href", 'data:application/vnd.ms-excel;base64,' + base64String );
-      link.setAttribute( "download", fileName );
-      link.style.visibility = 'hidden';
-      document.body.appendChild( link );
-      link.click();
-      document.body.removeChild( link );
-
-    } else {
-
-      // 不支援 HTML5 download 屬性的舊版瀏覽器時的處理
-      console.error( "您的瀏覽器不支援自動下載文件" );
-    }
-  }
 
   /*
     // @11/24 not use

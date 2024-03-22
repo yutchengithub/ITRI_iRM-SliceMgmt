@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 // For import APIs of Schedule Management 
-import { apiForScheduleMgmt }     from '../shared/api/For_Schedule';  // @2024/03/15 Add
+import { apiForScheduleMgmt }     from '../shared/api/For_Schedule_Mgmt';  // @2024/03/15 Add
 
 // 引入儲存各個資訊所需的 interfaces of Schedule Management
 import { ScheduleList, Schedule } from '../shared/interfaces/Schedule/For_queryJobTicketList'; // @2024/03/15 Add
@@ -336,6 +336,8 @@ export class ScheduleManagementComponent implements OnInit {
 // ↑ For Create FormGroup @2024/03/21 Add ↑
 
 
+// ↓ For Click View @2024/03/22 Add ↓
+
   // @2024/03/17 Add
   // 用於存儲當前選中的 Schedule 訊息
   selectSchedule!: Schedule;  
@@ -344,7 +346,7 @@ export class ScheduleManagementComponent implements OnInit {
    *  導航到選定的排程詳細資訊頁面。
    *  @param schedule 從排程列表中選擇的排程物件。
    */
-  viewScheduleDetailInfo( schedule: Schedule  ) {
+  viewScheduleDetailInfo( schedule: Schedule ) {
 
     this.selectSchedule = schedule; // 設定當前選擇的排程。
 
@@ -354,6 +356,52 @@ export class ScheduleManagementComponent implements OnInit {
     // 導航到排程管理的詳細資訊頁面，帶上排程的 ID 和排程的 ID 類型 作為路由參數。
     this.router.navigate( ['/main/schedule-mgr/info', this.selectSchedule.id, this.selectSchedule.tickettype] );
   }
+
+// ↑ For Click View @2024/03/22 Add ↑
+
+
+// ↓ For Download Schedule Report @2024/03/22 Add ↓
+
+  // 用於下載排程列表裡的指定排程報表
+  downloadSpecificScheduleReportInList( schedule: Schedule ) {
+    console.log("downloadSpecificScheduleReportInList() - Start");
+
+    // 將選中的 Schedule 賦值給 selectSchedule
+    this.selectSchedule = schedule;
+
+    // 檢查是否在 Local 環境下模擬執行
+    if ( this.commonService.isLocal ) {
+
+      // Local 模式下無法下載報表
+      console.log( "Local 模式下無法真的下載報表,\n 此點選要下載的報表名稱為:", this.selectSchedule.ticketresult );
+
+    } else {
+
+      // 生產環境下向後端 API 發送請求下載報表
+      this.API_Schedule.getReportFile( this.selectSchedule.id ).subscribe({
+        next: ( response ) => {
+
+          // 處理成功的響應
+          console.log("排程報表", this.selectSchedule.ticketresult, "下載成功:", response);
+
+          // 取得報表名稱
+          const fileName = this.selectSchedule.ticketresult;
+
+          // 解碼 Base64 字符串並自動下載檔案
+          this.commonService.downloadExcelFromBase64( response, fileName );
+        },
+        error: ( error ) => {
+          // 處理失敗響應
+          console.error( "排程報表下載失敗:", error );
+          // 例如顯示錯誤訊息給用戶
+        }
+      });
+    }
+
+    console.log( "downloadSpecificScheduleReportInList() - End" );
+  }
+
+// ↑ For Download Schedule Report @2024/03/22 Add ↑
 
 
 // ↓ For Delete Schedule @2024/03/22 Add ↓
@@ -439,7 +487,7 @@ export class ScheduleManagementComponent implements OnInit {
       });
     }
   }
-  
+
   // @2024/03/22 Add
   // 模擬在 Local 環境中刪除 Schedule 的函數 ( 依據 id 進行刪除 )
   deleteScheduleInLocal( scheduleId: string ) {
@@ -459,7 +507,6 @@ export class ScheduleManagementComponent implements OnInit {
       console.error('scheduleList_local.jobticket 不是陣列或為 undefined');
     }
   }
-
 
 // ↑ For Delete Schedule @2024/03/22 Add ↑
 

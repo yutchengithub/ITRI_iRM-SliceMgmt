@@ -10,7 +10,7 @@ import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
 
 // For import APIs of Schedule Management 
-import { apiForScheduleMgmt }     from '../../shared/api/For_Schedule';  // @2024/03/15 Add
+import { apiForScheduleMgmt }     from '../../shared/api/For_Schedule_Mgmt';  // @2024/03/15 Add
 
 // 引入儲存各個資訊所需的 interfaces of Schedule Management
 import { ScheduleInfo }           from '../../shared/interfaces/Schedule/For_queryJobTicketInfo';  // @2024/03/15 Add

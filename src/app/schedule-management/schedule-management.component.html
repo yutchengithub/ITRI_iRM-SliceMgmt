@@ -44,8 +44,8 @@
         <th>{{ languageService.i18n['sm.th_time'] }}</th>
         <th>{{ languageService.i18n['sm.th_type'] }}</th>
         <th class="icon">{{ languageService.i18n['sm.th_state'] }}</th>
-        <th class="icon">{{ languageService.i18n['sm.th_download'] }}</th>
         <th class="icon">{{ languageService.i18n['sm.th_view'] }}</th>
+        <th class="icon">{{ languageService.i18n['sm.th_download'] }}</th>
         <th class="icon">{{ languageService.i18n['sm.th_delete'] }}</th>
       </tr>
     </thead>
@@ -84,13 +84,13 @@
             <label>{{ getTicketStatusInfo( schedule ).message }}</label>
           </td>
           <td class="icon">
-            <mat-icon *ngIf="schedule.ticketresult" tooltip="{{ languageService.i18n['sm.smDownload'] }}" (click)="openProvisionModal(schedule)">download_for_offline</mat-icon>
-          </td>
-          <td class="icon">
             <mat-icon tooltip="{{ languageService.i18n['sm.view_detail'] }}" (click)="viewScheduleDetailInfo( schedule )"> remove_red_eye </mat-icon>
           </td>
+          <td class="icon">
+            <mat-icon *ngIf="schedule.ticketresult" tooltip="{{ languageService.i18n['sm.smDownload'] }}" (click)="downloadSpecificScheduleReportInList( schedule )">download_for_offline</mat-icon>
+          </td>
           <td class="icon"><!-- 刪除按鈕 -->
-            <mat-icon tooltip="{{ languageService.i18n['sm.delItem'] }}" (click)="openDeleteSchedule_ConfirmWindow(schedule)">
+            <mat-icon tooltip="{{ languageService.i18n['sm.delItem'] }}" (click)="openDeleteSchedule_ConfirmWindow( schedule )">
               delete_forever
             </mat-icon>
           </td>

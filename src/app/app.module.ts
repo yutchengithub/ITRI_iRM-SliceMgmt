@@ -73,10 +73,10 @@ import { MatStepperModule } from '@angular/material/stepper'; // @2024/01/31 Add
 import { MatExpansionModule } from '@angular/material/expansion'; // 用於縮合效果 @2024/02/29 Add
 
 // import API
-import { apiForFieldMgmt }    from './shared/api/For_Field';     // @2024/03/14 Update
-import { apiForBSMgmt }       from './shared/api/For_BS';        // @2024/03/14 Add
-import { apiForScheduleMgmt } from './shared/api/For_Schedule';  // @2024/03/14 Add
-import { apiForLogMgmt }      from './shared/api/For_Log';       // @2024/03/14 Add
+import { apiForFieldMgmt }    from './shared/api/For_Field_Mgmt';     // @2024/03/14 Update
+import { apiForBSMgmt }       from './shared/api/For_BS_Mgmt';        // @2024/03/14 Add
+import { apiForScheduleMgmt } from './shared/api/For_Schedule_Mgmt';  // @2024/03/14 Add
+import { apiForLogMgmt }      from './shared/api/For_Log_Mgmt';       // @2024/03/14 Add
 
 // import Local Files
 import { localFieldSummaryInfo }  from './shared/local-files/Field/For_queryFieldSummaryInfo';    // @2024/03/14 Add
