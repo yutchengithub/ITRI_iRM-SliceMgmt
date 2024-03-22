@@ -386,7 +386,15 @@ export const TwLanguage = {
   'sm.confirm_del':'確定要刪除此排程',
 
   'sm.info':'排程資訊', 
-  
+  'sm.detailInfo':'詳細資訊', 
+  'sm.executeField':'執行場域',
+
+  'sm.contentInfo':'內容訊息',
+  'sm.periodicExecution': '週期性執行',
+  'sm.notPeriodicExecution': '否',
+  'sm.executionResult': '執行結果',
+
+
 
   // Log Management (日誌管理)  @10/31 add by yuchen
   'LogLists': '日誌列表',
