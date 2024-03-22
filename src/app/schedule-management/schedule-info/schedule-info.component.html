@@ -1,273 +1,33 @@
-<div class="ocloudInfo">
+<div class="ocloudInfo software">
   <h5>
     <button (click)="back()">
       <span class="material-icons">arrow_back</span>Back
     </button>
-    {{languageService.i18n['sm.info']}} – 
-      <label *ngIf=" scheduleType === '0' ">{{ languageService.i18n['sm.sfUpdate'] }}</label>
-      <label *ngIf=" scheduleType === '1' ">{{ languageService.i18n['sm.caReport'] }}</label>
-      <label *ngIf=" scheduleType === '2' ">{{ languageService.i18n['sm.pmReport'] }}</label>
-      <label *ngIf=" scheduleType === '3' ">{{ languageService.i18n['sm.fmReport'] }}</label>
-      <label *ngIf=" scheduleType === '4' ">{{ languageService.i18n['sm.sfReport'] }}</label>
+    Software {{languageService.i18n['information']}} – /
   </h5>
 
-
-  <div class="BOX col-md-4 cpu">
-    <label class="boxTitle">{{languageService.i18n['index.resourceMsg']}}
-      <a href="javascript:void(0)" (click)="goPerformanceMgr()">
-       {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
-      </a>
-    </label>
-    <div>
-      <span>
-        <img src="assets/img/cpu.png">
-        <div><label>{{languageService.i18n['index.cpuLoading']}}</label><br>{{ocloudPerformance.cpu}}</div>
-      </span>
-      <span>
-        <img src="assets/img/database.png">
-        <div><label>{{languageService.i18n['index.diskUsage']}}</label><br>{{ocloudPerformance.storage}}</div>
-      </span>
-      <span>
-        <img src="assets/img/memory.png">
-        <div><label>{{languageService.i18n['index.memoryUsage']}}</label><br><!--span class="bold"-->{{ocloudPerformance.memory}}<!--/span--></div>
-      </span>
-      <span>
-        <img src="assets/img/network.png">
-        <div><label>{{languageService.i18n['index.networkThroughput']}}</label><br>{{ocloudPerformance.network}}</div>
-      </span>
-    </div>
-
-  </div>
-
-  <div class="BOX col-md-4 center Fault ">
-    <label class="boxTitle">{{languageService.i18n['index.faultMsg']}}
-      <a href="javascript:void(0)" (click)="goFaultMgr()">
-       {{languageService.i18n['index.viewMore']}}<span class="material-icons">more_horiz</span>
-      </a>
-    </label>
-    <span class="percent {{severityText(severity)}}" *ngFor="let severity of severitys;let i=index">
-      {{severityText(severity)}}<br>{{severityCount(severity)}}
-
-    </span>
-  </div>
-
-  <div class="BOX col-md-3 basicInfo h30">
+  <div class="BOX basicInfo ">
     <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
-    <ul>
-      <li><label>{{languageService.i18n['cm.name']}}</label><span>{{bsComponentInfo.name}}</span></li>
-      <li><label>{{languageService.i18n['cm.type']}}</label><span>{{bsComponentInfo.id}}</span></li>
-      <li><label>{{languageService.i18n['cm.ip']}}</label><span>{{bsComponentInfo.ip}}</span></li>
-      <li><label>{{languageService.i18n['cm.port']}}</label><span>{{bsComponentInfo.port}}</span></li>
-      <li><label>{{languageService.i18n['cm.acc']}}</label><span>{{bsComponentInfo.account}}</span></li>
-      <li><label>{{languageService.i18n['cm.passw']}}</label><span>{{bsComponentInfo.key}}</span></li>
-      <li><label>{{languageService.i18n['cm.manufacturer']}}</label><span>{{bsComponentInfo.firm}}</span></li>
-      <li><label>{{languageService.i18n['cm.model']}}</label><span>{{bsComponentInfo.modelname}}</span></li>
-      <li><label>{{languageService.i18n['table.Status']}}</label><span>{{bsComponentInfo.status}}</span></li>
-      <li><label>{{languageService.i18n['software_version']}}</label><span>{{bsComponentInfo.port}}</span></li>
-    </ul>
-
-    <!-- <label class="boxTitle">{{languageService.i18n['software.info']}}</label>
-    <ul>
-      <li>
-        <label>{{languageService.i18n['version']}}</label>
-        <span>{{ocloudInfo.softwareVersion}}
-          <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">{{languageService.i18n['update']}}</button>
-        </span>
-      </li>
-    </ul> -->
-  </div>
-
-  <div class="BOX col-md-3 nf h30">
-    <label class="boxTitle">{{languageService.i18n['nf.list']}}</label>
-    <div class="table">
-      <table>
-        <thead>
-          <tr>
-            <th>{{languageService.i18n['table.header_name']}}</th>
-            <th>DMS</th>
-            <th>{{languageService.i18n['table.Status']}}</th>
-            <th>{{languageService.i18n['index.view']}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let opt of ocloudInfo.nf">
-            <td>{{opt.name}}</td>
-            <td>{{opt.dmsName}}</td>
-            <td>
-              <label tooltip="{{languageService.i18n['nfRun']}}" *ngIf="opt.status === 0" class="greenLight"></label>
-              <label tooltip="{{languageService.i18n['nfRun']}}" *ngIf="opt.status === 1" class="blueLight"></label>
-              <label tooltip="{{languageService.i18n['nfNotRun']}}" *ngIf="opt.status === 2" class="redLight"></label>
-              <label tooltip="{{languageService.i18n['nfNotRun']}}" *ngIf="opt.status === 3" class="grayLight"></label>
-              <ng-container *ngIf="opt.status !== 2; else ifAction">
-                {{commonService.details(opt.status)}}
-              </ng-container>
-              <ng-template #ifAction>
-                {{opt.actionstatus}}
-              </ng-template>
-            </td>
-            <td (click)="goNFMgr(opt)">
-              <mat-icon tooltip="{{languageService.i18n['view_detail']}}">search</mat-icon>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="center">
+      <ul class="Software_info">
+        <h3>Software Information</h3>
+        <li><label>{{languageService.i18n['manufacturer']}}</label><span>2</span></li>
+        <li><label>{{languageService.i18n['model']}}</label><span>2</span></li>
+        <li><label>{{languageService.i18n['type']}}</label><span>2</span></li>
+        <li><label>{{languageService.i18n['version']}}</label><span>2</span></li>
+        <li><label>{{languageService.i18n['notes']}}</label><span>2</span></li>
+      </ul>
+      <ul class="file_url_info">
+        <h3>File/URL Information</h3>
+        <li><label>File name</label><span>1</span></li>
+        <li><label>URL</label><span>2</span></li>
+        <li><label>File size</label><span>2</span></li>
+        <li><label>CheckSum</label><span>2</span></li>
+      </ul>
+      <ul class="ftp_info">
+        <h3>FTP Information</h3>
+        <li><label>FTP Account</label><span>1111111111111</span></li>
+        <li><label>FTP Password</label><span>111111</span></li>
+      </ul>
     </div>
   </div>
-
-  <div class="BOX col-md-3 h30">
-    <label class="boxTitle">Resource Pools</label>
-    <div>
-      <div *ngFor="let resourcepool of ocloudInfo.resourcepool;let i=index">
-        <div class="table">
-          <div class="opt" (click)="resourcepool.active = !resourcepool.active" class="{{resourcepool.active?'active':''}}">{{resourcepool.poolName}}
-            <span class="material-icons">expand_less</span>
-          </div>
-          <table *ngIf="resourcepool.active">
-            <thead>
-              <tr>
-                <th>Node</th>
-                <th>CPU</th>
-                <th>Memory</th>
-                <th>Storage</th>
-                <th>Interface</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let node of resourcepool.node;let j=index">
-                <td>{{node.nodeName}}</td>
-                <!-- Tooltip Cpu -->
-                <td class="ResourceTooltip">
-                  <a href="javascript:void(0)" [tooltip]="$any(cpuContent)" [options]="$any(tooltipOptions)" contentType="template">{{node.cpu.length}}</a>
-                  <ng-template #cpuContent>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>{{languageService.i18n['table.header_name']}}</th>
-                          <th>Product</th>
-                          <th>Capacity</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let cpu of node.cpu">
-                          <td>{{cpu.name}}</td>
-                          <td>{{cpu.product}}</td>
-                          <td>{{cpu.capacity}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </ng-template>
-                </td>
-                <td>{{node.memory.size}}</td>
-                <!-- Tooltip Cpu -->
-                <td class="ResourceTooltip">
-                  <a href="javascript:void(0)" [tooltip]="$any(storageContent)" [options]="$any(tooltipOptions)" contentType="template">{{node.storage.total}}</a>
-                  <ng-template #storageContent>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>{{languageService.i18n['table.header_name']}}</th>
-                          <th>Size</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let item of node.storage.items">
-                          <td>{{item.name}}</td>
-                          <td>{{item.size}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </ng-template>
-                </td>
-                <!-- Tooltip Nic -->
-                <td class="Interface ResourceTooltip">
-                  <a href="javascript:void(0)" [tooltip]="$any(nicContent)" [options]="$any(tooltipOptions)" contentType="template">{{node.nic.length}}</a>
-                  <ng-template #nicContent>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Product</th>
-                          <th>Capacity</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let nic of node.nic">
-                          <td>{{nic.name}}</td>
-                          <td>{{nic.product}}</td>
-                          <td>{{nic.capacity}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </ng-template>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-
-
-
-<ng-template #updateModal>
-  <h5>{{languageService.i18n['software_update']}}</h5>
-  <form [formGroup]="updateForm">
-    <ul>
-      <li>
-        <label>Current Version</label>
-        <span>{{ocloudInfo.softwareVersion}}</span>
-      </li>
-      <li>
-        <label>Update Software</label>
-        <span class="SoftwareUpdate">
-          <mat-button-toggle-group formControlName="type" (change)="changeType($event)">
-            <mat-button-toggle value="imageUrl">Image URL</mat-button-toggle>
-            <mat-button-toggle value="existedFile">Existed File</mat-button-toggle>
-          </mat-button-toggle-group>
-
-          <div *ngIf="updateForm.controls['type'].value === 'imageUrl'">
-            <input type="text" formControlName="imageUrl" placeholder="Image URL" class="{{formValidated&&updateForm.controls['imageUrl'].invalid?'required':''}}">
-            <mat-error *ngIf="formValidated&&updateForm.controls['imageUrl'].invalid">Required</mat-error>
-          </div>
-          <div *ngIf="updateForm.controls['type'].value === 'existedFile'">
-            <select formControlName="fileName" class="{{formValidated&&updateForm.controls['fileName'].invalid?'required':''}}">
-              <option *ngFor="let opt of softwareList" [value]="opt.fileName">{{opt.fileName}}</option>
-            </select>
-            <mat-error *ngIf="formValidated&&updateForm.controls['fileName'].invalid">Required</mat-error>
-            <div class="UV" *ngIf="updateForm.controls['type'].value === 'existedFile'">
-              Update Version : {{softwareVersion()}}
-            </div>
-          </div>
-        </span>
-      </li>
-    </ul>
-    <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
-      <button type="button" (click)="update()">OK</button>
-    </div>
-  </form>
-</ng-template>
-
-<ng-template #updateIPModal>
-  <h5>Update IP Address</h5>
-  <form [formGroup]="updateForm">
-    <ul>
-      <li>
-        <label>New IP Address</label>
-        <input type="text" formControlName="newip" class="update-ip" [ngModel]="ocloudInfo.ipAddress">
-        <div class="error-container" *ngIf="updateBasicError">
-          <mat-icon class="error-icon">warning</mat-icon>
-          Invalid IP, Please try again.
-        </div>
-      </li>
-    </ul>
-    <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
-      <button type="button" (click)="updateIPAddress()">OK</button>
-    </div>
-  </form>
-</ng-template>
