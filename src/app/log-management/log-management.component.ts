@@ -1233,8 +1233,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       const endDate = new Date( this.searchForm.get('to')?.value );     // 取得日期部分(至)
 
       // 將日期轉換為 'YYYYMMDD_HHmm' 的格式
-      const formattedStartDate = this.formatDateForFileName( startDate );
-      const formattedEndDate = this.formatDateForFileName( endDate );
+      const formattedStartDate = this.commonService.formatDateForFileName( startDate );
+      const formattedEndDate = this.commonService.formatDateForFileName( endDate );
 
       // 定義欄位順序
       const fields = dataType === 'UserLogs' ? 
@@ -1448,16 +1448,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     console.log( "exportLogsToFile() - End" );
   }
 
-  // @11/29 Add by yuchen
-  // 格式化日期時間至 'YYYYMMDD_HHmm' 該格式
-  formatDateForFileName( date: Date ): string {
-    
-    return date.getFullYear().toString() +
-            (date.getMonth() + 1).toString().padStart(2, '0') +
-            date.getDate().toString().padStart(2, '0') + '_' +
-            date.getHours().toString().padStart(2, '0') +
-            date.getMinutes().toString().padStart(2, '0');
-  }
+
 
   /*
     // @11/24 not use
