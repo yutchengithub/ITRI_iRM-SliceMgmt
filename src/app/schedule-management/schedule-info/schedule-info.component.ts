@@ -1,13 +1,18 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonService } from '../../shared/common.service';
-import { SoftwareList } from '../../software-management/software-management.component';
+import { CommonService } from './../../shared/common.service';
+import { SoftwareList } from './../../software-management/software-management.component';
+import { SoftwareLists } from './../../software-management/software-management.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
+import { FmsgList } from './../../fault-management/fault-management.component';
+import { FaultMessages } from './../../fault-management/fault-management.component';
+import { Subscription } from 'rxjs';
+import { XMLParser } from "fast-xml-parser";
 
 // For import APIs of Schedule Management 
 import { apiForScheduleMgmt }     from '../../shared/api/For_Schedule_Mgmt';  // @2024/03/15 Add
@@ -18,96 +23,6 @@ import { ScheduleInfo }           from '../../shared/interfaces/Schedule/For_que
 // For import local files of Schedule Management 
 import { localScheduleInfo }      from '../../shared/local-files/Schedule/For_queryJobTicketInfo'; // @2024/03/15 Add
 
-export interface OcloudInfo {
-  id: string;
-  name: string;
-  imsEndpoint: string;
-  ipAddress: string;
-  description: string;
-  status: string;
-  softwareVersion: string;
-  callbackUri: string;
-  dms: Dms[];
-  nf: Nf[];
-  fault: Fault;
-  resourcepool: Resourcepool[];
-}
-
-export interface Dms {
-  id: string;
-  name: string;
-  dmsEndpoint: string;
-}
-
-export interface Nf {
-  id: string;
-  name: string;
-  dmsName: string;
-  status: number;
-  actionstatus: string;
-}
-
-export interface Fault {
-  critical: number;
-  major: number;
-  minor: number;
-  warning: number;
-}
-
-export interface Resourcepool {
-  poolId: string;
-  poolName: string;
-  active?: boolean;
-  node: Node[];
-}
-
-export interface Node {
-  nodeId: string;
-  nodeName: string;
-  cpu: Cpu[];
-  memory: Memory,
-  nic: Nic[];
-  storage: Storage;
-}
-
-export interface Cpu {
-  id: string;
-  name: string;
-  product: string;
-  capacity: string;
-}
-
-export interface Nic {
-  id: string;
-  name: string;
-  product: string;
-  capacity: string;
-}
-
-export interface Memory {
-  name: string;
-  size: string;
-}
-
-export interface Storage {
-  total: string;
-  items: Items[];
-}
-
-export interface Items {
-  id: string;
-  name: string;
-  size: string;
-}
-
-export interface OcloudPerformance {
-  // totalCpu: number;
-  // usedCpu: number;
-  cpu: string;
-  memory: string;
-  storage: string;
-  network: string;
-}
 //component Info
 export interface BsComponentInfo {
   id: string;
@@ -127,6 +42,21 @@ export interface BsComponentInfo {
     };
   };
 }
+export interface Uploadinfos {
+  id: string;
+  firm: string;
+  modelname: string;
+  uploadtime: string;
+  uploadtype: number;
+  uploadversion: string;
+  description: string;
+  uploadinfo: string;
+  uploadurl: string;
+}
+
+export interface ComponentInfosw{
+  uploadinfos: Uploadinfos[];
+}
 
 export interface Info {
   data: string;
@@ -142,12 +72,13 @@ interface SoftwareSlot {
   buildId?: string;
   buildName?: string;
   buildVersion?: string;
-  files?: {
-    name: string;
-    version: string;
-    localPath: string;
-    integrity: string;
-  };
+  files?: Files;
+}
+interface Files {
+  name: string;
+  version: string;
+  localPath: string;
+  integrity: string;
 }
 
 @Component({
@@ -176,6 +107,7 @@ export class ScheduleInfoComponent implements OnInit {
   
   ) {
     this.severitys = this.commonService.severitys;
+    this.cmpsource = this.commonService.cmpsource;
   }
 
   // @2024/03/17 Add
@@ -205,8 +137,6 @@ export class ScheduleInfoComponent implements OnInit {
   newip: string = '';
   // utilizationPercent: number = 0;
   bsComponentInfo: BsComponentInfo = {} as BsComponentInfo;
-  ocloudInfo: OcloudInfo = {} as OcloudInfo;
-  ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
   softwareList: SoftwareList[] = [];
   systemSummary: SystemSummary = {} as SystemSummary;;
   fileNameMapSoftware: Map<string, SoftwareList> = new Map();
@@ -289,7 +219,6 @@ export class ScheduleInfoComponent implements OnInit {
   getOcloudPerformance() {
     if (this.commonService.isLocal) {
       /* local file test */
-      this.ocloudPerformance = this.commonService.ocloudPerformance;
       this.ocloudPerformanceDeal();
     } else {
       clearTimeout(this.refreshTimeout);
@@ -297,7 +226,6 @@ export class ScheduleInfoComponent implements OnInit {
         res => {
           console.log('getOcloudPerformance:');
           console.log(res);
-          this.ocloudPerformance = res as OcloudPerformance;
           this.ocloudPerformanceDeal();
         }
       );
@@ -332,20 +260,6 @@ export class ScheduleInfoComponent implements OnInit {
     });
   }
 
-  // getSystemSummary() {
-  //   if (this.commonService.isLocal) {
-  //     /* local file test */
-  //     this.systemSummary = this.commonService.systemSummary;
-  //   } else {
-  //     this.commonService.querySystemSummary().subscribe(
-  //       res => {
-  //         console.log('getSoftwareList:');
-  //         console.log(res);
-  //         this.systemSummary = res as SystemSummary;
-  //       }
-  //     );
-  //   }
-  // }
 
   softwareVersion(): string {
     const fileName = this.updateForm.controls['fileName'].value;
@@ -358,38 +272,15 @@ export class ScheduleInfoComponent implements OnInit {
   }
 
   ocloudInfoDeal() {
-    if (this.ocloudInfo.resourcepool && this.ocloudInfo.resourcepool.length > 0) {
-      this.ocloudInfo.resourcepool[0].active = true;
-    }
   }
 
-  ocloudPerformanceDeal() {
-    // this.utilizationPercent = Math.floor((Number(this.ocloudPerformance.usedCpu) / Number(this.ocloudPerformance.totalCpu)) * 100);
-    if (this.ocloudPerformance.cpu != 'N/A' || this.ocloudPerformance.storage != 'N/A' ||
-      this.ocloudPerformance.memory != 'N/A' || this.ocloudPerformance.network != 'N/A') {
-      this.ocloudPerformance.cpu += ' %';
-      this.ocloudPerformance.memory += ' GB';
-      this.ocloudPerformance.storage += ' MB';
-      this.ocloudPerformance.network += ' Kbps';
-    }
-  }
+  ocloudPerformanceDeal() {}
 
   severityText(severity: string): string {
     return this.commonService.severityText(severity);
   }
 
-  severityCount(severity: string): number {
-    if (severity.toUpperCase() === this.severitys[0]) {
-      return this.ocloudInfo.fault.critical;
-    } else if (severity.toUpperCase() === this.severitys[1]) {
-      return this.ocloudInfo.fault.major;
-    } else if (severity.toUpperCase() === this.severitys[2]) {
-      return this.ocloudInfo.fault.minor;
-    } else if (severity.toUpperCase() === this.severitys[3]) {
-      return this.ocloudInfo.fault.warning;
-    } else {
-      return 0;
-    }
+  severityCount(severity: string) {
   }
 
   // 返回 Schedule Management 主頁
@@ -397,10 +288,21 @@ export class ScheduleInfoComponent implements OnInit {
     this.router.navigate(['/main/schedule-mgr']);
   }
 
+  pageChanged( page: number ) {
+    this.p = page;
+  }
+
+  get msgToDisplay(): FaultMessages[] {
+    // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
+    // 否則，顯示全部 this.fmsgList.faultMessages
+    return this.isSearch ? this.filteredFmList : this.fmsgList.faultMessages;
+  }
 
   goFaultMgr() {
     this.router.navigate(['/main/fault-mgr', this.cloudName, 'All']);
   }
+
+  search() { }
 
   openUpdateModel() {
     this.formValidated = false;
@@ -452,8 +354,6 @@ export class ScheduleInfoComponent implements OnInit {
       this.updateModalRef.close();
     } else {
       const body: any = {
-        ocloud: this.ocloudInfo.id,
-        currentVersion: this.ocloudInfo.softwareVersion,
         sessionid: this.sessionId
       };
       if (this.updateForm.controls['type'].value === 'imageUrl') {
@@ -493,7 +393,6 @@ export class ScheduleInfoComponent implements OnInit {
       if (isIPValid) {
         // Valid IP and non-empty port, proceed with the update
         const body: any = {
-          ocloud: this.ocloudInfo.id,
           ip: this.newip,
         };
         // this.commonService.queryOCInfoUpdate(body).subscribe(
@@ -513,18 +412,45 @@ export class ScheduleInfoComponent implements OnInit {
     this.getQueryJobTicketInfo();
   }
 
-  veiw(opt: Nf) {
+  veiw() {
     const url = '/main/nf-mgr';
     this.router.navigate([url]);
   }
 
   goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr', 'ocloud', this.ocloudInfo.id, 'All']);
+    this.router.navigate(['/main/performance-mgr', 'ocloud']);
   }
 
-  goNFMgr(opt: Nf) {
-    const nfId = opt.id;
+  goNFMgr( ) {
+    const nfId = "";
     this.router.navigate(['/main/nf-mgr', nfId]);
   }
 
+  comId: string = '';
+  uploadinfos: Uploadinfos[] = [];
+  componentInfosw: ComponentInfosw = {} as ComponentInfosw;
+
+  ListRefreshTime: number = 5;
+
+  cmpsource: string[];
+  fmsgList: FmsgList = {} as FmsgList;
+  searchForm!: FormGroup;
+  p: number = 1;            // 當前頁數
+  pageSize: number = 5;    // 每頁幾筆
+  totalItems: number = 0;   // 總筆數
+  queryFaultMessageScpt!: Subscription;
+  nullList: string[] = [];  // 給頁籤套件使用
+  timeSort: '' | 'asc' | 'desc' = '';
+  isSearch: boolean = false;
+  filteredFmList: FaultMessages[] = [];
+  isActive = false;
+  activeMap: any = {
+    box1 : true,
+    box2 : false,
+    box3 : false,
+    box4 : false,
+    box5 : false
+  };
+
 }
+

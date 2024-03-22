@@ -8,6 +8,8 @@ import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
+import { FmsgList } from './../../fault-management/fault-management.component';
+import { FaultMessages } from './../../fault-management/fault-management.component';
 
 export interface OcloudInfo {
   id: string;
@@ -189,6 +191,7 @@ export class BSInfoComponent implements OnInit {
     public languageService: LanguageService
   ) {
     this.severitys = this.commonService.severitys;
+    this.cmpsource = this.commonService.cmpsource;
   }
 
   ngOnInit(): void {
@@ -274,21 +277,6 @@ export class BSInfoComponent implements OnInit {
       this.fileNameMapSoftware.set(row.fileName, row);
     });
   }
-
-  // getSystemSummary() {
-  //   if (this.commonService.isLocal) {
-  //     /* local file test */
-  //     this.systemSummary = this.commonService.systemSummary;
-  //   } else {
-  //     this.commonService.querySystemSummary().subscribe(
-  //       res => {
-  //         console.log('getSoftwareList:');
-  //         console.log(res);
-  //         this.systemSummary = res as SystemSummary;
-  //       }
-  //     );
-  //   }
-  // }
 
   softwareVersion(): string {
     const fileName = this.updateForm.controls['fileName'].value;
@@ -455,6 +443,14 @@ export class BSInfoComponent implements OnInit {
     this.getBSInfo();
   }
 
+  p: number = 1;            // 當前頁數
+  pageSize: number = 5;    // 每頁幾筆
+  totalItems: number = 0;   // 總筆數
+
+  pageChanged( page: number ) {
+    this.p = page;
+  }
+
   veiw(opt: Nf) {
     const url = '/main/nf-mgr';
     this.router.navigate([url]);
@@ -467,6 +463,18 @@ export class BSInfoComponent implements OnInit {
   goNFMgr(opt: Nf) {
     const nfId = opt.id;
     this.router.navigate(['/main/nf-mgr', nfId]);
+  }
+
+  search() {}
+  searchForm!: FormGroup;
+  cmpsource: string[];
+  fmsgList: FmsgList = {} as FmsgList;
+  isSearch: boolean = false;
+  filteredFmList: FaultMessages[] = [];
+  get msgToDisplay(): FaultMessages[] {
+    // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
+    // 否則，顯示全部 this.fmsgList.faultMessages
+    return this.isSearch ? this.filteredFmList : this.fmsgList.faultMessages;
   }
 
 }

@@ -1,4 +1,16 @@
 
+.ocloudInfo.component {
+  overflow: auto;
+  max-height: 86vh;
+}
+.filter{
+  padding: 0;
+  width: 96%;
+  margin: auto;
+  border-left: 0;
+  border-radius: 5px;
+  height: initial;
+}
 svg {
   position: relative;
   width: 150px;
@@ -68,6 +80,9 @@ svg circle {
   cy:70px;
   r:70px;
 }
+h5 {
+  margin: 0 0 0 0.7em;
+}
 .ocloudInfo h5 button {
   background: transparent;
   border-radius: 50em;
@@ -84,14 +99,16 @@ svg circle {
 }
 .boxTitle {
   display: block;
-  font-size: 2em;
-  line-height: 1.6;
-  margin: 0 0 0.5em;
-  text-align: center;
-  padding: 0;
+  font-size: 1.35em;
+  line-height: 2;
+  margin: 0;
+  text-align: left;
+  padding: 0 1em;
+  cursor: pointer;
+  border-bottom: none!important;
 }
 .boxTitle a {
-    font-size: .8em;
+    font-size: .7em;
     position: absolute;
     right: 1em;
     top:.3em;
@@ -102,7 +119,7 @@ svg circle {
   margin: 0 0 0 .3em;
 }
 .boxTitle + div {
-  height: 90%;
+  //height: 21%;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -112,12 +129,12 @@ svg circle {
 
 .BOX {
   position: relative;
-  display: inline-block;
-  padding:0 1.5em 1.5em;
-  vertical-align: top;
+  display: block;
+  padding:0;
   margin: 0 1% 1% 0;
   border-radius: 10px;
   opacity: 1;
+  width: 96%;
 }
 .col-md-3 {
   width:31.55%;
@@ -183,21 +200,21 @@ svg circle {
   transform: translateX( 6px) translateY(-47px) scale(0.75);
 }
 .Fault, .cpu {
-  height: 20em;
+  /* height: 42em; */
 }
 .basicInfo ul {
-  margin: 0 0 1em 0;
+  margin: 1em 1.5em 1.5em;
   font-size: .9em;
 }
 .basicInfo ul li {
-  font-size: 1.35em;
   margin: 0 0 0 1.5em;
 }
 .basicInfo ul li label {
   display: inline-block;
   margin:  0;
-  width: 7em;
+  width: 11em;
 }
+
 .basicInfo ul li label::after {
   content: ':';
   display: inline-block;
@@ -348,6 +365,8 @@ svg circle {
 }
 .table table {
   display: table;
+  width: 96%;
+  margin: auto;
 }
 .SoftwareUpdate .mat-button-toggle {
   width: 10.55em;
@@ -358,6 +377,450 @@ svg circle {
 .UV {
   margin: 0.2em 0 0 .7em!important;
 }
+
+/*1213*/
+.ocloudInfo.component .BOX ul,
+.ocloudInfo.component .BOX .table,
+.ocloudInfo.component .BOX .filter,
+.ocloudInfo.component .tree_list {
+  display: none;
+  transition: all .25s;
+  font-size: 16px;
+}
+.ocloudInfo.component .BOX.active ul,
+.ocloudInfo.component .BOX.active .table,
+.ocloudInfo.component .BOX.active .filter,
+.ocloudInfo.component .BOX.active .tree_list {
+  display: block;
+  transition: all .25s;
+}
+.ocloudInfo.component .BOXTitle:hover {
+  background-color: #062948;
+  transition: all .25s
+}
+.ocloudInfo.component .BOX .table {
+  margin: 1em 0;
+}
+.ocloudInfo.component .BOX .filter {
+  margin-top: .5em;
+}
+
+.ocloudInfo.component .BOX .material-symbols-outlined {
+  vertical-align: middle;
+  transform: rotate(90deg);
+}
+.ocloudInfo.component .BOX.active .material-symbols-outlined {
+  transform: rotate(180deg);
+}
+.ocloudInfo.component .BOX input[type="text"] {
+  padding: 4px 5px;
+  border-radius: 3px;
+  border: 1px solid #799dd7;
+  margin: 0 5px;
+  font-size: 15px;
+}
+/*end*/
+
+
+.main.collabsible {
+  width: 90%;
+}
+.main.collabsible > div .lbl-toggle {
+  position: absolute;
+  top: -.6em;
+  width: 2em;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  transition: all 0.25s ease-out;
+}
+.collabsible { 
+  margin: 1.2rem 0;
+  font-size: 16px;
+  padding: 0 1em;
+ } 
+.collabsible > div input.toggle[type='checkbox'] { 
+  display: none; 
+} 
+.collabsible > div {
+  margin: .5em 0 2em 0;
+  padding: 2em 0 0 0;
+  position: relative;
+}
+.collabsible > div > span:first-child {
+  position: absolute;
+  left: 0;
+  top: -9px;
+  line-height: 2;
+  padding: 0 0 0 2em;
+  border-radius: 5px 5px 0 0;
+  width: 100%;
+  height: 41px;
+  font-family: Microsoft JhengHei;
+  color: #fff;
+  background:linear-gradient(to right, #1d8ee5 0%, #1e5799 100%);
+  font-weight: bold;
+  font-size: 17px;
+  text-align: left;
+}
+.content-inner .collabsible > div > span:first-child {
+  background:linear-gradient(to right, #1d8ee5be 0%, #1e5799da 100%);
+}
+.collabsible .lbl-toggle {
+  display: block;
+  text-align: left;
+  padding: 0.5em 1em;
+  color: #b0ceff;
+  cursor: pointer;
+  border-radius: 7px 7px 0 0;
+  transition: all 0.25s ease-out;
+}
+
+.collabsible .lbl-toggle::before { 
+  content: ' '; 
+  color: #fff;
+  display: inline-block; 
+  border-top: 5px solid transparent; 
+  border-bottom: 5px solid transparent; 
+  border-left: 5px solid currentColor; 
+  vertical-align: middle; 
+  margin-right: .7rem; 
+  transform: translateY(-2px); 
+  transition: transform .2s ease-out;
+  transform: rotate(90deg) translateX(-3px);
+ } 
+.collabsible .toggle:checked + .lbl-toggle::before { 
+  transform: rotate(0deg) translateX(0px); 
+} 
+.collapsible-content { 
+  max-height: 52vh; 
+  overflow: auto; 
+  transition: max-height .25s ease-in-out; 
+} 
+.collabsible .toggle:checked + .lbl-toggle + .collapsible-content { 
+  max-height: 0;
+  overflow: hidden;
+} 
+.collapsible-content .collapsible-content {
+  max-height: 38vh;
+}
+.collabsible .toggle:checked+.lbl-toggle { 
+  border-radius: 7px;
+} 
+.collabsible span > span {
+  display: inline-block;
+  margin: 0 0 0 1em;
+  font-size: .9em;
+  padding: 0;
+}
+.collabsible span button {
+  background-color:#ba5a2a  ;
+  border-radius: 50em;
+  cursor: pointer;
+  font-size: 0.85em;
+  padding: 0.3em 0.7em;
+  vertical-align: middle;
+  margin: 0 0 0 0.5em;
+  border: 0;
+  color: #fff;
+}
+.collabsible span .material-symbols-outlined {
+  padding: 0;
+  margin: 0;
+  font-size: 22px;
+  vertical-align: middle;
+}
+.collabsible  span select {
+  padding: 3px 5px;
+  border-radius: 3px;
+  margin: 5px;
+  border: 0;
+}
+.collapsible-content .content-inner { 
+  background-color: #0d2032e6;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  padding: .5rem 1rem; 
+  color: #333;
+  border: 1px solid #223b50;
+} 
+.collapsible-content p { margin-bottom: 0; }
+.collabsible .content-inner ul {
+  margin: 0 0 0 2em;
+}
+.collabsible .content-inner ul li {
+  color: #d5d5d5;
+  line-height: 1.5;
+  font-size: 16px;
+}
+.collabsible .content-inner ul li label {
+  width: auto;
+  display: inline-block;
+}
+div.baseInfo .content-inner ul li label {
+  width: 7em;
+}
+.collabsible .content-inner ul li::marker {
+  color: #5a8bdd;
+}
+.collabsible .content-inner ul li label::after {
+  content: ':';
+  margin: 0 3px;
+}
+.collabsible table th {
+  font-size: .9em;
+  text-align: center;
+}
+
+.collabsible .filter {
+  text-align: center;
+  background-color: #acb8c7c2;
+}
+.collabsible .filter .material-icons,
+.collabsible .filter .material-symbols-outlined {
+  color: #ffffff;
+  border: 1px solid #ddd;
+  background: #4180b7;
+  font-size: 20px;
+}
+/**/
+.content-inner .panel {
+  width: 97%;
+  display: block;
+  margin: auto;
+}
+.collabsible .content-inner .panel ul li label {
+  min-width: 5em;
+}
+.content-inner .panel > label {
+  display: inline-block;
+  vertical-align: top;
+  cursor: pointer;
+  margin: 1em 0.5em;
+  background-color: #fff;
+  padding: 1em 3em 1em 0.5em;
+  border-radius: 5px;
+  border-top: 6px solid #399df3;
+  position: relative;
+  width: 15.6em;
+  min-height: 11.5em;
+  z-index: 1;
+}
+.content-inner .panel > label ul li {
+  width: 110%;
+}
+.content-inner .panel > label input[type="radio"] {
+  position: absolute;
+  right: 1em;
+  z-index: 999;
+}
+.content-inner .panel > label input[type="radio"]:hover::after {
+  color:#337ab78a;
+  transition: all .25s ;
+}
+.content-inner .panel > label input[type="radio"]::after {
+  content: "\e1c4";
+  font-family: "Material Icons" !important;
+  font-size: 30px;
+  cursor: pointer;
+  top: -13px;
+  right: -9px;
+  position: absolute;
+  background-color: #fff;
+  color: #c1c1c1;
+} 
+.content-inner .panel > label input[type="radio"]:checked::after  {
+  content: "\ef71";
+  color: #6199f3;
+  top: -10px;
+  background-color: #fff7a6;
+  border: 1px solid #97beef;
+  border-radius: 5em;
+  width: 28px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 28px;
+}
+.content-inner .panel > label input[type="radio"]:checked + div {
+  background-color: #fff7a6ba;
+  display: block;
+  width: 100%;
+  padding: 1em 3em 1.1em 0.5em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 0 0 5px 5px;
+}
+.table {
+  margin: 1em 0;
+}
+.ocloudInfo.component .table tr td{
+  text-align: center;
+}
+.total {
+  margin-left: 2.5em;
+}
+.note_info {
+  border-top: 1px dashed #507abf;
+  width: 96%;
+  margin: auto;
+  padding: .5em 0;
+}
+.note_info ul {
+  margin-left: 0!important;
+}
+.note_info ul li {
+  position: relative;
+  padding-left: 1.5em;
+}
+.note_info ul li::before {
+  color: #8eb3ef;
+  content: "◆";
+  margin: 0 0.5em 0 0;
+  position: absolute;
+  left: 4px;
+  top: 2px;
+  font-size: 14px;
+}
+.note_info ul.event li {
+  display: block;
+}
+.note_info ul li {
+  display: inline-block;
+  margin-right: 1em;
+}
+/*tree menu*/
+ul.treeList {
+  position: relative;
+  color: #696464;
+  margin: 0;
+  padding: 0 0 0 1em;
+  scroll-behavior: smooth;
+}
+ul.treeList::before {
+  position: absolute;
+  content: "";
+  display: inline-block;
+  height: 18px;
+  border-left: 1px solid #0d2032;
+  top: -4px;
+  z-index: 1;
+}
+ul.treeList li:nth-last-child(2)::after {
+  position: absolute;
+  content: "";
+  display: inline-block;
+  height: 22px;
+  border-left: 1px solid #254c71;
+  bottom: -15px;
+  left: -1px;
+}
+ul.treeList li::before {
+  position: absolute;
+  content: "─";
+  color: #254c71;
+  left: 0;
+  top: -1px;
+}
+ul.treeList li::after {
+  position: absolute;
+  content: "";
+  display: inline-block;
+  height: 22px;
+  border-left: 1px solid #254c71;
+  bottom: -15px;
+  left: -1px;
+}
+ul.treeList li {
+  position: relative;
+  line-height: 1.5;
+  border-left: 1px solid #254c71;
+  padding: 0 0 .5em 1em;
+  list-style: none;
+}
+ul.treeList li:last-child {
+  border-left: none;
+}
+ul.treeList li:last-child:after {
+  border-left: 1px solid #254c71;
+  height: 16px;
+  top: 0;
+  left: 0;
+}
+ul.treeList li label {
+  min-width: initial!important;
+}
+ul.treeList li label::after {
+  display: none;
+}
+ul.treeList li label + span{
+  margin: 0 0 0 .5em;
+}
+ul.treeList li img,
+ul.treelist li .material-icons,
+ul.treeList li span {
+  margin-right: .5em;
+  cursor: auto;
+}
+
+ul.treeList li img {
+  cursor: pointer;
+  height: 1.3em;
+}
+ul.treeList li .material-icons {
+  vertical-align: middle;
+  color: #21b4ce;
+  font-size: 28px;
+  cursor: pointer;
+  margin-right: .5em;
+}
+ul.treeList li ul li {
+  margin-left: 2%;
+}
+ul.treeList li ul li a {
+  white-space: nowrap;
+  font-size: .9em;
+  width: 95%;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+}
+ul.treeList li ul li a.btn {
+  width: 2em;
+  DISPLAY: inline-block;
+}
+ul.treeList > li > label {
+  cursor: pointer;
+  padding-left: .3em;
+  width: initial;
+}
+ul.treeList > li span input[type="text"] {
+  padding: 3px;
+  border: 1px solid #ebdd6e;
+  border-radius: 4px;
+  font-size: 16px;
+}
+ul.treeList li a.btn {
+  padding: 0 .2em;
+  color: #000;
+  margin-right: .2em;
+  width: 2em;
+  display: inline-block;
+}
+
+.SubItem > label {
+  cursor: pointer;
+  color: #ebdd6e;
+  text-decoration: underline;
+}
+.SubItem label.active + ul {
+  display: block;
+}
+.SubItem label + ul {
+  display: none;
+  margin: 0!important;
+}
+/**/
+
 @media screen and (max-width:1680px) {
   .h30 {
     height: 24em;
@@ -368,34 +831,37 @@ svg circle {
     margin: 1.5em 0.5em;
   }
   .BOX {
-    padding: 0 1em 1.5em;
-    height: 17em;
+    /* padding: 0 1em 1.5em;
+    height: 17em; */
   }
   .boxTitle {
-    font-size: 1.8em;
-    line-height: 1.5;
+   /*  font-size: 1.8em;
+    line-height: 1.5; */
 }
 .basicInfo ul {
-  font-size: .9em;
+  /* font-size: .9em; */
 }
 .h30 {
-  height: 24em;
+  /* height: 24em; */
 }
 .cpu span img {
   width: 2em;
 }
 }
-
+:host ::ng-deep .footer {
+  position: fixed!important;
+  bottom: 0;
+}
 @media screen and (max-width:1366px) {
   .BOX {
-    height: 11em;
+    /* height: 11em; */
 }
   .h30 {
     height: 22em;
   }
   .boxTitle {
-    font-size: 1.35em;
-    line-height: 1.5;
+    /* font-size: 1.35em;
+    line-height: 1.5; */
   }
   .basicInfo ul {
     font-size: .9em;
@@ -426,7 +892,7 @@ svg circle {
     width:28%;
   }
   .basicInfo {
-    width: 39%;
+    /* width: 39%; */
   }
   .basicInfo ul li label {
     width: auto;
@@ -459,5 +925,26 @@ svg circle {
 .cpu span {
   margin: .5% 0 2% 3%;
   font-size: 1.3em;
+}
+.ocloudInfo.component {
+  max-height: 86vh;
+}
+.main.collabsible{
+  width: 100%;
+}
+.content-inner .panel > label {
+  /* margin: 0.5em;
+  padding: 0.5em 3em 0.5em 0.5em;
+  width: 16.7em;
+  min-height: 12.5em; */
+}
+.content-inner .panel > label input[type=radio]:checked + div {
+  /* padding: 0.5em 3em 0.5em 0.5em; */
+}
+.content-inner .panel > label input[type=radio] {
+  top: 1em;
+}
+.ocloudInfo.component {
+  max-height: 83vh;
 }
 }
