@@ -23,64 +23,6 @@ import { ScheduleInfo }           from '../../shared/interfaces/Schedule/For_que
 // For import local files of Schedule Management 
 import { localScheduleInfo }      from '../../shared/local-files/Schedule/For_queryJobTicketInfo'; // @2024/03/15 Add
 
-//component Info
-export interface BsComponentInfo {
-  id: string;
-  name: string;
-  ip: string;
-  port: string;
-  account: string;
-  key: string;
-  comtype: number;
-  firm: string;
-  modelname: string;
-  status: number;
-  info: Info;
-  sm: {
-    softwareInventory: {
-      softwareSlot: SoftwareSlot[];
-    };
-  };
-}
-export interface Uploadinfos {
-  id: string;
-  firm: string;
-  modelname: string;
-  uploadtime: string;
-  uploadtype: number;
-  uploadversion: string;
-  description: string;
-  uploadinfo: string;
-  uploadurl: string;
-}
-
-export interface ComponentInfosw{
-  uploadinfos: Uploadinfos[];
-}
-
-export interface Info {
-  data: string;
-}
-
-interface SoftwareSlot {
-  name: string;
-  status: string;
-  active?: string;
-  running?: string;
-  access?: string;
-  vendorCode?: string;
-  buildId?: string;
-  buildName?: string;
-  buildVersion?: string;
-  files?: Files;
-}
-interface Files {
-  name: string;
-  version: string;
-  localPath: string;
-  integrity: string;
-}
-
 @Component({
   selector: 'app-schedule-info',
   templateUrl: './schedule-info.component.html',
@@ -92,6 +34,11 @@ export class ScheduleInfoComponent implements OnInit {
   sessionId: string = '';   // sessionId 用於存儲當前會話 ID
   refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
   refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
+
+  // 返回 Schedule Management 主頁
+  back() {
+    this.router.navigate(['/main/schedule-mgr']);
+  }
 
   constructor(
   
@@ -106,8 +53,6 @@ export class ScheduleInfoComponent implements OnInit {
     public  scheduleInfo_LocalFiles: localScheduleInfo,   // scheduleInfo_LocalFiles 用於從 Local Files 獲取排程資訊
   
   ) {
-    this.severitys = this.commonService.severitys;
-    this.cmpsource = this.commonService.cmpsource;
   }
 
   // @2024/03/17 Add
@@ -119,66 +64,41 @@ export class ScheduleInfoComponent implements OnInit {
 
     this.sessionId = this.commonService.getSessionId();
 
-    this.route.params.subscribe((params) => {
+    this.route.params.subscribe(( params ) => {
       this.scheduleId = params['id'];
       this.scheduleType = params['type'];
       console.log('scheduleId: ' + this.scheduleId + ', scheduleType: ' + this.scheduleType + ',\nsend from /main/schedule-mgr');
       this.getQueryJobTicketInfo();
     });
 
+    this.languageService.languageChanged.subscribe(
+      ( language ) => this.updateTicketStatusInfo()
+    );
   }
 
   ngOnDestroy() {
     clearTimeout( this.refreshTimeout );
   }
 
-  cloudId: string = '';
-  cloudName: string = '';
-  newip: string = '';
-  // utilizationPercent: number = 0;
-  bsComponentInfo: BsComponentInfo = {} as BsComponentInfo;
-  softwareList: SoftwareList[] = [];
-  systemSummary: SystemSummary = {} as SystemSummary;;
-  fileNameMapSoftware: Map<string, SoftwareList> = new Map();
-  faultColors: string[] = ['#FF0000', '#FFA042', '	#FFFF37', '#00FFFF'];
-  showTooltipCpu: any = {};
-  showTooltipStorage: any = {};
-  showTooltipNic: any = {};
-  RunRefreshTimeout!: any;
-  RunRefreshTime: number = 3;
-  @ViewChild('updateModal') updateModal: any;
-  @ViewChild('updateIPModal') updateIPModal: any;
-  updateModalRef!: MatDialogRef<any>;
-  updateIPModalRef!: MatDialogRef<any>;
-  updateForm!: FormGroup;
-  formValidated = false;
-  /* CRITICAL,MAJOR,MINOR,WARNING */
-  severitys: string[];
 
-  tooltipOptions = {
-    theme: 'light',     // 'dark' | 'light'
-    hideDelay: 250
-  };
+  selectScheduleInfo: ScheduleInfo = {} as ScheduleInfo; // 用於存儲從伺服器或 Local 文件獲取的排程資訊
+             isLoadingScheduleInfo = true;               // 加載狀態的標誌，初始設置為 true
 
-
-
-  scheduleInfo: ScheduleInfo = {} as ScheduleInfo; // 用於存儲從伺服器或 Local 文件獲取的排程資訊
-  isLoadingScheduleInfo = true; // 加載狀態的標誌，初始設置為 true
   /** @2024/03/17 Add
-   *  用於獲取排程資訊。
+   *  用於獲取排程詳細資訊。
    *  根據是否處於 Local 模式，它會從 Local 文件或通過 API 從伺服器獲取排程資訊。
    */
   getQueryJobTicketInfo() {
     console.log( 'getQueryJobTicketInfo() - Start' );
-    this.isLoadingScheduleInfo = true;   // 開始加載數，顯示進度指示器
 
+    this.isLoadingScheduleInfo = true;   // 開始加載數，顯示進度指示器
     clearTimeout( this.refreshTimeout ); // 取消之前設定的超時，避免重複或不必要的操作
 
     if ( this.commonService.isLocal ) {
 
       // Local 模式: 使用 Local 文件提供的數據
-      this.scheduleInfo = this.scheduleInfo_LocalFiles.scheduleInfo_local.find( info => info.id === this.scheduleId ) || {} as ScheduleInfo;
-      console.log( 'In local - Get the ScheduleInfo:', this.scheduleInfo );
+      this.selectScheduleInfo = this.scheduleInfo_LocalFiles.scheduleInfo_local.find( info => info.id === this.scheduleId ) || {} as ScheduleInfo;
+      console.log( 'In local - Get the ScheduleInfo:', this.selectScheduleInfo );
 
       this.isLoadingScheduleInfo = false; // Local 模式下，數據加載快速完成,直接設置為 false
 
@@ -191,7 +111,7 @@ export class ScheduleInfoComponent implements OnInit {
           // 請求成功，獲得排程資訊
           console.log( 'Get the ScheduleInfo:', res );
 
-          this.scheduleInfo = res; // 更新排程資訊
+          this.selectScheduleInfo = res; // 更新排程資訊
         },
         error: ( error ) => {
           // 請求出現錯誤
@@ -208,249 +128,77 @@ export class ScheduleInfoComponent implements OnInit {
   }
 
 
+  // ↓ 控制顯示排程狀態的 icon 與訊息 @2024/03/22 Add ↓
 
+    // @2024/03/22 Add
+    // 用於存儲排程狀態對應的 icon 和訊息
+    ticketStatusInfo = [
+      { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] },
+      { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobDailyString'] + ')' },
+      { icon: 'blueLight',   message: this.languageService.i18n['sm.jobOnGoingString'] },
+      { icon: 'greenLight',  message: this.languageService.i18n['sm.jobSuccessString'] },
+      { icon: 'redLight',    message: this.languageService.i18n['sm.jobFailString'] },
+      { icon: 'yellowLight', message: this.languageService.i18n['sm.jobPartialSuccessString'] }
+    ];
 
+    // @2024/03/22 Add
+    // 根據排程狀態獲取對應的圖示和訊息
+    getTicketStatusInfo( scheduleInfo: ScheduleInfo ) {
 
-  nfRunRefresh() {
-    clearTimeout(this.refreshTimeout);
-    this.RunRefreshTimeout = window.setTimeout(() => this.getOcloudPerformance(), this.RunRefreshTime * 1000);
-    this.RunRefreshTimeout = window.setTimeout(() => this.getQueryJobTicketInfo(), this.RunRefreshTime * 1000);
-  }
-  getOcloudPerformance() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.ocloudPerformanceDeal();
-    } else {
-      clearTimeout(this.refreshTimeout);
-      this.commonService.queryOcloudPerformance(this.cloudId).subscribe(
-        res => {
-          console.log('getOcloudPerformance:');
-          console.log(res);
-          this.ocloudPerformanceDeal();
+      // 將 scheduleInfo.ticketstatus 從字符串轉換為數字
+      const ticketStatus = parseInt( scheduleInfo.ticketstatus );
+
+      // 將 scheduleInfo.executedtype 從字符串轉換為數字
+      const executedType = parseInt( scheduleInfo.executedtype );
+
+      // 如果 ticketStatus 為 0 或 1
+      if ( ticketStatus === 0 || ticketStatus === 1 ) {
+        // 如果 executedType 為 1
+        if ( executedType === 1 ) {
+          // 返回 ticketStatusInfo 中索引為 1 的項目
+          return this.ticketStatusInfo[1];
+        } else if ( executedType === 2 ) {
+          // 返回一個自定義的對象,包含圖示和消息
+          return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobWeeklyString'] + ')' };
+        } else if ( executedType === 3 ) {
+          // 返回一個自定義的對象,包含圖示和消息
+          return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobMonthlyString'] + ')' };
         }
-      );
-    }
-  }
-
-  getSoftwareList() {
-    let type = '0'
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.softwareList = this.commonService.softwareList;
-      this.softwareDeal();
-    } else {
-      if (this.cloudName === 'Wind River' || this.cloudName === 'windriver'){
-        type = '-3';
       }
-      this.commonService.querySoftwareList('', type, '').subscribe(
-        res => {
-          console.log('getSoftwareList:');
-          console.log(res);
-          this.softwareList = res as SoftwareList[];
-          this.softwareDeal();
-        }
-      );
+
+      // 如果上述條件都不滿足,則返回 ticketStatusInfo 中與 ticketStatus 相對應的項目
+      return this.ticketStatusInfo[ticketStatus];
     }
-  }
 
-  softwareDeal() {
-    this.fileNameMapSoftware = new Map();
-    this.softwareList.forEach((row) => {
-      this.fileNameMapSoftware.set(row.fileName, row);
-    });
-  }
+    // @2024/03/22 Add
+    // 用於控制當語系切換時根據排程狀態，顯示對應的 icon 或中英文字訊息
+    updateTicketStatusInfo() {
 
-
-  softwareVersion(): string {
-    const fileName = this.updateForm.controls['fileName'].value;
-    if (fileName === '') {
-      return '';
-    } else {
-      const software = this.fileNameMapSoftware.get(fileName) as any;
-      return software.version;
+      // 重新初始化 ticketStatusInfo 數組，以正確顯示對應的語言訊息於表格的狀態欄中
+      this.ticketStatusInfo = [
+        { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] },
+        { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] + ' (' + this.languageService.i18n['sm.jobDailyString'] + ')' },
+        { icon: 'blueLight',   message: this.languageService.i18n['sm.jobOnGoingString'] },
+        { icon: 'greenLight',  message: this.languageService.i18n['sm.jobSuccessString'] },
+        { icon: 'redLight',    message: this.languageService.i18n['sm.jobFailString'] },
+        { icon: 'yellowLight', message: this.languageService.i18n['sm.jobPartialSuccessString'] }
+      ];
     }
-  }
 
-  ocloudInfoDeal() {
-  }
+// ↑ 控制顯示排程狀態的 icon 與訊息 @2024/03/22 Add ↑
 
-  ocloudPerformanceDeal() {}
 
-  severityText(severity: string): string {
-    return this.commonService.severityText(severity);
-  }
 
-  severityCount(severity: string) {
-  }
 
-  // 返回 Schedule Management 主頁
-  back() {
-    this.router.navigate(['/main/schedule-mgr']);
-  }
+
+
+  p: number = 1;            // 當前頁數
+  pageSize: number = 5;    // 每頁幾筆
+  totalItems: number = 0;   // 總筆數
+  nullList: string[] = [];  // 給頁籤套件使用
 
   pageChanged( page: number ) {
     this.p = page;
   }
 
-  get msgToDisplay(): FaultMessages[] {
-    // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
-    // 否則，顯示全部 this.fmsgList.faultMessages
-    return this.isSearch ? this.filteredFmList : this.fmsgList.faultMessages;
-  }
-
-  goFaultMgr() {
-    this.router.navigate(['/main/fault-mgr', this.cloudName, 'All']);
-  }
-
-  search() { }
-
-  openUpdateModel() {
-    this.formValidated = false;
-    this.updateForm = this.fb.group({
-      'type': new FormControl('imageUrl'),
-      'imageUrl': new FormControl('', [Validators.required]),
-      'fileName': new FormControl('')
-    });
-    this.updateModalRef = this.dialog.open(this.updateModal, { id: 'updateModal' });
-    this.updateModalRef.afterClosed().subscribe(() => {
-      this.formValidated = false;
-    });
-  }
-
-  updateBasicError: boolean = false;
-  openUpdateIPModel() {
-    this.formValidated = false;
-    this.updateForm = this.fb.group({
-      newip: ['',],
-    });
-    this.updateIPModalRef = this.dialog.open(this.updateIPModal, { id: 'updateIPModal' });
-    this.updateIPModalRef.afterClosed().subscribe(() => {
-      this.formValidated = false;
-    });
-  }
-
-  changeType(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    if (e.value === 'imageUrl') {
-      this.updateForm.controls['imageUrl'].setValidators([Validators.required]);
-      this.updateForm.controls['fileName'].setValidators(null);
-      this.updateForm.controls['fileName'].setValue('');
-    } else {
-      this.updateForm.controls['imageUrl'].setValidators(null);
-      this.updateForm.controls['imageUrl'].setValue('');
-      this.updateForm.controls['fileName'].setValidators([Validators.required]);
-    }
-    this.updateForm.controls['imageUrl'].updateValueAndValidity();
-    this.updateForm.controls['fileName'].updateValueAndValidity();
-  }
-
-  update() {
-    this.formValidated = true;
-    if (!this.updateForm.valid) {
-      return;
-    }
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.updateModalRef.close();
-    } else {
-      const body: any = {
-        sessionid: this.sessionId
-      };
-      if (this.updateForm.controls['type'].value === 'imageUrl') {
-        const imageUrlSplit = this.updateForm.controls['imageUrl'].value.split('/');
-        body['fileName'] = imageUrlSplit[imageUrlSplit.length - 1];
-      } else {
-        body['fileName'] = this.updateForm.controls['fileName'].value;
-        body['version'] = this.softwareVersion();
-      }
-      this.commonService.applyOcloudSoftware(body).subscribe(
-        () => console.log('Update Successful.')
-      );
-      this.updateModalRef.close();
-      this.getQueryJobTicketInfo();
-    }
-    this.getQueryJobTicketInfo();
-  }
-
-  updateNFSuccessful: boolean | null = null; 
-  hideUpdateIcon() {
-    setTimeout(() => {
-      this.updateNFSuccessful = null;
-    }, 3000);
-  }
-  updateIPAddress() {
-    this.updateBasicError = false; // Reset the error state
-    const newIPControl = this.updateForm.get('newip');
-    if (newIPControl) {
-      this.newip = newIPControl.value;
-    }
-    const ipPattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)$/;
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.updateIPModalRef.close();
-    } else {
-      const isIPValid = ipPattern.test(this.newip);
-      if (isIPValid) {
-        // Valid IP and non-empty port, proceed with the update
-        const body: any = {
-          ip: this.newip,
-        };
-        // this.commonService.queryOCInfoUpdate(body).subscribe(
-        //   () => console.log('Update Successful.')  
-        // );
-        this.updateNFSuccessful = true;
-        this.hideUpdateIcon();
-        this.updateIPModalRef.close();
-        this.getQueryJobTicketInfo();
-      } else {
-        // Form validation failed, set the error flag
-        this.updateNFSuccessful = false;
-        this.hideUpdateIcon();
-        this.updateBasicError = true;
-      }
-    }
-    this.getQueryJobTicketInfo();
-  }
-
-  veiw() {
-    const url = '/main/nf-mgr';
-    this.router.navigate([url]);
-  }
-
-  goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr', 'ocloud']);
-  }
-
-  goNFMgr( ) {
-    const nfId = "";
-    this.router.navigate(['/main/nf-mgr', nfId]);
-  }
-
-  comId: string = '';
-  uploadinfos: Uploadinfos[] = [];
-  componentInfosw: ComponentInfosw = {} as ComponentInfosw;
-
-  ListRefreshTime: number = 5;
-
-  cmpsource: string[];
-  fmsgList: FmsgList = {} as FmsgList;
-  searchForm!: FormGroup;
-  p: number = 1;            // 當前頁數
-  pageSize: number = 5;    // 每頁幾筆
-  totalItems: number = 0;   // 總筆數
-  queryFaultMessageScpt!: Subscription;
-  nullList: string[] = [];  // 給頁籤套件使用
-  timeSort: '' | 'asc' | 'desc' = '';
-  isSearch: boolean = false;
-  filteredFmList: FaultMessages[] = [];
-  isActive = false;
-  activeMap: any = {
-    box1 : true,
-    box2 : false,
-    box3 : false,
-    box4 : false,
-    box5 : false
-  };
-
 }
-

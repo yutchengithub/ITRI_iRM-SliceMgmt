@@ -386,7 +386,17 @@ export const Enlanguage = {
 
   'sm.confirm_del':'Confirm to Delete this Schedule',
 
-  'sm.info':'Schedule Information', 
+  'sm.info':'Schedule Information',
+  'sm.detailInfo':'Detail Information', 
+  'sm.executeField': 'Execute Field',
+
+  'sm.contentInfo': 'Content Information',
+  'sm.periodicExecution': 'Periodic Execution',
+  'sm.notPeriodicExecution': 'None',
+  'sm.executionResult': 'Execution Result',
+
+
+
 
   
   // Log Management @10/31 add by yuchen

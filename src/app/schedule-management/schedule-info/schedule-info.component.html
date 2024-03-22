@@ -3,31 +3,68 @@
     <button (click)="back()">
       <span class="material-icons">arrow_back</span>Back
     </button>
-    Software {{languageService.i18n['information']}} – /
+    {{languageService.i18n['sm.info']}} – 
+    <label *ngIf=" selectScheduleInfo.tickettype === '0' ">{{ languageService.i18n['sm.sfUpdate'] }}</label>
+    <label *ngIf=" selectScheduleInfo.tickettype === '1' ">{{ languageService.i18n['sm.caReport'] }}</label>
+    <label *ngIf=" selectScheduleInfo.tickettype === '2' ">{{ languageService.i18n['sm.pmReport'] }}</label>
+    <label *ngIf=" selectScheduleInfo.tickettype === '3' ">{{ languageService.i18n['sm.fmReport'] }}</label>
+    <label *ngIf=" selectScheduleInfo.tickettype === '4' ">{{ languageService.i18n['sm.sfReport'] }}</label>
+    / {{ selectScheduleInfo.executedtime }}
   </h5>
 
   <div class="BOX basicInfo ">
-    <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
+    <label class="boxTitle">{{ languageService.i18n['sm.detailInfo'] }}</label>
     <div class="center">
+      
       <ul class="Software_info">
-        <h3>Software Information</h3>
-        <li><label>{{languageService.i18n['manufacturer']}}</label><span>2</span></li>
-        <li><label>{{languageService.i18n['model']}}</label><span>2</span></li>
-        <li><label>{{languageService.i18n['type']}}</label><span>2</span></li>
-        <li><label>{{languageService.i18n['version']}}</label><span>2</span></li>
-        <li><label>{{languageService.i18n['notes']}}</label><span>2</span></li>
+        <h3>{{ languageService.i18n['basic.info'] }}</h3>
+        <li>
+          <label>{{ languageService.i18n['sm.th_type'] }}</label>
+            <span *ngIf=" selectScheduleInfo.tickettype === '0' ">{{ languageService.i18n['sm.sfUpdate'] }}</span>
+            <span *ngIf=" selectScheduleInfo.tickettype === '1' ">{{ languageService.i18n['sm.caReport'] }}</span>
+            <span *ngIf=" selectScheduleInfo.tickettype === '2' ">{{ languageService.i18n['sm.pmReport'] }}</span>
+            <span *ngIf=" selectScheduleInfo.tickettype === '3' ">{{ languageService.i18n['sm.fmReport'] }}</span>
+            <span *ngIf=" selectScheduleInfo.tickettype === '4' ">{{ languageService.i18n['sm.sfReport'] }}</span>
+        </li>
+        <li>
+          <label>{{ languageService.i18n['sm.th_time'] }}</label>
+            <span>{{ selectScheduleInfo.executedtime }}</span>
+        </li>
+        <li>
+          <label>{{ languageService.i18n['sm.th_state'] }}</label>
+            <span class="icon" [class]="getTicketStatusInfo( selectScheduleInfo ).icon"></span>
+            &zwnj;<span>{{ getTicketStatusInfo( selectScheduleInfo ).message }}</span>
+        </li>
+        <li>
+          <label>{{ languageService.i18n['sm.executeField'] }}</label>
+            <span>{{ selectScheduleInfo.fieldname }}</span>
+        </li>
       </ul>
+
       <ul class="file_url_info">
-        <h3>File/URL Information</h3>
-        <li><label>File name</label><span>1</span></li>
-        <li><label>URL</label><span>2</span></li>
-        <li><label>File size</label><span>2</span></li>
-        <li><label>CheckSum</label><span>2</span></li>
+        <h3>{{ languageService.i18n['sm.contentInfo'] }}</h3>
+        <li>
+          <label>{{ languageService.i18n['sm.periodicExecution'] }}</label>
+          <span *ngIf=" selectScheduleInfo.executedtype === '0' ">{{ languageService.i18n['sm.notPeriodicExecution'] }}</span>
+          <span *ngIf=" selectScheduleInfo.executedtype === '1' ">{{ languageService.i18n['sm.jobDailyString'] }}</span>
+          <span *ngIf=" selectScheduleInfo.executedtype === '2' ">{{ languageService.i18n['sm.jobWeeklyString'] }}</span>
+          <span *ngIf=" selectScheduleInfo.executedtype === '3' ">{{ languageService.i18n['sm.jobMonthlyString'] }}</span>
+        </li>
+        <li>
+          <label>URL</label><span>2</span></li>
+        <li>
+          <label>File size</label><span>2</span></li>
+        <li>
+          <label>CheckSum</label><span>2</span></li>
       </ul>
+
       <ul class="ftp_info">
-        <h3>FTP Information</h3>
-        <li><label>FTP Account</label><span>1111111111111</span></li>
-        <li><label>FTP Password</label><span>111111</span></li>
+        <h3>{{ languageService.i18n['sm.executionResult'] }}</h3>
+        <li>
+          <label>FTP Account</label><span>1111111111111</span></li>
+        <li>
+          <label>FTP Password</label><span>111111</span></li>
       </ul>
+
     </div>
   </div>
