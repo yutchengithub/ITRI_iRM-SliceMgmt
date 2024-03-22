@@ -384,7 +384,7 @@ export const Enlanguage = {
   'sm.jobWeeklyString':'Weekly',                    // executedtype = 2
   'sm.jobMonthlyString':'Monthly',                  // executedtype = 3
 
-  'sm.confirm_del':'Confirm to Delete Schedule',
+  'sm.confirm_del':'Confirm to Delete this Schedule',
 
   'sm.info':'Schedule Information', 
 

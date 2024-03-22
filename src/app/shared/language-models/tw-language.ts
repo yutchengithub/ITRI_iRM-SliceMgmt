@@ -383,7 +383,7 @@ export const TwLanguage = {
   'sm.jobWeeklyString':'每週',             // executedtype = 2
   'sm.jobMonthlyString':'每月',            // executedtype = 3
 
-  'sm.confirm_del':'確定要刪除排程',
+  'sm.confirm_del':'確定要刪除此排程',
 
   'sm.info':'排程資訊', 
   

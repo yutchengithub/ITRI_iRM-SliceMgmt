@@ -38,7 +38,7 @@ export class apiForScheduleMgmt {
     return this.http.post( url, bodyStr );
   }
 
-  // 移除現有 Schedule 用
+  // Remove Schedule of selection @2024/03/22 Add
   removeJobTicket( jobId: string ): Observable<any> { 
 
     const url = `${this.restPath}/removeJobTicket`;

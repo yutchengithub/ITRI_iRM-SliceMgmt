@@ -188,7 +188,7 @@ export class BSManagementComponent implements OnInit {
     this.totalItems = this.bsList.basestation.length;
   
     // 遍歷 basestation 陣列
-    this.bsList.basestation.forEach(bs => {
+    this.bsList.basestation.forEach( bs => {
       // 如果 bstype 為 1
       if ( bs.bstype === 1 ) {
         // 設置 cellCount 為 1
@@ -210,12 +210,12 @@ export class BSManagementComponent implements OnInit {
   
     // 使用 setTimeout 設定一個定時刷新
     // 如當前頁面是第一頁，則定時刷新 BS 列表
-    this.refreshTimeout = window.setTimeout(() => {
-      if (this.p === 1) {
-        console.log(`page[${this.p}] ===> refresh.`);
+    this.refreshTimeout = window.setTimeout( () => {
+      if ( this.p === 1 ) {
+        console.log( `page[${this.p}] ===> refresh.` );
         this.getQueryBsList(); // 刷新 BS 列表
       } else {
-        console.log(`page[${this.p}] ===> no refresh.`);
+        console.log( `page[${this.p}] ===> no refresh.` );
       }
     }, 10000 ); // 設定 10000 ms 後執行
   }
@@ -234,6 +234,9 @@ export class BSManagementComponent implements OnInit {
     // 導航到 BS 管理的詳細資訊頁面，帶上 BS 的 ID 和名稱作為路由參數。
     this.router.navigate( ['/main/bs-mgr/info', this.selectBS.id, this.selectBS.name] );
   }
+
+
+// ↓ For Delete BS @2024/03/22 Add ↓
 
   // @2024/03/22 Add
   // ViewChild 裝飾器用於獲取模板中 #deleteBS_ConfirmWindow 的元素
@@ -267,11 +270,79 @@ export class BSManagementComponent implements OnInit {
   // 確認刪除 BS 的操作
   confirmDeleteBS() {
 
-    // 關閉對話框
-    this.deleteBS_ConfirmWindowRef.close();
+    // 顯示加載指示器
+    this.isGetQueryBsListLoading = true;
+
+    // 檢查是否是 Local 環境
+    if ( this.commonService.isLocal ) {
+
+      // 在控制台輸出調試訊息
+      console.log('Remove BS in local environment.');
+
+      // 調用刪除 BS 的函數，傳入 BS 名稱
+      this.deleteBSInLocal( this.selectBS.name );
+
+      // 刷新 BS 列表或進行其他更新
+      this.getQueryBsList();
+
+      // 關閉加載指示器
+      this.isGetQueryBsListLoading = false;
+
+    } else {
+
+      // 非 Local 環境,調用後端 API 進行刪除
+      this.API_BS.removeBs( this.selectBS.id ).subscribe({
+        next: ( response ) => {
+
+          // 刪除成功的回調,輸出成功訊息和後端響應
+          console.log( 'BS removed successfully', response );
+
+          // 刷新 BS 列表或進行其他更新
+          this.getQueryBsList();
+
+          // 關閉加載指示器
+          this.isGetQueryBsListLoading = false;
+        },
+        error: ( error ) => {
+
+          // 刪除失敗的回調,輸出錯誤訊息
+          console.error('Failed to remove BS:', error);
+
+          // 關閉加載指示器
+          this.isGetQueryBsListLoading = false;
+        },
+        complete: () => {
+
+          // 請求完成後的回調,不管成功或失敗都會執行
+          // 關閉加載指示器
+          this.isGetQueryBsListLoading = false;
+        }
+      });
+    }
   }
 
+  // @2024/03/22 Add
+  // 模擬在 Local 環境中刪除 BS 的函數 ( 依據 name 進行刪除 )
+  deleteBSInLocal( bsName: string ) {
 
+    // 輸出將要刪除的 BS 名稱，用於記錄和調試
+    console.log( "The delete BS name:", bsName )
+
+    // 確保 bsList_LocalFiles.bsList_local.basestation 是一個陣列
+    if ( Array.isArray( this.bsList_LocalFiles.bsList_local.basestation ) ) {
+
+      // 從 BS 列表中過濾掉要刪除的 BS
+      this.bsList_LocalFiles.bsList_local.basestation = this.bsList_LocalFiles.bsList_local.basestation.filter( bs => bs.name !== bsName );
+    
+    } else {
+
+      // 如果 bsList_LocalFiles.bsList_local.basestation 不是陣列,輸出錯誤訊息
+      console.error( 'bsList_local.basestation 不是陣列或為 undefined' );
+    }
+  }
+
+  
+// ↑ For Delete BS @2024/03/22 Add ↑
 
 
   
