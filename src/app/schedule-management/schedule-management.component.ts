@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 // For import APIs of Schedule Management 
-import { apiForScheduleMgmt }     from '../shared/api/For_Schedule';  // @2024/03/15 Add
+import { apiForScheduleMgmt }     from '../shared/api/For_Schedule_Mgmt';  // @2024/03/15 Add
 
 // 引入儲存各個資訊所需的 interfaces of Schedule Management
 import { ScheduleList, Schedule } from '../shared/interfaces/Schedule/For_queryJobTicketList'; // @2024/03/15 Add
@@ -439,7 +439,7 @@ export class ScheduleManagementComponent implements OnInit {
       });
     }
   }
-  
+
   // @2024/03/22 Add
   // 模擬在 Local 環境中刪除 Schedule 的函數 ( 依據 id 進行刪除 )
   deleteScheduleInLocal( scheduleId: string ) {

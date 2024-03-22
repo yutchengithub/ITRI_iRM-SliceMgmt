@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 // import APIs of BS Management @2024/03/19 Add 
-import { apiForBSMgmt } from '../shared/api/For_BS';
+import { apiForBSMgmt } from '../shared/api/For_BS_Mgmt';
 
 // 引入儲存各個資訊所需的 interfaces @2024/03/19 Add 
 import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList';
@@ -341,7 +341,7 @@ export class BSManagementComponent implements OnInit {
     }
   }
 
-  
+
 // ↑ For Delete BS @2024/03/22 Add ↑
 
 

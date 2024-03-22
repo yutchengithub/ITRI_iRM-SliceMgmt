@@ -28,6 +28,16 @@ export class apiForScheduleMgmt {
     return this.http.get( url );
   }
 
+  // 取得現有對應到的 Schedule 資訊用
+  queryJobTicketInfo( jobId: string ): Observable<any> { 
+
+    // 構建 API URL
+    const url = `${this.restPath}/queryJobTicketInfo/${this.sessionId}/${jobId}`;
+
+    // 發起 HTTP GET 請求
+    return this.http.get(url);
+  }
+
   // 建立 Schedule 用
   createJobTicket( body: any ): Observable<any> {     
 
@@ -38,7 +48,19 @@ export class apiForScheduleMgmt {
     return this.http.post( url, bodyStr );
   }
 
-  // Remove Schedule of selection @2024/03/22 Add
+  // @2024/03/22 Add
+  // 下載 Schedule 報表用 as an .xlsx file 
+  getReportFile( jobId: string ): Observable<any> { 
+
+    // 構建 API URL
+    const url = `${this.restPath}/getReportFile/${this.sessionId}/${jobId}`;
+    
+    // 發起 HTTP GET 請求
+    return this.http.get( url );
+  }
+
+  // @2024/03/22 Add
+  // Remove Schedule of selection
   removeJobTicket( jobId: string ): Observable<any> { 
 
     const url = `${this.restPath}/removeJobTicket`;
@@ -60,26 +82,6 @@ export class apiForScheduleMgmt {
     
     // 發起 HTTP DELETE 請求
     return this.http.delete( url, httpOptions );
-  }
-
-  // 下載 Schedule 報表用
-  getReportFile( jobId: string ): Observable<any> { 
-
-    // 構建 API URL
-    const url = `${this.restPath}/getReportFile/${this.sessionId}/${jobId}`;
-    
-    // 發起 HTTP GET 請求
-    return this.http.get( url );
-  }
-
-  // 取得現有對應到的 Schedule 資訊用
-  queryJobTicketInfo( jobId: string ): Observable<any> { 
-
-    // 構建 API URL
-    const url = `${this.restPath}/queryJobTicketInfo/${this.sessionId}/${jobId}`;
-
-    // 發起 HTTP GET 請求
-    return this.http.get(url);
   }
 
 }

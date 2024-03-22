@@ -18,7 +18,7 @@ import { environment } from 'src/environments/environment'; // @2023/12/20 Add f
 import { NgZone } from '@angular/core';
 
 // import APIs of Field Management @2024/03/14 Update 
-import { apiForFieldMgmt } from '../../shared/api/For_Field';
+import { apiForFieldMgmt } from '../../shared/api/For_Field_Mgmt';
 
 // 引入儲存各個資訊所需的 interfaces
 import { FieldInfo }                      from '../../shared/interfaces/Field/For_queryFieldInfo';                     // @2023/12/21 Add

@@ -252,6 +252,28 @@ export class CommonService {
     }
   }
 
+  // @2024/03/22 Add
+  // 用於解碼 Base64 字符串並轉換下載成 .xlsx 文件
+  downloadExcelFromBase64( base64String: string, fileName: string ) {
+    const link = document.createElement("a");
+
+    if ( link.download !== undefined ) {
+
+      // 支援 HTML5 download 屬性的瀏覽器
+      link.setAttribute( "href", 'data:application/vnd.ms-excel;base64,' + base64String );
+      link.setAttribute( "download", fileName );
+      link.style.visibility = 'hidden';
+      document.body.appendChild( link );
+      link.click();
+      document.body.removeChild( link );
+
+    } else {
+
+      // 不支援 HTML5 download 屬性的舊版瀏覽器時的處理
+      console.error( "您的瀏覽器不支援自動下載文件" );
+    }
+  }
+
 
 /* API */
 //  loginpage(body: {}): Observable<any> {

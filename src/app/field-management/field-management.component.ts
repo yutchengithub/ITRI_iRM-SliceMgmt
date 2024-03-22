@@ -10,7 +10,7 @@ import { CommonService } from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
 
 // For import APIs of Field Management 
-import { apiForFieldMgmt } from '../shared/api/For_Field';  // @2024/01/29 Add 
+import { apiForFieldMgmt } from '../shared/api/For_Field_Mgmt';  // @2024/01/29 Add 
 
 // For import interface of queryFieldList
 import { FieldList, Field } from '../shared/interfaces/Field/For_queryFieldList'; // @2024/01/29 Add 
@@ -41,9 +41,9 @@ import * as XLSX from 'xlsx';           // @2024/03/09 Add
 
 export class FieldManagementComponent implements OnInit, OnDestroy {
 
-  sessionId: string = '';   // sessionId 用於存儲當前會話 ID
-  refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
-  refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
+        sessionId: string = ''; // sessionId 用於存儲當前會話 ID
+  refreshTimeout!: any;         // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
+      refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
 
   // 類的構造函數，注入了多個依賴項目
   constructor(
@@ -88,10 +88,10 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   }
 
 
-  p: number = 1;            // 當前頁數 - 指示分頁控件當前顯示的頁面編號，初始設定為第 1 頁。
-  pageSize: number = 10;    // 每頁幾筆 - 每頁顯示的數據條目數量，這裡設定為每頁顯示 10 條數據。
-  totalItems: number = 0;   // 總筆數 - 整個數據集的總條目數，用於計算分頁總數。
-  nullList: string[] = [];  // 給頁籤套件使用 - 用於分頁控件的一個空陣列，通常用於初始化或臨時存儲數據。
+           p: number = 1;    // 當前頁數 - 指示分頁控件當前顯示的頁面編號，初始設定為第 1 頁。
+    pageSize: number = 10;   // 每頁幾筆 - 每頁顯示的數據條目數量，這裡設定為每頁顯示 10 條數據。
+  totalItems: number = 0;    // 總筆數 - 整個數據集的總條目數，用於計算分頁總數。
+    nullList: string[] = []; // 給頁籤套件使用 - 用於分頁控件的一個空陣列，通常用於初始化或臨時存儲數據。
 
   /**
    * 當分頁控件中的頁面發生變化時被呼叫的函數。
@@ -830,7 +830,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           const fileName = `${fieldName}_currentFieldSnapshot_${this.currentFieldSnapshotID}.xlsx`;
 
           // 解碼 Base64 字符串並自動下載 .xlsx 文件
-          this.downloadExcelFromBase64( response, fileName );
+          this.commonService.downloadExcelFromBase64( response, fileName );
         },
         error: ( error ) => {
           // 處理失敗響應
@@ -883,7 +883,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           const fileName = `${fieldName}_${snapshotName}_${year}${month}${day}_${hours}${minutes}${seconds}.xlsx`;
 
           // 解碼 Base64 字符串並自動下載 .xlsx 文件
-          this.downloadExcelFromBase64( response, fileName );
+          this.commonService.downloadExcelFromBase64( response, fileName );
         },
         error: ( error ) => {
           // 處理失敗響應
@@ -895,29 +895,6 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
     console.log( "downloadSpecificFieldSnapshotInList() - End" );
   }
-
-  // @2024/03/09 Add
-  // 用於解碼 Base64 字符串並下載 .xlsx 文件
-  downloadExcelFromBase64( base64String: string, fileName: string ) {
-    const link = document.createElement("a");
-
-    if ( link.download !== undefined ) {
-
-      // 支援 HTML5 download 屬性的瀏覽器
-      link.setAttribute( "href", 'data:application/vnd.ms-excel;base64,' + base64String );
-      link.setAttribute( "download", fileName );
-      link.style.visibility = 'hidden';
-      document.body.appendChild( link );
-      link.click();
-      document.body.removeChild( link );
-
-    } else {
-
-      // 不支援 HTML5 download 屬性的舊版瀏覽器時的處理
-      console.error( "您的瀏覽器不支援自動下載文件" );
-    }
-  }
-  
 
   // 用於存儲取得的 Field Snapshot List 數據 @2024/03/06 Add
   getFieldSnapshotList: FieldSnapshotList = {} as FieldSnapshotList;
