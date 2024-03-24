@@ -18,7 +18,7 @@
         "jobticket": "0",
         "ticketinfo": {
           "fieldsnapshotid": "170bf2b11b794827b820",
-          "fieldsnapshotname": "123132"
+          "fieldsnapshotname": "Snapshot_20230315"
         },
         "ticketresult": ""
       },
@@ -151,9 +151,9 @@
             "iscustomized": 1,
             "customizedkpi": {
               "0": {
-                "name": "25121",
-                "describe": "212112",
-                "kpi": "5212121"
+                "name": "RSRP",
+                "describe": "Reference Signal Received Power",
+                "kpi": ">= -95dBm && <= -85dBm"
               }
             }
           }
@@ -474,7 +474,7 @@
         "jobticket": "1",
         "ticketinfo": {
           "fieldsnapshotid": "170bf2b11b794827b820",
-          "fieldsnapshotname": "123132"
+          "fieldsnapshotname": "Snapshot_20240215"
         },
         "ticketresult": ""
       },
@@ -514,19 +514,19 @@
             "iscustomized": 1,
             "customizedkpi": {
               "0": {
-                "name": "2222222222222",
-                "describe": "22222222222222",
-                "kpi": "44444444444444444444444"
+                "name": "RSRP",
+                "describe": "Reference Signal Received Power",
+                "kpi": ">= -95dBm && <= -85dBm"
               },
               "1": {
-                "name": "44444444444444",
-                "describe": "444444444",
-                "kpi": "4444444444"
+                "name": "RSRQ",
+                "describe": "Reference Signal Received Quality",
+                "kpi": ">= -19.5dB && <= -3dB"
               },
               "2": {
-                "name": "1343RFSFS",
-                "describe": "EFSEFSEFSE",
-                "kpi": "FSFESEFESFS"
+                "name": "SINR",
+                "describe": "Signal to Interference plus Noise Ratio",
+                "kpi": ">= 20dB"
               }
             }
           }

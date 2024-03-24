@@ -2,23 +2,24 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from './../../shared/common.service';
-import { SoftwareList } from './../../software-management/software-management.component';
+import { SoftwareList }  from './../../software-management/software-management.component';
 import { SoftwareLists } from './../../software-management/software-management.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import { SystemSummary } from 'src/app/dashboard/dashboard.component';
+import { SystemSummary }   from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
-import { FmsgList } from './../../fault-management/fault-management.component';
+import { FmsgList }      from './../../fault-management/fault-management.component';
 import { FaultMessages } from './../../fault-management/fault-management.component';
-import { Subscription } from 'rxjs';
-import { XMLParser } from "fast-xml-parser";
+import { Subscription }  from 'rxjs';
+import { XMLParser }     from "fast-xml-parser";
 
 // For import APIs of Schedule Management 
-import { apiForScheduleMgmt }     from '../../shared/api/For_Schedule_Mgmt';  // @2024/03/15 Add
+import { apiForScheduleMgmt } from '../../shared/api/For_Schedule_Mgmt';  // @2024/03/15 Add
 
 // 引入儲存各個資訊所需的 interfaces of Schedule Management
-import { ScheduleInfo }           from '../../shared/interfaces/Schedule/For_queryJobTicketInfo';  // @2024/03/15 Add
+import { ScheduleInfo, sfUpdateInfo, caReportInfo, pmReportInfo, sfOrfmReportInfo } from '../../shared/interfaces/Schedule/For_queryJobTicketInfo';  // @2024/03/15 Add
+import { installLogInfo, kpiInfo } from '../../shared/interfaces/Schedule/For_queryJobTicketInfo';  // @2024/03/24 Add
 
 // For import local files of Schedule Management 
 import { localScheduleInfo }      from '../../shared/local-files/Schedule/For_queryJobTicketInfo'; // @2024/03/15 Add
@@ -81,9 +82,8 @@ export class ScheduleInfoComponent implements OnInit {
   }
 
 
-  selectScheduleInfo: ScheduleInfo = {} as ScheduleInfo; // 用於存儲從伺服器或 Local 文件獲取的排程資訊
-             isLoadingScheduleInfo = true;               // 加載狀態的標誌，初始設置為 true
-
+  isLoadingScheduleInfo = true;  // 加載狀態的標誌，初始設置為 true
+  selectScheduleInfo:     ScheduleInfo = {} as ScheduleInfo;     // 用於存儲從伺服器或 Local 文件獲取的排程資訊
   /** @2024/03/17 Add
    *  用於獲取排程詳細資訊。
    *  根據是否處於 Local 模式，它會從 Local 文件或通過 API 從伺服器獲取排程資訊。
@@ -112,6 +112,8 @@ export class ScheduleInfoComponent implements OnInit {
           console.log( 'Get the ScheduleInfo:', res );
 
           this.selectScheduleInfo = res; // 更新排程資訊
+
+          this.isLoadingScheduleInfo = false; // 數據加載完成
         },
         error: ( error ) => {
           // 請求出現錯誤
@@ -121,10 +123,60 @@ export class ScheduleInfoComponent implements OnInit {
         complete: () => {
           // 數據流處理完成（ 無論成功或失敗 ）
           console.log( 'Job ticket info fetch completed' );
-          this.isLoadingScheduleInfo = false; // 數據加載完成
         }
       });
     }
+  }
+  
+  // @2024/03/24 Add
+  // isSfUpdateInfoArray 是一個自定義的類型守衛函數，用於檢查 `ticketinfo` 是否為 `sfUpdateInfo[]` 類型的陣列。
+  isSfUpdateInfoArray( ticketinfo: ScheduleInfo['ticketinfo'] ): ticketinfo is sfUpdateInfo[] {
+    // `this.selectScheduleInfo.tickettype === '0'` 檢查當前選擇的排程信息 (`selectScheduleInfo`) 的 `tickettype` 是否為 '0'。
+    // 如果 `tickettype` 是 '0'，根據我們的介面定義，`ticketinfo` 應該是一個 `sfUpdateInfo[]` 類型的陣列。
+    
+    // `Array.isArray(ticketinfo)` 是 JavaScript 的標準函數，用於檢查 `ticketinfo` 是否是一個陣列。
+    // 組合這兩個條件，我們可以確定 `ticketinfo` 是不是一個 `sfUpdateInfo[]` 類型的陣列。
+
+    // 此函數最終返回一個布爾值，如果是 `sfUpdateInfo[]` 類型的陣列則返回 true，否則返回 false。
+    // 這樣的檢查使得在使用 `ticketinfo` 變數時，TypeScript 能夠了解其類型，並且提供正確的自動完成功能和類型檢查。
+    return this.selectScheduleInfo.tickettype === '0' && Array.isArray( ticketinfo );
+  }
+
+  // @2024/03/24 Add
+  // 檢查 ticketinfo 是否為 caReportInfo 類型（當 tickettype 為 '1' 時）
+  isCaReportInfo( ticketinfo: ScheduleInfo['ticketinfo'] ): ticketinfo is caReportInfo {
+    return this.selectScheduleInfo.tickettype === '1' && !Array.isArray( ticketinfo );
+  }
+
+ /** @2024/03/24 Add
+   * 檢查給定的 ticketinfo 是否為 pmReportInfo[] 類型。
+   * 此函數是一個類型守衛，用於當 tickettype 為 '2' 時，
+   * 確保 ticketinfo 是 pmReportInfo[] 類型的陣列。
+   * @param ticketinfo - 從 ScheduleInfo['ticketinfo'] 傳入的值
+   * @returns - 如果 ticketinfo 是 pmReportInfo[] 類型且 tickettype 為 '2'，則返回 true，否則返回 false
+   */
+  isPmReportInfoArray( ticketinfo: ScheduleInfo['ticketinfo'] ): ticketinfo is pmReportInfo[] {
+    // 先檢查 tickettype 是否為 '2'，然後檢查 ticketinfo 是否為一個陣列。
+    // 這是必要的，因為根據 ScheduleInfo 介面的定義，當 tickettype 為 '2' 時，ticketinfo 應該是 pmReportInfo[] 類型。
+    return this.selectScheduleInfo.tickettype === '2' && Array.isArray( ticketinfo );
+  }
+
+ /** @2024/03/24 Add
+   * 將 customizedkpi 物件轉換為 kpiInfo 類型的陣列。
+   * 這允許在模板中使用 *ngFor 來迭代 kpiInfo 項目。
+   * @param customizedkpi - 可能是一個字典物件或 undefined，字典的值是 kpiInfo 類型
+   * @returns - 如果 customizedkpi 定義了，則返回一個 kpiInfo 陣列，否則返回一個空陣列
+   */
+  getCustomizedKpiArray( customizedkpi: { [key: string]: kpiInfo } | undefined ): kpiInfo[] {
+    // 使用 JavaScript 的 Object.values() 函數來轉換物件的值為一個陣列。
+    // 如果 customizedkpi 是 undefined，則返回一個空陣列以防止錯誤。
+    return customizedkpi ? Object.values( customizedkpi ) : [];
+  }
+
+  // @2024/03/24 Add
+  // 檢查 ticketinfo 是否為 sfOrfmReportInfo[] 類型（當 tickettype 為 '3' 或 '4' 時）
+  isSfOrfmReportInfoArray( ticketinfo: ScheduleInfo['ticketinfo'] ): ticketinfo is sfOrfmReportInfo[] {
+    return ( this.selectScheduleInfo.tickettype === '3' || this.selectScheduleInfo.tickettype === '4' ) && Array.isArray( ticketinfo );
   }
 
 
@@ -188,6 +240,80 @@ export class ScheduleInfoComponent implements OnInit {
 // ↑ 控制顯示排程狀態的 icon 與訊息 @2024/03/22 Add ↑
 
 
+// ↓ For Download Schedule Report @2024/03/24 Add ↓
+
+  // 用於下載排程列表裡的指定排程報表
+  downloadSpecificScheduleReportInList( scheduleInfo: ScheduleInfo ) {
+    console.log("downloadSpecificScheduleReportInList() - Start");
+
+    // 將選中的 scheduleInfo 賦值給 selectScheduleInfo
+    this.selectScheduleInfo = scheduleInfo;
+
+    // 檢查是否在 Local 環境下模擬執行
+    if ( this.commonService.isLocal ) {
+
+      // Local 模式下無法下載報表
+      console.log( "Local 模式下無法真的下載報表,\n 此點選要下載的報表名稱為:", this.selectScheduleInfo.ticketresult );
+
+    } else {
+
+      // 生產環境下向後端 API 發送請求下載報表
+      this.API_Schedule.getReportFile( this.selectScheduleInfo.id ).subscribe({
+        next: ( response ) => {
+
+          // 處理成功的響應
+          console.log( "排程報表", this.selectScheduleInfo.ticketresult, "下載成功:", response );
+
+          // 取得報表名稱
+          const fileName = this.selectScheduleInfo.ticketresult;
+
+          // 解碼 Base64 字符串並自動下載檔案
+          this.commonService.downloadExcelFromBase64( response, fileName );
+        },
+        error: ( error ) => {
+          // 處理失敗響應
+          console.error( "排程報表下載失敗:", error );
+          // 例如顯示錯誤訊息給用戶
+        }
+      });
+    }
+
+    console.log( "downloadSpecificScheduleReportInList() - End" );
+  }
+
+// ↑ For Download Schedule Report @2024/03/24 Add ↑
+
+
+// ↓ For 處理 "軟體更新" 排程裡會出現的 installlog @2024/03/24 Add ↓
+
+  /** @2024/03/24 Add
+    * 將每個 Install Log 條目解析成模板中更易於管理的格式。
+    * @param installLogs - 軟體更新資訊中的 Install Log 資訊陣列。
+    * @returns - 包含解析後日誌細節的物件陣列。
+    */
+  parseInstallLog( installLogs: installLogInfo[] ): any[] {
+
+    return installLogs.map( log => {
+
+      // 嘗試匹配 Download Log 條目是否符合預定義的模式
+      const downloadMatch = log.Download.match( /(.*) (Download Success|Download Fail) (.*)/ );
+
+      // 嘗試匹配 Install Log 條目是否符合預定義的模式
+      const installMatch = log.Install.match( /(.*) (Install Success|Install Fail) (.*)/ );
+
+      // 返回一個物件，包含下載和安裝事件的解析時間、狀態及目標
+      return {
+          downloadTime: downloadMatch ? downloadMatch[1] : '',  // 捕獲的下載時間
+        downloadStatus: downloadMatch ? downloadMatch[2] : '',  // 捕獲的下載狀態
+        downloadTarget: downloadMatch ? downloadMatch[3] : '',  // 捕獲的下載目標 NE ID
+          installTime: installMatch ? installMatch[1] : '',    // 捕獲的安裝時間
+        installStatus: installMatch ? installMatch[2] : '',    // 捕獲的安裝狀態
+        installTarget: installMatch ? installMatch[3] : '',    // 捕獲的安裝目標 NE ID
+      };
+    });
+  }
+
+// ↑ For 處理 "軟體更新" 排程裡會出現的 installlog @2024/03/24 Add ↑
 
 
 
