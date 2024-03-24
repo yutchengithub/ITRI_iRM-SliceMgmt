@@ -193,7 +193,7 @@ export const TwLanguage = {
 
   // BS Management ( 基站管理 )
   'BS.list':'基站列表',
-
+  
   'BS.name':'基站名稱',
   'BS.type':'基站類型',
   'BS.cellCount':'Cell 數',
@@ -203,6 +203,8 @@ export const TwLanguage = {
   'BS.view':'檢視',
   'BS.delete':'刪除',
   'BS.confirm_del':'確定要刪除基站',
+
+  'BS.info':'基站詳細資訊',
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',

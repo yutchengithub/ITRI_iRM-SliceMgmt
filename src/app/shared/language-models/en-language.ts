@@ -206,6 +206,8 @@ export const Enlanguage = {
   'BS.delete':'Delete',
   'BS.confirm_del':'Confirm to Delete Basestation',
 
+  'BS.info':'Basestation Detailed Information',
+
   // Fault Management
   'fm.start':'StartTime',
   'fm.end':'EndTime',

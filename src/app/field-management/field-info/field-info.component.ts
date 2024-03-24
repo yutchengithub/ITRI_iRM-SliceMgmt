@@ -33,7 +33,7 @@ import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList'
 import { localFieldInfo } from '../../shared/local-files/Field/For_queryFieldInfo'; // @2024/03/14 Add
 import { localPmFTPInfo } from '../../shared/local-files/Field/For_queryPmFtpInfo'; // @2024/02/04 Add
 import { localBSList }    from '../../shared/local-files/BS/For_queryBsList';       // @2024/01/16 Add
-import { localBSinfo }    from '../../shared/local-files/BS/For_queryBsInfo';       // @2023/12/27 Add
+import { localBSInfo }    from '../../shared/local-files/BS/For_queryBsInfo';       // @2023/12/27 Add
 
 import { map } from 'rxjs/operators';              // @2023/12/24 Add
 import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
@@ -147,7 +147,7 @@ export class FieldInfoComponent implements OnInit {
     public            API_Field: apiForFieldMgmt, // @2024/03/14 Update for import API of Field Management
 
     public  fieldInfo_LocalFiles: localFieldInfo,  // @2024/03/14 Add for import Field Info Local Files
-    public     bsInfo_LocalFiles: localBSinfo,     // @2023/12/27 Add for import BS Info Local Files
+    public     bsInfo_LocalFiles: localBSInfo,     // @2023/12/27 Add for import BS Info Local Files
     public     bsList_LocalFiles: localBSList,     // @2024/01/16 Add for import BS List Local Files 
     public  pmFtpInfo_LocalFiles: localPmFTPInfo,  // @2024/02/04 Add for import info of PM Parameter Setting Local Files
   ) {

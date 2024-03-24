@@ -11,137 +11,15 @@ import { LanguageService } from 'src/app/shared/service/language.service';
 import { FmsgList } from './../../fault-management/fault-management.component';
 import { FaultMessages } from './../../fault-management/fault-management.component';
 
-export interface OcloudInfo {
-  id: string;
-  name: string;
-  imsEndpoint: string;
-  ipAddress: string;
-  description: string;
-  status: string;
-  softwareVersion: string;
-  callbackUri: string;
-  dms: Dms[];
-  nf: Nf[];
-  fault: Fault;
-  resourcepool: Resourcepool[];
-}
+// import APIs of BS Management @2024/03/25 Add 
+import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt';
 
-export interface Dms {
-  id: string;
-  name: string;
-  dmsEndpoint: string;
-}
+// 引入儲存各個資訊所需的 interfaces @2024/03/25 Add
+import { BSInfo }      from '../../shared/interfaces/BS/For_queryBsInfo_BS';
+import { BSInfo_dist } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';
 
-export interface Nf {
-  id: string;
-  name: string;
-  dmsName: string;
-  status: number;
-  actionstatus: string;
-}
-
-export interface Fault {
-  critical: number;
-  major: number;
-  minor: number;
-  warning: number;
-}
-
-export interface Resourcepool {
-  poolId: string;
-  poolName: string;
-  active?: boolean;
-  node: Node[];
-}
-
-export interface Node {
-  nodeId: string;
-  nodeName: string;
-  cpu: Cpu[];
-  memory: Memory,
-  nic: Nic[];
-  storage: Storage;
-}
-
-export interface Cpu {
-  id: string;
-  name: string;
-  product: string;
-  capacity: string;
-}
-
-export interface Nic {
-  id: string;
-  name: string;
-  product: string;
-  capacity: string;
-}
-
-export interface Memory {
-  name: string;
-  size: string;
-}
-
-export interface Storage {
-  total: string;
-  items: Items[];
-}
-
-export interface Items {
-  id: string;
-  name: string;
-  size: string;
-}
-
-export interface OcloudPerformance {
-  // totalCpu: number;
-  // usedCpu: number;
-  cpu: string;
-  memory: string;
-  storage: string;
-  network: string;
-}
-//component Info
-export interface BsComponentInfo {
-  id: string;
-  name: string;
-  ip: string;
-  port: string;
-  account: string;
-  key: string;
-  comtype: number;
-  firm: string;
-  modelname: string;
-  status: number;
-  info: Info;
-  sm: {
-    softwareInventory: {
-      softwareSlot: SoftwareSlot[];
-    };
-  };
-}
-
-export interface Info {
-  data: string;
-}
-
-interface SoftwareSlot {
-  name: string;
-  status: string;
-  active?: string;
-  running?: string;
-  access?: string;
-  vendorCode?: string;
-  buildId?: string;
-  buildName?: string;
-  buildVersion?: string;
-  files?: {
-    name: string;
-    version: string;
-    localPath: string;
-    integrity: string;
-  };
-}
+// 引入所需 Local Files @2024/03/25 Add
+import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';
 
 @Component({
   selector: 'app-bs-info',
@@ -150,64 +28,144 @@ interface SoftwareSlot {
 })
 
 export class BSInfoComponent implements OnInit {
-  sessionId: string = '';
-  cloudId: string = '';
-  cloudName: string = '';
-  newip: string = '';
-  // utilizationPercent: number = 0;
-  bsComponentInfo: BsComponentInfo = {} as BsComponentInfo;
-  ocloudInfo: OcloudInfo = {} as OcloudInfo;
-  ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
-  softwareList: SoftwareList[] = [];
-  systemSummary: SystemSummary = {} as SystemSummary;;
-  fileNameMapSoftware: Map<string, SoftwareList> = new Map();
-  faultColors: string[] = ['#FF0000', '#FFA042', '	#FFFF37', '#00FFFF'];
-  showTooltipCpu: any = {};
-  showTooltipStorage: any = {};
-  showTooltipNic: any = {};
-  RunRefreshTimeout!: any;
-  RunRefreshTime: number = 3;
-  refreshTimeout!: any;
-  @ViewChild('updateModal') updateModal: any;
-  @ViewChild('updateIPModal') updateIPModal: any;
-  updateModalRef!: MatDialogRef<any>;
-  updateIPModalRef!: MatDialogRef<any>;
-  updateForm!: FormGroup;
-  formValidated = false;
-  /* CRITICAL,MAJOR,MINOR,WARNING */
-  severitys: string[];
 
-  tooltipOptions = {
-    theme: 'light',     // 'dark' | 'light'
-    hideDelay: 250
-  };
+  sessionId: string = '';   // sessionId 用於存儲當前會話 ID
+  refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
+  refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    public commonService: CommonService,
-    private fb: FormBuilder,
-    private dialog: MatDialog,
-    public languageService: LanguageService
+
+    private         router: Router,
+    private          route: ActivatedRoute,
+    private             fb: FormBuilder,
+    private         dialog: MatDialog,
+    public   commonService: CommonService,
+    public languageService: LanguageService,
+
+    public  API_BS: apiForBSMgmt,           // @2024/03/25 Add for import API of BS Management
+    public  bsInfo_LocalFiles: localBSInfo, // @2024/03/25 Add for import BS Info Local Files 
+  
   ) {
+
     this.severitys = this.commonService.severitys;
     this.cmpsource = this.commonService.cmpsource;
+
   }
 
+  // @2024/03/25 Add
+  bsID:   string = ''; // 用於存儲當前選中的 BS ID
+  bsName: string = ''; // 用於存儲當前選中的 BS 名稱
+  bsType: string = ''; // 用於存儲當前選中的 BS 類型
+
+  // 頁面初始化 @2024/03/25 Update
   ngOnInit(): void {
+
     this.sessionId = this.commonService.getSessionId();
-    this.route.params.subscribe((params) => {
-      this.cloudId = params['cloudId'];
-      this.cloudName = params['cloudName'];
-      console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
-      this.getBSInfo();
-      this.getOcloudPerformance();
-      this.getSoftwareList();
+
+    this.route.params.subscribe(( params ) => {
+      this.bsID = params['id'];
+      this.bsName = params['name'];
+      this.bsType = params['type'];
+      console.log('bsId: ' + this.bsID + ', bsName: ' + this.bsName +
+                     ', bsType: ' + this.bsType + ',\nsend from /main/bs-mgr');
+      
+      // 初入該頁面就取得此BS資訊               
+      this.getQueryBsInfo();
     });
+
   }
+
   ngOnDestroy() {
-    clearTimeout(this.refreshTimeout);
+    clearTimeout( this.refreshTimeout );
   }
+
+  // 用於返回 BS 主頁 @2024/03/25 Add
+  back() {
+    this.router.navigate( ['/main/bs-mgr'] );
+  }
+
+  isLoadingBsInfo =  true;                            // 加載狀態的標誌，初始設置為 true
+  selectBsInfo:      BSInfo = {} as BSInfo;           // 用於存儲從服務器或 Local Files 獲取的一體式基站資訊
+  selectBsInfo_dist: BSInfo_dist = {} as BSInfo_dist; // 用於存儲從服務器或 Local Files 獲取的分佈式基站資訊
+
+  // @2024/03/25 Add
+  // 用於獲取基站資訊
+  getQueryBsInfo() {
+    console.log( 'getQueryBsInfo() - Start' );
+
+    this.isLoadingBsInfo = true;         // 開始加載數據，顯示進度指示器
+
+    clearTimeout( this.refreshTimeout ); // 取消之前設定的超時，避免重複或不必要的操作
+
+    if ( this.commonService.isLocal ) {
+      // Local 模式: 使用 Local 文件提供的數據
+
+      if ( this.bsType === "1" ) {
+
+        // 取得 Local 一體式基站資訊
+        this.selectBsInfo = this.bsInfo_LocalFiles.bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo;
+        console.log( 'In local - Get the BSInfo:', this.selectBsInfo );
+
+      } else if ( this.bsType === "2" ) {
+
+        // 取得 Local 分佈式基站資訊
+        this.selectBsInfo_dist = this.bsInfo_LocalFiles.dist_bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo_dist;
+        console.log( 'In local - Get the BSInfo_dist:', this.selectBsInfo_dist );
+      }
+
+      this.isLoadingBsInfo = false; // Local 模式下，數據加載快速完成,直接設置為 false
+
+    } else {
+      
+      // 非 Local 模式: 通過 API 從服務器獲取數據
+      this.API_BS.queryBsInfo( this.bsID ).subscribe({
+        next: ( res ) => {
+
+          console.log( 'Get the BSInfo:', res );
+
+          if ( this.bsType === "1" ) {
+
+            // 刷新一體式基站資訊
+            this.selectBsInfo = res as BSInfo;
+            console.log( 'Get the BSInfo:', this.selectBsInfo );
+
+          } else if ( this.bsType === "2" ) {
+
+            // 刷新分佈式基站資訊
+            this.selectBsInfo_dist = res as BSInfo_dist; 
+            console.log( 'Get the BSInfo_dist:', this.selectBsInfo_dist );
+          }
+
+          this.isLoadingBsInfo = false; // 數據加載完成
+        },
+        error: ( error ) => {
+          console.error( 'Error fetching BS info:', error );
+          this.isLoadingBsInfo = false; // 出錯時設置加載標誌為 false
+        },
+        complete: () => {
+          console.log( 'BS info fetch completed' );
+        }
+      });
+    }
+
+    console.log( 'getQueryBsInfo() - End' );
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
   getBSInfo() {
     if (this.commonService.isLocal) {
@@ -322,11 +280,6 @@ export class BSInfoComponent implements OnInit {
       return 0;
     }
   }
-
-  back() {
-    this.router.navigate(['/main/component-mgr']);
-  }
-
 
   goFaultMgr() {
     this.router.navigate(['/main/fault-mgr', this.cloudName, 'All']);
@@ -477,4 +430,169 @@ export class BSInfoComponent implements OnInit {
     return this.isSearch ? this.filteredFmList : this.fmsgList.faultMessages;
   }
 
+
+
+  cloudId: string = '';
+  cloudName: string = '';
+  newip: string = '';
+  // utilizationPercent: number = 0;
+  bsComponentInfo: BsComponentInfo = {} as BsComponentInfo;
+  ocloudInfo: OcloudInfo = {} as OcloudInfo;
+  ocloudPerformance: OcloudPerformance = {} as OcloudPerformance;
+  softwareList: SoftwareList[] = [];
+  systemSummary: SystemSummary = {} as SystemSummary;;
+  fileNameMapSoftware: Map<string, SoftwareList> = new Map();
+  faultColors: string[] = ['#FF0000', '#FFA042', '	#FFFF37', '#00FFFF'];
+  showTooltipCpu: any = {};
+  showTooltipStorage: any = {};
+  showTooltipNic: any = {};
+  RunRefreshTimeout!: any;
+  RunRefreshTime: number = 3;
+  @ViewChild('updateModal') updateModal: any;
+  @ViewChild('updateIPModal') updateIPModal: any;
+  updateModalRef!: MatDialogRef<any>;
+  updateIPModalRef!: MatDialogRef<any>;
+  updateForm!: FormGroup;
+  formValidated = false;
+  /* CRITICAL,MAJOR,MINOR,WARNING */
+  severitys: string[];
+
+  tooltipOptions = {
+    theme: 'light',     // 'dark' | 'light'
+    hideDelay: 250
+  };
+
+}
+
+
+export interface OcloudInfo {
+  id: string;
+  name: string;
+  imsEndpoint: string;
+  ipAddress: string;
+  description: string;
+  status: string;
+  softwareVersion: string;
+  callbackUri: string;
+  dms: Dms[];
+  nf: Nf[];
+  fault: Fault;
+  resourcepool: Resourcepool[];
+}
+
+export interface Dms {
+  id: string;
+  name: string;
+  dmsEndpoint: string;
+}
+
+export interface Nf {
+  id: string;
+  name: string;
+  dmsName: string;
+  status: number;
+  actionstatus: string;
+}
+
+export interface Fault {
+  critical: number;
+  major: number;
+  minor: number;
+  warning: number;
+}
+
+export interface Resourcepool {
+  poolId: string;
+  poolName: string;
+  active?: boolean;
+  node: Node[];
+}
+
+export interface Node {
+  nodeId: string;
+  nodeName: string;
+  cpu: Cpu[];
+  memory: Memory,
+  nic: Nic[];
+  storage: Storage;
+}
+
+export interface Cpu {
+  id: string;
+  name: string;
+  product: string;
+  capacity: string;
+}
+
+export interface Nic {
+  id: string;
+  name: string;
+  product: string;
+  capacity: string;
+}
+
+export interface Memory {
+  name: string;
+  size: string;
+}
+
+export interface Storage {
+  total: string;
+  items: Items[];
+}
+
+export interface Items {
+  id: string;
+  name: string;
+  size: string;
+}
+
+export interface OcloudPerformance {
+  // totalCpu: number;
+  // usedCpu: number;
+  cpu: string;
+  memory: string;
+  storage: string;
+  network: string;
+}
+//component Info
+export interface BsComponentInfo {
+  id: string;
+  name: string;
+  ip: string;
+  port: string;
+  account: string;
+  key: string;
+  comtype: number;
+  firm: string;
+  modelname: string;
+  status: number;
+  info: Info;
+  sm: {
+    softwareInventory: {
+      softwareSlot: SoftwareSlot[];
+    };
+  };
+}
+
+export interface Info {
+  data: string;
+}
+
+interface SoftwareSlot {
+  name: string;
+  status: string;
+  active?: string;
+  running?: string;
+  access?: string;
+  vendorCode?: string;
+  buildId?: string;
+  buildName?: string;
+  buildVersion?: string;
+  files?: {
+    name: string;
+    version: string;
+    localPath: string;
+    integrity: string;
+  };
 }

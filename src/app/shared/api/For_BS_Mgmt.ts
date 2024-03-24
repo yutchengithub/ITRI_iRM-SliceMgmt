@@ -21,12 +21,6 @@ export class apiForBSMgmt {
   restPath = this.commonService.restPath;         // Get the root path  @2024/01/08
   sessionId = this.commonService.getSessionId();  // Get the Session ID @2024/01/08
 
-  // 取得指定 id 基站所有資訊
-  queryBsInfo( bsId: string ): Observable< BSInfo | BSInfo_dist >  {
-    const url = `${this.restPath}/queryBsInfo/${this.sessionId}/${bsId}`;
-    return this.http.get< BSInfo >( url ); // 告訴 HttpClient 期望的響應類型是 BSInfo
-  }
-
   // Get a list of BSs that are not limited to being within the specified field
   queryBsList(): Observable<any> {
     
@@ -35,6 +29,12 @@ export class apiForBSMgmt {
   
     // 發起 HTTP GET 請求
     return this.http.get( url );
+  }
+
+  // 取得指定 id 基站所有資訊
+  queryBsInfo( bsId: string ): Observable< BSInfo | BSInfo_dist >  {
+    const url = `${this.restPath}/queryBsInfo/${this.sessionId}/${bsId}`;
+    return this.http.get< BSInfo >( url ); // 告訴 HttpClient 期望的響應類型是 BSInfo
   }
 
   // For Updating Configurations of All-in-one BS

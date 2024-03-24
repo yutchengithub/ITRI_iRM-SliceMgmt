@@ -85,7 +85,7 @@ import { localFieldInfo }         from './shared/local-files/Field/For_queryFiel
 import { localPmFTPInfo }         from './shared/local-files//Field/For_queryPmFtpInfo';          // @2024/02/04 Add
 import { localFieldSnapshotList } from './shared/local-files/Field/For_queryFieldSnapshotList';   // @2024/03/06 Add
 
-import { localBSinfo }            from './shared/local-files/BS/For_queryBsInfo';                 // @2023/12/27 Add 
+import { localBSInfo }            from './shared/local-files/BS/For_queryBsInfo';                 // @2023/12/27 Add 
 import { localBSList }            from './shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
 
 import { localScheduleList }      from './shared/local-files/Schedule/For_queryJobTicketList';    // @2024/03/15 Add   
@@ -204,7 +204,7 @@ import { localNEList }            from './shared/local-files/NE/For_queryBsCompo
     localFieldList,         // @2024/01/29 Add for import Local files of Field List
     localFieldInfo,         // @2024/03/14 Add for import Local files of Field Info
     localFieldSnapshotList, // @2024/03/06 Add for import Local files of Field Snapshot List
-    localBSinfo,            // @2023/12/27 Add for import Local files of BS Info
+    localBSInfo,            // @2023/12/27 Add for import Local files of BS Info
     localBSList,            // @2024/01/16 Add for import Local files of BS List
     localPmFTPInfo,         // @2024/02/04 Add for import info of PM Parameter Setting Local Files
     
