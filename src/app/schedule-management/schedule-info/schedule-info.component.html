@@ -13,24 +13,20 @@
   </h5>
 
   <div class="BOX basicInfo ">
+    <label class="boxTitle">
+      {{ languageService.i18n['sm.detailInfo'] }}
+    </label>
 
     <!-- 當數據正在加載時顯示進度條 @2024/03/24 Add -->
     <ng-container *ngIf="isLoadingScheduleInfo">
-      <tr>
-        <td colspan="6">
-          <div class="progress-spinner-container">
-            <!-- 指示器大小設置 -->
-            <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="120"></mat-progress-spinner>
-          </div>
-        </td>
-      </tr>
+        <div class="progress-spinner-container">
+          <!-- 指示器大小設置 -->
+          <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="120"></mat-progress-spinner>
+        </div>
     </ng-container>
 
     <!-- 加載完成後顯示 排程資訊 數據 @2024/03/24 Add -->
     <ng-container *ngIf="!isLoadingScheduleInfo">
-      <label class="boxTitle">
-        {{ languageService.i18n['sm.detailInfo'] }}
-      </label>
       <div class="center">
         
         <!-- 基本訊息區 @2024/03/24 Add -->
