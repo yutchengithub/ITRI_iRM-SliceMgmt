@@ -4,7 +4,7 @@
   import { BSInfo_dist } from '../../interfaces/BS/For_queryBsInfo_dist_BS';  // @12/27 Add by yuchen
 
   // Local Files for general BS @12/27 Add by yuchen 
-  export class localBSinfo {
+  export class localBSInfo {
   
     bsInfo_local: BSInfo[] = [
         {
@@ -12709,7 +12709,7 @@
             },
             "pci": {},
             "cco": {},
-            "id": "349b9f81afa54669b094",
+            "id": "349b9f81afa54669b096",
             "name": "BS9",
             "ip": "",
             "port": "",

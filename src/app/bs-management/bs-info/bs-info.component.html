@@ -1,9 +1,10 @@
 <div class="ocloudInfo component">
   <h5>
     <button (click)="back()"><span class="material-icons">arrow_back</span>Back</button>
-    {{languageService.i18n['cm.info']}} – {{bsComponentInfo.name}}
+    {{ languageService.i18n['BS.info'] }} – {{ bsName }} / 
+    <label *ngIf="bsType === '1' ">All-in-one:&thinsp;[CU + DU + RU]</label>
+    <label *ngIf="bsType === '2'">Disaggregated:&thinsp;[CU] + [DU] + [RU]</label>
   </h5>
-
 
   <div class="main collabsible">
     <div class="baseInfo">

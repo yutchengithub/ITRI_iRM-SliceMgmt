@@ -534,7 +534,7 @@ export class ScheduleManagementComponent implements OnInit {
     });
   }
 
-  fileChange(e: any) {
+  fileChange( e: any ) {
     // console.log(e);
     this.fileMsg = '';
     let passFile = null;
