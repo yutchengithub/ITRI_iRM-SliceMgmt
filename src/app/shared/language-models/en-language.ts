@@ -393,10 +393,31 @@ export const Enlanguage = {
   'sm.contentInfo': 'Content Information',
   'sm.periodicExecution': 'Periodic Execution',
   'sm.notPeriodicExecution': 'None',
+
+  // tickettype = 0
+  'sm.neCurrentVersion': 'Current Version',
+  'sm.neTargetVersion': 'Target Version',
+
+  // tickettype = 1
+  'sm.snapshotAuditTitle': 'Snapshot Name for Audit',
+
+  // tickettype = 2
+  'sm.startDate': 'Start Date',
+  'sm.endDate': 'End Date',
+  'sm.kpiType': 'KPI Type',
+  'sm.custom': 'Custom',
+  'sm.kpiName': 'KPI Name',
+  'sm.kpiDescription': 'KPI Description',
+  'sm.kpiFormula': 'KPI Formula',
+
+  // 執行結果區
   'sm.executionResult': 'Execution Result',
-
-
-
+  'sm.NeName':'NE Name',
+  'sm.targetNE': 'Target NE',
+  'sm.targetNeID': 'Target NE ID',
+  'sm.time': 'Time',
+  'sm.updateStatus': 'Update Status',
+  'sm.target': 'Target',
 
   
   // Log Management @10/31 add by yuchen

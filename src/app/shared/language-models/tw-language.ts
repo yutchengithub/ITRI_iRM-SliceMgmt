@@ -372,7 +372,7 @@ export const TwLanguage = {
   'sm.fmReport':'產出故障管理報表', // tickettype = 3
   'sm.pmReport':'產出效能管理報表', // tickettype = 2
   'sm.caReport':'產出配置稽核報表', // tickettype = 1
-  'sm.sfUpdate':'軟體更新',         // tickettype = 0
+  'sm.sfUpdate':'軟體更新',        // tickettype = 0
 
   'sm.jobPartialSuccessString':'部份成功', // ticketstatus = 5
   'sm.jobFailString':'失敗',               // ticketstatus = 4
@@ -391,9 +391,33 @@ export const TwLanguage = {
 
   'sm.contentInfo':'內容訊息',
   'sm.periodicExecution': '週期性執行',
-  'sm.notPeriodicExecution': '否',
-  'sm.executionResult': '執行結果',
+  'sm.notPeriodicExecution': '無',
 
+  // tickettype = 0
+  'sm.neCurrentVersion': '現有版本',
+  'sm.neTargetVersion': '目標版本',
+
+  // tickettype = 1
+  'sm.snapshotAuditTitle': '欲稽核的快照名稱',
+
+  // tickettype = 2
+  'sm.startDate': '起始日期',
+  'sm.endDate': '結束日期',
+  'sm.kpiType': 'KPI類型',
+  'sm.custom': '自定義',
+  'sm.kpiName': 'KPI 名稱',
+  'sm.kpiDescription': 'KPI 說明',
+  'sm.kpiFormula': 'KPI 公式',
+
+  // 執行結果區
+  'sm.executionResult': '執行結果',
+  'sm.NeName':'網元名稱',
+  'sm.targetNE': '目標網元',
+  'sm.targetNeID': '目標網元ID',
+  'sm.neID': '網元ID',
+  'sm.time': '時間',
+  'sm.updateStatus': '更新狀態',
+  'sm.target': '目標',
 
 
   // Log Management (日誌管理)  @10/31 add by yuchen

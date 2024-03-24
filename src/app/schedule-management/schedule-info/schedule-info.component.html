@@ -13,9 +13,12 @@
   </h5>
 
   <div class="BOX basicInfo ">
-    <label class="boxTitle">{{ languageService.i18n['sm.detailInfo'] }}</label>
+    <label class="boxTitle">
+      {{ languageService.i18n['sm.detailInfo'] }}
+    </label>
     <div class="center">
       
+      <!-- 基本訊息區 @2024/03/24 Add -->
       <ul class="Software_info">
         <h3>{{ languageService.i18n['basic.info'] }}</h3>
         <li>
@@ -41,29 +44,153 @@
         </li>
       </ul>
 
+      <!-- 內容訊息區 @2024/03/24 Add -->
       <ul class="file_url_info">
         <h3>{{ languageService.i18n['sm.contentInfo'] }}</h3>
         <li>
+          <!-- 顯示是否為"週期性執行"的區域 -->
           <label>{{ languageService.i18n['sm.periodicExecution'] }}</label>
           <span *ngIf=" selectScheduleInfo.executedtype === '0' ">{{ languageService.i18n['sm.notPeriodicExecution'] }}</span>
           <span *ngIf=" selectScheduleInfo.executedtype === '1' ">{{ languageService.i18n['sm.jobDailyString'] }}</span>
           <span *ngIf=" selectScheduleInfo.executedtype === '2' ">{{ languageService.i18n['sm.jobWeeklyString'] }}</span>
           <span *ngIf=" selectScheduleInfo.executedtype === '3' ">{{ languageService.i18n['sm.jobMonthlyString'] }}</span>
         </li>
-        <li>
-          <label>URL</label><span>2</span></li>
-        <li>
-          <label>File size</label><span>2</span></li>
-        <li>
-          <label>CheckSum</label><span>2</span></li>
+
+        <!-- 依據排程類型，顯示對應的內容訊息 -->
+        <div *ngIf="selectScheduleInfo">
+
+          <!-- 排程為 "軟體更新" 時的顯示內容 @2024/03/24 Add -->
+          <ng-container *ngIf="isSfUpdateInfoArray( selectScheduleInfo.ticketinfo )">
+            <table>
+              <thead>
+                <tr>
+                  <th>{{ languageService.i18n['sm.targetNE'] }}</th>
+                  <th>{{ languageService.i18n['sm.neCurrentVersion'] }}</th>
+                  <th>{{ languageService.i18n['sm.neTargetVersion'] }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let info of selectScheduleInfo.ticketinfo">
+                  <td>{{ info.bscompname }}</td>
+                  <td>{{ info.currentversion }}</td>
+                  <td>{{ info.upgradeversion }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </ng-container>
+
+          <!-- 排程為 "產出配置稽核報表" 時的顯示內容 @2024/03/24 Add -->
+          <ng-container *ngIf="isCaReportInfo( selectScheduleInfo.ticketinfo )">
+            <li>
+              <label>{{ languageService.i18n['sm.snapshotAuditTitle'] }}</label>
+              <span>{{ selectScheduleInfo.ticketinfo.fieldsnapshotname }}</span>
+            </li>
+          </ng-container>
+
+          <!-- 排程為 "產出效能管理報表" 時的顯示內容 @2024/03/24 Add -->
+          <ng-container *ngIf="isPmReportInfoArray( selectScheduleInfo.ticketinfo )">
+            <li>
+              <label>{{ languageService.i18n['sm.startDate'] }}</label>
+              <span>{{ selectScheduleInfo.ticketinfo[0].start }}</span>
+            </li>
+            <li>
+              <label>{{ languageService.i18n['sm.endDate'] }}</label>
+              <span>{{ selectScheduleInfo.ticketinfo[0].end }}</span>
+            </li>
+            <li>
+              <label>{{ languageService.i18n['sm.kpiType'] }}</label>
+              <span *ngIf="selectScheduleInfo.ticketinfo[0].iscustomized === 0">3GPP</span>
+              <span *ngIf="selectScheduleInfo.ticketinfo[0].iscustomized  === 1">{{ languageService.i18n['sm.custom'] }}</span>
+            </li>
+            <ng-container *ngIf="selectScheduleInfo.ticketinfo[0].iscustomized  === 1">
+              <table>
+                <thead>
+                  <tr>
+                    <th>{{ languageService.i18n['sm.kpiName'] }}</th>
+                    <th>{{ languageService.i18n['sm.kpiDescription'] }}</th>
+                    <th>{{ languageService.i18n['sm.kpiFormula'] }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let kpi of getCustomizedKpiArray( selectScheduleInfo.ticketinfo[0].customizedkpi )">
+                    <td>{{ kpi.name }}</td>
+                    <td>{{ kpi.describe }}</td>
+                    <td>{{ kpi.kpi }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-container>
+          </ng-container>
+
+          <!-- 排程為 "產出故障管理報表" 或 "產出軟體管理報表" 時的顯示內容 @2024/03/24 Add -->
+          <ng-container *ngIf="isSfOrfmReportInfoArray( selectScheduleInfo.ticketinfo )">
+            <li>
+              <label>{{ languageService.i18n['sm.startDate'] }}</label>
+              <span>{{ selectScheduleInfo.ticketinfo[0].start }}</span>
+            </li>
+            <li>
+              <label>{{ languageService.i18n['sm.endDate'] }}</label>
+              <span>{{ selectScheduleInfo.ticketinfo[0].end }}</span>
+            </li>
+          </ng-container>
+        </div>
       </ul>
 
+      <!-- 執行結果區 @2024/03/24 Add -->
       <ul class="ftp_info">
         <h3>{{ languageService.i18n['sm.executionResult'] }}</h3>
-        <li>
-          <label>FTP Account</label><span>1111111111111</span></li>
-        <li>
-          <label>FTP Password</label><span>111111</span></li>
+
+        <!-- 如 selectScheduleInfo.ticketresult 有值，顯示報表下載讓使用者下載報表 -->
+        <li *ngIf="selectScheduleInfo.ticketresult">
+          <label>{{ languageService.i18n['sm.th_download'] }}</label>
+          <span *ngIf="selectScheduleInfo.ticketresult">
+            <button mat-icon-button color="primary" (click)="downloadSpecificScheduleReportInList( selectScheduleInfo )">
+              <mat-icon tooltip="{{ languageService.i18n['sm.smDownload'] }}">sim_card_download</mat-icon>
+            </button>
+          </span>
+        </li>
+
+        <!-- 當排程為 "軟體更新" 時顯示的執行結果內容 @2024/03/24 Add  -->
+        <ng-container *ngIf="isSfUpdateInfoArray( selectScheduleInfo.ticketinfo )">
+          <table>
+            <thead>
+              <tr>
+                <th>{{ languageService.i18n['sm.targetNE'] }}</th>
+                <th>{{ languageService.i18n['sm.targetNeID'] }}</th>
+                <th>{{ languageService.i18n['sm.updateStatus'] }}</th>
+                <th>{{ languageService.i18n['sm.time'] }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 遍歷每個軟體更新資訊以顯示日誌 -->
+              <ng-container *ngFor="let info of selectScheduleInfo.ticketinfo">
+                <!-- 下載行 -->
+                <tr>
+                  <!-- 網元名稱；使用 rowspan 跨越下載和安裝行 -->
+                  <td rowspan="2" class="vertical-align-middle">{{ info.bscompname }}</td>
+                  <!-- 目標網元 ID；也使用 rowspan 跨越兩行 -->
+                  <!-- <td rowspan="2" class="vertical-align-middle">{{ parseInstallLog(info.installlog)[3].downloadTarget }}</td> -->
+                  <!-- 目標網元 ID -->
+                  <td>{{ parseInstallLog( info.installlog )[0].downloadTarget }}</td>
+                  <!-- 顯示下載狀態 -->
+                  <td>{{ parseInstallLog( info.installlog )[0].downloadStatus }}</td>
+                  <!-- 顯示下載時間 -->
+                  <td>{{ parseInstallLog( info.installlog )[0].downloadTime }}</td>
+                </tr>
+                <!-- 安裝行 -->
+                <tr>
+                  <!-- 目標網元 ID -->
+                  <td>{{ parseInstallLog( info.installlog )[0].installTarget }}</td>
+                  <!-- 顯示安裝狀態 -->
+                  <td>{{ parseInstallLog( info.installlog )[0].installStatus }}</td>
+                  <!-- 顯示安裝時間 -->
+                  <td>{{ parseInstallLog( info.installlog )[0].installTime }}</td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </ng-container>
+
       </ul>
 
     </div>

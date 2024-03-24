@@ -157,3 +157,24 @@ span.upload {
   background-color: rgb(0, 67, 200);
 }
 
+table {
+  max-width: 97.65%;
+  width: 97.5%;
+  margin: 0;
+  text-align: center;
+  max-height: 70vh;
+  table-layout: fixed; // 固定列寬
+}
+table thead th {
+  white-space: nowrap;
+}
+table tr td {
+  width: 20%;    // 將每個列的寬度設置為相等的百分比
+  min-width: 5vw;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.vertical-align-middle {
+  vertical-align: middle;
+}

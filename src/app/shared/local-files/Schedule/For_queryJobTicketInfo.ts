@@ -18,7 +18,7 @@
         "jobticket": "0",
         "ticketinfo": {
           "fieldsnapshotid": "170bf2b11b794827b820",
-          "fieldsnapshotname": "123132"
+          "fieldsnapshotname": "Snapshot_20230315"
         },
         "ticketresult": ""
       },
@@ -151,9 +151,9 @@
             "iscustomized": 1,
             "customizedkpi": {
               "0": {
-                "name": "25121",
-                "describe": "212112",
-                "kpi": "5212121"
+                "name": "RSRP",
+                "describe": "Reference Signal Received Power",
+                "kpi": ">= -95dBm && <= -85dBm"
               }
             }
           }
@@ -474,8 +474,63 @@
         "jobticket": "1",
         "ticketinfo": {
           "fieldsnapshotid": "170bf2b11b794827b820",
-          "fieldsnapshotname": "123132"
+          "fieldsnapshotname": "Snapshot_20240215"
         },
+        "ticketresult": ""
+      },
+      {
+        "id": "0ddc4a5ba62f43bcb3e7",
+        "fieldid": "e6700d701f8b41f8950e",
+        "fieldname": "ITRI",
+        "tickettype": "2",
+        "ticketstatus": "2",
+        "executedtype": "0",
+        "executedtime": "2024-03-23 03:33:00",
+        "jobticket": "0",
+        "ticketinfo": [
+          {
+            "fieldId": "e6700d701f8b41f8950e",
+            "start": "2024-03-06 00:00",
+            "end": "2024-03-08 00:00",
+            "iscustomized": 0
+          }
+        ],
+        "ticketresult": ""
+      },
+      {
+        "id": "6a8d961f6b9c4f8d9492",
+        "fieldid": "e6700d701f8b41f8950e",
+        "fieldname": "ITRI",
+        "tickettype": "2",
+        "ticketstatus": "2",
+        "executedtype": "0",
+        "executedtime": "2024-03-23 04:00:00",
+        "jobticket": "0",
+        "ticketinfo": [
+          {
+            "fieldId": "e6700d701f8b41f8950e",
+            "start": "2024-03-13 00:00",
+            "end": "2024-03-19 00:00",
+            "iscustomized": 1,
+            "customizedkpi": {
+              "0": {
+                "name": "RSRP",
+                "describe": "Reference Signal Received Power",
+                "kpi": ">= -95dBm && <= -85dBm"
+              },
+              "1": {
+                "name": "RSRQ",
+                "describe": "Reference Signal Received Quality",
+                "kpi": ">= -19.5dB && <= -3dB"
+              },
+              "2": {
+                "name": "SINR",
+                "describe": "Signal to Interference plus Noise Ratio",
+                "kpi": ">= 20dB"
+              }
+            }
+          }
+        ],
         "ticketresult": ""
       }
     ];
