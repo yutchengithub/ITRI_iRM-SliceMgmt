@@ -229,10 +229,11 @@ export class BSManagementComponent implements OnInit {
   viewBSDetailInfo( BS: Basestation ) {
 
     this.selectBS = BS; // 設定當前選擇的 BS。
-    console.log( "View Detail of the BS id:", this.selectBS.id, "and the BS name: ", this.selectBS.name, "and the BS type: ", this.selectBS.bstype ); // 輸出選擇的基站 ID、名稱和類型。
+    console.log( "View Detail of the BS id:", this.selectBS.id, "and the BS name: ", this.selectBS.name,
+                   "and the BS type: ", this.selectBS.bstype, "and the BS cellCount:", this.selectBS.cellCount ); // 輸出選擇的基站 ID、名稱和類型。
     
-    // 導航到 BS 管理的詳細資訊頁面，帶上 BS 的 ID、名稱和類型作為路由參數。
-    this.router.navigate( ['/main/bs-mgr/info', this.selectBS.id, this.selectBS.name, this.selectBS.bstype ] );
+    // 導航到 BS 管理的詳細資訊頁面，帶上 BS 的 ID、名稱、類型和Cell數作為路由參數。
+    this.router.navigate( ['/main/bs-mgr/info', this.selectBS.id, this.selectBS.name, this.selectBS.bstype, this.selectBS.cellCount ] );
   }
 
 

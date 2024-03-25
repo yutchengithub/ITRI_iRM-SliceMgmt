@@ -201,12 +201,14 @@ export const Enlanguage = {
   'BS.cellCount':'Cell Count',
   'BS.description':'Description',
   'BS.belongField':'Field',
-  'BS.status':'Status',
+  'BS.status':'BS Status',
   'BS.view':'View',
   'BS.delete':'Delete',
   'BS.confirm_del':'Confirm to Delete Basestation',
 
   'BS.info':'Basestation Detailed Information',
+  'BS.bsAntennaCoord':'BS Antenna Coordinates',
+  'BS.lastHeartbeatTime': 'Last Heartbeat Time',
 
   // Fault Management
   'fm.start':'StartTime',

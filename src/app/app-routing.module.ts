@@ -68,11 +68,11 @@ const routes: Routes = [
         ]
       },
       { 
-        // BS Management @12/27 Add by yuchen
+        // BS Management @03/25 Update by yuchen
         path: 'bs-mgr',
         children: [
           { path: '', component: BSManagementComponent },
-          { path: 'info/:id/:name/:type', component: BSInfoComponent }
+          { path: 'info/:id/:name/:type/:cellCount', component: BSInfoComponent }
         ]
       },
       {
