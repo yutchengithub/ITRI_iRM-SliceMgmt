@@ -205,6 +205,10 @@ export const TwLanguage = {
   'BS.confirm_del':'確定要刪除基站',
 
   'BS.info':'基站詳細資訊',
+  'BS.bsAntennaCoord':'基站天線位置座標',
+  'BS.lastHeartbeatTime': '最後心跳時間',
+ 
+
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',

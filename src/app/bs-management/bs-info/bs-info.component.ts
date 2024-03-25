@@ -53,9 +53,10 @@ export class BSInfoComponent implements OnInit {
   }
 
   // @2024/03/25 Add
-  bsID:   string = ''; // 用於存儲當前選中的 BS ID
-  bsName: string = ''; // 用於存儲當前選中的 BS 名稱
-  bsType: string = ''; // 用於存儲當前選中的 BS 類型
+  bsID:   string = '';      // 用於存儲當前選中的 BS ID
+  bsName: string = '';      // 用於存儲當前選中的 BS 名稱
+  bsType: string = '';      // 用於存儲當前選中的 BS 類型
+  bsCellCount: string = ''; // 用於存儲當前選中的 BS Cell 數量
 
   // 頁面初始化 @2024/03/25 Update
   ngOnInit(): void {
@@ -66,8 +67,9 @@ export class BSInfoComponent implements OnInit {
       this.bsID = params['id'];
       this.bsName = params['name'];
       this.bsType = params['type'];
+      this.bsCellCount = params['cellCount'];
       console.log('bsId: ' + this.bsID + ', bsName: ' + this.bsName +
-                     ', bsType: ' + this.bsType + ',\nsend from /main/bs-mgr');
+                     ', bsType: ' + this.bsType + ', bsCellCount: ' + this.bsCellCount + ',\nsend from /main/bs-mgr');
       
       // 初入該頁面就取得此BS資訊               
       this.getQueryBsInfo();
@@ -121,15 +123,15 @@ export class BSInfoComponent implements OnInit {
       this.API_BS.queryBsInfo( this.bsID ).subscribe({
         next: ( res ) => {
 
-          console.log( 'Get the BSInfo:', res );
+          console.log( 'Get the response of queryBsInfo:', res );
 
-          if ( this.bsType === "1" ) {
+          if ( res.bstype === 1 ) {
 
             // 刷新一體式基站資訊
             this.selectBsInfo = res as BSInfo;
             console.log( 'Get the BSInfo:', this.selectBsInfo );
 
-          } else if ( this.bsType === "2" ) {
+          } else if ( res.bstype === 2 ) {
 
             // 刷新分佈式基站資訊
             this.selectBsInfo_dist = res as BSInfo_dist; 

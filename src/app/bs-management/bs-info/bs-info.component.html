@@ -8,25 +8,60 @@
 
   <div class="main collabsible">
     <div class="baseInfo">
-      <span>{{languageService.i18n['basic.info']}}:</span>
+      <span>{{ languageService.i18n['basic.info'] }}</span>
       <input id="baseInfo" class="toggle" type="checkbox">
       <label for="baseInfo" class="lbl-toggle"></label>
       <div class="collapsible-content">
         <div class="content-inner">
-          
-            <ul>
-              <li><label>{{languageService.i18n['cm.name']}}</label><span>{{bsComponentInfo.name}}</span></li>
-              <li><label>{{languageService.i18n['cm.type']}}</label><span>{{bsComponentInfo.comtype}}</span></li>
-              <li><label>{{languageService.i18n['cm.ip']}}</label><span>{{bsComponentInfo.ip}}</span></li>
-              <li><label>{{languageService.i18n['cm.port']}}</label><span>{{bsComponentInfo.port}}</span></li>
-              <li><label>{{languageService.i18n['cm.acc']}}</label><span>{{bsComponentInfo.account}}</span></li>
-              <li><label>{{languageService.i18n['cm.passw']}}</label><span>{{bsComponentInfo.key}}</span></li>
-              <li><label>{{languageService.i18n['cm.manufacturer']}}</label><span>{{bsComponentInfo.firm}}</span></li>
-              <li><label>{{languageService.i18n['cm.model']}}</label><span>{{bsComponentInfo.modelname}}</span></li>
-              <li><label>{{languageService.i18n['table.Status']}}</label><span>{{bsComponentInfo.status}}</span></li>
-              <li><label>{{languageService.i18n['software_version']}}</label><span>{{bsComponentInfo.port}}</span></li>
-            </ul>
-          
+          <ul>
+            <li><!-- 基站名稱 -->
+              <label>{{ languageService.i18n['BS.name'] }}</label>
+               <span *ngIf="selectBsInfo">{{ selectBsInfo.name }}</span>
+               <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.name }}</span>
+            </li>
+            <li><!-- 基站類型 -->
+              <label>{{ languageService.i18n['BS.type'] }}</label>
+              <span *ngIf="selectBsInfo.bstype === 1">All-in-one:&thinsp;[CU + DU + RU]</span>
+              <span *ngIf="selectBsInfo_dist.bstype === 2">Disaggregated:&thinsp;[CU] + [DU] + [RU]</span>
+            </li>
+            <li><!-- 基站Cell數量 -->
+              <label>{{ languageService.i18n['BS.cellCount'] }}</label>
+              <span>{{ bsCellCount }}</span>
+            </li>
+            <li><!-- 基站地點說明 -->
+              <label>{{ languageService.i18n['BS.description'] }}</label>
+              <span *ngIf="selectBsInfo">{{ selectBsInfo.description }}</span>
+              <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.description }}</span>
+            </li>
+            <li><!-- 基站天線位置座標 -->
+              <label>{{ languageService.i18n['BS.bsAntennaCoord'] }}</label>
+              <span *ngIf="selectBsInfo">{{ selectBsInfo.position }}</span>
+              <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.position }}</span>
+            </li>
+            <li><!-- 基站最後心跳時間 -->
+              <label>{{ languageService.i18n['BS.lastHeartbeatTime'] }}</label>
+              <span *ngIf="selectBsInfo">{{ selectBsInfo.laston }}</span>
+              <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.laston }}</span>
+            </li>
+            <li><!-- 基站狀態 -->
+              <label>{{ languageService.i18n['BS.status'] }}</label>
+
+              <!-- 一體式 -->
+              <span *ngIf=" selectBsInfo.status === 0 " class="grayLight"></span>
+              <span *ngIf=" selectBsInfo.status === 1 " class="redLight"></span>
+              <span *ngIf=" selectBsInfo.status === 2 " class="greenLight"></span>
+
+              <!-- 分佈式 -->
+              <span *ngIf=" selectBsInfo_dist.status === 0 " class="grayLight"></span>
+              <span *ngIf=" selectBsInfo_dist.status === 1 " class="redLight"></span>
+              <span *ngIf=" selectBsInfo_dist.status === 2 " class="greenLight"></span>
+
+            </li>
+            <li>
+              <label>{{languageService.i18n['software_version']}}</label>
+              <span>{{bsComponentInfo.port}}</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -168,7 +203,7 @@
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="panel">
-            <label *ngFor="let software of bsComponentInfo.sm.softwareInventory.softwareSlot" [for]="'radio-' + software.name">
+            <!-- <label *ngFor="let software of bsComponentInfo.sm.softwareInventory.softwareSlot" [for]="'radio-' + software.name">
               <input type="radio" [id]="'radio-' + software.name" name="software-group">
               <div>
                 <ul>
@@ -180,7 +215,7 @@
                   <li><label>Version</label><span>{{ software.buildVersion }}</span></li>
                 </ul>
               </div>
-            </label>
+            </label> -->
           </div>
 
             <div class="table">
@@ -258,7 +293,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: msgToDisplay.length, id: 'fmList' }; let i = index" >
+                  <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: 1, id: 'fmList' }; let i = index" >
                     <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
                     <td>{{opt.fieldName}}</td>
                     <td>{{opt.bsName}}</td>
