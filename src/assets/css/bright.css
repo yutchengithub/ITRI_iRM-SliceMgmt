@@ -200,7 +200,6 @@ h5 {
   border: 1px solid #63acc9;
 }
 .ocloudInfo .boxTitle {
-  color: #fff;
   line-height: 1.9em!important;
   border-bottom: 1px solid #63abe9;
 }
@@ -460,9 +459,10 @@ mat-dialog-container h5 .mat-icon {
 #provisionModal ul li > span {
   color: #000;
 }
+.ocloudInfo.scheduleInfo ul h3 ,
 .ocloudInfo.software ul h3 {
-  border-bottom: 1px solid #c7dcf1;
-  color: #3471b9;
+  border-bottom: 1px solid #c7dcf1!important;
+  color: #3471b9!important;
 }
 #fieldSnapshotSetWindow .mat-expansion-indicator::after,
 #fieldSnapshotSetWindow .mat-expansion-panel-header-title,
@@ -479,4 +479,15 @@ mat-dialog-container h5 .mat-icon {
 }
 #fieldSnapshotSetWindow .Snapshot_UI02 {
   background-color: #a4d1f5db;
+}
+.scheduleInfo .basicInfo table th,
+.scheduleInfo .basicInfo table td {
+  border-color: #bcd4fd;
+}
+.scheduleInfo .basicInfo table th, .basicInfo table td {
+  border-color: #7eb1df!important;
+}
+.scheduleInfo .basicInfo table th {
+  color: #2a5caf!important;
+  background-color: #b6d6f3!important;
 }

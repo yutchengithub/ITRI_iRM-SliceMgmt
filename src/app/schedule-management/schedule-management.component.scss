@@ -81,4 +81,12 @@ ul li > label {
 div.del_confirmName {
   font-size: 18px;
   margin: 0.35em 2em;
+  text-align: center;
+}
+
+td.state {
+  text-align: left!important;
+}
+td.state > label {
+  vertical-align: middle;
 }

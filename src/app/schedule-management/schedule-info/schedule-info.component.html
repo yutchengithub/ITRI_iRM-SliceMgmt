@@ -1,4 +1,4 @@
-<div class="ocloudInfo software">
+<div class="ocloudInfo scheduleInfo">
   <h5>
     <button (click)="back()">
       <span class="material-icons">arrow_back</span>Back
@@ -12,7 +12,7 @@
     / {{ selectScheduleInfo.executedtime }}
   </h5>
 
-  <div class="BOX basicInfo ">
+  <div class="BOX basicInfo">
     <label class="boxTitle">
       {{ languageService.i18n['sm.detailInfo'] }}
     </label>
@@ -68,7 +68,7 @@
           </li>
 
           <!-- 依據排程類型，顯示對應的內容訊息 -->
-          <div *ngIf="selectScheduleInfo">
+          <ng-container *ngIf="selectScheduleInfo">
 
             <!-- 排程為 "軟體更新" 時的顯示內容 @2024/03/24 Add -->
             <ng-container *ngIf="isSfUpdateInfoArray( selectScheduleInfo.ticketinfo )">
@@ -144,7 +144,7 @@
                 <span>{{ selectScheduleInfo.ticketinfo[0].end }}</span>
               </li>
             </ng-container>
-          </div>
+          </ng-container>
         </ul>
 
         <!-- 執行結果區 @2024/03/24 Add -->

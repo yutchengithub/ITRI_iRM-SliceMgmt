@@ -43,7 +43,7 @@
       <tr>
         <th>{{ languageService.i18n['sm.th_time'] }}</th>
         <th>{{ languageService.i18n['sm.th_type'] }}</th>
-        <th class="icon">{{ languageService.i18n['sm.th_state'] }}</th>
+        <th class="icon state">{{ languageService.i18n['sm.th_state'] }}</th>
         <th class="icon">{{ languageService.i18n['sm.th_view'] }}</th>
         <th class="icon">{{ languageService.i18n['sm.th_download'] }}</th>
         <th class="icon">{{ languageService.i18n['sm.th_delete'] }}</th>
@@ -79,7 +79,7 @@
             <label *ngIf=" schedule.tickettype === '3' ">{{ languageService.i18n['sm.fmReport'] }}</label>
             <label *ngIf=" schedule.tickettype === '4' ">{{ languageService.i18n['sm.sfReport'] }}</label>
           </td>
-          <td class="icon">
+          <td class="icon state">
             <label [class]="getTicketStatusInfo( schedule ).icon"></label>
             &zwnj;<label>{{ getTicketStatusInfo( schedule ).message }}</label>
           </td>
