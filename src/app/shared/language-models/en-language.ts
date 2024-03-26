@@ -297,7 +297,7 @@ export const Enlanguage = {
   'modify_faultMsg_status':'Modify Fault Message Status',
   'confirm_modify':'Confirm to modify',
   'pending_error':'Pending', //Modify by Charles (Pending Error->Pending)
-  'resolved':'Ended', //Modify by Charles (Resolved->Ended)
+  'resolved':'Ended',         //Modify by Charles (Resolved->Ended)
   'no_results':'No results were found. Please verify your search terms and try again.',
 
   // Dashboard

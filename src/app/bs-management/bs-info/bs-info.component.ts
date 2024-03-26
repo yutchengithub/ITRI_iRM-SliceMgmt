@@ -89,8 +89,9 @@ export class BSInfoComponent implements OnInit {
   isLoadingBsInfo =  true;                            // 加載狀態的標誌，初始設置為 true
   selectBsInfo:      BSInfo = {} as BSInfo;           // 用於存儲從服務器或 Local Files 獲取的一體式基站資訊
   selectBsInfo_dist: BSInfo_dist = {} as BSInfo_dist; // 用於存儲從服務器或 Local Files 獲取的分佈式基站資訊
+  selectBsCellCount: number = 0;                      // 用於存儲當前選中的 BS Cell 數量
 
-  // @2024/03/25 Add
+  // @2024/03/26 Update
   // 用於獲取基站資訊
   getQueryBsInfo() {
     console.log( 'getQueryBsInfo() - Start' );
@@ -108,12 +109,20 @@ export class BSInfoComponent implements OnInit {
         this.selectBsInfo = this.bsInfo_LocalFiles.bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo;
         console.log( 'In local - Get the BSInfo:', this.selectBsInfo );
 
+        // 一體式基站，直接將 Cell 數量設為 1
+        this.selectBsCellCount = 1;
+
       } else if ( this.bsType === "2" ) {
 
         // 取得 Local 分佈式基站資訊
         this.selectBsInfo_dist = this.bsInfo_LocalFiles.dist_bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo_dist;
         console.log( 'In local - Get the BSInfo_dist:', this.selectBsInfo_dist );
+
+         // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
+         this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
       }
+
+      console.log(`In local - BS Type ${ this.bsType } - Cell Count: ${ this.bsCellCount }`);
 
       this.isLoadingBsInfo = false; // Local 模式下，數據加載快速完成,直接設置為 false
 
@@ -131,12 +140,20 @@ export class BSInfoComponent implements OnInit {
             this.selectBsInfo = res as BSInfo;
             console.log( 'Get the BSInfo:', this.selectBsInfo );
 
+            // 一體式基站，直接將 Cell 數量設為 1
+            this.selectBsCellCount = 1;
+
           } else if ( res.bstype === 2 ) {
 
             // 刷新分佈式基站資訊
             this.selectBsInfo_dist = res as BSInfo_dist; 
             console.log( 'Get the BSInfo_dist:', this.selectBsInfo_dist );
+
+            // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
+            this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
           }
+
+          console.log(`BS Type ${ this.bsType } - Cell Count: ${ this.bsCellCount }`);
 
           this.isLoadingBsInfo = false; // 數據加載完成
         },
@@ -152,8 +169,6 @@ export class BSInfoComponent implements OnInit {
 
     console.log( 'getQueryBsInfo() - End' );
   }
-
-
 
 
 
