@@ -1197,7 +1197,7 @@ body.tw #itemDetail ul li > span {
   max-width: 68%!important;
 }
 body.en .ocloudInfo.software .basicInfo ul.Software_info li label {
-  width: 7em!important;
+  width: 7.5em !important;
 }
 body.en .schedule_mgr .basicInfo ul li label {
   width: 10.5em!important;
@@ -1327,6 +1327,16 @@ body.tw #fieldSnapshotSetWindow .Snapshot_UI02 .save_name input {
 }
 body.tw .Snapshot_UI02 + .mat-accordion {
   margin: 3.8em 1em 0!important;
+}
+
+body.tw ul.file_url_info li label {
+  width: 6em!important;
+}
+body.tw ul.ftp_info li label {
+  width: 5em!important;
+}
+body.en .basicInfo ul.Software_info li > span {
+  width: 68%!important;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {

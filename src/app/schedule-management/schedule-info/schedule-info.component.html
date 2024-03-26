@@ -46,8 +46,8 @@
           </li>
           <li>
             <label>{{ languageService.i18n['sm.th_state'] }}</label>
-              <span class="icon" [class]="getTicketStatusInfo( selectScheduleInfo ).icon"></span>
-              &zwnj;<span>{{ getTicketStatusInfo( selectScheduleInfo ).message }}</span>
+            <span><span class="icon" [class]="getTicketStatusInfo( selectScheduleInfo ).icon"></span>
+              &zwnj;{{ getTicketStatusInfo( selectScheduleInfo ).message }}</span>
           </li>
           <li>
             <label>{{ languageService.i18n['sm.executeField'] }}</label>
@@ -72,7 +72,7 @@
 
             <!-- 排程為 "軟體更新" 時的顯示內容 @2024/03/24 Add -->
             <ng-container *ngIf="isSfUpdateInfoArray( selectScheduleInfo.ticketinfo )">
-              <table>
+              <table class="par_success">
                 <thead>
                   <tr>
                     <th>{{ languageService.i18n['sm.targetNE'] }}</th>
@@ -152,7 +152,7 @@
           <h3>{{ languageService.i18n['sm.executionResult'] }}</h3>
 
           <!-- 如 selectScheduleInfo.ticketresult 有值，顯示報表下載讓使用者下載報表 -->
-          <li *ngIf="selectScheduleInfo.ticketresult">
+          <li *ngIf="selectScheduleInfo.ticketresult" class="downloadRPT">
             <label>{{ languageService.i18n['sm.th_download'] }}</label>
             <span *ngIf="selectScheduleInfo.ticketresult">
               <button mat-icon-button color="primary" (click)="downloadSpecificScheduleReportInList( selectScheduleInfo )">

@@ -9,7 +9,9 @@ td label {
 :host ::ng-deep p-calendar {
   width: initial;
 }
-
+.table {
+  margin-top: 0;
+}
 table.userLog thead th {  // @11/21 Add by yuchen
   vertical-align: middle; // 內容垂直置中
   text-align: center;     // 內容水平置中

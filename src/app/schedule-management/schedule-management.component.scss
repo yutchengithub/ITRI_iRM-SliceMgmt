@@ -3,7 +3,9 @@ table {
   max-width: 97.65%;
   table-layout: fixed; // 固定列寬
 }
-
+.table {
+  margin-top: 0;
+}
 thead tr th,
 tbody tr td {
   width: 20%;    // 將每個列的寬度設置為相等的百分比
@@ -75,4 +77,8 @@ input[type="file"] {
 }
 ul li > label {
   min-width: 7em;
+}
+div.del_confirmName {
+  font-size: 18px;
+  margin: 0.35em 2em;
 }

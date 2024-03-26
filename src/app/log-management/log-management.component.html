@@ -11,7 +11,7 @@
 
   <!-- User Logs -->
   <ul *ngIf="type === 'User_Logs'">
-    <form [formGroup]="searchForm" style="padding-bottom: 10px;">
+    <form [formGroup]="searchForm">
       <div class="filter">
 
         <!-- userid Filter for User Logs @11/20 Add by yuchen -->
@@ -142,7 +142,7 @@
 
   <!-- NE Logs -->
   <ul *ngIf="type === 'NE_Logs'">
-    <form [formGroup]="searchForm" style="padding-bottom: 10px;">
+    <form [formGroup]="searchForm">
       <div class="filter">
 
         <!-- userid Filter for NE Logs @11/20 Add by yuchen -->
