@@ -378,7 +378,7 @@ export const TwLanguage = {
   'sm.fmReport':'產出故障管理報表', // tickettype = 3
   'sm.pmReport':'產出效能管理報表', // tickettype = 2
   'sm.caReport':'產出配置稽核報表', // tickettype = 1
-  'sm.sfUpdate':'軟體更新',        // tickettype = 0
+  'sm.sfUpdate':'軟體更新',         // tickettype = 0
 
   'sm.jobPartialSuccessString':'部份成功', // ticketstatus = 5
   'sm.jobFailString':'失敗',               // ticketstatus = 4
