@@ -217,7 +217,7 @@ export class BSManagementComponent implements OnInit {
       } else {
         console.log( `page[${this.p}] ===> no refresh.` );
       }
-    }, 10000 ); // 設定 10000 ms 後執行
+    }, 60000 ); // 設定 60000 ms ( 60s ) 後執行
   }
 
   selectBS!: Basestation;  // 用於存儲當前選中的 BS 訊息 @2024/03/22 Add

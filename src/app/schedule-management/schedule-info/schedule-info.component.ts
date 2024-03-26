@@ -129,6 +129,9 @@ export class ScheduleInfoComponent implements OnInit {
       });
     }
   }
+
+
+
   
   // @2024/03/24 Add
   // isSfUpdateInfoArray 是一個自定義的類型守衛函數，用於檢查 `ticketinfo` 是否為 `sfUpdateInfo[]` 類型的陣列。
@@ -175,24 +178,44 @@ export class ScheduleInfoComponent implements OnInit {
     return customizedkpi ? Object.values( customizedkpi ) : [];
   }
 
-  // @2024/03/26 Add
-  // 在組件類中定義方法，用於檢查是否應該應用 'kpiTable' 樣式
-  shouldApplyKpiTableStyle(): boolean {
-    // 使用類型守衛函數 isPmReportInfoArray 來檢查 ticketinfo 是否是 pmReportInfo[] 類型
-    if (this.isPmReportInfoArray(this.selectScheduleInfo.ticketinfo)) {
-      // 如果是 pmReportInfo[] 類型，並且第一個元素的 iscustomized 屬性為 1，則返回 true
-      return this.selectScheduleInfo.ticketinfo[0].iscustomized === 1;
-    }
-    // 如果不是 pmReportInfo[] 類型或者 iscustomized 不為 1，則返回 false
-    return false;
-  }
-
   // @2024/03/24 Add
   // 檢查 ticketinfo 是否為 sfOrfmReportInfo[] 類型（當 tickettype 為 '3' 或 '4' 時）
   isSfOrfmReportInfoArray( ticketinfo: ScheduleInfo['ticketinfo'] ): ticketinfo is sfOrfmReportInfo[] {
     return ( this.selectScheduleInfo.tickettype === '3' || this.selectScheduleInfo.tickettype === '4' ) && Array.isArray( ticketinfo );
   }
 
+  // @2024/03/26 Add
+  // 在組件類中定義方法，根據不同條件返回對應的 CSS 類名
+  getDynamicClasses( scheduleInfo: ScheduleInfo ): Record<string, boolean> {
+    // 定義所有可能的 CSS 類名
+    const cssClasses: Record<string, boolean> = {
+      'sfUpdate': scheduleInfo.tickettype === '0',
+      'caReport': scheduleInfo.tickettype === '1',
+      'pmReport': scheduleInfo.tickettype === '2',
+      'fmReport': scheduleInfo.tickettype === '3',
+      'sfReport': scheduleInfo.tickettype === '4',
+    };
+  
+    // 檢查是否應該應用 kpiTable 樣式
+    cssClasses['kpiTable'] = this.shouldApplyKpiTableStyle(); // 無需if檢查，直接賦值
+  
+    return cssClasses;
+  }
+  
+  // @2024/03/26 Add
+  // 在組件類中定義方法，用於檢查是否應該應用 'kpiTable' 樣式
+  shouldApplyKpiTableStyle(): boolean {
+    
+    // 使用類型守衛函數 isPmReportInfoArray 來檢查 ticketinfo 是否是 pmReportInfo[] 類型
+    if ( this.isPmReportInfoArray( this.selectScheduleInfo.ticketinfo ) ) {
+
+      // 如果是 pmReportInfo[] 類型，並且第一個元素的 iscustomized 屬性為 1，則返回 true
+      return this.selectScheduleInfo.ticketinfo[0].iscustomized === 1;
+    }
+
+    // 如果不是 pmReportInfo[] 類型或者 iscustomized 不為 1，則返回 false
+    return false;
+  }
 
 
   // ↓ 控制顯示排程狀態的 icon 與訊息 @2024/03/22 Add ↓

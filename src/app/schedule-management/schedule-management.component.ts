@@ -117,6 +117,7 @@ export class ScheduleManagementComponent implements OnInit {
 
     if ( this.commonService.isLocal ) {
       // Local 模式: 使用 Local 文件提供的數據
+      
       this.scheduleList = this.scheduleList_LocalFiles.scheduleList_local;
       console.log( 'In local - Get the ScheduleList:', this.scheduleList );
 
@@ -166,7 +167,7 @@ export class ScheduleManagementComponent implements OnInit {
 
         console.log(`page[${ this.p }] ===> no refresh.`);
       }
-    }, 10000 ); // 設定 10000 ms 後執行
+    }, 60000 ); // 設定 60000 ms ( 60s ) 後執行
   }
 
 
