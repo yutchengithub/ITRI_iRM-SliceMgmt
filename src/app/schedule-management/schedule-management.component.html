@@ -87,7 +87,9 @@
             <mat-icon tooltip="{{ languageService.i18n['sm.view_detail'] }}" (click)="viewScheduleDetailInfo( schedule )"> remove_red_eye </mat-icon>
           </td>
           <td class="icon">
-            <mat-icon *ngIf="schedule.ticketresult" tooltip="{{ languageService.i18n['sm.smDownload'] }}" (click)="downloadSpecificScheduleReportInList( schedule )">sim_card_download</mat-icon>
+            <mat-icon *ngIf="schedule.ticketresult" tooltip="{{ languageService.i18n['sm.smDownload'] }}" (click)="downloadSpecificScheduleReportInList( schedule )">
+              assignment_returned
+            </mat-icon>
           </td>
           <td class="icon"><!-- 刪除按鈕 -->
             <mat-icon tooltip="{{ languageService.i18n['sm.delItem'] }}" (click)="openDeleteSchedule_ConfirmWindow( schedule )">
