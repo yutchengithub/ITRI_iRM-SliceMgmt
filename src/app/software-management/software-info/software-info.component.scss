@@ -65,13 +65,14 @@ ul + .buttons {
 
 ul h3 {
   font-size: 1.3em;
-  text-align: center;
-  border-bottom: 1px solid #3b6a97;
-  padding: 0;
+  text-align: left;
+  padding: 5px 13px;
   margin: 0 0 0.5em;
+  border-radius: 5px;
   line-height: 1.75;
   display: block;
-  color: #7ea3cf;
+  color: #fff;
+  background: linear-gradient(to right, #1d8ee5 0%, #1e5799 100%);
 }
 .center {
   text-align: center;
