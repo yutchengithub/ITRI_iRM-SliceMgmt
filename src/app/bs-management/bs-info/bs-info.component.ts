@@ -91,7 +91,7 @@ export class BSInfoComponent implements OnInit {
   selectBsInfo_dist: BSInfo_dist = {} as BSInfo_dist; // 用於存儲從服務器或 Local Files 獲取的分佈式基站資訊
   selectBsCellCount: number = 0;                      // 用於存儲當前選中的 BS Cell 數量
 
-  // @2024/03/26 Update
+  // @2024/03/27 Update
   // 用於獲取基站資訊
   getQueryBsInfo() {
     console.log( 'getQueryBsInfo() - Start' );
@@ -107,6 +107,8 @@ export class BSInfoComponent implements OnInit {
 
         // 取得 Local 一體式基站資訊
         this.selectBsInfo = this.bsInfo_LocalFiles.bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo;
+        this.selectBsInfo.laston = this.formatTimeWithoutSecondsFraction( this.selectBsInfo.laston ); // 處理時間格式
+        this.selectBsInfo.position = this.formatPosition( this.selectBsInfo.position );               // 處理位置訊息格式
         console.log( 'In local - Get the BSInfo:', this.selectBsInfo );
 
         // 一體式基站，直接將 Cell 數量設為 1
@@ -116,6 +118,8 @@ export class BSInfoComponent implements OnInit {
 
         // 取得 Local 分佈式基站資訊
         this.selectBsInfo_dist = this.bsInfo_LocalFiles.dist_bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo_dist;
+        this.selectBsInfo_dist.laston = this.formatTimeWithoutSecondsFraction( this.selectBsInfo_dist.laston ); // 處理時間格式
+        this.selectBsInfo_dist.position = this.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
         console.log( 'In local - Get the BSInfo_dist:', this.selectBsInfo_dist );
 
          // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
@@ -138,6 +142,8 @@ export class BSInfoComponent implements OnInit {
 
             // 刷新一體式基站資訊
             this.selectBsInfo = res as BSInfo;
+            this.selectBsInfo.laston = this.formatTimeWithoutSecondsFraction( this.selectBsInfo.laston ); // 處理時間格式
+            this.selectBsInfo.position = this.formatPosition( this.selectBsInfo.position );               // 處理位置訊息格式
             console.log( 'Get the BSInfo:', this.selectBsInfo );
 
             // 一體式基站，直接將 Cell 數量設為 1
@@ -146,7 +152,9 @@ export class BSInfoComponent implements OnInit {
           } else if ( res.bstype === 2 ) {
 
             // 刷新分佈式基站資訊
-            this.selectBsInfo_dist = res as BSInfo_dist; 
+            this.selectBsInfo_dist = res as BSInfo_dist;
+            this.selectBsInfo_dist.laston = this.formatTimeWithoutSecondsFraction( this.selectBsInfo_dist.laston ); // 處理時間格式
+            this.selectBsInfo_dist.position = this.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
             console.log( 'Get the BSInfo_dist:', this.selectBsInfo_dist );
 
             // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
@@ -171,10 +179,23 @@ export class BSInfoComponent implements OnInit {
   }
 
 
+  // @2024/03/27 Add
+  // 用於處理時間字符串，去掉秒後的小數部分
+  formatTimeWithoutSecondsFraction( timeString: string ): string {
+    return timeString.split('.')[0]; // 只保留小數點前的部分
+  }
 
-
-
-
+ // @2024/03/27 Add
+ // 用於處理位置訊息的格式
+ formatPosition( positionJson: string ): string {
+  try {
+    const positionArray = JSON.parse( positionJson );
+    return `( ${positionArray[0]}, ${positionArray[1]} )`;
+  } catch ( e ) {
+    console.error( 'Error parsing position JSON:', e );
+    return '';
+  }
+}
 
 
 
@@ -436,6 +457,7 @@ export class BSInfoComponent implements OnInit {
   }
 
   search() {}
+  clear_search(){}
   searchForm!: FormGroup;
   cmpsource: string[];
   fmsgList: FmsgList = {} as FmsgList;

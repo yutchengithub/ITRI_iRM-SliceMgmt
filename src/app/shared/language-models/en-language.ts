@@ -206,9 +206,16 @@ export const Enlanguage = {
   'BS.delete':'Delete',
   'BS.confirm_del':'Confirm to Delete Basestation',
 
-  'BS.info':'Basestation Detailed Information',
+  'BS.info':'BS Detailed Information',
   'BS.bsAntennaCoord':'BS Antenna Coordinates',
   'BS.lastHeartbeatTime': 'Last Heartbeat Time',
+
+  'BS.topology':'BS Topology',
+  'BS.parameters':'BS Parameters',
+  'BS.neighborBsList':'Neighbor BS List',
+  'BS.alarms':'BS Alarms',
+  'BS.neList':'NE List',
+  'BS.performance':'BS Performance',
 
   // Fault Management
   'fm.start':'StartTime',

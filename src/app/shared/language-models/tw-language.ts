@@ -207,7 +207,13 @@ export const TwLanguage = {
   'BS.info':'基站詳細資訊',
   'BS.bsAntennaCoord':'基站天線位置座標',
   'BS.lastHeartbeatTime': '最後心跳時間',
- 
+
+  'BS.topology':'基站組態',
+  'BS.parameters':'基站參數',
+  'BS.neighborBsList':'鄰居基站列表',
+  'BS.alarms':'基站告警',
+  'BS.neList':'網元列表',
+  'BS.performance':'基站效能',
 
 
   // Fault Management (故障管理)
