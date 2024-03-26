@@ -6,7 +6,7 @@
 }
 .basicInfo ul li {
   font-size: 1.35em;
-  margin: 0 0 3px 2.1em;
+  margin: 0 0 5px 2.1em;
   text-align: left;
 }
 .ocloudInfo.schedule .basicInfo ul li label {
@@ -16,8 +16,11 @@
 ul.Software_info li label {
   width: 7.5em;
 }
-ul.ftp_info li label {
+ul.ftp_info li > label {
   width: 9em;
+}
+ul.ftp_info li > span {
+  width: 60%!important;
 }
 ul.file_url_info li label {
   width: 12.3em;
@@ -116,8 +119,8 @@ span.upload {
 }
 
 .icon {
-  width: 4% !important;
-  text-align: center;
+  width: 1em!important;
+  height: 1em!important;
   vertical-align: middle !important;
   margin-top: -5px;
 }
@@ -207,7 +210,7 @@ body.tw ul.file_url_info li label {
   width: initial;
   min-width: initial;
   /* border: 1px solid ; */
-  padding:5px;
+  padding:5px 12px;
   white-space: nowrap;
   font-weight: normal;
   font-size: 15px;
@@ -230,7 +233,7 @@ body.tw ul.file_url_info li label {
   line-height: initial;
 }
 .par_success th,.par_success td {
-  width: 10.5em !important;
+  width: 11.5em !important;
 }
 .ocloudInfo.schedule .kpiTable .ftp_info,
 .ocloudInfo.schedule .kpiTable .Software_info {
@@ -252,4 +255,16 @@ body.tw ul.file_url_info li label {
 }
 table tbody tr td[rowspan="2"] {
   border-bottom: 1px solid #223b50;
+}
+.caReport ul.file_url_info li label {
+  width: 12.5em;
+}
+.sfReport ul.file_url_info li label,
+.sfUpdate ul.file_url_info li label,
+.fmReport ul.file_url_info li label,
+.pmReport ul.file_url_info li label {
+  width: 9em;
+}
+.sfReport .ul.Software_info li label {
+  width: 5em;
 }
