@@ -1,5 +1,5 @@
 <!-- 使用 [ngClass] 根據條件動態添加 CSS -->
-<div class="ocloudInfo software" [ngClass]="{'kpiTable': shouldApplyKpiTableStyle()}">
+<div class="ocloudInfo schedule" >
   <h5>
     <button (click)="back()">
       <span class="material-icons">arrow_back</span>Back
@@ -28,7 +28,7 @@
 
     <!-- 加載完成後顯示 排程資訊 數據 @2024/03/24 Add -->
     <ng-container *ngIf="!isLoadingScheduleInfo">
-      <div class="center">
+      <div class="center" [ngClass]="{'kpiTable': shouldApplyKpiTableStyle()}">
         
         <!-- 基本訊息區 @2024/03/24 Add -->
         <ul class="Software_info">
@@ -73,22 +73,24 @@
 
             <!-- 排程為 "軟體更新" 時的顯示內容 @2024/03/24 Add -->
             <ng-container *ngIf="isSfUpdateInfoArray( selectScheduleInfo.ticketinfo )">
-              <table class="par_success">
-                <thead>
-                  <tr>
-                    <th>{{ languageService.i18n['sm.targetNE'] }}</th>
-                    <th>{{ languageService.i18n['sm.neCurrentVersion'] }}</th>
-                    <th>{{ languageService.i18n['sm.neTargetVersion'] }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let info of selectScheduleInfo.ticketinfo">
-                    <td>{{ info.bscompname }}</td>
-                    <td>{{ info.currentversion }}</td>
-                    <td>{{ info.upgradeversion }}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="table">
+                <table class="par_success">
+                  <thead>
+                    <tr>
+                      <th>{{ languageService.i18n['sm.targetNE'] }}</th>
+                      <th>{{ languageService.i18n['sm.neCurrentVersion'] }}</th>
+                      <th>{{ languageService.i18n['sm.neTargetVersion'] }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let info of selectScheduleInfo.ticketinfo">
+                      <td>{{ info.bscompname }}</td>
+                      <td>{{ info.currentversion }}</td>
+                      <td>{{ info.upgradeversion }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </ng-container>
 
             <!-- 排程為 "產出配置稽核報表" 時的顯示內容 @2024/03/24 Add -->
@@ -115,22 +117,24 @@
                 <span *ngIf="selectScheduleInfo.ticketinfo[0].iscustomized  === 1">{{ languageService.i18n['sm.custom'] }}</span>
               </li>
               <ng-container *ngIf="selectScheduleInfo.ticketinfo[0].iscustomized  === 1">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>{{ languageService.i18n['sm.kpiName'] }}</th>
-                      <th>{{ languageService.i18n['sm.kpiDescription'] }}</th>
-                      <th>{{ languageService.i18n['sm.kpiFormula'] }}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let kpi of getCustomizedKpiArray( selectScheduleInfo.ticketinfo[0].customizedkpi )">
-                      <td>{{ kpi.name }}</td>
-                      <td>{{ kpi.describe }}</td>
-                      <td>{{ kpi.kpi }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div class="table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>{{ languageService.i18n['sm.kpiName'] }}</th>
+                        <th>{{ languageService.i18n['sm.kpiDescription'] }}</th>
+                        <th>{{ languageService.i18n['sm.kpiFormula'] }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let kpi of getCustomizedKpiArray( selectScheduleInfo.ticketinfo[0].customizedkpi )">
+                        <td>{{ kpi.name }}</td>
+                        <td>{{ kpi.describe }}</td>
+                        <td>{{ kpi.kpi }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </ng-container>
             </ng-container>
 
@@ -164,43 +168,45 @@
 
           <!-- 當排程為 "軟體更新" 時顯示的執行結果內容 @2024/03/24 Add  -->
           <ng-container *ngIf="isSfUpdateInfoArray( selectScheduleInfo.ticketinfo )">
-            <table>
-              <thead>
-                <tr>
-                  <th>{{ languageService.i18n['sm.targetNE'] }}</th>
-                  <th>{{ languageService.i18n['sm.targetNeID'] }}</th>
-                  <th>{{ languageService.i18n['sm.updateStatus'] }}</th>
-                  <th>{{ languageService.i18n['sm.time'] }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- 遍歷每個軟體更新資訊以顯示日誌 -->
-                <ng-container *ngFor="let info of selectScheduleInfo.ticketinfo">
-                  <!-- 下載行 -->
+            <div class="table">
+              <table>
+                <thead>
                   <tr>
-                    <!-- 網元名稱；使用 rowspan 跨越下載和安裝行 -->
-                    <td rowspan="2" class="vertical-align-middle">{{ info.bscompname }}</td>
-                    <!-- 目標網元 ID；也使用 rowspan 跨越兩行 -->
-                    <!-- <td rowspan="2" class="vertical-align-middle">{{ parseInstallLog(info.installlog)[3].downloadTarget }}</td> -->
-                    <!-- 目標網元 ID -->
-                    <td>{{ parseInstallLog( info.installlog )[0].downloadTarget }}</td>
-                    <!-- 顯示下載狀態 -->
-                    <td>{{ parseInstallLog( info.installlog )[0].downloadStatus }}</td>
-                    <!-- 顯示下載時間 -->
-                    <td>{{ parseInstallLog( info.installlog )[0].downloadTime }}</td>
+                    <th>{{ languageService.i18n['sm.targetNE'] }}</th>
+                    <th>{{ languageService.i18n['sm.targetNeID'] }}</th>
+                    <th>{{ languageService.i18n['sm.updateStatus'] }}</th>
+                    <th>{{ languageService.i18n['sm.time'] }}</th>
                   </tr>
-                  <!-- 安裝行 -->
-                  <tr>
-                    <!-- 目標網元 ID -->
-                    <td>{{ parseInstallLog( info.installlog )[0].installTarget }}</td>
-                    <!-- 顯示安裝狀態 -->
-                    <td>{{ parseInstallLog( info.installlog )[0].installStatus }}</td>
-                    <!-- 顯示安裝時間 -->
-                    <td>{{ parseInstallLog( info.installlog )[0].installTime }}</td>
-                  </tr>
-                </ng-container>
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  <!-- 遍歷每個軟體更新資訊以顯示日誌 -->
+                  <ng-container *ngFor="let info of selectScheduleInfo.ticketinfo">
+                    <!-- 下載行 -->
+                    <tr>
+                      <!-- 網元名稱；使用 rowspan 跨越下載和安裝行 -->
+                      <td rowspan="2" class="vertical-align-middle">{{ info.bscompname }}</td>
+                      <!-- 目標網元 ID；也使用 rowspan 跨越兩行 -->
+                      <!-- <td rowspan="2" class="vertical-align-middle">{{ parseInstallLog(info.installlog)[3].downloadTarget }}</td> -->
+                      <!-- 目標網元 ID -->
+                      <td>{{ parseInstallLog( info.installlog )[0].downloadTarget }}</td>
+                      <!-- 顯示下載狀態 -->
+                      <td>{{ parseInstallLog( info.installlog )[0].downloadStatus }}</td>
+                      <!-- 顯示下載時間 -->
+                      <td>{{ parseInstallLog( info.installlog )[0].downloadTime }}</td>
+                    </tr>
+                    <!-- 安裝行 -->
+                    <tr>
+                      <!-- 目標網元 ID -->
+                      <td>{{ parseInstallLog( info.installlog )[0].installTarget }}</td>
+                      <!-- 顯示安裝狀態 -->
+                      <td>{{ parseInstallLog( info.installlog )[0].installStatus }}</td>
+                      <!-- 顯示安裝時間 -->
+                      <td>{{ parseInstallLog( info.installlog )[0].installTime }}</td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
           </ng-container>
         </ul>
 

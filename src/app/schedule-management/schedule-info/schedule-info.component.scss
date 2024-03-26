@@ -1,35 +1,36 @@
 .basicInfo ul {
-  font-size: 0.9em;
+  font-size: 12px;
   display: inline-block;
   vertical-align: top;
-  margin: 0 1% 0;
+  margin: 0 1% 0 0;
 }
 .basicInfo ul li {
   font-size: 1.35em;
-  margin: 0 0 3px 1.5em;
+  margin: 0 0 3px 2.1em;
   text-align: left;
 }
-.ocloudInfo.software .basicInfo ul li label {
+.ocloudInfo.schedule .basicInfo ul li label {
   display: inline-block;
+  vertical-align: top;
 }
 ul.Software_info li label {
-  width: 5.5em;
+  width: 7.5em;
 }
 ul.ftp_info li label {
   width: 9em;
 }
 ul.file_url_info li label {
-  width: 9em;
+  width: 12.3em;
 }
 
 ul.file_url_info li label + span {
-  width: 60%!important;
+  width: 50%!important;
 }
 .basicInfo ul li span {
   word-break: break-all;
   display: inline-block;
   vertical-align: top;
-  width: 70%;
+  width: 65%;
 }
 .basicInfo ul.url li label {
   width: 5.6em!important;
@@ -41,7 +42,6 @@ ul.file_url_info li label + span {
   display: block;
   font-size: 1.5em;
   line-height: 2;
-  margin: 0 0 0.5em;
   text-align: center;
   padding: 0;
 }
@@ -68,13 +68,14 @@ ul + .buttons {
 
 ul h3 {
   font-size: 1.3em;
-  text-align: center;
-  border-bottom: 1px solid #3b6a97;
-  padding: 0;
+  text-align: left;
+  padding: 5px 13px;
   margin: 0 0 0.5em;
+  border-radius: 5px;
   line-height: 1.75;
   display: block;
-  color: #7ea3cf;
+  color: #fff;
+  background: linear-gradient(to right, #1d8ee5 0%, #1e5799 100%);
 }
 .center {
   text-align: center;
@@ -187,7 +188,7 @@ body.tw ul.file_url_info li label {
 .basicInfo table {
   width: 100%;
   margin-top: 8px;
-  max-height: 35em;
+  max-height: 43.5em;
   overflow: auto;
   display: block;
 }
@@ -196,37 +197,32 @@ body.tw ul.file_url_info li label {
   width: initial;
   min-width: initial;
   white-space: initial;
-  border: 1px solid ;
+ /*  border: 1px solid ; */
   padding:5px;
-  word-break: break-all;
+  word-break: break-word;
   font-size: 15px;
 }
 .basicInfo table th {
   text-align: center;
   width: initial;
   min-width: initial;
-  border: 1px solid ;
+  /* border: 1px solid ; */
   padding:5px;
   white-space: nowrap;
   font-weight: normal;
   font-size: 15px;
-  color: #eee;
-  background-color: #053e74;
+/*   color: #eee;
+  background-color: #053e74; */
   position: sticky;
   top: -1px;
 }
-.basicInfo table th ,
-.basicInfo table td {
-  border-color: #4d6183;
-}
-.file_url_info,
 .Software_info {
   width: 28%;
 }
+.file_url_info,
 .ftp_info {
-  width: 38%;
+  width: 34%;
 }
-
 .downloadRPT span button {
   color: #3b82f6;
   width: initial;
@@ -234,15 +230,26 @@ body.tw ul.file_url_info li label {
   line-height: initial;
 }
 .par_success th,.par_success td {
-  width: 9.3em !important;
+  width: 10.5em !important;
 }
-.ocloudInfo.software.kpiTable .ftp_info,
-.ocloudInfo.software.kpiTable .Software_info {
+.ocloudInfo.schedule .kpiTable .ftp_info,
+.ocloudInfo.schedule .kpiTable .Software_info {
   width: 28%!important;
 }
-.ocloudInfo.software.kpiTable .file_url_info {
-  width: 37%!important;
+.ocloudInfo.schedule .kpiTable .file_url_info {
+  width: 38%!important;
 }
-.ocloudInfo.software.kpiTable .file_url_info table td:not(:first-child) {
+.ocloudInfo.schedule .kpiTable .file_url_info .table {
+  width: 96%;
+  margin: auto;
+}
+.ocloudInfo.schedule .kpiTable .file_url_info table td:last-child {
+  width: 45%!important;
+}
+.ocloudInfo.schedule .kpiTable .file_url_info table td:not(:first-child) {
   text-align: left!important;
+  word-break: break-word;
+}
+table tbody tr td[rowspan="2"] {
+  border-bottom: 1px solid #223b50;
 }
