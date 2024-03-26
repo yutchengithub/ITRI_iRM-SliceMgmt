@@ -238,11 +238,11 @@ body.tw ul.file_url_info li label {
 }
 .ocloudInfo.software.kpiTable .ftp_info,
 .ocloudInfo.software.kpiTable .Software_info {
-  width: 28%;
+  width: 28%!important;
 }
 .ocloudInfo.software.kpiTable .file_url_info {
-  width: 35%;
+  width: 37%!important;
 }
 .ocloudInfo.software.kpiTable .file_url_info table td:not(:first-child) {
-  text-align: left;
+  text-align: left!important;
 }
