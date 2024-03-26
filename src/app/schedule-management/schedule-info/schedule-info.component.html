@@ -1,4 +1,5 @@
-<div class="ocloudInfo software">
+<!-- 使用 [ngClass] 根據條件動態添加 CSS -->
+<div class="ocloudInfo software" [ngClass]="{'kpiTable': shouldApplyKpiTableStyle()}">
   <h5>
     <button (click)="back()">
       <span class="material-icons">arrow_back</span>Back
