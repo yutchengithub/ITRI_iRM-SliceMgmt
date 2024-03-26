@@ -301,27 +301,31 @@ export class ScheduleInfoComponent implements OnInit {
 
 // ↓ For 處理 "軟體更新" 排程裡會出現的 installlog @2024/03/24 Add ↓
 
-  /** @2024/03/24 Add
-    * 將每個 Install Log 條目解析成模板中更易於管理的格式。
-    * @param installLogs - 軟體更新資訊中的 Install Log 資訊陣列。
-    * @returns - 包含解析後日誌細節的物件陣列。
-    */
+  /** @2024/03/26 Update
+  * 將每個 Install Log 條目解析成模板中更易於管理的格式。
+  * @param installLogs - 軟體更新資訊中的 Install Log 資訊陣列。
+  * @returns - 包含解析後日誌細節的物件陣列。
+  */
   parseInstallLog( installLogs: installLogInfo[] ): any[] {
 
-    return installLogs.map( log => {
+    return installLogs.map(log => {
 
       // 嘗試匹配 Download Log 條目是否符合預定義的模式
-      const downloadMatch = log.Download.match( /(.*) (Download Success|Download Fail) (.*)/ );
+      const downloadMatch = log.Download.match(/(.*) (Download Success|Download Fail) (.*)/);
 
       // 嘗試匹配 Install Log 條目是否符合預定義的模式
-      const installMatch = log.Install.match( /(.*) (Install Success|Install Fail) (.*)/ );
+      const installMatch = log.Install.match(/(.*) (Install Success|Install Fail) (.*)/);
+
+      // 處理時間字符串，去掉秒數後的小數部分
+      const downloadTime = downloadMatch ? downloadMatch[1].split('.')[0] : ''; // 下載時間處理
+      const installTime = installMatch ? installMatch[1].split('.')[0] : '';    // 安裝時間處理
 
       // 返回一個物件，包含下載和安裝事件的解析時間、狀態及目標
       return {
-          downloadTime: downloadMatch ? downloadMatch[1] : '',  // 捕獲的下載時間
+        downloadTime,  // 捕獲並處理的下載時間
         downloadStatus: downloadMatch ? downloadMatch[2] : '',  // 捕獲的下載狀態
         downloadTarget: downloadMatch ? downloadMatch[3] : '',  // 捕獲的下載目標 NE ID
-          installTime: installMatch ? installMatch[1] : '',    // 捕獲的安裝時間
+        installTime,    // 捕獲並處理的安裝時間
         installStatus: installMatch ? installMatch[2] : '',    // 捕獲的安裝狀態
         installTarget: installMatch ? installMatch[3] : '',    // 捕獲的安裝目標 NE ID
       };
