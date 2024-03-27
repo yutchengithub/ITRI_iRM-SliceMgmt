@@ -177,7 +177,7 @@ div.header {
     border: 1px solid #1c6dad;
   }
   .ocloudInfo .BOX {
-    background-color: #0c0f16;
+    background-color: #0d2032e6;
     border: 1px solid #223b50;
   }
   /* .ocloudInfo .boxTitle {
@@ -367,4 +367,7 @@ span.material-symbols-outlined.stop {
 .ocloudInfo h5 span button {
   background: #337ab766!important;
   color: #ddd;
+}
+.schedule .table table tbody tr:nth-child(even) td {
+  background-color: #052d52e6;
 }
