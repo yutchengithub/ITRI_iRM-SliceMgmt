@@ -12717,21 +12717,21 @@
             "description": "BS09",
             "bstype": 2,
             "components": {
-              "1ebfdbd887034b439104": {  // gNBCUId - Update Distributed BS Configurations need it
-                "542ec6627f744df1bafd": [
+              "1ebfdbd887034b439104": {   // gNBCUId - Update Distributed BS Configurations need it
+                "542ec6627f744df1bafd": [ // DU
                   {
-                    "8ece726a4ebe4803b8be": "[121.045096,24.773931]"
+                    "8ece726a4ebe4803b8be": "[121.045096,24.773931]" // RU
                   }
                 ],
-                "f026604b16ab4651b1a3": [
+                "f026604b16ab4651b1a3": [ // DU
                   {
-                    "4d926256a64443349aa1": "[121.044212,24.774544]"
+                    "4d926256a64443349aa1": "[121.044212,24.774544]" // RU
                   },
                   {
-                    "9302a2a119484ef1ab67": "[121.043409,24.77402]"
+                    "9302a2a119484ef1ab67": "[121.043409,24.77402]"  // RU
                   },
                   {
-                    "56fc9a6be991472f8b86": "[121.044212,24.773144]"
+                    "56fc9a6be991472f8b86": "[121.044212,24.773144]" // RU
                   }
                 ]
               }

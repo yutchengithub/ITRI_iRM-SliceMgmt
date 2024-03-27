@@ -12,12 +12,24 @@
   stroke: #7cbaec !important;
 }
 
-.topology-canvas {
-  width: 90%;
-  height: 400px;
+// .topology-canvas {
+//   width: 90%;
+//   height: 400px;
+// }
+
+ 
+.ne-info {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  color: #00FFFF;
 }
 
-// 
+.ne-info span {
+  margin-right: 5px;
+}
+
 .greenLight {
   display: inline-block;
   width: 1em;
@@ -39,6 +51,8 @@
   border-radius: 50em;
   background-color: #7e7e7e;
 }
+
+
 
 .ocloudInfo.component {
   overflow: auto;

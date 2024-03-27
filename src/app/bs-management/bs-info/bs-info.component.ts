@@ -425,15 +425,13 @@ export class BSInfoComponent implements OnInit {
       const ctx = this.canvas.nativeElement.getContext('2d');
       const canvasWidth = this.canvas.nativeElement.width;
       const canvasHeight = this.canvas.nativeElement.height;
-
-      
   
       if ( ctx ) {
 
         // 清除畫布
         ctx.clearRect( 0, 0, canvasWidth, canvasHeight );
       
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1;
         ctx.strokeStyle = 'white';
         ctx.fillStyle = 'white';
         ctx.font = '12px Arial';
@@ -449,79 +447,80 @@ export class BSInfoComponent implements OnInit {
             ctx.beginPath();
             ctx.arc( x, y, 1, 0, 2 * Math.PI );
             ctx.stroke();
-            ctx.fillText( `${ne.name} (${component.type})`, x + 40, y );
+            //ctx.fillText( `${ne.name} (${component.type})`, x + 40, y );
           }
         }
       
-        // 繪製分佈式基站
+         // 繪製分佈式基站
         if ( this.selectBsInfo_dist && this.selectBsInfo_dist.bstype === 2 ) {
-    
-          // 繪製分佈式基站的拓撲圖
-          const cus = this.componentArray.filter(component => component.type === 'cu');
-          const dus = this.componentArray.filter(component => component.type === 'du');
-          const rus = this.componentArray.filter(component => component.type === 'ru');
-      
+          const components = this.selectBsInfo_dist.components;
+
           // 繪製 CU、DU 和 RU
           ctx.beginPath();
-          cus.forEach(( cu, i ) => {
-            const x = canvasWidth / 4;
-            const y = canvasHeight / (cus.length + 1) * (i + 1);
-            ctx.moveTo( x, y );
-            ctx.arc( x, y, 1, 0, 2 * Math.PI );
-            const ne = this.NEList.components.find( n => n.id === cu.id );
-            ctx.fillText( `${ne ? ne.name : ''} (CU)`, x + 30, y );
-          });
-      
-          dus.forEach(( du, i ) => {
-            const x = canvasWidth / 2;
-            const y = canvasHeight / (dus.length + 1) * (i + 1);
-            ctx.moveTo( x, y );
-            ctx.arc(x, y, 1, 0, 2 * Math.PI);
-            const ne = this.NEList.components.find( n => n.id === du.id );
-            ctx.fillText( `${ne ? ne.name : ''} (DU)`, x + 30, y );
-          });
-      
-          rus.forEach(( ru, i ) => {
-            const x = canvasWidth * 0.75;
-            const y = canvasHeight / (rus.length + 1) * (i + 1);
-    
-            ctx.moveTo( x, y );
-            ctx.arc( x, y, 1, 0, 2 * Math.PI );
-            const ne = this.NEList.components.find( n => n.id === ru.id );
-            ctx.fillText( `${ne ? ne.name : ''} (RU)`, x + 30, y );
-          });
-          ctx.stroke();
-      
-          // 繪製連線
-          cus.forEach( cu => {
-            const cuNe = this.NEList.components.find( n => n.id === cu.id );
-            dus.forEach( du => {
-              const duNe = this.NEList.components.find( n => n.id === du.id );
-              if ( cuNe && duNe ) {
-                const cuX = canvasWidth / 4;
-                const cuY = canvasHeight / ( cus.length + 1 ) * ( cus.indexOf(cu) + 1 );
+          for (const cuid in components) {
+            const cu = this.componentArray.find(component => component.id === cuid);
+            if (cu) {
+              const cuX = canvasWidth / 4;
+              const cuY = canvasHeight / (Object.keys(components).length + 1) * (Object.keys(components).indexOf(cuid) + 1);
+              ctx.moveTo(cuX, cuY);
+              ctx.arc(cuX, cuY, 1, 0, 2 * Math.PI);
+            }
+
+            const dus = components[cuid];
+            for (const duid in dus) {
+              const du = this.componentArray.find(component => component.id === duid);
+              if (du) {
                 const duX = canvasWidth / 2;
-                const duY = canvasHeight / ( dus.length + 1 ) * ( dus.indexOf(du) + 1 );
-                ctx.moveTo( cuX, cuY );
-                ctx.lineTo( duX, duY );
-              }
-            });
-          });
-      
-          dus.forEach(du => {
-            const duNe = this.NEList.components.find(n => n.id === du.id);
-            rus.forEach(ru => {
-              const ruNe = this.NEList.components.find(n => n.id === ru.id);
-              if (duNe && ruNe) {
-                const duX = canvasWidth / 2;
-                const duY = canvasHeight / (dus.length + 1) * (dus.indexOf(du) + 1);
-                const ruX = canvasWidth * 0.75;
-                const ruY = canvasHeight / (rus.length + 1) * (rus.indexOf(ru) + 1);
+                const duY = canvasHeight / (Object.keys(dus).length + 1) * (Object.keys(dus).indexOf(duid) + 1);
                 ctx.moveTo(duX, duY);
-                ctx.lineTo(ruX, ruY);
+                ctx.arc(duX, duY, 1, 0, 2 * Math.PI);
               }
-            });
-          });
+
+              const rus = dus[duid];
+              for (let i = 0; i < rus.length; i++) {
+                const ruId = Object.keys(rus[i])[0];
+                const ru = this.componentArray.find(component => component.id === ruId);
+                if (ru) {
+                  const ruX = canvasWidth * 0.75;
+                  const ruY = canvasHeight / (rus.length + 1) * (i + 1);
+                  ctx.moveTo(ruX, ruY);
+                  ctx.arc(ruX, ruY, 1, 0, 2 * Math.PI);
+                }
+              }
+            }
+          }
+          ctx.stroke();
+
+          // 繪製連線
+          for (const cuid in components) {
+            const cu = this.componentArray.find(component => component.id === cuid);
+            const dus = components[cuid];
+            for (const duid in dus) {
+              const du = this.componentArray.find(component => component.id === duid);
+              if (cu && du) {
+                const cuX = canvasWidth / 4;
+                const cuY = canvasHeight / (Object.keys(components).length + 1) * (Object.keys(components).indexOf(cuid) + 1);
+                const duX = canvasWidth / 2;
+                const duY = canvasHeight / (Object.keys(dus).length + 1) * (Object.keys(dus).indexOf(duid) + 1);
+                ctx.moveTo(cuX, cuY);
+                ctx.lineTo(duX, duY);
+              }
+
+              const rus = dus[duid];
+              for (let i = 0; i < rus.length; i++) {
+                const ruId = Object.keys(rus[i])[0];
+                const ru = this.componentArray.find(component => component.id === ruId);
+                if (du && ru) {
+                  const duX = canvasWidth / 2;
+                  const duY = canvasHeight / (Object.keys(dus).length + 1) * (Object.keys(dus).indexOf(duid) + 1);
+                  const ruX = canvasWidth * 0.75;
+                  const ruY = canvasHeight / (rus.length + 1) * (i + 1);
+                  ctx.moveTo(duX, duY);
+                  ctx.lineTo(ruX, ruY);
+                }
+              }
+            }
+          }
           ctx.stroke();
         }
       }
@@ -529,6 +528,36 @@ export class BSInfoComponent implements OnInit {
     
   }
 
+  getCuPosition(cu: any): { x: number, y: number } {
+    const index = this.componentArray.filter(c => c.type === 'cu').indexOf(cu);
+    const x = this.canvas.nativeElement.width / 4;
+    const y = this.canvas.nativeElement.height / (this.componentArray.filter(c => c.type === 'cu').length + 1) * (index + 1);
+    return { x, y };
+  }
+  
+  getDuPosition(du: any): { x: number, y: number } {
+    const index = this.componentArray.filter(c => c.type === 'du').indexOf(du);
+    const x = this.canvas.nativeElement.width / 2;
+    const y = this.canvas.nativeElement.height / (this.componentArray.filter(c => c.type === 'du').length + 1) * (index + 1);
+    return { x, y };
+  }
+  
+  getRuPosition(ru: any): { x: number, y: number } {
+    const index = this.componentArray.filter(c => c.type === 'ru').indexOf(ru);
+    const x = this.canvas.nativeElement.width * 0.75;
+    const y = this.canvas.nativeElement.height / (this.componentArray.filter(c => c.type === 'ru').length + 1) * (index + 1);
+    return { x, y };
+  }
+  
+  getComponentName( id: string ): string {
+    const component = this.NEList.components.find(c => c.id === id);
+    return component ? component.name : '';
+  }
+  
+  getComponentStatus( id: string) : number {
+    const component = this.NEList.components.find(c => c.id === id);
+    return component ? component.status : 0;
+  }
 
   
 

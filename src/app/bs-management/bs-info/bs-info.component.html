@@ -166,18 +166,37 @@
           <div class="collabsible">
 
             <!-- 使用 Canvas 畫網元拓樸圖 -->
-
             <canvas #canvas class="topology-canvas"></canvas>
+
+
             <!-- 顯示組件資訊 -->
             <div *ngIf="bsType === '2'">
               <div *ngFor="let cu of componentArray | filterBy: 'type': 'cu'">
                 <!-- 顯示 CU 的資訊 -->
+                <div class="ne-info" [style.left.px]="getCuPosition(cu).x" [style.top.px]="getCuPosition(cu).y">
+                  <span class="grayLight" *ngIf="getComponentStatus(cu.id) === 0"></span>
+                  <span class="redLight" *ngIf="getComponentStatus(cu.id) === 1"></span>
+                  <span class="greenLight" *ngIf="getComponentStatus(cu.id) === 2"></span>
+                  <span>{{ getComponentName( cu.id ) }} (CU)</span>
+                </div>
               </div>
               <div *ngFor="let du of componentArray | filterBy: 'type': 'du'">
                 <!-- 顯示 DU 的資訊 -->
+                <div class="ne-info" [style.left.px]="getDuPosition(du).x" [style.top.px]="getDuPosition(du).y">
+                  <span class="grayLight" *ngIf="getComponentStatus(du.id) === 0"></span>
+                  <span class="redLight" *ngIf="getComponentStatus(du.id) === 1"></span>
+                  <span class="greenLight" *ngIf="getComponentStatus(du.id) === 2"></span>
+                  <span>{{ getComponentName( du.id ) }} (DU)</span>
+                </div>
               </div>
               <div *ngFor="let ru of componentArray | filterBy: 'type': 'ru'">
                 <!-- 顯示 RU 的資訊 -->
+                <div class="ne-info" [style.left.px]="getRuPosition(ru).x" [style.top.px]="getRuPosition(ru).y">
+                  <span class="grayLight" *ngIf="getComponentStatus(ru.id) === 0"></span>
+                  <span class="redLight" *ngIf="getComponentStatus(ru.id) === 1"></span>
+                  <span class="greenLight" *ngIf="getComponentStatus(ru.id) === 2"></span>
+                  <span>{{ getComponentName( ru.id ) }} (RU)</span>
+                </div>
               </div>
             </div>
           </div>
