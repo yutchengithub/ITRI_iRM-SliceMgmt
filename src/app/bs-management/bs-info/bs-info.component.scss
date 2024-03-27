@@ -1,4 +1,17 @@
 
+// Spinner 居中並設定大小
+.progress-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px; 
+}
+
+// 設定進度調 (Spinner) 的顏色
+::ng-deep .mat-progress-spinner circle {
+  stroke: #7cbaec !important;
+}
+
 .ocloudInfo.component {
   overflow: auto;
   max-height: 86vh;

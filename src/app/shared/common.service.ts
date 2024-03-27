@@ -263,6 +263,24 @@ export class CommonService {
             date.getMinutes().toString().padStart(2, '0');
   }
 
+  // @2024/03/27 Add
+  // 用於處理時間字符串，去掉秒後的小數部分
+  formatTimeWithoutSecondsFraction( timeString: string ): string {
+    return timeString.split('.')[0]; // 只保留小數點前的部分
+  }
+
+ // @2024/03/27 Add
+ // 用於處理位置訊息的格式
+ formatPosition( positionJson: string ): string {
+    try {
+      const positionArray = JSON.parse( positionJson );
+      return `( ${positionArray[0]}, ${positionArray[1]} )`;
+    } catch ( e ) {
+      console.error( 'Error parsing position JSON:', e );
+      return '';
+    }
+  }
+
   // @2024/03/22 Add
   // 用於解碼 Base64 字符串並轉換下載成 .xlsx 文件
   downloadExcelFromBase64( base64String: string, fileName: string ) {

@@ -11,64 +11,147 @@
       <span>{{ languageService.i18n['basic.info'] }}</span>
       <input id="baseInfo" class="toggle" type="checkbox">
       <label for="baseInfo" class="lbl-toggle"></label>
+
       <div class="collapsible-content">
         <div class="content-inner">
-          <ul>
-            <li>
-              <!-- 基站名稱 -->
-              <label>{{ languageService.i18n['BS.name'] }}</label>
-              <span *ngIf=" bsType === '1' ">{{ selectBsInfo.name }}</span>
-              <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.name }}</span>
-            </li>
-            <li>
-              <!-- 基站類型 -->
-              <label>{{ languageService.i18n['BS.type'] }}</label>
-              <span *ngIf="selectBsInfo.bstype === 1">All-in-one:&thinsp;[CU + DU + RU]</span>
-              <span *ngIf="selectBsInfo_dist.bstype === 2">Disaggregated:&thinsp;[CU] + [DU] + [RU]</span>
-            </li>
-            <li>
-              <!-- 基站Cell數量 -->
-              <label>{{ languageService.i18n['BS.cellCount'] }}</label>
-              <span>{{ selectBsCellCount }}</span>
-            </li>
-            <li>
-              <!-- 基站地點說明 -->
-              <label>{{ languageService.i18n['BS.description'] }}</label>
-              <span *ngIf="selectBsInfo">{{ selectBsInfo.description }}</span>
-              <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.description }}</span>
-            </li>
-            <li>
-              <!-- 基站天線位置座標 -->
-              <label>{{ languageService.i18n['BS.bsAntennaCoord'] }}</label>
-              <span *ngIf="selectBsInfo">{{ selectBsInfo.position }}</span>
-              <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.position }}</span>
-            </li>
-            <li>
-              <!-- 基站最後心跳時間 -->
-              <label>{{ languageService.i18n['BS.lastHeartbeatTime'] }}</label>
-              <span *ngIf="selectBsInfo">{{ selectBsInfo.laston }}</span>
-              <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.laston }}</span>
-            </li>
-            <li>
-              <!-- 基站狀態 -->
-              <label>{{ languageService.i18n['BS.status'] }}</label>
 
-              <!-- 一體式 -->
-              <span *ngIf=" selectBsInfo.status === 0 " class="grayLight"></span>
-              <span *ngIf=" selectBsInfo.status === 1 " class="redLight"></span>
-              <span *ngIf=" selectBsInfo.status === 2 " class="greenLight"></span>
+          <!-- 當數據正在加載時顯示進度條 @2024/03/27 Add -->
+          <ng-container *ngIf="isLoadingBsInfo">
+            <div class="progress-spinner-container">
+              <!-- 指示器大小設置 -->
+              <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="100"></mat-progress-spinner>
+            </div>
+          </ng-container>
 
-              <!-- 分佈式 -->
-              <span *ngIf=" selectBsInfo_dist.status === 0 " class="grayLight"></span>
-              <span *ngIf=" selectBsInfo_dist.status === 1 " class="redLight"></span>
-              <span *ngIf=" selectBsInfo_dist.status === 2 " class="greenLight"></span>
+          <!-- 加載完成後顯示 基站資訊 數據 @2024/03/27 Add -->
+          <ng-container *ngIf="!isLoadingBsInfo">
+            <ul>
+              <li>
+                <!-- 基站名稱 -->
+                <label>{{ languageService.i18n['BS.name'] }}</label>
+                <span *ngIf="selectBsInfo">{{ selectBsInfo.name }}</span>
+                <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.name }}</span>
+              </li>
+              <li>
+                <!-- 基站類型 -->
+                <label>{{ languageService.i18n['BS.type'] }}</label>
+                <span *ngIf="selectBsInfo.bstype === 1">All-in-one:&thinsp;[CU + DU + RU]</span>
+                <span *ngIf="selectBsInfo_dist.bstype === 2">Disaggregated:&thinsp;[CU] + [DU] + [RU]</span>
+              </li>
+              <li>
+                <!-- 基站 Cell 數量 -->
+                <label>{{ languageService.i18n['BS.cellCount'] }}</label>
+                <span>{{ selectBsCellCount }}</span>
+              </li>
+              <li>
+                <!-- 基站地點說明 -->
+                <label>{{ languageService.i18n['BS.description'] }}</label>
+                <span *ngIf="selectBsInfo">{{ selectBsInfo.description }}</span>
+                <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.description }}</span>
+              </li>
+              <li>
+                <!-- 基站天線位置座標 -->
+                <label>{{ languageService.i18n['BS.bsAntennaCoord'] }}</label>
+                <!-- 依據 BS 類型，顯示對應的位置內容訊息 -->
 
-            </li>
-            <li>
-              <label>{{ languageService.i18n['software_version'] }}</label>
-              <span>{{bsComponentInfo.port}}</span>
-            </li>
-          </ul>
+                <!-- 一體式 -->
+                <ng-container>
+                  <span *ngIf="selectBsInfo.bstype === 1">{{ selectBsInfo.position }}</span>
+                </ng-container>
+
+                <!-- 分佈式 -->
+                <ng-container *ngIf="selectBsInfo_dist.bstype === 2">
+                  <div class="table">
+                    <table class="par_success">
+                      <thead>
+                        <tr>
+                          <th>{{ languageService.i18n['BS.ruNeName'] }}</th>
+                          <th>{{ languageService.i18n['BS.latLong'] }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                        <!-- 當數據正在加載時顯示進度條 @2024/03/27 Add -->
+                        <ng-container *ngIf="isLoadingNEList">
+                          <div class="progress-spinner-container">
+                            <!-- 指示器大小設置 -->
+                            <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner>
+                          </div>
+                        </ng-container>
+
+                        <!-- 加載完成後顯示 分佈式基站經緯度資訊 數據 @2024/03/27 Add -->
+                        <ng-container *ngIf="!isLoadingNEList">
+                          <tr *ngFor="let ruInfo of ruIdNamePositionMap | keyvalue">
+                            <td>{{ ruInfo.value.name }}</td>
+                            <td>{{ ruInfo.value.position }}</td>
+                          </tr>
+                        </ng-container>
+                        
+                      </tbody>
+                    </table>
+                  </div>
+                </ng-container>
+              </li>
+              <li>
+                <!-- 基站最後心跳時間 -->
+                <label>{{ languageService.i18n['BS.lastHeartbeatTime'] }}</label>
+                <span *ngIf="selectBsInfo">{{ selectBsInfo.laston }}</span>
+                <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.laston }}</span>
+              </li>
+              <li>
+                <!-- 基站狀態 -->
+                <label>{{ languageService.i18n['BS.status'] }}</label>
+
+                <!-- 一體式 -->
+                <span *ngIf=" selectBsInfo.status === 0 " class="grayLight"></span>
+                <span *ngIf=" selectBsInfo.status === 1 " class="redLight"></span>
+                <span *ngIf=" selectBsInfo.status === 2 " class="greenLight"></span>
+
+                <!-- 分佈式 -->
+                <span *ngIf=" selectBsInfo_dist.status === 0 " class="grayLight"></span>
+                <span *ngIf=" selectBsInfo_dist.status === 1 " class="redLight"></span>
+                <span *ngIf=" selectBsInfo_dist.status === 2 " class="greenLight"></span>
+              </li>
+              <li>
+                <!-- 軟體版本 -->
+                <label>{{ languageService.i18n['software_version'] }}</label>
+                <div class="table">
+                  <table class="par_success">
+                    <thead>
+                      <tr>
+                        <th>{{ languageService.i18n['BS.neName'] }}</th>
+                        <th>{{ languageService.i18n['BS.neType'] }}</th>
+                        <th>{{ languageService.i18n['BS.neModel'] }}</th>
+                        <th>{{ languageService.i18n['BS.neSFversion'] }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                      <!-- 當數據正在加載時顯示進度條 @2024/03/27 Add -->
+                      <ng-container *ngIf="isLoadingNEList">
+                        <div class="progress-spinner-container">
+                          <!-- 指示器大小設置 -->
+                          <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner>
+                        </div>
+                      </ng-container>
+
+                      <!-- 加載完成後顯示 一體式或分佈式 BS 網元軟體版本資訊 數據 @2024/03/27 Add -->
+                      <ng-container *ngIf="!isLoadingNEList">
+                        <!-- 一體式或分佈式 BS 共用網元軟體版本表格 -->
+                        <tr *ngFor="let swInfo of swVersionMap | keyvalue">
+                          <td>{{ swInfo.value.neName }}</td>
+                          <td>{{ swInfo.value.neType }}</td>
+                          <td>{{ swInfo.value.neModel }}</td>
+                          <td>{{ swInfo.value.neSFversion }}</td>
+                        </tr>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </div>
+              </li>            
+            </ul>
+          </ng-container>
+
         </div>
       </div>
     </div>
@@ -81,7 +164,10 @@
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="collabsible">
-      
+            <!-- 使用 Canvas 畫網元拓樸圖 -->
+            <canvas>
+
+            </canvas>
           </div>
         </div>
       </div>
