@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '../../shared/common.service';
@@ -15,9 +15,9 @@ import { FaultMessages } from './../../fault-management/fault-management.compone
 import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt'; // @2024/03/25 Add
 
 // 引入儲存各個資訊所需的 interfaces
-import { BSInfo }         from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
-import { BSInfo_dist }    from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
-import { NEList, NE, Sm } from '../../shared/interfaces/NE/For_queryBsComponentList'; // @2024/03/27 Add
+import { BSInfo, Components }              from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
+import { BSInfo_dist, Components_dist }    from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
+import { NEList, NE, Sm  } from '../../shared/interfaces/NE/For_queryBsComponentList'; // @2024/03/27 Add
 
 // 引入所需 Local Files
 import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';          // @2024/03/25 Add
@@ -80,12 +80,18 @@ export class BSInfoComponent implements OnInit {
       // @2024/03/27 Add
       // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 
       this.getNEList(); 
-    });
 
+      
+    });
+   // this.initTopologyPanel();
   }
 
   ngOnDestroy() {
     clearTimeout( this.refreshTimeout );
+  }
+
+  ngAfterViewInit() {
+    this.initTopologyPanel();
   }
 
   // 用於返回 BS 主頁 @2024/03/25 Add
@@ -179,6 +185,8 @@ export class BSInfoComponent implements OnInit {
           // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 
           //this.getNEList(); 
 
+         // this.initTopologyPanel();
+
           this.isLoadingBsInfo = false; // 數據加載完成
         },
         error: ( error ) => {
@@ -230,6 +238,8 @@ export class BSInfoComponent implements OnInit {
           this.processNEList( this.NEList ); // 處理獲取的 NE 列表
 
           this.isLoadingNEList = false; // 數據加載完成
+
+          
         },
         error: ( error ) => {
 
@@ -241,6 +251,8 @@ export class BSInfoComponent implements OnInit {
 
           // 獲取 NE 列表完成
           console.log( 'NE list fetch completed' ); // 輸出完成日誌
+
+          this.initTopologyPanel();
         }
       });
     }
@@ -257,6 +269,10 @@ export class BSInfoComponent implements OnInit {
   ruIdNamePositionMap: { [ruId: string]: { name: string, position: string } } = {};
 
   // @2024/03/27 Add
+  // 用於存儲兩種基站的網元資訊，用於後續繪製拓樸圖
+  componentArray: any[] = [];
+
+  // @2024/03/27 Add
   // processNEList 函數用於處理從 NEList 中獲取的網元訊息，並將相關資訊存儲在以下對象中:
   // - ruIdNamePositionMap: 用於存儲分佈式基站的 RU id 對應到的名稱與位置
   //        - swVersionMap: 用於存儲網元的使用的軟體版本訊息，包括網元名稱、網元類型、網元型號和軟體版本號
@@ -264,6 +280,9 @@ export class BSInfoComponent implements OnInit {
 
     // 如果是一體式基站
     if ( this.bsType === "1" ) {
+
+      // 處理一體式基站的組件資訊，放入 componentArray 用於繪拓樸圖
+      this.componentArray = this.selectBsInfo.components;
 
       // 處理一體式基站的軟體版本資訊
       for ( const component of this.selectBsInfo.components ) {
@@ -290,7 +309,26 @@ export class BSInfoComponent implements OnInit {
 
     } else if ( this.bsType === "2" ) { // 如果是分佈式基站
 
-        // 遍歷 selectBsInfo_dist.info 中的每個 Info 對象
+        // 處理分佈式基站的組件資訊，放入 componentArray 用於繪拓樸圖
+        const components = this.selectBsInfo_dist.components;
+
+        for ( const cuid in components ) {
+          this.componentArray.push( { type: 'cu', id: cuid } );
+
+          const dus = components[cuid];
+          for ( const duid in dus ) {
+            this.componentArray.push( { type: 'du', id: duid, cuid: cuid } );
+
+            const rus = dus[duid];
+            for ( let i = 0; i < rus.length; i++ ) {
+              const ruId = Object.keys( rus[i] )[0];
+
+              this.componentArray.push( { type: 'ru', id: ruId, duid: duid } );
+            }
+          }
+        }
+
+        // 遍歷 selectBsInfo_dist.info 中的每個 Info 對象，對分佈式基站的網元軟體版本資訊進行處理
         for ( const info of this.selectBsInfo_dist.info ) {
           
           // 如果 RU.id 存在
@@ -307,13 +345,13 @@ export class BSInfoComponent implements OnInit {
               // 將 NE 的名稱和位置存儲在對象中,以 RU.id 作為鍵
               this.ruIdNamePositionMap[ruId] = {
                 name: correspondingNE.name, // NE 的名稱
-                position: this.commonService.formatPosition(info.RU.position) // 格式化 RU 的位置資訊
+                position: this.commonService.formatPosition( info.RU.position ) // 格式化 RU 的位置資訊
               };
 
               // 處理軟體版本資訊
               const neType = 'RU'; // 設置網元類型為 'RU'
               const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
-              const neSFversion = this.getActiveSoftwareVersion(correspondingNE.sm) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+              const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
               this.swVersionMap[ruId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 RU.id 作為鍵
             }
           }
@@ -328,7 +366,7 @@ export class BSInfoComponent implements OnInit {
             if ( correspondingNE ) {
               const neType = 'CU'; // 設置網元類型為 'CU'
               const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
-              const neSFversion = this.getActiveSoftwareVersion(correspondingNE.sm) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+              const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
 
               this.swVersionMap[cuId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 CU.id 作為鍵
             }
@@ -343,12 +381,13 @@ export class BSInfoComponent implements OnInit {
             if ( correspondingNE ) { 
               const neType = 'DU';   // 設置網元類型為 'DU'
               const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
-              const neSFversion = this.getActiveSoftwareVersion(correspondingNE.sm) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+              const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
               
               this.swVersionMap[duId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 DU.id 作為鍵
             }
           }
         }
+
       }
   }
 
@@ -374,6 +413,121 @@ export class BSInfoComponent implements OnInit {
     return undefined;
   }
 
+
+
+  @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
+
+  initTopologyPanel() {
+    console.log( 'In initTopologyPanel() - componentArray:', this.componentArray );
+
+    if ( this.canvas ) {
+
+      const ctx = this.canvas.nativeElement.getContext('2d');
+      const canvasWidth = this.canvas.nativeElement.width;
+      const canvasHeight = this.canvas.nativeElement.height;
+
+      
+  
+      if ( ctx ) {
+
+        // 清除畫布
+        ctx.clearRect( 0, 0, canvasWidth, canvasHeight );
+      
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'white';
+        ctx.fillStyle = 'white';
+        ctx.font = '12px Arial';
+  
+        // 繪製一體式基站
+        if ( this.selectBsInfo && this.selectBsInfo.bstype === 1 ) {
+          const component = this.selectBsInfo.components[0];
+          const ne = this.NEList.components.find( n => n.id === component.id );
+    
+          if ( ne ) {
+            const x = canvasWidth / 2;
+            const y = canvasHeight / 2;
+            ctx.beginPath();
+            ctx.arc( x, y, 1, 0, 2 * Math.PI );
+            ctx.stroke();
+            ctx.fillText( `${ne.name} (${component.type})`, x + 40, y );
+          }
+        }
+      
+        // 繪製分佈式基站
+        if ( this.selectBsInfo_dist && this.selectBsInfo_dist.bstype === 2 ) {
+    
+          // 繪製分佈式基站的拓撲圖
+          const cus = this.componentArray.filter(component => component.type === 'cu');
+          const dus = this.componentArray.filter(component => component.type === 'du');
+          const rus = this.componentArray.filter(component => component.type === 'ru');
+      
+          // 繪製 CU、DU 和 RU
+          ctx.beginPath();
+          cus.forEach(( cu, i ) => {
+            const x = canvasWidth / 4;
+            const y = canvasHeight / (cus.length + 1) * (i + 1);
+            ctx.moveTo( x, y );
+            ctx.arc( x, y, 1, 0, 2 * Math.PI );
+            const ne = this.NEList.components.find( n => n.id === cu.id );
+            ctx.fillText( `${ne ? ne.name : ''} (CU)`, x + 30, y );
+          });
+      
+          dus.forEach(( du, i ) => {
+            const x = canvasWidth / 2;
+            const y = canvasHeight / (dus.length + 1) * (i + 1);
+            ctx.moveTo( x, y );
+            ctx.arc(x, y, 1, 0, 2 * Math.PI);
+            const ne = this.NEList.components.find( n => n.id === du.id );
+            ctx.fillText( `${ne ? ne.name : ''} (DU)`, x + 30, y );
+          });
+      
+          rus.forEach(( ru, i ) => {
+            const x = canvasWidth * 0.75;
+            const y = canvasHeight / (rus.length + 1) * (i + 1);
+    
+            ctx.moveTo( x, y );
+            ctx.arc( x, y, 1, 0, 2 * Math.PI );
+            const ne = this.NEList.components.find( n => n.id === ru.id );
+            ctx.fillText( `${ne ? ne.name : ''} (RU)`, x + 30, y );
+          });
+          ctx.stroke();
+      
+          // 繪製連線
+          cus.forEach( cu => {
+            const cuNe = this.NEList.components.find( n => n.id === cu.id );
+            dus.forEach( du => {
+              const duNe = this.NEList.components.find( n => n.id === du.id );
+              if ( cuNe && duNe ) {
+                const cuX = canvasWidth / 4;
+                const cuY = canvasHeight / ( cus.length + 1 ) * ( cus.indexOf(cu) + 1 );
+                const duX = canvasWidth / 2;
+                const duY = canvasHeight / ( dus.length + 1 ) * ( dus.indexOf(du) + 1 );
+                ctx.moveTo( cuX, cuY );
+                ctx.lineTo( duX, duY );
+              }
+            });
+          });
+      
+          dus.forEach(du => {
+            const duNe = this.NEList.components.find(n => n.id === du.id);
+            rus.forEach(ru => {
+              const ruNe = this.NEList.components.find(n => n.id === ru.id);
+              if (duNe && ruNe) {
+                const duX = canvasWidth / 2;
+                const duY = canvasHeight / (dus.length + 1) * (dus.indexOf(du) + 1);
+                const ruX = canvasWidth * 0.75;
+                const ruY = canvasHeight / (rus.length + 1) * (rus.indexOf(ru) + 1);
+                ctx.moveTo(duX, duY);
+                ctx.lineTo(ruX, ruY);
+              }
+            });
+          });
+          ctx.stroke();
+        }
+      }
+    }
+    
+  }
 
 
   

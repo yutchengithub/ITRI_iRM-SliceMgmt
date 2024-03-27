@@ -15,7 +15,7 @@ export interface BSInfo_dist {
     position: string;         // ok dist BS 有定義該參數但都沒有值
     description: string;      // ok
     bstype: number;           // ok
-    components: Components;   // ok 可能會出錯
+    components: Components_dist;   // ok 可能會出錯
     status: number;           // ok
     laston: string;           // ok
     lastoff: string;          // ok
@@ -696,7 +696,7 @@ export interface BSInfo_dist {
   
   /* ↓ @12/15 Add  For "components": ↓ */
   
-  export interface Components {
+  export interface Components_dist {
     [cuID: string]: duID; // 使用 CUId 而不是 CUId[]
   }
   

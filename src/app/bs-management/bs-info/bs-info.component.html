@@ -39,6 +39,20 @@
                 <span *ngIf="selectBsInfo_dist.bstype === 2">Disaggregated:&thinsp;[CU] + [DU] + [RU]</span>
               </li>
               <li>
+                <!-- 基站狀態 -->
+                <label>{{ languageService.i18n['BS.status'] }}</label>
+
+                <!-- 一體式 -->
+                <span *ngIf=" selectBsInfo.status === 0 " class="grayLight"></span>
+                <span *ngIf=" selectBsInfo.status === 1 " class="redLight"></span>
+                <span *ngIf=" selectBsInfo.status === 2 " class="greenLight"></span>
+
+                <!-- 分佈式 -->
+                <span *ngIf=" selectBsInfo_dist.status === 0 " class="grayLight"></span>
+                <span *ngIf=" selectBsInfo_dist.status === 1 " class="redLight"></span>
+                <span *ngIf=" selectBsInfo_dist.status === 2 " class="greenLight"></span>
+              </li>
+              <li>
                 <!-- 基站 Cell 數量 -->
                 <label>{{ languageService.i18n['BS.cellCount'] }}</label>
                 <span>{{ selectBsCellCount }}</span>
@@ -99,20 +113,6 @@
                 <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.laston }}</span>
               </li>
               <li>
-                <!-- 基站狀態 -->
-                <label>{{ languageService.i18n['BS.status'] }}</label>
-
-                <!-- 一體式 -->
-                <span *ngIf=" selectBsInfo.status === 0 " class="grayLight"></span>
-                <span *ngIf=" selectBsInfo.status === 1 " class="redLight"></span>
-                <span *ngIf=" selectBsInfo.status === 2 " class="greenLight"></span>
-
-                <!-- 分佈式 -->
-                <span *ngIf=" selectBsInfo_dist.status === 0 " class="grayLight"></span>
-                <span *ngIf=" selectBsInfo_dist.status === 1 " class="redLight"></span>
-                <span *ngIf=" selectBsInfo_dist.status === 2 " class="greenLight"></span>
-              </li>
-              <li>
                 <!-- 軟體版本 -->
                 <label>{{ languageService.i18n['software_version'] }}</label>
                 <div class="table">
@@ -164,10 +164,10 @@
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="collabsible">
-            <!-- 使用 Canvas 畫網元拓樸圖 -->
-            <canvas>
 
-            </canvas>
+            <!-- 使用 Canvas 畫網元拓樸圖 -->
+            <canvas #canvas class="topology-canvas"></canvas>
+
           </div>
         </div>
       </div>
