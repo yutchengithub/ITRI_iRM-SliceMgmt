@@ -17,6 +17,29 @@
   height: 400px;
 }
 
+// 
+.greenLight {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border-radius: 50em;
+  background-color: #89d135;
+}
+
+// 
+.redLight {
+  display: inline-block;
+}
+
+// 
+.grayLight {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border-radius: 50em;
+  background-color: #7e7e7e;
+}
+
 .ocloudInfo.component {
   overflow: auto;
   max-height: 86vh;

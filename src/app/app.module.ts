@@ -45,7 +45,7 @@ import { CommonService } from './shared/common.service';
 import { AuthGuard } from './shared/guard/auth.guard';
 import { HttpErrorInterceptor } from './shared/http-error.interceptor';
 import { DatePickerFormatDirective } from './shared/directive/date-picker-format.directive';
-import { TruncatePipe } from './shared/pipes/truncate.pipe';  // @11/16 Add by yuchen 
+
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatMomentDateModule } from "@angular/material-moment-adapter";
 import { CalendarModule } from 'primeng/calendar';
@@ -71,6 +71,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';      // @2024/01/31 Add
 import { MatInputModule } from '@angular/material/input';     // @2024/01/31 Add
 import { MatStepperModule } from '@angular/material/stepper'; // @2024/01/31 Add
 import { MatExpansionModule } from '@angular/material/expansion'; // 用於縮合效果 @2024/02/29 Add
+
+// Pipe 管道
+import { TruncatePipe } from './shared/pipes/truncate.pipe';  // @11/16 Add by yuchen 
+import { FilterByPipe } from './shared/pipes/filter-by.pipe'; // @2024/03/27 Add
 
 // import API
 import { apiForFieldMgmt }    from './shared/api/For_Field_Mgmt';     // @2024/03/14 Update
@@ -126,8 +130,11 @@ import { localNEList }            from './shared/local-files/NE/For_queryBsCompo
 
     AccountManagementComponent,
     AccountInfoComponent,
+    
+    // Pipe 管道
+    TruncatePipe, // @11/16 Add by yuchen 
+    FilterByPipe, // @2024/03/27 Add by yuchen 
 
-    TruncatePipe,                 // @11/16 Add by yuchen 
     DatePickerFormatDirective,
 
     NfManagementComponent,

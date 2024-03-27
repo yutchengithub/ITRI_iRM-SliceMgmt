@@ -166,8 +166,20 @@
           <div class="collabsible">
 
             <!-- 使用 Canvas 畫網元拓樸圖 -->
-            <canvas #canvas class="topology-canvas"></canvas>
 
+            <canvas #canvas class="topology-canvas"></canvas>
+            <!-- 顯示組件資訊 -->
+            <div *ngIf="bsType === '2'">
+              <div *ngFor="let cu of componentArray | filterBy: 'type': 'cu'">
+                <!-- 顯示 CU 的資訊 -->
+              </div>
+              <div *ngFor="let du of componentArray | filterBy: 'type': 'du'">
+                <!-- 顯示 DU 的資訊 -->
+              </div>
+              <div *ngFor="let ru of componentArray | filterBy: 'type': 'ru'">
+                <!-- 顯示 RU 的資訊 -->
+              </div>
+            </div>
           </div>
         </div>
       </div>
