@@ -29,7 +29,7 @@ async function initMap(): Promise< void > {
   console.log('Google Maps is loaded and ready to use.');
 }
 
-initMap();
+//initMap();
 
 // 將根據環境配置動態添加 Google Maps 腳本標籤至 <head>
 function addGoogleMapApiKeyByEnvironment() {

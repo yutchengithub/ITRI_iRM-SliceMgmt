@@ -15,7 +15,7 @@ export const TwLanguage = {
   'index.menu_dashboard':'主畫面',
   'index.menu_fieldMgr':'場域管理',
   'index.menu_BSMgr':'基站管理',
-  'index.menu_componentMgr':'元件管理',
+  'index.menu_componentMgr':'網元管理',
   'index.menu_faultMgr':'故障管理',
   'index.menu_performMgr':'效能管理',
   'index.menu_softwareMgr':'軟體管理',
@@ -205,9 +205,23 @@ export const TwLanguage = {
   'BS.confirm_del':'確定要刪除基站',
 
   'BS.info':'基站詳細資訊',
+
+  // 基本訊息區
   'BS.bsAntennaCoord':'基站天線位置座標',
+  'BS.ruNeName':'網元名稱 ( RU )',
+  'BS.latLong':'經緯度',
   'BS.lastHeartbeatTime': '最後心跳時間',
- 
+  'BS.neName':'網元名稱',
+  'BS.neType':'網元類型',
+  'BS.neModel':'網元型號',
+  'BS.neSFversion':'軟體版本',
+
+  'BS.topology':'基站組態',
+  'BS.parameters':'基站參數',
+  'BS.neighborBsList':'鄰居基站列表',
+  'BS.alarms':'基站告警',
+  'BS.neList':'網元列表',
+  'BS.performance':'基站效能',
 
 
   // Fault Management (故障管理)
@@ -345,7 +359,7 @@ export const TwLanguage = {
   'cm.confirm_del':'確定要刪除此元件',
   'cm.unable_del':'無法刪除已組站之元件，請先刪除所屬之基站',
   'cm.error':'錯誤',
-  'cm.info':'元件資訊',
+  'cm.info':'網元資訊',
   'cm.apply':'套用',
   'cm.file':'檔案管理',
   'cm.path':'路徑',

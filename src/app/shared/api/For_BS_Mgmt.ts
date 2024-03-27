@@ -89,4 +89,14 @@ export class apiForBSMgmt {
     return this.http.delete( url, httpOptions );
   }
 
+  // Get a list of NEs  @2024/03/27 Add
+  queryBsComponentList(): Observable<any> {
+  
+    // 構建 API URL
+    const url = `${this.restPath}/queryBsComponentList/${this.sessionId}`;
+  
+    // 發起 HTTP GET 請求
+    return this.http.get( url );
+  }
+
 }

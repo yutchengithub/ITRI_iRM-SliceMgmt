@@ -15,7 +15,7 @@ export const Enlanguage = {
   'index.menu_dashboard':'Dashboard',
   'index.menu_fieldMgr':'Field Management',
   'index.menu_BSMgr':'BS Management',
-  'index.menu_componentMgr':'Component Management',
+  'index.menu_componentMgr':'NE Management',
   'index.menu_faultMgr':'Fault Management',
   'index.menu_performMgr':'Performance Management',
   'index.menu_softwareMgr':'Software Management',
@@ -89,6 +89,7 @@ export const Enlanguage = {
   'field.saveFieldSnapshot':'Save',
   'field.snapshotNameRequired': 'Enter snapshot name (no whitespace only)',
   'field.mustContainNonWhitespace': 'The snapshot name must contain at least one non-whitespace character',
+  
 
   'field.downloadCurrentFieldSnapshot':'Download This Snapshot',
   'field.snapshotNo':'No.',
@@ -200,15 +201,32 @@ export const Enlanguage = {
   'BS.type':'BS Type',
   'BS.cellCount':'Cell Count',
   'BS.description':'Description',
-  'BS.belongField':'Field',
+  'BS.belongField':'Affiliated Field',
   'BS.status':'BS Status',
   'BS.view':'View',
   'BS.delete':'Delete',
   'BS.confirm_del':'Confirm to Delete Basestation',
 
-  'BS.info':'Basestation Detailed Information',
+  'BS.info':'BS Detailed Information',
   'BS.bsAntennaCoord':'BS Antenna Coordinates',
+
+  'BS.ruNeName':'NE Name ( RU )',
+  'BS.latLong': 'Latitude and Longitude',
+
   'BS.lastHeartbeatTime': 'Last Heartbeat Time',
+
+  'BS.neName':'NE Name',
+  'BS.neType':'NE Type',
+  'BS.neModel':'NE Model',
+  'BS.neSFversion':'Software Version',
+
+
+  'BS.topology':'BS Topology',
+  'BS.parameters':'BS Parameters',
+  'BS.neighborBsList':'Neighbor BS List',
+  'BS.alarms':'BS Alarms',
+  'BS.neList':'NE List',
+  'BS.performance':'BS Performance',
 
   // Fault Management
   'fm.start':'StartTime',
@@ -345,7 +363,7 @@ export const Enlanguage = {
   'cm.confirm_del':'Confirm to Delete Component',
   'cm.unable_del':'Can not delete the component which has been assigned to a certain BS',
   'cm.error':'ERROR',
-  'cm.info':'Component Detail Information',
+  'cm.info':'NE Detail Information',
   'cm.apply':'Apply',
   'cm.file':'File Management',
   'cm.path':'Path',
