@@ -11,15 +11,17 @@ import { LanguageService } from 'src/app/shared/service/language.service';
 import { FmsgList } from './../../fault-management/fault-management.component';
 import { FaultMessages } from './../../fault-management/fault-management.component';
 
-// import APIs of BS Management @2024/03/25 Add 
-import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt';
+// import APIs of BS Management
+import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt'; // @2024/03/25 Add
 
-// 引入儲存各個資訊所需的 interfaces @2024/03/25 Add
-import { BSInfo }      from '../../shared/interfaces/BS/For_queryBsInfo_BS';
-import { BSInfo_dist } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';
+// 引入儲存各個資訊所需的 interfaces
+import { BSInfo }         from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
+import { BSInfo_dist }    from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
+import { NEList, NE, Sm } from '../../shared/interfaces/NE/For_queryBsComponentList'; // @2024/03/27 Add
 
-// 引入所需 Local Files @2024/03/25 Add
-import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';
+// 引入所需 Local Files
+import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';          // @2024/03/25 Add
+import { localNEList } from '../../shared/local-files/NE/For_queryBsComponentList'; // @2024/03/27 Add
 
 @Component({
   selector: 'app-bs-info',
@@ -44,6 +46,7 @@ export class BSInfoComponent implements OnInit {
 
     public  API_BS: apiForBSMgmt,           // @2024/03/25 Add for import API of BS Management
     public  bsInfo_LocalFiles: localBSInfo, // @2024/03/25 Add for import BS Info Local Files 
+    public  neList_LocalFiles: localNEList, // @2024/03/27 Add neList_LocalFiles 用於從 Local 文件獲取 NE 列表數據
   
   ) {
 
@@ -71,8 +74,12 @@ export class BSInfoComponent implements OnInit {
       console.log('bsId: ' + this.bsID + ', bsName: ' + this.bsName +
                      ', bsType: ' + this.bsType + ', bsCellCount: ' + this.bsCellCount + ',\nsend from /main/bs-mgr');
       
-      // 初入該頁面就取得此BS資訊               
+      // 初入該頁面就取得此 BS 資訊               
       this.getQueryBsInfo();
+
+      // @2024/03/27 Add
+      // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 
+      this.getNEList(); 
     });
 
   }
@@ -86,13 +93,14 @@ export class BSInfoComponent implements OnInit {
     this.router.navigate( ['/main/bs-mgr'] );
   }
 
-  isLoadingBsInfo =  true;                            // 加載狀態的標誌，初始設置為 true
+
+
+  isLoadingBsInfo =  true;                            // 加載 BS 資訊狀態的標誌，初始設置為 true
   selectBsInfo:      BSInfo = {} as BSInfo;           // 用於存儲從服務器或 Local Files 獲取的一體式基站資訊
   selectBsInfo_dist: BSInfo_dist = {} as BSInfo_dist; // 用於存儲從服務器或 Local Files 獲取的分佈式基站資訊
   selectBsCellCount: number = 0;                      // 用於存儲當前選中的 BS Cell 數量
 
-  // @2024/03/27 Update
-  // 用於獲取基站資訊
+  // 用於獲取基站資訊 @2024/03/27 Update
   getQueryBsInfo() {
     console.log( 'getQueryBsInfo() - Start' );
 
@@ -107,8 +115,8 @@ export class BSInfoComponent implements OnInit {
 
         // 取得 Local 一體式基站資訊
         this.selectBsInfo = this.bsInfo_LocalFiles.bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo;
-        this.selectBsInfo.laston = this.formatTimeWithoutSecondsFraction( this.selectBsInfo.laston ); // 處理時間格式
-        this.selectBsInfo.position = this.formatPosition( this.selectBsInfo.position );               // 處理位置訊息格式
+        this.selectBsInfo.laston = this.commonService.formatTimeWithoutSecondsFraction( this.selectBsInfo.laston ); // 處理時間格式
+        this.selectBsInfo.position = this.commonService.formatPosition( this.selectBsInfo.position );               // 處理位置訊息格式
         console.log( 'In local - Get the BSInfo:', this.selectBsInfo );
 
         // 一體式基站，直接將 Cell 數量設為 1
@@ -118,8 +126,8 @@ export class BSInfoComponent implements OnInit {
 
         // 取得 Local 分佈式基站資訊
         this.selectBsInfo_dist = this.bsInfo_LocalFiles.dist_bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo_dist;
-        this.selectBsInfo_dist.laston = this.formatTimeWithoutSecondsFraction( this.selectBsInfo_dist.laston ); // 處理時間格式
-        this.selectBsInfo_dist.position = this.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
+        this.selectBsInfo_dist.laston = this.commonService.formatTimeWithoutSecondsFraction( this.selectBsInfo_dist.laston ); // 處理時間格式
+        this.selectBsInfo_dist.position = this.commonService.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
         console.log( 'In local - Get the BSInfo_dist:', this.selectBsInfo_dist );
 
          // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
@@ -128,7 +136,11 @@ export class BSInfoComponent implements OnInit {
 
       console.log(`In local - BS Type ${ this.bsType } - Cell Count: ${ this.bsCellCount }`);
 
-      this.isLoadingBsInfo = false; // Local 模式下，數據加載快速完成,直接設置為 false
+      // @2024/03/27 Add
+      // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 
+      //this.getNEList(); 
+
+      this.isLoadingBsInfo = false; // Local 模式下，數據加載快速完成，直接設置為 false
 
     } else {
       
@@ -142,8 +154,8 @@ export class BSInfoComponent implements OnInit {
 
             // 刷新一體式基站資訊
             this.selectBsInfo = res as BSInfo;
-            this.selectBsInfo.laston = this.formatTimeWithoutSecondsFraction( this.selectBsInfo.laston ); // 處理時間格式
-            this.selectBsInfo.position = this.formatPosition( this.selectBsInfo.position );               // 處理位置訊息格式
+            this.selectBsInfo.laston = this.commonService.formatTimeWithoutSecondsFraction( this.selectBsInfo.laston ); // 處理時間格式
+            this.selectBsInfo.position = this.commonService.formatPosition( this.selectBsInfo.position );               // 處理位置訊息格式
             console.log( 'Get the BSInfo:', this.selectBsInfo );
 
             // 一體式基站，直接將 Cell 數量設為 1
@@ -153,15 +165,19 @@ export class BSInfoComponent implements OnInit {
 
             // 刷新分佈式基站資訊
             this.selectBsInfo_dist = res as BSInfo_dist;
-            this.selectBsInfo_dist.laston = this.formatTimeWithoutSecondsFraction( this.selectBsInfo_dist.laston ); // 處理時間格式
-            this.selectBsInfo_dist.position = this.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
+            this.selectBsInfo_dist.laston = this.commonService.formatTimeWithoutSecondsFraction( this.selectBsInfo_dist.laston ); // 處理時間格式
+            this.selectBsInfo_dist.position = this.commonService.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
             console.log( 'Get the BSInfo_dist:', this.selectBsInfo_dist );
 
             // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
             this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
           }
-
+          
           console.log(`BS Type ${ this.bsType } - Cell Count: ${ this.bsCellCount }`);
+
+          // @2024/03/27 Add
+          // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 
+          //this.getNEList(); 
 
           this.isLoadingBsInfo = false; // 數據加載完成
         },
@@ -180,26 +196,183 @@ export class BSInfoComponent implements OnInit {
 
 
   // @2024/03/27 Add
-  // 用於處理時間字符串，去掉秒後的小數部分
-  formatTimeWithoutSecondsFraction( timeString: string ): string {
-    return timeString.split('.')[0]; // 只保留小數點前的部分
+  // 定義 NEList 物件，並使用類型斷言將其初始化為空物件
+  NEList:  NEList = {} as NEList;
+  isLoadingNEList =  true;        // 控制加載 NE List 資訊狀態的標誌，初始設置為 true
+
+  // @2024/03/27 Add
+  // 用於取得 NE 列表資訊的函數
+  getNEList() {
+    console.log( 'getNEList() - Start' ); // 輸出開始取得 NE 列表的日誌
+
+    this.isLoadingNEList = true;         // 開始加載數據，顯示進度指示器
+
+    if ( this.commonService.isLocal ) {
+
+      // 如果是本地模式
+      // 從本地文件中獲取 NE 列表
+      this.NEList = this.neList_LocalFiles.neList_local;
+
+      // 處理獲取的 NE 列表,將 id 和 name 存儲到 neidNamePairs 中
+      this.processNEList( this.NEList );
+
+      this.isLoadingNEList = false; // Local 模式下，數據加載快速完成，直接設置為 false
+
+    } else {
+
+      // 如果非本地模式
+      // 從後端 API 獲取 NE 列表
+      this.API_BS.queryBsComponentList().subscribe({
+        next: ( res ) => {
+
+          // 成功獲取 NE 列表
+          this.NEList = res; // 將獲取到的 NE 列表賦值給 NEList 屬性
+          this.processNEList( this.NEList ); // 處理獲取的 NE 列表
+
+          this.isLoadingNEList = false; // 數據加載完成
+        },
+        error: ( error ) => {
+
+          // 獲取 NE 列表出錯
+          console.error( 'Error fetching NE list:', error ); // 輸出錯誤日誌
+          this.isLoadingNEList = false; // 出錯時設置加載標誌為 false
+        },
+        complete: () => {
+
+          // 獲取 NE 列表完成
+          console.log( 'NE list fetch completed' ); // 輸出完成日誌
+        }
+      });
+    }
+
+    console.log( 'getNEList() - End' ); // 輸出結束取得 NE 列表的日誌
   }
 
- // @2024/03/27 Add
- // 用於處理位置訊息的格式
- formatPosition( positionJson: string ): string {
-  try {
-    const positionArray = JSON.parse( positionJson );
-    return `( ${positionArray[0]}, ${positionArray[1]} )`;
-  } catch ( e ) {
-    console.error( 'Error parsing position JSON:', e );
-    return '';
+  // @2024/03/27 Add
+  // 用於存儲網元的使用的軟體版本訊息，包括網元名稱、網元類型、網元型號和軟體版本號
+  swVersionMap: { [neId: string]: { neName: string, neType: string, neModel: string, neSFversion: string } } = {};
+
+  // @2024/03/27 Add
+  // 用於存儲分佈式基站的 RU id 對應到的名稱與位置
+  ruIdNamePositionMap: { [ruId: string]: { name: string, position: string } } = {};
+
+  // @2024/03/27 Add
+  // processNEList 函數用於處理從 NEList 中獲取的網元訊息，並將相關資訊存儲在以下對象中:
+  // - ruIdNamePositionMap: 用於存儲分佈式基站的 RU id 對應到的名稱與位置
+  //        - swVersionMap: 用於存儲網元的使用的軟體版本訊息，包括網元名稱、網元類型、網元型號和軟體版本號
+  processNEList( neList: NEList ) {
+
+    // 如果是一體式基站
+    if ( this.bsType === "1" ) {
+
+      // 處理一體式基站的軟體版本資訊
+      for ( const component of this.selectBsInfo.components ) {
+
+        // 在 NEList 中找到與組件 id 相對應的 NE
+        const correspondingNE = neList.components.find( ne => ne.id === component.id );
+
+        // 如果找到對應的 NE
+        if ( correspondingNE ) {
+
+          // 將組件類型轉換為大寫
+          const neType = component.type.toUpperCase();
+
+          // 構建 neModel 字串
+          const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`;
+
+          // 獲取活動軟體版本,如果沒有則設置為 'None'
+          const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None';
+
+          // 將軟體版本資訊存儲在 swVersionMap 中,以組件 id 作為鍵
+          this.swVersionMap[component.id] = { neName: correspondingNE.name, neType, neModel, neSFversion };
+        }
+      }
+
+    } else if ( this.bsType === "2" ) { // 如果是分佈式基站
+
+        // 遍歷 selectBsInfo_dist.info 中的每個 Info 對象
+        for ( const info of this.selectBsInfo_dist.info ) {
+          
+          // 如果 RU.id 存在
+          if ( info.RU && info.RU.id ) {
+
+            const ruId = info.RU.id; // 獲取 RU.id
+
+            // 在 NEList 中找到與 RU.id 相對應的 NE
+            const correspondingNE = neList.components.find( ne => ne.id === ruId );
+
+            // 如果找到對應的 NE
+            if ( correspondingNE ) {
+
+              // 將 NE 的名稱和位置存儲在對象中,以 RU.id 作為鍵
+              this.ruIdNamePositionMap[ruId] = {
+                name: correspondingNE.name, // NE 的名稱
+                position: this.commonService.formatPosition(info.RU.position) // 格式化 RU 的位置資訊
+              };
+
+              // 處理軟體版本資訊
+              const neType = 'RU'; // 設置網元類型為 'RU'
+              const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
+              const neSFversion = this.getActiveSoftwareVersion(correspondingNE.sm) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+              this.swVersionMap[ruId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 RU.id 作為鍵
+            }
+          }
+      
+          // 處理 CU 和 DU 的軟體版本資訊
+          if ( info.CU && info.CU.id ) { // 如果 CU.id 存在
+
+            const cuId = info.CU.id; // 獲取 CU.id
+            const correspondingNE = neList.components.find(ne => ne.id === cuId); // 在 NEList 中找到與 CU.id 相對應的 NE
+
+            // 如果找到對應的 NE
+            if ( correspondingNE ) {
+              const neType = 'CU'; // 設置網元類型為 'CU'
+              const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
+              const neSFversion = this.getActiveSoftwareVersion(correspondingNE.sm) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+
+              this.swVersionMap[cuId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 CU.id 作為鍵
+            }
+          }
+      
+          if ( info.DU && info.DU.id ) { // 如果 DU.id 存在
+
+            const duId = info.DU.id; // 獲取 DU.id
+            const correspondingNE = neList.components.find( ne => ne.id === duId ); // 在 NEList 中找到與 DU.id 相對應的 NE
+
+            // 如果找到對應的 NE
+            if ( correspondingNE ) { 
+              const neType = 'DU';   // 設置網元類型為 'DU'
+              const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
+              const neSFversion = this.getActiveSoftwareVersion(correspondingNE.sm) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+              
+              this.swVersionMap[duId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 DU.id 作為鍵
+            }
+          }
+        }
+      }
   }
-}
 
+  // @2024/03/27 Add
+  // 用於取得對應 NE 目前使用的軟體版本
+  getActiveSoftwareVersion( sm: Sm ): string | undefined {
 
+    // 如果 sm 和 software-inventory 和 software-slot 存在
+    if ( sm && sm['software-inventory'] && sm['software-inventory']['software-slot'] ) {
 
+      // 找到 active 為 'true' 的 slot
+      const activeSlot = sm['software-inventory']['software-slot'].find( slot => slot.active === 'true' );
 
+      // 如果找到活動 slot 並且有 build-version
+      if ( activeSlot && activeSlot['build-version'] ) {
+
+        // 返回 build-version
+        return activeSlot['build-version'];
+      }
+    }
+
+    // 如果沒有找到活動軟體版本，返回 undefined
+    return undefined;
+  }
 
 
 
