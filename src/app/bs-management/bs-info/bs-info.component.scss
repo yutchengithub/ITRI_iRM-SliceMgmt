@@ -12,22 +12,59 @@
   stroke: #7cbaec !important;
 }
 
-// .topology-canvas {
-//   width: 90%;
-//   height: 400px;
-// }
+.topology-canvas {
+  // width: 90%;
+  // height: 400px;
+  
+  position: relative;
+  top: 30px;
+  left: 150px;
+}
 
+.nes-topology {
+  position: relative;
+  bottom: 250px;
+  left: 95px;
+}
  
 .ne-info {
   position: absolute;
   display: flex;
   align-items: center;
   white-space: nowrap;
-  color: #00FFFF;
+  
+  border: 1px solid rgb(255, 255, 255);
+  padding: 5px;
+  color: rgb(251, 251, 251);
+  font-weight: bold;
 }
 
 .ne-info span {
   margin-right: 5px;
+}
+
+.all-in-one-ne-info {
+  border-color: rgb(183, 21, 75);
+  background-color: rgb(183, 21, 75);
+  border-width: 2px;
+}
+
+.cu-info {
+  border-color: orange;
+  background-color: orange;
+  border-width: 2px;
+}
+
+.du-info {
+  border-color: orangered;
+  background-color: orangered;
+  border-width: 2px;
+}
+
+.ru-info {
+  border-color: rgb(158, 36, 36);
+  background-color: rgb(158, 36, 36);
+  border-width: 2px;
 }
 
 .greenLight {
