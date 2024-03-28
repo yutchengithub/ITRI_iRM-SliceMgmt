@@ -1299,6 +1299,197 @@ import { NEList, NE }  from './../../interfaces/NE/For_queryBsComponentList';
                 ]
               }
             }
+          },
+          {
+            "id": "51e4faf908f3434fa06d",
+            "bsId": "f124a709d0ea4875a43e",
+            "bsName": "BS-D-1",
+            "name": "itri_10.0.2.17",
+            "ip": "10.0.2.17",
+            "port": "830",
+            "account": "k200",
+            "key": "k200123",
+            "comtype": 1,
+            "firm": "ITRI",
+            "modelname": "v2.0",
+            "status": 2,
+            "sm": {
+              "data": null
+            }
+          },
+          {
+            "id": "edb9791520714df685ec",
+            "bsId": "f124a709d0ea4875a43e",
+            "bsName": "BS-D-1",
+            "name": "itri_10.0.2.18",
+            "ip": "10.0.2.18",
+            "port": "830",
+            "account": "k200",
+            "key": "k200123",
+            "comtype": 2,
+            "firm": "ITRI",
+            "modelname": "v2.0",
+            "status": 2,
+            "sm": {
+              "software-inventory": {
+                "software-slot": [
+                  {
+                    "name": "slot-1",
+                    "status": "VALID",
+                    "active": "true",
+                    "running": "true",
+                    "access": "READ_ONLY",
+                    "vendor-code": "K2",
+                    "build-id": "b01",
+                    "build-name": "product-default",
+                    "build-version": "0.1.0",
+                    "files": {
+                      "name": "file-1",
+                      "version": "0.2.3",
+                      "local-path": "~/some_dir/",
+                      "integrity": "OK"
+                    }
+                  },
+                  {
+                    "name": "slot-2",
+                    "status": "EMPTY",
+                    "active": "false",
+                    "running": "false",
+                    "access": "READ_WRITE"
+                  },
+                  {
+                    "name": "slot-3",
+                    "status": "EMPTY",
+                    "active": "false",
+                    "running": "false",
+                    "access": "READ_WRITE"
+                  },
+                  {
+                    "name": "slot-4",
+                    "status": "EMPTY",
+                    "active": "false",
+                    "running": "false",
+                    "access": "READ_WRITE"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "74454a0beefa495889ea",
+            "bsId": "f124a709d0ea4875a43e",
+            "bsName": "BS-D-1",
+            "name": "itri_10.0.2.20",
+            "ip": "10.0.2.20",
+            "port": "830",
+            "account": "k200",
+            "key": "k200123",
+            "comtype": 3,
+            "firm": "ITRI",
+            "modelname": "v2.0",
+            "status": 2,
+            "sm": {
+              "software-inventory": {
+                "software-slot": [
+                  {
+                    "name": "slot-1",
+                    "status": "VALID",
+                    "active": "true",
+                    "running": "true",
+                    "access": "READ_ONLY",
+                    "vendor-code": "K2",
+                    "build-id": "b01",
+                    "build-name": "product-default",
+                    "build-version": "0.1.0",
+                    "files": {
+                      "name": "file-1",
+                      "version": "0.2.3",
+                      "local-path": "~/some_dir/",
+                      "integrity": "OK"
+                    }
+                  },
+                  {
+                    "name": "slot-2",
+                    "status": "EMPTY",
+                    "active": "false",
+                    "running": "false",
+                    "access": "READ_WRITE"
+                  },
+                  {
+                    "name": "slot-3",
+                    "status": "EMPTY",
+                    "active": "false",
+                    "running": "false",
+                    "access": "READ_WRITE"
+                  },
+                  {
+                    "name": "slot-4",
+                    "status": "EMPTY",
+                    "active": "false",
+                    "running": "false",
+                    "access": "READ_WRITE"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "0acf7ca15e0b4f259ff2",
+            "bsId": "f124a709d0ea4875a43e",
+            "bsName": "BS-D-1",
+            "name": "itri_10.0.2.21",
+            "ip": "10.0.2.21",
+            "port": "830",
+            "account": "k200",
+            "key": "k200123",
+            "comtype": 3,
+            "firm": "ITRI",
+            "modelname": "v2.0",
+            "status": 2,
+            "sm": {
+              "software-inventory": {
+                "software-slot": [
+                  {
+                    "name": "slot-1",
+                    "status": "VALID",
+                    "active": "true",
+                    "running": "true",
+                    "access": "READ_ONLY",
+                    "vendor-code": "K2",
+                    "build-id": "b01",
+                    "build-name": "product-default",
+                    "build-version": "0.1.0",
+                    "files": {
+                      "name": "file-1",
+                      "version": "0.2.3",
+                      "local-path": "~/some_dir/",
+                      "integrity": "OK"
+                    }
+                  },
+                  {
+                    "name": "slot-2",
+                    "status": "EMPTY",
+                    "active": "false",
+                    "running": "false",
+                    "access": "READ_WRITE"
+                  },
+                  {
+                    "name": "slot-3",
+                    "status": "EMPTY",
+                    "active": "false",
+                    "running": "false",
+                    "access": "READ_WRITE"
+                  },
+                  {
+                    "name": "slot-4",
+                    "status": "EMPTY",
+                    "active": "false",
+                    "running": "false",
+                    "access": "READ_WRITE"
+                  }
+                ]
+              }
+            }
           }
         ]
     }

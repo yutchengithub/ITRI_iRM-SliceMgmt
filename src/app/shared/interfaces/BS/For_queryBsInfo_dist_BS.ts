@@ -18,7 +18,7 @@ export interface BSInfo_dist {
     components: Components_dist;   // ok 可能會出錯
     status: number;           // ok
     laston: string;           // ok
-    lastoff: string;          // ok
+    lastoff: string | null;          // ok
     'components-info': ComponentsInfo;   // ok 不一定有值
 }
 

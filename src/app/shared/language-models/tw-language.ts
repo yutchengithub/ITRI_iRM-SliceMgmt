@@ -91,6 +91,7 @@ export const TwLanguage = {
   'field.snapshotNo':'編號',
   'field.snapshotName':'快照名稱',
   'field.createdTime': '建立時間',
+  'field.currentSnapshot': '目前快照',
   'field.download': '下載',
   'field.downloadSnapshot': '下載此快照',
   'field.delete': '刪除',

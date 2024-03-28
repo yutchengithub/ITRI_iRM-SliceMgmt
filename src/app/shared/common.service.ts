@@ -46,6 +46,7 @@ export interface NowTime {
   day: string;
   hour: string;
   minute: string;
+  second: string;
 }
 
 @Injectable({
@@ -172,12 +173,14 @@ export class CommonService {
     const day = this.addZero(d.getDate());
     const hour = this.addZero(d.getHours());
     const minute = this.addZero(d.getMinutes());
+    const second = this.addZero(d.getSeconds());
     return {
       year: year,
       month: month,
       day: day,
       hour: hour,
-      minute: minute
+      minute: minute,
+      second: second
     }
   }
 

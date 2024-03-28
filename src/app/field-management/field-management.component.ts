@@ -676,11 +676,19 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   @ViewChild('fieldSnapshotSetWindow') fieldSnapshotSetWindow: any;  // 使用 ViewChild 裝飾器引用模板中的 'fieldSnapshotSetWindow' 元素
   fieldSnapshotSetWindowRef!: MatDialogRef<any>; // 用於控制"場域快照設置"視窗的開啟和關閉
   fieldSnapshotSetFormValidated = false;         // 用於跟踪"場域快照設置"表單的驗證狀態
+  currentSnapshotTime: string = "";              // 用於儲存打開快照視窗的當下時間 @2024/03/29 Add
 
-  // 開啟 "場域快照" 視窗用 @2024/03/07 Update
+  // 開啟 "場域快照" 視窗用 @2024/03/29 Update
   openfieldSnapshotSetWindow( field: Field ){
     this.selectField = field;
 
+    // 使用函數取得當下時間 @2024/03/29 Add
+    const currentTime = this.commonService.getNowTime();
+
+    // 將各時間部分組合成一個字串 @2024/03/29 Add
+    //this.currentSnapshotTime = `${currentTime.year}-${currentTime.month}-${currentTime.day} ${currentTime.hour}:${currentTime.minute}:${currentTime.second}`;
+    this.currentSnapshotTime = `${currentTime.year}-${currentTime.month}-${currentTime.day} ${currentTime.hour}:${currentTime.minute}`;
+    
     // @2024/03/06 Add
     this.toCreateFieldSnapshot();     // 打開視窗即建立一張當下快照 
     this.getQueryFieldSnapshotList(); // 接著取得先前有儲存的其它場域快照
@@ -700,8 +708,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     } );
 
     // 訂閱視窗關閉事件，並在關閉時重置表單驗證狀態
-    this.fieldSnapshotSetWindowRef.afterClosed().subscribe(() => {
-      this.fieldSnapshotSetFormValidated = false;
+    this.fieldSnapshotSetWindowRef.afterClosed().subscribe( ( ) => {
+        this.fieldSnapshotSetFormValidated = false;
     });
   }
 
