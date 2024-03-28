@@ -415,117 +415,178 @@ export class BSInfoComponent implements OnInit {
 
 
 
+
+  // 使用 @ViewChild 裝飾器獲取 canvas 元素的引用
   @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
 
+  // 初始化拓撲圖面板
   initTopologyPanel() {
-    console.log( 'In initTopologyPanel() - componentArray:', this.componentArray );
+    // 輸出目前的 componentArray 到控制台
+    console.log('In initTopologyPanel() - componentArray:', this.componentArray);
 
-    if ( this.canvas ) {
-
+    // 檢查 canvas 元素是否存在
+    if (this.canvas) {
+      // 獲取 canvas 的 2D 渲染上下文
       const ctx = this.canvas.nativeElement.getContext('2d');
+      // 獲取 canvas 的寬度
       const canvasWidth = this.canvas.nativeElement.width;
+      // 獲取 canvas 的高度
       const canvasHeight = this.canvas.nativeElement.height;
-  
-      if ( ctx ) {
 
-        // 清除畫布
-        ctx.clearRect( 0, 0, canvasWidth, canvasHeight );
-      
+      // 檢查渲染上下文是否存在
+      if (ctx) {
+        // 清除整個 canvas
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+        // 設置線條寬度為 1
         ctx.lineWidth = 1;
+        // 設置線條顏色為白色
         ctx.strokeStyle = 'white';
+        // 設置填充顏色為白色
         ctx.fillStyle = 'white';
+        // 設置字體為 12px Arial
         ctx.font = '12px Arial';
-  
-        // 繪製一體式基站
-        if ( this.selectBsInfo && this.selectBsInfo.bstype === 1 ) {
+
+        // 檢查是否為一體式基站
+        if (this.selectBsInfo && this.selectBsInfo.bstype === 1) {
+          // 獲取一體式基站的組件
           const component = this.selectBsInfo.components[0];
-          const ne = this.NEList.components.find( n => n.id === component.id );
-    
-          if ( ne ) {
+          // 在 NEList 中找到對應的網元
+          const ne = this.NEList.components.find(n => n.id === component.id);
+
+          // 如果找到對應的網元
+          if (ne) {
+            // 計算一體式基站的中心位置
             const x = canvasWidth / 2;
             const y = canvasHeight / 2;
+            // 開始一個新的路徑
             ctx.beginPath();
-            ctx.arc( x, y, 1, 0, 2 * Math.PI );
+            // 繪製一個半徑為 1 的圓
+            ctx.arc(x, y, 1, 0, 2 * Math.PI);
+            // 繪製線條
             ctx.stroke();
+            // 繪製網元名稱和組件類型 (註解掉)
             //ctx.fillText( `${ne.name} (${component.type})`, x + 40, y );
           }
         }
-      
-         // 繪製分佈式基站
-        if ( this.selectBsInfo_dist && this.selectBsInfo_dist.bstype === 2 ) {
+
+        // 檢查是否為分佈式基站
+        if (this.selectBsInfo_dist && this.selectBsInfo_dist.bstype === 2) {
+          // 獲取分佈式基站的組件
           const components = this.selectBsInfo_dist.components;
 
-          // 繪製 CU、DU 和 RU
+          // 開始繪製 CU、DU 和 RU
           ctx.beginPath();
+          // 遍歷所有的 CU
           for (const cuid in components) {
+            // 在 componentArray 中找到對應的 CU
             const cu = this.componentArray.find(component => component.id === cuid);
+            // 如果找到對應的 CU
             if (cu) {
+              // 計算 CU 的位置
               const cuX = canvasWidth / 4;
               const cuY = canvasHeight / (Object.keys(components).length + 1) * (Object.keys(components).indexOf(cuid) + 1);
+              // 移動到 CU 的位置
               ctx.moveTo(cuX, cuY);
+              // 繪製一個半徑為 1 的圓
               ctx.arc(cuX, cuY, 1, 0, 2 * Math.PI);
             }
 
+            // 獲取當前 CU 下的所有 DU
             const dus = components[cuid];
+            // 遍歷所有的 DU
             for (const duid in dus) {
+              // 在 componentArray 中找到對應的 DU
               const du = this.componentArray.find(component => component.id === duid);
+              // 如果找到對應的 DU
               if (du) {
+                // 計算 DU 的位置
                 const duX = canvasWidth / 2;
                 const duY = canvasHeight / (Object.keys(dus).length + 1) * (Object.keys(dus).indexOf(duid) + 1);
+                // 移動到 DU 的位置
                 ctx.moveTo(duX, duY);
+                // 繪製一個半徑為 1 的圓
                 ctx.arc(duX, duY, 1, 0, 2 * Math.PI);
               }
 
+              // 獲取當前 DU 下的所有 RU
               const rus = dus[duid];
+              // 遍歷所有的 RU
               for (let i = 0; i < rus.length; i++) {
+                // 獲取 RU 的 ID
                 const ruId = Object.keys(rus[i])[0];
+                // 在 componentArray 中找到對應的 RU
                 const ru = this.componentArray.find(component => component.id === ruId);
+                // 如果找到對應的 RU
                 if (ru) {
+                  // 計算 RU 的位置
                   const ruX = canvasWidth * 0.75;
                   const ruY = canvasHeight / (rus.length + 1) * (i + 1);
+                  // 移動到 RU 的位置
                   ctx.moveTo(ruX, ruY);
+                  // 繪製一個半徑為 1 的圓
                   ctx.arc(ruX, ruY, 1, 0, 2 * Math.PI);
                 }
               }
             }
           }
+          // 繪製所有的 CU、DU 和 RU
           ctx.stroke();
 
-          // 繪製連線
+          // 開始繪製連線
+          // 遍歷所有的 CU
           for (const cuid in components) {
+            // 在 componentArray 中找到對應的 CU
             const cu = this.componentArray.find(component => component.id === cuid);
+            // 獲取當前 CU 下的所有 DU
             const dus = components[cuid];
+            // 遍歷所有的 DU
             for (const duid in dus) {
+              // 在 componentArray 中找到對應的 DU
               const du = this.componentArray.find(component => component.id === duid);
+              // 如果找到對應的 CU 和 DU
               if (cu && du) {
+                // 計算 CU 的位置
                 const cuX = canvasWidth / 4;
                 const cuY = canvasHeight / (Object.keys(components).length + 1) * (Object.keys(components).indexOf(cuid) + 1);
+                // 計算 DU 的位置
                 const duX = canvasWidth / 2;
                 const duY = canvasHeight / (Object.keys(dus).length + 1) * (Object.keys(dus).indexOf(duid) + 1);
+                // 移動到 CU 的位置
                 ctx.moveTo(cuX, cuY);
+                // 繪製一條線到 DU 的位置
                 ctx.lineTo(duX, duY);
               }
 
+              // 獲取當前 DU 下的所有 RU
               const rus = dus[duid];
+              // 遍歷所有的 RU
               for (let i = 0; i < rus.length; i++) {
+                // 獲取 RU 的 ID
                 const ruId = Object.keys(rus[i])[0];
+                // 在 componentArray 中找到對應的 RU
                 const ru = this.componentArray.find(component => component.id === ruId);
+                // 如果找到對應的 DU 和 RU
                 if (du && ru) {
+                  // 計算 DU 的位置
                   const duX = canvasWidth / 2;
                   const duY = canvasHeight / (Object.keys(dus).length + 1) * (Object.keys(dus).indexOf(duid) + 1);
+                  // 計算 RU 的位置
                   const ruX = canvasWidth * 0.75;
                   const ruY = canvasHeight / (rus.length + 1) * (i + 1);
+                  // 移動到 DU 的位置
                   ctx.moveTo(duX, duY);
+                  // 繪製一條線到 RU 的位置
                   ctx.lineTo(ruX, ruY);
                 }
               }
             }
           }
+          // 繪製所有的連線
           ctx.stroke();
         }
       }
     }
-    
   }
 
   getCuPosition(cu: any): { x: number, y: number } {
