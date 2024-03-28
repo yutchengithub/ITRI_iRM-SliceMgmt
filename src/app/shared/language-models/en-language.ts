@@ -216,6 +216,7 @@ export const Enlanguage = {
 
   'BS.lastHeartbeatTime': 'Last Heartbeat Time',
 
+  'BS.No':'No.',
   'BS.neName':'NE Name',
   'BS.neType':'NE Type',
   'BS.neModel':'NE Model',
@@ -228,6 +229,10 @@ export const Enlanguage = {
   'BS.alarms':'BS Alarms',
   'BS.neList':'NE List',
   'BS.performance':'BS Performance',
+  'BS.ip':'IP Address',
+  'BS.neStatus':'Status',
+  'BS.port':'Port',
+  'BS.edit':'Edit',
 
   // Fault Management
   'fm.start':'StartTime',

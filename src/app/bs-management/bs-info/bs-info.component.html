@@ -164,8 +164,10 @@
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="collabsible">
+            
               <!-- 使用 Canvas 畫網元拓樸圖 -->
               <canvas #canvas class="topology-canvas"></canvas>
+
               <ng-container *ngIf=" bsType === '1' ">
                 <!-- 顯示 一體式基站 拓樸 -->
                 <div class="nes-topology">
@@ -222,65 +224,148 @@
 
     <div>
       <span>{{ languageService.i18n['BS.parameters'] }}</span>
-      <input id="Datastore" class="toggle" type="checkbox">
-      <label for="Datastore" class="lbl-toggle"></label>
+      <input id="bsParameters" class="toggle" type="checkbox">
+      <label for="bsParameters" class="lbl-toggle"></label>
       
       <div class="collapsible-content">
         <div class="content-inner">
+          <button>DB → gNB</button><button>DB ← gNB</button>
           <div class="collabsible">
-      
+            <div class="table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Items</th>
+                    <th>Athena Ochestreator DB</th>
+                    <th>Network Element Datastore</th>
+                    <th>Conflict</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>PLMNID_MCC</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>PLMNID_MNC</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>gNB ID</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>gNB ID Length</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Cell Local ID ( binary value )</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>NCI ( hexadecimal value )</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>PCI</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>NR-ARFCN-DL</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>NR-ARFCN-UL</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Channel Bandwidth</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Tx Power</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>TAC</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div>
+    <div><!-- 鄰居基站列表 -->
       <span>{{ languageService.i18n['BS.neighborBsList'] }}</span>
       <input id="softInfo" class="toggle" type="checkbox">
       <label for="softInfo" class="lbl-toggle"></label>
       <div class="collapsible-content">
         <div class="content-inner">
-          <div class="panel">
-            <!-- <label *ngFor="let software of bsComponentInfo.sm.softwareInventory.softwareSlot" [for]="'radio-' + software.name">
-              <input type="radio" [id]="'radio-' + software.name" name="software-group">
-              <div>
-                <ul>
-                  <li><label>Software</label><span>{{ software.name }}</span></li>
-                  <li><label>Status</label><span>{{ software.status }}</span></li>
-                  <li><label>Active</label><span>{{ software.active }}</span></li>
-                  <li><label>Running</label><span>{{ software.running }}</span></li>
-                  <li><label>Access</label><span>{{ software.access }}</span></li>
-                  <li><label>Version</label><span>{{ software.buildVersion }}</span></li>
-                </ul>
-              </div>
-            </label> -->
-          </div>
-
             <div class="table">
               <table>
                 <thead>
                   <tr>
-                    <!-- <th>{{languageService.i18n['table.header_name']}}</th> -->
-                    <th>{{languageService.i18n['manufacturer']}}</th>
-                    <th>{{languageService.i18n['model']}}</th>
-                    <th>{{languageService.i18n['type']}}</th>
-                    <th>{{languageService.i18n['version']}}</th>
-                    <th>{{languageService.i18n['notes']}}</th>
-                    <th>{{languageService.i18n['upload_time']}}</th>
-                    <th>{{languageService.i18n['cm.apply']}}</th>
+                    <th>{{ languageService.i18n['BS.No'] }}</th>
+                    <th>PLMN ID</th>
+                    <th>gNB ID</th>
+                    <th>NCI</th>
+                    <th>PCI</th>
+                    <th>{{ languageService.i18n['BS.edit'] }}</th>
+                    <th>{{ languageService.i18n['BS.delete'] }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <!-- <td>{{bsComponentInfo.name}}</td> -->
-                    <td>{{bsComponentInfo.firm}}</td>
-                    <td>{{bsComponentInfo.modelname}}</td>
-                    <td>{{bsComponentInfo.comtype}}</td>
+                    <td></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td class="center">
-                      <mat-icon tooltip="{{languageService.i18n['view_detail']}}">cloud_download</mat-icon>
+                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                    </td>
+                    <td class="icon"><!-- 刪除按鈕 -->
+                      <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}">delete_forever</mat-icon>
                     </td>
                   </tr>
                 </tbody>
@@ -322,14 +407,14 @@
               <table>
                 <thead>
                   <tr>
-                    <th>{{languageService.i18n['fm.no']}}</th>
-                    <th>{{languageService.i18n['fm.field']}}</th>
-                    <th>{{languageService.i18n['fm.BS']}}</th>
-                    <th>{{languageService.i18n['fm.component']}}</th>
-                    <th>{{languageService.i18n['fm.alarm']}}</th>
-                    <th>{{languageService.i18n['fm.severity']}}</th>
-                    <th>{{languageService.i18n['fm.occurtime']}}</th>
-                    <th>{{languageService.i18n['fm.status']}}</th>
+                    <th>{{ languageService.i18n['BS.No'] }}</th>
+                    <th>{{ languageService.i18n['fm.field'] }}</th>
+                    <th>{{ languageService.i18n['fm.BS'] }}</th>
+                    <th>{{ languageService.i18n['BS.neName'] }}</th>
+                    <th>{{ languageService.i18n['fm.alarm'] }}</th>
+                    <th>{{ languageService.i18n['fm.severity'] }}</th>
+                    <th>{{ languageService.i18n['fm.occurtime'] }}</th>
+                    <th>{{ languageService.i18n['fm.status'] }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -365,16 +450,24 @@
             <table>
               <thead>
                 <tr>
-                  <th>{{languageService.i18n['fileName']}}</th>
-                  <th>{{languageService.i18n['cm.path']}}</th>
-                  <th>{{languageService.i18n['cm.download']}}</th>
+                  <th>{{ languageService.i18n['BS.neName'] }}</th>
+                  <th>{{ languageService.i18n['BS.neType'] }}</th>
+                  <th>{{ languageService.i18n['BS.ip'] }}</th>
+                  <th>{{ languageService.i18n['BS.port'] }}</th>
+                  <th>{{ languageService.i18n['BS.neStatus'] }}</th>
+                  <th>{{ languageService.i18n['BS.view'] }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>{{bsComponentInfo.name}}</td>
-                  <td>{{bsComponentInfo.firm}}</td>
-                  <td class="center"><mat-icon tooltip="{{languageService.i18n['view_detail']}}">download_for_offline</mat-icon></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td class="icon">
+                    <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}">remove_red_eye</mat-icon>
+                  </td>
                 </tr>
               </tbody>
             </table>
