@@ -95,6 +95,7 @@ export const Enlanguage = {
   'field.snapshotNo':'No.',
   'field.snapshotName':'Snapshot Name',
   'field.createdTime': 'Created Time',
+  'field.currentSnapshot': 'Current Snapshot',
   'field.download': 'Download',
   'field.downloadSnapshot': 'Download this snapshot',
   'field.delete': 'Delete',

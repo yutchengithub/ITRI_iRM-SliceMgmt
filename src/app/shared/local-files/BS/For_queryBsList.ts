@@ -77,29 +77,6 @@
             "lastoff": "2023-12-29 20:53:31.456347"
           },
           {
-            "id": "815c6f997c434114a3e5",
-            "fieldId": "aa520ec8e5074f54b77d",
-            "fieldName": "ITRI2",
-            "name": "BS12",
-            "ip": "",
-            "port": "",
-            "position": "[121.045001,24.776136]",
-            "description": "BS12",
-            "bstype": 1,
-            "components": [
-              {
-                "type": "cu+du+ru",
-                "id": "77566db644d24af3b93f"
-              }
-            ],
-            "status": 2,
-            "gNBId": 12,
-            "gNBIdLength": 22,
-            "adminstate": 1,
-            "laston": "2024-01-23 11:56:29.294851",
-            "lastoff": "2023-12-30 09:44:10.008023"
-          },
-          {
             "id": "dac6f2a55f774233bae4",
             "fieldId": "aa520ec8e5074f54b77d",
             "fieldName": "ITRI2",
@@ -215,98 +192,6 @@
             "lastoff": "2023-12-29 11:31:29.128311"
           },
           {
-            "id": "03b5648702994bf69f44",
-            "fieldId": "e6700d701f8b41f8950e",
-            "fieldName": "ITRI",
-            "name": "BS3",
-            "ip": "",
-            "port": "",
-            "position": "[121.043750,24.776600]",
-            "description": "BS07",
-            "bstype": 1,
-            "components": [
-              {
-                "type": "cu+du+ru",
-                "id": "2f2492e4d32b432c8e5a"
-              }
-            ],
-            "status": 2,
-            "gNBId": 7,
-            "gNBIdLength": 22,
-            "adminstate": 1,
-            "laston": "2024-01-23 11:56:28.440221",
-            "lastoff": "2023-12-29 06:22:48.593618"
-          },
-          {
-            "id": "e8cd8bfa098d4cea85ac",
-            "fieldId": "e6700d701f8b41f8950e",
-            "fieldName": "ITRI",
-            "name": "BS3",
-            "ip": "",
-            "port": "",
-            "position": "[121.043632,24.777500]",
-            "description": "BS03",
-            "bstype": 1,
-            "components": [
-              {
-                "type": "cu+du+ru",
-                "id": "77880b1c527c4a63b886"
-              }
-            ],
-            "status": 2,
-            "gNBId": 3,
-            "gNBIdLength": 22,
-            "adminstate": 1,
-            "laston": "2024-01-23 11:56:29.854533",
-            "lastoff": "2023-12-30 06:00:13.304028"
-          },
-          {
-            "id": "e28c262d948c4802811e",
-            "fieldId": "e6700d701f8b41f8950e",
-            "fieldName": "ITRI",
-            "name": "BS4",
-            "ip": "",
-            "port": "",
-            "position": "[121.041763,24.775443]",
-            "description": "BS04",
-            "bstype": 1,
-            "components": [
-              {
-                "type": "cu+du+ru",
-                "id": "ae9afa8c69a04a418a31"
-              }
-            ],
-            "status": 2,
-            "gNBId": 4,
-            "gNBIdLength": 22,
-            "adminstate": 1,
-            "laston": "2024-01-23 11:56:29.743328",
-            "lastoff": "2023-12-28 14:54:30.431344"
-          },
-          {
-            "id": "75acd33433a44dd6b8a5",
-            "fieldId": "e6700d701f8b41f8950e",
-            "fieldName": "ITRI",
-            "name": "BS5",
-            "ip": "",
-            "port": "",
-            "position": "[121.042983,24.775178]",
-            "description": "BS05",
-            "bstype": 1,
-            "components": [
-              {
-                "type": "cu+du+ru",
-                "id": "b65db7a58227447e8045"
-              }
-            ],
-            "status": 2,
-            "gNBId": 5,
-            "gNBIdLength": 22,
-            "adminstate": 1,
-            "laston": "2024-01-23 11:56:29.116537",
-            "lastoff": "2024-01-02 11:45:27.172762"
-          },
-          {
             "id": "31e8142a41f9411f8855",
             "fieldId": "e6700d701f8b41f8950e",
             "fieldName": "ITRI",
@@ -328,99 +213,6 @@
             "adminstate": 1,
             "laston": "2024-01-23 11:56:28.858589",
             "lastoff": "2024-01-02 11:45:26.836341"
-          },
-          {
-            "id": "e4f0013574684be19deb",
-            "fieldId": "e6700d701f8b41f8950e",
-            "fieldName": "ITRI",
-            "name": "BS8",
-            "ip": "",
-            "port": "",
-            "position": "[121.042304,24.774599]",
-            "description": "BS08",
-            "bstype": 1,
-            "components": [
-              {
-                "type": "cu+du+ru",
-                "id": "7583c14081f2465f9b1a"
-              }
-            ],
-            "status": 2,
-            "gNBId": 8,
-            "gNBIdLength": 22,
-            "adminstate": 1,
-            "laston": "2024-01-23 11:56:29.800655",
-            "lastoff": "2023-12-30 02:50:10.569725"
-          },
-          {
-            "id": "349b9f81afa54669b094",
-            "name": "BS9",
-            "ip": "",
-            "port": "",
-            "position": "[121.044568,24.775007]",
-            "description": "BS09",
-            "bstype": 2,
-            "components": {
-              "1ebfdbd887034b439104": {
-                "542ec6627f744df1bafd": [
-                  {
-                    "8ece726a4ebe4803b8be": "[121.045096,24.773931]"
-                  }
-                ],
-                "f026604b16ab4651b1a3": [
-                  {
-                    "4d926256a64443349aa1": "[121.044212,24.774544]"
-                  },
-                  {
-                    "9302a2a119484ef1ab67": "[121.043409,24.77402]"
-                  },
-                  {
-                    "56fc9a6be991472f8b86": "[121.044212,24.773144]"
-                  }
-                ]
-              }
-            },
-            "status": 1,
-            "gNBId": 9,
-            "gNBIdLength": 22,
-            "adminstate": 1,
-            "laston": "2024-01-23 11:56:29.014575",
-            "lastoff": "2023-12-27 08:04:10.562803"
-          },
-          {
-            "id": "349b9f81afa54669b095",
-            "name": "BS30",
-            "ip": "",
-            "port": "",
-            "position": "[121.044368,24.774007]",
-            "description": "BS30",
-            "bstype": 2,
-            "components": {
-              "1ebfdbd887034b439104": {
-                "542ec6627f744df1bafd": [
-                  {
-                    "8ece726a4ebe4803b8be": "[121.045086,24.773951]"
-                  }
-                ],
-                "f026604b16ab4651b1a3": [
-                  {
-                    "4d926256a64443349aa1": "[121.044215,24.774554]"
-                  },
-                  {
-                    "9302a2a119484ef1ab67": "[121.043419,24.77405]"
-                  },
-                  {
-                    "56fc9a6be991472f8b86": "[121.044215,24.773146]"
-                  }
-                ]
-              }
-            },
-            "status": 1,
-            "gNBId": 30,
-            "gNBIdLength": 22,
-            "adminstate": 1,
-            "laston": "2024-01-26 11:48:29.014588",
-            "lastoff": "2023-12-28 08:15:10.562811"
           },
           {
             "id": "349b9f81afa54669b096",
@@ -456,6 +248,35 @@
             "adminstate": 1,
             "laston": "2024-01-31 05:43:29.054588",
             "lastoff": "2023-12-30 12:15:10.565811"
+          },
+          {
+            "id": "f124a709d0ea4875a43e",
+            "fieldId": "f769da087f2044e7a0d7",
+            "fieldName": "field",
+            "name": "BS-D-1",
+            "ip": "",
+            "port": "",
+            "position": "",
+            "description": "bs-3",
+            "bstype": 2,
+            "components": {
+              "51e4faf908f3434fa06d": {
+                "edb9791520714df685ec": [
+                  {
+                    "74454a0beefa495889ea": "[121.044224,24.774815]"
+                  },
+                  {
+                    "0acf7ca15e0b4f259ff2": "[121.045324,24.774035]"
+                  }
+                ]
+              }
+            },
+            "status": 2,
+            "gNBId": 3,
+            "gNBIdLength": 22,
+            "adminstate": 1,
+            "laston": "2024-03-29 02:28:37.501378",
+            "lastoff": null
           }
         ]
       }

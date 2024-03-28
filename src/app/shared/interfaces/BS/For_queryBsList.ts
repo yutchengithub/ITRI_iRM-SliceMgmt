@@ -22,10 +22,9 @@ export interface Basestation {
     gNBIdLength: number;
     adminstate: number;
     laston: string;
-    lastoff: string;
+    lastoff: string | null;
 
     cellCount?: number; // 記錄 cell 數用
-    
     selected?: boolean; // 用於決定 BS list 每列 BS 對應到的 CheckBox 是否要顯示被選擇或未選擇
 }
   

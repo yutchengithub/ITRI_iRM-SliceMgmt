@@ -292,11 +292,11 @@
 <!-- Window of Field Snapshot Set @2024/03/09 Update -->
 <ng-template #fieldSnapshotSetWindow>
 
-    <!-- 視窗標頭 - 場域快照 -->
+  <!-- 視窗標頭 - 場域快照 -->
   <h5>{{ languageService.i18n['field.fieldSnapshots'] }}</h5>
   <div class="content Snapshot_UI02">
-    <h3>Current Snapshot</h3>
-    <span class="time">Created Time:  2024-03-11 14:05:38</span>
+    <h3>{{ languageService.i18n['field.currentSnapshot'] }}</h3>
+    <span class="time">{{ languageService.i18n['field.createdTime'] }}: {{ currentSnapshotTime }}</span>
     <ul *ngIf="selectField">
       <li>
         <label>{{ languageService.i18n['field.name'] }}:</label>
