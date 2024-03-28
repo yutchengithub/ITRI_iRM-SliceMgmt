@@ -39,6 +39,20 @@
                 <span *ngIf="selectBsInfo_dist.bstype === 2">Disaggregated:&thinsp;[CU] + [DU] + [RU]</span>
               </li>
               <li>
+                <!-- 基站狀態 -->
+                <label>{{ languageService.i18n['BS.status'] }}</label>
+
+                <!-- 一體式 -->
+                <span *ngIf=" selectBsInfo.status === 0 " class="grayLight"></span>
+                <span *ngIf=" selectBsInfo.status === 1 " class="redLight"></span>
+                <span *ngIf=" selectBsInfo.status === 2 " class="greenLight"></span>
+
+                <!-- 分佈式 -->
+                <span *ngIf=" selectBsInfo_dist.status === 0 " class="grayLight"></span>
+                <span *ngIf=" selectBsInfo_dist.status === 1 " class="redLight"></span>
+                <span *ngIf=" selectBsInfo_dist.status === 2 " class="greenLight"></span>
+              </li>
+              <li>
                 <!-- 基站 Cell 數量 -->
                 <label>{{ languageService.i18n['BS.cellCount'] }}</label>
                 <span>{{ selectBsCellCount }}</span>
@@ -56,7 +70,7 @@
 
                 <!-- 一體式 -->
                 <ng-container>
-                  <span *ngIf="selectBsInfo.bstype === 1">{{ selectBsInfo.position }}</span>
+                  <span *ngIf="selectBsInfo.bstype === 1">{{ selectBsPosition }}</span>
                 </ng-container>
 
                 <!-- 分佈式 -->
@@ -97,20 +111,6 @@
                 <label>{{ languageService.i18n['BS.lastHeartbeatTime'] }}</label>
                 <span *ngIf="selectBsInfo">{{ selectBsInfo.laston }}</span>
                 <span *ngIf="selectBsInfo_dist">{{ selectBsInfo_dist.laston }}</span>
-              </li>
-              <li>
-                <!-- 基站狀態 -->
-                <label>{{ languageService.i18n['BS.status'] }}</label>
-
-                <!-- 一體式 -->
-                <span *ngIf=" selectBsInfo.status === 0 " class="grayLight"></span>
-                <span *ngIf=" selectBsInfo.status === 1 " class="redLight"></span>
-                <span *ngIf=" selectBsInfo.status === 2 " class="greenLight"></span>
-
-                <!-- 分佈式 -->
-                <span *ngIf=" selectBsInfo_dist.status === 0 " class="grayLight"></span>
-                <span *ngIf=" selectBsInfo_dist.status === 1 " class="redLight"></span>
-                <span *ngIf=" selectBsInfo_dist.status === 2 " class="greenLight"></span>
               </li>
               <li>
                 <!-- 軟體版本 -->
@@ -156,18 +156,65 @@
       </div>
     </div>
 
-    <div>
+    <div><!-- 網元拓樸圖 -->
       <span>{{ languageService.i18n['BS.topology'] }}</span>
-      <input id="Datastore" class="toggle" type="checkbox">
-      <label for="Datastore" class="lbl-toggle"></label>
+      <input id="topology" class="toggle" type="checkbox">
+      <label for="topology" class="lbl-toggle"></label>
       
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="collabsible">
-            <!-- 使用 Canvas 畫網元拓樸圖 -->
-            <canvas>
+              <!-- 使用 Canvas 畫網元拓樸圖 -->
+              <canvas #canvas class="topology-canvas"></canvas>
+              <ng-container *ngIf=" bsType === '1' ">
+                <!-- 顯示 一體式基站 拓樸 -->
+                <div class="nes-topology">
+                  <div>  
+                    <div tooltip="{{ getComponentName( allInOneNEID ) }}" class="ne-info all-in-one-ne-info"
+                            [style.left.px] = "getAllInOnePosition().x"
+                             [style.top.px] = "getAllInOnePosition().y" >
+                      <span class="grayLight"  *ngIf="getComponentStatus( allInOneNEID ) === 0"></span>
+                      <span class="redLight"   *ngIf="getComponentStatus( allInOneNEID ) === 1"></span>
+                      <span class="greenLight" *ngIf="getComponentStatus( allInOneNEID ) === 2"></span>
+                      <span>[CU+DU+RU]</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
 
-            </canvas>
+              <ng-container *ngIf=" bsType === '2' ">
+                <!-- 顯示 分佈式基站 拓樸 -->
+                <div class="nes-topology">   
+                  <div *ngFor="let cu of componentArray | filterBy: 'type': 'cu'">
+                    <!-- 顯示 CU 的資訊 -->
+                    <div tooltip="{{ getComponentName(cu.id) }}" class="ne-info cu-info" [style.left.px]="getCuPosition(cu).x" [style.top.px]="getCuPosition(cu).y">
+                      <span class="grayLight"  *ngIf="getComponentStatus(cu.id) === 0"></span>
+                      <span class="redLight"   *ngIf="getComponentStatus(cu.id) === 1"></span>
+                      <span class="greenLight" *ngIf="getComponentStatus(cu.id) === 2"></span>
+                      <span>CU</span>
+                    </div>
+                  </div>
+                  <div *ngFor="let du of componentArray | filterBy: 'type': 'du'">
+                    <!-- 顯示 DU 的資訊 -->
+                    <div tooltip="{{ getComponentName(du.id) }}" class="ne-info du-info" [style.left.px]="getDuPosition(du).x" [style.top.px]="getDuPosition(du).y">
+                      <span class="grayLight"  *ngIf="getComponentStatus(du.id) === 0"></span>
+                      <span class="redLight"   *ngIf="getComponentStatus(du.id) === 1"></span>
+                      <span class="greenLight" *ngIf="getComponentStatus(du.id) === 2"></span>
+                      <span>DU</span>
+                    </div>
+                  </div>
+                  <div *ngFor="let ru of componentArray | filterBy: 'type': 'ru'">
+                    <!-- 顯示 RU 的資訊 -->
+                    <div tooltip="{{ getComponentName(ru.id) }}" class="ne-info ru-info" [style.left.px]="getRuPosition(ru).x" [style.top.px]="getRuPosition(ru).y">
+                      <span class="grayLight"  *ngIf="getComponentStatus(ru.id) === 0"></span>
+                      <span class="redLight"   *ngIf="getComponentStatus(ru.id) === 1"></span>
+                      <span class="greenLight" *ngIf="getComponentStatus(ru.id) === 2"></span>
+                      <span>RU</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+
           </div>
         </div>
       </div>

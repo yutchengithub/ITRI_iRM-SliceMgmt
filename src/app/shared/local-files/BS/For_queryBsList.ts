@@ -192,29 +192,6 @@
             "lastoff": "2023-12-30 03:35:28.928799"
           },
           {
-            "id": "9a4df79e890c4820b329",
-            "fieldId": "aa520ec8e5074f54b77d",
-            "fieldName": "ITRI2",
-            "name": "BS17",
-            "ip": "",
-            "port": "",
-            "position": "[121.042,24.776378]",
-            "description": "BS17",
-            "bstype": 1,
-            "components": [
-              {
-                "type": "cu+du+ru",
-                "id": "004d2e7160da4deda404"
-              }
-            ],
-            "status": 2,
-            "gNBId": 17,
-            "gNBIdLength": 22,
-            "adminstate": 1,
-            "laston": "2024-01-23 11:56:29.512274",
-            "lastoff": "2023-12-29 07:33:19.879219"
-          },
-          {
             "id": "c62e5330bda64c51ad16",
             "fieldId": "e6700d701f8b41f8950e",
             "fieldName": "ITRI",

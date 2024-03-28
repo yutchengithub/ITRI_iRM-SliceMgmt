@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '../../shared/common.service';
@@ -10,14 +10,15 @@ import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
 import { FmsgList } from './../../fault-management/fault-management.component';
 import { FaultMessages } from './../../fault-management/fault-management.component';
+import { ChangeDetectorRef } from '@angular/core';
 
 // import APIs of BS Management
 import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt'; // @2024/03/25 Add
 
 // 引入儲存各個資訊所需的 interfaces
-import { BSInfo }         from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
-import { BSInfo_dist }    from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
-import { NEList, NE, Sm } from '../../shared/interfaces/NE/For_queryBsComponentList'; // @2024/03/27 Add
+import { BSInfo, Components }              from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
+import { BSInfo_dist, Components_dist }    from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
+import { NEList, NE, Sm  } from '../../shared/interfaces/NE/For_queryBsComponentList'; // @2024/03/27 Add
 
 // 引入所需 Local Files
 import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';          // @2024/03/25 Add
@@ -43,6 +44,7 @@ export class BSInfoComponent implements OnInit {
     private         dialog: MatDialog,
     public   commonService: CommonService,
     public languageService: LanguageService,
+    private changeDetectorRef: ChangeDetectorRef,
 
     public  API_BS: apiForBSMgmt,           // @2024/03/25 Add for import API of BS Management
     public  bsInfo_LocalFiles: localBSInfo, // @2024/03/25 Add for import BS Info Local Files 
@@ -80,12 +82,26 @@ export class BSInfoComponent implements OnInit {
       // @2024/03/27 Add
       // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 
       this.getNEList(); 
-    });
 
+    });
+   
+
+   this.drawConnectingLines();
   }
 
   ngOnDestroy() {
     clearTimeout( this.refreshTimeout );
+  }
+
+  ngAfterViewInit() {
+    this.canvas.nativeElement.width  = 800; // 增加 Canvas 的寬度
+    this.canvas.nativeElement.height = 250; // 增加 Canvas 的寬度
+
+    // 在獲取基站和網元資訊完成後，手動觸發變更檢測
+   // Promise.all([this.getQueryBsInfo(), this.getNEList()]).then(() => {
+      //this.changeDetectorRef.detectChanges();
+      this.drawConnectingLines();
+    //});
   }
 
   // 用於返回 BS 主頁 @2024/03/25 Add
@@ -99,7 +115,9 @@ export class BSInfoComponent implements OnInit {
   selectBsInfo:      BSInfo = {} as BSInfo;           // 用於存儲從服務器或 Local Files 獲取的一體式基站資訊
   selectBsInfo_dist: BSInfo_dist = {} as BSInfo_dist; // 用於存儲從服務器或 Local Files 獲取的分佈式基站資訊
   selectBsCellCount: number = 0;                      // 用於存儲當前選中的 BS Cell 數量
-
+   selectBsPosition: string = "";                     // 用於存儲當前選中的一體式 BS 位置
+  selectDistBsPosition: string = "";                  // 用於存儲當前選中的分佈式 BS 位置
+  
   // 用於獲取基站資訊 @2024/03/27 Update
   getQueryBsInfo() {
     console.log( 'getQueryBsInfo() - Start' );
@@ -114,10 +132,11 @@ export class BSInfoComponent implements OnInit {
       if ( this.bsType === "1" ) {
 
         // 取得 Local 一體式基站資訊
-        this.selectBsInfo = this.bsInfo_LocalFiles.bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo;
+        this.selectBsInfo        = this.bsInfo_LocalFiles.bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo;
         this.selectBsInfo.laston = this.commonService.formatTimeWithoutSecondsFraction( this.selectBsInfo.laston ); // 處理時間格式
-        this.selectBsInfo.position = this.commonService.formatPosition( this.selectBsInfo.position );               // 處理位置訊息格式
+        this.selectBsPosition    = this.commonService.formatPosition( this.selectBsInfo.position );                 // 處理位置訊息格式
         console.log( 'In local - Get the BSInfo:', this.selectBsInfo );
+        console.log( 'In local - Get the BSInfo position:', this.selectBsPosition );
 
         // 一體式基站，直接將 Cell 數量設為 1
         this.selectBsCellCount = 1;
@@ -125,16 +144,17 @@ export class BSInfoComponent implements OnInit {
       } else if ( this.bsType === "2" ) {
 
         // 取得 Local 分佈式基站資訊
-        this.selectBsInfo_dist = this.bsInfo_LocalFiles.dist_bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo_dist;
+        this.selectBsInfo_dist        = this.bsInfo_LocalFiles.dist_bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo_dist;
         this.selectBsInfo_dist.laston = this.commonService.formatTimeWithoutSecondsFraction( this.selectBsInfo_dist.laston ); // 處理時間格式
-        this.selectBsInfo_dist.position = this.commonService.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
+        //this.selectDistBsPosition     = this.commonService.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
         console.log( 'In local - Get the BSInfo_dist:', this.selectBsInfo_dist );
+        //console.log( 'In local - Get the BSInfo_dist position:', this.selectBsInfo_dist.position );
 
          // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
          this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
       }
 
-      console.log(`In local - BS Type ${ this.bsType } - Cell Count: ${ this.bsCellCount }`);
+      console.log( `In local - BS Type ${ this.bsType } - Cell Count: ${ this.bsCellCount }` );
 
       // @2024/03/27 Add
       // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 
@@ -153,10 +173,11 @@ export class BSInfoComponent implements OnInit {
           if ( res.bstype === 1 ) {
 
             // 刷新一體式基站資訊
-            this.selectBsInfo = res as BSInfo;
+            this.selectBsInfo        = res as BSInfo;
             this.selectBsInfo.laston = this.commonService.formatTimeWithoutSecondsFraction( this.selectBsInfo.laston ); // 處理時間格式
-            this.selectBsInfo.position = this.commonService.formatPosition( this.selectBsInfo.position );               // 處理位置訊息格式
+            this.selectBsPosition    = this.commonService.formatPosition( this.selectBsInfo.position );               // 處理位置訊息格式
             console.log( 'Get the BSInfo:', this.selectBsInfo );
+            console.log( 'Get the BSInfo position:', this.selectBsPosition );
 
             // 一體式基站，直接將 Cell 數量設為 1
             this.selectBsCellCount = 1;
@@ -164,10 +185,11 @@ export class BSInfoComponent implements OnInit {
           } else if ( res.bstype === 2 ) {
 
             // 刷新分佈式基站資訊
-            this.selectBsInfo_dist = res as BSInfo_dist;
+            this.selectBsInfo_dist        = res as BSInfo_dist;
             this.selectBsInfo_dist.laston = this.commonService.formatTimeWithoutSecondsFraction( this.selectBsInfo_dist.laston ); // 處理時間格式
-            this.selectBsInfo_dist.position = this.commonService.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
+            //this.selectDistBsPosition     = this.commonService.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
             console.log( 'Get the BSInfo_dist:', this.selectBsInfo_dist );
+            // console.log( 'Get the BSInfo_dist position:', this.selectDistBsPosition );
 
             // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
             this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
@@ -230,6 +252,8 @@ export class BSInfoComponent implements OnInit {
           this.processNEList( this.NEList ); // 處理獲取的 NE 列表
 
           this.isLoadingNEList = false; // 數據加載完成
+
+          
         },
         error: ( error ) => {
 
@@ -241,6 +265,8 @@ export class BSInfoComponent implements OnInit {
 
           // 獲取 NE 列表完成
           console.log( 'NE list fetch completed' ); // 輸出完成日誌
+
+          this.drawConnectingLines();
         }
       });
     }
@@ -257,6 +283,12 @@ export class BSInfoComponent implements OnInit {
   ruIdNamePositionMap: { [ruId: string]: { name: string, position: string } } = {};
 
   // @2024/03/27 Add
+  // 用於存儲兩種基站的網元資訊，用於後續繪製拓樸圖
+  componentArray: any[] = [];
+
+  allInOneNEID: string = "";
+
+  // @2024/03/27 Add
   // processNEList 函數用於處理從 NEList 中獲取的網元訊息，並將相關資訊存儲在以下對象中:
   // - ruIdNamePositionMap: 用於存儲分佈式基站的 RU id 對應到的名稱與位置
   //        - swVersionMap: 用於存儲網元的使用的軟體版本訊息，包括網元名稱、網元類型、網元型號和軟體版本號
@@ -265,14 +297,21 @@ export class BSInfoComponent implements OnInit {
     // 如果是一體式基站
     if ( this.bsType === "1" ) {
 
+      // 處理一體式基站的組件資訊，放入 componentArray 用於繪拓樸圖
+      this.componentArray = this.selectBsInfo.components;
+
       // 處理一體式基站的軟體版本資訊
       for ( const component of this.selectBsInfo.components ) {
 
         // 在 NEList 中找到與組件 id 相對應的 NE
         const correspondingNE = neList.components.find( ne => ne.id === component.id );
 
+    
         // 如果找到對應的 NE
         if ( correspondingNE ) {
+
+          // 儲存此 NE ID 用於繪製拓樸圖
+          this.allInOneNEID = correspondingNE.id;
 
           // 將組件類型轉換為大寫
           const neType = component.type.toUpperCase();
@@ -290,7 +329,26 @@ export class BSInfoComponent implements OnInit {
 
     } else if ( this.bsType === "2" ) { // 如果是分佈式基站
 
-        // 遍歷 selectBsInfo_dist.info 中的每個 Info 對象
+        // 處理分佈式基站的組件資訊，放入 componentArray 用於繪拓樸圖
+        const components = this.selectBsInfo_dist.components;
+
+        for ( const cuid in components ) {
+          this.componentArray.push( { type: 'cu', id: cuid } );
+
+          const dus = components[cuid];
+          for ( const duid in dus ) {
+            this.componentArray.push( { type: 'du', id: duid, cuid: cuid } );
+
+            const rus = dus[duid];
+            for ( let i = 0; i < rus.length; i++ ) {
+              const ruId = Object.keys( rus[i] )[0];
+
+              this.componentArray.push( { type: 'ru', id: ruId, duid: duid } );
+            }
+          }
+        }
+
+        // 遍歷 selectBsInfo_dist.info 中的每個 Info 對象，對分佈式基站的網元軟體版本資訊進行處理
         for ( const info of this.selectBsInfo_dist.info ) {
           
           // 如果 RU.id 存在
@@ -307,13 +365,13 @@ export class BSInfoComponent implements OnInit {
               // 將 NE 的名稱和位置存儲在對象中,以 RU.id 作為鍵
               this.ruIdNamePositionMap[ruId] = {
                 name: correspondingNE.name, // NE 的名稱
-                position: this.commonService.formatPosition(info.RU.position) // 格式化 RU 的位置資訊
+                position: this.commonService.formatPosition( info.RU.position ) // 格式化 RU 的位置資訊
               };
 
               // 處理軟體版本資訊
               const neType = 'RU'; // 設置網元類型為 'RU'
               const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
-              const neSFversion = this.getActiveSoftwareVersion(correspondingNE.sm) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+              const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
               this.swVersionMap[ruId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 RU.id 作為鍵
             }
           }
@@ -328,7 +386,7 @@ export class BSInfoComponent implements OnInit {
             if ( correspondingNE ) {
               const neType = 'CU'; // 設置網元類型為 'CU'
               const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
-              const neSFversion = this.getActiveSoftwareVersion(correspondingNE.sm) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+              const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
 
               this.swVersionMap[cuId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 CU.id 作為鍵
             }
@@ -343,13 +401,15 @@ export class BSInfoComponent implements OnInit {
             if ( correspondingNE ) { 
               const neType = 'DU';   // 設置網元類型為 'DU'
               const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
-              const neSFversion = this.getActiveSoftwareVersion(correspondingNE.sm) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+              const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
               
               this.swVersionMap[duId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 DU.id 作為鍵
             }
           }
         }
+
       }
+      console.log("this.componentArray:", this.componentArray)
   }
 
   // @2024/03/27 Add
@@ -374,6 +434,95 @@ export class BSInfoComponent implements OnInit {
     return undefined;
   }
 
+
+
+  // 使用 @ViewChild 裝飾器獲取 canvas 元素的引用
+  @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
+
+  getAllInOnePosition(): { x: number, y: number } {
+    const canvasWidth = this.canvas.nativeElement.width;
+    const canvasHeight = this.canvas.nativeElement.height;
+    const x = canvasWidth / 2;  // 水平置中
+    const y = canvasHeight / 2; // 垂直置中
+    return { x, y };
+  }
+
+  getCuPosition( cu: any ): { x: number, y: number } {
+    const index = this.componentArray.filter( c => c.type === 'cu' ).indexOf( cu );
+    const x = this.canvas.nativeElement.width / 4;
+    const y = this.canvas.nativeElement.height / (this.componentArray.filter(c => c.type === 'cu').length + 1) * (index + 1);
+    return { x, y };
+  }
+  
+  getDuPosition( du: any ): { x: number, y: number } {
+    const index = this.componentArray.filter( c => c.type === 'du' ).indexOf(du);
+    const x = this.canvas.nativeElement.width * 0.535;
+    const y = this.canvas.nativeElement.height / ( this.componentArray.filter( c => c.type === 'du').length + 1 ) * ( index + 1 );
+    return { x, y };
+  }
+
+  getRuPosition( ru: any ): { x: number, y: number } {
+    const index = this.componentArray.filter( c => c.type === 'ru' ).indexOf( ru );
+    const ruCount = this.componentArray.filter( c => c.type === 'ru' ).length;
+    const x = this.canvas.nativeElement.width * 0.75; // 調整 RU 的 x 座標
+    const y = this.canvas.nativeElement.height / ( ruCount + 1 ) * ( index + 1 )* 1.1; // 均勻分佈 RU 的 y 座標
+    return { x, y };
+  }
+
+  getComponentName( id: string ): string {
+    const component = this.NEList.components.find( c => c.id === id );
+    return component ? component.name : '';
+  }
+  
+  getComponentStatus( id: string ) : number {
+    const component = this.NEList.components.find( c => c.id === id );
+    return component ? component.status : 0;
+  }
+
+  drawConnectingLines() {
+    const canvas = this.canvas.nativeElement;
+    const ctx = canvas.getContext( '2d' );
+
+    // 檢查渲染上下文是否存在
+    if ( ctx ) {
+
+      ctx.clearRect( 0, 0, canvas.width, canvas.height );
+
+      // 設置線條寬度為 1
+      ctx.lineWidth = 3;
+      // 設置線條顏色為白色
+      ctx.strokeStyle = 'white';
+
+      // 繪製 CU 和 DU 之間的連接線
+      this.componentArray.filter( c => c.type === 'cu' ).forEach( cu => {
+        const cuPosition = this.getCuPosition( cu );
+        this.componentArray.filter( c => c.type === 'du' ).forEach( du => {
+          const duPosition = this.getDuPosition( du );
+          console.log( "繪製 CU 和 DU 之間的連接線 - cuPosition", cuPosition );
+          console.log( "繪製 CU 和 DU 之間的連接線 - duPosition", duPosition );
+          this.drawLine( ctx, cuPosition, duPosition );
+        });
+      });
+
+      // 繪製 DU 和 RU 之間的連接線
+      this.componentArray.filter( du => du.type === 'du' ).forEach( du => {
+        const duPosition = this.getDuPosition( du );
+        this.componentArray.filter( ru => ru.type === 'ru' && ru.duid === du.id ).forEach( ru => {
+          const ruPosition = this.getRuPosition( ru );
+          console.log( "繪製 DU 和 RU 之間的連接線 - duPosition", duPosition );
+          console.log( "繪製 DU 和 RU 之間的連接線 - ruPosition", ruPosition );
+          this.drawLine( ctx, duPosition, ruPosition );
+        });
+      });
+    }
+  }
+  
+  drawLine( ctx: CanvasRenderingContext2D, start: { x: number, y: number }, end: { x: number, y: number } ) {
+    ctx.beginPath();
+    ctx.moveTo( start.x, start.y );
+    ctx.lineTo( end.x, end.y );
+    ctx.stroke();
+  }
 
 
   
