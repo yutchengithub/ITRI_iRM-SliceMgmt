@@ -224,6 +224,12 @@ export const TwLanguage = {
   'BS.neList':'網元列表',
   'BS.performance':'基站效能',
 
+  'BS.No':'編號',
+  'BS.ip':'IP 位址',
+  'BS.neStatus':'狀態',
+  'BS.port':'埠號',
+  'BS.edit':'編輯',
+
 
   // Fault Management (故障管理)
   'fm.start':'起始時間',
