@@ -2990,6 +2990,59 @@ export class FieldInfoComponent implements OnInit {
 
 
 
+// For 場域效能報表 @2024/03/30 Add ↓
+
+  // 用於控制 場域效能報表 視窗 @2024/03/30 Add
+  @ViewChild('fieldPMReportWindow') fieldPMReportWindow: any;
+  fieldPMReportWindow_Ref!: MatDialogRef<any>;
+  fieldPMReportWindow_Validated = false;
+
+  // 開啟視窗 - 場域效能報表 @2024/03/30 Add
+  openfieldPMReportWindow() {
+    this.fieldPMReportWindow_Validated = false;
+    this.fieldPMReportWindow_Ref = this.dialog.open( this.fieldPMReportWindow, {
+      id: 'fieldOptimizationWindow',
+      // width 和 height 可以根據需要設置或去掉
+      // width: '300px', 
+      // height: '200px'
+    });
+
+    // 訂閱對話框關閉後的事件
+    this.fieldPMReportWindow_Ref.afterClosed().subscribe(() => {
+      // 這裡可以添加當對話框關閉後的邏輯
+      this.fieldPMReportWindow_Validated = false;
+    });
+  }
+
+// For 場域效能報表 @2024/03/30 Add ↑
+
+
+
+// For 場域優化 @2024/03/30 Add ↓
+
+  // 用於控制 場域優化 視窗 @2024/03/30 Add
+  @ViewChild('fieldOptimizationWindow') fieldOptimizationWindow: any;
+  fieldOptimizationWindow_Ref!: MatDialogRef<any>;
+  fieldOptimizationWindow_Validated = false;
+
+  // 開啟視窗 - 場域優化 @2024/03/30 Add
+  openfieldOptimizationWindow() {
+    this.fieldOptimizationWindow_Validated = false;
+    this.fieldOptimizationWindow_Ref = this.dialog.open( this.fieldOptimizationWindow, {
+      id: 'fieldOptimizationWindow',
+      // width 和 height 可以根據需要設置或去掉
+      // width: '300px', 
+      // height: '200px'
+    });
+
+    // 訂閱對話框關閉後的事件
+    this.fieldOptimizationWindow_Ref.afterClosed().subscribe(() => {
+      // 這裡可以添加當對話框關閉後的邏輯
+      this.fieldOptimizationWindow_Validated = false;
+    });
+  }
+
+// For 場域優化 @2024/03/30 Add ↑
 
 
 

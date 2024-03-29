@@ -74,7 +74,7 @@
 				  <mat-icon>report</mat-icon>
 				  <span>{{ languageService.i18n['field.report'] }}</span>
 				</button>
-				<button mat-menu-item>
+				<button mat-menu-item (click)="openfieldPMReportWindow()">
 					<span class="material-symbols-outlined">
 						wysiwyg
 						</span>
@@ -93,7 +93,7 @@
 					<mat-icon>settings_suggest</mat-icon>
 					<span>{{ languageService.i18n['field.optim'] }}</span>
 				  </button>
-				  <button mat-menu-item>
+				  <button mat-menu-item (click)="openfieldOptimizationWindow()">
 					  <span class="material-symbols-outlined">
 						  play_circle
 					  </span>
@@ -1110,5 +1110,35 @@
 		<button type="button" mat-dialog-close>
 			{{ languageService.i18n['cancel'] }}
 		</button>
+		</div>
+	</ng-template>
+
+
+	<!-- Window of PM Report @2024/03/30 Add -->
+	<ng-template #fieldPMReportWindow>
+		<div><h5>場域效能分析</h5></div>
+
+		
+
+
+		<div class="buttons buttons-centered">
+			<button type="button" mat-dialog-close>
+				{{ languageService.i18n['close'] }}
+			</button>
+		</div>
+	</ng-template>
+
+	
+	<!-- Window of Field Optimization @2024/03/30 Add -->
+	<ng-template #fieldOptimizationWindow>
+		<div><h5>{{ languageService.i18n['field.optim'] }}</h5></div>
+
+		
+
+
+		<div class="buttons buttons-centered">
+			<button type="button" mat-dialog-close>
+				{{ languageService.i18n['close'] }}
+			</button>
 		</div>
 	</ng-template>
