@@ -240,7 +240,13 @@
     <div><!-- 基站參數 -->
       <span>
         {{ languageService.i18n['BS.parameters'] }}
-        <button>DB → gNB</button><button>gNB → DB</button>
+        
+        <div class="logTab">
+          <mat-button-toggle-group name="bsParametersType" [(ngModel)]="bsParametersType" (change)="changeBsParametersType( $event )">
+            <mat-button-toggle value="Basic">Basic</mat-button-toggle>
+            <mat-button-toggle value="Advanced">Advanced</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
       </span>
       <input id="bsParameters" class="toggle" type="checkbox">
       <label for="bsParameters" class="lbl-toggle"></label>
@@ -271,17 +277,15 @@
           
               <!-- Button of clear_search_ScheduleList -->
               <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined">clear</span>
+
             </div>
           </form>
 
-          <!-- <div class="logTab">
-            <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
-              <mat-button-toggle value="Basic">Basic</mat-button-toggle>
-              <mat-button-toggle value="Advanced">Advanced</mat-button-toggle>
-            </mat-button-toggle-group>
-          </div> -->
-
-          <div class="collabsible">
+          <!-- Basic -->
+          <div class="collabsible" *ngIf=" bsParametersType === 'Basic' ">
+            <div>
+              For All: <button>DB → gNB</button><button>DB ← gNB</button>
+            </div>
             <div class="table">
               <table>
                 <thead>
@@ -338,48 +342,2766 @@
                   </tr>
                   <tr>
                     <td>PCI</td>
-                    <td>158</td>
+                    <td>158
+                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                    </td>
                     <td>100</td>
                     <td>Yes</td>
-                    <td><button>DB → gNB</button><button>gNB → DB</button></td>
+                    <td><button>DB → gNB</button><button>DB ← gNB</button></td>
                   </tr>
                   <tr>
                     <td>NR-ARFCN-DL</td>
-                    <td>723333</td>
+                    <td>723333
+                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                    </td>
                     <td>723333</td>
                     <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>NR-ARFCN-UL</td>
-                    <td>723333</td>
+                    <td>723333
+                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                    </td>
                     <td>723333</td>
                     <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>Channel Bandwidth</td>
-                    <td>20</td>
+                    <td>20
+                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                    </td>
                     <td>20</td>
                     <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>Tx Power</td>
-                    <td>8</td>
+                    <td>8
+                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                    </td>
                     <td>10</td>
                     <td>Yes</td>
-                    <td><button>DB → gNB</button><button>gNB → DB</button></td>
+                    <td><button>DB → gNB</button><button>DB ← gNB</button></td>
                   </tr>
                   <tr>
                     <td>TAC</td>
-                    <td>3000</td>
+                    <td>3000
+                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                    </td>
                     <td>3001</td>
                     <td>Yes</td>
-                    <td><button>DB → gNB</button><button>gNB → DB</button></td>
+                    <td><button>DB → gNB</button><button>DB ← gNB</button></td>
                   </tr>
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          <!-- Advanced -->
+          <div class="collabsible" *ngIf=" bsParametersType === 'Advanced' ">
+            <div class="collapsible-content">
+              <div class="content-inner">
+                <div class="collabsible">
+
+                  <!-- gNBCUFunction -->
+                  <div>
+                    <span>gNBCUFunction</span>
+                    <input id="gNBCUFunction" class="toggle" type="checkbox">
+                    <label for="gNBCUFunction" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBCUName</td>
+                                <td>cu1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>CU123</td>
+                                <td>Yes</td>
+                                <td><button>DB → gNB</button><button>DB ← gNB</button></td>
+                              </tr>
+                              <tr>
+                                <td>gNB_type</td>
+                                <td>SA
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>SA</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- peeParametersList_CU -->
+                  <div>
+                    <span>peeParametersList_CU</span>
+                    <input id="peeParametersList_CU" class="toggle" type="checkbox">
+                    <label for="peeParametersList_CU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteIdentification:</td>
+                                <td>bbb
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>bbb</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLatitude:</td>
+                                <td>10.0001
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>10.0001</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLongitude:</td>
+                                <td>10.0001
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>10.0001</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteDescription:</td>
+                                <td>aaa
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>aaa</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>equipmentType:</td>
+                                <td>RRU
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>RRU</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>environmentType:</td>
+                                <td>Indoor
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>Indoor</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>powerInterface:</td>
+                                <td>AC
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>AC</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- vnfParametersList_CU -->
+                  <div>
+                    <span>vnfParametersList_CU</span>
+                    <input id="vnfParametersList_CU" class="toggle" type="checkbox">
+                    <label for="vnfParametersList_CU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>autoScalable:</td>
+                                <td>true
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>true</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>flavourId:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfInstanceId:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfId:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- EP_F1C_CU -->
+                  <div>
+                    <span>EP_F1C_CU</span>
+                    <input id="EP_F1C_CU" class="toggle" type="checkbox">
+                    <label for="EP_F1C_CU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_ip_addr:</td>
+                                <td>1.1.1.1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.1.1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_vlan_id:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>remoteAddress:</td>
+                                <td>1.1.2.1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.2.1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- EP_F1U_CU -->
+                  <div>
+                    <span>EP_F1U_CU</span>
+                    <input id="EP_F1U_CU" class="toggle" type="checkbox">
+                    <label for="EP_F1U_CU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_ip_addr:</td>
+                                <td>1.1.1.3
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.1.3</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_vlan_id:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>remoteAddress:</td>
+                                <td>1.1.2.3
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.2.3</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- EP_NgC -->
+                  <div>
+                    <span>EP_NgC</span>
+                    <input id="EP_NgC" class="toggle" type="checkbox">
+                    <label for="EP_NgC" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_ip_addr:</td>
+                                <td>1.1.1.5
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.1.5</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_vlan_id:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>remoteAddress:</td>
+                                <td>1.1.2.5
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.2.5</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- EP_NgU -->
+                  <div> 
+                    <span>EP_NgU</span>
+                    <input id="EP_NgU" class="toggle" type="checkbox">
+                    <label for="EP_NgU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_ip_addr:</td>
+                                <td>1.1.1.6
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.1.6</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_vlan_id:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>remoteAddress:</td>
+                                <td>1.1.2.6
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.2.6</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- NRCellCU -->
+                  <div>
+                    <span>NRCellCU</span>
+                    <input id="NRCellCU" class="toggle" type="checkbox">
+                    <label for="NRCellCU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>cellLocalId:</td>
+                                <td>100001000</td>
+                                <td>100001000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>absoluteFrequencySSB:</td>
+                                <td>100
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>100</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>sBSubCarrierSpacing:</td>
+                                <td>15
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>15</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- peeParametersList_NRCellCU -->
+                  <div>
+                    <span>peeParametersList_NRCellCU</span>
+                    <input id="peeParametersList_NRCellCU" class="toggle" type="checkbox">
+                    <label for="peeParametersList_NRCellCU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>cellLocalId:</td>
+                                <td>100001000</td>
+                                <td>100001000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteIdentification:</td>
+                                <td>bbb
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>bbb</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLatitude:</td>
+                                <td>10.0101
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>10.0101</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLongitude:</td>
+                                <td>10.0101
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>10.0101</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteDescription:</td>
+                                <td>aaa
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>aaa</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>equipmentType:</td>
+                                <td>RRU
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>RRU</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>environmentType:</td>
+                                <td>Indoor
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>Indoor</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>powerInterface:</td>
+                                <td>AC
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>AC</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- vnfParametersList_NRCellCU -->
+                  <div>
+                    <span>vnfParametersList_NRCellCU</span>
+                    <input id="vnfParametersList_NRCellCU" class="toggle" type="checkbox">
+                    <label for="vnfParametersList_NRCellCU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>cellLocalId:</td>
+                                <td>100001000</td>
+                                <td>100001000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>autoScalable:</td>
+                                <td>true
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>true</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>flavourId:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfInstanceId:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfId:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- s_NSSAI_leafList_NRCellCU -->
+                  <div>
+                    <span>s_NSSAI_leafList_NRCellCU</span>
+                    <input id="s_NSSAI_leafList_NRCellCU" class="toggle" type="checkbox">
+                    <label for="s_NSSAI_leafList_NRCellCU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>cellLocalId:</td>
+                                <td>100001000</td>
+                                <td>100001000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>s_NSSAi:</td>
+                                <td>0
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>0</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- gNBDUFunction -->
+                  <div>
+                    <span>gNBDUFunction</span>
+                    <input id="gNBDUFunction" class="toggle" type="checkbox">
+                    <label for="gNBDUFunction" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId:</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUName:</td>
+                                <td>du1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>du1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- peeParametersList_DU -->
+                  <div>
+                    <span>peeParametersList_DU</span>
+                    <input id="peeParametersList_DU" class="toggle" type="checkbox">
+                    <label for="peeParametersList_DU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId:</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteIdentification:</td>
+                                <td>bbb
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>bbb</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLatitude:</td>
+                                <td>10.0202
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>10.0202</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLongitude:</td>
+                                <td>10.0202
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>10.0202</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteDescription:</td>
+                                <td>aaa
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>aaa</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>equipmentType:</td>
+                                <td>RRU
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>RRU</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>environmentType:</td>
+                                <td>Indoor
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>Indoor</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>powerInterface:</td>
+                                <td>AC
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>AC</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- vnfParametersList_DU -->
+                  <div>
+                    <span>vnfParametersList_DU</span>
+                    <input id="vnfParametersList_DU" class="toggle" type="checkbox">
+                    <label for="vnfParametersList_DU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId:</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>autoScalable:</td>
+                                <td>true
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>true</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>flavourId:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfInstanceId:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfId:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- EP_FIC_DU -->
+                  <div>
+                    <span>EP_FIC_DU</span>
+                    <input id="EP_FIC_DU" class="toggle" type="checkbox">
+                    <label for="EP_FIC_DU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId:</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_ip_addr:</td>
+                                <td>1.1.2.1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.2.1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_vlan_id:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>remoteAddress:</td>
+                                <td>1.1.1.1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.1.1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- EP_FIU_DU -->
+                  <div>
+                    <span>EP_FIU_DU</span>
+                    <input id="EP_FIU_DU" class="toggle" type="checkbox">
+                    <label for="EP_FIU_DU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId:</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength:</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC:</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC:</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId:</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_ip_addr:</td>
+                                <td>1.1.2.3
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.2.3</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>localAddress_vlan_id:</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>remoteAddress:</td>
+                                <td>1.1.1.3
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1.1.1.3</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- NRCellDU -->
+                  <div>
+                    <span>NRCellDU</span>
+                    <input id="NRCellDU" class="toggle" type="checkbox">
+                    <label for="NRCellDU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>cellLocalId</td>
+                                <td>100001000</td>
+                                <td>100001000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>nRPCI</td>
+                                <td>100
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>100</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>nRTAC</td>
+                                <td>3000
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>3000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>administrativeState</td>
+                                <td>Locked
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>Locked</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>arfcnDL</td>
+                                <td>723333
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>723333</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>arfcnSUL</td>
+                                <td>2079415
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>2079415</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>arfcnUL</td>
+                                <td>723333
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>723333</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>bSChannelBwDL</td>
+                                <td>20
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>20</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>bSChannelBwSUL</td>
+                                <td>1000
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>bSChannelBwUL</td>
+                                <td>1000
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>ssbFrequency</td>
+                                <td>9500
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>9500</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>ssbPeriodicity</td>
+                                <td>5
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>5</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>ssbSubCarrierSpacing</td>
+                                <td>15
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>15</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>ssbOffset</td>
+                                <td>100
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>100</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>ssbDuration</td>
+                                <td>3
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>3</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- peeParametersList_NRCellDU -->
+                  <div>
+                    <span>peeParametersList_NRCellDU</span>
+                    <input id="peeParametersList_NRCellDU" class="toggle" type="checkbox">
+                    <label for="peeParametersList_NRCellDU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>cellLocalId</td>
+                                <td>100001000</td>
+                                <td>100001000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteIdentification</td>
+                                <td>bbb
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>bbb</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLatitude</td>
+                                <td>10.0303
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>10.0303</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLongitude</td>
+                                <td>10.3033
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>10.3033</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteDescription</td>
+                                <td>aaa
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>aaa</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>equipmentType</td>
+                                <td>RRU
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>RRU</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>environmentType</td>
+                                <td>Indoor
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>Indoor</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>powerInterface</td>
+                                <td>AC
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>AC</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- vnfParametersList_NRCellDU -->
+                  <div>
+                    <span>vnfParametersList_NRCellDU</span>
+                    <input id="vnfParametersList_NRCellDU" class="toggle" type="checkbox">
+                    <label for="vnfParametersList_NRCellDU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>cellLocalId</td>
+                                <td>100001000</td>
+                                <td>100001000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>autoScalable</td>
+                                <td>true
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>true</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>flavourId</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfInstanceId</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfId</td>
+                                <td>1
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- s_NSSAI_leafList_NRCellDU -->
+                  <div>
+                    <span>s_NSSAI_leafList_NRCellDU</span>
+                    <input id="s_NSSAI_leafList_NRCellDU" class="toggle" type="checkbox">
+                    <label for="s_NSSAI_leafList_NRCellDU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>cellLocalId</td>
+                                <td>100001000</td>
+                                <td>100001000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>s_NSSAI</td>
+                                <td>0
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>0</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- NRSectorCarrierRef_NRCellDU -->
+                  <div>
+                    <span>NRSectorCarrierRef_NRCellDU</span>
+                    <input id="NRSectorCarrierRef_NRCellDU" class="toggle" type="checkbox">
+                    <label for="NRSectorCarrierRef_NRCellDU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>cellLocalId</td>
+                                <td>100001000</td>
+                                <td>100001000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>NRSectorCarrierRef</td>
+                                <td>0
+                                  <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                </td>
+                                <td>0</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- bWPRef_leafList_NRCellDU -->
+                  <div>
+                    <span>bWPRef_leafList_NRCellDU</span>
+                    <input id="bWPRef_leafList_NRCellDU" class="toggle" type="checkbox">
+                    <label for="bWPRef_leafList_NRCellDU" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>cellLocalId</td>
+                                <td>100001000</td>
+                                <td>100001000</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>bWPRef</td>
+                                <td>0 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>0</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- NRSectorCarrier -->
+                  <div>
+                    <span>NRSectorCarrier</span>
+                    <input id="NRSectorCarrier" class="toggle" type="checkbox">
+                    <label for="NRSectorCarrier" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>arfcnDL</td>
+                                <td>649788 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>649788</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>arfcnUL</td>
+                                <td>649788 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>649788</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>bSChannelBwDL</td>
+                                <td>100 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>100</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>bSChannelBwUL</td>
+                                <td>100 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>100</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>txDirection</td>
+                                <td>DL <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>DL</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>configuredMaxTxPower</td>
+                                <td>9 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>10</td>
+                                <td>Yes</td>
+                                <td><button>DB → gNB</button><button>DB ← gNB</button></td>
+                              </tr>
+                              <tr>
+                                <td>configuredMaxTxEIRP</td>
+                                <td>10 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>10</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- peeParametersList_NRSector -->
+                  <div>
+                    <span>peeParametersList_NRSector</span>
+                    <input id="peeParametersList_NRSector" class="toggle" type="checkbox">
+                    <label for="peeParametersList_NRSector" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteIdentification</td>
+                                <td>bbb<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>bbb</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLatitude</td>
+                                <td>10.1111 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>10.1111</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLongitude</td>
+                                <td>10.2222 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>10.2222</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteDescription</td>
+                                <td>aaa<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>aaa</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>equipmentType</td>
+                                <td>RRU<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>RRU</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>environmentType</td>
+                                <td>Indoor<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>Indoor</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>powerInterface</td>
+                                <td>AC<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>AC</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- vnfParametersList_NRSector -->
+                  <div>
+                    <span>vnfParametersList_NRSector</span>
+                    <input id="vnfParametersList_NRSector" class="toggle" type="checkbox">
+                    <label for="vnfParametersList_NRSector" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>autoScalable</td>
+                                <td>true<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>true</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>flavourId</td>
+                                <td>1<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfInstanceId</td>
+                                <td>1<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfdId</td>
+                                <td>1<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- BWP -->
+                  <div>
+                    <span>BWP</span>
+                    <input id="BWP" class="toggle" type="checkbox">
+                    <label for="BWP" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>bwpContext</td>
+                                <td>DL<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>DL</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>isInitialBwp</td>
+                                <td>INITIAL<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>INITIAL</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>subCarrierSpacing</td>
+                                <td>15<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>15</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>cyclicPrefix</td>
+                                <td>Normal<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>Normal</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>startRB</td>
+                                <td>1<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>numberOfrRBs</td>
+                                <td>25<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>25</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- peeParametersList_BWP -->
+                  <div>
+                    <span>peeParametersList_BWP</span>
+                    <input id="peeParametersList_BWP" class="toggle" type="checkbox">
+                    <label for="peeParametersList_BWP" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBDUId</td>
+                                <td>11</td>
+                                <td>11</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteIdentification</td>
+                                <td>bbb<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>bbb</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLatitude</td>
+                                <td>10.3333<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>10.3333</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteLongitude</td>
+                                <td>10.4444<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>10.4444</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>siteDescription</td>
+                                <td>aaa<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>aaa</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>equipmentType</td>
+                                <td>RRU<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>RRU</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>environmentType</td>
+                                <td>Indoor<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>Indoor</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>powerInterface</td>
+                                <td>AC<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>AC</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- vnfParametersList_BWP -->
+                  <div>
+                    <span>vnfParametersList_BWP</span>
+                    <input id="vnfParametersList_BWP" class="toggle" type="checkbox">
+                    <label for="vnfParametersList_BWP" class="lbl-toggle"></label>
+                    <div class="collapsible-content">
+                      <div class="content-inner">
+                        <div class="table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Items</th>
+                                <th>Athena Ochestreator DB</th>
+                                <th>Network Element Datastore</th>
+                                <th>Conflict</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>gNBId</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>gNBIdLength</td>
+                                <td>22</td>
+                                <td>22</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MCC</td>
+                                <td>466</td>
+                                <td>466</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>pLMNId_MNC</td>
+                                <td>55</td>
+                                <td>55</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>autoScalable</td>
+                                <td>true <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>true</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>flavourId</td>
+                                <td>1 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfInstanceId</td>
+                                <td>1 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>vnfId</td>
+                                <td>1 <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                <td>1</td>
+                                <td>No</td>
+                                <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -522,7 +3244,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: 1, id: 'fmList' }; let i = index" >
+                  <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: 5, id: 'fmList' }; let i = index" >
                     <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
                     <td>{{opt.fieldName}}</td>
                     <td>{{opt.bsName}}</td>
@@ -535,7 +3257,7 @@
                 </tbody>
               </table>
               <!-- pagination -->    
-              <span class="total">{{languageService.i18n['fm.total1']}}  {{languageService.i18n['fm.total2']}}</span>
+              <span class="total">{{languageService.i18n['fm.total1']}}  5 {{languageService.i18n['fm.total2']}}</span>
               <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
                 nextLabel="" id="fmList">
               </pagination-controls>
