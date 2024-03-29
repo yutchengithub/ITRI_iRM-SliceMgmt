@@ -7,7 +7,8 @@
   </h5>
 
   <div class="main collabsible">
-    <div class="baseInfo">
+
+    <div class="baseInfo"><!-- 基本訊息區 -->
       <span>
         {{ languageService.i18n['basic.info'] }}
         <button>{{ languageService.i18n['BS.editSettings'] }}</button>
@@ -239,14 +240,47 @@
     <div><!-- 基站參數 -->
       <span>
         {{ languageService.i18n['BS.parameters'] }}
-        <button>DB → gNB</button>
-        <button>gNB → DB</button>
+        <button>DB → gNB</button><button>gNB → DB</button>
       </span>
       <input id="bsParameters" class="toggle" type="checkbox">
       <label for="bsParameters" class="lbl-toggle"></label>
       
       <div class="collapsible-content">
         <div class="content-inner">
+          
+          <form>
+            <div class="filter">
+              <span><label>Cell:</label>
+                <select>
+                  <option>
+                    Cell#1 (NCI=0x000024001)
+                  </option>
+                  <option>
+                    Cell#2 (NCI=0x000024002)
+                  </option>
+                  <option>
+                    Cell#3 (NCI=0x000024003)
+                  </option>
+                  <option>
+                    Cell#4 (NCI=0x000024004)
+                  </option>
+                </select>
+              </span>
+          
+              <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" >search</span>
+          
+              <!-- Button of clear_search_ScheduleList -->
+              <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined">clear</span>
+            </div>
+          </form>
+
+          <!-- <div class="logTab">
+            <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
+              <mat-button-toggle value="Basic">Basic</mat-button-toggle>
+              <mat-button-toggle value="Advanced">Advanced</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div> -->
+
           <div class="collabsible">
             <div class="table">
               <table>
@@ -262,87 +296,87 @@
                 <tbody>
                   <tr>
                     <td>PLMNID_MCC</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>466</td>
+                    <td>466</td>
+                    <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>PLMNID_MNC</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>66</td>
+                    <td>66</td>
+                    <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>gNB ID</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>9</td>
+                    <td>9</td>
+                    <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>gNB ID Length</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>22</td>
+                    <td>22</td>
+                    <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>Cell Local ID ( binary value )</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>10</td>
+                    <td>10</td>
+                    <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>NCI ( hexadecimal value )</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>000024001</td>
+                    <td>000024001</td>
+                    <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>PCI</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>158</td>
+                    <td>100</td>
+                    <td>Yes</td>
+                    <td><button>DB → gNB</button><button>gNB → DB</button></td>
                   </tr>
                   <tr>
                     <td>NR-ARFCN-DL</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>723333</td>
+                    <td>723333</td>
+                    <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>NR-ARFCN-UL</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>723333</td>
+                    <td>723333</td>
+                    <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>Channel Bandwidth</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>20</td>
+                    <td>20</td>
+                    <td>No</td>
                     <td></td>
                   </tr>
                   <tr>
                     <td>Tx Power</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>8</td>
+                    <td>10</td>
+                    <td>Yes</td>
+                    <td><button>DB → gNB</button><button>gNB → DB</button></td>
                   </tr>
                   <tr>
                     <td>TAC</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>3000</td>
+                    <td>3001</td>
+                    <td>Yes</td>
+                    <td><button>DB → gNB</button><button>gNB → DB</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -356,46 +390,97 @@
       <span>{{ languageService.i18n['BS.neighborBsList'] }}
         <h5><mat-icon tooltip="{{languageService.i18n['sm.create']}}">add</mat-icon></h5>
       </span>
-      <input id="softInfo" class="toggle" type="checkbox">
-      <label for="softInfo" class="lbl-toggle"></label>
+      <input id="neighborBsList" class="toggle" type="checkbox">
+      <label for="neighborBsList" class="lbl-toggle"></label>
       <div class="collapsible-content">
         <div class="content-inner">
-            <div class="table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>{{ languageService.i18n['BS.No'] }}</th>
-                    <th>PLMN ID</th>
-                    <th>gNB ID</th>
-                    <th>NCI</th>
-                    <th>PCI</th>
-                    <th>{{ languageService.i18n['BS.edit'] }}</th>
-                    <th>{{ languageService.i18n['BS.delete'] }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="center">
-                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
-                    </td>
-                    <td class="icon"><!-- 刪除按鈕 -->
-                      <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}">delete_forever</mat-icon>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+          <form>
+            <div class="filter">
+              <span><label>Cell:</label>
+                <select>
+                  <option>
+                    Cell#1 (NCI=0x000024001)
+                  </option>
+                  <option>
+                    Cell#2 (NCI=0x000024002)
+                  </option>
+                  <option>
+                    Cell#3 (NCI=0x000024003)
+                  </option>
+                  <option>
+                    Cell#4 (NCI=0x000024004)
+                  </option>
+                </select>
+              </span>
+          
+              <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" >search</span>
+          
+              <!-- Button of clear_search_ScheduleList -->
+              <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined">clear</span>
             </div>
+          </form>
+          <div class="table">
+            <table>
+              <thead>
+                <tr>
+                  <th>{{ languageService.i18n['BS.No'] }}</th>
+                  <th>PLMN ID</th>
+                  <th>gNB ID</th>
+                  <th>NCI</th>
+                  <th>PCI</th>
+                  <th>{{ languageService.i18n['BS.edit'] }}</th>
+                  <th>{{ languageService.i18n['BS.delete'] }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>46655</td>
+                  <td>7</td>
+                  <td>0x00001c108</td>
+                  <td>152</td>
+                  <td class="center">
+                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                  </td>
+                  <td class="icon"><!-- 刪除按鈕 -->
+                    <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}">delete_forever</mat-icon>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>46655</td>
+                  <td>16</td>
+                  <td>0x000040108</td>
+                  <td>153</td>
+                  <td class="center">
+                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                  </td>
+                  <td class="icon"><!-- 刪除按鈕 -->
+                    <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}">delete_forever</mat-icon>
+                  </td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>46655</td>
+                  <td>11</td>
+                  <td>0x00002c108</td>
+                  <td>154</td>
+                  <td class="center">
+                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                  </td>
+                  <td class="icon"><!-- 刪除按鈕 -->
+                    <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}">delete_forever</mat-icon>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           
         </div>
       </div>
     </div>
 
-    <div>
+    <div><!-- 基站告警 -->
       <span>{{ languageService.i18n['BS.alarms'] }}</span>
       <input id="faultMsg" class="toggle" type="checkbox">
       <label for="faultMsg" class="lbl-toggle">
@@ -526,8 +611,8 @@
 
     <div>
       <span>{{ languageService.i18n['BS.performance'] }}</span>
-      <input id="Datastore" class="toggle" type="checkbox">
-      <label for="Datastore" class="lbl-toggle"></label>
+      <input id="performance" class="toggle" type="checkbox">
+      <label for="performance" class="lbl-toggle"></label>
       
       <div class="collapsible-content">
         <div class="content-inner">
