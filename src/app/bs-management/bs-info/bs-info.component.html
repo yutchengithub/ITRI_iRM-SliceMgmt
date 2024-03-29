@@ -8,7 +8,10 @@
 
   <div class="main collabsible">
     <div class="baseInfo">
-      <span>{{ languageService.i18n['basic.info'] }}</span>
+      <span>
+        {{ languageService.i18n['basic.info'] }}
+        <button>{{ languageService.i18n['BS.editSettings'] }}</button>
+      </span>
       <input id="baseInfo" class="toggle" type="checkbox">
       <label for="baseInfo" class="lbl-toggle"></label>
 
@@ -223,13 +226,16 @@
     </div>
 
     <div>
-      <span>{{ languageService.i18n['BS.parameters'] }}</span>
+      <span>
+        {{ languageService.i18n['BS.parameters'] }}
+        <button>DB → gNB</button>
+        <button>gNB → DB</button>
+      </span>
       <input id="bsParameters" class="toggle" type="checkbox">
       <label for="bsParameters" class="lbl-toggle"></label>
       
       <div class="collapsible-content">
         <div class="content-inner">
-          <button>DB → gNB</button><button>DB ← gNB</button>
           <div class="collabsible">
             <div class="table">
               <table>
@@ -336,7 +342,9 @@
     </div>
 
     <div><!-- 鄰居基站列表 -->
-      <span>{{ languageService.i18n['BS.neighborBsList'] }}</span>
+      <span>{{ languageService.i18n['BS.neighborBsList'] }}
+        <h5><mat-icon tooltip="{{languageService.i18n['sm.create']}}">add</mat-icon></h5>
+      </span>
       <input id="softInfo" class="toggle" type="checkbox">
       <label for="softInfo" class="lbl-toggle"></label>
       <div class="collapsible-content">
@@ -459,14 +467,30 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                <tr
+                  *ngFor="let NE of NEList_InThisBS.components | paginate: { 
+                              itemsPerPage: pageSize, 
+                                currentPage: p, 
+                                  totalItems: totalItems, 
+                                    id: 'PageDisplay_of_NEList'
+                          };">
+                  <td>{{ NE.name }}</td>
+                  <td>
+                    <label *ngIf=" NE.comtype === 1 ">CU</label>
+                    <label *ngIf=" NE.comtype === 2 ">DU</label>
+                    <label *ngIf=" NE.comtype === 3 ">RU</label>
+                    <label *ngIf=" NE.comtype === 4 ">CU+DU</label>
+                    <label *ngIf=" NE.comtype === 5 ">CU+DU+RU</label>
+                  </td>
+                  <td>{{ NE.ip }}</td>
+                  <td>{{ NE.port }}</td>
                   <td class="icon">
-                    <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}">remove_red_eye</mat-icon>
+                    <label *ngIf=" NE.status === 0 " class="grayLight"></label>
+                    <label *ngIf=" NE.status === 1 " class="redLight"></label>
+                    <label *ngIf=" NE.status === 2 " class="greenLight"></label>
+                  </td>
+                  <td class="icon">
+                    <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}" (click)="viewNEDetailInfo( NE )">remove_red_eye</mat-icon>
                   </td>
                 </tr>
               </tbody>

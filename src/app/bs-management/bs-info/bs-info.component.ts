@@ -109,6 +109,13 @@ export class BSInfoComponent implements OnInit {
     this.router.navigate( ['/main/bs-mgr'] );
   }
 
+  /** @2024/03/29 Add
+   * 導航到選定基站的詳細資訊頁面。
+   * @param BS 從 BS 列表中選擇的 BS 物件。
+   */
+  viewNEDetailInfo( NE: NE ) {
+    this.router.navigate( ['/main/component-mgr/info', NE.id, NE.bsId] );
+  }
 
 
   isLoadingBsInfo =  true;                            // 加載 BS 資訊狀態的標誌，初始設置為 true
@@ -219,8 +226,8 @@ export class BSInfoComponent implements OnInit {
 
   // @2024/03/27 Add
   // 定義 NEList 物件，並使用類型斷言將其初始化為空物件
-  NEList:  NEList = {} as NEList;
-  isLoadingNEList =  true;        // 控制加載 NE List 資訊狀態的標誌，初始設置為 true
+           NEList: NEList = {} as NEList; // 用於儲存 O1 系統內的網元列表
+  isLoadingNEList =  true; // 控制加載 NE List 資訊狀態的標誌，初始設置為 true
 
   // @2024/03/27 Add
   // 用於取得 NE 列表資訊的函數
@@ -238,6 +245,9 @@ export class BSInfoComponent implements OnInit {
       // 處理獲取的 NE 列表,將 id 和 name 存儲到 neidNamePairs 中
       this.processNEList( this.NEList );
 
+      // 篩選出於此 BS 內的網元 
+      this.filterNEListByBSName();       
+
       this.isLoadingNEList = false; // Local 模式下，數據加載快速完成，直接設置為 false
 
     } else {
@@ -249,7 +259,10 @@ export class BSInfoComponent implements OnInit {
 
           // 成功獲取 NE 列表
           this.NEList = res; // 將獲取到的 NE 列表賦值給 NEList 屬性
-          this.processNEList( this.NEList ); // 處理獲取的 NE 列表
+          this.processNEList( this.NEList );   // 處理獲取的 NE 列表
+
+          // 篩選出於此 BS 內的網元 
+          this.filterNEListByBSName();    
 
           this.isLoadingNEList = false; // 數據加載完成
 
@@ -526,6 +539,44 @@ export class BSInfoComponent implements OnInit {
 
 
   
+
+  // @2024/03/29 Add
+  // 用於儲存所有於此 BS 內的網元
+  NEList_InThisBS: NEList = {} as NEList;
+
+  // @2024/03/29 Add
+  // 篩選出在 this.bsName 中的網元,並存儲到 NEList_InThisBS 中
+  filterNEListByBSName() {
+    console.log('filterNEListByBSName() - Start');
+
+    // 建立一個空的 components 陣列，用於存儲篩選後的網元
+    const filteredComponents: NE[] = [];
+
+    // 遍歷 NEList 中的每個網元
+    this.NEList.components.forEach((ne: NE) => {
+      // 判斷網元的 bsName 是否與 this.bsName 相同
+      if (ne.bsName === this.bsName) {
+        // 如果相同,則將該網元加入到 filteredComponents 中
+        filteredComponents.push(ne);
+      }
+    });
+
+    // 將篩選後的網元存儲到 NEList_InThisBS 中
+    this.NEList_InThisBS = {
+      components: filteredComponents
+    };
+
+    console.log( "於此 BS -", this.bsName, "內的網元有:", this.NEList_InThisBS );
+
+    console.log('filterNEListByBSName() - End');
+  }
+
+
+
+
+
+
+
 
   getBSInfo() {
     if (this.commonService.isLocal) {

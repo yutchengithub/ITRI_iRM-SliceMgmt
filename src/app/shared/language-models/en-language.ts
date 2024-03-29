@@ -209,20 +209,20 @@ export const Enlanguage = {
   'BS.confirm_del':'Confirm to Delete Basestation',
 
   'BS.info':'BS Detailed Information',
-  'BS.bsAntennaCoord':'BS Antenna Coordinates',
 
+  // 基本訊息區
+  'BS.editSettings':'Edit Settings',
+  'BS.bsAntennaCoord':'BS Antenna Coordinates',
   'BS.ruNeName':'NE Name ( RU )',
   'BS.latLong': 'Latitude and Longitude',
-
   'BS.lastHeartbeatTime': 'Last Heartbeat Time',
-
   'BS.No':'No.',
   'BS.neName':'NE Name',
   'BS.neType':'NE Type',
   'BS.neModel':'NE Model',
   'BS.neSFversion':'Software Version',
 
-
+  // 網元拓樸區
   'BS.topology':'BS Topology',
   'BS.parameters':'BS Parameters',
   'BS.neighborBsList':'Neighbor BS List',
