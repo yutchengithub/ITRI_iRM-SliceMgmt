@@ -73,9 +73,9 @@ export class BSInfoComponent implements OnInit {
       this.bsID = params['id'];
       this.bsName = params['name'];
       this.bsType = params['type'];
-      this.bsCellCount = params['cellCount'];
+      //this.bsCellCount = params['cellCount'];
       console.log('bsId: ' + this.bsID + ', bsName: ' + this.bsName +
-                     ', bsType: ' + this.bsType + ', bsCellCount: ' + this.bsCellCount + ',\nsend from /main/bs-mgr');
+                     ', bsType: ' + this.bsType + ', bsCellCount: ' + ',\nsend from /main/bs-mgr');
       
       // 初入該頁面就取得此 BS 資訊               
       this.getQueryBsInfo();
@@ -230,7 +230,7 @@ export class BSInfoComponent implements OnInit {
            NEList: NEList = {} as NEList; // 用於儲存 O1 系統內的網元列表
   isLoadingNEList =  true; // 控制加載 NE List 資訊狀態的標誌，初始設置為 true
 
-  // @2024/03/27 Add
+  // @2024/03/29 Update
   // 用於取得 NE 列表資訊的函數
   getNEList() {
     console.log( 'getNEList() - Start' ); // 輸出開始取得 NE 列表的日誌
@@ -251,6 +251,8 @@ export class BSInfoComponent implements OnInit {
 
       this.isLoadingNEList = false; // Local 模式下，數據加載快速完成，直接設置為 false
 
+      this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
+
     } else {
 
       // 如果非本地模式
@@ -267,6 +269,7 @@ export class BSInfoComponent implements OnInit {
 
           this.isLoadingNEList = false; // 數據加載完成
 
+          this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
           
         },
         error: ( error ) => {
@@ -281,6 +284,7 @@ export class BSInfoComponent implements OnInit {
           console.log( 'NE list fetch completed' ); // 輸出完成日誌
 
           this.drawConnectingLines();
+          this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
         }
       });
     }
@@ -349,7 +353,7 @@ export class BSInfoComponent implements OnInit {
       this.getComponentArray_distBS( this.selectBsInfo_dist.components );
       console.log( "分佈式基站的 componentArray:", this.componentArray );
 
-      console.log( "分佈式基站的 this.selectBsInfo_dist.info.length:", this.selectBsInfo_dist.info.length );
+      // console.log( "分佈式基站的 this.selectBsInfo_dist.info.length:", this.selectBsInfo_dist.info.length );
 
       // 檢查分佈式 BS 的 info 是否有值
       // if ( this.selectBsInfo_dist.info.length > 0 ) { // 有值時

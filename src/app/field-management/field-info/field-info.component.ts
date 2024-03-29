@@ -128,6 +128,22 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
+  selectBS!: SimplifiedBSInfo;  // 用於存儲當前選中的 BS 訊息 @2024/03/22 Add
+
+  /** @2024/03/22 Add
+   * 導航到選定基站的詳細資訊頁面。
+   * @param BS 從 BS 列表中選擇的 BS 物件。
+   */
+  viewBSDetailInfo( BS: SimplifiedBSInfo ) {
+
+    this.selectBS = BS; // 設定當前選擇的 BS。
+    console.log( "View Detail of the BS id:", this.selectBS.id, "and the BS name: ", this.selectBS.name,
+                   "and the BS type: ", this.selectBS.bstype ); // 輸出選擇的基站 ID、名稱和類型。
+    
+    // 導航到 BS 管理的詳細資訊頁面，帶上 BS 的 ID、名稱、類型作為路由參數。
+    this.router.navigate( ['/main/bs-mgr/info', this.selectBS.id, this.selectBS.name, this.selectBS.bstype ] );
+  }
+
 // ↓ Page Init ↓
 
   constructor(

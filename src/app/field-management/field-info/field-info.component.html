@@ -356,7 +356,7 @@
 										<label *ngIf="opt.status === 2" class="greenLight"></label>
 									</td>
 									<td>
-										<mat-icon tooltip="{{ languageService.i18n['field.view'] }}">remove_red_eye</mat-icon>
+										<mat-icon tooltip="{{ languageService.i18n['field.view'] }}" (click)="viewBSDetailInfo( opt )">remove_red_eye</mat-icon>
 									</td>
 									<td>
 										<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}">warning</mat-icon>
