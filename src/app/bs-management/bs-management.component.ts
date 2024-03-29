@@ -151,12 +151,14 @@ export class BSManagementComponent implements OnInit {
 
       // 模擬從 Local files 獲取數據並初始化 selected 屬性
       this.bsList = this.bsList_LocalFiles.bsList_local;
-      this.queryBsListDeal();
       console.log( 'BS List in Local:', this.bsList );
+
+      this.queryBsListDeal();
       
       this.isGetQueryBsListLoading = false; // 加載完成，隱藏 spinner
 
     } else {
+      
       console.log('Start fetching BS List from API'); // 開始獲取 BS List 資訊
 
       // Use API_BS's queryBsList() to make an HTTP GET request
@@ -222,7 +224,7 @@ export class BSManagementComponent implements OnInit {
 
   selectBS!: Basestation;  // 用於存儲當前選中的 BS 訊息 @2024/03/22 Add
 
-  /** @2024/03/22 Add
+  /** @2024/03/28 Update
    * 導航到選定基站的詳細資訊頁面。
    * @param BS 從 BS 列表中選擇的 BS 物件。
    */
@@ -230,10 +232,10 @@ export class BSManagementComponent implements OnInit {
 
     this.selectBS = BS; // 設定當前選擇的 BS。
     console.log( "View Detail of the BS id:", this.selectBS.id, "and the BS name: ", this.selectBS.name,
-                   "and the BS type: ", this.selectBS.bstype, "and the BS cellCount:", this.selectBS.cellCount ); // 輸出選擇的基站 ID、名稱和類型。
+                   "and the BS type: ", this.selectBS.bstype ); // 輸出選擇的基站 ID、名稱和類型。
     
-    // 導航到 BS 管理的詳細資訊頁面，帶上 BS 的 ID、名稱、類型和Cell數作為路由參數。
-    this.router.navigate( ['/main/bs-mgr/info', this.selectBS.id, this.selectBS.name, this.selectBS.bstype, this.selectBS.cellCount ] );
+    // 導航到 BS 管理的詳細資訊頁面，帶上 BS 的 ID、名稱、類型作為路由參數。
+    this.router.navigate( ['/main/bs-mgr/info', this.selectBS.id, this.selectBS.name, this.selectBS.bstype ] );
   }
 
 

@@ -72,7 +72,7 @@ const routes: Routes = [
         path: 'bs-mgr',
         children: [
           { path: '', component: BSManagementComponent },
-          { path: 'info/:id/:name/:type/:cellCount', component: BSInfoComponent }
+          { path: 'info/:id/:name/:type', component: BSInfoComponent }
         ]
       },
       {

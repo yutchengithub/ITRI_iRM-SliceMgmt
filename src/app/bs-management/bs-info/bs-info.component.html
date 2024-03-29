@@ -148,6 +148,7 @@
                           <td>{{ swInfo.value.neSFversion }}</td>
                         </tr>
                       </ng-container>
+
                     </tbody>
                   </table>
                 </div>
@@ -167,65 +168,75 @@
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="collabsible">
-            
-              <!-- 使用 Canvas 畫網元拓樸圖 -->
-              <canvas #canvas class="topology-canvas"></canvas>
 
-              <ng-container *ngIf=" bsType === '1' ">
-                <!-- 顯示 一體式基站 拓樸 -->
-                <div class="nes-topology">
-                  <div>  
-                    <div tooltip="{{ getComponentName( allInOneNEID ) }}" class="ne-info all-in-one-ne-info"
-                            [style.left.px] = "getAllInOnePosition().x"
-                             [style.top.px] = "getAllInOnePosition().y" >
-                      <span class="grayLight"  *ngIf="getComponentStatus( allInOneNEID ) === 0"></span>
-                      <span class="redLight"   *ngIf="getComponentStatus( allInOneNEID ) === 1"></span>
-                      <span class="greenLight" *ngIf="getComponentStatus( allInOneNEID ) === 2"></span>
-                      <span>[CU+DU+RU]</span>
-                    </div>
+            <!-- 當數據正在加載時顯示進度條 @2024/03/29 Add -->
+            <ng-container *ngIf="isLoadingNEList">
+              <div class="progress-spinner-container">
+                <!-- 指示器大小設置 -->
+                <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner>
+              </div>
+            </ng-container>
+
+            <!-- 使用 Canvas 畫網元拓樸圖 -->
+            <canvas #canvas class="topology-canvas"></canvas>
+
+            <!-- 加載完成後，如 bsType === '1'，則顯示繪製的一體式 BS 網元拓樸圖 @2024/03/29 Add -->
+            <ng-container *ngIf=" bsType === '1' && !isLoadingNEList ">
+              <!-- 顯示 一體式基站 拓樸 -->
+              <div class="nes-topology">
+                <div>  
+                  <div tooltip="{{ getComponentName( allInOneNEID ) }}" class="ne-info all-in-one-ne-info"
+                          [style.left.px] = "getAllInOnePosition().x"
+                            [style.top.px] = "getAllInOnePosition().y" >
+                    <span class="grayLight"  *ngIf="getComponentStatus( allInOneNEID ) === 0"></span>
+                    <span class="redLight"   *ngIf="getComponentStatus( allInOneNEID ) === 1"></span>
+                    <span class="greenLight" *ngIf="getComponentStatus( allInOneNEID ) === 2"></span>
+                    <span>[CU+DU+RU]</span>
                   </div>
                 </div>
-              </ng-container>
+              </div>
+            </ng-container>
 
-              <ng-container *ngIf=" bsType === '2' ">
-                <!-- 顯示 分佈式基站 拓樸 -->
-                <div class="nes-topology">   
-                  <div *ngFor="let cu of componentArray | filterBy: 'type': 'cu'">
-                    <!-- 顯示 CU 的資訊 -->
-                    <div tooltip="{{ getComponentName(cu.id) }}" class="ne-info cu-info" [style.left.px]="getCuPosition(cu).x" [style.top.px]="getCuPosition(cu).y">
-                      <span class="grayLight"  *ngIf="getComponentStatus(cu.id) === 0"></span>
-                      <span class="redLight"   *ngIf="getComponentStatus(cu.id) === 1"></span>
-                      <span class="greenLight" *ngIf="getComponentStatus(cu.id) === 2"></span>
-                      <span>CU</span>
-                    </div>
-                  </div>
-                  <div *ngFor="let du of componentArray | filterBy: 'type': 'du'">
-                    <!-- 顯示 DU 的資訊 -->
-                    <div tooltip="{{ getComponentName(du.id) }}" class="ne-info du-info" [style.left.px]="getDuPosition(du).x" [style.top.px]="getDuPosition(du).y">
-                      <span class="grayLight"  *ngIf="getComponentStatus(du.id) === 0"></span>
-                      <span class="redLight"   *ngIf="getComponentStatus(du.id) === 1"></span>
-                      <span class="greenLight" *ngIf="getComponentStatus(du.id) === 2"></span>
-                      <span>DU</span>
-                    </div>
-                  </div>
-                  <div *ngFor="let ru of componentArray | filterBy: 'type': 'ru'">
-                    <!-- 顯示 RU 的資訊 -->
-                    <div tooltip="{{ getComponentName(ru.id) }}" class="ne-info ru-info" [style.left.px]="getRuPosition(ru).x" [style.top.px]="getRuPosition(ru).y">
-                      <span class="grayLight"  *ngIf="getComponentStatus(ru.id) === 0"></span>
-                      <span class="redLight"   *ngIf="getComponentStatus(ru.id) === 1"></span>
-                      <span class="greenLight" *ngIf="getComponentStatus(ru.id) === 2"></span>
-                      <span>RU</span>
-                    </div>
+            <!-- 加載完成後，如 bsType === '2'，則顯示繪製的分佈式 BS 網元拓樸圖 @2024/03/29 Add -->
+            <ng-container *ngIf=" bsType === '2' && !isLoadingNEList ">
+              <!-- 顯示 分佈式基站 拓樸 -->
+              <div class="nes-topology">   
+                <div *ngFor="let cu of componentArray | filterBy: 'type': 'cu'">
+                  <!-- 顯示 CU 的資訊 -->
+                  <div tooltip="{{ getComponentName(cu.id) }}" class="ne-info cu-info" [style.left.px]="getCuPosition(cu).x" [style.top.px]="getCuPosition(cu).y">
+                    <span class="grayLight"  *ngIf="getComponentStatus(cu.id) === 0"></span>
+                    <span class="redLight"   *ngIf="getComponentStatus(cu.id) === 1"></span>
+                    <span class="greenLight" *ngIf="getComponentStatus(cu.id) === 2"></span>
+                    <span>CU</span>
                   </div>
                 </div>
-              </ng-container>
-
+                <div *ngFor="let du of componentArray | filterBy: 'type': 'du'">
+                  <!-- 顯示 DU 的資訊 -->
+                  <div tooltip="{{ getComponentName(du.id) }}" class="ne-info du-info" [style.left.px]="getDuPosition(du).x" [style.top.px]="getDuPosition(du).y">
+                    <span class="grayLight"  *ngIf="getComponentStatus(du.id) === 0"></span>
+                    <span class="redLight"   *ngIf="getComponentStatus(du.id) === 1"></span>
+                    <span class="greenLight" *ngIf="getComponentStatus(du.id) === 2"></span>
+                    <span>DU</span>
+                  </div>
+                </div>
+                <div *ngFor="let ru of componentArray | filterBy: 'type': 'ru'">
+                  <!-- 顯示 RU 的資訊 -->
+                  <div tooltip="{{ getComponentName(ru.id) }}" class="ne-info ru-info" [style.left.px]="getRuPosition(ru).x" [style.top.px]="getRuPosition(ru).y">
+                    <span class="grayLight"  *ngIf="getComponentStatus(ru.id) === 0"></span>
+                    <span class="redLight"   *ngIf="getComponentStatus(ru.id) === 1"></span>
+                    <span class="greenLight" *ngIf="getComponentStatus(ru.id) === 2"></span>
+                    <span>RU</span>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+  
           </div>
         </div>
       </div>
     </div>
 
-    <div>
+    <div><!-- 基站參數 -->
       <span>
         {{ languageService.i18n['BS.parameters'] }}
         <button>DB → gNB</button>
@@ -448,10 +459,10 @@
       </div>
     </div>
 
-    <div>
+    <div><!-- 網元列表 -->
       <span>{{ languageService.i18n['BS.neList'] }}</span>
-      <input id="cm" class="toggle" type="checkbox">
-      <label for="cm" class="lbl-toggle"></label>
+      <input id="neList" class="toggle" type="checkbox">
+      <label for="neList" class="lbl-toggle"></label>
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="table">
@@ -467,32 +478,45 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  *ngFor="let NE of NEList_InThisBS.components | paginate: { 
-                              itemsPerPage: pageSize, 
-                                currentPage: p, 
-                                  totalItems: totalItems, 
-                                    id: 'PageDisplay_of_NEList'
-                          };">
-                  <td>{{ NE.name }}</td>
-                  <td>
-                    <label *ngIf=" NE.comtype === 1 ">CU</label>
-                    <label *ngIf=" NE.comtype === 2 ">DU</label>
-                    <label *ngIf=" NE.comtype === 3 ">RU</label>
-                    <label *ngIf=" NE.comtype === 4 ">CU+DU</label>
-                    <label *ngIf=" NE.comtype === 5 ">CU+DU+RU</label>
-                  </td>
-                  <td>{{ NE.ip }}</td>
-                  <td>{{ NE.port }}</td>
-                  <td class="icon">
-                    <label *ngIf=" NE.status === 0 " class="grayLight"></label>
-                    <label *ngIf=" NE.status === 1 " class="redLight"></label>
-                    <label *ngIf=" NE.status === 2 " class="greenLight"></label>
-                  </td>
-                  <td class="icon">
-                    <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}" (click)="viewNEDetailInfo( NE )">remove_red_eye</mat-icon>
-                  </td>
-                </tr>
+
+                <!-- 當數據正在加載時顯示進度條 @2024/03/29 Add -->
+                <ng-container *ngIf="isLoadingNEList">
+                  <div class="progress-spinner-container">
+                    <!-- 指示器大小設置 -->
+                    <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner>
+                  </div>
+                </ng-container>
+
+                <!-- 加載完成後顯示 一體式或分佈式 BS 網元軟體版本資訊 數據 @2024/03/27 Add -->
+                <ng-container *ngIf="!isLoadingNEList">
+                  <tr
+                    *ngFor="let NE of NEList_InThisBS.components | paginate: { 
+                                itemsPerPage: pageSize, 
+                                  currentPage: p, 
+                                    totalItems: totalItems, 
+                                      id: 'PageDisplay_of_NEList'
+                            };">
+                    <td>{{ NE.name }}</td>
+                    <td>
+                      <label *ngIf=" NE.comtype === 1 ">CU</label>
+                      <label *ngIf=" NE.comtype === 2 ">DU</label>
+                      <label *ngIf=" NE.comtype === 3 ">RU</label>
+                      <label *ngIf=" NE.comtype === 4 ">CU+DU</label>
+                      <label *ngIf=" NE.comtype === 5 ">CU+DU+RU</label>
+                    </td>
+                    <td>{{ NE.ip }}</td>
+                    <td>{{ NE.port }}</td>
+                    <td class="icon">
+                      <label *ngIf=" NE.status === 0 " class="grayLight"></label>
+                      <label *ngIf=" NE.status === 1 " class="redLight"></label>
+                      <label *ngIf=" NE.status === 2 " class="greenLight"></label>
+                    </td>
+                    <td class="icon">
+                      <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}" (click)="viewNEDetailInfo( NE )">remove_red_eye</mat-icon>
+                    </td>
+                  </tr>
+                </ng-container>
+
               </tbody>
             </table>
           </div>

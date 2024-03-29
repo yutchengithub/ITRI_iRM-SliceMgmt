@@ -16,9 +16,10 @@ import { ChangeDetectorRef } from '@angular/core';
 import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt'; // @2024/03/25 Add
 
 // 引入儲存各個資訊所需的 interfaces
-import { BSInfo, Components }              from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
-import { BSInfo_dist, Components_dist }    from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
+import { BSInfo, Components }                      from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
+import { BSInfo_dist, Info_dist, Components_dist } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
 import { NEList, NE, Sm  } from '../../shared/interfaces/NE/For_queryBsComponentList'; // @2024/03/27 Add
+import { NEInfo }          from '../../shared/interfaces/NE/For_queryBsComponentInfo'; // @2024/03/29 Add
 
 // 引入所需 Local Files
 import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';          // @2024/03/25 Add
@@ -72,9 +73,9 @@ export class BSInfoComponent implements OnInit {
       this.bsID = params['id'];
       this.bsName = params['name'];
       this.bsType = params['type'];
-      this.bsCellCount = params['cellCount'];
+      //this.bsCellCount = params['cellCount'];
       console.log('bsId: ' + this.bsID + ', bsName: ' + this.bsName +
-                     ', bsType: ' + this.bsType + ', bsCellCount: ' + this.bsCellCount + ',\nsend from /main/bs-mgr');
+                     ', bsType: ' + this.bsType + ', bsCellCount: ' + ',\nsend from /main/bs-mgr');
       
       // 初入該頁面就取得此 BS 資訊               
       this.getQueryBsInfo();
@@ -229,7 +230,7 @@ export class BSInfoComponent implements OnInit {
            NEList: NEList = {} as NEList; // 用於儲存 O1 系統內的網元列表
   isLoadingNEList =  true; // 控制加載 NE List 資訊狀態的標誌，初始設置為 true
 
-  // @2024/03/27 Add
+  // @2024/03/29 Update
   // 用於取得 NE 列表資訊的函數
   getNEList() {
     console.log( 'getNEList() - Start' ); // 輸出開始取得 NE 列表的日誌
@@ -250,6 +251,8 @@ export class BSInfoComponent implements OnInit {
 
       this.isLoadingNEList = false; // Local 模式下，數據加載快速完成，直接設置為 false
 
+      this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
+
     } else {
 
       // 如果非本地模式
@@ -266,6 +269,7 @@ export class BSInfoComponent implements OnInit {
 
           this.isLoadingNEList = false; // 數據加載完成
 
+          this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
           
         },
         error: ( error ) => {
@@ -280,6 +284,7 @@ export class BSInfoComponent implements OnInit {
           console.log( 'NE list fetch completed' ); // 輸出完成日誌
 
           this.drawConnectingLines();
+          this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
         }
       });
     }
@@ -299,9 +304,11 @@ export class BSInfoComponent implements OnInit {
   // 用於存儲兩種基站的網元資訊，用於後續繪製拓樸圖
   componentArray: any[] = [];
 
+  // @2024/03/28 Add
+  // 用於儲存一體式基站的 NE ID，用於後續繪製拓樸圖
   allInOneNEID: string = "";
 
-  // @2024/03/27 Add
+  // @2024/03/29 Update - 修改當 this.bsType === "2" 時的處理方式
   // processNEList 函數用於處理從 NEList 中獲取的網元訊息，並將相關資訊存儲在以下對象中:
   // - ruIdNamePositionMap: 用於存儲分佈式基站的 RU id 對應到的名稱與位置
   //        - swVersionMap: 用於存儲網元的使用的軟體版本訊息，包括網元名稱、網元類型、網元型號和軟體版本號
@@ -312,6 +319,7 @@ export class BSInfoComponent implements OnInit {
 
       // 處理一體式基站的組件資訊，放入 componentArray 用於繪拓樸圖
       this.componentArray = this.selectBsInfo.components;
+      console.log( "一體式基站的 componentArray:", this.componentArray );
 
       // 處理一體式基站的軟體版本資訊
       for ( const component of this.selectBsInfo.components ) {
@@ -319,7 +327,6 @@ export class BSInfoComponent implements OnInit {
         // 在 NEList 中找到與組件 id 相對應的 NE
         const correspondingNE = neList.components.find( ne => ne.id === component.id );
 
-    
         // 如果找到對應的 NE
         if ( correspondingNE ) {
 
@@ -330,100 +337,169 @@ export class BSInfoComponent implements OnInit {
           const neType = component.type.toUpperCase();
 
           // 構建 neModel 字串
-          const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`;
+          const neModel = `${correspondingNE.firm} / ${correspondingNE.modelname}`;
 
-          // 獲取活動軟體版本,如果沒有則設置為 'None'
+          // 獲取活動軟體版本，如果沒有則設置為 'None'
           const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None';
 
-          // 將軟體版本資訊存儲在 swVersionMap 中,以組件 id 作為鍵
+          // 將軟體版本資訊存儲在 swVersionMap 中，以組件 id 作為鍵
           this.swVersionMap[component.id] = { neName: correspondingNE.name, neType, neModel, neSFversion };
         }
       }
 
-    } else if ( this.bsType === "2" ) { // 如果是分佈式基站
+    } else if ( this.bsType === "2" ) { // 如是分佈式基站
 
-        // 處理分佈式基站的組件資訊，放入 componentArray 用於繪拓樸圖
-        const components = this.selectBsInfo_dist.components;
+      // 處理分佈式基站的組件資訊，放入 componentArray 用於繪拓樸圖
+      this.getComponentArray_distBS( this.selectBsInfo_dist.components );
+      console.log( "分佈式基站的 componentArray:", this.componentArray );
 
-        for ( const cuid in components ) {
-          this.componentArray.push( { type: 'cu', id: cuid } );
+      // console.log( "分佈式基站的 this.selectBsInfo_dist.info.length:", this.selectBsInfo_dist.info.length );
 
-          const dus = components[cuid];
-          for ( const duid in dus ) {
-            this.componentArray.push( { type: 'du', id: duid, cuid: cuid } );
+      // 檢查分佈式 BS 的 info 是否有值
+      // if ( this.selectBsInfo_dist.info.length > 0 ) { // 有值時
 
-            const rus = dus[duid];
-            for ( let i = 0; i < rus.length; i++ ) {
-              const ruId = Object.keys( rus[i] )[0];
+      //   // 遍歷 selectBsInfo_dist.info 中的每個 Info 對象，對分佈式基站的網元軟體版本資訊進行處理
+      //   this.if_BsInfo_dist_notNull( this.selectBsInfo_dist.info, neList );
 
-              this.componentArray.push( { type: 'ru', id: ruId, duid: duid } );
-            }
-          }
-        }
+      // } else { // 無值時
 
-        // 遍歷 selectBsInfo_dist.info 中的每個 Info 對象，對分佈式基站的網元軟體版本資訊進行處理
-        for ( const info of this.selectBsInfo_dist.info ) {
-          
-          // 如果 RU.id 存在
-          if ( info.RU && info.RU.id ) {
+      //   console.log( "this.selectBsInfo_dist.info 無值，開始使用 if_BsInfo_dist_isNull() 進行處理" );
 
-            const ruId = info.RU.id; // 獲取 RU.id
+      //   this.if_BsInfo_dist_isNull( neList );
+      // }
 
-            // 在 NEList 中找到與 RU.id 相對應的 NE
-            const correspondingNE = neList.components.find( ne => ne.id === ruId );
+      // 都直接改呼叫此函數，
+      // 從 this.componentArray 中去取得對應的軟體或位置資訊
+      this.if_BsInfo_dist_isNull( neList );
 
-            // 如果找到對應的 NE
-            if ( correspondingNE ) {
-
-              // 將 NE 的名稱和位置存儲在對象中,以 RU.id 作為鍵
-              this.ruIdNamePositionMap[ruId] = {
-                name: correspondingNE.name, // NE 的名稱
-                position: this.commonService.formatPosition( info.RU.position ) // 格式化 RU 的位置資訊
-              };
-
-              // 處理軟體版本資訊
-              const neType = 'RU'; // 設置網元類型為 'RU'
-              const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
-              const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
-              this.swVersionMap[ruId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 RU.id 作為鍵
-            }
-          }
-      
-          // 處理 CU 和 DU 的軟體版本資訊
-          if ( info.CU && info.CU.id ) { // 如果 CU.id 存在
-
-            const cuId = info.CU.id; // 獲取 CU.id
-            const correspondingNE = neList.components.find(ne => ne.id === cuId); // 在 NEList 中找到與 CU.id 相對應的 NE
-
-            // 如果找到對應的 NE
-            if ( correspondingNE ) {
-              const neType = 'CU'; // 設置網元類型為 'CU'
-              const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
-              const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
-
-              this.swVersionMap[cuId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 CU.id 作為鍵
-            }
-          }
-      
-          if ( info.DU && info.DU.id ) { // 如果 DU.id 存在
-
-            const duId = info.DU.id; // 獲取 DU.id
-            const correspondingNE = neList.components.find( ne => ne.id === duId ); // 在 NEList 中找到與 DU.id 相對應的 NE
-
-            // 如果找到對應的 NE
-            if ( correspondingNE ) { 
-              const neType = 'DU';   // 設置網元類型為 'DU'
-              const neModel = `${correspondingNE.firm}/${correspondingNE.modelname}`; // 構建網元型號字串
-              const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
-              
-              this.swVersionMap[duId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 DU.id 作為鍵
-            }
-          }
-        }
-
-      }
-      console.log("this.componentArray:", this.componentArray)
+    }
   }
+
+  // @2024/03/29 Add
+  // 用於從 BsInfo_dist.components 取得網元組成資訊 ( 分佈式用 )
+  getComponentArray_distBS( NE_Topology: Components_dist ) {
+
+    // 處理分佈式基站的組件資訊，放入 componentArray 用於繪拓樸圖
+    const components = NE_Topology;
+
+    for ( const cuid in components ) {
+
+      this.componentArray.push( { type: 'cu', id: cuid } );
+
+      const dus = components[cuid];
+
+      for ( const duid in dus ) {
+
+        this.componentArray.push( { type: 'du', id: duid, cuid: cuid } );
+
+        const rus = dus[duid];
+
+        for ( let i = 0; i < rus.length; i++ ) {
+
+          const ruId = Object.keys( rus[i] )[0];
+          const position = Object.values( rus[i] )[0];
+
+          this.componentArray.push( { type: 'ru', id: ruId, duid: duid, position: this.commonService.formatPosition( position ) } );
+        }
+      }
+    }
+  }
+
+  // @2024/03/29 Add
+  // 當於處理網元列表 processNEList(),，且 BsInfo_dist.info 沒有值時,
+  // 用於對基站的網元軟體版本資訊進行處理 ( 分佈式用 )。
+  if_BsInfo_dist_isNull( neList: NEList ) {
+    // 遍歷 this.componentArray,對分佈式基站的網元軟體版本資訊進行處理
+    for ( const component of this.componentArray ) {
+      const correspondingNE = neList.components.find( ne => ne.id === component.id );
+      
+      // 如果找到對應的 NE
+      if ( correspondingNE ) {
+        const neType = component.type.toUpperCase(); // 轉換網元類型為大寫
+        const neModel = `${correspondingNE.firm} / ${correspondingNE.modelname}`; // 構建網元型號字串
+        const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+        
+        // 將軟體版本資訊存儲在 swVersionMap 中,以網元 ID 作為鍵
+        this.swVersionMap[component.id] = { neName: correspondingNE.name, neType, neModel, neSFversion };
+        
+        // 如果是 RU 網元,將 NE 的名稱和位置存儲在 ruIdNamePositionMap 中,以 RU.id 作為鍵
+        if ( component.type === 'ru' ) {
+          this.ruIdNamePositionMap[component.id] = {
+            name: correspondingNE.name, // NE 的名稱
+            position: component.position // 從 componentArray 中獲取 RU 的位置資訊
+          };
+        }
+      }
+    }
+  }
+
+  // @2024/03/29 Add ( 目前改不使用此種方式 )
+  // 當於處理網元列表 processNEList()，且有從 BsInfo_dist.info 有取到值時，
+  // 用於對基站的網元軟體版本資訊進行處理 ( 分佈式用 )。
+  if_BsInfo_dist_notNull( info_distBS: Info_dist[], neList: NEList ) {
+
+    // 遍歷 selectBsInfo_dist.info 中的每個 Info 對象，對分佈式基站的網元軟體版本資訊進行處理
+    for ( const info of info_distBS ) {
+              
+      // 如果 RU.id 存在
+      if ( info.RU && info.RU.id ) {
+
+        const ruId = info.RU.id; // 獲取 RU.id
+
+        // 在 NEList 中找到與 RU.id 相對應的 NE
+        const correspondingNE = neList.components.find( ne => ne.id === ruId );
+
+        // 如果找到對應的 NE
+        if ( correspondingNE ) {
+
+          // 將 NE 的名稱和位置存儲在對象中,以 RU.id 作為鍵
+          this.ruIdNamePositionMap[ruId] = {
+            name: correspondingNE.name, // NE 的名稱
+            position: this.commonService.formatPosition( info.RU.position ) // 格式化 RU 的位置資訊
+          };
+
+          // 處理軟體版本資訊
+          const neType = 'RU'; // 設置網元類型為 'RU'
+          const neModel = `${correspondingNE.firm} / ${correspondingNE.modelname}`; // 構建網元型號字串
+          const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+          this.swVersionMap[ruId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 RU.id 作為鍵
+        }
+      }
+
+      // 處理 CU 和 DU 的軟體版本資訊
+      if ( info.CU && info.CU.id ) { // 如果 CU.id 存在
+
+        const cuId = info.CU.id; // 獲取 CU.id
+        const correspondingNE = neList.components.find(ne => ne.id === cuId); // 在 NEList 中找到與 CU.id 相對應的 NE
+
+        // 如果找到對應的 NE
+        if ( correspondingNE ) {
+          const neType = 'CU'; // 設置網元類型為 'CU'
+          const neModel = `${correspondingNE.firm} / ${correspondingNE.modelname}`; // 構建網元型號字串
+          const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+
+          this.swVersionMap[cuId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 CU.id 作為鍵
+        }
+      }
+
+      if ( info.DU && info.DU.id ) { // 如果 DU.id 存在
+
+        const duId = info.DU.id; // 獲取 DU.id
+        const correspondingNE = neList.components.find( ne => ne.id === duId ); // 在 NEList 中找到與 DU.id 相對應的 NE
+
+        // 如果找到對應的 NE
+        if ( correspondingNE ) { 
+          const neType = 'DU';   // 設置網元類型為 'DU'
+          const neModel = `${correspondingNE.firm} / ${correspondingNE.modelname}`; // 構建網元型號字串
+          const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+          
+          this.swVersionMap[duId] = { neName: correspondingNE.name, neType, neModel, neSFversion }; // 將軟體版本資訊存儲在 swVersionMap 中,以 DU.id 作為鍵
+        }
+      }
+    }
+
+  }
+
 
   // @2024/03/27 Add
   // 用於取得對應 NE 目前使用的軟體版本
@@ -447,98 +523,110 @@ export class BSInfoComponent implements OnInit {
     return undefined;
   }
 
+  // @2024/03/29 Add
+  selectNEid: string = ""; // 用於存儲當前選中的網元ID
 
+  
+
+
+// ↓ 繪製拓樸圖區 @2024/03/28 Add ↓
 
   // 使用 @ViewChild 裝飾器獲取 canvas 元素的引用
   @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
 
+  // 獲取一體式基站的位置
   getAllInOnePosition(): { x: number, y: number } {
-    const canvasWidth = this.canvas.nativeElement.width;
-    const canvasHeight = this.canvas.nativeElement.height;
-    const x = canvasWidth / 2;  // 水平置中
+    const canvasWidth = this.canvas.nativeElement.width; // 獲取畫布寬度
+    const canvasHeight = this.canvas.nativeElement.height; // 獲取畫布高度
+    const x = canvasWidth / 2; // 水平置中
     const y = canvasHeight / 2; // 垂直置中
-    return { x, y };
+    return { x, y }; // 返回位置
   }
 
-  getCuPosition( cu: any ): { x: number, y: number } {
-    const index = this.componentArray.filter( c => c.type === 'cu' ).indexOf( cu );
-    const x = this.canvas.nativeElement.width / 4;
-    const y = this.canvas.nativeElement.height / (this.componentArray.filter(c => c.type === 'cu').length + 1) * (index + 1);
-    return { x, y };
-  }
-  
-  getDuPosition( du: any ): { x: number, y: number } {
-    const index = this.componentArray.filter( c => c.type === 'du' ).indexOf(du);
-    const x = this.canvas.nativeElement.width * 0.535;
-    const y = this.canvas.nativeElement.height / ( this.componentArray.filter( c => c.type === 'du').length + 1 ) * ( index + 1 );
-    return { x, y };
+  // 獲取 CU 的位置
+  getCuPosition(cu: any): { x: number, y: number } {
+    const index = this.componentArray.filter(c => c.type === 'cu').indexOf(cu); // 獲取 CU 在 componentArray 中的索引
+    const x = this.canvas.nativeElement.width / 4; // CU 的 x 座標
+    const y = this.canvas.nativeElement.height / (this.componentArray.filter(c => c.type === 'cu').length + 1) * (index + 1); // CU 的 y 座標
+    return { x, y }; // 返回位置
   }
 
-  getRuPosition( ru: any ): { x: number, y: number } {
-    const index = this.componentArray.filter( c => c.type === 'ru' ).indexOf( ru );
-    const ruCount = this.componentArray.filter( c => c.type === 'ru' ).length;
+  // 獲取 DU 的位置
+  getDuPosition(du: any): { x: number, y: number } {
+    const index = this.componentArray.filter(c => c.type === 'du').indexOf(du); // 獲取 DU 在 componentArray 中的索引
+    const x = this.canvas.nativeElement.width * 0.535; // DU 的 x 座標
+    const y = this.canvas.nativeElement.height / (this.componentArray.filter(c => c.type === 'du').length + 1) * (index + 1); // DU 的 y 座標
+    return { x, y }; // 返回位置
+  }
+
+  // 獲取 RU 的位置
+  getRuPosition(ru: any): { x: number, y: number } {
+    const index = this.componentArray.filter(c => c.type === 'ru').indexOf(ru); // 獲取 RU 在 componentArray 中的索引
+    const ruCount = this.componentArray.filter(c => c.type === 'ru').length; // 獲取 RU 的數量
     const x = this.canvas.nativeElement.width * 0.75; // 調整 RU 的 x 座標
-    const y = this.canvas.nativeElement.height / ( ruCount + 1 ) * ( index + 1 )* 1.1; // 均勻分佈 RU 的 y 座標
-    return { x, y };
+    const y = this.canvas.nativeElement.height / (ruCount + 1) * (index + 1) * 1.1; // 均勻分佈 RU 的 y 座標
+    return { x, y }; // 返回位置
   }
 
-  getComponentName( id: string ): string {
-    const component = this.NEList.components.find( c => c.id === id );
-    return component ? component.name : '';
-  }
-  
-  getComponentStatus( id: string ) : number {
-    const component = this.NEList.components.find( c => c.id === id );
-    return component ? component.status : 0;
+  // 獲取組件名稱
+  getComponentName(id: string): string {
+    const component = this.NEList.components.find(c => c.id === id); // 根據組件 ID 查找組件
+    return component ? component.name : ''; // 返回組件名稱，如果找不到則返回空字串
   }
 
+  // 獲取組件狀態
+  getComponentStatus(id: string): number {
+    const component = this.NEList.components.find(c => c.id === id); // 根據組件 ID 查找組件
+    return component ? component.status : 0; // 返回組件狀態，如果找不到則返回 0
+  }
+
+  // 繪製連接線
   drawConnectingLines() {
-    const canvas = this.canvas.nativeElement;
-    const ctx = canvas.getContext( '2d' );
+    const canvas = this.canvas.nativeElement; // 獲取 canvas 元素
+    const ctx = canvas.getContext('2d'); // 獲取繪圖上下文
 
     // 檢查渲染上下文是否存在
-    if ( ctx ) {
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // 清除畫布
 
-      ctx.clearRect( 0, 0, canvas.width, canvas.height );
-
-      // 設置線條寬度為 1
-      ctx.lineWidth = 3;
-      // 設置線條顏色為白色
-      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 3;         // 設置線條寬度為 3
+      ctx.strokeStyle = 'white'; // 設置線條顏色為白色
 
       // 繪製 CU 和 DU 之間的連接線
-      this.componentArray.filter( c => c.type === 'cu' ).forEach( cu => {
-        const cuPosition = this.getCuPosition( cu );
-        this.componentArray.filter( c => c.type === 'du' ).forEach( du => {
-          const duPosition = this.getDuPosition( du );
-          console.log( "繪製 CU 和 DU 之間的連接線 - cuPosition", cuPosition );
-          console.log( "繪製 CU 和 DU 之間的連接線 - duPosition", duPosition );
-          this.drawLine( ctx, cuPosition, duPosition );
+      this.componentArray.filter(c => c.type === 'cu').forEach(cu => {
+        const cuPosition = this.getCuPosition(cu); // 獲取 CU 位置
+        this.componentArray.filter(c => c.type === 'du').forEach(du => {
+          const duPosition = this.getDuPosition(du); // 獲取 DU 位置
+          console.log("繪製 CU 和 DU 之間的連接線 - cuPosition", cuPosition); // 輸出 CU 位置
+          console.log("繪製 CU 和 DU 之間的連接線 - duPosition", duPosition); // 輸出 DU 位置
+          this.drawLine(ctx, cuPosition, duPosition); // 繪製 CU 和 DU 之間的連接線
         });
       });
 
       // 繪製 DU 和 RU 之間的連接線
-      this.componentArray.filter( du => du.type === 'du' ).forEach( du => {
-        const duPosition = this.getDuPosition( du );
-        this.componentArray.filter( ru => ru.type === 'ru' && ru.duid === du.id ).forEach( ru => {
-          const ruPosition = this.getRuPosition( ru );
-          console.log( "繪製 DU 和 RU 之間的連接線 - duPosition", duPosition );
-          console.log( "繪製 DU 和 RU 之間的連接線 - ruPosition", ruPosition );
-          this.drawLine( ctx, duPosition, ruPosition );
+      this.componentArray.filter(du => du.type === 'du').forEach(du => {
+        const duPosition = this.getDuPosition(du); // 獲取 DU 位置
+        this.componentArray.filter(ru => ru.type === 'ru' && ru.duid === du.id).forEach(ru => {
+          const ruPosition = this.getRuPosition(ru); // 獲取 RU 位置
+          console.log("繪製 DU 和 RU 之間的連接線 - duPosition", duPosition); // 輸出 DU 位置
+          console.log("繪製 DU 和 RU 之間的連接線 - ruPosition", ruPosition); // 輸出 RU 位置
+          this.drawLine(ctx, duPosition, ruPosition); // 繪製 DU 和 RU 之間的連接線
         });
       });
     }
   }
-  
-  drawLine( ctx: CanvasRenderingContext2D, start: { x: number, y: number }, end: { x: number, y: number } ) {
-    ctx.beginPath();
-    ctx.moveTo( start.x, start.y );
-    ctx.lineTo( end.x, end.y );
-    ctx.stroke();
+
+  // 繪製單條線
+  drawLine(ctx: CanvasRenderingContext2D, start: { x: number, y: number }, end: { x: number, y: number }) {
+    ctx.beginPath(); // 開始繪製新路徑
+    ctx.moveTo(start.x, start.y); // 移動到起點
+    ctx.lineTo(end.x, end.y); // 繪製到終點
+    ctx.stroke(); // 描邊
   }
 
-
+// ↑ 繪製拓樸圖區 @2024/03/28 Add ↑
   
+
 
   // @2024/03/29 Add
   // 用於儲存所有於此 BS 內的網元
@@ -553,11 +641,13 @@ export class BSInfoComponent implements OnInit {
     const filteredComponents: NE[] = [];
 
     // 遍歷 NEList 中的每個網元
-    this.NEList.components.forEach((ne: NE) => {
+    this.NEList.components.forEach( ( ne: NE ) => {
+
       // 判斷網元的 bsName 是否與 this.bsName 相同
-      if (ne.bsName === this.bsName) {
+      if ( ne.bsName === this.bsName ) {
+
         // 如果相同,則將該網元加入到 filteredComponents 中
-        filteredComponents.push(ne);
+        filteredComponents.push( ne );
       }
     });
 
@@ -568,7 +658,7 @@ export class BSInfoComponent implements OnInit {
 
     console.log( "於此 BS -", this.bsName, "內的網元有:", this.NEList_InThisBS );
 
-    console.log('filterNEListByBSName() - End');
+    console.log( 'filterNEListByBSName() - End' );
   }
 
 
