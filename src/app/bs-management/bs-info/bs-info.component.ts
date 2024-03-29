@@ -300,9 +300,11 @@ export class BSInfoComponent implements OnInit {
   // 用於存儲兩種基站的網元資訊，用於後續繪製拓樸圖
   componentArray: any[] = [];
 
+  // @2024/03/28 Add
+  // 用於儲存一體式基站的 NE ID，用於後續繪製拓樸圖
   allInOneNEID: string = "";
 
-  // @2024/03/27 Add
+  // @2024/03/29 Update - 修改當 this.bsType === "2" 時的處理方式
   // processNEList 函數用於處理從 NEList 中獲取的網元訊息，並將相關資訊存儲在以下對象中:
   // - ruIdNamePositionMap: 用於存儲分佈式基站的 RU id 對應到的名稱與位置
   //        - swVersionMap: 用於存儲網元的使用的軟體版本訊息，包括網元名稱、網元類型、網元型號和軟體版本號
@@ -348,47 +350,86 @@ export class BSInfoComponent implements OnInit {
       console.log( "分佈式基站的 componentArray:", this.componentArray );
 
       console.log( "分佈式基站的 this.selectBsInfo_dist.info.length:", this.selectBsInfo_dist.info.length );
+
       // 檢查分佈式 BS 的 info 是否有值
-      if ( this.selectBsInfo_dist.info.length > 0 ) {
+      // if ( this.selectBsInfo_dist.info.length > 0 ) { // 有值時
 
-        // 遍歷 selectBsInfo_dist.info 中的每個 Info 對象，對分佈式基站的網元軟體版本資訊進行處理
-        this.if_BsInfo_dist_notNull( this.selectBsInfo_dist.info, neList );
+      //   // 遍歷 selectBsInfo_dist.info 中的每個 Info 對象，對分佈式基站的網元軟體版本資訊進行處理
+      //   this.if_BsInfo_dist_notNull( this.selectBsInfo_dist.info, neList );
 
-      } else {
+      // } else { // 無值時
 
-        console.log( "this.selectBsInfo_dist.info 無值，開始進行另外處理" );
+      //   console.log( "this.selectBsInfo_dist.info 無值，開始使用 if_BsInfo_dist_isNull() 進行處理" );
 
+      //   this.if_BsInfo_dist_isNull( neList );
+      // }
 
-      }
+      // 都直接改呼叫此函數，
+      // 從 this.componentArray 中去取得對應的軟體或位置資訊
+      this.if_BsInfo_dist_isNull( neList );
+
     }
-
   }
 
   // @2024/03/29 Add
   // 用於從 BsInfo_dist.components 取得網元組成資訊 ( 分佈式用 )
   getComponentArray_distBS( NE_Topology: Components_dist ) {
 
-      // 處理分佈式基站的組件資訊，放入 componentArray 用於繪拓樸圖
-      const components = NE_Topology;
+    // 處理分佈式基站的組件資訊，放入 componentArray 用於繪拓樸圖
+    const components = NE_Topology;
 
-      for ( const cuid in components ) {
-        this.componentArray.push( { type: 'cu', id: cuid } );
+    for ( const cuid in components ) {
 
-        const dus = components[cuid];
-        for ( const duid in dus ) {
-          this.componentArray.push( { type: 'du', id: duid, cuid: cuid } );
+      this.componentArray.push( { type: 'cu', id: cuid } );
 
-          const rus = dus[duid];
-          for ( let i = 0; i < rus.length; i++ ) {
-            const ruId = Object.keys( rus[i] )[0];
+      const dus = components[cuid];
 
-            this.componentArray.push( { type: 'ru', id: ruId, duid: duid } );
-          }
+      for ( const duid in dus ) {
+
+        this.componentArray.push( { type: 'du', id: duid, cuid: cuid } );
+
+        const rus = dus[duid];
+
+        for ( let i = 0; i < rus.length; i++ ) {
+
+          const ruId = Object.keys( rus[i] )[0];
+          const position = Object.values( rus[i] )[0];
+
+          this.componentArray.push( { type: 'ru', id: ruId, duid: duid, position: this.commonService.formatPosition( position ) } );
         }
       }
+    }
   }
 
   // @2024/03/29 Add
+  // 當於處理網元列表 processNEList(),，且 BsInfo_dist.info 沒有值時,
+  // 用於對基站的網元軟體版本資訊進行處理 ( 分佈式用 )。
+  if_BsInfo_dist_isNull( neList: NEList ) {
+    // 遍歷 this.componentArray,對分佈式基站的網元軟體版本資訊進行處理
+    for ( const component of this.componentArray ) {
+      const correspondingNE = neList.components.find( ne => ne.id === component.id );
+      
+      // 如果找到對應的 NE
+      if ( correspondingNE ) {
+        const neType = component.type.toUpperCase(); // 轉換網元類型為大寫
+        const neModel = `${correspondingNE.firm} / ${correspondingNE.modelname}`; // 構建網元型號字串
+        const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None'; // 獲取活動軟體版本,如果沒有則設置為 'None'
+        
+        // 將軟體版本資訊存儲在 swVersionMap 中,以網元 ID 作為鍵
+        this.swVersionMap[component.id] = { neName: correspondingNE.name, neType, neModel, neSFversion };
+        
+        // 如果是 RU 網元,將 NE 的名稱和位置存儲在 ruIdNamePositionMap 中,以 RU.id 作為鍵
+        if ( component.type === 'ru' ) {
+          this.ruIdNamePositionMap[component.id] = {
+            name: correspondingNE.name, // NE 的名稱
+            position: component.position // 從 componentArray 中獲取 RU 的位置資訊
+          };
+        }
+      }
+    }
+  }
+
+  // @2024/03/29 Add ( 目前改不使用此種方式 )
   // 當於處理網元列表 processNEList()，且有從 BsInfo_dist.info 有取到值時，
   // 用於對基站的網元軟體版本資訊進行處理 ( 分佈式用 )。
   if_BsInfo_dist_notNull( info_distBS: Info_dist[], neList: NEList ) {

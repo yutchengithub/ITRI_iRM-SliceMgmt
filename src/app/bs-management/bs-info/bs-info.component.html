@@ -148,6 +148,7 @@
                           <td>{{ swInfo.value.neSFversion }}</td>
                         </tr>
                       </ng-container>
+                      
                     </tbody>
                   </table>
                 </div>
@@ -225,7 +226,7 @@
       </div>
     </div>
 
-    <div>
+    <div><!-- 基站參數 -->
       <span>
         {{ languageService.i18n['BS.parameters'] }}
         <button>DB → gNB</button>
@@ -467,32 +468,45 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  *ngFor="let NE of NEList_InThisBS.components | paginate: { 
-                              itemsPerPage: pageSize, 
-                                currentPage: p, 
-                                  totalItems: totalItems, 
-                                    id: 'PageDisplay_of_NEList'
-                          };">
-                  <td>{{ NE.name }}</td>
-                  <td>
-                    <label *ngIf=" NE.comtype === 1 ">CU</label>
-                    <label *ngIf=" NE.comtype === 2 ">DU</label>
-                    <label *ngIf=" NE.comtype === 3 ">RU</label>
-                    <label *ngIf=" NE.comtype === 4 ">CU+DU</label>
-                    <label *ngIf=" NE.comtype === 5 ">CU+DU+RU</label>
-                  </td>
-                  <td>{{ NE.ip }}</td>
-                  <td>{{ NE.port }}</td>
-                  <td class="icon">
-                    <label *ngIf=" NE.status === 0 " class="grayLight"></label>
-                    <label *ngIf=" NE.status === 1 " class="redLight"></label>
-                    <label *ngIf=" NE.status === 2 " class="greenLight"></label>
-                  </td>
-                  <td class="icon">
-                    <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}" (click)="viewNEDetailInfo( NE )">remove_red_eye</mat-icon>
-                  </td>
-                </tr>
+
+                <!-- 當數據正在加載時顯示進度條 @2024/03/29 Add -->
+                <ng-container *ngIf="isLoadingNEList">
+                  <div class="progress-spinner-container">
+                    <!-- 指示器大小設置 -->
+                    <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner>
+                  </div>
+                </ng-container>
+
+                <!-- 加載完成後顯示 一體式或分佈式 BS 網元軟體版本資訊 數據 @2024/03/27 Add -->
+                <ng-container *ngIf="!isLoadingNEList">
+                  <tr
+                    *ngFor="let NE of NEList_InThisBS.components | paginate: { 
+                                itemsPerPage: pageSize, 
+                                  currentPage: p, 
+                                    totalItems: totalItems, 
+                                      id: 'PageDisplay_of_NEList'
+                            };">
+                    <td>{{ NE.name }}</td>
+                    <td>
+                      <label *ngIf=" NE.comtype === 1 ">CU</label>
+                      <label *ngIf=" NE.comtype === 2 ">DU</label>
+                      <label *ngIf=" NE.comtype === 3 ">RU</label>
+                      <label *ngIf=" NE.comtype === 4 ">CU+DU</label>
+                      <label *ngIf=" NE.comtype === 5 ">CU+DU+RU</label>
+                    </td>
+                    <td>{{ NE.ip }}</td>
+                    <td>{{ NE.port }}</td>
+                    <td class="icon">
+                      <label *ngIf=" NE.status === 0 " class="grayLight"></label>
+                      <label *ngIf=" NE.status === 1 " class="redLight"></label>
+                      <label *ngIf=" NE.status === 2 " class="greenLight"></label>
+                    </td>
+                    <td class="icon">
+                      <mat-icon tooltip="{{ languageService.i18n['BS.view'] }}" (click)="viewNEDetailInfo( NE )">remove_red_eye</mat-icon>
+                    </td>
+                  </tr>
+                </ng-container>
+
               </tbody>
             </table>
           </div>

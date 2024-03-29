@@ -45,3 +45,4 @@ export interface NEInfo {
   export interface Info {
     data: string;
   }
+  
