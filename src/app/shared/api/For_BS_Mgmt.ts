@@ -31,7 +31,7 @@ export class apiForBSMgmt {
     return this.http.get( url );
   }
 
-  // 取得指定 id 基站所有資訊
+  // 取得指定 id 的基站所有資訊
   queryBsInfo( bsId: string ): Observable< BSInfo | BSInfo_dist >  {
     const url = `${this.restPath}/queryBsInfo/${this.sessionId}/${bsId}`;
     return this.http.get< BSInfo >( url ); // 告訴 HttpClient 期望的響應類型是 BSInfo
@@ -95,6 +95,17 @@ export class apiForBSMgmt {
     // 構建 API URL
     const url = `${this.restPath}/queryBsComponentList/${this.sessionId}`;
   
+    // 發起 HTTP GET 請求
+    return this.http.get( url );
+  }
+
+  // @2024/03/29
+  // 取得 BS 中指定 id 的 NE 所有資訊
+  queryBsComponentInfo( neId: string ): Observable< any >  {
+
+    // 構建 API URL
+    const url = `${this.restPath}/queryBsComponentInfo/${this.sessionId}/${neId}`;
+
     // 發起 HTTP GET 請求
     return this.http.get( url );
   }

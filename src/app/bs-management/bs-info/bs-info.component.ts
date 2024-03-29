@@ -19,6 +19,7 @@ import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt'; // @2024/03/25 Add
 import { BSInfo, Components }                      from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
 import { BSInfo_dist, Info_dist, Components_dist } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
 import { NEList, NE, Sm  } from '../../shared/interfaces/NE/For_queryBsComponentList'; // @2024/03/27 Add
+import { NEInfo }          from '../../shared/interfaces/NE/For_queryBsComponentInfo'; // @2024/03/29 Add
 
 // 引入所需 Local Files
 import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';          // @2024/03/25 Add
@@ -476,6 +477,11 @@ export class BSInfoComponent implements OnInit {
     // 如果沒有找到活動軟體版本，返回 undefined
     return undefined;
   }
+
+  // @2024/03/29 Add
+  selectNEid: string = ""; // 用於存儲當前選中的網元ID
+
+  
 
 
 // ↓ 繪製拓樸圖區 @2024/03/28 Add ↓
