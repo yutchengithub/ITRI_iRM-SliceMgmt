@@ -190,7 +190,7 @@ export const TwLanguage = {
   'field.BSstatus':'連線狀態',                      // @12/13 Add
   'field.bsAlarm':'告警',                          // @12/13 Add
   'field.legend_all-in-one_bs':'一體式基站',        // @12/28 Add
-  'field.legend_dist_bs':'O-RAN基站',              // @12/28 Add
+  'field.legend_dist_bs':'O-RAN 基站',              // @12/28 Add
 
   // BS Management ( 基站管理 )
   'BS.list':'基站列表',
@@ -208,6 +208,7 @@ export const TwLanguage = {
   'BS.info':'基站詳細資訊',
 
   // 基本訊息區
+  'BS.editSettings': '編輯設定',
   'BS.bsAntennaCoord':'基站天線位置座標',
   'BS.ruNeName':'網元名稱 ( RU )',
   'BS.latLong':'經緯度',

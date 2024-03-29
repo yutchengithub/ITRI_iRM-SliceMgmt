@@ -216,11 +216,12 @@
           },
           {
             "id": "349b9f81afa54669b096",
-            "name": "BS31",
+            "fieldName": "ITRI",
+            "name": "BS9",
             "ip": "",
             "port": "",
             "position": "[121.045368,24.775015]",
-            "description": "BS31",
+            "description": "BS09",
             "bstype": 2,
             "components": {
               "1ebfdbd887034b439104": {
