@@ -2,7 +2,7 @@
 /* ↓ @12/24 Add For API of queryBsInfo for dist BS ↓ */
 // notes: 當物件有可能是空的或可能不在 JSON 中設為"?:"
 export interface BSInfo_dist {
-    info: Info[];
+    info: Info_dist[];
     extension_info: ExtensionInfo[]; // ok
     cellInfo: Cellinfo; // ok
     anr: Anr;           // ok
@@ -24,7 +24,7 @@ export interface BSInfo_dist {
 
   /* ↓ @12/26 Add For info:[] ↓ */
 
-  export interface Info {
+  export interface Info_dist {
       nci: string;
       gNBId: number;
       gNBIdLength: number;
