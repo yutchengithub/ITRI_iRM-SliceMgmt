@@ -90,6 +90,23 @@
 }
 
 
+.logTab {
+  position: absolute;
+    z-index: 999;
+    margin-top: 0.3em;
+    margin-left: 2em;
+}
+:host ::ng-deep .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+  background-color:#ba5a2a!important;
+}
+:host ::ng-deep .mat-button-toggle-appearance-standard{
+  background-color:#485c77!important;
+  color:#ddd;
+}
+:host ::ng-deep .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
+    border-left:0;
+}
+
 
 .ocloudInfo.component {
   overflow: auto;

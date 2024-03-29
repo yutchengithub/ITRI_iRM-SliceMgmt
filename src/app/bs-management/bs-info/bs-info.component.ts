@@ -119,6 +119,35 @@ export class BSInfoComponent implements OnInit {
   }
 
 
+// ↓ For Bs Parameters Page Control @2024/03/29 Add ↓
+
+  bsParametersType: string = 'Basic';       // 預設選擇 "Basic"    @2024/03/29 Add 
+  //bsParametersType: string = 'Advanced';  // 預設選擇 "Advanced" @2024/03/29 Add
+
+  // @2024/03/29 Add
+  // 變更 changeBsParametersType 視窗顯示類型的函數
+  changeBsParametersType( e: MatButtonToggleChange ) {
+
+    // 根據當前選擇的 Log 類型載入數據
+    if ( e.value === 'Basic' ) {
+
+      this.bsParametersType = 'Basic';
+
+    } else if ( e.value === 'Advanced' ) {
+
+      this.bsParametersType = 'Advanced';
+    }
+
+    // 更新當前類型，以便知道哪個 Bs Parameters 類型被選中
+    this.bsParametersType = e.value;
+    console.log( '頁面切換後，顯示的 Bs Parameters 類型:', this.bsParametersType+
+                  '\nLog type displayed after tab switch:', this.bsParametersType );
+  }
+
+// ↑ For Bs Parameters Page Control @2024/03/29 Add ↑
+
+
+
   isLoadingBsInfo =  true;                            // 加載 BS 資訊狀態的標誌，初始設置為 true
   selectBsInfo:      BSInfo = {} as BSInfo;           // 用於存儲從服務器或 Local Files 獲取的一體式基站資訊
   selectBsInfo_dist: BSInfo_dist = {} as BSInfo_dist; // 用於存儲從服務器或 Local Files 獲取的分佈式基站資訊
