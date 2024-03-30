@@ -25,21 +25,26 @@ import { FieldInfo }                      from '../../shared/interfaces/Field/Fo
 import { BsInfoInField }                  from '../../shared/interfaces/Field/For_queryFieldInfo';                     // @2023/12/21 Add
 import { ForCreateOrUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_createField_or_updateField';         // @2024/01/26 Add
 import { ForQueryOrUpdatePmFTPInfo }      from '../../shared/interfaces/Field/For_queryPmFtpInfo_or_updatePmFtpInfo';  // @2024/02/04 Add
+import { ForQuerySonParameter }           from '../../shared/interfaces/Field/For_querySonParameter';                  // @2024/03/30 Add
+import { ForCalculateSon, ForCalculateSonResponse } from '../../shared/interfaces/Field/For_multiCalculateBs';                   // @2024/03/31 Add
 import { BSInfo }              from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2023/12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
 
 // 引入所需 Local Files
-import { localFieldInfo } from '../../shared/local-files/Field/For_queryFieldInfo'; // @2024/03/14 Add
-import { localPmFTPInfo } from '../../shared/local-files/Field/For_queryPmFtpInfo'; // @2024/02/04 Add
+import { localFieldInfo }            from '../../shared/local-files/Field/For_queryFieldInfo';    // @2024/03/14 Add
+import { localPmFTPInfo }            from '../../shared/local-files/Field/For_queryPmFtpInfo';    // @2024/02/04 Add
+import { localFieldSonParameters }   from '../../shared/local-files/Field/For_querySonParameter'; // @2024/03/30 Add
+import { localCalculateSonResponse } from '../../shared/local-files/Field/For_multiCalculateBs_response'; // @2024/03/31 Add
 import { localBSList }    from '../../shared/local-files/BS/For_queryBsList';       // @2024/01/16 Add
 import { localBSInfo }    from '../../shared/local-files/BS/For_queryBsInfo';       // @2023/12/27 Add
 
 import { map } from 'rxjs/operators';              // @2023/12/24 Add
 import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
 import { MapMarker, MapInfoWindow } from '@angular/google-maps'; // @2024/02/27 Add
-import { Input } from '@angular/core';
 
+import { Input } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox'; // @2024/03/30 Add
 
 import { ElementRef } from '@angular/core';
 import { Console } from 'console';
@@ -162,19 +167,21 @@ export class FieldInfoComponent implements OnInit {
 
     public            API_Field: apiForFieldMgmt, // @2024/03/14 Update for import API of Field Management
 
-    public  fieldInfo_LocalFiles: localFieldInfo,  // @2024/03/14 Add for import Field Info Local Files
-    public     bsInfo_LocalFiles: localBSInfo,     // @2023/12/27 Add for import BS Info Local Files
-    public     bsList_LocalFiles: localBSList,     // @2024/01/16 Add for import BS List Local Files 
-    public  pmFtpInfo_LocalFiles: localPmFTPInfo,  // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+    public  fieldInfo_LocalFiles: localFieldInfo,           // @2024/03/14 Add for import Field Info Local Files
+    public     bsInfo_LocalFiles: localBSInfo,              // @2023/12/27 Add for import BS Info Local Files
+    public     bsList_LocalFiles: localBSList,              // @2024/01/16 Add for import BS List Local Files local
+    public  pmFtpInfo_LocalFiles: localPmFTPInfo,           // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+    public    fieldSonParameters_LocalFiles: localFieldSonParameters,    // @2024/03/30 Add for import info of Field Son Parameters Local Files
+    public  calculateSonResponse_LocalFiles: localCalculateSonResponse,  // @2024/03/31 Add for import info of Calculate Son Response Local Files
   ) {
-    
-    const googleMapsApiKey = environment.googleMapsApiKey; // @12/20 Add for import Google Maps API Key
+
     this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
 
     // 建立並初始化各功能所需表單
     this.createBSInfoForm();              // For updateBs API @2024/01/05 Add 
     this.createFieldInfoForm();           // For Field Info in Field Editing  @2024/01/17 Add
     this.createPMgmtParameterSetForm();   // For Pm Ftp Info in PM Parameter Setting  @2024/02/04 Add
+    this.createFieldOptimizationForm();   // For Son Parameters in Field Optimization  @2024/03/30 Add
   }
 
   // 頁面初始化
@@ -186,6 +193,7 @@ export class FieldInfoComponent implements OnInit {
       this.fieldId = params['id'];
       this.fieldName = params['name'];
       console.log( 'fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr' );
+
       this.getQueryFieldInfo();
     });
 
@@ -3020,6 +3028,62 @@ export class FieldInfoComponent implements OnInit {
 
 // For 場域優化 @2024/03/30 Add ↓
 
+  getFieldSonParameters: ForQuerySonParameter = {} as ForQuerySonParameter;   // @2024/03/30 Add
+
+  // @2024/02/22 Add for Progress Spinner
+  getQuerySonParameter_Loading = false; // 用於識別載入"場域優化參數"資訊狀態的標誌，初始設置為 false 
+
+  // @2024/03/30 Add
+  // 取得 場域優化參數 用函數
+  getQuerySonParameter() {
+    this.getQuerySonParameter_Loading = true; // 顯示加載中的提示
+  
+    if ( this.commonService.isLocal ) { // 如果是本地模式
+
+      this.getFieldSonParameters = this.fieldSonParameters_LocalFiles.fieldSonParameters_local;
+
+      this.populateFieldOptimizationForm();
+
+      this.getQuerySonParameter_Loading = false; // 隱藏加載中的提示
+
+    } else { // 如果是 API 模式
+
+      this.API_Field.querySonParameter().subscribe({
+
+        next: ( res: ForQuerySonParameter ) => {
+
+          this.getFieldSonParameters = res; // 將 API 回應賦值給變數
+          this.populateFieldOptimizationForm();
+          this.getQuerySonParameter_Loading = false; // 隱藏加載中的提示
+        },
+        error: ( error ) => {
+          console.error('Error fetching SON parameters:', error);
+          this.getQuerySonParameter_Loading = false; // 隱藏加載中的提示
+        },
+        complete: () => console.log('SON parameters fetch completed')
+      });
+    }
+  }
+  
+  // @2024/03/30 Add
+  // 用於預填充 fieldOptimizationForm 表單值用
+  populateFieldOptimizationForm() {
+
+    // 使用獲取的 SON 參數填充表單
+    this.fieldOptimizationForm.patchValue({
+      setSONParameters: {
+        cco: this.getFieldSonParameters.dsonEnable === '1',
+        anr: this.getFieldSonParameters.dsonEnable === '1', // 假設 ANR 和 CCO 是相同的開關
+        pci: this.getFieldSonParameters.dsonEnable === '1'  // 假設 PCI 和 CCO 是相同的開關
+      },
+      ccoSetParameters: this.getFieldSonParameters.ratioAverageSINR ? 'ratioAverageSINR' : 'maxCoverageRange',
+      ueSyncMinSINR: this.getFieldSonParameters.ueSyncMinSINR,
+      pciMax: this.getFieldSonParameters.pciMax,
+      pciMin: this.getFieldSonParameters.pciMin
+      // ... 填充其他欄位
+    });
+  }
+
   // 用於控制 場域優化 視窗 @2024/03/30 Add
   @ViewChild('fieldOptimizationWindow') fieldOptimizationWindow: any;
   fieldOptimizationWindow_Ref!: MatDialogRef<any>;
@@ -3027,7 +3091,14 @@ export class FieldInfoComponent implements OnInit {
 
   // 開啟視窗 - 場域優化 @2024/03/30 Add
   openfieldOptimizationWindow() {
+
+    this.getQuerySonParameter();  // 取得"場域優化參數"資訊
+    console.log( "In openfieldOptimizationWindow() - this.getFieldSonParameters = ", this.getFieldSonParameters );
+    
+    // 表單驗證狀態重置
     this.fieldOptimizationWindow_Validated = false;
+
+    // 打開"場域優化"視窗
     this.fieldOptimizationWindow_Ref = this.dialog.open( this.fieldOptimizationWindow, {
       id: 'fieldOptimizationWindow',
       // width 和 height 可以根據需要設置或去掉
@@ -3038,8 +3109,215 @@ export class FieldInfoComponent implements OnInit {
     // 訂閱對話框關閉後的事件
     this.fieldOptimizationWindow_Ref.afterClosed().subscribe(() => {
       // 這裡可以添加當對話框關閉後的邏輯
-      this.fieldOptimizationWindow_Validated = false;
+      this.fieldOptimizationWindow_Validated = false; // 關閉時重置表單驗證狀態
     });
+  }
+
+  // @2024/03/30 Add
+  // 點擊 場域優化 視窗的 close 按鈕行為
+  resetFieldOptimizationForm() {
+
+    // 重置整個"場域優化參數"表單
+    this.fieldOptimizationForm.reset({
+      setSONParameters: {
+        cco: false,
+        anr: false,
+        pci: false
+      },
+      ccoSetParameters: '',
+      ueSyncMinSINR: -7,
+      pciMax: 100,
+      pciMin: 160
+      // ... 設定其他欄位的默認值
+    });
+
+    this.calculationCategories = [];
+    this.calculationResults = [];
+
+    // 重置顯示設定區域的標誌
+    this.showCCOSettings = false;
+    this.showANRSettings = false;
+    this.showPCISettings = false;
+
+    // 如果需要，這裡可以關閉場域優化視窗
+    this.fieldOptimizationWindow_Ref.close();
+
+    console.log("已關閉場域優化視窗，fieldOptimizationForm 已重製");
+  }
+
+  // 創建表單組，用於"場域優化設定" @2024/03/30 Add
+  fieldOptimizationForm!: FormGroup;
+
+  // 創建場域優化表單 @2024/03/30 Add
+  createFieldOptimizationForm() {
+
+    this.fieldOptimizationForm = this.fb.group({
+
+      setSONParameters: this.fb.group({
+        cco: new FormControl( false ),         // 默認 CCO 未勾選
+        anr: new FormControl( false ),         // 默認 ANR 未勾選
+        pci: new FormControl( false ),         // 默認 PCI 未勾選
+      }),
+      ccoSetParameters: new FormControl( this.getFieldSonParameters.ratioAverageSINR ? 'ratioAverageSINR' : 'maxCoverageRange' ), // CCO 單選按鈕依據取回得參數值ratioAverageSINR存在與否進行設定
+      ueSyncMinSINR: new FormControl( this.getFieldSonParameters.ueSyncMinSINR || '' ), // UE 同步最小 SINR 的默認值
+      pciMax: new FormControl( this.getFieldSonParameters.pciMax || '' ),               // PCI 最大值的默認值
+      pciMin: new FormControl( this.getFieldSonParameters.pciMin || '' )                // PCI 最小值的默認值
+    });
+  }
+
+  showCCOSettings = false;  // 是否顯示 CCO 設定區域 @2024/03/30 Add
+  showANRSettings = false;  // 是否顯示 ANR 設定區域 @2024/03/30 Add
+  showPCISettings = false;  // 是否顯示 PCI 設定區域 @2024/03/30 Add
+
+  // @2024/03/31 Add
+  // CCO Checkbox 變更事件處理函數
+  onCCOChange( event: MatCheckboxChange ) {
+    // 斷言 'setSONParameters' 一定是一個 FormGroup
+    const setSONParameters = this.fieldOptimizationForm.get('setSONParameters') as FormGroup;
+
+    if (event.checked) {
+      setSONParameters.controls['anr'].setValue(true);
+      setSONParameters.controls['pci'].setValue(true);
+      this.showCCOSettings = true;
+      this.showANRSettings = true;
+      this.showPCISettings = true;
+    } else {
+      setSONParameters.controls['anr'].setValue(false);
+      setSONParameters.controls['pci'].setValue(false);
+      this.showCCOSettings = false;
+      this.showANRSettings = false;
+      this.showPCISettings = false;
+    }
+  }
+
+  // @2024/03/31 Add
+  // ANR Checkbox 變更事件處理函數
+  onANRChange( event: MatCheckboxChange ) {
+
+    // 斷言 'setSONParameters' 一定是一個 FormGroup
+    const setSONParameters = this.fieldOptimizationForm.get('setSONParameters') as FormGroup;
+
+    if (event.checked) {
+      setSONParameters.controls['pci'].setValue( true );
+      this.showANRSettings = true;
+      this.showPCISettings = true;
+    } else {
+      setSONParameters.controls['cco'].setValue( false );
+      setSONParameters.controls['pci'].setValue( false );
+      this.showCCOSettings = false;
+      this.showANRSettings = false;
+      this.showPCISettings = false;
+    }
+  }
+
+  // @2024/03/31 Add
+  // PCI Checkbox 變更事件處理函數
+  onPCIChange( event: MatCheckboxChange ) {
+
+    // 斷言 'setSONParameters' 一定是一個 FormGroup
+    const setSONParameters = this.fieldOptimizationForm.get('setSONParameters') as FormGroup;
+
+    if ( event.checked ) {
+      this.showPCISettings = true;
+    } else {
+      setSONParameters.controls['cco'].setValue( false );
+      setSONParameters.controls['anr'].setValue( false );
+      this.showCCOSettings = false;
+      this.showANRSettings = false;
+      this.showPCISettings = false;
+    }
+  }
+
+
+  calculationCategories: string[] = []; // 用於記錄選擇計算的類別與數值 @2024/03/31 Add
+     calculationResults: string[] = []; // 用於記錄計算的結果          @2024/03/31 Add
+
+  // 宣告一個變數來接收 SON 計算的回傳值 @2024/03/31 Add
+  calculationResponse: ForCalculateSonResponse = {} as ForCalculateSonResponse;
+
+  // @2024/03/31 Add
+  // 發送計算 SON 演算法函數 
+  calculateSON_Submit() {
+    console.log( "calculateSON_Submit() - Start" );
+
+    this.getQuerySonParameter_Loading = true; // 顯示 Loading Progress Spinner
+
+    // 根據使用者選擇的設定，生成 Calculation Categories
+    this.calculationCategories = [];
+    if ( this.fieldOptimizationForm.get( 'setSONParameters.cco' )?.value ) {
+      this.calculationCategories.push( 'cco' );
+    }
+    if ( this.fieldOptimizationForm.get( 'setSONParameters.anr' )?.value ) {
+      this.calculationCategories.push( 'anr' );
+    }
+    if ( this.fieldOptimizationForm.get( 'setSONParameters.pci' )?.value ) {
+      this.calculationCategories.push( 'pci' );
+    }
+
+    // 準備提交的數據，格式化為適合 API 的格式
+    const submitData: ForCalculateSon = {
+          session: this.sessionId,             // 使用當前會話 ID
+      fieldServer: "127.0.0.1",                // 默認為 "127.0.0.1"
+          fieldId: this.fieldInfo.id,          // 使用場域的唯一識別符
+             type: this.calculationCategories, // 使用根據使用者選擇生成的 Calculation Categories
+           pciMax: this.fieldOptimizationForm.get('pciMax')?.value || '',              // 從表單獲取 PCI 最大值
+           pciMin: this.fieldOptimizationForm.get('pciMin')?.value || '',              // 從表單獲取 PCI 最小值
+          ueSyncMinSINR: this.fieldOptimizationForm.get('ueSyncMinSINR')?.value || '', // 從表單獲取 UE 同步最小 SINR
+       ratioAverageSINR: this.getFieldSonParameters.ratioAverageSINR || '',  // 從取回的 SON 參數獲取 ratioAverageSINR
+          ratioCoverage: this.getFieldSonParameters.ratioCoverage || '',     // 從取回的 SON 參數獲取 ratioCoverage
+       ratioMaxCapacity: this.getFieldSonParameters.ratioMaxCapacity || '',  // 從取回的 SON 參數獲取 ratioMaxCapacity
+      ratioFairCapacity: this.getFieldSonParameters.ratioFairCapacity || '', // 從取回的 SON 參數獲取 ratioFairCapacity
+             txPowerMax: this.getFieldSonParameters.txPowerMax || '',        // 從取回的 SON 參數獲取 txPowerMax
+             txPowerMin: this.getFieldSonParameters.txPowerMin || '',        // 從取回的 SON 參數獲取 txPowerMin
+    };
+
+    if ( this.commonService.isLocal ) {
+      // 本地模式下的處理
+
+      console.log( "本地模擬 SON 計算，提交的數據:", submitData );
+
+      // 取得本地模擬 SON 計算的死回應檔案
+      this.calculationResponse = this.calculateSonResponse_LocalFiles.calculateSonResponse_local;
+
+      console.log( "In Local - SON 計算成功:", this.calculationResponse );
+
+      // 模擬計算結果，這裡你可以根據實際需求進行修改
+      this.calculationResults = [
+        'Result 1',
+        'Result 2',
+        'Result 3'
+      ];
+
+      this.getQuerySonParameter_Loading = false; // 計算完成後停止 Loading Progress Spinner
+
+    } else {
+
+      console.log( "呼叫實際 API 前，SON 計算所提交的數據:", submitData );
+
+      // 向伺服器發送 SON 計算請求
+      this.API_Field.multiCalculateBs( submitData ).subscribe({
+        next: ( response: ForCalculateSonResponse ) => {
+
+          console.log( "SON 計算成功:", response );
+
+          this.calculationResponse = response;       // 將 API 回應賦值給變數
+
+          this.getQuerySonParameter_Loading = false; // 計算完成後停止 Loading Progress Spinner
+
+
+
+
+          // 在此處可以對計算結果進行處理和顯示
+          // ...
+        },
+        error: ( error ) => {
+          console.error( "SON 計算出錯:", error );
+          this.getQuerySonParameter_Loading = false; // 計算失敗也停止 Loading Progress Spinner
+        },
+      });
+    }
+
+    console.log( "calculateSON_Submit() - End" );
   }
 
 // For 場域優化 @2024/03/30 Add ↑

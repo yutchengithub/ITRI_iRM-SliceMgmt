@@ -67,10 +67,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 
-import { FormBuilder, FormGroup } from '@angular/forms';      // @2024/01/31 Add
-import { MatInputModule } from '@angular/material/input';     // @2024/01/31 Add
-import { MatStepperModule } from '@angular/material/stepper'; // @2024/01/31 Add
+import { FormBuilder, FormGroup } from '@angular/forms';       // @2024/01/31 Add
+import { MatInputModule } from '@angular/material/input';      // @2024/01/31 Add
+import { MatStepperModule } from '@angular/material/stepper';  // @2024/01/31 Add
 import { MatExpansionModule } from '@angular/material/expansion'; // 用於縮合效果 @2024/02/29 Add
+import { MatCheckboxModule } from '@angular/material/checkbox'; // @2024/03/30 Add
 
 // Pipe 管道
 import { TruncatePipe } from './shared/pipes/truncate.pipe';  // @11/16 Add by yuchen 
@@ -83,11 +84,13 @@ import { apiForScheduleMgmt } from './shared/api/For_Schedule_Mgmt';  // @2024/0
 import { apiForLogMgmt }      from './shared/api/For_Log_Mgmt';       // @2024/03/14 Add
 
 // import Local Files
-import { localFieldSummaryInfo }  from './shared/local-files/Field/For_queryFieldSummaryInfo';    // @2024/03/14 Add
-import { localFieldList }         from './shared/local-files/Field/For_queryFieldList';           // @2024/01/29 Add
-import { localFieldInfo }         from './shared/local-files/Field/For_queryFieldInfo';           // @2024/03/14 Add
-import { localPmFTPInfo }         from './shared/local-files//Field/For_queryPmFtpInfo';          // @2024/02/04 Add
-import { localFieldSnapshotList } from './shared/local-files/Field/For_queryFieldSnapshotList';   // @2024/03/06 Add
+import { localFieldSummaryInfo }  from './shared/local-files/Field/For_queryFieldSummaryInfo';        // @2024/03/14 Add
+import { localFieldList }         from './shared/local-files/Field/For_queryFieldList';               // @2024/01/29 Add
+import { localFieldInfo }         from './shared/local-files/Field/For_queryFieldInfo';               // @2024/03/14 Add
+import { localPmFTPInfo }         from './shared/local-files//Field/For_queryPmFtpInfo';              // @2024/02/04 Add
+import { localFieldSnapshotList } from './shared/local-files/Field/For_queryFieldSnapshotList';       // @2024/03/06 Add
+import { localFieldSonParameters } from './shared/local-files/Field/For_querySonParameter';           // @2024/03/30 Add
+import { localCalculateSonResponse } from './shared/local-files/Field/For_multiCalculateBs_response'; // @2024/03/31 Add
 
 import { localBSInfo }            from './shared/local-files/BS/For_queryBsInfo';                 // @2023/12/27 Add 
 import { localBSList }            from './shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
@@ -196,6 +199,7 @@ import { localNEList }            from './shared/local-files/NE/For_queryBsCompo
     MatExpansionModule, // 用於縮合效果 @2024/02/29 Add by yuchen
     MatTooltipModule,   // @2024/03/08 Add 
     MatSelectModule,    // @2024/03/21 Add
+    MatCheckboxModule,  // @2024/03/30 Add
   ],
   providers: [
     AuthGuard,
@@ -207,20 +211,22 @@ import { localNEList }            from './shared/local-files/NE/For_queryBsCompo
     apiForScheduleMgmt, // @2024/03/14 Add for import API of Schedule Management
     apiForLogMgmt,      // @2024/03/14 Add for import API of Log Management 
 
-    localFieldSummaryInfo,  // @2024/03/14 Add for import Local files of Field Summary Info
-    localFieldList,         // @2024/01/29 Add for import Local files of Field List
-    localFieldInfo,         // @2024/03/14 Add for import Local files of Field Info
-    localFieldSnapshotList, // @2024/03/06 Add for import Local files of Field Snapshot List
-    localBSInfo,            // @2023/12/27 Add for import Local files of BS Info
-    localBSList,            // @2024/01/16 Add for import Local files of BS List
-    localPmFTPInfo,         // @2024/02/04 Add for import info of PM Parameter Setting Local Files
-    
-    localScheduleList,      // @2024/03/15 Add for import Local files of Schedule List     
-    localScheduleInfo,      // @2024/03/15 Add for import Local files of Schedule Info 
+    localFieldSummaryInfo,     // @2024/03/14 Add for import Local files of Field Summary Info
+    localFieldList,            // @2024/01/29 Add for import Local files of Field List
+    localFieldInfo,            // @2024/03/14 Add for import Local files of Field Info
+    localFieldSnapshotList,    // @2024/03/06 Add for import Local files of Field Snapshot List
+    localBSInfo,               // @2023/12/27 Add for import Local files of BS Info
+    localBSList,               // @2024/01/16 Add for import Local files of BS List
+    localPmFTPInfo,            // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+    localFieldSonParameters,   // @2024/03/30 Add for import Local files of Field Son Parameters
+    localCalculateSonResponse, // @2024/03/31 Add for import Local files of Calculate Son Response
 
-    localUserLogsList,      // @2024/03/14 Add for import Local files of User Logs List
-    localNELogsList,        // @2024/03/14 Add for import Local files of NE Logs List
-    localNEList,            // @2024/03/14 Add for import Local files of NE List
+    localScheduleList,        // @2024/03/15 Add for import Local files of Schedule List     
+    localScheduleInfo,        // @2024/03/15 Add for import Local files of Schedule Info 
+
+    localUserLogsList,        // @2024/03/14 Add for import Local files of User Logs List
+    localNELogsList,          // @2024/03/14 Add for import Local files of NE Logs List
+    localNEList,              // @2024/03/14 Add for import Local files of NE List
 
     {
       provide: HTTP_INTERCEPTORS,

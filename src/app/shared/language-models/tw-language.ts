@@ -179,18 +179,57 @@ export const TwLanguage = {
   'field.close':'關閉', // @2024/02/22 Add
   'field.applyReminder': '提醒', // @2024/02/22 Add
   
-  'field.report':'場域報表',                        // @12/12 Add
-  'field.reportPM':'場域效能 (PM)',                 // @12/12 Add
-  'field.reportFM':'告警資訊 (FM)',                 // @12/12 Add
-  'field.optim':'場域優化',                         // @12/12 Add
-  'field.optimSON':'執行 SON rApps',               // @12/12 Add
-  'field.mapModel':'地圖模式',                      // @12/12 Add
-  'field.bsList':'基站列表',                        // @12/12 Add
-  'field.bsAntennaCoord':'基站天線位置座標',         // @12/13 Add
-  'field.BSstatus':'連線狀態',                      // @12/13 Add
-  'field.bsAlarm':'告警',                          // @12/13 Add
-  'field.legend_all-in-one_bs':'一體式基站',        // @12/28 Add
-  'field.legend_dist_bs':'O-RAN 基站',              // @12/28 Add
+  'field.report':'場域報表',                 // @12/12 Add
+  'field.reportPM':'場域效能 (PM)',          // @12/12 Add
+  'field.reportFM':'告警資訊 (FM)',          // @12/12 Add
+  'field.optim':'場域優化',                  // @12/12 Add
+  'field.optimSON':'執行 SON rApps',         // @12/12 Add
+  'field.mapModel':'地圖模式',                // @12/12 Add
+  'field.bsList':'基站列表',                  // @12/12 Add
+  'field.bsAntennaCoord':'基站天線位置座標',  // @12/13 Add
+  'field.BSstatus':'連線狀態',                // @12/13 Add
+  'field.bsAlarm':'告警',                    // @12/13 Add
+  'field.legend_all-in-one_bs':'一體式基站',  // @12/28 Add
+  'field.legend_dist_bs':'O-RAN 基站',       // @12/28 Add
+  
+
+
+  'field.selectOptimizationParameters': '選擇優化參數',
+  'field.selectCalculationParameters': '選擇計算參數',
+
+  'field.setCCO':'設定 CCO',
+  'field.ccoSettings':'CCO 設定',
+  'field.optimizationType': '優化類型',
+  'field.maxCoverageRange': '最大覆蓋範圍',
+  'field.maxSINR': '最大SINR',
+
+  'field.setANR':'設定 ANR',
+  'field.anrSettings':'ANR 設定',
+  'field.minSignalPower': '最小訊號強度',
+
+  'field.setPCI':'設定 PCI',
+  'field.pciSettings':'PCI 設定',
+  'field.pciRange': 'PCI最小值',
+  'field.pciSpacing': 'PCI最大值',
+
+  'field.sonCalculate':'計算',
+
+  'field.calculationCategories': '計算類別',
+  'field.calculationResults': '計算結果',
+
+  'field.applySON': '套用',
+  'field.cancelSON': '取消',
+  
+
+
+
+  'field.open': '開啟',
+  'field.anrMode': '最小訊雜比',
+  'field.anrThreshold': '最小訊雜比門檻值',
+  'field.sinr': '訊雜比(SINR值)',
+
+  'field.optimize': '執行優化',
+
 
   // BS Management ( 基站管理 )
   'BS.list':'基站列表',
