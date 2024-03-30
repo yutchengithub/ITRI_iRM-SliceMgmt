@@ -836,7 +836,7 @@
 						<div class="button-container">
 							<!-- 按鈕，用於觸發隱藏的 input 元素 -->
 							<button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()">
-							{{ languageService.i18n['field.fieldImageUpload'] }}
+								{{ languageService.i18n['field.fieldImageUpload'] }}
 							</button>
 							<!-- 隱藏的文件輸入元素，僅接受 PNG 和 JPG 圖片 -->
 							<input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".png, .jpg, .jpeg">
@@ -1128,16 +1128,101 @@
 		</div>
 	</ng-template>
 
-	
-	<!-- Window of Field Optimization @2024/03/30 Add -->
+
+	<!-- Window of Field Optimization @2024/03/31 Add -->
 	<ng-template #fieldOptimizationWindow>
-		<div><h5>{{ languageService.i18n['field.optim'] }}</h5></div>
+		<div>
+			<!-- 視窗標題 -->
+			<h5>{{ languageService.i18n['field.optimSON'] }}</h5>
+		</div>
 
+		<div class="field-optim-container">
+			<form [formGroup]="fieldOptimizationForm">
+				<div class="left-section" formGroupName="setSONParameters">
+					<span>{{ languageService.i18n['field.selectCalculationParameters'] }}: </span>
+					<mat-checkbox formControlName="cco" (change)="onCCOChange($event)">CCO</mat-checkbox>
+					<mat-checkbox formControlName="anr" (change)="onANRChange($event)">ANR</mat-checkbox>
+					<mat-checkbox formControlName="pci" (change)="onPCIChange($event)">PCI</mat-checkbox>
+				</div>
+				<div class="right-section">
+					<div *ngIf="showCCOSettings">
+						<h4>{{ languageService.i18n['field.setCCO'] }}:</h4>
+						<mat-radio-group formControlName="ccoSetParameters">
+							<mat-radio-button value="maxCoverageRange">{{ languageService.i18n['field.maxCoverageRange'] }}</mat-radio-button>
+							<mat-radio-button value="ratioAverageSINR">{{ languageService.i18n['field.maxSINR'] }}</mat-radio-button>
+						</mat-radio-group>
+					</div>
+					<div *ngIf="showANRSettings">
+						<h4>{{ languageService.i18n['field.setANR'] }}:</h4>
+						<mat-form-field>
+							<mat-label>{{ languageService.i18n['field.minSignalPower'] }}</mat-label>
+							<input matInput type="number" placeholder="-7" formControlName="ueSyncMinSINR"> </mat-form-field>
+					</div>
+					<div *ngIf="showPCISettings">
+						<h4>{{ languageService.i18n['field.setPCI'] }}:</h4>
+						<mat-form-field>
+							<mat-label>{{ languageService.i18n['field.pciRange'] }}</mat-label>
+							<input matInput type="number" placeholder="100" formControlName="pciMax"> </mat-form-field>
+						<mat-form-field>
+							<mat-label>{{ languageService.i18n['field.pciSpacing'] }}</mat-label>
+							<input matInput type="number" placeholder="160" formControlName="pciMin"> </mat-form-field>
+					</div>
+				</div>
+			</form>
+			<!-- 計算按鈕 -->
+			<button type="button" (click)="calculateSON_Submit()">
+				{{ languageService.i18n['field.sonCalculate'] }}
+			</button>
+		</div>
+
+		<!-- Calculation Categories 欄位 -->
+		<div *ngIf="calculationCategories.length > 0">
+			<h4>{{ languageService.i18n['field.calculationCategories'] }}</h4>
+			<ul>
+				<li *ngFor="let category of calculationCategories">
+					<span *ngIf=" category === 'cco' ">{{ languageService.i18n['field.ccoSettings'] }}:</span>
+					<span *ngIf=" category === 'anr'">{{ languageService.i18n['field.anrSettings'] }}:</span>
+					<span *ngIf=" category === 'pci' ">{{ languageService.i18n['field.pciSettings'] }}:</span>
+					<ul>
+						<li *ngIf=" category === 'cco' ">
+						<span *ngIf="fieldOptimizationForm.get('ccoSetParameters')?.value === 'maxCoverageRange'">
+							{{ languageService.i18n['field.maxCoverageRange'] }}
+						</span>
+						<span *ngIf="fieldOptimizationForm.get('ccoSetParameters')?.value === 'ratioAverageSINR'">
+							{{ languageService.i18n['field.maxSINR'] }}: {{ getFieldSonParameters.ratioAverageSINR }}
+						</span>
+						</li>
+						<li *ngIf=" category === 'anr' ">
+							{{ languageService.i18n['field.minSignalPower'] }}: {{ fieldOptimizationForm.get('ueSyncMinSINR')?.value }}
+						</li>
+						<li *ngIf=" category === 'pci' ">
+							{{ languageService.i18n['field.pciRange'] }}: {{ fieldOptimizationForm.get('pciMax')?.value }} ~ 
+							{{ languageService.i18n['field.pciSpacing'] }}: {{ fieldOptimizationForm.get('pciMin')?.value }}
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
 		
+		<!-- Calculation Results 欄位 -->
+		<div *ngIf="calculationResults.length > 0">
+			<h4>{{ languageService.i18n['field.calculationResults'] }}</h4>
+			<ul>
+				<li *ngFor="let result of calculationResults">{{ result }}</li>
+			</ul>
+			<!-- 套用按鈕 -->
+			<button type="button">
+				{{ languageService.i18n['field.applySON'] }}
+			</button>
+			<!-- 取消按鈕 -->
+			<button type="button">
+				{{ languageService.i18n['field.cancelSON'] }}
+			</button>
+		</div>
 
-
+		<!-- 關閉 Field Optimization 視窗按鈕 -->
 		<div class="buttons buttons-centered">
-			<button type="button" mat-dialog-close>
+			<button type="button" (click)="resetFieldOptimizationForm()" mat-dialog-close>
 				{{ languageService.i18n['close'] }}
 			</button>
 		</div>

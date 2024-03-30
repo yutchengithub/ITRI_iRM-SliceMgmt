@@ -178,8 +178,8 @@ export const Enlanguage = {
   'field.selfDefined': 'Self-defined',          // @2024/02/16 Add
   "field.enterSelfDefinedParam": "Enter self defined parameter",                          // @2024/02/21 Add
   'field.confirmPMgmtParameterSet': 'Confirm apply changes ?' ,  // @2024/02/22 Update
-  'field.apply':'Apply',        // @2024/02/22 Add
-  'field.close':'Close',        // @2024/02/22 Add
+  'field.apply':'Apply',            // @2024/02/22 Add
+  'field.close':'Close',            // @2024/02/22 Add
   'field.applyReminder':'Reminder', // @2024/02/22 Add
 
   'field.report':'Field Reports',                   // @12/12 Add
@@ -194,6 +194,41 @@ export const Enlanguage = {
   'field.bsAlarm':'Alarm',                          // @12/13 Add
   'field.legend_all-in-one_bs':'All-in-one BS',     // @12/28 Add
   'field.legend_dist_bs':'O-RAN BS',                // @12/28 Add
+
+  'field.selectOptimizationParameters': 'Select Optimization Parameters',
+  'field.selectCalculationParameters': 'Select Calculation Parameters',
+
+  'field.setCCO': 'Set CCO',
+  'field.ccoSettings': 'CCO Settings',
+  'field.optimizationType': 'Optimization Type',
+  'field.maxCoverageRange': 'Maximum Coverage Range',
+  'field.maxSINR': 'Maximum SINR',
+
+  'field.setANR':'Set ANR',
+  'field.anrSettings': 'ANR Settings',
+  'field.minSignalPower': 'Minimum Signal Power',
+
+  'field.setPCI':'Set PCI',
+  'field.pciSettings': 'PCI Settings',
+  'field.pciRange': 'Minimum PCI',
+  'field.pciSpacing': 'Maximum PCI',
+
+  'field.sonCalculate':'Calculate',
+
+  'field.calculationCategories': 'Calculation Categories',
+  'field.calculationResults': 'Calculation Results',
+  
+  'field.applySON': 'Apply',
+  'field.cancelSON': 'Cancel',
+
+
+
+  'field.open': 'Open',
+  'field.anrMode': 'Minimum SINR',
+  'field.anrThreshold': 'Minimum SINR Threshold',
+  'field.sinr': 'SINR',
+
+  'field.optimize': 'Optimize',
   
   // BS Management ( 基站管理 )
   'BS.list':'BS List',

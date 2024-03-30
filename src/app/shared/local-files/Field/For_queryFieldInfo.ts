@@ -125,7 +125,7 @@
         "alarmMajorNum": 294448,
         "alarmMinorNum": 740791,
         "alarmWarningNum": 0
-    }
+    };
 
  }
 

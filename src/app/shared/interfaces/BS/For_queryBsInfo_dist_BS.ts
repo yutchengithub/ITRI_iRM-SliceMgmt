@@ -3,7 +3,7 @@
 // notes: 當物件有可能是空的或可能不在 JSON 中設為"?:"
 export interface BSInfo_dist {
     info: Info_dist[];
-    extension_info: ExtensionInfo[]; // ok
+    extension_info: ExtensionInfo_dist[]; // ok
     cellInfo: Cellinfo; // ok
     anr: Anr;           // ok
     pci: PCI;           // ok 目前沒看到有 BS 這個有值
@@ -74,7 +74,7 @@ export interface BSInfo_dist {
 
   /* ↓ @12/14 Add For extension_info:[] ↓ */
   
-  export interface ExtensionInfo {
+  export interface ExtensionInfo_dist {
     gNBId: number;
     gNBIdLength: number;
     cellLocalId: string;

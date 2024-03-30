@@ -297,7 +297,34 @@ export class apiForFieldMgmt {
     return this.http.post( url, bodyStr );
   }
 
+  // For Get SON parameters @2024/03/30 Add by yuchen
+  querySonParameter(): Observable<any> {
+      
+    // 構建 API URL
+    const url = `${this.restPath}/querySonParameter/${this.sessionId}`;
+
+    // 發起 HTTP GET 請求
+    return this.http.get( url );
+  }
   
+  /**
+   * 用於發送參數給 SON 演算法計算的 API
+   *
+   * @param body 包含計算所需參數的物件
+   * @returns 一個 Observable，代表 API 的響應結果
+   */
+  multiCalculateBs( body: {} ): Observable<any> {
+    // 建立完整的 API URL
+    const url = `${this.restPath}/multiCalculateBs`;
+
+    // 將請求主體轉換為 JSON 字串
+    const bodyStr = JSON.stringify( body );
+
+    // 發送 HTTP POST 請求到指定的 URL，並將請求主體作為參數傳遞
+    return this.http.post( url, bodyStr );
+  }
+
+
   // For Updating Configurations of All-in-one BS @2024/01/05 Add by yuchen
   updateBs( body: {} ): Observable<any> {
 
