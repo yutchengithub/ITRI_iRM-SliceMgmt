@@ -3205,62 +3205,99 @@
     <div><!-- 基站告警 -->
       <span>{{ languageService.i18n['BS.alarms'] }}</span>
       <input id="faultMsg" class="toggle" type="checkbox">
-      <label for="faultMsg" class="lbl-toggle">
-      </label>
+      <label for="faultMsg" class="lbl-toggle"></label>
 
       <div class="collapsible-content">
         <div class="content-inner">
-          <!-- <form [formGroup]="searchForm">
+          <form [formGroup]="searchForm">
             <div class="filter">
-              <span><label>{{languageService.i18n['fm.severity']}}</label>
+              <span>
+                <label>{{languageService.i18n['fm.severity']}}</label>
                 <select formControlName="severity">
                   <option value="All">All</option>
-                  <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
-                </select> -->
-                <!-- <mat-error *ngIf="searchForm.controls['severity'].invalid">Required</mat-error> -->
-              <!-- </span>
-              <span><label>{{languageService.i18n['fm.start']}}</label>
+                  <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>  
+                </select>
+              </span>
+              <span>
+                <label>{{languageService.i18n['fm.start']}}</label> 
                 <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
               </span>
-              <span><label>{{languageService.i18n['fm.end']}}</label>
-                <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+              <span>  
+                <label>{{languageService.i18n['fm.end']}}</label>
+                <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>  
               </span>
-              <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-              <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search()">clear</span>
+              <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_currentBsFmList()">search</span>
+              <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search_currentBsFmList()">clear</span>
             </div>
-          </form> -->
+            
+            <!-- Search Criteria Summary of current bs fault message @2024/03/31 Add -->
+            <div class="filterBY">
+              <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;  
+              <span *ngIf="afterSearchForm.controls['severity'].value">
+                <label>{{ languageService.i18n['fm.severity'] }}:&nbsp;</label>{{afterSearchForm.controls['severity'].value}}
+              </span>
+              <span *ngIf="afterSearchForm.controls['from'].value || afterSearchForm.controls['to'].value">
+                <label>{{ languageService.i18n['fm.timeRange'] }}:&nbsp;</label>
+                {{ afterSearchForm.controls['from'].value ? (commonService.dealPostDate(afterSearchForm.controls['from'].value) + ' ~ ') : '' }}   
+                {{ afterSearchForm.controls['to'].value ? commonService.dealPostDate(afterSearchForm.controls['to'].value) : '' }}
+              </span>  
+            </div>
+          </form>
+          
           <div class="table">
-              <table>
-                <thead>
+            <table>
+              <thead>
+                <tr>
+                  <th>{{ languageService.i18n['BS.No'] }}</th>
+                  <th>{{ languageService.i18n['fm.field'] }}</th>  
+                  <th>{{ languageService.i18n['fm.BS'] }}</th>
+                  <th>{{ languageService.i18n['BS.neName'] }}</th>
+                  <th>{{ languageService.i18n['fm.alarm'] }}</th>
+                  <th>{{ languageService.i18n['fm.severity'] }}</th> 
+                  <th>{{ languageService.i18n['fm.occurtime'] }}</th>
+                  <th>{{ languageService.i18n['fm.status'] }}</th>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <!-- 當數據正在加載時顯示進度條 @2024/03/31 Add -->
+                <ng-container *ngIf="isLoadingCurrentBsFmList">
                   <tr>
-                    <th>{{ languageService.i18n['BS.No'] }}</th>
-                    <th>{{ languageService.i18n['fm.field'] }}</th>
-                    <th>{{ languageService.i18n['fm.BS'] }}</th>
-                    <th>{{ languageService.i18n['BS.neName'] }}</th>
-                    <th>{{ languageService.i18n['fm.alarm'] }}</th>
-                    <th>{{ languageService.i18n['fm.severity'] }}</th>
-                    <th>{{ languageService.i18n['fm.occurtime'] }}</th>
-                    <th>{{ languageService.i18n['fm.status'] }}</th>
+                    <td colspan="8">
+                      <div class="progress-spinner-container">  
+                        <!-- 指示器大小設置 -->
+                        <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: 5, id: 'fmList' }; let i = index" >
-                    <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
+                </ng-container>
+                
+                <!-- 加載完成後顯示當前 Bs Fm List 的數據 @2024/03/31 Add --> 
+                <ng-container *ngIf="!isLoadingCurrentBsFmList">
+                  <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, 
+                                      totalItems: totalItems, id: 'currentBsFmList' }; let i = index">
+                    <td>{{ (p - 1) * pageSize + i + 1 }}</td>
                     <td>{{opt.fieldName}}</td>
-                    <td>{{opt.bsName}}</td>
+                    <td>{{opt.bsName}}</td>  
                     <td>{{opt.compname}}</td>
                     <td>{{opt.probablecause}}</td>
                     <td>{{opt.eventtype}}</td>
                     <td>{{opt.timestamp}}</td>
-                    <td>{{opt.status}}</td>
+                    <td>
+                      <label *ngIf="opt.processstatus === ''" class="redLight"></label>
+                      <label *ngIf="opt.processstatus === '1'" class="greenLight"></label>
+                    </td>
                   </tr>
-                </tbody>
-              </table>
-              <!-- pagination -->    
-              <span class="total">{{languageService.i18n['fm.total1']}}  5 {{languageService.i18n['fm.total2']}}</span>
-              <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
-                nextLabel="" id="fmList">
-              </pagination-controls>
+                  <tr class="notFind" *ngIf="totalItems === 0">  
+                    <td colspan="8">{{ languageService.i18n['no_results'] }}</td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+            <!-- pagination -->      
+            <span class="total">{{languageService.i18n['fm.total1']}} {{totalItems}} {{languageService.i18n['fm.total2']}}</span>
+            <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" 
+                                  previousLabel="" nextLabel="" id="currentBsFmList"></pagination-controls>
           </div>
         </div>
       </div>
