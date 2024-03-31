@@ -18,12 +18,14 @@ import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt'; // @2024/03/25 Add
 // 引入儲存各個資訊所需的 interfaces
 import { BSInfo, Components }                      from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
 import { BSInfo_dist, Info_dist, Components_dist } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
-import { NEList, NE, Sm  } from '../../shared/interfaces/NE/For_queryBsComponentList'; // @2024/03/27 Add
-import { NEInfo }          from '../../shared/interfaces/NE/For_queryBsComponentInfo'; // @2024/03/29 Add
+import { CurrentBsFmList, FaultMessage } from '../../shared/interfaces/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
+import { NEList, NE, Sm  }               from '../../shared/interfaces/NE/For_queryBsComponentList'; // @2024/03/27 Add
+import { NEInfo }                        from '../../shared/interfaces/NE/For_queryBsComponentInfo'; // @2024/03/29 Add
 
 // 引入所需 Local Files
 import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';          // @2024/03/25 Add
 import { localNEList } from '../../shared/local-files/NE/For_queryBsComponentList'; // @2024/03/27 Add
+import { localCurrentBsFmList } from '../../shared/local-files/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
 
 @Component({
   selector: 'app-bs-info',
@@ -49,12 +51,44 @@ export class BSInfoComponent implements OnInit {
 
     public  API_BS: apiForBSMgmt,           // @2024/03/25 Add for import API of BS Management
     public  bsInfo_LocalFiles: localBSInfo, // @2024/03/25 Add for import BS Info Local Files 
-    public  neList_LocalFiles: localNEList, // @2024/03/27 Add neList_LocalFiles 用於從 Local 文件獲取 NE 列表數據
+    public  currentBsFmList_LocalFiles: localCurrentBsFmList, // @2024/03/31 Add for import Current Current BS Fault Messages List
+    public  neList_LocalFiles: localNEList,                   // @2024/03/27 Add neList_LocalFiles 用於從 Local 文件獲取 NE 列表數據
   
   ) {
 
-    this.severitys = this.commonService.severitys;
+    //this.severitys = this.commonService.severitys;
     this.cmpsource = this.commonService.cmpsource;
+
+
+    // 取得現在時間 @2024/04/01 Add
+    const nowTime = this.commonService.getNowTime();
+    console.log("getNowTime: ", nowTime);
+    
+    // @2024/04/01 Add
+    // 創建一個新的 Date 物件，代表當前時間
+    const currentDate = new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`);
+    
+    // @2024/04/01 Add
+    // 創建一個新的 Date 物件，並將月份往回設置一個月
+    const oneMonthAgoDate = new Date(currentDate);
+    oneMonthAgoDate.setMonth(oneMonthAgoDate.getMonth() - 1);
+    
+    // 確保月份和日期是兩位數的格式，如 "02" 代表 2 月 @2024/04/01 Add
+    const formattedMonth = ('0' + (oneMonthAgoDate.getMonth() + 1)).slice(-2);
+    const formattedDay = ('0' + oneMonthAgoDate.getDate()).slice(-2);
+    const formattedHour = ('0' + oneMonthAgoDate.getHours()).slice(-2);
+    const formattedMinute = ('0' + oneMonthAgoDate.getMinutes()).slice(-2);
+
+    // @2024/04/01 Add
+    // 使用這些格式化後的值來更新 searchForm 控件的值
+    this.searchForm = this.fb.group({
+      'from': new FormControl( `${oneMonthAgoDate.getFullYear()}-${formattedMonth}-${formattedDay} ${formattedHour}:${formattedMinute}` ), 
+      'to': new FormControl( `${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}` ),
+      'severity': new FormControl( 'All' )
+    });
+
+    // 建立搜尋表單 
+    this.createSearchForm();
 
   }
 
@@ -77,6 +111,9 @@ export class BSInfoComponent implements OnInit {
       console.log('bsId: ' + this.bsID + ', bsName: ' + this.bsName +
                      ', bsType: ' + this.bsType + ', bsCellCount: ' + ',\nsend from /main/bs-mgr');
       
+      // 建立 searchForm 的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。
+      this.afterSearchForm = _.cloneDeep( this.searchForm );
+
       // 初入該頁面就取得此 BS 資訊               
       this.getQueryBsInfo();
 
@@ -84,10 +121,11 @@ export class BSInfoComponent implements OnInit {
       // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 
       this.getNEList(); 
 
+      // 取得此基站告警資訊 @2024/04/01 Add
+      this.getCurrentBsFmList()
     });
-   
 
-   this.drawConnectingLines();
+    this.drawConnectingLines();
   }
 
   ngOnDestroy() {
@@ -95,6 +133,7 @@ export class BSInfoComponent implements OnInit {
   }
 
   ngAfterViewInit() {
+
     this.canvas.nativeElement.width  = 800; // 增加 Canvas 的寬度
     this.canvas.nativeElement.height = 250; // 增加 Canvas 的寬度
 
@@ -103,6 +142,7 @@ export class BSInfoComponent implements OnInit {
       //this.changeDetectorRef.detectChanges();
       this.drawConnectingLines();
     //});
+
   }
 
   // 用於返回 BS 主頁 @2024/03/25 Add
@@ -257,14 +297,14 @@ export class BSInfoComponent implements OnInit {
   // @2024/03/27 Add
   // 定義 NEList 物件，並使用類型斷言將其初始化為空物件
            NEList: NEList = {} as NEList; // 用於儲存 O1 系統內的網元列表
-  isLoadingNEList =  true; // 控制加載 NE List 資訊狀態的標誌，初始設置為 true
+  isLoadingNEList = true; // 控制加載 NE List 資訊狀態的標誌，初始設置為 true
 
   // @2024/03/29 Update
   // 用於取得 NE 列表資訊的函數
   getNEList() {
     console.log( 'getNEList() - Start' ); // 輸出開始取得 NE 列表的日誌
 
-    this.isLoadingNEList = true;         // 開始加載數據，顯示進度指示器
+    this.isLoadingNEList = true;          // 開始加載數據，顯示進度指示器
 
     if ( this.commonService.isLocal ) {
 
@@ -565,7 +605,7 @@ export class BSInfoComponent implements OnInit {
 
   // 獲取一體式基站的位置
   getAllInOnePosition(): { x: number, y: number } {
-    const canvasWidth = this.canvas.nativeElement.width; // 獲取畫布寬度
+    const  canvasWidth = this.canvas.nativeElement.width; // 獲取畫布寬度
     const canvasHeight = this.canvas.nativeElement.height; // 獲取畫布高度
     const x = canvasWidth / 2; // 水平置中
     const y = canvasHeight / 2; // 垂直置中
@@ -656,6 +696,7 @@ export class BSInfoComponent implements OnInit {
 // ↑ 繪製拓樸圖區 @2024/03/28 Add ↑
   
 
+// ↓ 網元列表區 @2024/03/29 Add ↓
 
   // @2024/03/29 Add
   // 用於儲存所有於此 BS 內的網元
@@ -689,6 +730,277 @@ export class BSInfoComponent implements OnInit {
 
     console.log( 'filterNEListByBSName() - End' );
   }
+
+// ↑ 網元列表區 @2024/03/29 Add ↑
+
+
+
+
+// ↓ 基站告警區 @2024/03/31 Add ↓
+
+  p: number = 1;            // 當前頁數
+  pageSize: number = 5;     // 每頁幾筆
+  totalItems: number = 0;   // 總筆數
+
+  searchForm!: FormGroup;
+  afterSearchForm!: FormGroup; // 用於儲存並顯示出篩選條件
+  cmpsource: string[];
+  fmsgList: FmsgList = {} as FmsgList;
+  isSearch: boolean = false;
+  filteredFmList: FaultMessages[] = [];
+
+ // ↓ 用於儲存所有於此 BS 內的告警資訊 ↓
+  currentBsFmList: CurrentBsFmList = {} as CurrentBsFmList;  
+  isLoadingCurrentBsFmList = true; // 控制加載當前 Bs Fm List 資訊狀態的標誌,初始設置為 true
+  filtered_CurrentBsFmList: FaultMessage[] = [];  // 用於儲存篩選後的基站告警資訊
+  isSearch_currentBsFmList: boolean = false;      // 用於標記是否進行了搜尋
+
+  // 頁數切換時重新獲取告警資訊
+  pageChanged(page: number) {
+    this.p = page;
+    console.log("Current Page:", this.p);
+
+    // 如非 Local 模式,切換每頁時才呼叫 API 取得告警資訊
+    if (!this.commonService.isLocal) {
+      this.getCurrentBsFmList();
+    }
+  }
+
+  // 取得指定基站的當前告警資訊
+  getCurrentBsFmList() {
+    console.log('getCurrentBsFmList() - Start');
+
+    this.isLoadingCurrentBsFmList = true; // 設置加載旗標為 true,表示開始加載
+
+    if (this.commonService.isLocal) {
+      // Local Test
+      this.currentBsFmList = this.currentBsFmList_LocalFiles.currentBsFmList_local;
+      console.log('currentBsFmList:', this.currentBsFmList);
+
+      this.totalItems = this.currentBsFmList.totalMessageNumber;
+
+      console.log("In getCurrentBsFmList() not click search (Local mode) - msgToDisplay:", this.msgToDisplay);
+
+      this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載完成
+
+    } else {
+
+      const params: { [key: string]: any } = {
+        method: 'desc',
+        start: this.searchForm.controls['from'].value.split(' ')[0],
+        end: this.searchForm.controls['to'].value.split(' ')[0],
+        offset: (this.p - 1) * this.pageSize,
+        limit: 5
+      };
+
+      // 如果選擇了特定的告警種類,則添加 urgency 參數
+      if (this.searchForm.controls['severity'].value !== 'All') {
+        params['urgency'] = this.searchForm.controls['severity'].value;
+      }
+
+      // 使用 API_BS 中的 queryCurrentBsFaultMessage() 發起 HTTP GET 請求
+      this.API_BS.queryCurrentBsFaultMessage(this.bsID, params).subscribe({
+        next: (res) => {    // 成功的 callback
+
+          if (!this.isSearch_currentBsFmList) {
+            // 如非點擊 Search 過
+            console.log('In getCurrentBsFmList() not click search - res:', res);
+
+            this.currentBsFmList = res; // 賦值響應至 currentBsFmList
+            console.log('In getCurrentBsFmList() not click search - currentBsFmList:', this.currentBsFmList);
+
+            this.totalItems = this.currentBsFmList.totalMessageNumber;
+            console.log('In getCurrentBsFmList() not click search - Total Bs Fault Message Num:', this.totalItems);
+
+            console.log("In getCurrentBsFmList() not click search - msgToDisplay:", this.msgToDisplay);
+
+          } else {
+            // 如點擊 Search 過
+            console.log('In getCurrentBsFmList() click search - res:', res);
+
+            // 傳回的數據 res 已是篩選過的,故直接放入 filtered_CurrentBsFmList
+            this.filtered_CurrentBsFmList = res.faultMessage;
+            this.totalItems = res.totalMessageNumber;     // 更新記錄的告警總數
+            console.log("In getCurrentBsFmList() click search - msgToDisplay:", this.msgToDisplay);
+          }
+
+          this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載完成
+        },
+        error: (error) => {  // 錯誤的 callback
+          console.error('Error fetching current bs fault message:', error); // 顯示錯誤訊息
+
+          this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載出錯
+        },
+        complete: () => {    // 完成的 callback
+          console.log('Current bs fault message fetch completed');   // 顯示完成訊息
+        }
+      });
+
+    }
+
+    console.log("getCurrentBsFmList() - End");
+  }
+
+  // 告警嚴重程度選項 @2024/04/01 Add
+  severitys: string[] = ['CRITICAL', 'MAJOR', 'MINOR', 'WARNING'];
+  
+  // 搜尋基站告警 @2024/04/01 Add
+  search_currentBsFmList() {
+    console.log('search_currentBsFmList() - Start');
+
+    // currentBsFmList 是否已加載
+    if (!this.currentBsFmList || !this.currentBsFmList.faultMessage) {
+      console.error('currentBsFmList.faultMessage is not loaded yet.');
+      return;
+    }
+
+    this.p = 1; // 當點擊搜尋時,將頁數預設為 1
+
+    const from = this.searchForm.get('from')?.value;
+    const to = this.searchForm.get('to')?.value;
+    const severity = this.searchForm.get('severity')?.value;
+    
+    console.log('the search severity is', severity );
+    
+    // 清除以前的搜尋結果
+    this.filtered_CurrentBsFmList = [];
+    this.isSearch_currentBsFmList = false;
+
+    this.isLoadingCurrentBsFmList = true; // 設置加載旗標為 true,表示開始加載
+
+    if (this.commonService.isLocal) {
+
+      this.filtered_CurrentBsFmList = this.currentBsFmList.faultMessage.filter(msg => {
+
+        const msgDate = new Date(msg.timestamp);
+        const isAfterFrom = msgDate >= new Date(from);
+        const isBeforeTo = msgDate <= new Date(to);
+        const isSeverityMatch = severity === 'All' || msg.eventtype === severity;
+
+        return isAfterFrom && isBeforeTo && isSeverityMatch;
+      });
+
+      this.isSearch_currentBsFmList = true;  // Local Search 完畢,設置標記為 true
+
+      this.totalItems = this.filtered_CurrentBsFmList.length; // 確保更新 totalItems 以反映搜尋結果的數量
+
+      console.log("In search_currentBsFmList() in Local mode - msgToDisplay:", this.msgToDisplay);
+
+      this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載完成
+
+    } else {  // 如非在 Local 環境測試
+
+      const params: { [key: string]: any } = {
+        method: 'desc',
+        start: from.split(' ')[0],
+        end: to.split(' ')[0],
+        offset: (this.p - 1) * this.pageSize,
+        limit: 5
+      };
+
+      if (severity !== 'All') {
+        params['urgency'] = severity;
+      }
+
+      // 使用 API_BS 中的 queryCurrentBsFaultMessage() 發起 HTTP GET 請求
+      this.API_BS.queryCurrentBsFaultMessage(this.bsID, params).subscribe({
+        next: (res) => {    // 成功的 callback
+
+          console.log('In search_currentBsFmList() - res:', res);
+          
+          // 傳回的數據 res 已是篩選過的,故直接放入 filtered_CurrentBsFmList
+          this.filtered_CurrentBsFmList = res.faultMessage;
+          this.totalItems = res.totalMessageNumber;       // 更新記錄的告警總數
+          this.isSearch_currentBsFmList = true;        // Search 完畢,設置標記為 true,以便 msgToDisplay 切換成顯示 filtered_CurrentBsFmList
+          console.log("In search_currentBsFmList() - msgToDisplay:", this.msgToDisplay);
+
+          this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載完成
+        },
+        error: (error) => {  // 錯誤的 callback
+          console.error('Error searching current bs fault message:', error); // 顯示錯誤訊息
+
+          this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載出錯
+        }
+      });
+
+    }
+
+    // 更新顯示的搜尋條件
+    this.afterSearchForm.patchValue({
+      'from': from,
+      'to': to,
+      'severity': severity
+    });
+
+    // 檢查搜尋表單的值
+    console.log('Search criteria for current bs fault message:', this.afterSearchForm.value);
+
+    console.log("search_currentBsFmList() - End");
+  }
+
+
+  // 創建搜尋表單 @2024/04/01 Add
+  createSearchForm() {
+    const nowTime = this.commonService.getNowTime();
+
+    // 創建當前時間的 Date 物件
+    const now = new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`);
+
+    // 創建往回推一個月的時間之 Date 物件
+    const from = new Date(now);
+    from.setMonth(from.getMonth() - 1);
+
+    // 格式化日期時間以符合兩位數格式
+    const paddedMonth = ('0' + (from.getMonth() + 1)).slice(-2);
+    const paddedDay = ('0' + from.getDate()).slice(-2);
+    const paddedHour = ('0' + from.getHours()).slice(-2);
+    const paddedMinute = ('0' + from.getMinutes()).slice(-2);
+
+    this.searchForm = this.fb.group({
+      'from': new FormControl(`${from.getFullYear()}-${paddedMonth}-${paddedDay} ${paddedHour}:${paddedMinute}`), 
+      'to': new FormControl(`${now.getFullYear()}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`),
+      'severity': new FormControl('All') // 告警嚴重程度欄位
+    });
+
+    //this.afterSearchForm = _.cloneDeep(this.searchForm); // 深拷貝 searchForm 的值給 afterSearchForm
+  }
+
+  // 重置告警搜尋 @2024/03/31 Add  
+  clear_search_currentBsFmList() {
+
+    this.isSearch_currentBsFmList = false;
+
+    this.searchForm.reset();  
+    this.createSearchForm();
+    this.afterSearchForm = _.cloneDeep( this.searchForm );
+    
+    this.p = 1; // 當點擊重置搜尋時,將顯示頁數預設為 1
+
+    this.getCurrentBsFmList();
+    
+  }  
+
+  // 用於顯示的基站告警數據 @2024/04/01 Add
+  get msgToDisplay(): FaultMessage[] {
+
+    // 檢查 this.currentBsFmList 是否存在，以及 this.currentBsFmList.faultMessage  是否為非空數組
+    if ( this.currentBsFmList && Array.isArray( this.currentBsFmList.faultMessage ) ) {
+      return this.isSearch_currentBsFmList ? this.filtered_CurrentBsFmList : this.currentBsFmList.faultMessage;
+    }
+    return []; // 如果數據還沒有載入，則返回一個空數組
+  }
+
+// ↑ 基站告警區 @2024/03/31 Add ↑
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -926,13 +1238,7 @@ export class BSInfoComponent implements OnInit {
     this.getBSInfo();
   }
 
-  p: number = 1;            // 當前頁數
-  pageSize: number = 5;    // 每頁幾筆
-  totalItems: number = 0;   // 總筆數
 
-  pageChanged( page: number ) {
-    this.p = page;
-  }
 
   veiw(opt: Nf) {
     const url = '/main/nf-mgr';
@@ -948,18 +1254,7 @@ export class BSInfoComponent implements OnInit {
     this.router.navigate(['/main/nf-mgr', nfId]);
   }
 
-  search() {}
-  clear_search(){}
-  searchForm!: FormGroup;
-  cmpsource: string[];
-  fmsgList: FmsgList = {} as FmsgList;
-  isSearch: boolean = false;
-  filteredFmList: FaultMessages[] = [];
-  get msgToDisplay(): FaultMessages[] {
-    // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
-    // 否則，顯示全部 this.fmsgList.faultMessages
-    return this.isSearch ? this.filteredFmList : this.fmsgList.faultMessages;
-  }
+
 
 
 
@@ -985,8 +1280,6 @@ export class BSInfoComponent implements OnInit {
   updateIPModalRef!: MatDialogRef<any>;
   updateForm!: FormGroup;
   formValidated = false;
-  /* CRITICAL,MAJOR,MINOR,WARNING */
-  severitys: string[];
 
   tooltipOptions = {
     theme: 'light',     // 'dark' | 'light'

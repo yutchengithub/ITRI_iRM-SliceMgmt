@@ -9,6 +9,7 @@ import { Item } from '../shared/models/item';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
+import * as XLSX from 'xlsx'; // 用於建立基站時上傳參數檔 @2024/03/31 Add by yuchen 
 
 // import APIs of BS Management @2024/03/19 Add 
 import { apiForBSMgmt } from '../shared/api/For_BS_Mgmt';

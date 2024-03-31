@@ -110,4 +110,19 @@ export class apiForBSMgmt {
     return this.http.get( url );
   }
 
+  /** @2024/03/31 Add
+    * 取得指定基站的當前告警資訊
+    * @param bsId 基站 ID
+    * @param params 其他查詢參數
+    * @returns 返回一個 Observable 物件，發出 API 返回的資料
+    */
+  queryCurrentBsFaultMessage( bsId: string, params: any ): Observable<any> {
+
+    // 組合 API 的 URL，包含 session ID 和基站 ID
+    const url = `${this.restPath}/queryCurrentBsFaultMessage/${this.sessionId}/${bsId}`;
+    
+    // 發送 HTTP GET 請求到指定的 URL，並將 params 物件作為查詢參數傳遞給請求
+    return this.http.get( url, { params } );
+  }
+
 }
