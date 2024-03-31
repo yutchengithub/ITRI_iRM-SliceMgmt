@@ -755,8 +755,9 @@ export class BSInfoComponent implements OnInit {
   filtered_CurrentBsFmList: FaultMessage[] = [];  // 用於儲存篩選後的基站告警資訊
   isSearch_currentBsFmList: boolean = false;      // 用於標記是否進行了搜尋
 
+  // @2024/04/01 Add
   // 頁數切換時重新獲取告警資訊
-  pageChanged(page: number) {
+  pageChanged( page: number ) {
     this.p = page;
     console.log("Current Page:", this.p);
 
@@ -766,16 +767,22 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
+  // @2024/04/01 Update
   // 取得指定基站的當前告警資訊
   getCurrentBsFmList() {
     console.log('getCurrentBsFmList() - Start');
 
     this.isLoadingCurrentBsFmList = true; // 設置加載旗標為 true,表示開始加載
 
-    if (this.commonService.isLocal) {
+    if ( this.commonService.isLocal ) {
       // Local Test
       this.currentBsFmList = this.currentBsFmList_LocalFiles.currentBsFmList_local;
       console.log('currentBsFmList:', this.currentBsFmList);
+
+      // 將 processstatus 轉換為字串型態
+      this.currentBsFmList.faultMessage.forEach(msg => {
+        msg.processstatus = String( msg.processstatus );
+      });
 
       this.totalItems = this.currentBsFmList.totalMessageNumber;
 
@@ -807,6 +814,12 @@ export class BSInfoComponent implements OnInit {
             console.log('In getCurrentBsFmList() not click search - res:', res);
 
             this.currentBsFmList = res; // 賦值響應至 currentBsFmList
+
+            // 將 processstatus 轉換為字串型態
+            this.currentBsFmList.faultMessage.forEach(msg => {
+              msg.processstatus = String(msg.processstatus);
+            });
+
             console.log('In getCurrentBsFmList() not click search - currentBsFmList:', this.currentBsFmList);
 
             this.totalItems = this.currentBsFmList.totalMessageNumber;
@@ -820,6 +833,12 @@ export class BSInfoComponent implements OnInit {
 
             // 傳回的數據 res 已是篩選過的,故直接放入 filtered_CurrentBsFmList
             this.filtered_CurrentBsFmList = res.faultMessage;
+
+            // 將 processstatus 轉換為字串型態
+            this.filtered_CurrentBsFmList.forEach(msg => {
+              msg.processstatus = String(msg.processstatus);
+            });
+
             this.totalItems = res.totalMessageNumber;     // 更新記錄的告警總數
             console.log("In getCurrentBsFmList() click search - msgToDisplay:", this.msgToDisplay);
           }
