@@ -544,6 +544,30 @@ export class CommonService {
     const url = `${this.restPath}/queryBsComponentInfo/${this.getSessionId()}/${comId}`;
     return this.http.get(url);
   }
+  // Account Mgmt API
+  queryUserList(): Observable<any> {
+    const url = `${this.restPath}/queryUserList/${this.getSessionId()}`;
+    return this.http.get(url);
+  }
+  queryUserInfo(comId: string): Observable<any> {
+    const url = `${this.restPath}/queryUserInfo/${this.getSessionId()}/${comId}`;
+    return this.http.get(url);
+  }
+  createUser(body: any): Observable<any> {
+    const url = `${this.restPath}/createUser`;
+    const bodyStr = JSON.stringify(body);
+    return this.http.post(url, bodyStr);
+  }
+  updateUser(body: any): Observable<any> {
+    const url = `${this.restPath}/updateUser`;
+    const bodyStr = JSON.stringify(body);
+    return this.http.post(url, bodyStr);
+  }
+  removeUser(httpOptions: any): Observable<any> {
+    const url = `${this.restPath}/removeUser`;
+    //return this.http.delete(url);
+    return this.http.delete( url, httpOptions );
+  }
 
 // Local Files ↓
 

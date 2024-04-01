@@ -14,9 +14,9 @@
       <li><label>{{languageService.i18n['key_account']}}</label><span>{{accountInfo.key}}</span></li>
         <!-- <input type="text" [(ngModel)]="accountInfo.key" name="key"></li> -->
         <li><label>{{languageService.i18n['role_account']}}</label><span>{{roleDisplayName(accountInfo.role)}}</span>
-          <!-- <select [(ngModel)]="accountInfo.role" name="role">
+          <select [(ngModel)]="accountInfo.role" name="role">
             <option *ngFor="let opt of userTypeList" [value]="opt.value">{{opt.displayName}}</option>
-          </select> -->
+          </select>
         </li>        
       <li><label>{{languageService.i18n['expired_time_account']}}</label>
         <span>{{accountInfo.expiretime}}</span></li>   
@@ -31,6 +31,6 @@
       <p>Confirm to Update {{accountInfo.id}}?</p>
       <div class="buttons">
         <button type="button" mat-dialog-close>Cancel</button>
-        <button type="button" >OK</button>
+        <button type="button" (click)="update()">OK</button>
       </div>
     </ng-template>

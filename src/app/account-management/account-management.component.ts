@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -9,6 +9,7 @@ import { Item } from '../shared/models/item';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import * as _ from 'lodash';
+
 
 export interface AccountLists {
   users: Users[];
@@ -35,6 +36,7 @@ export class AccountManagementComponent implements OnInit {
   sessionId: string = '';
   accountLists: AccountLists = {} as AccountLists;
   accountInfo: CreateUsers = {} as CreateUsers;
+  @ViewChild('createAccountModal') createAccountModal: any;
   @ViewChild('createModal') createModal: any;
   @ViewChild('deleteModal') deleteModal: any;
   @ViewChild('advancedModal') advancedModal: any;
@@ -44,6 +46,7 @@ export class AccountManagementComponent implements OnInit {
   createModalRef!: MatDialogRef<any>;
   deleteModalRef!: MatDialogRef<any>;
   createForm!: FormGroup;
+  deleteForm!: FormGroup;
   selectUser!: Users;
   file: any;
   typeMap: Map<number, string> = new Map();
@@ -96,71 +99,40 @@ export class AccountManagementComponent implements OnInit {
 
 
   getAccountList() {
-    const fileName = this.searchForm.controls['fileName'].value;
-    const type = this.searchForm.controls['type'].value;
-    const version = this.searchForm.controls['version'].value;
-    console.log('querySoftwareList params:')
-    console.log(`fileName=${fileName}`);
-    console.log(`type=${type}`);
-    console.log(`version=${version}`);
     if (this.commonService.isLocal) {
       /* local file test */
       this.accountLists = this.commonService.accountLists;
       console.log(this.accountLists);
-      this.softwareListDeal();
+      this.accountListDeal();
     } else {
-      this.commonService.queryUploadFileList().subscribe(
+      this.commonService.queryUserList().subscribe(
         res => {
-          console.log('Get software list:');
+          console.log('Get User list:');
           console.log(res);
           this.accountLists = res as AccountLists;
-          this.softwareListDeal();
+          this.accountListDeal();
         }
       );
     }
   }
 
-  softwareListDeal() {
+  accountListDeal() {
     this.totalItems = this.accountLists.users.length;
   }
 
   openCreateModal() {
     this.formValidated = false;
     this.createForm = this.fb.group({
-      'fileName': new FormControl('', [Validators.required]),
-      'description': new FormControl(''),
-      'version': new FormControl('', [Validators.required]),
-      'mode': new FormControl('ocloud'),
-      'type': new FormControl('0'),
-      'sessionid': this.sessionId
+      'id': new FormControl('', [Validators.required]),
+      'key': new FormControl('',  [Validators.required]),
+      'role': new FormControl('', [Validators.required]),
+      'session': this.sessionId
     });
-    this.createModalRef = this.dialog.open(this.createModal, { id: 'accountCreateModal' });
+    this.createModalRef = this.dialog.open(this.createAccountModal, { id: 'createAccountModal' });
     this.createModalRef.afterClosed().subscribe(() => {
       this.fileMsg = '';
       this.formValidated = false;
     });
-  }
-
-  fileChange(e: any) {
-    // console.log(e);
-    this.fileMsg = '';
-    let passFile = null;
-    const files = e.target.files;
-    if ('0' in files) {
-      if (files[0].name.indexOf('.zip') >= 0 || files[0].name.indexOf('.tar') >= 0) {
-        passFile = files[0];
-      } else {
-        this.fileMsg = '格式只允許[file].zip 和.tar';
-      }
-    }
-    if (passFile === null) {
-      this.file = null;
-      this.createForm.controls['fileName'].setValue('');
-    } else {
-      this.file = files[0];
-      this.createForm.controls['fileName'].setValue(files[0].name);
-    }
-    // console.log(files);
   }
 
   create() {
@@ -171,48 +143,25 @@ export class AccountManagementComponent implements OnInit {
     }
     if (this.commonService.isLocal) {
       /* local file test */
-      this.commonService.softwareList.push(
-        {
-          id: "s0011009",
-          firm: "ITRI",
-          model: "Os_image_2.tar",
-          type: 0,
-          version: "1.0.0",
-          notes: "Os_image_2.tar",
-          uploadTime: "2023-07-01 20: 01: 30",
-          fileName: "fw-v1-0-0.zip"
-        }
-      );
       this.createModalRef.close();
       this.getAccountList();
-
     } else {
+      console.log(this.createForm.controls['role'].value);
       const body = this.createForm.value;
-      if (this.createForm.controls['type'].value === 'CU') {
-        body['type'] = 1;
-      } else if (this.createForm.controls['type'].value === 'DU') {
-        body['type'] = 2;
-      } else if (this.createForm.controls['type'].value === 'CU+DU') {
-        body['type'] = 3;
+      if (this.createForm.controls['role'].value === '1') {
+        body['role'] = 1;
+      } else if (this.createForm.controls['role'].value === '2') {
+        body['role'] = 2;
+      } else if (this.createForm.controls['role'].value === '3') {
+        body['role'] = 3;
       } else {
-        body['type'] = 0;
+        body['role'] = 0;
       }
-      body['sessionid'] = this.sessionId;
-      this.commonService.createSoftware(body).subscribe(
+      body['session'] = this.sessionId;
+      this.commonService.createUser(body).subscribe(
         (res: any) => {
-          console.log('createSoftware:');
+          console.log('createUser:');
           console.log(res);
-          const softwareId = res['softwareId'];
-          const uploadUrl = `${this.commonService.restPath}/uploadSoftware/${this.sessionId}/${softwareId}`;
-          const options = this.commonService.options;
-          const formData = new FormData();
-          formData.append('file', this.file);
-          this.http.post(uploadUrl, formData, options).subscribe(
-            () => {
-              this.createModalRef.close();
-              this.getAccountList();
-            }
-          );
           this.createModalRef.close();
           this.getAccountList();
         }
@@ -237,8 +186,22 @@ export class AccountManagementComponent implements OnInit {
       this.deleteModalRef.close();
       this.getAccountList();
     } else {
-      this.commonService.deleteSoftware(this.selectUser.id).subscribe(
+      const removeBsBody = {
+        id: this.selectUser.id,
+        session: this.sessionId
+      };
+      // 定義 HTTP 請求選項
+      const httpOptions = {
+        // 設定 HTTP 標頭
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
+        }),
+        body: removeBsBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
+      };
+      this.commonService.removeUser(httpOptions).subscribe(
         res => {
+          console.log('deleteOcloud:');
+          console.log(this.selectUser.id);
           this.deleteModalRef.close();
           this.getAccountList();
         }
@@ -255,24 +218,20 @@ export class AccountManagementComponent implements OnInit {
     this.p = page;
   }
 
-  // search() {
-  //   this.getAccountList();
+  // debug() {
+  //   const body = this.createForm.value;
+  //   if (this.createForm.controls['role'].value === 'Administrator') {
+  //     body['type'] = 1;
+  //   } else if (this.createForm.controls['role'].value === 'Manager') {
+  //     body['type'] = 2;
+  //   } else if (this.createForm.controls['role'].value === 'Monitor') {
+  //     body['type'] = 3;
+  //   } else {
+  //     body['type'] = 0;
+  //   }
+  //   body['sessionid'] = this.sessionId;
+  //   console.log(body);
   // }
-
-  debug() {
-    const body = this.createForm.value;
-    if (this.createForm.controls['type'].value === 'CU') {
-      body['type'] = 1;
-    } else if (this.createForm.controls['type'].value === 'DU') {
-      body['type'] = 2;
-    } else if (this.createForm.controls['type'].value === 'CU+DU') {
-      body['type'] = 3;
-    } else {
-      body['type'] = 0;
-    }
-    body['sessionid'] = this.sessionId;
-    console.log(body);
-  }
 
   viewPage(accountwareList: Users) {
     this.router.navigate(['/main/account-mgr/info', accountwareList.id, accountwareList.role]);

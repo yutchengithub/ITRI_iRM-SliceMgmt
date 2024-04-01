@@ -10,23 +10,6 @@ import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
 
-
-export interface SoftwareInfo {
-  id: string;
-  firm: string;
-  modelname: string;
-  uploadtime: string;
-  uploadtype: number;
-  uploadversion: string;
-  description: string;
-  uploadinfo: string;
-  uploadurl: string;
-  ftpid: string;
-  ftpkey: string;
-  checksum: string;
-  size: number;
-}
-
 export interface AccountInfo {
   id: string;
   key: string;
@@ -51,9 +34,7 @@ export class AccountInfoComponent implements OnInit {
   fileMsg: string = '';
   createForm!: FormGroup;
   // utilizationPercent: number = 0;
-  softwareInfo: SoftwareInfo = {} as SoftwareInfo;
   accountInfo: AccountInfo = {} as AccountInfo;
-  softwareList: SoftwareList[] = [];
   systemSummary: SystemSummary = {} as SystemSummary;;
   fileNameMapSoftware: Map<string, SoftwareList> = new Map();
   typeMap: Map<number, string> = new Map();
@@ -77,6 +58,8 @@ export class AccountInfoComponent implements OnInit {
   @ViewChild('updateModal') updateModal: any;
   updateModalRef!: MatDialogRef<any>;
   updateForm!: FormGroup;
+  accInfoRefreshTimeout!: any;
+  accInfoRefreshTime: number = 2;
   formValidated = false;
   /* CRITICAL,MAJOR,MINOR,WARNING */
   severitys: string[];
@@ -109,7 +92,7 @@ export class AccountInfoComponent implements OnInit {
       this.cloudId = params['cloudId'];
       this.cloudName = params['cloudName'];
       console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
-      this.getSoftwareInfo();
+      this.getAccountInfo();
     });
   }
 
@@ -148,45 +131,50 @@ export class AccountInfoComponent implements OnInit {
     }
   }
   
-  getSoftwareInfo() {
+  getAccountInfo() {
     if (this.commonService.isLocal) {
       /* local file test */
       this.accountInfo = this.commonService.accountInfo;
     } else {
-      this.commonService.queryOcloudInfo(this.cloudId).subscribe(
+      this.commonService.queryUserInfo(this.cloudId).subscribe(
         res => {
-          console.log('getSoftwareInfo:');
+          console.log('getAccountInfo:');
           console.log(res);
           const str = JSON.stringify(res);//convert array to string
-          this.softwareInfo = JSON.parse(str);
-          this.softwareInfo = res as SoftwareInfo;
+          this.accountInfo = JSON.parse(str);
+          this.accountInfo = res as AccountInfo;
         }
       );
     }
   }
 
-  softwareDeal() {
-    this.fileNameMapSoftware = new Map();
-    this.softwareList.forEach((row) => {
-      this.fileNameMapSoftware.set(row.fileName, row);
-    });
-  }
-
-
-  softwareVersion(): string {
-    const fileName = this.updateForm.controls['fileName'].value;
-    if (fileName === '') {
-      return '';
+  update() {
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.updateModalRef.close();
     } else {
-      const software = this.fileNameMapSoftware.get(fileName) as any;
-      return software.version;
+      const body: any = {
+        id: this.accountInfo.id,
+        key: this.accountInfo.key,
+        role: this.accountInfo.role,
+        session: this.sessionId
+      };
+      this.commonService.updateUser(body).subscribe(
+        () => console.log('Update Successful.')
+      );
+      this.updateModalRef.close();
+      this.getAccountInfo();
+      this.nfRefresh();
     }
+    this.getAccountInfo();
   }
-
+  nfRefresh() {
+    // refresh
+    this.accInfoRefreshTimeout = window.setTimeout(() => this.getAccountInfo(), this.accInfoRefreshTime * 1000);
+  }
   back() {
     this.router.navigate(['/main/account-mgr']);
   }
-
 
   openUpdateModel() {
     this.formValidated = false;
