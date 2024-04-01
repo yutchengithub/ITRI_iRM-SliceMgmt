@@ -3284,8 +3284,8 @@
                     <td>{{opt.eventtype}}</td>
                     <td>{{opt.timestamp}}</td>
                     <td>
-                      <label *ngIf="opt.processstatus === ''" class="redLight"></label>
-                      <label *ngIf="opt.processstatus === '1'" class="greenLight"></label>
+                      <label *ngIf=" opt.processstatus === '' " class="redLight"></label>
+                      <label *ngIf=" opt.processstatus === '1' " class="greenLight"></label>
                     </td>
                   </tr>
                   <tr class="notFind" *ngIf="totalItems === 0">  
