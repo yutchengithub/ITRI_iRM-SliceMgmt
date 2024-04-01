@@ -244,6 +244,11 @@ export const Enlanguage = {
   'BS.confirm_del':'Confirm to Delete Basestation',
 
   'BS.info':'BS Detailed Information',
+  'BS.alarmLatestUpdateTime': 'Latest Update Time',
+  'BS.alarmLatestUpdateTimeRangeEnd':'～',    
+  'BS.processingFmStatus': 'Processing Status',
+
+
 
   // 基本訊息區
   'BS.editSettings':'Edit Settings',

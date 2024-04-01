@@ -246,6 +246,11 @@ export const TwLanguage = {
 
   'BS.info':'基站詳細資訊',
 
+  'BS.alarmLatestUpdateTime': '最新更新時間',
+  'BS.alarmLatestUpdateTimeRangeEnd':'～',     
+  'BS.processingFmStatus': '處理狀態',
+
+
   // 基本訊息區
   'BS.editSettings': '編輯設定',
   'BS.bsAntennaCoord':'基站天線位置座標',

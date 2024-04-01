@@ -3219,11 +3219,11 @@
                 </select>
               </span>
               <span>
-                <label>{{languageService.i18n['fm.start']}}</label> 
+                <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}</label> 
                 <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
               </span>
               <span>  
-                <label>{{languageService.i18n['fm.end']}}</label>
+                <label>{{ languageService.i18n['BS.alarmLatestUpdateTimeRangeEnd'] }}&ensp;</label>
                 <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>  
               </span>
               <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_currentBsFmList()">search</span>
@@ -3234,10 +3234,10 @@
             <div class="filterBY">
               <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;  
               <span *ngIf="afterSearchForm.controls['severity'].value">
-                <label>{{ languageService.i18n['fm.severity'] }}:&nbsp;</label>{{afterSearchForm.controls['severity'].value}}
+                <label>{{ languageService.i18n['fm.severity'] }}:&nbsp;</label>{{ afterSearchForm.controls['severity'].value }}
               </span>
               <span *ngIf="afterSearchForm.controls['from'].value || afterSearchForm.controls['to'].value">
-                <label>{{ languageService.i18n['fm.timeRange'] }}:&nbsp;</label>
+                <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}:&nbsp;</label>
                 {{ afterSearchForm.controls['from'].value ? (commonService.dealPostDate(afterSearchForm.controls['from'].value) + ' ~ ') : '' }}   
                 {{ afterSearchForm.controls['to'].value ? commonService.dealPostDate(afterSearchForm.controls['to'].value) : '' }}
               </span>  
@@ -3254,8 +3254,8 @@
                   <th>{{ languageService.i18n['BS.neName'] }}</th>
                   <th>{{ languageService.i18n['fm.alarm'] }}</th>
                   <th>{{ languageService.i18n['fm.severity'] }}</th> 
-                  <th>{{ languageService.i18n['fm.occurtime'] }}</th>
-                  <th>{{ languageService.i18n['fm.status'] }}</th>
+                  <th>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}</th>
+                  <th>{{ languageService.i18n['BS.processingFmStatus'] }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -3282,7 +3282,7 @@
                     <td>{{opt.compname}}</td>
                     <td>{{opt.probablecause}}</td>
                     <td>{{opt.eventtype}}</td>
-                    <td>{{opt.timestamp}}</td>
+                    <td>{{opt.modifytime}}</td>
                     <td>
                       <label *ngIf=" opt.processstatus === '' " class="redLight"></label>
                       <label *ngIf=" opt.processstatus === '1' " class="greenLight"></label>

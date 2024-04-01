@@ -27,6 +27,19 @@ import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';      
 import { localNEList } from '../../shared/local-files/NE/For_queryBsComponentList'; // @2024/03/27 Add
 import { localCurrentBsFmList } from '../../shared/local-files/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
 
+
+// 2024/04/01 Add
+// 搜尋基站告警用
+interface bsCurrentFmParams {
+  method: string;
+  start: string;
+  end: string;
+  urgency?: string; // 可選
+
+  offset: number;
+  limit: number;
+}
+
 @Component({
   selector: 'app-bs-info',
   templateUrl: './bs-info.component.html',
@@ -775,6 +788,7 @@ export class BSInfoComponent implements OnInit {
     this.isLoadingCurrentBsFmList = true; // 設置加載旗標為 true,表示開始加載
 
     if ( this.commonService.isLocal ) {
+      
       // Local Test
       this.currentBsFmList = this.currentBsFmList_LocalFiles.currentBsFmList_local;
       console.log('currentBsFmList:', this.currentBsFmList);
@@ -792,17 +806,28 @@ export class BSInfoComponent implements OnInit {
 
     } else {
 
-      const params: { [key: string]: any } = {
+      // 只保留傳入日期的部分
+      const formattedDate = this.commonService.dealPostDate( this.searchForm.controls['from'].value );
+      const start = formattedDate.split(' ')[0]; // 獲取日期部分,例如 '2024-03-10'
+      
+      const formattedEnd = this.commonService.dealPostDate( this.searchForm.controls['to'].value );  
+      const end = formattedEnd.split(' ')[0];    // 獲取日期部分,例如 '2024-03-10'
+
+      const params: bsCurrentFmParams = {
         method: 'desc',
-        start: this.searchForm.controls['from'].value.split(' ')[0],
-        end: this.searchForm.controls['to'].value.split(' ')[0],
-        offset: (this.p - 1) * this.pageSize,
+        start,           // 取得開始日期 - 目前後端無法篩選時分秒
+        end,             // 取得結束日期 - 目前後端無法篩選時分秒
+
+        offset: ( this.p - 1 ) * this.pageSize,
         limit: 5
       };
 
-      // 如果選擇了特定的告警種類,則添加 urgency 參數
-      if (this.searchForm.controls['severity'].value !== 'All') {
-        params['urgency'] = this.searchForm.controls['severity'].value;
+      // 獲取 bsCurrentFmControl 的控制元件
+      const bsCurrentFmControl = this.searchForm.get('severity');
+
+      // 判斷 severity 控制元件是否存在且有值
+      if ( bsCurrentFmControl && bsCurrentFmControl.value !== 'All' ) {
+        params.urgency = bsCurrentFmControl.value;
       }
 
       // 使用 API_BS 中的 queryCurrentBsFaultMessage() 發起 HTTP GET 請求
@@ -865,35 +890,40 @@ export class BSInfoComponent implements OnInit {
   
   // 搜尋基站告警 @2024/04/01 Add
   search_currentBsFmList() {
-    console.log('search_currentBsFmList() - Start');
+    console.log( 'search_currentBsFmList() - Start' );
 
     // currentBsFmList 是否已加載
-    if (!this.currentBsFmList || !this.currentBsFmList.faultMessage) {
-      console.error('currentBsFmList.faultMessage is not loaded yet.');
+    if ( !this.currentBsFmList || !this.currentBsFmList.faultMessage ) {
+      console.error( 'currentBsFmList.faultMessage is not loaded yet.' );
       return;
     }
 
+    // 更新顯示的搜尋條件
+    this.afterSearchForm = this.searchForm.value;
+
     this.p = 1; // 當點擊搜尋時,將頁數預設為 1
 
-    const from = this.searchForm.get('from')?.value;
-    const to = this.searchForm.get('to')?.value;
-    const severity = this.searchForm.get('severity')?.value;
+    const from = this.searchForm.get( 'from' )?.value;
+    const to = this.searchForm.get( 'to' )?.value;
+    const severity = this.searchForm.get( 'severity' )?.value;
     
-    console.log('the search severity is', severity );
+    console.log( 'the search severity is', severity );
     
     // 清除以前的搜尋結果
     this.filtered_CurrentBsFmList = [];
     this.isSearch_currentBsFmList = false;
 
+    this.afterSearchForm = _.cloneDeep( this.searchForm );
+
     this.isLoadingCurrentBsFmList = true; // 設置加載旗標為 true,表示開始加載
 
-    if (this.commonService.isLocal) {
+    if ( this.commonService.isLocal ) {
 
-      this.filtered_CurrentBsFmList = this.currentBsFmList.faultMessage.filter(msg => {
+      this.filtered_CurrentBsFmList = this.currentBsFmList.faultMessage.filter( msg => {
 
-        const msgDate = new Date(msg.timestamp);
-        const isAfterFrom = msgDate >= new Date(from);
-        const isBeforeTo = msgDate <= new Date(to);
+        const msgDate = new Date( msg.timestamp );
+        const isAfterFrom = msgDate >= new Date( from );
+        const isBeforeTo = msgDate <= new Date( to );
         const isSeverityMatch = severity === 'All' || msg.eventtype === severity;
 
         return isAfterFrom && isBeforeTo && isSeverityMatch;
@@ -908,29 +938,42 @@ export class BSInfoComponent implements OnInit {
 
       this.totalItems = this.filtered_CurrentBsFmList.length; // 確保更新 totalItems 以反映搜尋結果的數量
 
-      console.log("In search_currentBsFmList() in Local mode - msgToDisplay:", this.msgToDisplay);
+      console.log( "In search_currentBsFmList() in Local mode - msgToDisplay:", this.msgToDisplay );
 
       this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載完成
 
     } else {  // 如非在 Local 環境測試
 
-      const params: { [key: string]: any } = {
+
+      // 只保留傳入日期的部分
+      const formattedDate = this.commonService.dealPostDate( this.searchForm.controls['from'].value );
+      const start = formattedDate.split(' ')[0]; // 獲取日期部分,例如 '2024-03-10'
+      
+      const formattedEnd = this.commonService.dealPostDate( this.searchForm.controls['to'].value );  
+      const end = formattedEnd.split(' ')[0];    // 獲取日期部分,例如 '2024-03-10'
+
+      const params: bsCurrentFmParams = {
         method: 'desc',
-        start: from.split(' ')[0],
-        end: to.split(' ')[0],
-        offset: (this.p - 1) * this.pageSize,
+        start,           // 取得開始日期 - 目前後端無法篩選時分秒
+        end,             // 取得結束日期 - 目前後端無法篩選時分秒
+
+        offset: ( this.p - 1 ) * this.pageSize,
         limit: 5
       };
 
-      if (severity !== 'All') {
-        params['urgency'] = severity;
+      // 獲取 bsCurrentFmControl 的控制元件
+      const bsCurrentFmControl = this.searchForm.get('severity');
+
+      // 判斷 severity 控制元件是否存在且有值
+      if ( bsCurrentFmControl && bsCurrentFmControl.value !== 'All' ) {
+        params.urgency = bsCurrentFmControl.value;
       }
 
       // 使用 API_BS 中的 queryCurrentBsFaultMessage() 發起 HTTP GET 請求
-      this.API_BS.queryCurrentBsFaultMessage(this.bsID, params).subscribe({
-        next: (res) => {    // 成功的 callback
+      this.API_BS.queryCurrentBsFaultMessage( this.bsID, params ).subscribe({
+        next: ( res ) => {    // 成功的 callback
 
-          console.log('In search_currentBsFmList() - res:', res);
+          console.log( 'In search_currentBsFmList() - res:', res );
           
           // 傳回的數據 res 已是篩選過的,故直接放入 filtered_CurrentBsFmList
           this.filtered_CurrentBsFmList = res.faultMessage;
@@ -942,12 +985,12 @@ export class BSInfoComponent implements OnInit {
 
           this.totalItems = res.totalMessageNumber;       // 更新記錄的告警總數
           this.isSearch_currentBsFmList = true;        // Search 完畢,設置標記為 true,以便 msgToDisplay 切換成顯示 filtered_CurrentBsFmList
-          console.log("In search_currentBsFmList() - msgToDisplay:", this.msgToDisplay);
+          console.log( "In search_currentBsFmList() - msgToDisplay:", this.msgToDisplay );
 
           this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載完成
         },
-        error: (error) => {  // 錯誤的 callback
-          console.error('Error searching current bs fault message:', error); // 顯示錯誤訊息
+        error: ( error ) => {  // 錯誤的 callback
+          console.error( 'Error searching current bs fault message:', error ); // 顯示錯誤訊息
 
           this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載出錯
         }
@@ -955,12 +998,12 @@ export class BSInfoComponent implements OnInit {
 
     }
 
-    // 更新顯示的搜尋條件
-    this.afterSearchForm.patchValue({
-      'from': from,
-      'to': to,
-      'severity': severity
-    });
+    // // 更新顯示的搜尋條件
+    // this.afterSearchForm.patchValue({
+    //   'from': from,
+    //   'to': to,
+    //   'severity': severity
+    // });
 
     // 檢查搜尋表單的值
     console.log('Search criteria for current bs fault message:', this.afterSearchForm.value);
