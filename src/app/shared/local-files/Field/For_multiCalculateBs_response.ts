@@ -7,40 +7,39 @@
 
     // For calculateSON_Submit() Get local CalculateSonResponse
     calculateSonResponse_local: ForCalculateSonResponse = {
-
       "cco": {
-        "field": "f769da087f2044e7a0d7",
-        "average_sinr": "3.659120",
+        "average_sinr": "4.003489",
         "cellIndividualResult": [
           {
-            "pLMNId_MNC": "55",
-            "txpower": 4,
+            "txpower": 3,
             "gNBId": 2,
+            "pLMNId_MNC": "55",
             "pLMNId_MCC": "466",
             "cellLocalId": "00000100001000"
           },
           {
-            "pLMNId_MNC": "55",
-            "txpower": 8,
+            "txpower": 3,
             "gNBId": 1,
+            "pLMNId_MNC": "55",
             "pLMNId_MCC": "466",
             "cellLocalId": "00000100001000"
           },
           {
-            "pLMNId_MNC": "55",
-            "txpower": 21,
+            "txpower": 3,
             "gNBId": 3,
+            "pLMNId_MNC": "55",
             "pLMNId_MCC": "466",
             "cellLocalId": "00000100001000"
           },
           {
-            "pLMNId_MNC": "55",
-            "txpower": 14,
+            "txpower": 16,
             "gNBId": 3,
+            "pLMNId_MNC": "55",
             "pLMNId_MCC": "466",
             "cellLocalId": "00000100001001"
           }
         ],
+        "field": "f769da087f2044e7a0d7",
         "coverage": "0.990000"
       },
       "anr": {
@@ -48,527 +47,637 @@
         "cellIndividualResult": [
           {
             "gNBId": 2,
-            "cellLocalId": "00000100001000",
-            "pLMNId_MNC": "55",
-            "pLMNId_MCC": "466",
             "NRCellRelation": [
               {
-                "cellLocalId": "00000100001000",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
-                "isHOAllowed": "true",
                 "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
                   "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
                   "rsrqOffsetSsb": "db0",
                   "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
+                  "rsrpOffsetCsiRs": "db0"
                 },
-                "nRPCI": 159,
+                "cellLocalId": "00000100001000",
                 "gNBId": 1,
                 "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 159,
                 "nRFreqRelationRef": "id0",
-                "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0"
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
+                "adjacentNrCellRef": "id0"
               },
               {
-                "cellLocalId": "00000100001000",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
-                "isHOAllowed": "true",
                 "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
                   "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
                   "rsrqOffsetSsb": "db0",
                   "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
+                  "rsrpOffsetCsiRs": "db0"
                 },
-                "nRPCI": 160,
+                "cellLocalId": "00000100001000",
                 "gNBId": 3,
                 "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 160,
                 "nRFreqRelationRef": "id0",
-                "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0"
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
+                "adjacentNrCellRef": "id0"
               },
               {
+                "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
+                  "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
+                  "rsrqOffsetSsb": "db0",
+                  "sinrOffsetSsb": "db0",
+                  "rsrpOffsetCsiRs": "db0"
+                },
                 "cellLocalId": "00000100001001",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
+                "gNBId": 3,
+                "pLMNId_MNC": "55",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 101,
                 "nRFreqRelation": [
                   {
-                    "nRFrequncyRef": "id0",
                     "qRxLevMin": -90,
                     "threshXHighP": 62,
                     "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
                     "tReselectionNr": 0
                   },
                   {
-                    "nRFrequncyRef": "id0",
                     "qRxLevMin": -90,
                     "threshXHighP": 62,
                     "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
                     "tReselectionNr": 0
                   },
                   {
-                    "nRFrequncyRef": "id0",
                     "qRxLevMin": -90,
                     "threshXHighP": 62,
                     "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
                     "tReselectionNr": 0
                   }
                 ],
-                "isHOAllowed": "true",
-                "cellIndividualOffset": {
-                  "rsrpOffsetSsb": "db0",
-                  "rsrqOffsetSsb": "db0",
-                  "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
-                },
-                "nRPCI": 101,
-                "gNBId": 3,
-                "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
                 "nRFreqRelationRef": "id0",
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
                 "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0",
                 "externalNrCellCu": []
               }
-            ]
+            ],
+            "cellLocalId": "00000100001000",
+            "pLMNId_MCC": "466",
+            "pLMNId_MNC": "55"
           },
           {
             "gNBId": 1,
-            "cellLocalId": "00000100001000",
-            "pLMNId_MNC": "55",
-            "pLMNId_MCC": "466",
             "NRCellRelation": [
               {
-                "cellLocalId": "00000100001000",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
-                "isHOAllowed": "true",
                 "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
                   "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
                   "rsrqOffsetSsb": "db0",
                   "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
+                  "rsrpOffsetCsiRs": "db0"
                 },
-                "nRPCI": 100,
+                "cellLocalId": "00000100001000",
                 "gNBId": 2,
                 "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 100,
                 "nRFreqRelationRef": "id0",
-                "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0"
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
+                "adjacentNrCellRef": "id0"
               },
               {
-                "cellLocalId": "00000100001000",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
-                "isHOAllowed": "true",
                 "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
                   "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
                   "rsrqOffsetSsb": "db0",
                   "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
+                  "rsrpOffsetCsiRs": "db0"
                 },
-                "nRPCI": 160,
+                "cellLocalId": "00000100001000",
                 "gNBId": 3,
                 "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 160,
                 "nRFreqRelationRef": "id0",
-                "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0"
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
+                "adjacentNrCellRef": "id0"
               },
               {
+                "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
+                  "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
+                  "rsrqOffsetSsb": "db0",
+                  "sinrOffsetSsb": "db0",
+                  "rsrpOffsetCsiRs": "db0"
+                },
                 "cellLocalId": "00000100001001",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
+                "gNBId": 3,
+                "pLMNId_MNC": "55",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 101,
                 "nRFreqRelation": [
                   {
-                    "nRFrequncyRef": "id0",
                     "qRxLevMin": -90,
                     "threshXHighP": 62,
                     "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
                     "tReselectionNr": 0
                   },
                   {
-                    "nRFrequncyRef": "id0",
                     "qRxLevMin": -90,
                     "threshXHighP": 62,
                     "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
                     "tReselectionNr": 0
                   },
                   {
-                    "nRFrequncyRef": "id0",
                     "qRxLevMin": -90,
                     "threshXHighP": 62,
                     "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
                     "tReselectionNr": 0
                   }
                 ],
-                "isHOAllowed": "true",
-                "cellIndividualOffset": {
-                  "rsrpOffsetSsb": "db0",
-                  "rsrqOffsetSsb": "db0",
-                  "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
-                },
-                "nRPCI": 101,
-                "gNBId": 3,
-                "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
                 "nRFreqRelationRef": "id0",
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
                 "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0",
                 "externalNrCellCu": []
               }
-            ]
+            ],
+            "cellLocalId": "00000100001000",
+            "pLMNId_MCC": "466",
+            "pLMNId_MNC": "55"
           },
           {
             "gNBId": 3,
-            "cellLocalId": "00000100001000",
-            "pLMNId_MNC": "55",
-            "pLMNId_MCC": "466",
             "NRCellRelation": [
               {
-                "cellLocalId": "00000100001000",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
-                "isHOAllowed": "true",
                 "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
                   "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
                   "rsrqOffsetSsb": "db0",
                   "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
+                  "rsrpOffsetCsiRs": "db0"
                 },
-                "nRPCI": 100,
+                "cellLocalId": "00000100001000",
                 "gNBId": 2,
                 "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 100,
                 "nRFreqRelationRef": "id0",
-                "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0"
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
+                "adjacentNrCellRef": "id0"
               },
               {
-                "cellLocalId": "00000100001000",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
-                "isHOAllowed": "true",
                 "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
                   "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
                   "rsrqOffsetSsb": "db0",
                   "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
+                  "rsrpOffsetCsiRs": "db0"
                 },
-                "nRPCI": 159,
+                "cellLocalId": "00000100001000",
                 "gNBId": 1,
                 "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 159,
                 "nRFreqRelationRef": "id0",
-                "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0"
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
+                "adjacentNrCellRef": "id0"
               },
               {
+                "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
+                  "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
+                  "rsrqOffsetSsb": "db0",
+                  "sinrOffsetSsb": "db0",
+                  "rsrpOffsetCsiRs": "db0"
+                },
                 "cellLocalId": "00000100001001",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
+                "gNBId": 3,
+                "pLMNId_MNC": "55",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 101,
                 "nRFreqRelation": [
                   {
-                    "nRFrequncyRef": "id0",
                     "qRxLevMin": -90,
                     "threshXHighP": 62,
                     "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
                     "tReselectionNr": 0
                   },
                   {
-                    "nRFrequncyRef": "id0",
                     "qRxLevMin": -90,
                     "threshXHighP": 62,
                     "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
                     "tReselectionNr": 0
                   },
                   {
-                    "nRFrequncyRef": "id0",
                     "qRxLevMin": -90,
                     "threshXHighP": 62,
                     "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
                     "tReselectionNr": 0
                   }
                 ],
-                "isHOAllowed": "true",
-                "cellIndividualOffset": {
-                  "rsrpOffsetSsb": "db0",
-                  "rsrqOffsetSsb": "db0",
-                  "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
-                },
-                "nRPCI": 101,
-                "gNBId": 3,
-                "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
                 "nRFreqRelationRef": "id0",
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
                 "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0",
                 "externalNrCellCu": []
               }
-            ]
+            ],
+            "cellLocalId": "00000100001000",
+            "pLMNId_MCC": "466",
+            "pLMNId_MNC": "55"
           },
           {
             "gNBId": 3,
+            "NRCellRelation": [
+              {
+                "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
+                  "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
+                  "rsrqOffsetSsb": "db0",
+                  "sinrOffsetSsb": "db0",
+                  "rsrpOffsetCsiRs": "db0"
+                },
+                "cellLocalId": "00000100001000",
+                "gNBId": 2,
+                "pLMNId_MNC": "55",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 100,
+                "nRFreqRelationRef": "id0",
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
+                "adjacentNrCellRef": "id0"
+              },
+              {
+                "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
+                  "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
+                  "rsrqOffsetSsb": "db0",
+                  "sinrOffsetSsb": "db0",
+                  "rsrpOffsetCsiRs": "db0"
+                },
+                "cellLocalId": "00000100001000",
+                "gNBId": 1,
+                "pLMNId_MNC": "55",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 159,
+                "nRFreqRelationRef": "id0",
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
+                "adjacentNrCellRef": "id0"
+              },
+              {
+                "cellIndividualOffset": {
+                  "sinrOffsetCsiRs": "db0",
+                  "rsrpOffsetSsb": "db0",
+                  "rsrqOffsetCsiRs": "db0",
+                  "rsrqOffsetSsb": "db0",
+                  "sinrOffsetSsb": "db0",
+                  "rsrpOffsetCsiRs": "db0"
+                },
+                "cellLocalId": "00000100001000",
+                "gNBId": 3,
+                "pLMNId_MNC": "55",
+                "nRFrequencyRef": "id0",
+                "nRPCI": 160,
+                "nRFreqRelation": [
+                  {
+                    "qRxLevMin": -90,
+                    "threshXHighP": 62,
+                    "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
+                    "tReselectionNr": 0
+                  },
+                  {
+                    "qRxLevMin": -90,
+                    "threshXHighP": 62,
+                    "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
+                    "tReselectionNr": 0
+                  },
+                  {
+                    "qRxLevMin": -90,
+                    "threshXHighP": 62,
+                    "threshXLowP": 0,
+                    "nRFrequncyRef": "id0",
+                    "tReselectionNr": 0
+                  }
+                ],
+                "nRFreqRelationRef": "id0",
+                "isHOAllowed": "true",
+                "isRemoveAllowed": "false",
+                "pLMNId_MCC": "466",
+                "arfcnDl": 4850,
+                "adjacentNrCellRef": "id0",
+                "externalNrCellCu": []
+              }
+            ],
             "cellLocalId": "00000100001001",
-            "pLMNId_MNC": "55",
             "pLMNId_MCC": "466",
-            "NRCellRelation": [
-              {
-                "cellLocalId": "00000100001000",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
-                "isHOAllowed": "true",
-                "cellIndividualOffset": {
-                  "rsrpOffsetSsb": "db0",
-                  "rsrqOffsetSsb": "db0",
-                  "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
-                },
-                "nRPCI": 100,
-                "gNBId": 2,
-                "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
-                "nRFreqRelationRef": "id0",
-                "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0"
-              },
-              {
-                "cellLocalId": "00000100001000",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
-                "isHOAllowed": "true",
-                "cellIndividualOffset": {
-                  "rsrpOffsetSsb": "db0",
-                  "rsrqOffsetSsb": "db0",
-                  "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
-                },
-                "nRPCI": 159,
-                "gNBId": 1,
-                "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
-                "nRFreqRelationRef": "id0",
-                "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0"
-              },
-              {
-                "cellLocalId": "00000100001000",
-                "isRemoveAllowed": "false",
-                "arfcnDl": 4850,
-                "nRFreqRelation": [
-                  {
-                    "nRFrequncyRef": "id0",
-                    "qRxLevMin": -90,
-                    "threshXHighP": 62,
-                    "threshXLowP": 0,
-                    "tReselectionNr": 0
-                  },
-                  {
-                    "nRFrequncyRef": "id0",
-                    "qRxLevMin": -90,
-                    "threshXHighP": 62,
-                    "threshXLowP": 0,
-                    "tReselectionNr": 0
-                  },
-                  {
-                    "nRFrequncyRef": "id0",
-                    "qRxLevMin": -90,
-                    "threshXHighP": 62,
-                    "threshXLowP": 0,
-                    "tReselectionNr": 0
-                  }
-                ],
-                "isHOAllowed": "true",
-                "cellIndividualOffset": {
-                  "rsrpOffsetSsb": "db0",
-                  "rsrqOffsetSsb": "db0",
-                  "sinrOffsetSsb": "db0",
-                  "rsrpOffsetCsiRs": "db0",
-                  "rsrqOffsetCsiRs": "db0",
-                  "sinrOffsetCsiRs": "db0"
-                },
-                "nRPCI": 160,
-                "gNBId": 3,
-                "pLMNId_MNC": "55",
-                "pLMNId_MCC": "466",
-                "nRFreqRelationRef": "id0",
-                "adjacentNrCellRef": "id0",
-                "nRFrequencyRef": "id0",
-                "externalNrCellCu": []
-              }
-            ]
+            "pLMNId_MNC": "55"
           }
         ]
       },
       "pci": {
-        "collision_cell": [],
-        "confusion_cell": [],
-        "confusion_count_new": [],
         "collision_count": [],
-        "confusion_cell_new": [],
+        "confusion_count_new": [
+          {
+            "confusion_pci": 102,
+            "confusion_count": 4
+          }
+        ],
+        "collision_cell": [],
+        "confusion_cell_new": [
+          {
+            "confused_gNBId_length": 22,
+            "target_gNBId_length": 22,
+            "confusion_pci": 102,
+            "target_mcc": "466",
+            "confused_gNBId": 1,
+            "source_gNBId": 2,
+            "source_gNBId_length": 22,
+            "source_cellLocalId": 264,
+            "target_mnc": "55",
+            "confused_mcc": "466",
+            "confused_cellLocalId": 264,
+            "source_mcc": "466",
+            "source_mnc": "55",
+            "confused_mnc": "55",
+            "target_cellLocalId": 265,
+            "target_gNBId": 3
+          },
+          {
+            "confused_gNBId_length": 22,
+            "target_gNBId_length": 22,
+            "confusion_pci": 102,
+            "target_mcc": "466",
+            "confused_gNBId": 1,
+            "source_gNBId": 3,
+            "source_gNBId_length": 22,
+            "source_cellLocalId": 265,
+            "target_mnc": "55",
+            "confused_mcc": "466",
+            "confused_cellLocalId": 264,
+            "source_mcc": "466",
+            "source_mnc": "55",
+            "confused_mnc": "55",
+            "target_cellLocalId": 264,
+            "target_gNBId": 2
+          },
+          {
+            "confused_gNBId_length": 22,
+            "target_gNBId_length": 22,
+            "confusion_pci": 102,
+            "target_mcc": "466",
+            "confused_gNBId": 3,
+            "source_gNBId": 2,
+            "source_gNBId_length": 22,
+            "source_cellLocalId": 264,
+            "target_mnc": "55",
+            "confused_mcc": "466",
+            "confused_cellLocalId": 264,
+            "source_mcc": "466",
+            "source_mnc": "55",
+            "confused_mnc": "55",
+            "target_cellLocalId": 265,
+            "target_gNBId": 3
+          },
+          {
+            "confused_gNBId_length": 22,
+            "target_gNBId_length": 22,
+            "confusion_pci": 102,
+            "target_mcc": "466",
+            "confused_gNBId": 3,
+            "source_gNBId": 3,
+            "source_gNBId_length": 22,
+            "source_cellLocalId": 265,
+            "target_mnc": "55",
+            "confused_mcc": "466",
+            "confused_cellLocalId": 264,
+            "source_mcc": "466",
+            "source_mnc": "55",
+            "confused_mnc": "55",
+            "target_cellLocalId": 264,
+            "target_gNBId": 2
+          }
+        ],
+        "confusion_cell": [],
         "confusion_count": [],
-        "collision_cell_new": [],
-        "collision_count_new": [],
+        "collision_cell_new": [
+          {
+            "source_cellLocalId": 264,
+            "collision_pci": 102,
+            "source_gNBId": 2,
+            "source_gNBId_length": 22,
+            "target_mnc": "55",
+            "source_mcc": "466",
+            "source_mnc": "55",
+            "target_cellLocalId": 265,
+            "target_gNBId": 3,
+            "target_gNBId_length": 22,
+            "target_mcc": "466"
+          },
+          {
+            "source_cellLocalId": 265,
+            "collision_pci": 102,
+            "source_gNBId": 3,
+            "source_gNBId_length": 22,
+            "target_mnc": "55",
+            "source_mcc": "466",
+            "source_mnc": "55",
+            "target_cellLocalId": 264,
+            "target_gNBId": 2,
+            "target_gNBId_length": 22,
+            "target_mcc": "466"
+          }
+        ],
+        "collision_count_new": [
+          {
+            "collision_count": 2,
+            "collision_pci": 102
+          }
+        ],
         "cellIndividualResult": [
           {
-            "nrPCI": 100,
+            "NRCellRelation": [
+              {
+                "nRPCI": 101,
+                "nRTCI": 101,
+                "PLMNId_MCC": "466",
+                "gNBId": 1,
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001000"
+              },
+              {
+                "nRPCI": 100,
+                "nRTCI": 100,
+                "PLMNId_MCC": "466",
+                "gNBId": 3,
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001000"
+              },
+              {
+                "nRPCI": 102,
+                "nRTCI": 102,
+                "PLMNId_MCC": "466",
+                "gNBId": 3,
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001001"
+              }
+            ],
+            "nrPCI": 102,
+            "PLMNId_MCC": "466",
             "gNBId": 2,
-            "cellLocalId": "00000100001000",
-            "NRCellRelation": [
-              {
-                "nRTCI": 159,
-                "gNBId": 1,
-                "nRPCI": 159,
-                "cellLocalId": "00000100001000",
-                "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
-              },
-              {
-                "nRTCI": 160,
-                "gNBId": 3,
-                "nRPCI": 160,
-                "cellLocalId": "00000100001000",
-                "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
-              },
-              {
-                "nRTCI": 101,
-                "gNBId": 3,
-                "nRPCI": 101,
-                "cellLocalId": "00000100001001",
-                "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
-              }
-            ],
-            "PLMNId_MCC": "466",
-            "PLMNId_MNC": "55"
+            "PLMNId_MNC": "55",
+            "cellLocalId": "00000100001000"
           },
           {
-            "nrPCI": 159,
-            "gNBId": 1,
-            "cellLocalId": "00000100001000",
             "NRCellRelation": [
               {
-                "nRTCI": 100,
+                "nRPCI": 102,
+                "nRTCI": 102,
+                "PLMNId_MCC": "466",
                 "gNBId": 2,
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001000"
+              },
+              {
                 "nRPCI": 100,
-                "cellLocalId": "00000100001000",
-                "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
-              },
-              {
-                "nRTCI": 160,
-                "gNBId": 3,
-                "nRPCI": 160,
-                "cellLocalId": "00000100001000",
-                "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
-              },
-              {
-                "nRTCI": 101,
-                "gNBId": 3,
-                "nRPCI": 101,
-                "cellLocalId": "00000100001001",
-                "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
-              }
-            ],
-            "PLMNId_MCC": "466",
-            "PLMNId_MNC": "55"
-          },
-          {
-            "nrPCI": 160,
-            "gNBId": 3,
-            "cellLocalId": "00000100001000",
-            "NRCellRelation": [
-              {
                 "nRTCI": 100,
-                "gNBId": 2,
-                "nRPCI": 100,
-                "cellLocalId": "00000100001000",
                 "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
-              },
-              {
-                "nRTCI": 159,
-                "gNBId": 1,
-                "nRPCI": 159,
-                "cellLocalId": "00000100001000",
-                "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
-              },
-              {
-                "nRTCI": 101,
                 "gNBId": 3,
-                "nRPCI": 101,
-                "cellLocalId": "00000100001001",
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001000"
+              },
+              {
+                "nRPCI": 102,
+                "nRTCI": 102,
                 "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
+                "gNBId": 3,
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001001"
               }
             ],
-            "PLMNId_MCC": "466",
-            "PLMNId_MNC": "55"
-          },
-          {
             "nrPCI": 101,
-            "gNBId": 3,
-            "cellLocalId": "00000100001001",
+            "PLMNId_MCC": "466",
+            "gNBId": 1,
+            "PLMNId_MNC": "55",
+            "cellLocalId": "00000100001000"
+          },
+          {
             "NRCellRelation": [
               {
-                "nRTCI": 100,
+                "nRPCI": 102,
+                "nRTCI": 102,
+                "PLMNId_MCC": "466",
                 "gNBId": 2,
-                "nRPCI": 100,
-                "cellLocalId": "00000100001000",
-                "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001000"
               },
               {
-                "nRTCI": 159,
+                "nRPCI": 101,
+                "nRTCI": 101,
+                "PLMNId_MCC": "466",
                 "gNBId": 1,
-                "nRPCI": 159,
-                "cellLocalId": "00000100001000",
-                "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001000"
               },
               {
-                "nRTCI": 160,
-                "gNBId": 3,
-                "nRPCI": 160,
-                "cellLocalId": "00000100001000",
+                "nRPCI": 102,
+                "nRTCI": 102,
                 "PLMNId_MCC": "466",
-                "PLMNId_MNC": "55"
+                "gNBId": 3,
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001001"
               }
             ],
+            "nrPCI": 100,
             "PLMNId_MCC": "466",
-            "PLMNId_MNC": "55"
+            "gNBId": 3,
+            "PLMNId_MNC": "55",
+            "cellLocalId": "00000100001000"
+          },
+          {
+            "NRCellRelation": [
+              {
+                "nRPCI": 102,
+                "nRTCI": 102,
+                "PLMNId_MCC": "466",
+                "gNBId": 2,
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001000"
+              },
+              {
+                "nRPCI": 101,
+                "nRTCI": 101,
+                "PLMNId_MCC": "466",
+                "gNBId": 1,
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001000"
+              },
+              {
+                "nRPCI": 100,
+                "nRTCI": 100,
+                "PLMNId_MCC": "466",
+                "gNBId": 3,
+                "PLMNId_MNC": "55",
+                "cellLocalId": "00000100001000"
+              }
+            ],
+            "nrPCI": 102,
+            "PLMNId_MCC": "466",
+            "gNBId": 3,
+            "PLMNId_MNC": "55",
+            "cellLocalId": "00000100001001"
           }
         ]
       }
