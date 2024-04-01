@@ -899,6 +899,11 @@ export class BSInfoComponent implements OnInit {
         return isAfterFrom && isBeforeTo && isSeverityMatch;
       });
 
+      // 將 filtered_CurrentBsFmList 中的 processstatus 轉換為字串型態
+      this.filtered_CurrentBsFmList.forEach( msg => {
+        msg.processstatus = String( msg.processstatus );
+      });
+
       this.isSearch_currentBsFmList = true;  // Local Search 完畢,設置標記為 true
 
       this.totalItems = this.filtered_CurrentBsFmList.length; // 確保更新 totalItems 以反映搜尋結果的數量
@@ -929,6 +934,12 @@ export class BSInfoComponent implements OnInit {
           
           // 傳回的數據 res 已是篩選過的,故直接放入 filtered_CurrentBsFmList
           this.filtered_CurrentBsFmList = res.faultMessage;
+
+          // 將 filtered_CurrentBsFmList 中的 processstatus 轉換為字串型態
+          this.filtered_CurrentBsFmList.forEach( msg => {
+            msg.processstatus = String( msg.processstatus );
+          });
+
           this.totalItems = res.totalMessageNumber;       // 更新記錄的告警總數
           this.isSearch_currentBsFmList = true;        // Search 完畢,設置標記為 true,以便 msgToDisplay 切換成顯示 filtered_CurrentBsFmList
           console.log("In search_currentBsFmList() - msgToDisplay:", this.msgToDisplay);
