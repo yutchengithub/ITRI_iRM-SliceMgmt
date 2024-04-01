@@ -3283,9 +3283,10 @@ export class FieldInfoComponent implements OnInit {
 
       // 模擬計算結果，這裡你可以根據實際需求進行修改
       this.calculationResults = [
-        'Result 1',
-        'Result 2',
-        'Result 3'
+        'PCI Result',
+        'ANR Result',
+        'CCO Result',
+        'Performance'
       ];
 
       this.getQuerySonParameter_Loading = false; // 計算完成後停止 Loading Progress Spinner
