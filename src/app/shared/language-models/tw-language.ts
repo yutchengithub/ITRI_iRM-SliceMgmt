@@ -201,7 +201,7 @@ export const TwLanguage = {
   'field.ccoSettings':'CCO 設定',
   'field.optimizationType': '優化類型',
   'field.maxCoverageRange': '最大覆蓋範圍',
-  'field.maxSINR': '最大SINR',
+  'field.maxSINR': '最大 SINR',
 
   'field.setANR':'設定 ANR',
   'field.anrSettings':'ANR 設定',
@@ -209,8 +209,8 @@ export const TwLanguage = {
 
   'field.setPCI':'設定 PCI',
   'field.pciSettings':'PCI 設定',
-  'field.pciRange': 'PCI最小值',
-  'field.pciSpacing': 'PCI最大值',
+  'field.pciRange': 'PCI 最小值',
+  'field.pciSpacing': 'PCI 最大值',
 
   'field.sonCalculate':'計算',
 

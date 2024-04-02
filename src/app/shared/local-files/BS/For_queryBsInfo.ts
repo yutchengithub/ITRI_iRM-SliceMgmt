@@ -8580,6 +8580,1855 @@
               }
             }
           }
+        },{
+          "info": {
+            "bs-conf": {
+              "plmn-id": {
+                "mcc": "466",
+                "mnc": "55"
+              },
+              "nci": "000004108",
+              "pci": 159,
+              "nrarfcn-dl": 723333,
+              "nrarfcn-ul": 723333,
+              "duplex-mode": "",
+              "channel-bandwidth": 20,
+              "tac": "3000",
+              "tx-power": 8
+            },
+            "gNBId": 1,
+            "gNBIdLength": 22,
+            "gNB-type": "SA",
+            "gNBCUName": "cu1",
+            "pLMNId_MCC": "466",
+            "pLMNId_MNC": "55",
+            "id": "0"
+          },
+          "extension_info": [
+            {
+              "gNBId": 1,
+              "gNBIdLength": 22,
+              "cellLocalId": "100001000",
+              "nci": "000004108",
+              "NRCellCU": {
+                "db": {
+                  "componentId": "97259ca0b7ea409d9b53",
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "absoluteFrequencySSB": "100",
+                  "sSBSubCarrierSpacing": "15",
+                  "id": "0"
+                },
+                "ds": {
+                  "componentId": "97259ca0b7ea409d9b53",
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "absoluteFrequencySSB": "100",
+                  "sSBSubCarrierSpacing": "15",
+                  "id": "0"
+                }
+              },
+              "gNBCUFunction": {
+                "db": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "gNB-type": "SA",
+                  "gNBCUName": "cu1",
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "componentId": "97259ca0b7ea409d9b53",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "gNB-type": "SA",
+                  "gNBCUName": "cu1",
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "componentId": "97259ca0b7ea409d9b53",
+                  "id": "0"
+                }
+              },
+              "peeParametersList_CU": {
+                "db": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0001",
+                  "siteLongitude": "10.0001",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0001",
+                  "siteLongitude": "10.0001",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_CU": {
+                "db": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              },
+              "EP_F1C_CU": {
+                "db": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.1",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.1",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.1",
+                  "id": "0"
+                }
+              },
+              "EP_F1U_CU": {
+                "db": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.3",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.3",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.3",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.3",
+                  "id": "0"
+                }
+              },
+              "EP_NgC": {
+                "db": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.5",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.5",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.5",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.5",
+                  "id": "0"
+                }
+              },
+              "EP_NgU": {
+                "db": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.6",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.6",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.6",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.6",
+                  "id": "0"
+                }
+              },
+              "peeParametersList_NRCellCU": {
+                "db": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0101",
+                  "siteLongitude": "10.0101",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0101",
+                  "siteLongitude": "10.0101",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_NRCellCU": {
+                "db": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              },
+              "s_NSSAI_leafList_NRCellCU": {
+                "db": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "s_NSSAI": 0,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "s_NSSAI": 0,
+                  "id": "0"
+                }
+              },
+              "gNBDUFunction": {
+                "db": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "gNBDUId": 11,
+                  "gNBDUName": "du1",
+                  "componentId": "97259ca0b7ea409d9b53",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "gNBDUId": 11,
+                  "gNBDUName": "du1",
+                  "componentId": "97259ca0b7ea409d9b53",
+                  "id": "0"
+                }
+              },
+              "NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "administrativeState": "Locked",
+                  "nRPCI": 159,
+                  "nRTAC": "3000",
+                  "arfcnDL": 723333,
+                  "arfcnUL": 723333,
+                  "arfcnSUL": 2079415,
+                  "bSChannelBwDL": 20,
+                  "ssbFrequency": 9500,
+                  "ssbPeriodicity": 5,
+                  "ssbSubCarrierSpacing": 15,
+                  "ssbOffset": 100,
+                  "ssbDuration": 3,
+                  "bSChannelBwUL": 1000,
+                  "bSChannelBwSUL": 1000,
+                  "componentId": "97259ca0b7ea409d9b53",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "administrativeState": "Locked",
+                  "nRPCI": 159,
+                  "nRTAC": "3000",
+                  "arfcnDL": 723333,
+                  "arfcnUL": 723333,
+                  "arfcnSUL": 2079415,
+                  "bSChannelBwDL": 20,
+                  "ssbFrequency": 9500,
+                  "ssbPeriodicity": 5,
+                  "ssbSubCarrierSpacing": 15,
+                  "ssbOffset": 100,
+                  "ssbDuration": 3,
+                  "bSChannelBwUL": 1000,
+                  "bSChannelBwSUL": 1000,
+                  "id": "0",
+                  "componentId": "97259ca0b7ea409d9b53"
+                }
+              },
+              "peeParametersList_DU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0202",
+                  "siteLongitude": "10.0202",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0202",
+                  "siteLongitude": "10.0202",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_DU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              },
+              "EP_F1C_DU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.2.1",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.1.1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.2.1",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.1.1",
+                  "id": "0"
+                }
+              },
+              "EP_F1U_DU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.2.3",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.1.3",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.2.3",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.1.3",
+                  "id": "0"
+                }
+              },
+              "peeParametersList_NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0303",
+                  "siteLongitude": "10.3033",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0303",
+                  "siteLongitude": "10.3033",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              },
+              "s_NSSAI_leafList_NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "s_NSSAI": 0,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "s_NSSAI": 0,
+                  "id": "0"
+                }
+              },
+              "NRSectorCarrierRef_NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "NRSectorCarrierRef": 0,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "NRSectorCarrierRef": 0,
+                  "id": "0"
+                }
+              },
+              "bWPRef_leafList_NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "bWPRef": 0,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "bWPRef": 0,
+                  "id": "0"
+                }
+              },
+              "NRSectorCarrier": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "txDirection": "DL",
+                  "configuredMaxTxPower": 8,
+                  "configuredMaxTxEIRP": 10,
+                  "arfcnDL": 649788,
+                  "arfcnUL": 649788,
+                  "bSChannelBwDL": 100,
+                  "bSChannelBwUL": 100,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "txDirection": "DL",
+                  "configuredMaxTxPower": 9,
+                  "configuredMaxTxEIRP": 10,
+                  "arfcnDL": 649788,
+                  "arfcnUL": 649788,
+                  "bSChannelBwDL": 100,
+                  "bSChannelBwUL": 100,
+                  "id": "0"
+                }
+              },
+              "BWP": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "bwpContext": 0,
+                  "isInitialBwp": 0,
+                  "subCarrierSpacing": 15,
+                  "cyclicPrefix": 0,
+                  "startRB": "1",
+                  "numberOfRBs": 25,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "bwpContext": 0,
+                  "isInitialBwp": 0,
+                  "subCarrierSpacing": 15,
+                  "cyclicPrefix": 0,
+                  "startRB": "1",
+                  "numberOfRBs": 25,
+                  "id": "0"
+                }
+              },
+              "peeParametersList_NRSector": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.1111",
+                  "siteLongitude": "10.2222",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.1111",
+                  "siteLongitude": "10.2222",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_NRSector": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              },
+              "peeParametersList_BWP": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.3333",
+                  "siteLongitude": "10.4444",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.3333",
+                  "siteLongitude": "10.4444",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_BWP": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 1,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              }
+            }
+          ],
+          "cellInfo": {},
+          "anr": {
+            "anr-son-output": {
+              "neighbor": [
+                {
+                  "id": "",
+                  "nci": "000008108",
+                  "enable": "0",
+                  "alias": "xxxxxxxxxxxxxxxxxx",
+                  "must-include": "",
+                  "plmn-id": {
+                    "mcc": "466",
+                    "mnc": "55"
+                  },
+                  "nrarfcn": 4850,
+                  "pci": 100,
+                  "q-offset": "",
+                  "cio": "",
+                  "rs-tx-power": "",
+                  "blacklisted": "",
+                  "tac": ""
+                },
+                {
+                  "id": "",
+                  "nci": "00000c108",
+                  "enable": "0",
+                  "alias": "xxxxxxxxxxxxxxxxxx",
+                  "must-include": "",
+                  "plmn-id": {
+                    "mcc": "466",
+                    "mnc": "55"
+                  },
+                  "nrarfcn": 4850,
+                  "pci": 160,
+                  "q-offset": "",
+                  "cio": "",
+                  "rs-tx-power": "",
+                  "blacklisted": "",
+                  "tac": ""
+                },
+                {
+                  "id": "",
+                  "nci": "00000c109",
+                  "enable": "0",
+                  "alias": "xxxxxxxxxxxxxxxxxx",
+                  "must-include": "",
+                  "plmn-id": {
+                    "mcc": "466",
+                    "mnc": "55"
+                  },
+                  "nrarfcn": 4850,
+                  "pci": 101,
+                  "q-offset": "",
+                  "cio": "",
+                  "rs-tx-power": "",
+                  "blacklisted": "",
+                  "tac": ""
+                }
+              ]
+            }
+          },
+          "pci": {},
+          "cco": {},
+          "id": "c34b682a16be4f06a32c",
+          "name": "BS-all-1",
+          "ip": "",
+          "port": "",
+          "position": "[121.044029,24.773652]",
+          "description": "bs-1",
+          "bstype": 1,
+          "components": [
+            {
+              "type": "cu+du+ru",
+              "id": "97259ca0b7ea409d9b53"
+            }
+          ],
+          "status": 2,
+          "laston": "2024-04-02 18:54:37.335575",
+          "lastoff": null,
+          "components-info": {
+            "97259ca0b7ea409d9b53": {
+              "firm": "ITRI",
+              "modelname": "A001",
+              "components-sw-inventory": {
+                "software-inventory": {
+                  "software-slot": [
+                    {
+                      "name": "slot-1",
+                      "status": "VALID",
+                      "active": "true",
+                      "running": "true",
+                      "access": "READ_ONLY",
+                      "vendor-code": "K2",
+                      "build-id": "b01",
+                      "build-name": "product-default",
+                      "build-version": "0.1.0",
+                      "files": {
+                        "name": "file-1",
+                        "version": "0.2.3",
+                        "local-path": "~/some_dir/",
+                        "integrity": "OK"
+                      }
+                    },
+                    {
+                      "name": "slot-2",
+                      "status": "EMPTY",
+                      "active": "false",
+                      "running": "false",
+                      "access": "READ_WRITE"
+                    },
+                    {
+                      "name": "slot-3",
+                      "status": "EMPTY",
+                      "active": "false",
+                      "running": "false",
+                      "access": "READ_WRITE"
+                    },
+                    {
+                      "name": "slot-4",
+                      "status": "EMPTY",
+                      "active": "false",
+                      "running": "false",
+                      "access": "READ_WRITE"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "info": {
+            "bs-conf": {
+              "plmn-id": {
+                "mcc": "466",
+                "mnc": "55"
+              },
+              "nci": "000008108",
+              "pci": 100,
+              "nrarfcn-dl": 723333,
+              "nrarfcn-ul": 723333,
+              "duplex-mode": "",
+              "channel-bandwidth": 20,
+              "tac": "3000",
+              "tx-power": 4
+            },
+            "gNBId": 2,
+            "gNBIdLength": 22,
+            "gNB-type": "SA",
+            "gNBCUName": "cu1",
+            "pLMNId_MCC": "466",
+            "pLMNId_MNC": "55",
+            "id": "0"
+          },
+          "extension_info": [
+            {
+              "gNBId": 2,
+              "gNBIdLength": 22,
+              "cellLocalId": "100001000",
+              "nci": "000008108",
+              "NRCellCU": {
+                "db": {
+                  "componentId": "94d4aa57df9e4e909e88",
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "absoluteFrequencySSB": "100",
+                  "sSBSubCarrierSpacing": "15",
+                  "id": "0"
+                },
+                "ds": {
+                  "componentId": "94d4aa57df9e4e909e88",
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "absoluteFrequencySSB": "100",
+                  "sSBSubCarrierSpacing": "15",
+                  "id": "0"
+                }
+              },
+              "gNBCUFunction": {
+                "db": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "gNB-type": "SA",
+                  "gNBCUName": "cu1",
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "componentId": "94d4aa57df9e4e909e88",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "gNB-type": "SA",
+                  "gNBCUName": "cu1",
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "componentId": "94d4aa57df9e4e909e88",
+                  "id": "0"
+                }
+              },
+              "peeParametersList_CU": {
+                "db": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0001",
+                  "siteLongitude": "10.0001",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0001",
+                  "siteLongitude": "10.0001",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_CU": {
+                "db": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              },
+              "EP_F1C_CU": {
+                "db": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.1",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.1",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.1",
+                  "id": "0"
+                }
+              },
+              "EP_F1U_CU": {
+                "db": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.3",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.3",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.3",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.3",
+                  "id": "0"
+                }
+              },
+              "EP_NgC": {
+                "db": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.5",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.5",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.5",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.5",
+                  "id": "0"
+                }
+              },
+              "EP_NgU": {
+                "db": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.6",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.6",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.1.6",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.2.6",
+                  "id": "0"
+                }
+              },
+              "peeParametersList_NRCellCU": {
+                "db": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0101",
+                  "siteLongitude": "10.0101",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0101",
+                  "siteLongitude": "10.0101",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_NRCellCU": {
+                "db": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              },
+              "s_NSSAI_leafList_NRCellCU": {
+                "db": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "s_NSSAI": 0,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "s_NSSAI": 0,
+                  "id": "0"
+                }
+              },
+              "gNBDUFunction": {
+                "db": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "gNBDUId": 11,
+                  "gNBDUName": "du1",
+                  "componentId": "94d4aa57df9e4e909e88",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "gNBDUId": 11,
+                  "gNBDUName": "du1",
+                  "componentId": "94d4aa57df9e4e909e88",
+                  "id": "0"
+                }
+              },
+              "NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "administrativeState": "Locked",
+                  "nRPCI": 100,
+                  "nRTAC": "3000",
+                  "arfcnDL": 723333,
+                  "arfcnUL": 723333,
+                  "arfcnSUL": 2079415,
+                  "bSChannelBwDL": 20,
+                  "ssbFrequency": 9500,
+                  "ssbPeriodicity": 5,
+                  "ssbSubCarrierSpacing": 15,
+                  "ssbOffset": 100,
+                  "ssbDuration": 3,
+                  "bSChannelBwUL": 1000,
+                  "bSChannelBwSUL": 1000,
+                  "componentId": "94d4aa57df9e4e909e88",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "administrativeState": "Locked",
+                  "nRPCI": 100,
+                  "nRTAC": "3000",
+                  "arfcnDL": 723333,
+                  "arfcnUL": 723333,
+                  "arfcnSUL": 2079415,
+                  "bSChannelBwDL": 20,
+                  "ssbFrequency": 9500,
+                  "ssbPeriodicity": 5,
+                  "ssbSubCarrierSpacing": 15,
+                  "ssbOffset": 100,
+                  "ssbDuration": 3,
+                  "bSChannelBwUL": 1000,
+                  "bSChannelBwSUL": 1000,
+                  "id": "0",
+                  "componentId": "94d4aa57df9e4e909e88"
+                }
+              },
+              "peeParametersList_DU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0202",
+                  "siteLongitude": "10.0202",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0202",
+                  "siteLongitude": "10.0202",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_DU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              },
+              "EP_F1C_DU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.2.1",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.1.1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.2.1",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.1.1",
+                  "id": "0"
+                }
+              },
+              "EP_F1U_DU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.2.3",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.1.3",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "localAddress_ip_addr": "1.1.2.3",
+                  "localAddress_vlan_id": "1",
+                  "remoteAddress": "1.1.1.3",
+                  "id": "0"
+                }
+              },
+              "peeParametersList_NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0303",
+                  "siteLongitude": "10.3033",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.0303",
+                  "siteLongitude": "10.3033",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              },
+              "s_NSSAI_leafList_NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "s_NSSAI": 0,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "s_NSSAI": 0,
+                  "id": "0"
+                }
+              },
+              "NRSectorCarrierRef_NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "NRSectorCarrierRef": 0,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "NRSectorCarrierRef": 0,
+                  "id": "0"
+                }
+              },
+              "bWPRef_leafList_NRCellDU": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "bWPRef": 0,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "cellLocalId": "100001000",
+                  "bWPRef": 0,
+                  "id": "0"
+                }
+              },
+              "NRSectorCarrier": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "txDirection": "DL",
+                  "configuredMaxTxPower": 4,
+                  "configuredMaxTxEIRP": 10,
+                  "arfcnDL": 649788,
+                  "arfcnUL": 649788,
+                  "bSChannelBwDL": 100,
+                  "bSChannelBwUL": 100,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "txDirection": "DL",
+                  "configuredMaxTxPower": 10,
+                  "configuredMaxTxEIRP": 10,
+                  "arfcnDL": 649788,
+                  "arfcnUL": 649788,
+                  "bSChannelBwDL": 100,
+                  "bSChannelBwUL": 100,
+                  "id": "0"
+                }
+              },
+              "BWP": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "bwpContext": 0,
+                  "isInitialBwp": 0,
+                  "subCarrierSpacing": 15,
+                  "cyclicPrefix": 0,
+                  "startRB": "1",
+                  "numberOfRBs": 25,
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "bwpContext": 0,
+                  "isInitialBwp": 0,
+                  "subCarrierSpacing": 15,
+                  "cyclicPrefix": 0,
+                  "startRB": "1",
+                  "numberOfRBs": 25,
+                  "id": "0"
+                }
+              },
+              "peeParametersList_NRSector": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.1111",
+                  "siteLongitude": "10.2222",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.1111",
+                  "siteLongitude": "10.2222",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_NRSector": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              },
+              "peeParametersList_BWP": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.3333",
+                  "siteLongitude": "10.4444",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "siteIdentification": "bbb",
+                  "siteLatitude": "10.3333",
+                  "siteLongitude": "10.4444",
+                  "siteDescription": "aaa",
+                  "equipmentType": "RRU",
+                  "environmentType": "Indoor",
+                  "powerInterface": "AC",
+                  "id": "0"
+                }
+              },
+              "vnfParametersList_BWP": {
+                "db": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                },
+                "ds": {
+                  "gNBDUId": 11,
+                  "gNBId": 2,
+                  "gNBIdLength": 22,
+                  "pLMNId_MCC": "466",
+                  "pLMNId_MNC": "55",
+                  "idRef": "0",
+                  "autoScalable": true,
+                  "flavourId": "1",
+                  "vnfInstanceId": "1",
+                  "vnfdId": "1",
+                  "id": "0"
+                }
+              }
+            }
+          ],
+          "cellInfo": {},
+          "anr": {
+            "anr-son-output": {
+              "neighbor": [
+                {
+                  "id": "",
+                  "nci": "000004108",
+                  "enable": "0",
+                  "alias": "xxxxxxxxxxxxxxxxxx",
+                  "must-include": "",
+                  "plmn-id": {
+                    "mcc": "466",
+                    "mnc": "55"
+                  },
+                  "nrarfcn": 4850,
+                  "pci": 159,
+                  "q-offset": "",
+                  "cio": "",
+                  "rs-tx-power": "",
+                  "blacklisted": "",
+                  "tac": ""
+                },
+                {
+                  "id": "",
+                  "nci": "00000c108",
+                  "enable": "0",
+                  "alias": "xxxxxxxxxxxxxxxxxx",
+                  "must-include": "",
+                  "plmn-id": {
+                    "mcc": "466",
+                    "mnc": "55"
+                  },
+                  "nrarfcn": 4850,
+                  "pci": 160,
+                  "q-offset": "",
+                  "cio": "",
+                  "rs-tx-power": "",
+                  "blacklisted": "",
+                  "tac": ""
+                },
+                {
+                  "id": "",
+                  "nci": "00000c109",
+                  "enable": "0",
+                  "alias": "xxxxxxxxxxxxxxxxxx",
+                  "must-include": "",
+                  "plmn-id": {
+                    "mcc": "466",
+                    "mnc": "55"
+                  },
+                  "nrarfcn": 4850,
+                  "pci": 101,
+                  "q-offset": "",
+                  "cio": "",
+                  "rs-tx-power": "",
+                  "blacklisted": "",
+                  "tac": ""
+                }
+              ]
+            }
+          },
+          "pci": {},
+          "cco": {},
+          "id": "29a863b185af423d9b32",
+          "name": "BS-all-2",
+          "ip": "",
+          "port": "",
+          "position": "[121.044324,24.773815]",
+          "description": "bs-2",
+          "bstype": 1,
+          "components": [
+            {
+              "type": "cu+du+ru",
+              "id": "94d4aa57df9e4e909e88"
+            }
+          ],
+          "status": 2,
+          "laston": "2024-04-02 18:58:20.165678",
+          "lastoff": null,
+          "components-info": {
+            "94d4aa57df9e4e909e88": {
+              "firm": "ITRI",
+              "modelname": "A001",
+              "components-sw-inventory": {
+                "software-inventory": {
+                  "software-slot": [
+                    {
+                      "name": "slot-1",
+                      "status": "VALID",
+                      "active": "false",
+                      "running": "true",
+                      "access": "READ_ONLY",
+                      "vendor-code": "K2",
+                      "build-id": "b01",
+                      "build-name": "product-default",
+                      "build-version": "0.1.0",
+                      "files": {
+                        "name": "file-1",
+                        "version": "0.2.3",
+                        "local-path": "~/some_dir/",
+                        "integrity": "OK"
+                      }
+                    },
+                    {
+                      "name": "slot-2",
+                      "status": "EMPTY",
+                      "active": "false",
+                      "running": "false",
+                      "access": "READ_WRITE"
+                    },
+                    {
+                      "name": "slot-3",
+                      "status": "EMPTY",
+                      "active": "false",
+                      "running": "false",
+                      "access": "READ_WRITE"
+                    },
+                    {
+                      "name": "slot-4",
+                      "status": "VALID",
+                      "active": "true",
+                      "running": "false",
+                      "access": "READ_WRITE",
+                      "vendor-code": "WN",
+                      "build-id": "1",
+                      "build-name": "WNC-official-build",
+                      "build-version": "1-0-0",
+                      "files": {
+                        "name": "fw-v1-0-0.bin",
+                        "version": "1.0.0",
+                        "local-path": "/sw_inventory/slot_3/",
+                        "integrity": "OK"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
         }
     ];
 
