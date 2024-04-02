@@ -17,10 +17,22 @@
   // height: 400px;
   
   position: relative;
-  top: 30px;
+  top: 36px;
   left: 150px;
 }
-
+.topology {
+  /* padding: 0!important; */
+}
+.topology .collapsible-content .content-inner {
+  height: 20em;
+  padding: 0;
+}
+.topology .collapsible-content .content-inner .collabsible > div {
+  padding:  0;
+}
+.topology .collapsible-content .content-inner .collabsible {
+  margin: -10px 0 0 0;
+}
 .nes-topology {
   position: relative;
   bottom: 250px;
@@ -32,15 +44,17 @@
   display: flex;
   align-items: center;
   white-space: nowrap;
-  
-  border: 1px solid rgb(255, 255, 255);
-  padding: 5px;
-  color: rgb(251, 251, 251);
+
+  border: 1px solid white;
+  padding: .5em 1em;
+  color: #fbfbfb;
   font-weight: bold;
+  border-radius: 5px;
 }
 
 .ne-info span {
   margin-right: 5px;
+  font-size: 1.2em;
 }
 
 .all-in-one-ne-info {
@@ -89,12 +103,11 @@
   background-color: #7e7e7e;
 }
 
-
 .logTab {
   position: absolute;
-    z-index: 999;
-    margin-top: 0.3em;
-    margin-left: 2em;
+  z-index: 999;
+  top: -5px;
+  right: 12px;
 }
 :host ::ng-deep .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
   background-color:#ba5a2a!important;
@@ -102,13 +115,14 @@
 :host ::ng-deep .mat-button-toggle-appearance-standard{
   background-color:#485c77!important;
   color:#ddd;
+  font-weight: normal;
 }
 :host ::ng-deep .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
     border-left:0;
 }
 
 
-.ocloudInfo.component {
+.bs-info {
   overflow: auto;
   max-height: 86vh;
 }
@@ -488,40 +502,40 @@ h5 {
 }
 
 /*1213*/
-.ocloudInfo.component .BOX ul,
-.ocloudInfo.component .BOX .table,
-.ocloudInfo.component .BOX .filter,
-.ocloudInfo.component .tree_list {
+.bs-info .BOX ul,
+.bs-info .BOX .table,
+.bs-info .BOX .filter,
+.bs-info .tree_list {
   display: none;
   transition: all .25s;
   font-size: 16px;
 }
-.ocloudInfo.component .BOX.active ul,
-.ocloudInfo.component .BOX.active .table,
-.ocloudInfo.component .BOX.active .filter,
-.ocloudInfo.component .BOX.active .tree_list {
+.bs-info .BOX.active ul,
+.bs-info .BOX.active .table,
+.bs-info .BOX.active .filter,
+.bs-info .BOX.active .tree_list {
   display: block;
   transition: all .25s;
 }
-.ocloudInfo.component .BOXTitle:hover {
+.bs-info .BOXTitle:hover {
   background-color: #062948;
   transition: all .25s
 }
-.ocloudInfo.component .BOX .table {
+.bs-info .BOX .table {
   margin: 1em 0;
 }
-.ocloudInfo.component .BOX .filter {
+.bs-info .BOX .filter {
   margin-top: .5em;
 }
 
-.ocloudInfo.component .BOX .material-symbols-outlined {
+.bs-info .BOX .material-symbols-outlined {
   vertical-align: middle;
   transform: rotate(90deg);
 }
-.ocloudInfo.component .BOX.active .material-symbols-outlined {
+.bs-info .BOX.active .material-symbols-outlined {
   transform: rotate(180deg);
 }
-.ocloudInfo.component .BOX input[type="text"] {
+.bs-info .BOX input[type="text"] {
   padding: 4px 5px;
   border-radius: 3px;
   border: 1px solid #799dd7;
@@ -603,6 +617,7 @@ h5 {
 .collapsible-content { 
   max-height: 52vh; 
   overflow: auto; 
+  overflow-x: hidden;
   transition: max-height .25s ease-in-out; 
 } 
 .collabsible .toggle:checked + .lbl-toggle + .collapsible-content { 
@@ -621,6 +636,18 @@ h5 {
   font-size: .9em;
   padding: 0;
 }
+.neighborBsList > span > .mat-icon {
+  background-color: #ba5a2a;
+  color: #fff;
+  border-radius: 5em;
+  cursor: pointer;
+  vertical-align: middle;
+  margin: 0 0 0 .3em;
+}
+.neighborBsList .table {
+  margin: .5em 0 1em;
+}
+.Advanced.collabsible table td button,
 .collabsible span button {
   background-color:#ba5a2a  ;
   border-radius: 50em;
@@ -666,7 +693,7 @@ h5 {
   display: inline-block;
 }
 div.baseInfo .content-inner ul li label {
-  width: 7em;
+  width: 9em;
 }
 .collabsible .content-inner ul li::marker {
   color: #5a8bdd;
@@ -760,9 +787,9 @@ div.baseInfo .content-inner ul li label {
   border-radius: 0 0 5px 5px;
 }
 .table {
-  margin: 1em 0;
+  margin: .5em 0 1em;
 }
-.ocloudInfo.component .table tr td{
+.bs-info .table tr td{
   text-align: center;
 }
 .total {
@@ -929,7 +956,24 @@ ul.treeList li a.btn {
   margin: 0!important;
 }
 /**/
-
+.forALL_btn {
+  color: #fff;
+  display: block;
+  margin: -.7em 0 0.5em 1.5em;
+}
+.forALL_btn + .table {
+  padding: 0;
+  margin: 0;
+}
+.parameters .collapsible-content {
+  max-height: max-content;
+}
+.Advanced.collabsible > div {
+  padding: 0;
+}
+.alarms .filterBY {
+  padding: 1em 2em .5em;
+}
 @media screen and (max-width:1680px) {
   .h30 {
     height: 24em;
@@ -1035,7 +1079,7 @@ ul.treeList li a.btn {
   margin: .5% 0 2% 3%;
   font-size: 1.3em;
 }
-.ocloudInfo.component {
+.bs-info {
   max-height: 86vh;
 }
 .main.collabsible{
@@ -1053,7 +1097,7 @@ ul.treeList li a.btn {
 .content-inner .panel > label input[type=radio] {
   top: 1em;
 }
-.ocloudInfo.component {
+.bs-info {
   max-height: 83vh;
 }
 }

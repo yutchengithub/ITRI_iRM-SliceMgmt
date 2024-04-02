@@ -147,7 +147,7 @@ export class BSInfoComponent implements OnInit {
 
   ngAfterViewInit() {
 
-    this.canvas.nativeElement.width  = 800; // 增加 Canvas 的寬度
+    this.canvas.nativeElement.width  = 1000; // 增加 Canvas 的寬度
     this.canvas.nativeElement.height = 250; // 增加 Canvas 的寬度
 
     // 在獲取基站和網元資訊完成後，手動觸發變更檢測

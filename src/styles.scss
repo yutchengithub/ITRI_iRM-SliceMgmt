@@ -1185,7 +1185,10 @@ body.en #promptWindow_noFieldImage {
   margin: auto;
 }
 body.en .ocloudInfo.component .collabsible .baseInfo .content-inner ul li label {
-  width: 10.5em!important;
+  width: 10.5em;
+}
+body.en .bs-info .collabsible .baseInfo .content-inner ul li label {
+  width: 11.5em!important;
 }
 body.en .ocloudInfo.bs_mgr .basicInfo ul li label {
   width: 10.5em!important;

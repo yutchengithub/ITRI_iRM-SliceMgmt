@@ -1,4 +1,4 @@
-<div class="ocloudInfo component">
+<div class="ocloudInfo component bs-info">
   <h5>
     <button (click)="back()"><span class="material-icons">arrow_back</span>Back</button>
       {{ languageService.i18n['BS.info'] }} – {{ bsName }} / 
@@ -161,7 +161,7 @@
       </div>
     </div>
 
-    <div><!-- 網元拓樸圖 -->
+    <div class="topology"><!-- 網元拓樸圖 -->
       <span>{{ languageService.i18n['BS.topology'] }}</span>
       <input id="topology" class="toggle" type="checkbox">
       <label for="topology" class="lbl-toggle"></label>
@@ -237,7 +237,7 @@
       </div>
     </div>
 
-    <div><!-- 基站參數 -->
+    <div class="parameters"><!-- 基站參數 -->
       <span>
         {{ languageService.i18n['BS.parameters'] }}
         
@@ -283,9 +283,11 @@
 
           <!-- Basic -->
           <div class="collabsible" *ngIf=" bsParametersType === 'Basic' ">
-            <div>
-              For All: <button>DB → gNB</button><button>DB ← gNB</button>
-            </div>
+            <span class="forALL_btn">
+              For All: 
+              <button>DB → gNB</button>
+              <button>DB ← gNB</button>
+            </span>
             <div class="table">
               <table>
                 <thead>
@@ -347,7 +349,7 @@
                     </td>
                     <td>100</td>
                     <td>Yes</td>
-                    <td><button>DB → gNB</button><button>DB ← gNB</button></td>
+                    <td><span><button>DB → gNB</button><button>DB ← gNB</button></span></td>
                   </tr>
                   <tr>
                     <td>NR-ARFCN-DL</td>
@@ -383,7 +385,7 @@
                     </td>
                     <td>10</td>
                     <td>Yes</td>
-                    <td><button>DB → gNB</button><button>DB ← gNB</button></td>
+                    <td><span><button>DB → gNB</button><button>DB ← gNB</button></span></td>
                   </tr>
                   <tr>
                     <td>TAC</td>
@@ -392,7 +394,7 @@
                     </td>
                     <td>3001</td>
                     <td>Yes</td>
-                    <td><button>DB → gNB</button><button>DB ← gNB</button></td>
+                    <td><span><button>DB → gNB</button><button>DB ← gNB</button></span></td>
                   </tr>
                 </tbody>
               </table>
@@ -400,9 +402,9 @@
           </div>
 
           <!-- Advanced -->
-          <div class="collabsible" *ngIf=" bsParametersType === 'Advanced' ">
-            <div class="collapsible-content">
-              <div class="content-inner">
+          <div class="collabsible Advanced" *ngIf=" bsParametersType === 'Advanced' ">
+            <div class="">
+              <div class="">
                 <div class="collabsible">
 
                   <!-- gNBCUFunction -->
@@ -3108,9 +3110,9 @@
       </div>
     </div>
 
-    <div><!-- 鄰居基站列表 -->
+    <div class="neighborBsList"><!-- 鄰居基站列表 -->
       <span>{{ languageService.i18n['BS.neighborBsList'] }}
-        <h5><mat-icon tooltip="{{languageService.i18n['sm.create']}}">add</mat-icon></h5>
+        <mat-icon tooltip="{{languageService.i18n['sm.create']}}">add</mat-icon>
       </span>
       <input id="neighborBsList" class="toggle" type="checkbox">
       <label for="neighborBsList" class="lbl-toggle"></label>
@@ -3202,7 +3204,7 @@
       </div>
     </div>
 
-    <div><!-- 基站告警 -->
+    <div class="alarms"><!-- 基站告警 -->
       <span>{{ languageService.i18n['BS.alarms'] }}</span>
       <input id="faultMsg" class="toggle" type="checkbox">
       <label for="faultMsg" class="lbl-toggle"></label>
