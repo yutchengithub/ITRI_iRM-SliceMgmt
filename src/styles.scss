@@ -1260,12 +1260,21 @@ body.en .fault_mgr.table table tbody tr td:nth-child(4) {
 #PMgmtParameterSetWindow {
   width: 44em;
 }
+#fieldOptimizationWindow .mat-radio-button.mat-accent .mat-radio-inner-circle,
 #PMgmtParameterSetWindow .mat-radio-button.mat-accent .mat-radio-inner-circle,
 #PMgmtParameterSetWindow .mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
   background-color: #1d8ee4!important;
 }
+#fieldOptimizationWindow .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle,
 #PMgmtParameterSetWindow .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
   border-color: #1d8ee5!important;
+}
+#fieldOptimizationWindow .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
+#fieldOptimizationWindow .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background: #1d8ee4!important;
+}
+#fieldOptimizationWindow .mat-checkbox-frame {
+  border-color: #ddd;
 }
 #PMgmtParameterSetWindow .content {
   max-height: 53vh;
@@ -1442,4 +1451,14 @@ body.tw .sfReport .file_url_info li label {
 // 定義 Google Maps API 的 InfoWindow 中鼠標懸停在 <li> 標籤上的樣式
 .gm-style .gm-style-iw li:hover {
   color: #ba5a2a; // 當鼠標懸停在 <li> 標籤上時，將文字顏色改變顏色
+}
+
+#fieldOptimizationWindow {
+  min-width: 60em!important;
+}
+#fieldOptimizationWindow .field-optim-wrap .mat-form-field-appearance-legacy .mat-form-field-label {
+  color: #fff;
+}
+#fieldOptimizationWindow .mat-form-field-appearance-legacy .mat-form-field-underline {
+  background-color: #fff;
 }

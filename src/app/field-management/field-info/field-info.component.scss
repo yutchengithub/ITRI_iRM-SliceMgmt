@@ -366,8 +366,10 @@ F
   margin: 0 0.5em 0 0;
   background: transparent;
 }
-
-.ocloudInfo h5 button .material-icons {
+.ocloudInfo h5 button .material-icons.back {
+  margin: 0;
+}
+.ocloudInfo h5 button .material-icons:not(.back) {
   vertical-align: middle;
   font-size: 20px;
   margin: 0;
@@ -444,14 +446,17 @@ F
 // @12/08 Add by yuchen
 /* 新增或修改的 CSS */
 .boxTitleRightAligned {
-  justify-content: center;
+  /* justify-content: center; */
   /* 讓內部元素整體居中對齊 */
 }
 
 .boxTitleRightAligned .title-container {
   flex-grow: 1;
+  margin: 0 0 0 0.8em;
+  font-size: .85em;
+  line-height: 1;
   /* 讓標題容器增長佔據空間，以保持標題置中 */
-  text-align: center;
+  /* text-align: center; */
   /* 確保標題文字居中 */
 }
 
@@ -1380,3 +1385,42 @@ h3 {
 :host ::ng-deep map-info-window  .mat-expansion-panel-body ul li:hover {
   color: #3b95f6!important;
 }
+.bs_list table {
+  max-height: 50em;
+}
+.bs_list table thead th {
+  min-width: 8em;
+  font-size: 1em;
+}
+.field-optim-wrap table tbody td {
+  text-align: center;
+  padding: .5em 1em;
+}
+.field-optim-wrap table tbody td > span {
+  display: block;
+}
+.bs_list table thead th:nth-child(1) {
+  width: 15em;
+}
+.bs_list table thead th:nth-child(2),
+.bs_list table thead th:nth-child(3) {
+  width: 30em;
+}
+.showMapModel {
+  height: initial!important;
+}
+.field-optim-wrap > span {
+  display: inline-block;
+  vertical-align: top;
+  width: 32%;
+  margin: 1%;
+  max-height: 75vh;
+}
+.field-optim-wrap > span:last-child {
+  display: inline-block;
+  vertical-align: top;
+  width: 64%;
+  margin: 1%;
+  max-height: 75vh;
+}
+
