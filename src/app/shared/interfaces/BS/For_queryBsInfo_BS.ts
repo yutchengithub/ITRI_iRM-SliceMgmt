@@ -41,7 +41,7 @@ export interface BSInfo {
     components: Components[];   // ok 
     status: number;             // ok
     laston: string;             // ok
-    lastoff: string;            // ok
+    lastoff: string | null;            // ok
     'components-info': ComponentsInfo;   // ok 不一定有值
   }
   

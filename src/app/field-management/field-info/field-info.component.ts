@@ -26,7 +26,7 @@ import { BsInfoInField }                  from '../../shared/interfaces/Field/Fo
 import { ForCreateOrUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_createField_or_updateField';         // @2024/01/26 Add
 import { ForQueryOrUpdatePmFTPInfo }      from '../../shared/interfaces/Field/For_queryPmFtpInfo_or_updatePmFtpInfo';  // @2024/02/04 Add
 import { ForQuerySonParameter }           from '../../shared/interfaces/Field/For_querySonParameter';                  // @2024/03/30 Add
-import { ForCalculateSon, ForCalculateSonResponse } from '../../shared/interfaces/Field/For_multiCalculateBs';                   // @2024/03/31 Add
+import { ForCalculateSon, ForCalculateSonResponse, CellIndividualResult2, CellIndividualResult3, CellIndividualResult } from '../../shared/interfaces/Field/For_multiCalculateBs';                   // @2024/03/31 Add
 import { BSInfo }              from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2023/12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
@@ -3235,11 +3235,15 @@ export class FieldInfoComponent implements OnInit {
   // 宣告一個變數來接收 SON 計算的回傳值 @2024/03/31 Add
   calculationResponse: ForCalculateSonResponse = {} as ForCalculateSonResponse;
 
-  // @2024/03/31 Add
+  // 記錄是否觸發計算旗標 @2024/04/02 Add
+  isClickCalculate: boolean = false;
+
+  // @2024/04/02 Update
   // 發送計算 SON 演算法函數 
   calculateSON_Submit() {
     console.log( "calculateSON_Submit() - Start" );
 
+    this.isClickCalculate = true;
     this.getQuerySonParameter_Loading = true; // 顯示 Loading Progress Spinner
 
     // 根據使用者選擇的設定，生成 Calculation Categories
@@ -3282,12 +3286,15 @@ export class FieldInfoComponent implements OnInit {
       console.log( "In Local - SON 計算成功:", this.calculationResponse );
 
       // 模擬計算結果，這裡你可以根據實際需求進行修改
-      this.calculationResults = [
-        'PCI Result',
-        'ANR Result',
-        'CCO Result',
-        'Performance'
-      ];
+      // this.calculationResults = [
+      //   'PCI Result',
+      //   'ANR Result',
+      //   'CCO Result',
+      //   'Performance'
+      // ];
+
+      // 處理計算結果
+      this.processCalculationResponse( this.calculationResponse );
 
       this.getQuerySonParameter_Loading = false; // 計算完成後停止 Loading Progress Spinner
 
@@ -3303,13 +3310,11 @@ export class FieldInfoComponent implements OnInit {
 
           this.calculationResponse = response;       // 將 API 回應賦值給變數
 
+          // 處理計算結果
+          this.processCalculationResponse( this.calculationResponse );
+
           this.getQuerySonParameter_Loading = false; // 計算完成後停止 Loading Progress Spinner
 
-
-
-
-          // 在此處可以對計算結果進行處理和顯示
-          // ...
         },
         error: ( error ) => {
           console.error( "SON 計算出錯:", error );
@@ -3319,6 +3324,166 @@ export class FieldInfoComponent implements OnInit {
     }
 
     console.log( "calculateSON_Submit() - End" );
+  }
+
+
+  // 清楚計算結果 @2024/04/02 Add
+  clear_calculateSON() {
+    this.isCcoClass = false;
+    this.isAnrClass = false;
+    this.isPciClass = false;
+    this.isClickCalculate = false;
+  }
+
+
+  // 宣告變數來儲存 ANR 結果
+  gnbsAnr: CellIndividualResult2[] = [];
+
+  // 宣告變數來儲存 PCI 結果
+  gnbsPci: CellIndividualResult3[] = [];
+  pciCollisions: any[] = [];
+  pciConfusions: any[] = [];
+  collisionCount: number = 0;
+  confusionCount: number = 0;
+  collisionRatio: number = 0;
+  confusionRatio: number = 0;
+
+  // 宣告變數來儲存 CCO 結果
+  gnbsCco: CellIndividualResult[] = [];
+  resultSinr: string = '';
+  resultCoverage: string = '';
+
+  // 宣告變數來儲存前端顯示狀態
+  isPciClass: boolean = false;
+  isAnrClass: boolean = false;
+  isCcoClass: boolean = false;
+  currentProgress: number = 0;
+  showPciMax: number | null = null;
+  showPciMin: number | null = null;
+  showAnrSense: number | null = null;
+  showOptType: boolean | null = null;
+
+  // @2024/04/02 Add
+  // 處理 SON 計算回傳值的函數
+  processCalculationResponse( calculationResponse: ForCalculateSonResponse ) {
+
+    // 將回傳值轉換成 JSON 字串並輸出到控制台
+    console.log( JSON.stringify( calculationResponse ) );
+    
+
+    // 從回傳值中取出 anr、pci、cco 的結果資料
+    const tempAnr = calculationResponse.anr;
+    const tempPci = calculationResponse.pci;
+    const tempCco = calculationResponse.cco;
+
+    // 處理 ANR 結果資料
+    if (tempAnr !== undefined && tempAnr.cellIndividualResult) {
+      // 將 ANR 的個別小區結果加入到 gnbsAnr 陣列中
+      tempAnr.cellIndividualResult.forEach(res => {
+        this.gnbsAnr.push(res);
+      });
+    }
+
+    // 處理 PCI 結果資料
+    if ( tempPci !== undefined ) {
+
+      let neighborCount = 0;
+      let combineCount = 0;
+
+      if ( tempPci.cellIndividualResult ) {
+
+        // 將 PCI 的個別小區結果加入到 gnbsPci 陣列中
+        tempPci.cellIndividualResult.forEach( res => {
+
+          this.gnbsPci.push( res );
+
+          const count = res.NRCellRelation.length;
+
+          // 計算鄰居小區的總數
+          neighborCount += count;
+
+          // 計算鄰居小區的組合數
+          combineCount += count * ( count - 1 ) / 2;
+        });
+      }
+
+      // 處理 PCI 碰撞的小區資料
+      if ( tempPci.collision_cell ) {
+        this.pciCollisions = tempPci.collision_cell;
+      }
+
+      // 計算 PCI 碰撞的統計資料
+      if ( tempPci.collision_count ) {
+
+        let totalCount = 0;
+
+        for ( let i = 0; i < tempPci.collision_count.length; i++ ) {
+          totalCount += tempPci.collision_count[i].collision_count;
+        }
+
+        this.collisionCount = totalCount / 2;
+        console.log( neighborCount );
+
+        if ( neighborCount > 0 ) {
+
+          // 計算 PCI 碰撞比率
+          this.collisionRatio = Number( ( this.collisionCount / ( neighborCount / 2 ) ).toFixed( 3 ) ) * 100;
+
+        }
+      }
+      // 處理 PCI 混淆的小區資料
+      if ( tempPci.confusion_cell ) {
+        this.pciConfusions = tempPci.confusion_cell;
+      }
+      // 計算 PCI 混淆的統計資料
+      if ( tempPci.confusion_count ) {
+        let totalCount = 0;
+        for ( let i = 0; i < tempPci.confusion_count.length; i++ ) {
+          totalCount += tempPci.confusion_count[i].confusion_count;
+        }
+        this.confusionCount = totalCount / 2;
+        if ( combineCount > 0 ) {
+
+          // 計算 PCI 混淆比率
+          this.confusionRatio = Number( ( this.confusionCount / combineCount ).toFixed( 3 ) ) * 100;
+        }
+      }
+    }
+
+    // 處理 CCO 結果資料
+    if ( tempCco !== undefined && tempCco.cellIndividualResult ) {
+      // 將 CCO 的個別小區結果加入到 gnbsCco 陣列中
+      tempCco.cellIndividualResult.forEach(res => {
+        this.gnbsCco.push(res);
+      });
+      // 取得平均 SINR 值
+      this.resultSinr = tempCco['average_sinr'];
+      // 取得覆蓋率
+      this.resultCoverage = tempCco.coverage;
+    }
+
+    // 更新前端顯示狀態
+    this.isPciClass = this.calculationCategories.includes('pci');
+    this.isAnrClass = this.calculationCategories.includes('anr');
+    this.isCcoClass = this.calculationCategories.includes('cco');
+    this.currentProgress = 100;
+
+    if ( this.isPciClass ) {
+
+      // 取得 PCI 最大值和最小值的設定
+      this.showPciMax = this.fieldOptimizationForm.get('pciMax')?.value;
+      this.showPciMin = this.fieldOptimizationForm.get('pciMin')?.value;
+    }
+    if ( this.isAnrClass ) {
+
+      // 取得 UE 同步最小 SINR 的設定
+      this.showAnrSense = this.fieldOptimizationForm.get('ueSyncMinSINR')?.value;
+    }
+    if ( this.isCcoClass ) {
+
+      // 取得 CCO 優化類型的設定
+      this.showOptType = this.fieldOptimizationForm.get('setSONParameters.cco')?.value;
+    }
   }
 
 // For 場域優化 @2024/03/30 Add ↑

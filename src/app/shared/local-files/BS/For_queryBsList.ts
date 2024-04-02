@@ -278,6 +278,52 @@
             "adminstate": 1,
             "laston": "2024-03-29 02:28:37.501378",
             "lastoff": null
+          },
+          {
+            "id": "c34b682a16be4f06a32c",
+            "fieldId": "f769da087f2044e7a0d7",
+            "fieldName": "field",
+            "name": "BS-all-1",
+            "ip": "",
+            "port": "",
+            "position": "[121.044029,24.773652]",
+            "description": "bs-1",
+            "bstype": 1,
+            "components": [
+              {
+                "type": "cu+du+ru",
+                "id": "97259ca0b7ea409d9b53"
+              }
+            ],
+            "status": 2,
+            "gNBId": 1,
+            "gNBIdLength": 22,
+            "adminstate": 1,
+            "laston": "2024-04-02 18:53:04.544291",
+            "lastoff": null
+          },
+          {
+            "id": "29a863b185af423d9b32",
+            "fieldId": "f769da087f2044e7a0d7",
+            "fieldName": "field",
+            "name": "BS-all-2",
+            "ip": "",
+            "port": "",
+            "position": "[121.044324,24.773815]",
+            "description": "bs-2",
+            "bstype": 1,
+            "components": [
+              {
+                "type": "cu+du+ru",
+                "id": "94d4aa57df9e4e909e88"
+              }
+            ],
+            "status": 2,
+            "gNBId": 2,
+            "gNBIdLength": 22,
+            "adminstate": 1,
+            "laston": "2024-04-02 18:53:04.530114",
+            "lastoff": null
           }
         ]
       }
