@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -75,10 +75,11 @@ export class SoftwareManagementComponent implements OnInit {
   filteredSwList: Uploadinfos[] = [];
 
   uploadtypeList: Item[] = [
-    { displayName: 'CU', value: '0' },
-    { displayName: `DU`, value: '1' },
-    { displayName: `RU`, value: '2' },
-    { displayName: `CU+DU+RU`, value: '3' }
+    { displayName: 'CU', value: '1' },
+    { displayName: `DU`, value: '2' },
+    { displayName: `RU`, value: '3' },
+    { displayName: `CU+DU`, value: '4' },
+    { displayName: `CU+DU+RU`, value: '5' }
   ];
 
   constructor(
@@ -156,15 +157,15 @@ export class SoftwareManagementComponent implements OnInit {
     this.formValidated = false;
     this.createForm = this.fb.group({
       'firm': new FormControl(''),
-      'model': new FormControl(''),
-      'uploadtype': new FormControl('All'),
+      'modelname': new FormControl(''),
+      'uploadtype': new FormControl(''),
       'uploadversion': new FormControl('', [Validators.required]),
-      'method': new FormControl('upload'),
-      'notes': new FormControl(''),
-      'ftpaccount': new FormControl(''),
-      'ftppassword': new FormControl(''),
-      'fileName': new FormControl('', [Validators.required]),
-      'sessionid': this.sessionId
+      //'method': new FormControl('upload'),
+      //'notes': new FormControl(''),
+      'ftpid': new FormControl(''),
+      'ftpkey': new FormControl(''),
+      //'fileName': new FormControl('', [Validators.required]),
+      'session': this.sessionId
     });
     this.createModalRef = this.dialog.open(this.createModal, { id: 'createModal' });
     this.createModalRef.afterClosed().subscribe(() => {
@@ -216,25 +217,15 @@ export class SoftwareManagementComponent implements OnInit {
       );
       this.createModalRef.close();
       this.getSoftwareList();
-
     } else {
       const body = this.createForm.value;
-      if (this.createForm.controls['uploadtype'].value === 'CU') {
-        body['uploadtype'] = 1;
-      } else if (this.createForm.controls['uploadtype'].value === 'DU') {
-        body['uploadtype'] = 2;
-      } else if (this.createForm.controls['uploadtype'].value === 'CU+DU') {
-        body['uploadtype'] = 3;
-      } else {
-        body['uploadtype'] = 0;
-      }
-      body['sessionid'] = this.sessionId;
-      this.commonService.createSoftware(body).subscribe(
+      body['session'] = this.sessionId;
+      this.commonService.uploadFileInfo(body).subscribe(
         (res: any) => {
-          console.log('createSoftware:');
+          console.log('uploadFileInfo:');
           console.log(res);
           const softwareId = res['softwareId'];
-          const uploadUrl = `${this.commonService.restPath}/uploadSoftware/${this.sessionId}/${softwareId}`;
+          const uploadUrl = `${this.commonService.restPath}/uploadFirmware/${this.sessionId}/${softwareId}`;
           const options = this.commonService.options;
           const formData = new FormData();
           formData.append('file', this.file);
@@ -248,6 +239,33 @@ export class SoftwareManagementComponent implements OnInit {
           this.getSoftwareList();
         }
       );
+      
+      // this.commonService.uploadFileInfo(body).subscribe(
+      //   (res: any) => {
+      //     console.log('uploadFileInfo:');
+      //     console.log(res);
+      //     this.createModalRef.close();
+      //     this.getSoftwareList();
+      //   }
+      // );
+      // this.commonService.uploadFileInfo(body).subscribe(
+      //   (res: any) => {
+      //     console.log('uploadFileInfo:');
+      //     console.log(res);
+      //     const uploadUrl = `${this.commonService.restPath}/uploadFileInfo`;
+      //     const options = this.commonService.options;
+      //     const formData = new FormData();
+      //     formData.append('file', this.file);
+      //     this.http.post(uploadUrl, formData, options).subscribe(
+      //       () => {
+      //         this.createModalRef.close();
+      //         this.getSoftwareList();
+      //       }
+      //     );
+      //     this.createModalRef.close();
+      //     this.getSoftwareList();
+      //   }
+      // );
     }
   }
 
@@ -268,14 +286,29 @@ export class SoftwareManagementComponent implements OnInit {
       this.deleteModalRef.close();
       this.getSoftwareList();
     } else {
-      this.commonService.deleteSoftware(this.selectSoftware.id).subscribe(
+      const removeBsBody = {
+        id: this.selectSoftware.id,
+        session: this.sessionId
+      };
+      // 定義 HTTP 請求選項
+      const httpOptions = {
+        // 設定 HTTP 標頭
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
+        }),
+        body: removeBsBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
+      };
+      this.commonService.removeUploadFileInfo(httpOptions).subscribe(
         res => {
+          console.log('deleteOcloud:');
+          console.log(this.selectSoftware.id);
           this.deleteModalRef.close();
           this.getSoftwareList();
         }
       );
     }
   }
+
   changeType(e: MatButtonToggleChange) {
     this.formValidated = false;
     if (e.value === 'imageUrl') {

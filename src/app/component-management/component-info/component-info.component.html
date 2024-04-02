@@ -1,7 +1,7 @@
 <div class="ocloudInfo component">
   <h5>
     <button (click)="back()"><span class="material-icons">arrow_back</span>Back</button>
-    {{languageService.i18n['cm.info']}} – {{bsComponentInfo.name}}
+    {{languageService.i18n['cm.info']}} – {{componentInfo.name}}
   </h5>
 
 
@@ -14,16 +14,16 @@
         <div class="content-inner">
           
             <ul>
-              <li><label>{{languageService.i18n['cm.name']}}</label><span>{{bsComponentInfo.name}}</span></li>
-              <li><label>{{languageService.i18n['cm.type']}}</label><span>{{bsComponentInfo.comtype}}</span></li>
-              <li><label>{{languageService.i18n['cm.ip']}}</label><span>{{bsComponentInfo.ip}}</span></li>
-              <li><label>{{languageService.i18n['cm.port']}}</label><span>{{bsComponentInfo.port}}</span></li>
-              <li><label>{{languageService.i18n['cm.acc']}}</label><span>{{bsComponentInfo.account}}</span></li>
-              <li><label>{{languageService.i18n['cm.passw']}}</label><span>{{bsComponentInfo.key}}</span></li>
-              <li><label>{{languageService.i18n['cm.manufacturer']}}</label><span>{{bsComponentInfo.firm}}</span></li>
-              <li><label>{{languageService.i18n['cm.model']}}</label><span>{{bsComponentInfo.modelname}}</span></li>
-              <li><label>{{languageService.i18n['table.Status']}}</label><span>{{bsComponentInfo.status}}</span></li>
-              <li><label>{{languageService.i18n['software_version']}}</label><span>{{bsComponentInfo.port}}</span></li>
+              <li><label>{{languageService.i18n['cm.name']}}</label><span>{{componentInfo.name}}</span></li>
+              <li><label>{{languageService.i18n['cm.type']}}</label><span>{{componentInfo.comtype}}</span></li>
+              <li><label>{{languageService.i18n['cm.ip']}}</label><span>{{componentInfo.ip}}</span></li>
+              <li><label>{{languageService.i18n['cm.port']}}</label><span>{{componentInfo.port}}</span></li>
+              <li><label>{{languageService.i18n['cm.acc']}}</label><span>{{componentInfo.account}}</span></li>
+              <li><label>{{languageService.i18n['cm.passw']}}</label><span>{{componentInfo.key}}</span></li>
+              <li><label>{{languageService.i18n['cm.manufacturer']}}</label><span>{{componentInfo.firm}}</span></li>
+              <li><label>{{languageService.i18n['cm.model']}}</label><span>{{componentInfo.modelname}}</span></li>
+              <li><label>{{languageService.i18n['table.Status']}}</label><span>{{componentInfo.status}}</span></li>
+              <li><label>{{languageService.i18n['software_version']}}</label><span>{{componentInfo.port}}</span></li>
             </ul>
           
         </div>
@@ -161,13 +161,14 @@
     </div>
 
     <div>
-      <span>{{languageService.i18n['software.info']}} – {{bsComponentInfo.firm}} – {{bsComponentInfo.modelname}}</span>
+      <span>{{languageService.i18n['software.info']}} – {{componentInfo.firm}} – {{componentInfo.modelname}}</span>
       <input id="softInfo" class="toggle" type="checkbox">
       <label for="softInfo" class="lbl-toggle"></label>
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="panel">
-            <label *ngFor="let software of bsComponentInfo.sm.softwareInventory.softwareSlot" [for]="'radio-' + software.name">
+            <!-- <label *ngFor="let software of componentInfo.sm.software-inventory.software-slot" [for]="'radio-' + software.name"> -->
+              <label *ngFor="let software of componentInfo.sm['software-inventory']['software-slot']" [for]="'radio-' + software.name">
               <input type="radio" [id]="'radio-' + software.name" name="software-group">
               <div>
                 <ul>
@@ -199,9 +200,9 @@
                 <tbody>
                   <tr>
                     <!-- <td>{{bsComponentInfo.name}}</td> -->
-                    <td>{{bsComponentInfo.firm}}</td>
-                    <td>{{bsComponentInfo.modelname}}</td>
-                    <td>{{bsComponentInfo.comtype}}</td>
+                    <td>{{componentInfo.firm}}</td>
+                    <td>{{componentInfo.modelname}}</td>
+                    <td>{{componentInfo.comtype}}</td>
                     <td>{{componentInfosw.uploadinfos[0]?.uploadversion}}</td>
                     <td></td>
                     <td>{{componentInfosw.uploadinfos[0]?.uploadtime}}</td>
@@ -295,7 +296,8 @@
     </div>
 
     <div>
-      <span>{{languageService.i18n['cm.file']}}</span>
+      <!-- <span>{{languageService.i18n['cm.file']}}</span> -->
+      <span>File Management</span>
       <input id="cm" class="toggle" type="checkbox">
       <label for="cm" class="lbl-toggle"></label>
       <div class="collapsible-content">
@@ -311,8 +313,8 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>{{bsComponentInfo.name}}</td>
-                  <td>{{bsComponentInfo.firm}}</td>
+                  <td>{{componentInfo.name}}</td>
+                  <td>{{componentInfo.firm}}</td>
                   <td class="center"><mat-icon tooltip="{{languageService.i18n['view_detail']}}">download_for_offline</mat-icon></td>
                 </tr>
               </tbody>

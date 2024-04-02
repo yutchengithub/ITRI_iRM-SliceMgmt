@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
 import { XMLParser } from "fast-xml-parser";
 
 //component Info
-export interface BsComponentInfo {
+export interface ComponentInfo {
   id: string;
   name: string;
   ip: string;
@@ -28,8 +28,8 @@ export interface BsComponentInfo {
   status: number;
   info: Info;
   sm: {
-    softwareInventory: {
-      softwareSlot: SoftwareSlot[];
+    "software-inventory": {
+      "software-slot": SoftwareSlot[];
     };
   };
 }
@@ -85,7 +85,7 @@ export class ComponentInfoComponent implements OnInit {
   newip: string = '';
   comId: string = '';
   // utilizationPercent: number = 0;
-  bsComponentInfo: BsComponentInfo = {} as BsComponentInfo;
+  componentInfo: ComponentInfo = {} as ComponentInfo;
   uploadinfos: Uploadinfos[] = [];
   softwareList: SoftwareList[] = [];
   componentInfosw: ComponentInfosw = {} as ComponentInfosw;
@@ -161,30 +161,30 @@ export class ComponentInfoComponent implements OnInit {
     clearTimeout(this.refreshTimeout);
   }
   getComponentInfo() {
+    const parseOption = {
+      cdataTagName: "![CDATA[",
+      cdataPositionChar: "\\c",
+      attributeNamePrefix: "",
+      attrNodeName: "attr",
+      textNodeName: "#text",
+      ignoreAttributes: false,
+      ignoreNameSpace: false,
+      allowBooleanAttributes: false,
+      parseNodeValue: false,
+      parseAttributeValue: false,
+      trimValues: true,
+      parseTrueNumberOnly: false,
+      numParseOptions: {
+        hex: true,
+        leadingZeros: true,
+      },
+      arrayMode: false,
+      stopNodes: ["parse-me-as-string"],
+      alwaysCreateTextNode: false,
+    };
     if (this.commonService.isLocal) {
       /* local file test */
-      const parseOption = {
-        cdataTagName: "![CDATA[",
-        cdataPositionChar: "\\c",
-        attributeNamePrefix: "",
-        attrNodeName: "attr",
-        textNodeName: "#text",
-        ignoreAttributes: false,
-        ignoreNameSpace: false,
-        allowBooleanAttributes: false,
-        parseNodeValue: false,
-        parseAttributeValue: false,
-        trimValues: true,
-        parseTrueNumberOnly: false,
-        numParseOptions: {
-          hex: true,
-          leadingZeros: true,
-        },
-        arrayMode: false,
-        stopNodes: ["parse-me-as-string"],
-        alwaysCreateTextNode: false,
-      };
-      this.bsComponentInfo = this.commonService.bsComponentInfo;
+      this.componentInfo = this.commonService.componentInfo;
       this.cmpsource = this.commonService.cmpsource;
       const xmldata = this.commonService.bsComponentInfo.info.data;
       const parser = new XMLParser(parseOption);
@@ -193,10 +193,16 @@ export class ComponentInfoComponent implements OnInit {
       console.log('Json output: ', JSON.stringify(output, null, 2));
 
     } else {
+      this.cmpsource = this.commonService.cmpsource;
       this.commonService.queryBsComponentInfo(this.comId).subscribe(
-        (res: BsComponentInfo) => {
-          console.log('getOcloudInfo:', res);
-          this.bsComponentInfo = res;
+        (res: ComponentInfo) => {
+          console.log('queryComponentInfo:', res);
+          this.componentInfo = res;
+          const xmldata = this.commonService.bsComponentInfo.info.data;
+          const parser = new XMLParser(parseOption);
+          const output = parser.parse(xmldata);
+          //console.log('Json output: ',output);
+          console.log('Json output: ', JSON.stringify(output, null, 2));
         },
         (error: any) => {
           console.error('Error loading BsComponentInfo:', error);
@@ -207,7 +213,7 @@ export class ComponentInfoComponent implements OnInit {
 
   // Getter to get the first item in the softwareSlot array or undefined if the array is empty
   get firstSoftwareSlot(): SoftwareSlot | undefined {
-    return this.bsComponentInfo?.sm.softwareInventory.softwareSlot[0];
+    return this.componentInfo?.sm['software-inventory']['software-slot'][0];
   }
 
    // 建立搜尋表單

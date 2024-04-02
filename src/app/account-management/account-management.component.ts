@@ -57,8 +57,6 @@ export class AccountManagementComponent implements OnInit {
   formValidated = false;
   searchForm!: FormGroup;
 
-
-  uploadType = 'upload';
   role = 'upload';
   userTypeList: Item[] = [
     { displayName: 'Administrator', value: '1' },
@@ -217,21 +215,6 @@ export class AccountManagementComponent implements OnInit {
   pageChanged(page: number) {
     this.p = page;
   }
-
-  // debug() {
-  //   const body = this.createForm.value;
-  //   if (this.createForm.controls['role'].value === 'Administrator') {
-  //     body['type'] = 1;
-  //   } else if (this.createForm.controls['role'].value === 'Manager') {
-  //     body['type'] = 2;
-  //   } else if (this.createForm.controls['role'].value === 'Monitor') {
-  //     body['type'] = 3;
-  //   } else {
-  //     body['type'] = 0;
-  //   }
-  //   body['sessionid'] = this.sessionId;
-  //   console.log(body);
-  // }
 
   viewPage(accountwareList: Users) {
     this.router.navigate(['/main/account-mgr/info', accountwareList.id, accountwareList.role]);

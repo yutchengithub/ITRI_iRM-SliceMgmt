@@ -90,16 +90,15 @@
       <li>
         <label>{{languageService.i18n['model']}}</label>
         <span>
-          <input type="text" formControlName="model" class="{{formValidated&&createForm.controls['model'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['model'].invalid">Required</mat-error>
+          <input type="text" formControlName="modelname" class="{{formValidated&&createForm.controls['modelname'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['modelname'].invalid">Required</mat-error>
         </span>
       </li>
 
       <li>
         <label>{{languageService.i18n['type']}}</label>
         <span>
-          <select>
-            <option value="All">All</option>
+          <select formControlName="uploadtype">
             <option *ngFor="let opt of uploadtypeList" [value]="opt.value">{{opt.displayName}}</option>
           </select>
         </span>
@@ -107,11 +106,11 @@
       <li>
         <label>{{languageService.i18n['version']}}</label>
         <span>
-          <input type="text" formControlName="version" class="{{formValidated&&createForm.controls['version'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['version'].invalid">Required</mat-error>
+          <input type="text" formControlName="uploadversion" class="{{formValidated&&createForm.controls['uploadversion'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['uploadversion'].invalid">Required</mat-error>
         </span>
       </li>
-      <li>
+      <!-- <li>
         <label>{{languageService.i18n['add.method']}}</label>
         <span>
           <mat-button-toggle-group formControlName="method">
@@ -138,20 +137,20 @@
         <span>
           <textarea formControlName="notes"></textarea>
         </span>
-      </li>
+      </li> -->
 
       <li>
         <label>{{languageService.i18n['ftp.account']}}</label>
         <span>
-          <input type="text" formControlName="ftpaccount" class="{{formValidated&&createForm.controls['ftpaccount'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['ftpaccount'].invalid">Required</mat-error>
+          <input type="text" formControlName="ftpid" class="{{formValidated&&createForm.controls['ftpid'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['ftpid'].invalid">Required</mat-error>
         </span>
       </li>
       <li>
         <label>{{languageService.i18n['ftp.password']}}</label>
         <span>
-          <input type="text" formControlName="ftppassword" class="{{formValidated&&createForm.controls['ftppassword'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['ftppassword'].invalid">Required</mat-error>
+          <input type="text" formControlName="ftpkey" class="{{formValidated&&createForm.controls['ftpkey'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['ftpkey'].invalid">Required</mat-error>
         </span>
       </li>
 
@@ -159,7 +158,6 @@
     <div class="buttons">
       <button type="button" mat-dialog-close>Cancel</button>
       <button type="button" (click)="create()">OK</button>
-      <!-- <button (click)="debug()">debug</button> -->
     </div>
   </form>
 </ng-template>

@@ -54,19 +54,30 @@ export class SoftwareInfoComponent implements OnInit {
   updateModalRef!: MatDialogRef<any>;
   updateForm!: FormGroup;
   formValidated = false;
+  softwareInfoRefreshTimeout!: any;
+  softwareInfoRefreshTime: number = 2;
   /* CRITICAL,MAJOR,MINOR,WARNING */
   severitys: string[];
+  typeMap: Map<number, string> = new Map();
 
   tooltipOptions = {
     theme: 'light',     // 'dark' | 'light'
     hideDelay: 250
   };
+  uploadtypeList: Item[] = [
+    { displayName: 'CU', value: '1' },
+    { displayName: `DU`, value: '2' },
+    { displayName: `RU`, value: '3' },
+    { displayName: `CU+DU`, value: '4' },
+    { displayName: `CU+DU+RU`, value: '5' }
+  ];
 
-  notesTypeList: Item[] = [
-    { displayName: 'CU', value: '0' },
-    { displayName: `DU`, value: '1' },
-    { displayName: `CU+DU`, value: '2' },
-    { displayName: `CU+DU+RU`, value: '3' }
+  uploadtypeUI = [
+    { displayName: 'CU', value: 1 },
+    { displayName: 'DU', value: 2 },
+    { displayName: 'RU', value: 3 },
+    { displayName: 'CU+DU', value: 4 },
+    { displayName: 'CU+DU+RU', value: 5 }
   ];
 
   constructor(
@@ -78,6 +89,8 @@ export class SoftwareInfoComponent implements OnInit {
     public languageService: LanguageService
   ) {
     this.severitys = this.commonService.severitys;
+    this.uploadtypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
+    this.uploadtypeList = this.commonService.nfTypeList;
   }
 
   ngOnInit(): void {
@@ -85,9 +98,6 @@ export class SoftwareInfoComponent implements OnInit {
     this.route.params.subscribe((params) => {
       this.cloudId = params['cloudId'];
       this.cloudName = params['cloudName'];
-      this.cloudId = params['cloudId'];
-      this.cloudName = params['cloudName'];
-      console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
       this.getSoftwareInfo();
     });
   }
@@ -113,13 +123,41 @@ export class SoftwareInfoComponent implements OnInit {
     }
     // console.log(files);
   }
-  
+
+  mapUploadType(uploadType: number): string {
+    switch (uploadType) {
+        case 1:
+            return 'CU';
+        case 2:
+            return 'DU';
+        case 3:
+            return 'RU';
+        case 4:
+            return 'CU+DU';
+        case 5:
+            return 'CU+DU+RU';
+        default:
+            return 'Unknown';
+    }
+  }
+  mapUpdateType(uploadtype: number): string {
+    const selectedOption = this.uploadtypeList.find(option => option.value === String(uploadtype));
+    return selectedOption ? selectedOption.displayName : '';
+  }
+  selectedTypeName: string = '';
+  updateTypeName() {
+    const selectedType = this.uploadtypeUI.find(type => type.value === this.softwareInfo.uploadtype);
+    if (selectedType) {
+      this.selectedTypeName = selectedType.displayName;
+    }
+  }
   getSoftwareInfo() {
     if (this.commonService.isLocal) {
       /* local file test */
       this.softwareInfo = this.commonService.softwareInfo;
     } else {
-      this.commonService.queryOcloudInfo(this.cloudId).subscribe(
+      console.log(this.softwareInfo.id);
+      this.commonService.queryUploadFileInfo(this.cloudId).subscribe(
         res => {
           console.log('getSoftwareInfo:');
           console.log(res);
@@ -138,7 +176,6 @@ export class SoftwareInfoComponent implements OnInit {
     // });
   }
 
-
   softwareVersion(): string {
     const fileName = this.updateForm.controls['fileName'].value;
     if (fileName === '') {
@@ -153,11 +190,37 @@ export class SoftwareInfoComponent implements OnInit {
     this.router.navigate(['/main/software-mgr']);
   }
 
-
-  goFaultMgr() {
-    this.router.navigate(['/main/fault-mgr', this.cloudName, 'All']);
+  update() {
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.updateModalRef.close();
+    } else {
+      const body: any = {
+        id: this.softwareInfo.id,
+        firm: this.softwareInfo.firm,
+        modelname: this.softwareInfo.modelname,
+        uploadtype: this.softwareInfo.uploadtype,
+        description: this.softwareInfo.description,
+        uploadinfo: this.softwareInfo.uploadinfo,
+        uploadurl: this.softwareInfo.uploadurl,
+        ftpid: this.softwareInfo.ftpid,
+        ftpkey: this.softwareInfo.ftpkey,
+        uploadversion: this.softwareInfo.uploadversion,
+        session: this.sessionId
+      };
+      this.commonService.updateUploadFileInfo(body).subscribe(
+        () => console.log('Update Successful.')
+      );
+      this.updateModalRef.close();
+      this.getSoftwareInfo();
+      this.Refresh();
+    }
+    this.getSoftwareInfo();
   }
-
+  Refresh() {
+    // refresh
+    this.softwareInfoRefreshTimeout = window.setTimeout(() => this.getSoftwareInfo(), this.softwareInfoRefreshTime * 1000);
+  }
   openUpdateModel() {
     this.formValidated = false;
     this.updateForm = this.fb.group({
