@@ -546,6 +546,11 @@ export class CommonService {
     const url = `${this.restPath}/queryBsComponentInfo/${this.getSessionId()}/${comId}`;
     return this.http.get(url);
   }
+  filterQueryUploadFileList(body: any): Observable<any> {
+    const url = `${this.restPath}/filterQueryUploadFileList`;
+    const bodyStr = JSON.stringify(body);
+    return this.http.post(url, bodyStr);
+  }
   // Software Mgmt API
   queryUploadFileInfo(fileId: string): Observable<any> {
     const url = `${this.restPath}/queryUploadFileInfo/${this.getSessionId()}/${fileId}`;
@@ -1622,6 +1627,7 @@ export class CommonService {
       checksum:"6c4d426bcdb914708c9e7b8019116ddf",
       size:10485760
     };
+    
     //Component
     componentList: ComponentList =
     {
@@ -5816,10 +5822,10 @@ export class CommonService {
               active: "true",
               running: "true",
               access: "READ_ONLY",
-              vendorCode: "K2",
-              buildId: "b01",
-              buildName: "product-default",
-              buildVersion: "0.1.0",
+              "vendor-code": "K2",
+              "build-id": "b01",
+              "build-name": "product-default",
+              "build-version": "0.1.0",
               files: {
                 name: "file-1",
                 version: "0.2.3",

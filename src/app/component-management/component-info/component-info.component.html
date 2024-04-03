@@ -54,11 +54,11 @@
       <input id="Datastore" class="toggle" type="checkbox">
       <label for="Datastore" class="lbl-toggle"></label>
       
-      <div class="collapsible-content">
+      <!-- <div class="collapsible-content">
         <div class="content-inner">
           <div class="collabsible">
             <div>
-              <span>Netconf Server:<button>Update</button></span>
+              <span>netconf-server:<button>Update</button></span>
               <input id="treemenu" class="toggle" type="checkbox">
               <label for="treemenu" class="lbl-toggle"></label>
               <div class="collapsible-content">
@@ -129,7 +129,7 @@
               </div>
             </div>
             <div>
-              <span>Netconf Server:<button>Update</button></span>
+              <span>keystore:<button>Update</button></span>
               <input id="netconf-server" class="toggle" type="checkbox">
               <label for="netconf-server" class="lbl-toggle"></label>
               <div class="collapsible-content">
@@ -157,7 +157,113 @@
             </div>
           </div>
         </div>
+      </div> -->
+
+      
+      <!-- sample mine <div *ngFor="let key of objectKeys(jsonData)">
+        <div class="collapsible-content">
+          <div class="content-inner">
+            <div class="collabsible">
+              <div>
+                <span>{{ key }}:<button>Update</button></span>
+                <input id="{{ key }}" class="toggle" type="checkbox">
+                <label for="{{ key }}" class="lbl-toggle"></label>
+                <div class="collapsible-content">
+                  <div class="content-inner">
+                    <ul class="treeList">
+                      <ng-container *ngIf="isObject(jsonData[key])">
+                        <li class="SubItem">
+                          <label class="active">{{ key }}</label>
+                          <ul>
+                            <li *ngFor="let subKey of objectKeys(jsonData[key])" class="SubItem">
+                              <ng-container *ngIf="isObject(jsonData[key][subKey])">
+                                <label>{{ subKey }}:</label>
+                              </ng-container>
+                              <ng-container *ngIf="!isObject(jsonData[key][subKey])">
+                                <label>{{ subKey }}:</label>
+                                <ng-container *ngIf="subKey === 'users'">
+                                  <input type="text" [value]="jsonData[key][subKey]">
+                                </ng-container>
+                              </ng-container>
+                              <div *ngIf="isObject(jsonData[key][subKey])">
+                                <ng-container *ngTemplateOutlet="nestedKeys; context: { $implicit: jsonData[key][subKey] }"></ng-container>
+                              </div>
+                            </li>
+                          </ul>
+                        </li>
+                      </ng-container>
+                      <ng-container *ngIf="!isObject(jsonData[key])">
+                        <label>{{ key }}:</label>
+                        <input type="text" [value]="jsonData[key]">
+                      </ng-container>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+      <ng-template #nestedKeys let-data>
+        <ul class="treeList">
+          <li *ngFor="let subSubKey of objectKeys(data)" class="SubItem">
+            <label>{{ subSubKey }}:</label>
+            <ng-container *ngIf="isObject(data[subSubKey])">
+              <div *ngTemplateOutlet="nestedKeys; context: { $implicit: data[subSubKey] }"></div>
+            </ng-container>
+            <ng-container *ngIf="!isObject(data[subSubKey])">
+              <label>{{ subSubKey }}:</label>
+              <input type="text" [value]="data[subSubKey]">
+            </ng-container>
+          </li>
+        </ul>
+      </ng-template> -->
+
+      <!-- <div class="tree-container" *ngFor="let node of treeData">
+        <ul class="treeList">
+          <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: node }"></ng-container>
+        </ul>
+      </div> -->
+
+      <div class="collapsible-content">
+        <div class="content-inner">
+          <div class="collabsible">
+            <div class="tree-container" *ngFor="let node of treeData">
+              <span>{{ node.key }}:<button>Update</button></span>
+              <input id="{{ node.key }}" class="toggle" type="checkbox">
+              <label for="{{ node.key }}" class="lbl-toggle"></label>
+              <div class="collapsible-content">
+                <div class="content-inner">
+                  <ul class="treeList">
+                    <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: node }"></ng-container>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <ng-template #nodeTemplate let-node>
+        <li>
+          <label>{{ node.key }}</label>
+          <ng-container *ngIf="node.children">
+            <ul>
+              <ng-container *ngFor="let child of node.children; let i = index">
+                <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: child }"></ng-container>
+              </ng-container>
+            </ul>
+          </ng-container>
+          <span *ngIf="!node.children && !node.isTerminal" class="node-value"></span>
+          <!-- Display input if child type is string or number -->
+          <ng-container *ngIf="node.type === 'string' || node.type === 'number'">
+            <input type="text" [(ngModel)]="node.value" class="node-value">
+          </ng-container>
+        </li>
+      </ng-template>
+      
+
+      
     </div>
 
     <div>
@@ -167,8 +273,7 @@
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="panel">
-            <!-- <label *ngFor="let software of componentInfo.sm.software-inventory.software-slot" [for]="'radio-' + software.name"> -->
-              <label *ngFor="let software of componentInfo.sm['software-inventory']['software-slot']" [for]="'radio-' + software.name">
+                <label *ngFor="let software of componentInfo?.sm?.['software-inventory']?.['software-slot']" [for]="'radio-' + software.name">
               <input type="radio" [id]="'radio-' + software.name" name="software-group">
               <div>
                 <ul>
@@ -177,7 +282,7 @@
                   <li><label>Active</label><span>{{ software.active }}</span></li>
                   <li><label>Running</label><span>{{ software.running }}</span></li>
                   <li><label>Access</label><span>{{ software.access }}</span></li>
-                  <li><label>Version</label><span>{{ software.buildVersion }}</span></li>
+                  <li><label>Version</label><span>{{ software['build-version'] ? software['build-version'] : '-' }}</span></li>
                 </ul>
               </div>
             </label>
@@ -187,7 +292,6 @@
               <table>
                 <thead>
                   <tr>
-                    <!-- <th>{{languageService.i18n['table.header_name']}}</th> -->
                     <th>{{languageService.i18n['manufacturer']}}</th>
                     <th>{{languageService.i18n['model']}}</th>
                     <th>{{languageService.i18n['type']}}</th>
@@ -198,14 +302,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <!-- <td>{{bsComponentInfo.name}}</td> -->
-                    <td>{{componentInfo.firm}}</td>
-                    <td>{{componentInfo.modelname}}</td>
-                    <td>{{componentInfo.comtype}}</td>
-                    <td>{{componentInfosw.uploadinfos[0]?.uploadversion}}</td>
-                    <td></td>
-                    <td>{{componentInfosw.uploadinfos[0]?.uploadtime}}</td>
+                  <tr *ngFor="let info of uploadinfos">
+                    <td>{{info.firm}}</td>
+                    <td>{{info.modelname}}</td>
+                    <td>{{info.uploadtype}}</td>
+                    <td>{{info.uploadversion}}</td>
+                    <td>{{info.description}}</td>
+                    <td>{{info.uploadtime}}</td>
                     <td class="center">
                       <mat-icon tooltip="{{languageService.i18n['view_detail']}}">cloud_download</mat-icon>
                     </td>
@@ -213,12 +316,11 @@
                 </tbody>
               </table>
             </div>
-          
         </div>
       </div>
     </div>
 
-    <div><span>Alarms</span>
+    <!-- <div><span>Alarms</span>
       <input id="faultMsg" class="toggle" type="checkbox">
       <label for="faultMsg" class="lbl-toggle">
         </label>
@@ -231,7 +333,6 @@
                   <option value="All">All</option>
                   <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
                 </select>
-                <!-- <mat-error *ngIf="searchForm.controls['severity'].invalid">Required</mat-error> -->
               </span>
               <span><label>{{languageService.i18n['fm.start']}}</label>
                 <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
@@ -240,7 +341,6 @@
                 <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
               </span>
               <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
-              <!-- <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search()">clear</span> -->
             </div>
           </form>
             <div class="table">
@@ -259,7 +359,7 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: msgToDisplay.length, id: 'fmList' }; let i = index" >
-                    <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
+                    <td>{{ (p - 1) * pageSize + i + 1 }}</td>
                     <td>{{opt.fieldName}}</td>
                     <td>{{opt.bsName}}</td>
                     <td>{{opt.compname}}</td>
@@ -269,8 +369,7 @@
                     <td>{{opt.status}}</td>
                   </tr>
                 </tbody>
-              </table>
-              <!-- pagination -->    
+              </table> 
               <span class="total">{{languageService.i18n['fm.total1']}} {{msgToDisplay.length}} {{languageService.i18n['fm.total2']}}</span>
               <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
         nextLabel="" id="fmList">
@@ -293,11 +392,10 @@
             </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div>
-      <!-- <span>{{languageService.i18n['cm.file']}}</span> -->
-      <span>File Management</span>
+      <span>{{languageService.i18n['cm.file']}}</span>
       <input id="cm" class="toggle" type="checkbox">
       <label for="cm" class="lbl-toggle"></label>
       <div class="collapsible-content">
