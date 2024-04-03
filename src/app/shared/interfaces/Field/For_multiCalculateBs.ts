@@ -32,10 +32,10 @@ export interface Pci {
   confusion_count: any[];
   collision_cell_new: any[];
   collision_count_new: any[];
-  cellIndividualResult: CellIndividualResult3[];
+  cellIndividualResult: pci_CellIndividualResult[];
 }
 
-export interface CellIndividualResult3 {
+export interface pci_CellIndividualResult {
   nrPCI: number;
   gNBId: number;
   cellLocalId: string;
@@ -55,10 +55,10 @@ export interface NRCellRelation2 {
 
 export interface Anr {
   field: string;
-  cellIndividualResult: CellIndividualResult2[];
+  cellIndividualResult: anr_CellIndividualResult[];
 }
 
-export interface CellIndividualResult2 {
+export interface anr_CellIndividualResult {
   gNBId: number;
   cellLocalId: string;
   pLMNId_MNC: string;
@@ -103,11 +103,11 @@ export interface CellIndividualOffset {
 export interface Cco {
   field: string;
   average_sinr: string;
-  cellIndividualResult: CellIndividualResult[];
+  cellIndividualResult: cco_CellIndividualResult[];
   coverage: string;
 }
 
-export interface CellIndividualResult {
+export interface cco_CellIndividualResult {
   pLMNId_MNC: string;
   txpower: number;
   gNBId: number;

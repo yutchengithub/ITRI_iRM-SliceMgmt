@@ -3116,6 +3116,7 @@
       </span>
       <input id="neighborBsList" class="toggle" type="checkbox">
       <label for="neighborBsList" class="lbl-toggle"></label>
+
       <div class="collapsible-content">
         <div class="content-inner">
           <form>
@@ -3143,7 +3144,9 @@
               <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined">clear</span>
             </div>
           </form>
+          
           <div class="table">
+
             <table>
               <thead>
                 <tr>
@@ -3198,6 +3201,7 @@
                 </tr>
               </tbody>
             </table>
+
           </div>
           
         </div>
@@ -3214,10 +3218,10 @@
           <form [formGroup]="searchForm">
             <div class="filter">
               <span>
-                <label>{{languageService.i18n['fm.severity']}}</label>
+                <label>{{ languageService.i18n['fm.severity'] }}</label>
                 <select formControlName="severity">
                   <option value="All">All</option>
-                  <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>  
+                  <option *ngFor="let severit of severitys" [value]="severit">{{ commonService.textTransfer( severit ) }}</option>  
                 </select>
               </span>
               <span>
@@ -3277,21 +3281,21 @@
                 <!-- 加載完成後顯示當前 Bs Fm List 的數據 @2024/03/31 Add --> 
                 <ng-container *ngIf="!isLoadingCurrentBsFmList">
                   <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, 
-                                      totalItems: totalItems, id: 'currentBsFmList' }; let i = index">
+                                          totalItems: totalItems, id: 'currentBsFmList' }; let i = index">
                     <td>{{ (p - 1) * pageSize + i + 1 }}</td>
-                    <td>{{opt.fieldName}}</td>
-                    <td>{{opt.bsName}}</td>  
-                    <td>{{opt.compname}}</td>
-                    <td>{{opt.probablecause}}</td>
-                    <td>{{opt.eventtype}}</td>
-                    <td>{{opt.modifytime}}</td>
+                    <td>{{ opt.fieldName }}</td>
+                    <td>{{ opt.bsName }}</td>  
+                    <td>{{ opt.compname }}</td>
+                    <td>{{ opt.probablecause }}</td>
+                    <td>{{ opt.eventtype }}</td>
+                    <td>{{ opt.modifytime }}</td>
                     <td>
                       <label *ngIf=" opt.processstatus === '' " class="redLight"></label>
                       <label *ngIf=" opt.processstatus === '0' " class="redLight"></label>
                       <label *ngIf=" opt.processstatus === '1' " class="greenLight"></label>
                     </td>
                   </tr>
-                  <tr class="notFind" *ngIf="totalItems === 0">  
+                  <tr class="notFind" *ngIf=" totalItems === 0 ">  
                     <td colspan="8">{{ languageService.i18n['no_results'] }}</td>
                   </tr>
                 </ng-container>
@@ -3300,7 +3304,7 @@
             <!-- pagination -->      
             <span class="total">{{languageService.i18n['fm.total1']}} {{totalItems}} {{languageService.i18n['fm.total2']}}</span>
             <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" 
-                                  previousLabel="" nextLabel="" id="currentBsFmList"></pagination-controls>
+                                    previousLabel="" nextLabel="" id="currentBsFmList"></pagination-controls>
           </div>
         </div>
       </div>

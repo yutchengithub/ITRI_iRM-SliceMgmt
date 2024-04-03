@@ -209,13 +209,25 @@ export const TwLanguage = {
 
   'field.setPCI':'設定 PCI',
   'field.pciSettings':'PCI 設定',
-  'field.pciRange': 'PCI 最小值',
-  'field.pciSpacing': 'PCI 最大值',
+  'field.pciMin': 'PCI 最小值',
+  'field.pciMax': 'PCI 最大值',
 
   'field.sonCalculate':'計算',
 
   'field.calculationCategories': '計算類別',
+
   'field.calculationResults': '計算結果',
+  'field.originalTxPower': '原傳輸功率',
+  'field.newTxPower': '新傳輸功率',
+
+  'field.fieldPerformance': '場域效能',
+
+  'field.originalNeighborBS': '原鄰居基站',
+  'field.newNeighborBS': '新鄰居基站',
+  
+  'field.originalPCI': '原 PCI',
+  'field.newPCI': '新 PCI',
+  
 
   'field.applySON': '套用',
   'field.cancelSON': '取消',
