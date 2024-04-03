@@ -3287,6 +3287,7 @@
                     <td>{{opt.modifytime}}</td>
                     <td>
                       <label *ngIf=" opt.processstatus === '' " class="redLight"></label>
+                      <label *ngIf=" opt.processstatus === '0' " class="redLight"></label>
                       <label *ngIf=" opt.processstatus === '1' " class="greenLight"></label>
                     </td>
                   </tr>
