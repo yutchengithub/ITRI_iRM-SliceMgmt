@@ -3238,7 +3238,7 @@ export class FieldInfoComponent implements OnInit {
   // 記錄是否觸發計算旗標 @2024/04/02 Add
   isClickCalculate: boolean = false;
 
-  // @2024/04/02 Update
+  // @2024/04/05  Update
   // 發送計算 SON 演算法函數 
   calculateSON_Submit() {
     console.log( "calculateSON_Submit() - Start" );
@@ -3274,6 +3274,11 @@ export class FieldInfoComponent implements OnInit {
              txPowerMax: this.getFieldSonParameters.txPowerMax || '',        // 從取回的 SON 參數獲取 txPowerMax
              txPowerMin: this.getFieldSonParameters.txPowerMin || '',        // 從取回的 SON 參數獲取 txPowerMin
     };
+
+    // @04/05 Add
+    // 切換 <h4> 元素的 "active" 類別
+    const optimizationTypeHeader = document.querySelector('.field-optim-wrap h4');
+    optimizationTypeHeader?.classList.remove('active');
 
     if ( this.commonService.isLocal ) {
       // 本地模式下的處理

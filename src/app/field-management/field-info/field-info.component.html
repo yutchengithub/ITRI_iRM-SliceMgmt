@@ -1499,7 +1499,7 @@
 						{{ languageService.i18n['field.applySON'] }}
 					</button>
 					<!-- 取消按鈕 -->
-					<button type="button" (click)="clear_calculateSON()" >
+					<button type="button" (click)="clear_calculateSON(); resetFieldOptimizationForm()" >
 						{{ languageService.i18n['field.cancelSON'] }}
 					</button>
 				</div>
@@ -1508,7 +1508,7 @@
   
 		<!-- 關閉 Field Optimization 視窗按鈕 -->
 		<!-- <div class="buttons buttons-centered">
-			<button type="button" (click)="resetFieldOptimizationForm()" mat-dialog-close>
+			<button type="button" (click)="" mat-dialog-close>
 				{{ languageService.i18n['close'] }}
 			</button>
 		</div> -->
