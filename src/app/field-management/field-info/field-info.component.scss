@@ -72,14 +72,14 @@ h5 .mat-icon {
 }
 
 // 定義 Expansion Accordion 樣式 @2024/02/29 Add
-::ng-deep .mat-accordion {
-  /* background-color: rgba(255, 255, 255, 0.1); */
-}
+// ::ng-deep .mat-accordion {
+//   /* background-color: rgba(255, 255, 255, 0.1); */
+// }
 
 // 定義 Expansion Panel 樣式 @2024/02/29 Add
-::ng-deep .mat-expansion-panel {
-  /* background-color: rgba(255, 255, 255, 0.1); */
-}
+// ::ng-deep .mat-expansion-panel {
+//   /* background-color: rgba(255, 255, 255, 0.1); */
+// }
 
 // 設定 Expansion Panel 標題區的樣式 @2024/02/29 Add
 .custom-panel-header {
@@ -445,10 +445,10 @@ F
 
 // @12/08 Add by yuchen
 /* 新增或修改的 CSS */
-.boxTitleRightAligned {
-  /* justify-content: center; */
-  /* 讓內部元素整體居中對齊 */
-}
+// .boxTitleRightAligned {
+//   /* justify-content: center; */
+//   /* 讓內部元素整體居中對齊 */
+// }
 
 .boxTitleRightAligned .title-container {
   flex-grow: 1;
