@@ -26,7 +26,7 @@ import { BsInfoInField }                  from '../../shared/interfaces/Field/Fo
 import { ForCreateOrUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_createField_or_updateField';         // @2024/01/26 Add
 import { ForQueryOrUpdatePmFTPInfo }      from '../../shared/interfaces/Field/For_queryPmFtpInfo_or_updatePmFtpInfo';  // @2024/02/04 Add
 import { ForQuerySonParameter }           from '../../shared/interfaces/Field/For_querySonParameter';                  // @2024/03/30 Add
-import { ForCalculateSon, ForCalculateSonResponse, CellIndividualResult2, CellIndividualResult3, CellIndividualResult } from '../../shared/interfaces/Field/For_multiCalculateBs';                   // @2024/03/31 Add
+import { ForCalculateSon, ForCalculateSonResponse, anr_CellIndividualResult, pci_CellIndividualResult, cco_CellIndividualResult } from '../../shared/interfaces/Field/For_multiCalculateBs';                   // @2024/03/31 Add
 import { BSInfo }              from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2023/12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
@@ -3336,27 +3336,32 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
-  // 宣告變數來儲存 ANR 結果
-  gnbsAnr: CellIndividualResult2[] = [];
-
-  // 宣告變數來儲存 PCI 結果
-  gnbsPci: CellIndividualResult3[] = [];
-  pciCollisions: any[] = [];
-  pciConfusions: any[] = [];
-  collisionCount: number = 0;
-  confusionCount: number = 0;
-  collisionRatio: number = 0;
-  confusionRatio: number = 0;
-
   // 宣告變數來儲存 CCO 結果
-  gnbsCco: CellIndividualResult[] = [];
+  gnbsCco: cco_CellIndividualResult[] = [];
   resultSinr: string = '';
   resultCoverage: string = '';
 
+  // 宣告變數來儲存 ANR 結果
+  gnbsAnr: anr_CellIndividualResult[] = [];
+
+  // 宣告變數來儲存 PCI 結果
+  gnbsPci: pci_CellIndividualResult[] = [];
+
+  // 記錄 PCI Collision 資訊
+  pciCollisions: any[] = [];
+  pci_collisionCount: number = 0; // 計算 PCI Collision 次數
+  pci_collisionRatio: number = 0; // 計算 PCI Collision 比率
+
+  // 記錄 PCI Confusion 資訊
+  pciConfusions: any[] = [];
+  pci_confusionCount: number = 0; // 計算 PCI Confusion 次數
+  pci_confusionRatio: number = 0; // 計算 PCI Confusion 比率
+
   // 宣告變數來儲存前端顯示狀態
+  isCcoClass: boolean = false;
   isPciClass: boolean = false;
   isAnrClass: boolean = false;
-  isCcoClass: boolean = false;
+
   currentProgress: number = 0;
   showPciMax: number | null = null;
   showPciMin: number | null = null;
@@ -3367,21 +3372,26 @@ export class FieldInfoComponent implements OnInit {
   // 處理 SON 計算回傳值的函數
   processCalculationResponse( calculationResponse: ForCalculateSonResponse ) {
 
-    // 將回傳值轉換成 JSON 字串並輸出到控制台
-    console.log( JSON.stringify( calculationResponse ) );
+    // 將取得的回傳值轉換成輸出到控制台上 this.allSimplifiedBsInfo
+    console.log("In processCalculationResponse() - SON calculation:", calculationResponse );
+    console.log("In processCalculationResponse() - this.allSimplifiedBsInfo:", this.allSimplifiedBsInfo );
     
-
-    // 從回傳值中取出 anr、pci、cco 的結果資料
+    // 從回傳值中取出 cco、anr、pci 的結果資料
+    const tempCco = calculationResponse.cco;
     const tempAnr = calculationResponse.anr;
     const tempPci = calculationResponse.pci;
-    const tempCco = calculationResponse.cco;
+
+    console.log("tempCCO: ", tempCco);
+    console.log("tempANR: ", tempAnr);
+    console.log("tempPci: ", tempPci);
 
     // 處理 ANR 結果資料
-    if (tempAnr !== undefined && tempAnr.cellIndividualResult) {
+    if ( tempAnr !== undefined && tempAnr.cellIndividualResult ) {
       // 將 ANR 的個別小區結果加入到 gnbsAnr 陣列中
-      tempAnr.cellIndividualResult.forEach(res => {
-        this.gnbsAnr.push(res);
+      tempAnr.cellIndividualResult.forEach( res => {
+        this.gnbsAnr.push( res );
       });
+      console.log( "gnbsAnr: ",  this.gnbsAnr );
     }
 
     // 處理 PCI 結果資料
@@ -3399,15 +3409,15 @@ export class FieldInfoComponent implements OnInit {
 
           const count = res.NRCellRelation.length;
 
-          // 計算鄰居小區的總數
+          // 計算鄰居 Cell 的總數
           neighborCount += count;
 
-          // 計算鄰居小區的組合數
+          // 計算鄰居 Cell 的組合數
           combineCount += count * ( count - 1 ) / 2;
         });
       }
 
-      // 處理 PCI 碰撞的小區資料
+      // 處理 PCI 碰撞的 Cell 資料
       if ( tempPci.collision_cell ) {
         this.pciCollisions = tempPci.collision_cell;
       }
@@ -3421,17 +3431,17 @@ export class FieldInfoComponent implements OnInit {
           totalCount += tempPci.collision_count[i].collision_count;
         }
 
-        this.collisionCount = totalCount / 2;
+        this.pci_collisionCount = totalCount / 2;
         console.log( neighborCount );
 
         if ( neighborCount > 0 ) {
 
           // 計算 PCI 碰撞比率
-          this.collisionRatio = Number( ( this.collisionCount / ( neighborCount / 2 ) ).toFixed( 3 ) ) * 100;
+          this.pci_collisionRatio = Number( ( this.pci_collisionCount / ( neighborCount / 2 ) ).toFixed( 3 ) ) * 100;
 
         }
       }
-      // 處理 PCI 混淆的小區資料
+      // 處理 PCI 混淆的 Cell 資料
       if ( tempPci.confusion_cell ) {
         this.pciConfusions = tempPci.confusion_cell;
       }
@@ -3441,11 +3451,11 @@ export class FieldInfoComponent implements OnInit {
         for ( let i = 0; i < tempPci.confusion_count.length; i++ ) {
           totalCount += tempPci.confusion_count[i].confusion_count;
         }
-        this.confusionCount = totalCount / 2;
+        this.pci_confusionCount = totalCount / 2;
         if ( combineCount > 0 ) {
 
           // 計算 PCI 混淆比率
-          this.confusionRatio = Number( ( this.confusionCount / combineCount ).toFixed( 3 ) ) * 100;
+          this.pci_confusionRatio = Number( ( this.pci_confusionCount / combineCount ).toFixed( 3 ) ) * 100;
         }
       }
     }

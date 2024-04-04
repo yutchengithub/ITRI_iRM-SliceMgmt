@@ -210,13 +210,25 @@ export const Enlanguage = {
 
   'field.setPCI':'Set PCI',
   'field.pciSettings': 'PCI Settings',
-  'field.pciRange': 'Minimum PCI',
-  'field.pciSpacing': 'Maximum PCI',
+  'field.pciMin': 'Minimum PCI',
+  'field.pciMax': 'Maximum PCI',
 
   'field.sonCalculate':'Calculate',
 
   'field.calculationCategories': 'Calculation Categories',
   'field.calculationResults': 'Calculation Results',
+  'field.originalTxPower': 'Original Tx Power',
+  'field.newTxPower': 'New Tx Power',
+
+  'field.fieldPerformance': 'Field Performance',
+
+  'field.originalNeighborBS': 'Original Neighbor BSs',
+  'field.newNeighborBS': 'New Neighbor BSs',
+  
+  'field.originalPCI': 'Original PCI',
+  'field.newPCI': 'New PCI',
+  
+  
   
   'field.applySON': 'Apply',
   'field.cancelSON': 'Cancel',

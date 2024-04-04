@@ -59,10 +59,10 @@ interface SoftwareSlot {
   active?: string;
   running?: string;
   access?: string;
-  vendorCode?: string;
-  buildId?: string;
-  buildName?: string;
-  buildVersion?: string;
+  "vendor-code"?: string;
+  "build-id"?: string;
+  "build-name"?: string;
+  "build-version"?: string;
   files?: Files;
 }
 interface Files {
@@ -72,11 +72,27 @@ interface Files {
   integrity: string;
 }
 
+export interface UploadFileList {
+  session: string;
+  firm: string;
+  modelname: string;
+  uploadtype: number;
+}
+interface JsonObject {
+  [key: string]: any;
+}
+interface TreeNode {
+  key: string;
+  value: any;
+  type: string;
+  children?: TreeNode[];
+}
 @Component({
   selector: 'app-component-info',
   templateUrl: './component-info.component.html',
   styleUrls: ['./component-info.component.scss']
 })
+
 
 export class ComponentInfoComponent implements OnInit {
   sessionId: string = '';
@@ -86,10 +102,9 @@ export class ComponentInfoComponent implements OnInit {
   comId: string = '';
   // utilizationPercent: number = 0;
   componentInfo: ComponentInfo = {} as ComponentInfo;
-  uploadinfos: Uploadinfos[] = [];
   softwareList: SoftwareList[] = [];
   componentInfosw: ComponentInfosw = {} as ComponentInfosw;
-  systemSummary: SystemSummary = {} as SystemSummary;;
+  systemSummary: SystemSummary = {} as SystemSummary;
   fileNameMapSoftware: Map<string, SoftwareList> = new Map();
   faultColors: string[] = ['#FF0000', '#FFA042', '	#FFFF37', '#00FFFF'];
   showTooltipCpu: any = {};
@@ -105,6 +120,7 @@ export class ComponentInfoComponent implements OnInit {
   updateIPModalRef!: MatDialogRef<any>;
   updateForm!: FormGroup;
   formValidated = false;
+  uploadinfos: Uploadinfos[] = [];
   /* CRITICAL,MAJOR,MINOR,WARNING */
   severitys: string[];
   cmpsource: string[];
@@ -119,6 +135,47 @@ export class ComponentInfoComponent implements OnInit {
   isSearch: boolean = false;
   filteredFmList: FaultMessages[] = [];
   isActive = false;
+  jsonData: any = {};
+  treeData: TreeNode[] = [];
+  json = {
+    "netconf-server": {
+      "listen": {
+        "endpoint": {
+          "name": "default-ssh",
+          "ssh": {
+            "tcp-server-parameters": {
+              "local-address": "0.0.0.0",
+              "local-port": 11830,
+              "keepalives": {
+                "idle-time": 1,
+                "max-probes": 10,
+                "probe-interval": 5
+              }
+            },
+            "ssh-server-parameters": {
+              "server-identity": {
+                "host-key": {
+                  "name": "default-key",
+                  "public-key": {
+                    "keystore-reference": "genkey"
+                  }
+                }
+              },
+              "client-authentication": {
+                "supported-authentication-methods": {
+                  "publickey": "",
+                  "passsword": "",
+                  "other": "interactive"
+                },
+                "users": ""
+              }
+            }
+          }
+        }
+      },
+      "xmlns": "urn:ietf:params:xml:ns:yang:ietf-netconf-server"
+    }
+  };
   activeMap: any = {
     box1 : true,
     box2 : false,
@@ -131,7 +188,10 @@ export class ComponentInfoComponent implements OnInit {
     theme: 'light',     // 'dark' | 'light'
     hideDelay: 250
   };
-
+  isObject(value: any): boolean {
+    return typeof value === 'object' && value !== null;
+  }
+  
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -151,7 +211,6 @@ export class ComponentInfoComponent implements OnInit {
       this.comId = params['id'];
       //console.log('id=' + this.comId);
       this.getComponentInfo();
-      this.getSoftwareList();
       this.getFaultMessage();
       this.search();
       
@@ -190,8 +249,7 @@ export class ComponentInfoComponent implements OnInit {
       const parser = new XMLParser(parseOption);
       const output = parser.parse(xmldata);
       //console.log('Json output: ',output);
-      console.log('Json output: ', JSON.stringify(output, null, 2));
-
+      //console.log('Json output: ', JSON.stringify(output, null, 2));
     } else {
       this.cmpsource = this.commonService.cmpsource;
       this.commonService.queryBsComponentInfo(this.comId).subscribe(
@@ -201,16 +259,133 @@ export class ComponentInfoComponent implements OnInit {
           const xmldata = this.commonService.bsComponentInfo.info.data;
           const parser = new XMLParser(parseOption);
           const output = parser.parse(xmldata);
-          //console.log('Json output: ',output);
-          console.log('Json output: ', JSON.stringify(output, null, 2));
+          this.jsonData = output;
+          this.getfilterQueryUploadFileList();
+          const jsonstr = JSON.stringify(output, null, 2);//get in string
+          this.treeData = this.buildTree(this.jsonData);
+          console.log('Tree Data:', this.treeData);
+          //this.treeData = this.parseJSON(this.json);
+          //console.log('Json output: ',jsonstr);
+          //this.printJson(this.jsonData);
+          //this.loopThroughJSON(this.json);
+          //this.checkType(this.json);
+          console.log('Json output: ', this.jsonData);
         },
         (error: any) => {
-          console.error('Error loading BsComponentInfo:', error);
+          console.error('Error loading ComponentInfo:', error);
         }
       );
     }
   }
+  buildTree(obj: any): TreeNode[] {
+    return Object.entries(obj).map(([key, value]) => {
+      const node: TreeNode = { key, value, type: this.checkType(value) };
+      if (node.type === 'object') {
+        node.children = this.buildTree(value);
+      }
+      return node;
+    });
+    
+  }
 
+  checkType(obj: any): string {
+    if (typeof obj === 'object' && obj !== null) {
+      return 'object';
+    } else {
+      return typeof obj;
+    }
+  }
+  loopThroughJSON(obj: any) {
+    for (let key in obj) {
+      if (typeof obj[key] === 'object') {
+        if (Array.isArray(obj[key])) {
+          // loop through array
+          for (let i = 0; i < obj[key].length; i++) {
+            this.loopThroughJSON(obj[key][i]);
+          }
+        } else {
+          // call function recursively for object
+          this.loopThroughJSON(obj[key]);
+        }
+      } else {
+        // do something with value
+        console.log(key + ': ' + obj[key]);
+      }
+    }
+  }
+  // parseJSON(obj: any): TreeNode[] {
+  //   const nodes: TreeNode[] = [];
+  //   for (const key in obj) {
+  //     if (obj.hasOwnProperty(key)) {
+  //       const value = obj[key];
+  //       if (typeof value === 'object') {
+  //         nodes.push({ key, value, children: this.parseJSON(value) });
+  //         //console.log(typeof value);
+  //       } else {
+  //         nodes.push({ key, value });
+  //         //console.log(typeof value);
+  //       }
+  //     }
+  //   }
+  //   return nodes;
+  // }
+  // printJson(jsonObj: JsonObject, num: number = 0): void {
+  //   for (const key in jsonObj) {
+  //       if (jsonObj.hasOwnProperty(key)) {
+  //           const value = jsonObj[key];
+  //           if (typeof value === 'object' && value !== null) {
+  //               console.log("  ".repeat(num) + `${key}:`);
+  //               this.printJson(value, num + 1);
+  //           } else {
+  //               console.log("  ".repeat(num) + `${key}: ${value}`);
+  //           }
+  //       }
+  //   }
+  // }
+  
+  generatedHtml: string = '';
+  printJson(jsonObj: JsonObject, depth: number = 0): void {
+    for (const key in jsonObj) {
+      if (jsonObj.hasOwnProperty(key)) {
+        const value = jsonObj[key];
+        const indent = '&nbsp;&nbsp;'.repeat(depth); // Indent based on depth
+        this.generatedHtml += `<div>${indent}<span>${key}</span></div>`; // Display key as span
+        if (typeof value === 'object' && value !== null) {
+          // If value is an object, recursively call printJson with increased depth
+          this.printJson(value, depth + 1); // Recursive call for nested objects
+        } else {
+          // If value is not an object, display it as key : value pair
+          this.generatedHtml += `<div>${indent}&nbsp;&nbsp;----${key}: ${value}</div>`;
+        }
+      }
+    }
+  }
+  objectKeys(obj: any): string[] {
+    return Object.keys(obj);
+  }
+  
+  getfilterQueryUploadFileList() {
+    this.formValidated = true;
+    if (this.commonService.isLocal) {
+      /* local file test */
+      console.log('getfilterQueryUploadFileList');
+    } else {
+      const body = {
+        session: this.sessionId,
+        firm: this.componentInfo.firm,
+        modelname: this.componentInfo.modelname,
+        uploadtype: this.componentInfo.comtype
+      };
+      this.commonService.filterQueryUploadFileList(body).subscribe(
+        (res: any) => {
+          console.log('filterQueryUploadFileList:');
+          console.log(res);
+          this.uploadinfos = res.uploadinfos;
+        }
+      );
+    }
+  }
+  
   // Getter to get the first item in the softwareSlot array or undefined if the array is empty
   get firstSoftwareSlot(): SoftwareSlot | undefined {
     return this.componentInfo?.sm['software-inventory']['software-slot'][0];
@@ -220,8 +395,6 @@ export class ComponentInfoComponent implements OnInit {
    createSearchForm() {
     const nowTime = this.commonService.getNowTime();
     const compName = this.commonService.bsComponentInfo.name;
-    // // // console.log(nowTime)
-    // // // 格式驗證需要處理?
 
     this.searchForm = this.fb.group({
       'compName': new FormControl(compName),
@@ -331,23 +504,23 @@ export class ComponentInfoComponent implements OnInit {
     this.RunRefreshTimeout = window.setTimeout(() => this.getComponentInfo(), this.RunRefreshTime * 1000);
   }
 
-  getSoftwareList() {
-    clearTimeout(this.refreshTimeout);
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.componentInfosw.uploadinfos = this.commonService.componentInfosw.uploadinfos;
-      //this.softwareListDeal();
-    } else {
-      this.commonService.queryUploadFileList().subscribe(
-        res => {
-          console.log('Get software list:');
-          console.log(res);
-          //this.softwareLists = res as SoftwareLists;
-          //this.softwareListDeal();
-        }
-      );
-    }
-  }
+  // getSoftwareList() {
+  //   clearTimeout(this.refreshTimeout);
+  //   if (this.commonService.isLocal) {
+  //     /* local file test */
+  //     this.componentInfosw.uploadinfos = this.commonService.componentInfosw.uploadinfos;
+  //     //this.softwareListDeal();
+  //   } else {
+  //     this.commonService.queryUploadFileList().subscribe(
+  //       res => {
+  //         console.log('Get software list:');
+  //         console.log(res);
+  //         //this.softwareLists = res as SoftwareLists;
+  //         //this.softwareListDeal();
+  //       }
+  //     );
+  //   }
+  // }
 
   softwareDeal() {
     this.fileNameMapSoftware = new Map();
