@@ -1135,12 +1135,17 @@ cursor: pointer;
 body.en #fieldEditWindow {
   width: 71em;
 }
+#fieldOptimizationWindow mat-button-toggle-group .mat-button-toggle-appearance-standard.mat-button-toggle-checked,
  #fieldEditWindow .fieldEditTab mat-button-toggle-group .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
   background-color:#ba5a2a!important;
 }
+#fieldOptimizationWindow mat-button-toggle-group .mat-button-toggle-appearance-standard,
 #fieldEditWindow .fieldEditTab mat-button-toggle-group .mat-button-toggle-appearance-standard {
   background-color:#485c77!important;
   color:#ddd;
+}
+#fieldOptimizationWindow .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
+  border-left: solid 1px #2d3842;
 }
 #fieldEditWindow .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
   border-left: solid 1px #064f97;
@@ -1257,6 +1262,7 @@ body.en .fault_mgr.table table tbody tr td:nth-child(4) {
   color: #45a0e7;
   top: 5px;
 }
+
 #PMgmtParameterSetWindow {
   width: 44em;
 }
@@ -1454,11 +1460,29 @@ body.tw .sfReport .file_url_info li label {
 }
 
 #fieldOptimizationWindow {
-  min-width: 60em!important;
+  width: 63.35vw!important;
+  padding-bottom: 1.5em!important;
 }
 #fieldOptimizationWindow .field-optim-wrap .mat-form-field-appearance-legacy .mat-form-field-label {
   color: #fff;
+  font-size: .75em;
 }
 #fieldOptimizationWindow .mat-form-field-appearance-legacy .mat-form-field-underline {
   background-color: #fff;
+}
+#fieldOptimizationWindow .mat-form-field-appearance-legacy.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  transform: initial;
+  font-size: .75em;
+  top: 3px;
+  position: absolute;
+  display: inline-block;
+  color: #ddd;
+}
+
+body.tw #fieldOptimizationWindow ul li > label {
+  width: 6.5em!important;
+  min-width: initial;
+}
+#fieldOptimizationWindow .mat-radio-button ~ .mat-radio-button {
+  margin: 3px 0;
 }

@@ -1133,306 +1133,347 @@
 	<ng-template #fieldOptimizationWindow>
 		<!-- 視窗標題 -->
 		<h5>{{ languageService.i18n['field.optim'] }}</h5>
-	<div class="field-optim-wrap">
-		<span class="field-optim-container">
-			<form [formGroup]="fieldOptimizationForm">
-				<div class="left-section" formGroupName="setSONParameters">
-				<label>{{ languageService.i18n['field.selectCalculationParameters'] }}: </label>
-				<span>
-					<mat-checkbox formControlName="cco" (change)="onCCOChange($event)">CCO</mat-checkbox>
-					<mat-checkbox formControlName="anr" (change)="onANRChange($event)">ANR</mat-checkbox>
-					<mat-checkbox formControlName="pci" (change)="onPCIChange($event)">PCI</mat-checkbox>
-				</span>
-				</div>
-				<div class="right-section">
-				<div *ngIf="showCCOSettings">
-					<label>{{ languageService.i18n['field.setCCO'] }}:</label>
-					<mat-radio-group formControlName="ccoSetParameters">
-					<mat-radio-button value="maxCoverageRange">{{ languageService.i18n['field.maxCoverageRange'] }}</mat-radio-button>
-					<mat-radio-button value="ratioAverageSINR">{{ languageService.i18n['field.maxSINR'] }}</mat-radio-button>
-					</mat-radio-group>
-				</div>
-				<div *ngIf="showANRSettings">
-					<label>{{ languageService.i18n['field.setANR'] }}:</label>
-					<mat-form-field>
-						<mat-label>{{ languageService.i18n['field.minSignalPower'] }}</mat-label>
-						<input matInput type="number" placeholder="-7" formControlName="ueSyncMinSINR">
-					</mat-form-field>
-				</div>
-				<div *ngIf="showPCISettings">
-					<label>{{ languageService.i18n['field.setPCI'] }}:</label>
-					<mat-form-field>
-					<mat-label>{{ languageService.i18n['field.pciRange'] }}</mat-label>
-					<input matInput type="number" placeholder="100" formControlName="pciMax">
-					</mat-form-field>
-					<mat-form-field>
-					<mat-label>{{ languageService.i18n['field.pciSpacing'] }}</mat-label>
-					<input matInput type="number" placeholder="160" formControlName="pciMin">
-					</mat-form-field>
-				</div>
-				</div>
-			</form>
-			<!-- 計算按鈕 -->
-			<button type="button" (click)="calculateSON_Submit()">
-				{{ languageService.i18n['field.sonCalculate'] }}
-			</button>
-		</span>
-  
+	<div class="field-optim-wrap fieldOptimization">
 		<span>
-			<!-- Calculation Categories 欄位 -->
-			<label>{{ languageService.i18n['field.calculationCategories'] }}</label>
-			<span *ngIf="calculationCategories.length > 0">
-				<div *ngIf="isClickCalculate">
-					<ul>
-						<li *ngFor="let category of calculationCategories">
-							<label *ngIf="category === 'cco'">{{ languageService.i18n['field.ccoSettings'] }}:</label>
-							<label *ngIf="category === 'anr'">{{ languageService.i18n['field.setANR'] }}:</label>
-							<label *ngIf="category === 'pci'">{{ languageService.i18n['field.setPCI'] }}:</label>
-							<span *ngIf="category === 'cco'">
-								<span *ngIf="fieldOptimizationForm.get('ccoSetParameters')?.value === 'maxCoverageRange'">
-									{{ languageService.i18n['field.maxCoverageRange'] }}
-								</span>
-								<span *ngIf="fieldOptimizationForm.get('ccoSetParameters')?.value === 'ratioAverageSINR'">
-									{{ languageService.i18n['field.maxSINR'] }}: {{ getFieldSonParameters.ratioAverageSINR }}
-								</span>
+			<h4 class="active">優化種類
+				<span class="material-symbols-outlined">expand_more</span>
+			</h4>
+			<div class="field-optim-container">
+				<form [formGroup]="fieldOptimizationForm">
+					<div class="left-section" formGroupName="setSONParameters">
+						<div>
+							<mat-checkbox formControlName="cco" (change)="onCCOChange($event)">CCO</mat-checkbox>
+							<span>
+								<select name="" id="">
+									<option value="maxCoverageRange">{{ languageService.i18n['field.maxCoverageRange'] }}</option>
+									<option value="ratioAverageSINR">{{ languageService.i18n['field.maxSINR'] }}</option>
+								</select>
+								<!-- <mat-radio-group formControlName="ccoSetParameters">
+									<mat-radio-button value="maxCoverageRange">{{ languageService.i18n['field.maxCoverageRange'] }}</mat-radio-button>
+									<mat-radio-button value="ratioAverageSINR">{{ languageService.i18n['field.maxSINR'] }}</mat-radio-button>
+								</mat-radio-group> -->
 							</span>
-							<span *ngIf="category === 'anr'">
-								{{ languageService.i18n['field.minSignalPower'] }}: {{ fieldOptimizationForm.get('ueSyncMinSINR')?.value }}
+						</div>
+						<div>
+							<mat-checkbox formControlName="anr" (change)="onANRChange($event)">ANR</mat-checkbox>
+							<span>
+								<label>{{ languageService.i18n['field.minSignalPower'] }}</label>
+								<input type="number" value="-7" formControlName="ueSyncMinSINR">
+								<!-- <mat-form-field>
+									<mat-label>{{ languageService.i18n['field.minSignalPower'] }}</mat-label>
+									<input matInput type="number" placeholder="-7" formControlName="ueSyncMinSINR">
+								</mat-form-field> -->
 							</span>
-							<span *ngIf="category === 'pci'">
-								{{ languageService.i18n['field.pciSpacing'] }}: {{ fieldOptimizationForm.get('pciMax')?.value }} ~
-								{{ languageService.i18n['field.pciRange'] }}: {{ fieldOptimizationForm.get('pciMin')?.value }}
+						</div>
+						<div>
+							<mat-checkbox formControlName="pci" (change)="onPCIChange($event)">PCI</mat-checkbox>
+							<span>
+								<label>{{ languageService.i18n['field.minSignalPower'] }}</label>
+								<input type="number" value="100" formControlName="pciMax">
+								<!-- <mat-form-field>
+									<mat-label>{{ languageService.i18n['field.pciRange'] }}</mat-label>
+									<input matInput type="number" placeholder="100" formControlName="pciMax">
+								</mat-form-field> -->
 							</span>
-						</li>
-					</ul>
+							<span>
+								<label>{{ languageService.i18n['field.pciSpacing'] }}</label>
+								<input type="number" value="160" formControlName="pciMin">
+								<!-- <mat-form-field>
+									<mat-label>{{ languageService.i18n['field.pciSpacing'] }}</mat-label>
+									<input matInput type="number" placeholder="160" formControlName="pciMin">
+								</mat-form-field> -->
+							</span>
+						</div>
+					</div>
+					
+				</form>
+				<!-- 計算按鈕 -->
+				<div class="buttons ">
+					<button type="button" (click)="calculateSON_Submit()">
+						{{ languageService.i18n['field.sonCalculate'] }}
+					</button>
 				</div>
-			</span>
+			</div>
+		</span>
+		<!-- Calculation Categories 欄位 -->
+		<!--  <label>{{ languageService.i18n['field.calculationCategories'] }}</label>
+			<span *ngIf="calculationCategories.length > 0">
+			<div *ngIf="isClickCalculate">
+				<ul>
+					<li *ngFor="let category of calculationCategories">
+						<label *ngIf="category === 'cco'">{{ languageService.i18n['field.ccoSettings'] }}:</label>
+						<label *ngIf="category === 'anr'">{{ languageService.i18n['field.setANR'] }}:</label>
+						<label *ngIf="category === 'pci'">{{ languageService.i18n['field.setPCI'] }}:</label>
+						<span *ngIf="category === 'cco'">
+							<span *ngIf="fieldOptimizationForm.get('ccoSetParameters')?.value === 'maxCoverageRange'">
+								{{ languageService.i18n['field.maxCoverageRange'] }}
+							</span>
+							<span *ngIf="fieldOptimizationForm.get('ccoSetParameters')?.value === 'ratioAverageSINR'">
+								{{ languageService.i18n['field.maxSINR'] }}: {{ getFieldSonParameters.ratioAverageSINR }}
+							</span>
+						</span>
+						<span *ngIf="category === 'anr'">
+							{{ languageService.i18n['field.minSignalPower'] }}: {{ fieldOptimizationForm.get('ueSyncMinSINR')?.value }}
+						</span>
+						<span *ngIf="category === 'pci'">
+							{{ languageService.i18n['field.pciSpacing'] }}: {{ fieldOptimizationForm.get('pciMax')?.value }} ~
+							{{ languageService.i18n['field.pciRange'] }}: {{ fieldOptimizationForm.get('pciMin')?.value }}
+						</span>
+					</li>
+				</ul>
+			</div>
+		</span> -->
 
-			<!-- Calculation Results 欄位 -->
-			<label>{{ languageService.i18n['field.calculationResults'] }}</label>
-			<span *ngIf="isClickCalculate">
-				
+		<!-- Calculation Results 欄位 -->
+		<span *ngIf="isClickCalculate" class="isClickCalculate">
+
+			<h4 class="inline-block">
+				優化結果
+				<!-- {{ languageService.i18n['field.calculationResults'] }} -->
+			</h4>
+			<div class="tabs">
+				<mat-button-toggle-group name="fieldEditType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldEditType" (change)="changefieldEditType($event)">
+					<mat-button-toggle value="cco" >CCO</mat-button-toggle>
+					<mat-button-toggle value="anr" >ANR</mat-button-toggle>
+					<mat-button-toggle value="pci" >PCI</mat-button-toggle>
+				</mat-button-toggle-group>
+			</div>
+			<div class="Field_Infos" *ngIf="fieldEditType === 'cco'">
 				<!-- CCO 結果 -->
 				<div *ngIf="isCcoClass">
-					<h5>CCO</h5>
-					<div class="table">
-						<table>
-							<thead>
-								<tr>
-									<th>基站名稱</th>
-									<th>原值功率</th>
-									<th>-></th>
-									<th>新值功率</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr *ngFor="let result of gnbsCco">
-									<td>BS-all-2<br>(NCI=000008108)</td>
-									<td>{{ result.txpower }}</td>
-									<td>-></td>
-									<td>{{ result.txpower }}</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					<h5>場域效能</h5>
-					<div>
-						<span>SINR: {{ resultSinr }}</span>
-						<span>Coverage: {{ resultCoverage }}</span>
-					</div>
+					<label>
+						<div class="table">
+							<table>
+								<thead>
+									<tr>
+										<th>基站名稱</th>
+										<th>原值功率</th>
+										<th><span class="material-symbols-outlined after">east</span></th>
+										<th class="new">新值功率</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let result of gnbsCco">
+										<td>BS-all-2<br>(NCI=000008108)</td>
+										<td>{{ result.txpower }}</td>
+										<td><span class="material-symbols-outlined after">east</span></td>
+										<td class="new">{{ result.txpower }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</label>
+					<label class="Performance">
+						<H6>場域效能</H6>
+						<ul>
+							<li>SINR: {{ resultSinr }}</li>
+							<li>Coverage: {{ resultCoverage }}</li>
+						</ul>
+					</label>
 				</div>
+			</div>
 
+			<div class="Field_Infos" *ngIf="fieldEditType === 'anr'">
 				<!-- ANR 結果 -->
 				<div *ngIf="isAnrClass">
-					<h5>ANR</h5>
+					<!-- <H6>ANR</H6> -->
 					<div class="table">
 						<table>
 							<thead>
 								<tr>
 									<th>基站名稱</th>
 									<th>原鄰居關係</th>
-									<th>-></th>
-									<th>新鄰居關係</th>
+									<th><span class="material-symbols-outlined after">east</span></th>
+									<th class="new">新鄰居關係</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr *ngFor="let result of gnbsAnr">
-									<td>BS-all-2 (NCI=000008108)</td>
+									<td>BS-all-2<br>(NCI=000008108)</td>
 									<td>
-										<span *ngFor="let relation of result.NRCellRelation">
-											BS-all-1 (NCI=000004108),
-											BS-D-1 (NCI=00000c108),
-											BS-D-1 (NCI=00000c109)
-										</span>
+										<!-- <label *ngFor="let relation of result.NRCellRelation"> -->
+										<label>
+											<span>BS-all-1<br>(NCI=000004108)</span>
+											<span>BS-D-1<br>(NCI=00000c108)</span>
+											<span>BS-D-1<br>(NCI=00000c109)</span>
+										</label>
 									</td>
-									<td>-></td>
-									<td>
-										<span *ngFor="let relation of result.NRCellRelation">
-											BS-all-1 (NCI=000004108),
-											BS-D-1 (NCI=00000c108),
-											BS-D-1 (NCI=00000c109)
-										</span>
+									<td><span class="material-symbols-outlined after">east</span></td>
+									<td class="new">
+										<label>
+											<span>BS-all-1<br>(NCI=000004108)</span>
+											<span>BS-D-1<br>(NCI=00000c108)</span>
+											<span>BS-D-1<br>(NCI=00000c109)</span>
+										</label>
 									</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
 				</div>
+			</div>
+
+			<div class="Field_Infos" *ngIf="fieldEditType === 'pci'">
 
 				<!-- PCI 結果 -->
 				<div *ngIf="isPciClass">
-				<h5>PCI</h5>
-				<div class="table">
-					<table>
-						<thead>
-							<tr>
-								<th>基站名稱</th>
-								<th>原PCI</th>
-								<th>-></th>
-								<th>新PCI</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr *ngFor="let result of gnbsPci">
-								<td>BS-all-2<br>(NCI=000008108)</td>
-								<td>{{ result.nrPCI }}</td>
-								<td>-></td>
-								<td>{{ result.nrPCI }}</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div>
-					<h6>PCI collisions ↓</h6>
-					<label>Uni-directional pair count=0, ratio=0%
+					<label>
 						<div class="table">
 							<table>
 								<thead>
 									<tr>
-										<th>PCI</th>
-										<th>Collision Pairs (Source & Target)</th>
+										<th>基站名稱</th>
+										<th>原PCI</th>
+										<th><span class="material-symbols-outlined after">east</span></th>
+										<th class="new">新PCI</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										<td>101</td>
-										<td>
-											<span>
-												BS-all-1 (NCI=000004108) & BS-D-1 (NCI=00000c109)
-											</span>
-										</td>
-									</tr>
-									<tr>
-										<td>101</td>
-										<td>
-											<span>
-												BS-all-1 (NCI=000004108) & BS-D-1 (NCI=00000c109)
-											</span>
-										</td>
+									<tr *ngFor="let result of gnbsPci">
+										<td>BS-all-2<br>(NCI=000008108)</td>
+										<td>{{ result.nrPCI }}</td>
+										<td><span class="material-symbols-outlined after">east</span></td>
+										<td class="new">{{ result.nrPCI }}</td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
 					</label>
-					<div>-></div>
-					<label>Uni-directional pair count=1, ratio=16.7%
-						<div class="table">
-							<table>
-								<thead>
-									<tr>
-									<th>PCI</th>
-									<th>Collision Pairs (Source & Target)</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-									<td>101</td>
-									<td>
-										<span>
-											BS-all-1 (NCI=000004108) & BS-D-1 (NCI=00000c109)
-										</span>
-									</td>
-									</tr>
-									<tr>
-									<td>101</td>
-									<td>
-										<span>
-											BS-all-1 (NCI=000004108) & BS-D-1 (NCI=00000c109)
-										</span>
-									</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</label>
-				</div>
 					<div>
-						<h6>PCI confusions ↓</h6>
-						<label>Uni-directional pair count=0, ratio=0%
+						<h6>PCI collisions </h6>
+						<label>
+							<div>Uni-directional pair count=0, ratio=0%</div>
 							<div class="table">
 								<table>
 									<thead>
 										<tr>
-										<th>PCI</th>
-										<th>Confusion Pairs (Source & Confused & Target)</th>
-										</tr>
+											<th rowspan="2">PCI</th>
+											<th colspan="2">Collision Pairs</th>
+											</tr>
+											<tr>
+												<th>Source</th>
+												<th>Target</th>
+											</tr>
 									</thead>
 									<tbody>
 										<tr>
 											<td>101</td>
-												<td>
-													<span>
-														BS-all-1 (NCI=000004108) & BS-all-2 (NCI=000008108) & BS-D-1 (NCI=00000c109)
-													</span>
-												</td>
-											</tr>
+											<td>BS-all-1<br>(NCI=000004108)</td>
+											<td>BS-D-1<br>(NCI=00000c109)</td>
+										</tr>
 										<tr>
 											<td>101</td>
-											<td>
-												<span>
-													BS-D-1 (NCI=00000c109) & BS-all-2 (NCI=000008108) & BS-all-1 (NCI=000004108)
-												</span>
-											</td>
+											<td>BS-all-1<br>(NCI=000004108)</td>
+											<td>BS-D-1<br>(NCI=00000c109)</td>
 										</tr>
 									</tbody>
 								</table>
 							</div>
 						</label>
-						<div>-></div>
-						<label>Uni-directional pair count=2, ratio=16.7%
+						<span class="material-symbols-outlined after">east</span>
+						<label>
+							<div>Uni-directional pair count=1, ratio=16.7%</div>
 							<div class="table">
 								<table>
 									<thead>
 										<tr>
-											<th>PCI</th>
-											<th>Confusion Pairs (Source & Confused & Target)</th>
+										<th rowspan="2">PCI</th>
+										<th colspan="2">Collision Pairs</th>
+										</tr>
+										<tr>
+											<th>Source</th>
+											<th>Target</th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
 											<td>101</td>
-											<td>
-												<span>
-													BS-all-1 (NCI=000004108) & BS-all-2 (NCI=000008108) & BS-D-1 (NCI=00000c109)
-												</span>
-											</td>
+											<td>BS-all-1<br>(NCI=000004108)</td>
+											<td>BS-D-1<br>(NCI=00000c109)</td>
 										</tr>
 										<tr>
 											<td>101</td>
-											<td>
-												<span>
-													BS-D-1 (NCI=00000c109) & BS-all-2 (NCI=000008108) & BS-all-1 (NCI=000004108)
-												</span>
-											</td>
+											<td>BS-all-1<br>(NCI=000004108)</td>
+											<td>BS-D-1<br>(NCI=00000c109)</td>
 										</tr>
 									</tbody>
 								</table>
 							</div>
 						</label>
 					</div>
+					<div>
+						<h6>PCI confusions </h6>
+						<label>
+							<div>Uni-directional pair count=0, ratio=0%</div>
+							<div class="table">
+								<table>
+									<thead>
+										<tr>
+											<th rowspan="2">PCI</th>
+											<th colspan="3">Confusion Pairs</th>
+										</tr>
+										<tr>
+											<th>Source</th>
+											<th>Confused</th>
+											<th>Target</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>101</td>
+											<td>BS-D-1<br>(NCI=00000c109)</td>
+											<td>BS-all-2<br>(NCI=000008108)</td>
+											<td>BS-all-1<br>(NCI=000004108)</td>
+										</tr>
+										<tr>
+											<td>101</td>
+											<td>BS-D-1<br>(NCI=00000c109)</td>
+											<td>BS-all-2<br>(NCI=000008108)</td>
+											<td>BS-all-1<br>(NCI=000004108)</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</label>
+						<span class="material-symbols-outlined after">east</span>
+						<label>
+							<div>Uni-directional pair count=2, ratio=16.7%</div>
+							<div class="table">
+								<table>
+									<thead>
+										<tr>
+											<th rowspan="2">PCI</th>
+											<th colspan="3">Confusion Pairs</th>
+										</tr>
+										<tr>
+											<th>Source</th>
+											<th>Confused</th>
+											<th>Target</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>101</td>
+											<td>BS-D-1<br>(NCI=00000c109)</td>
+											<td>BS-all-2<br>(NCI=000008108)</td>
+											<td>BS-all-1<br>(NCI=000004108)</td>
+										</tr>
+										<tr>
+											<td>101</td>
+											<td>BS-D-1<br>(NCI=00000c109)</td>
+											<td>BS-all-2<br>(NCI=000008108)</td>
+											<td>BS-all-1<br>(NCI=000004108)</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</label>
+					</div>
+					</div>
 				</div>
 
-				<!-- 套用按鈕 -->
+			<!-- 套用按鈕 -->
+			<div class="buttons">
 				<button type="button">
 					{{ languageService.i18n['field.applySON'] }}
 				</button>
@@ -1440,14 +1481,14 @@
 				<button type="button" (click)="clear_calculateSON()" >
 					{{ languageService.i18n['field.cancelSON'] }}
 				</button>
-			</span>
+			</div>
 		</span>
 	</div>
   
 		<!-- 關閉 Field Optimization 視窗按鈕 -->
-		<div class="buttons buttons-centered">
+		<!-- <div class="buttons buttons-centered">
 			<button type="button" (click)="resetFieldOptimizationForm()" mat-dialog-close>
 				{{ languageService.i18n['close'] }}
 			</button>
-		</div>
+		</div> -->
   	</ng-template>
