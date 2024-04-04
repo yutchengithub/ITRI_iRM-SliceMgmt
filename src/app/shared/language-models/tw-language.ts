@@ -199,7 +199,6 @@ export const TwLanguage = {
 
   'field.setCCO':'設定 CCO',
   'field.ccoSettings':'CCO 設定',
-  'field.optimizationType': '優化類型',
   'field.maxCoverageRange': '最大覆蓋範圍',
   'field.maxSINR': '最大 SINR',
 
@@ -229,6 +228,9 @@ export const TwLanguage = {
   'field.newPCI': '新 PCI',
   
 
+  'field.optimizationType': '優化種類',
+  'field.optimizationResult': '優化結果',
+  
   'field.applySON': '套用',
   'field.cancelSON': '取消',
   

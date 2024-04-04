@@ -200,7 +200,6 @@ export const Enlanguage = {
 
   'field.setCCO': 'Set CCO',
   'field.ccoSettings': 'CCO Settings',
-  'field.optimizationType': 'Optimization Type',
   'field.maxCoverageRange': 'Maximum Coverage Range',
   'field.maxSINR': 'Maximum SINR',
 
@@ -228,8 +227,9 @@ export const Enlanguage = {
   'field.originalPCI': 'Original PCI',
   'field.newPCI': 'New PCI',
   
-  
-  
+  'field.optimizationType': 'Optimization Type',
+  'field.optimizationResult': 'Optimization Result',
+
   'field.applySON': 'Apply',
   'field.cancelSON': 'Cancel',
 

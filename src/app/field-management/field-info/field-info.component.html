@@ -1131,7 +1131,7 @@
 		<h5>{{ languageService.i18n['field.optim'] }}</h5>
 		<div class="field-optim-wrap fieldOptimization">
 			<span>
-				<h4 class="active">優化種類
+				<h4 class="active">{{ languageService.i18n['field.optimizationType'] }}
 					<span class="material-symbols-outlined">expand_more</span>
 				</h4>
 				<div class="field-optim-container">
@@ -1248,8 +1248,7 @@
 			<span>
 				<!-- Calculation Results 欄位 -->
 				<h4 class="inline-block">
-					優化結果
-					<!-- {{ languageService.i18n['field.calculationResults'] }} -->
+					{{ languageService.i18n['field.optimizationResult'] }}
 				</h4>
 				<div class="tabs">
 					<mat-button-toggle-group name="fieldEditType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldEditType" (change)="changefieldEditType($event)">
@@ -1267,10 +1266,10 @@
 								<table>
 									<thead>
 										<tr>
-											<th>基站名稱</th>
-											<th>原值功率</th>
+											<th>{{ languageService.i18n['field.BSname'] }}</th>
+											<th>{{ languageService.i18n['field.originalTxPower'] }}</th>
 											<th><span class="material-symbols-outlined after">east</span></th>
-											<th class="new">新值功率</th>
+											<th class="new">{{ languageService.i18n['field.newTxPower'] }}</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -1302,10 +1301,10 @@
 							<table>
 								<thead>
 									<tr>
-										<th>基站名稱</th>
-										<th>原鄰居關係</th>
+										<th>{{ languageService.i18n['field.BSname'] }}</th>
+										<th>{{ languageService.i18n['field.originalNeighborBS'] }}</th>
 										<th><span class="material-symbols-outlined after">east</span></th>
-										<th class="new">新鄰居關係</th>
+										<th class="new">{{ languageService.i18n['field.newNeighborBS'] }}</th>
 									</tr>
 								</thead>
 								<tbody>
