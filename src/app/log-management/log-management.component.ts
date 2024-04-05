@@ -375,6 +375,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   UserLogsList: UserLogsList = {} as UserLogsList; 
   UserLogs_getNum = 0;              // 用於記錄取得 User Logs 資訊之次數
   isGetUserLogsInfoLoading = false; // 用於表示加載 User Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
+  
+  // @2024/04/05 Update
   getUserLogsInfo() {
     console.log( 'getUserLogsInfo() - Start' );
 
@@ -397,6 +399,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       this.totalLogs = this.UserLogsList.logNumber;
       //this.UserloginfoDeal();
+
+      // @2024/04/05 Add
+      // 處理 Local 模式下的 logtime 格式
+      this.UserLogsList.loginfo.forEach( log => {
+        log.logtime = this.commonService.formatTimeWithoutSecondsFraction( log.logtime );
+      } );
 
       console.log( "In getUserLogsInfo() not click search ( Local mode ) - userLogsToDisplay:", this.userLogsToDisplay );
 
@@ -465,6 +473,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
               this.totalLogs = this.UserLogsList.logNumber;
               console.log( 'In getUserLogsInfo() not click search - Total User Logs Num:', this.totalLogs );
   
+              // @2024/04/05 Add
+              // 處理非 Local 模式下的 logtime 格式
+              this.UserLogsList.loginfo.forEach( log => {
+                log.logtime = this.commonService.formatTimeWithoutSecondsFraction( log.logtime );
+              });
+
               console.log( "In getUserLogsInfo() not click search - userLogsToDisplay:", this.userLogsToDisplay );
   
             } else {
@@ -473,7 +487,14 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   
               // 傳回的數據 res 已是篩選過的，故直接放入 filtered_UserLogs
               this.filtered_UserLogs = res.loginfo;
-              this.totalLogs = res.logNumber;     // 更新記錄的 Log 總數      
+              this.totalLogs = res.logNumber;     // 更新記錄的 Log 總數     
+              
+              // @2024/04/05 Add
+              // 處理非 Local 模式下的 logtime 格式 (篩選後的結果)
+              this.filtered_UserLogs.forEach( log => {
+                log.logtime = this.commonService.formatTimeWithoutSecondsFraction( log.logtime );
+              });
+
               console.log( "In getUserLogsInfo() click search - userLogsToDisplay:", this.userLogsToDisplay );
             }
             // this.UserloginfoDeal();       // 調用處理 User Log 訊息的函數
@@ -531,7 +552,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   NELogs_getNum = 0; // 用於記錄取得 NE Logs 資訊之次數
   isGetNELogsInfoLoading = false; // 用於表示加載 NE Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
   
-  // Get NE Logs @2024/03/14 Update
+  // Get NE Logs @2024/04/05 Update
   getNELogsInfo() {
     console.log( 'getNELogsInfo() - Start' );
     
@@ -551,6 +572,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       this.totalLogs = this.NELogsList.logNumber;
       //this.NEloginfoDeal();
+
+      // @2024/04/05 Add
+      // 處理 Local 模式下的 logtime 格式
+      this.NELogsList.loginfo.forEach(log => {
+        log.logtime = this.commonService.formatTimeWithoutSecondsFraction(log.logtime);
+      });
 
       console.log( "In getNELogsInfo() not click search ( Local mode ) - neLogsToDisplay:", this.neLogsToDisplay );
 
@@ -637,6 +664,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
             this.totalLogs = this.NELogsList.logNumber;
             console.log( 'In getNELogsInfo() not click search - Total NE Logs Num:', this.totalLogs );
 
+            // @2024/04/05 Add
+            // 處理非 Local 模式下的 logtime 格式
+            this.NELogsList.loginfo.forEach(log => {
+              log.logtime = this.commonService.formatTimeWithoutSecondsFraction(log.logtime);
+            });
+
             console.log( "In getNELogsInfo() not click search - neLogsToDisplay:", this.neLogsToDisplay );
 
           } else {
@@ -645,7 +678,14 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
             // 傳回的數據 res 已是篩選過的，故直接放入 filtered_NELogs
             this.filtered_NELogs = res.loginfo;
-            this.totalLogs = res.logNumber;     // 更新記錄的 Log 總數      
+            this.totalLogs = res.logNumber;     // 更新記錄的 Log 總數     
+
+            // @2024/04/05 Add
+            // 處理非 Local 模式下的 logtime 格式 (篩選後的結果)
+            this.filtered_NELogs.forEach(log => {
+              log.logtime = this.commonService.formatTimeWithoutSecondsFraction(log.logtime);
+            });
+
             console.log( "In getNELogsInfo() click search - neLogsToDisplay:", this.neLogsToDisplay );
           }
           // this.NEloginfoDeal();       // 調用處理 NE Log 訊息的函數
@@ -908,6 +948,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       this.totalLogs = this.filtered_UserLogs.length; // 確保更新 totalLogs 以反映搜尋結果的數量
 
+      // @2024/04/05 Add
+      // 處理 Local 模式下的 logtime 格式
+      this.filtered_UserLogs.forEach( log => {
+        log.logtime = this.commonService.formatTimeWithoutSecondsFraction( log.logtime );
+      });
+
       console.log( "In search_UserLogs() in Local mode - userLogsToDisplay:", this.userLogsToDisplay );
 
       // 設置加載旗標為 false，表示加載完成
@@ -966,6 +1012,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           // 傳回的數據 res 已是篩選過的，故直接放入 filtered_UserLogs
           this.filtered_UserLogs = res.loginfo;
           this.totalLogs = res.logNumber;       // 更新記錄的 Log 總數
+
+          // @2024/04/05 Add
+          // 處理非 Local 模式下的 logtime 格式 (篩選後的結果)
+          this.filtered_UserLogs.forEach(log => {
+            log.logtime = this.commonService.formatTimeWithoutSecondsFraction(log.logtime);
+          });
+
           this.isSearch_userLogs = true;        // Search 完畢，設置標記為 true，以便 userLogsToDisplay 切換成顯示 filtered_UserLogs
           console.log( "In search_UserLogs() - userLogsToDisplay:", this.userLogsToDisplay );
 
@@ -1066,6 +1119,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       this.totalLogs = this.filtered_NELogs.length; // 確保更新 totalLogs 以反映搜尋結果的數量
 
+      // @2024/04/05 Add
+      // 處理 Local 模式下的 logtime 格式
+      this.filtered_NELogs.forEach( log => {
+        log.logtime = this.commonService.formatTimeWithoutSecondsFraction( log.logtime );
+      });
+
       console.log( "In search_NELogs() in Local mode - neLogsToDisplay:", this.neLogsToDisplay );
 
       // 設置加載旗標為 false，表示加載完成
@@ -1142,6 +1201,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           // 傳回的數據 res 已是篩選過的，故直接放入 filtered_NELogs
           this.filtered_NELogs = res.loginfo;
           this.totalLogs = res.logNumber;     // 更新記錄的 Log 總數
+
+          // @2024/04/05 Add
+          // 處理非 Local 模式下的 logtime 格式 (篩選後的結果)
+          this.filtered_NELogs.forEach( log => {
+            log.logtime = this.commonService.formatTimeWithoutSecondsFraction( log.logtime );
+          });
+
           this.isSearch_neLogs = true;        // Search 完畢，設置標記為 true，以便 neLogsToDisplay 切換成顯示 filtered_NELogs
           console.log( "In search_NELogs() - neLogsToDisplay:", this.neLogsToDisplay );
 
