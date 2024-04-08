@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
   userId: string = '';
   password: string = '';
   errorPorperty: string = '';
+  userRole: number | null = null;
 
   constructor(
     private router: Router,
@@ -70,7 +71,12 @@ export class LoginComponent implements OnInit {
           if (res !== 'userID or password invalid') {
             this.commonService.setSessionId(res['session']); // 儲存 sessionId @11/28 sessionId -> session 以符合後端 API 的 Response
             console.log(res['session']);
-            this.router.navigate(['/main/dashboard']);       // 導向主頁
+            if(res.role === 1){
+              this.router.navigate(['/main/account-mgr'], { queryParams: { role: res.role } });
+            }
+            else if (res.role === 2){
+              this.router.navigate(['/main/dashboard'], { queryParams: { role: res.role } }); // 導向主頁
+            }      
           } else {
             this.showErrMssage(this.languageService.i18n['logon.password_error']);  // 顯示"輸入帳密錯誤"訊息
           }

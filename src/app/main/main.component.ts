@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { CommonService } from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
 
@@ -35,17 +35,22 @@ export class MainComponent implements OnInit {
     'schedule-management': '/main/schedule-mgr',   // @11/20 Add by yuchen
     'log-management': '/main/log-mgr',             // @10/25 Add by yuchen
     'account-management': '/main/account-mgr',
-
     'nf-management': '/main/nf-mgr'
   }
-
-  constructor(private router: Router, private commonService: CommonService, public languageService: LanguageService) { }
+  userRole: number | null = null;
+  constructor(private router: Router, private route: ActivatedRoute, private commonService: CommonService, public languageService: LanguageService) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         // router 更新 menu foucs
         this.reloadTitle(event.url);
+      }
+    });
+    this.route.queryParams.subscribe(params => {
+      if (params['role']) {
+        this.userRole = params['role'];
+        console.log(this.userRole);
       }
     });
 
