@@ -197,6 +197,7 @@ export class FieldInfoComponent implements OnInit {
       this.getQueryFieldInfo();
     });
 
+  //this.createFieldOptimizationForm();
   }
 
   // @2024/03/19 Update
@@ -3026,7 +3027,7 @@ export class FieldInfoComponent implements OnInit {
 
 
 
-// For 場域優化 @2024/03/30 Add ↓
+// For 場域優化 @2024/04/08 Update ↓
 
   getFieldSonParameters: ForQuerySonParameter = {} as ForQuerySonParameter;   // @2024/03/30 Add
 
@@ -3065,23 +3066,45 @@ export class FieldInfoComponent implements OnInit {
     }
   }
   
-  // @2024/03/30 Add
+  // @2024/04/08 Update
   // 用於預填充 fieldOptimizationForm 表單值用
   populateFieldOptimizationForm() {
+
+    let ccoParameter = '';
+
+    if (this.getFieldSonParameters.ratioAverageSINR !== '0' && this.getFieldSonParameters.ratioAverageSINR !== '') {
+      ccoParameter = 'ratioAverageSINR';
+    } else if (this.getFieldSonParameters.ratioCoverage !== '0' && this.getFieldSonParameters.ratioCoverage !== '') {
+      ccoParameter = 'maxCoverageRange';
+    }
+  
+    // 使用獲取的 SON 參數填充表單
+    // this.fieldOptimizationForm.patchValue({
+    //   setSONParameters: {
+    //     cco: true, // 預設勾選 CCO
+    //     anr: true, // 預設勾選 ANR
+    //     pci: true, // 預設勾選 PCI
+    //   },
+    //   ccoSetParameters: ccoParameter,
+    //   ueSyncMinSINR: this.getFieldSonParameters.ueSyncMinSINR,
+    //   pciMax: this.getFieldSonParameters.pciMax,
+    //   pciMin: this.getFieldSonParameters.pciMin
+    //   // ... 填充其他欄位
+    // });
 
     // 使用獲取的 SON 參數填充表單
     this.fieldOptimizationForm.patchValue({
       setSONParameters: {
-        cco: this.getFieldSonParameters.dsonEnable === '1',
-        anr: this.getFieldSonParameters.dsonEnable === '1', // 假設 ANR 和 CCO 是相同的開關
-        pci: this.getFieldSonParameters.dsonEnable === '1'  // 假設 PCI 和 CCO 是相同的開關
-      },
-      ccoSetParameters: this.getFieldSonParameters.ratioAverageSINR ? 'ratioAverageSINR' : 'maxCoverageRange',
-      ueSyncMinSINR: this.getFieldSonParameters.ueSyncMinSINR,
-      pciMax: this.getFieldSonParameters.pciMax,
-      pciMin: this.getFieldSonParameters.pciMin
-      // ... 填充其他欄位
+        cco: true, // 預設勾選 CCO
+        anr: true, // 預設勾選 ANR
+        pci: true, // 預設勾選 PCI
+        ccoSetParameters: ccoParameter, // 從 getFieldSonParameters 獲取的值
+        ueSyncMinSINR: this.getFieldSonParameters.ueSyncMinSINR, // 從 getFieldSonParameters 獲取的值
+        pciMax: this.getFieldSonParameters.pciMax, // 從 getFieldSonParameters 獲取的值
+        pciMin: this.getFieldSonParameters.pciMin // 從 getFieldSonParameters 獲取的值
+      }
     });
+
   }
 
   // 用於控制 場域優化 視窗 @2024/03/30 Add
@@ -3089,11 +3112,13 @@ export class FieldInfoComponent implements OnInit {
   fieldOptimizationWindow_Ref!: MatDialogRef<any>;
   fieldOptimizationWindow_Validated = false;
 
-  // 開啟視窗 - 場域優化 @2024/03/30 Add
+  // 開啟視窗 - 場域優化 @2024/04/08 Update
   openfieldOptimizationWindow() {
 
     this.getQuerySonParameter();  // 取得"場域優化參數"資訊
     console.log( "In openfieldOptimizationWindow() - this.getFieldSonParameters = ", this.getFieldSonParameters );
+
+    this.fieldOptimizationResultType = 'cco'; // 預設顯示 CCO 頁籤
     
     // 表單驗證狀態重置
     this.fieldOptimizationWindow_Validated = false;
@@ -3113,16 +3138,16 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
-  // @2024/03/30 Add
+  // @2024/04/08 Update
   // 點擊 場域優化 視窗的 close 按鈕行為
   resetFieldOptimizationForm() {
 
     // 重置整個"場域優化參數"表單
     this.fieldOptimizationForm.reset({
       setSONParameters: {
-        cco: false,
-        anr: false,
-        pci: false
+        cco: true, // 默認 CCO 勾選
+        anr: true, // 默認 ANR 勾選
+        pci: true, // 默認 PCI 勾選
       },
       ccoSetParameters: '',
       ueSyncMinSINR: -7,
@@ -3148,20 +3173,32 @@ export class FieldInfoComponent implements OnInit {
   // 創建表單組，用於"場域優化設定" @2024/03/30 Add
   fieldOptimizationForm!: FormGroup;
 
-  // 創建場域優化表單 @2024/03/30 Add
+  // 創建場域優化表單 @2024/04/08 Update
   createFieldOptimizationForm() {
 
     this.fieldOptimizationForm = this.fb.group({
 
+      // setSONParameters: this.fb.group({
+      //   cco: new FormControl(true), // 設置 CCO 預設為選中
+      //   anr: new FormControl(true), // 設置 ANR 預設為選中 
+      //   pci: new FormControl(true), // 設置 PCI 預設為選中
+      // }),
+      // //ccoSetParameters: new FormControl( this.getFieldSonParameters.ratioAverageSINR ? 'ratioAverageSINR' : 'maxCoverageRange' ), // CCO 單選按鈕依據取回得參數值ratioAverageSINR存在與否進行設定
+      // ccoSetParameters: new FormControl(''), // 設置默認為空字符串
+      // ueSyncMinSINR: new FormControl( this.getFieldSonParameters.ueSyncMinSINR || '' ), // UE 同步最小 SINR 的默認值
+      // pciMax: new FormControl( this.getFieldSonParameters.pciMax || '' ),               // PCI 最大值的默認值
+      // pciMin: new FormControl( this.getFieldSonParameters.pciMin || '' )                // PCI 最小值的默認值
+
       setSONParameters: this.fb.group({
-        cco: new FormControl( false ),         // 默認 CCO 未勾選
-        anr: new FormControl( false ),         // 默認 ANR 未勾選
-        pci: new FormControl( false ),         // 默認 PCI 未勾選
-      }),
-      ccoSetParameters: new FormControl( this.getFieldSonParameters.ratioAverageSINR ? 'ratioAverageSINR' : 'maxCoverageRange' ), // CCO 單選按鈕依據取回得參數值ratioAverageSINR存在與否進行設定
-      ueSyncMinSINR: new FormControl( this.getFieldSonParameters.ueSyncMinSINR || '' ), // UE 同步最小 SINR 的默認值
-      pciMax: new FormControl( this.getFieldSonParameters.pciMax || '' ),               // PCI 最大值的默認值
-      pciMin: new FormControl( this.getFieldSonParameters.pciMin || '' )                // PCI 最小值的默認值
+        cco: new FormControl( true ), // 設置 CCO 預設為選中
+        anr: new FormControl( true ), // 設置 ANR 預設為選中 
+        pci: new FormControl( true ), // 設置 PCI 預設為選中
+        ccoSetParameters: new FormControl( '' ), // 現在放置在正確的位置
+        ueSyncMinSINR: new FormControl( this.getFieldSonParameters.ueSyncMinSINR || '' ), // 現在放置在正確的位置
+        pciMax: new FormControl( this.getFieldSonParameters.pciMax || '' ), // 現在放置在正確的位置
+        pciMin: new FormControl( this.getFieldSonParameters.pciMin || '' ) // 現在放置在正確的位置
+      })
+
     });
   }
 
@@ -3238,7 +3275,65 @@ export class FieldInfoComponent implements OnInit {
   // 記錄是否觸發計算旗標 @2024/04/02 Add
   isClickCalculate: boolean = false;
 
-  // @2024/04/05  Update
+  /** @2024/04/08 Add
+   *  切換種類區的展開/縮合狀態
+   *  @method toggleOptimizationType
+   *  @returns { void }
+   *  @description
+   *  - 通過 document.querySelector() 獲取種類區標題元素
+   *  - 使用 classList.toggle('active') 切換 "active" 類別
+   *  - 當 "active" 類別存在時，種類區展開；否則，種類區縮合
+   *  @note
+   *  - 這種直接操作 DOM 的方式並不是 Angular 推薦的做法
+   *  - 在 Angular 中,更好的方式是使用資料綁定和指令來控制元素的狀態
+   *  - 但考慮到需求,這種方式可以快速地實現所需的效果
+   * */
+  toggleOptimizationType() {
+    const optimizationTypeHeader = document.querySelector( '.field-optim-wrap h4' );
+    optimizationTypeHeader?.classList.toggle('active');
+  }
+
+
+  // @2024/04/08 Add
+  fieldOptimizationResultType: string = 'cco'; // 預設選擇顯示 "cco" 
+
+  // 變更場域優化結果頁籤顯示的類型函數 @2024/04/08 Add
+  changefieldOptimizationResultType( e: MatButtonToggleChange ) {
+    console.log("changefieldOptimizationResultType() - Start");
+
+    // 根據用戶當前的選擇來設定場域優化結果顯示的類型
+    if ( e.value === 'cco' ) {
+
+      // 如果選擇的是 CCO 頁面
+      this.fieldOptimizationResultType = 'cco'; // 設定場域優化結果顯示類型為 CCO
+
+      // TODO: 在這裡添加任何需要在切換到 CCO 頁面時執行的操作
+
+    } else if ( e.value === 'anr' ) {
+
+      // 如果選擇的是 ANR 頁面
+      this.fieldOptimizationResultType = 'anr'; // 設定場域優化結果顯示類型為 ANR
+
+      // TODO: 在這裡添加任何需要在切換到 ANR 頁面時執行的操作
+
+    } else if ( e.value === 'pci' ) {
+
+      // 如果選擇的是 PCI 頁面
+      this.fieldOptimizationResultType = 'pci'; // 設定場域優化結果顯示類型為 PCI
+
+      // TODO: 在這裡添加任何需要在切換到 PCI 頁面時執行的操作
+    }
+
+    // 輸出場域優化結果顯示類型的變更結果
+    console.log("頁面切換後，顯示的場域優化結果類型:", this.fieldOptimizationResultType + "\n Optimization result type displayed after tab switch:",
+                   this.fieldOptimizationResultType);
+
+    // 函數結束的日誌
+    console.log("changefieldOptimizationResultType() - End, \n the optimization result type is", this.fieldOptimizationResultType);
+  }
+
+
+  // @2024/04/08 Update
   // 發送計算 SON 演算法函數 
   calculateSON_Submit() {
     console.log( "calculateSON_Submit() - Start" );
@@ -3258,27 +3353,60 @@ export class FieldInfoComponent implements OnInit {
       this.calculationCategories.push( 'pci' );
     }
 
-    // 準備提交的數據，格式化為適合 API 的格式
+    
+    // // 準備提交的數據，格式化為適合 API 的格式
+    // const submitData: ForCalculateSon = {
+    //       session: this.sessionId,             // 使用當前會話 ID
+    //   fieldServer: "127.0.0.1",                // 默認為 "127.0.0.1"
+    //       fieldId: this.fieldInfo.id,          // 使用場域的唯一識別符
+    //          type: this.calculationCategories, // 使用根據使用者選擇生成的 Calculation Categories
+    //        pciMax: this.fieldOptimizationForm.get('pciMax')?.value || '',              // 從表單獲取 PCI 最大值
+    //        pciMin: this.fieldOptimizationForm.get('pciMin')?.value || '',              // 從表單獲取 PCI 最小值
+    //       ueSyncMinSINR: this.fieldOptimizationForm.get('ueSyncMinSINR')?.value || '', // 從表單獲取 UE 同步最小 SINR
+    //    ratioAverageSINR: this.getFieldSonParameters.ratioAverageSINR || '',  // 從取回的 SON 參數獲取 ratioAverageSINR
+    //       ratioCoverage: this.getFieldSonParameters.ratioCoverage || '',     // 從取回的 SON 參數獲取 ratioCoverage
+    //    ratioMaxCapacity: this.getFieldSonParameters.ratioMaxCapacity || '',  // 從取回的 SON 參數獲取 ratioMaxCapacity
+    //   ratioFairCapacity: this.getFieldSonParameters.ratioFairCapacity || '', // 從取回的 SON 參數獲取 ratioFairCapacity
+    //          txPowerMax: this.getFieldSonParameters.txPowerMax || '',        // 從取回的 SON 參數獲取 txPowerMax
+    //          txPowerMin: this.getFieldSonParameters.txPowerMin || '',        // 從取回的 SON 參數獲取 txPowerMin
+    // };
+
+    
+    const formData = this.fieldOptimizationForm.value.setSONParameters;
+
     const submitData: ForCalculateSon = {
-          session: this.sessionId,             // 使用當前會話 ID
-      fieldServer: "127.0.0.1",                // 默認為 "127.0.0.1"
-          fieldId: this.fieldInfo.id,          // 使用場域的唯一識別符
-             type: this.calculationCategories, // 使用根據使用者選擇生成的 Calculation Categories
-           pciMax: this.fieldOptimizationForm.get('pciMax')?.value || '',              // 從表單獲取 PCI 最大值
-           pciMin: this.fieldOptimizationForm.get('pciMin')?.value || '',              // 從表單獲取 PCI 最小值
-          ueSyncMinSINR: this.fieldOptimizationForm.get('ueSyncMinSINR')?.value || '', // 從表單獲取 UE 同步最小 SINR
-       ratioAverageSINR: this.getFieldSonParameters.ratioAverageSINR || '',  // 從取回的 SON 參數獲取 ratioAverageSINR
+          session: this.sessionId,
+      fieldServer: "127.0.0.1",
+          fieldId: this.fieldInfo.id,
+            type: this.calculationCategories,
+          pciMin: formData.pciMin || '',
+          pciMax: formData.pciMax || '',
+          ueSyncMinSINR: formData.ueSyncMinSINR || '',
+       ratioAverageSINR: this.getFieldSonParameters.ratioAverageSINR || '',
           ratioCoverage: this.getFieldSonParameters.ratioCoverage || '',     // 從取回的 SON 參數獲取 ratioCoverage
        ratioMaxCapacity: this.getFieldSonParameters.ratioMaxCapacity || '',  // 從取回的 SON 參數獲取 ratioMaxCapacity
       ratioFairCapacity: this.getFieldSonParameters.ratioFairCapacity || '', // 從取回的 SON 參數獲取 ratioFairCapacity
              txPowerMax: this.getFieldSonParameters.txPowerMax || '',        // 從取回的 SON 參數獲取 txPowerMax
              txPowerMin: this.getFieldSonParameters.txPowerMin || '',        // 從取回的 SON 參數獲取 txPowerMin
+      // ...其餘參數
     };
 
-    // @04/05 Add
-    // 切換 <h4> 元素的 "active" 類別
-    const optimizationTypeHeader = document.querySelector('.field-optim-wrap h4');
-    optimizationTypeHeader?.classList.remove('active');
+    // 獲取用戶在表單中設置的 CCO 參數
+    const ccoSetParam = this.fieldOptimizationForm.get('setSONParameters.ccoSetParameters')?.value;
+
+    // 根據用戶選擇的 CCO 參數設置相關值
+    if (ccoSetParam === 'maxCoverageRange') {
+      submitData.ratioCoverage = '100';
+      submitData.ratioAverageSINR = '0';
+      submitData.ratioFairCapacity = '0';
+      submitData.ratioMaxCapacity = '0';
+    } else if (ccoSetParam === 'ratioAverageSINR') {
+      submitData.ratioAverageSINR = '100';
+      submitData.ratioCoverage = '0';
+      submitData.ratioFairCapacity = '0';
+      submitData.ratioMaxCapacity = '0';
+    }
+
 
     if ( this.commonService.isLocal ) {
       // 本地模式下的處理
@@ -3301,6 +3429,10 @@ export class FieldInfoComponent implements OnInit {
       // 處理計算結果
       this.processCalculationResponse( this.calculationResponse );
 
+      // @04/08 Add
+      // 計算完成後自動縮合種類區
+      this.toggleOptimizationType();
+
       this.getQuerySonParameter_Loading = false; // 計算完成後停止 Loading Progress Spinner
 
     } else {
@@ -3318,6 +3450,10 @@ export class FieldInfoComponent implements OnInit {
           // 處理計算結果
           this.processCalculationResponse( this.calculationResponse );
 
+          // @04/08 Add
+          // 計算完成後自動縮合種類區
+          this.toggleOptimizationType();
+
           this.getQuerySonParameter_Loading = false; // 計算完成後停止 Loading Progress Spinner
 
         },
@@ -3328,12 +3464,22 @@ export class FieldInfoComponent implements OnInit {
       });
     }
 
+    // @04/08 Add
+    // 根據計算類別顯示結果頁籤
+    if ( this.calculationCategories.includes('cco') ) {
+      this.fieldOptimizationResultType = 'cco';
+    } else if ( this.calculationCategories.includes('anr') ) {
+      this.fieldOptimizationResultType = 'anr';
+    } else if ( this.calculationCategories.includes('pci') ) {
+      this.fieldOptimizationResultType = 'pci';
+    }
+
     console.log( "calculateSON_Submit() - End" );
   }
 
-
   // 清楚計算結果 @2024/04/02 Add
   clear_calculateSON() {
+
     this.isCcoClass = false;
     this.isAnrClass = false;
     this.isPciClass = false;
@@ -3378,17 +3524,17 @@ export class FieldInfoComponent implements OnInit {
   processCalculationResponse( calculationResponse: ForCalculateSonResponse ) {
 
     // 將取得的回傳值轉換成輸出到控制台上 this.allSimplifiedBsInfo
-    console.log("In processCalculationResponse() - SON calculation:", calculationResponse );
-    console.log("In processCalculationResponse() - this.allSimplifiedBsInfo:", this.allSimplifiedBsInfo );
+    console.log( "In processCalculationResponse() - SON calculation:", calculationResponse );
+    console.log( "In processCalculationResponse() - this.allSimplifiedBsInfo:", this.allSimplifiedBsInfo );
     
     // 從回傳值中取出 cco、anr、pci 的結果資料
     const tempCco = calculationResponse.cco;
     const tempAnr = calculationResponse.anr;
     const tempPci = calculationResponse.pci;
 
-    console.log("tempCCO: ", tempCco);
-    console.log("tempANR: ", tempAnr);
-    console.log("tempPci: ", tempPci);
+    console.log( "tempCCO: ", tempCco );
+    console.log( "tempANR: ", tempAnr );
+    console.log( "tempPci: ", tempPci );
 
     // 處理 ANR 結果資料
     if ( tempAnr !== undefined && tempAnr.cellIndividualResult ) {
@@ -3501,7 +3647,16 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-// For 場域優化 @2024/03/30 Add ↑
+// For 場域優化 @2024/04/08 Update ↑
+
+
+
+
+
+
+
+
+
 
 
 
