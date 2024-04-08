@@ -1124,14 +1124,21 @@
 		</div>
 	</ng-template>
 
-
-	<!-- Window of Field Optimization @2024/03/31 Add -->
+	<!-- Window of Field Optimization @2024/04/08 Update-->
 	<ng-template #fieldOptimizationWindow>
 		<!-- 視窗標題 -->
 		<h5>{{ languageService.i18n['field.optim'] }}</h5>
 		<div class="field-optim-wrap fieldOptimization">
 			<span>
-				<h4 class="active">{{ languageService.i18n['field.optimizationType'] }}
+				<!-- 
+					種類區標題
+					- 綁定點擊事件 toggleOptimizationType()，用於切換種類區的展開/縮合狀態
+					- 根據 "active" 類別的存在與否，控制種類區的展開/縮合狀態
+					- 使用語言服務獲取國際化文本作為標題
+					- 使用 Material Icons ( expand_more ) 作為展開/縮合的指示圖標
+				-->
+				<h4 class="active" (click)="toggleOptimizationType()">
+					{{ languageService.i18n['field.optimizationType'] }}
 					<span class="material-symbols-outlined">expand_more</span>
 				</h4>
 				<div class="field-optim-container">
@@ -1140,10 +1147,14 @@
 							<div>
 								<mat-checkbox formControlName="cco" (change)="onCCOChange($event)">CCO</mat-checkbox>
 								<span>
-									<select name="" id="">
-										<option value="maxCoverageRange">{{ languageService.i18n['field.maxCoverageRange'] }}</option>
-										<option value="ratioAverageSINR">{{ languageService.i18n['field.maxSINR'] }}</option>
-									</select>
+									<select formControlName="ccoSetParameters">
+										<option value="maxCoverageRange">
+										  {{ languageService.i18n['field.maxCoverageRange'] }}
+										</option>
+										<option value="ratioAverageSINR">
+										  {{ languageService.i18n['field.maxSINR'] }}
+										</option>
+									  </select>
 									<!-- <mat-radio-group formControlName="ccoSetParameters">
 										<mat-radio-button value="maxCoverageRange">{{ languageService.i18n['field.maxCoverageRange'] }}</mat-radio-button>
 										<mat-radio-button value="ratioAverageSINR">{{ languageService.i18n['field.maxSINR'] }}</mat-radio-button>
@@ -1164,19 +1175,19 @@
 							<div>
 								<mat-checkbox formControlName="pci" (change)="onPCIChange($event)">PCI</mat-checkbox>
 								<span>
-									<label>{{ languageService.i18n['field.minSignalPower'] }}</label>
-									<input type="number" value="100" formControlName="pciMax">
-									<!-- <mat-form-field>
-										<mat-label>{{ languageService.i18n['field.pciRange'] }}</mat-label>
-										<input matInput type="number" placeholder="100" formControlName="pciMax">
-									</mat-form-field> -->
-								</span>
-								<span>
-									<label>{{ languageService.i18n['field.pciSpacing'] }}</label>
+									<label>{{ languageService.i18n['field.pciMin'] }}</label>
 									<input type="number" value="160" formControlName="pciMin">
 									<!-- <mat-form-field>
 										<mat-label>{{ languageService.i18n['field.pciSpacing'] }}</mat-label>
 										<input matInput type="number" placeholder="160" formControlName="pciMin">
+									</mat-form-field> -->
+								</span>
+								<span>
+									<label>{{ languageService.i18n['field.pciMax'] }}</label>
+									<input type="number" value="100" formControlName="pciMax">
+									<!-- <mat-form-field>
+										<mat-label>{{ languageService.i18n['field.pciRange'] }}</mat-label>
+										<input matInput type="number" placeholder="100" formControlName="pciMax">
 									</mat-form-field> -->
 								</span>
 							</div>
@@ -1205,7 +1216,7 @@
 									<mat-label>{{ languageService.i18n['field.pciMax'] }}</mat-label>
 									<input matInput type="number" placeholder="160" formControlName="pciMax">
 								</mat-form-field> -->
-							</div>
+						</div>
 					</form>
 					<!-- 計算按鈕 -->
 					<div class="buttons">
@@ -1251,14 +1262,14 @@
 					{{ languageService.i18n['field.optimizationResult'] }}
 				</h4>
 				<div class="tabs">
-					<mat-button-toggle-group name="fieldEditType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldEditType" (change)="changefieldEditType($event)">
+					<mat-button-toggle-group name="fieldOptimizationResultType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldOptimizationResultType" (change)="changefieldOptimizationResultType($event)">
 						<mat-button-toggle value="cco" >CCO</mat-button-toggle>
 						<mat-button-toggle value="anr" >ANR</mat-button-toggle>
 						<mat-button-toggle value="pci" >PCI</mat-button-toggle>
 					</mat-button-toggle-group>
 				</div>
 				<!-- CCO 結果 -->
-				<div class="Field_Infos" *ngIf="fieldEditType === 'cco'">
+				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'cco' ">
 					
 					<div *ngIf="isCcoClass">
 						<label>
@@ -1293,7 +1304,7 @@
 					</div>
 				</div>
 				<!-- ANR 結果 -->
-				<div class="Field_Infos" *ngIf="fieldEditType === 'anr'">
+				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'anr' ">
 					<!-- ANR 結果 -->
 					<div *ngIf="isAnrClass">
 						<!-- <H6>ANR</H6> -->
@@ -1333,7 +1344,7 @@
 				</div>
 				</div>
 				<!-- PCI 結果 -->
-				<div class="Field_Infos" *ngIf="fieldEditType === 'pci'">
+				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'pci' ">
 
 						
 						<div *ngIf="isPciClass">
