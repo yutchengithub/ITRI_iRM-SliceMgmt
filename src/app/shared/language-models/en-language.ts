@@ -213,6 +213,8 @@ export const Enlanguage = {
   'field.pciMax': 'Maximum PCI',
 
   'field.sonCalculate':'Calculate',
+  'field.clearAndReset': 'Clear and Reset',
+
 
   'field.calculationCategories': 'Calculation Categories',
   'field.calculationResults': 'Calculation Results',

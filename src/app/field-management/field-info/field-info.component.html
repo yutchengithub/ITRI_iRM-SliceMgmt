@@ -1261,6 +1261,14 @@
 				<h4 class="inline-block">
 					{{ languageService.i18n['field.optimizationResult'] }}
 				</h4>
+
+				<!-- 清除計算結果並重置設定參數按鈕 -->
+				<div class="buttons">
+					<button type="button" (click)="resetFieldOptimizationForm(); clear_calculateSON();">
+						{{ languageService.i18n['field.clearAndReset'] }}
+					</button>
+				</div>
+
 				<div class="tabs">
 					<mat-button-toggle-group name="fieldOptimizationResultType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldOptimizationResultType" (change)="changefieldOptimizationResultType($event)">
 						<mat-button-toggle value="cco" >CCO</mat-button-toggle>
@@ -1268,6 +1276,7 @@
 						<mat-button-toggle value="pci" >PCI</mat-button-toggle>
 					</mat-button-toggle-group>
 				</div>
+		
 				<!-- CCO 結果 -->
 				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'cco' ">
 					
@@ -1510,7 +1519,7 @@
 						{{ languageService.i18n['field.applySON'] }}
 					</button>
 					<!-- 取消按鈕 -->
-					<button type="button" (click)="clear_calculateSON(); resetFieldOptimizationForm()" >
+					<button type="button" (click)="clear_calculateSON(); resetFieldOptimizationForm()" mat-dialog-close>
 						{{ languageService.i18n['field.cancelSON'] }}
 					</button>
 				</div>

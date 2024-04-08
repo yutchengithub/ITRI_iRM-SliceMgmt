@@ -3138,38 +3138,6 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
-  // @2024/04/08 Update
-  // 點擊 場域優化 視窗的 close 按鈕行為
-  resetFieldOptimizationForm() {
-
-    // 重置整個"場域優化參數"表單
-    this.fieldOptimizationForm.reset({
-      setSONParameters: {
-        cco: true, // 默認 CCO 勾選
-        anr: true, // 默認 ANR 勾選
-        pci: true, // 默認 PCI 勾選
-      },
-      ccoSetParameters: '',
-      ueSyncMinSINR: -7,
-      pciMax: 100,
-      pciMin: 160
-      // ... 設定其他欄位的默認值
-    });
-
-    this.calculationCategories = [];
-    this.calculationResults = [];
-
-    // 重置顯示設定區域的標誌
-    this.showCCOSettings = false;
-    this.showANRSettings = false;
-    this.showPCISettings = false;
-
-    // 如果需要，這裡可以關閉場域優化視窗
-    this.fieldOptimizationWindow_Ref.close();
-
-    console.log("已關閉場域優化視窗，fieldOptimizationForm 已重製");
-  }
-
   // 創建表單組，用於"場域優化設定" @2024/03/30 Add
   fieldOptimizationForm!: FormGroup;
 
@@ -3200,6 +3168,55 @@ export class FieldInfoComponent implements OnInit {
       })
 
     });
+  }
+
+  // @2024/04/09 Update
+  // 點擊 場域優化 視窗的"重置"與"取消"按鈕行為
+  resetFieldOptimizationForm() {
+
+    // 重置整個"場域優化參數"表單
+    // this.fieldOptimizationForm.reset({
+    //   setSONParameters: {
+    //     cco: true, // 默認 CCO 勾選
+    //     anr: true, // 默認 ANR 勾選
+    //     pci: true, // 默認 PCI 勾選
+    //   },
+    //   ccoSetParameters: '',
+    //   ueSyncMinSINR: -7,
+    //   pciMax: 100,
+    //   pciMin: 160
+    //   // ... 設定其他欄位的默認值
+    // });
+
+    // @2024/04/09 Add
+    // 重新取得系統內現有設定 
+    this.populateFieldOptimizationForm();
+
+    this.calculationCategories = [];
+    this.calculationResults = [];
+
+    // @2024/04/09 Add
+    // 清空存儲計算結果的變數
+    this.gnbsCco = [];
+    this.gnbsAnr = [];
+    this.gnbsPci = [];
+    this.pciCollisions = [];
+    this.pciConfusions = [];
+    this.pci_collisionCount = 0;
+    this.pci_collisionRatio = 0;
+    this.pci_confusionCount = 0;
+    this.pci_confusionRatio = 0;
+
+
+    // 重置顯示設定區域的標誌
+    // this.showCCOSettings = false;
+    // this.showANRSettings = false;
+    // this.showPCISettings = false;
+
+    // 如果需要，這裡可以關閉場域優化視窗
+    //this.fieldOptimizationWindow_Ref.close();
+
+    console.log("已重置 fieldOptimizationForm 表單回系統內現有設定");
   }
 
   showCCOSettings = false;  // 是否顯示 CCO 設定區域 @2024/03/30 Add
@@ -3289,10 +3306,9 @@ export class FieldInfoComponent implements OnInit {
    *  - 但考慮到需求,這種方式可以快速地實現所需的效果
    * */
   toggleOptimizationType() {
-    const optimizationTypeHeader = document.querySelector( '.field-optim-wrap h4' );
+    const optimizationTypeHeader = document.querySelector('.field-optim-wrap h4');
     optimizationTypeHeader?.classList.toggle('active');
   }
-
 
   // @2024/04/08 Add
   fieldOptimizationResultType: string = 'cco'; // 預設選擇顯示 "cco" 
@@ -3333,10 +3349,22 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
-  // @2024/04/08 Update
+  // @2024/04/09 Update
   // 發送計算 SON 演算法函數 
   calculateSON_Submit() {
     console.log( "calculateSON_Submit() - Start" );
+
+    // @2024/04/09 Add
+    // 清空存儲計算結果的變數，確保計算結果是最新的
+    this.gnbsCco = [];
+    this.gnbsAnr = [];
+    this.gnbsPci = [];
+    this.pciCollisions = [];
+    this.pciConfusions = [];
+    this.pci_collisionCount = 0;
+    this.pci_collisionRatio = 0;
+    this.pci_confusionCount = 0;
+    this.pci_confusionRatio = 0;
 
     this.isClickCalculate = true;
     this.getQuerySonParameter_Loading = true; // 顯示 Loading Progress Spinner
@@ -3395,16 +3423,20 @@ export class FieldInfoComponent implements OnInit {
     const ccoSetParam = this.fieldOptimizationForm.get('setSONParameters.ccoSetParameters')?.value;
 
     // 根據用戶選擇的 CCO 參數設置相關值
-    if (ccoSetParam === 'maxCoverageRange') {
+    if ( ccoSetParam === 'maxCoverageRange' ) {
+
       submitData.ratioCoverage = '100';
       submitData.ratioAverageSINR = '0';
       submitData.ratioFairCapacity = '0';
       submitData.ratioMaxCapacity = '0';
-    } else if (ccoSetParam === 'ratioAverageSINR') {
+
+    } else if ( ccoSetParam === 'ratioAverageSINR' ) {
+      
       submitData.ratioAverageSINR = '100';
       submitData.ratioCoverage = '0';
       submitData.ratioFairCapacity = '0';
       submitData.ratioMaxCapacity = '0';
+
     }
 
 
@@ -3430,7 +3462,7 @@ export class FieldInfoComponent implements OnInit {
       this.processCalculationResponse( this.calculationResponse );
 
       // @04/08 Add
-      // 計算完成後自動縮合種類區
+      // 計算完成後自動縮合優化種類區
       this.toggleOptimizationType();
 
       this.getQuerySonParameter_Loading = false; // 計算完成後停止 Loading Progress Spinner
@@ -3451,7 +3483,7 @@ export class FieldInfoComponent implements OnInit {
           this.processCalculationResponse( this.calculationResponse );
 
           // @04/08 Add
-          // 計算完成後自動縮合種類區
+          // 計算完成後自動縮合優化種類區
           this.toggleOptimizationType();
 
           this.getQuerySonParameter_Loading = false; // 計算完成後停止 Loading Progress Spinner
@@ -3477,15 +3509,21 @@ export class FieldInfoComponent implements OnInit {
     console.log( "calculateSON_Submit() - End" );
   }
 
-  // 清楚計算結果 @2024/04/02 Add
+  // @2024/04/09 Update
+  // 清楚場域優化計算結果 
   clear_calculateSON() {
 
     this.isCcoClass = false;
     this.isAnrClass = false;
     this.isPciClass = false;
     this.isClickCalculate = false;
-  }
 
+    console.log("已清除場域優化計算結果");
+
+    // @04/09 Add
+    // 清除場域優化計算結果後自動展開優化種類區
+    this.toggleOptimizationType();
+  }
 
   // 宣告變數來儲存 CCO 結果
   gnbsCco: cco_CellIndividualResult[] = [];
@@ -3526,6 +3564,8 @@ export class FieldInfoComponent implements OnInit {
     // 將取得的回傳值轉換成輸出到控制台上 this.allSimplifiedBsInfo
     console.log( "In processCalculationResponse() - SON calculation:", calculationResponse );
     console.log( "In processCalculationResponse() - this.allSimplifiedBsInfo:", this.allSimplifiedBsInfo );
+
+    console.log( "gnbsCco: ", this.gnbsCco );
     
     // 從回傳值中取出 cco、anr、pci 的結果資料
     const tempCco = calculationResponse.cco;
@@ -3613,7 +3653,7 @@ export class FieldInfoComponent implements OnInit {
 
     // 處理 CCO 結果資料
     if ( tempCco !== undefined && tempCco.cellIndividualResult ) {
-      // 將 CCO 的個別小區結果加入到 gnbsCco 陣列中
+      // 將 CCO 的個別 Cell 結果加入到 gnbsCco 陣列中
       tempCco.cellIndividualResult.forEach(res => {
         this.gnbsCco.push(res);
       });

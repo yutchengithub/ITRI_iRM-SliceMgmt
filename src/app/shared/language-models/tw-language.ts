@@ -212,6 +212,8 @@ export const TwLanguage = {
   'field.pciMax': 'PCI 最大值',
 
   'field.sonCalculate':'計算',
+  'field.clearAndReset': '清除並重置',
+
 
   'field.calculationCategories': '計算類別',
 
