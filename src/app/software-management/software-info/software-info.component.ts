@@ -49,6 +49,7 @@ export class SoftwareInfoComponent implements OnInit {
   showTooltipCpu: any = {};
   showTooltipStorage: any = {};
   showTooltipNic: any = {};
+  softwarecontent = 'upload';
   uploadType = 'upload';
   @ViewChild('updateModal') updateModal: any;
   updateModalRef!: MatDialogRef<any>;
@@ -56,21 +57,12 @@ export class SoftwareInfoComponent implements OnInit {
   formValidated = false;
   softwareInfoRefreshTimeout!: any;
   softwareInfoRefreshTime: number = 2;
-  /* CRITICAL,MAJOR,MINOR,WARNING */
-  severitys: string[];
   typeMap: Map<number, string> = new Map();
 
   tooltipOptions = {
     theme: 'light',     // 'dark' | 'light'
     hideDelay: 250
   };
-  uploadtypeList: Item[] = [
-    { displayName: 'CU', value: '1' },
-    { displayName: `DU`, value: '2' },
-    { displayName: `RU`, value: '3' },
-    { displayName: `CU+DU`, value: '4' },
-    { displayName: `CU+DU+RU`, value: '5' }
-  ];
 
   uploadtypeUI = [
     { displayName: 'CU', value: 1 },
@@ -88,9 +80,7 @@ export class SoftwareInfoComponent implements OnInit {
     private dialog: MatDialog,
     public languageService: LanguageService
   ) {
-    this.severitys = this.commonService.severitys;
-    this.uploadtypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
-    this.uploadtypeList = this.commonService.nfTypeList;
+    this.uploadtypeUI.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
   }
 
   ngOnInit(): void {
@@ -141,16 +131,16 @@ export class SoftwareInfoComponent implements OnInit {
     }
   }
   mapUpdateType(uploadtype: number): string {
-    const selectedOption = this.uploadtypeList.find(option => option.value === String(uploadtype));
+    const selectedOption = this.uploadtypeUI.find(type => type.value === this.softwareInfo.uploadtype);
     return selectedOption ? selectedOption.displayName : '';
   }
-  selectedTypeName: string = '';
-  updateTypeName() {
-    const selectedType = this.uploadtypeUI.find(type => type.value === this.softwareInfo.uploadtype);
-    if (selectedType) {
-      this.selectedTypeName = selectedType.displayName;
-    }
-  }
+  //selectedTypeName: string = '';
+  // updateTypeName() {
+  //   const selectedType = this.uploadtypeUI.find(type => type.value === this.softwareInfo.uploadtype);
+  //   if (selectedType) {
+  //     this.selectedTypeName = selectedType.displayName;
+  //   }
+  // }
   getSoftwareInfo() {
     if (this.commonService.isLocal) {
       /* local file test */
@@ -208,26 +198,29 @@ export class SoftwareInfoComponent implements OnInit {
         uploadversion: this.softwareInfo.uploadversion,
         session: this.sessionId
       };
+      console.log("hello");
+      console.log(body);
       this.commonService.updateUploadFileInfo(body).subscribe(
         () => console.log('Update Successful.')
       );
       this.updateModalRef.close();
       this.getSoftwareInfo();
-      this.Refresh();
+      this.refresh();
     }
     this.getSoftwareInfo();
   }
-  Refresh() {
-    // refresh
+  refresh() {
     this.softwareInfoRefreshTimeout = window.setTimeout(() => this.getSoftwareInfo(), this.softwareInfoRefreshTime * 1000);
   }
   openUpdateModel() {
     this.formValidated = false;
+    //this.softwareInfo = softwareInfo;
     this.updateForm = this.fb.group({
       'type': new FormControl('imageUrl'),
       'imageUrl': new FormControl('', [Validators.required]),
       'fileName': new FormControl('')
     });
+    this.softwarecontent;
     this.updateModalRef = this.dialog.open(this.updateModal, { id: 'updateModal' });
     this.updateModalRef.afterClosed().subscribe(() => {
       this.formValidated = false;

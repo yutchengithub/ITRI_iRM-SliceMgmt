@@ -403,6 +403,7 @@ export const Enlanguage = {
   'field_list':'Field List',
   'software_version':'Software Version',
   'time.end':'～ ',
+  'modify_content': 'Modify Software Content',
   
   // Component Management (元件管理)
   'cm.name':'Component Name',

@@ -2,7 +2,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
 import { Item } from '../shared/models/item';
@@ -27,6 +27,13 @@ export interface CreateUsers {
   role: string;
 }
 
+export interface AccountInfo {
+  id: string;
+  key: string;
+  role: string;
+  expiretime: string;
+}
+
 @Component({
   selector: 'app-account-management',
   templateUrl: './account-management.component.html',
@@ -35,13 +42,11 @@ export interface CreateUsers {
 export class AccountManagementComponent implements OnInit {
   sessionId: string = '';
   accountLists: AccountLists = {} as AccountLists;
-  accountInfo: CreateUsers = {} as CreateUsers;
+  accountInfo: AccountInfo = {} as AccountInfo;
   @ViewChild('createAccountModal') createAccountModal: any;
   @ViewChild('createModal') createModal: any;
   @ViewChild('deleteModal') deleteModal: any;
   @ViewChild('advancedModal') advancedModal: any;
-  advancedModalRef!: MatDialogRef<any>;
-  advancedForm!: FormGroup;
   isSettingAdvanced = false;
   createModalRef!: MatDialogRef<any>;
   deleteModalRef!: MatDialogRef<any>;
@@ -54,15 +59,20 @@ export class AccountManagementComponent implements OnInit {
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
   fileMsg: string = '';
+  cloudId: string = '';
   formValidated = false;
   searchForm!: FormGroup;
-
+  @ViewChild('accInfoModal') accInfoModal: any;
+  updateModalRef!: MatDialogRef<any>;
+  updateForm!: FormGroup;
   role = 'upload';
   userTypeList: Item[] = [
     { displayName: 'Administrator', value: '1' },
     { displayName: `Manager`, value: '2' },
     { displayName: `Monitor`, value: '3' }
   ];
+  accInfoRefreshTimeout!: any;
+  accInfoRefreshTime: number = 2;
 
   constructor(
     private dialog: MatDialog,
@@ -70,7 +80,8 @@ export class AccountManagementComponent implements OnInit {
     private commonService: CommonService,
     private http: HttpClient,
     private fb: FormBuilder,
-    public languageService: LanguageService
+    public languageService: LanguageService,
+    private route: ActivatedRoute
   ) {
     this.userTypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
     this.searchForm = this.fb.group({
@@ -84,17 +95,6 @@ export class AccountManagementComponent implements OnInit {
     this.sessionId = this.commonService.getSessionId();
     this.getAccountList();
   }
-
-  changeMethod(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    if (e.value === 'existing') {
-
-    } else {
-
-    }
-
-  }
-
 
   getAccountList() {
     if (this.commonService.isLocal) {
@@ -207,7 +207,6 @@ export class AccountManagementComponent implements OnInit {
     }
   }
 
-
   typeText(role: number): string {
     return this.typeMap.get(role) as string;
   }
@@ -218,5 +217,63 @@ export class AccountManagementComponent implements OnInit {
 
   viewPage(accountwareList: Users) {
     this.router.navigate(['/main/account-mgr/info', accountwareList.id, accountwareList.role]);
+  }
+
+  getAccountInfo(userid: string) {
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.accountInfo = this.commonService.accountInfo;
+    } else {
+      this.commonService.queryUserInfo(userid).subscribe(
+        res => {
+          console.log('getAccountInfo:');
+          console.log('tt'+userid);
+          const str = JSON.stringify(res);//convert array to string
+          this.accountInfo = JSON.parse(str);
+          this.accountInfo = res as AccountInfo;
+        }
+      );
+    }
+  }
+  
+  accInfoPage(Users: Users) {
+    this.updateModalRef = this.dialog.open(this.accInfoModal, { id: 'accInfoModal' });
+    //console.log(Users.id);
+    this.getAccountInfo(Users.id);
+    this.updateModalRef.afterClosed().subscribe(() => {
+      this.formValidated = false;
+    });
+  }
+
+  openUpdateModel() {
+    this.formValidated = false;
+    this.updateModalRef = this.dialog.open(this.accInfoModal, { id: 'updateModal' });
+    this.updateModalRef.afterClosed().subscribe(() => {
+      this.formValidated = false;
+    });
+  }
+  update() {
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.updateModalRef.close();
+    } else {
+      const body: any = {
+        id: this.accountInfo.id,
+        key: this.accountInfo.key,
+        role: this.accountInfo.role,
+        session: this.sessionId
+      };
+      this.commonService.updateUser(body).subscribe(
+        () => console.log('Update Successful.')
+      );
+      this.updateModalRef.close();
+      this.getAccountList();
+      this.nfRefresh();
+    }
+  }
+
+  nfRefresh() {
+    // refresh
+    this.accInfoRefreshTimeout = window.setTimeout(() => this.getAccountList(), this.accInfoRefreshTime * 1000);
   }
 }

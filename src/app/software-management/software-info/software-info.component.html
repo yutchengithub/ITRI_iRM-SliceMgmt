@@ -11,16 +11,18 @@
     <div class="center">
       <ul class="Software_info">
         <h3>Software Information</h3>
-        <li><label>{{languageService.i18n['manufacturer']}}</label><input type="text" [(ngModel)]="softwareInfo.firm"/></li>
-        <li><label>{{languageService.i18n['model']}}</label><input type="text" [(ngModel)]="softwareInfo.modelname"/></li>
-        <!-- <li><label>{{languageService.i18n['type']}}</label><span>{{mapUploadType(softwareInfo.uploadtype)}}</span></li> -->
-        <li><label>{{languageService.i18n['type']}}</label>
+        
+        <li><label>{{languageService.i18n['manufacturer']}}</label>{{softwareInfo.firm}}</li>
+        <li><label>{{languageService.i18n['model']}}</label>{{softwareInfo.modelname}}</li>
+        <!-- <li><label>{{languageService.i18n['model']}}</label><input type="text" [(ngModel)]="softwareInfo.modelname"/></li> -->
+        <!-- <li><label>{{languageService.i18n['type']}}</label>
           <select [(ngModel)]="softwareInfo.uploadtype" >
-            <option *ngFor="let opt of uploadtypeList" [value]="opt.value">{{opt.displayName}}</option>
+            <option *ngFor="let opt of uploadtypeUI" [value]="opt.value">{{opt.displayName}}</option>
           </select>
-        </li>
-        <li><label>{{languageService.i18n['version']}}</label><input type="text" [(ngModel)]="softwareInfo.uploadversion"/></li>
-        <li><label>{{languageService.i18n['notes']}}</label><input type="text" [(ngModel)]="softwareInfo.description"/></li>
+        </li> -->
+        <li><label>{{languageService.i18n['type']}}</label>{{mapUploadType(softwareInfo.uploadtype)}}</li>
+        <li><label>{{languageService.i18n['version']}}</label>{{softwareInfo.uploadversion}}</li>
+        <li><label>{{languageService.i18n['notes']}}</label>{{softwareInfo.description}}</li>
       </ul>
       <ul class="file_url_info">
         <h3>File/URL Information</h3>
@@ -31,13 +33,13 @@
       </ul>
       <ul class="ftp_info">
         <h3>FTP Information</h3>
-        <li><label>FTP Account</label><input type="text" [(ngModel)]="softwareInfo.ftpid"/></li>
-        <li><label>FTP Password</label><input type="text" [(ngModel)]="softwareInfo.ftpkey"/></li>
+        <li><label>{{languageService.i18n['ftp.account']}}</label>{{softwareInfo.ftpid}}</li>
+        <li><label>{{languageService.i18n['ftp.password']}}</label>{{softwareInfo.ftpkey}}</li>
       </ul>
     </div>
-    <label class="boxTitle">Modify Software Content</label>
+    <!-- <label class="boxTitle">{{languageService.i18n['modify_content']}}</label> -->
     <ul class="modify">
-      <li>
+      <!-- <li>
         <span class="btn-group">
           <mat-button-toggle-group [(ngModel)]="uploadType" >
             <mat-button-toggle value="upload">{{languageService.i18n['upload.file']}}</mat-button-toggle>
@@ -52,7 +54,7 @@
               <div class="url"><input type="text" placeholder="Url"></div>
           </ng-container>
       </span>
-      </li>
+      </li> -->
     </ul>
     <div class="buttons">
       <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">{{languageService.i18n['updateSoftware']}}</button>
@@ -61,40 +63,56 @@
 
 <ng-template #updateModal>
   <h5>Confirm to {{languageService.i18n['software_update']}}</h5>
-  <form [formGroup]="updateForm">
     <ul>
       <li>
         <label>{{languageService.i18n['manufacturer']}}: </label>
-        <span>{{softwareInfo.firm}}</span>
+        <span><input type="text" [value]="softwareInfo.firm"/></span>
       </li>
       <li>
         <label>{{languageService.i18n['model']}}: </label>
-        <span>{{softwareInfo.modelname}}</span>
+        <span><input type="text" [value]="softwareInfo.modelname"/></span>
       </li>
-      <li>
-        <label>{{languageService.i18n['type']}}: </label>
-        <span>{{mapUpdateType(softwareInfo.uploadtype)}}</span>
+      <li><label>{{languageService.i18n['type']}}</label>
+        <select [(ngModel)]="softwareInfo.uploadtype" >
+          <option *ngFor="let opt of uploadtypeUI" [value]="opt.value">{{opt.displayName}}</option>
+        </select>
       </li>
       <li>
         <label>{{languageService.i18n['version']}}: </label>
-        <span>{{softwareInfo.uploadversion}}</span>
+        <span><input type="text" [value]="softwareInfo.uploadversion"/></span>
       </li>
       <li>
         <label>{{languageService.i18n['notes']}}: </label>
-        <span>{{softwareInfo.description}}</span>
+        <span><input type="text" [value]="softwareInfo.description"/></span>
       </li>
       <li>
-        <label>FTP Account: </label>
-        <span>{{softwareInfo.ftpid}}</span>
+        <label>{{languageService.i18n['ftp.account']}}:</label>
+        <span><input type="text" [value]="softwareInfo.ftpid"/></span>
       </li>
       <li>
-        <label>FTP Password: </label>
-        <span>{{softwareInfo.ftpkey}}</span>
+        <label>{{languageService.i18n['ftp.password']}}</label>
+        <span><input type="text" [value]="softwareInfo.ftpkey"/></span>
       </li>
+      
+        <label class="boxTitle">{{languageService.i18n['modify_content']}}</label>
+        <span class="btn-group">
+          <mat-button-toggle-group [value]="softwarecontent" >
+            <mat-button-toggle value="upload">{{languageService.i18n['upload.file']}}</mat-button-toggle>
+            <mat-button-toggle value="url">{{languageService.i18n['url']}}</mat-button-toggle>
+          </mat-button-toggle-group>
+          <ng-container *ngIf="softwarecontent == 'upload'">
+            <div class="upload">
+              <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".zip, .tar" #fileInput>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="softwarecontent == 'url'">
+              <div class="url"><input type="text" placeholder="Url"></div>
+          </ng-container>
+      </span>
     </ul>
+    
     <div class="buttons">
       <button type="button" mat-dialog-close>Cancel</button>
       <button type="button" (click)="update()">OK</button>
     </div>
-  </form>
 </ng-template>

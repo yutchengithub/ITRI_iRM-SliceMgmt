@@ -18,7 +18,7 @@
         <td>{{typeText(+opt.role)}}</td>
         <!-- <td>{{opt.role}}</td> -->
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>
+          <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="accInfoPage(opt)">description</mat-icon>
           <!-- <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">description</mat-icon>-->
         </td>
         <td class="icon">
@@ -77,5 +77,36 @@
   <div class="buttons">
     <button type="button" mat-dialog-close>Cancel</button>
     <button type="button" (click)="delete()">Delete</button>
+  </div>
+</ng-template>
+
+<ng-template #accInfoModal>
+  <h5>{{languageService.i18n['basic.info']}}
+  </h5>
+    <ul>
+      <li><label>{{languageService.i18n['user_account']}}:</label><span>{{accountInfo.id}}</span></li>
+      <li><label>{{languageService.i18n['key_account']}}:</label><span>{{accountInfo.key}}</span></li>
+        <li><label>{{languageService.i18n['role_account']}}:</label>
+          <span><select [(ngModel)]="accountInfo.role" name="role">
+            <option *ngFor="let opt of userTypeList" [value]="opt.value">{{opt.displayName}}</option>
+          </select></span>
+        </li>        
+      <li><label>{{languageService.i18n['expired_time_account']}}:</label>
+        <span>{{accountInfo.expiretime}}</span>
+      </li>   
+    </ul>
+    <div class="buttons">
+      <!-- <button type="button" (click)="openUpdateModal()" >Update Settings</button> -->
+      <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="update()">{{languageService.i18n['updateSoftware']}}</button>
+      <button type="button" mat-dialog-close>{{languageService.i18n['cancel']}}</button>
+    </div>
+</ng-template>
+
+<ng-template #updateModal>
+  <h5>Update User {{accountInfo.id}}</h5>
+  <p>Confirm to Update {{accountInfo.id}}?</p>
+  <div class="buttons">
+    <button type="button" mat-dialog-close>Cancel</button>
+    <button type="button" (click)="update()">OK</button>
   </div>
 </ng-template>

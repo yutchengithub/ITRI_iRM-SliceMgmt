@@ -407,6 +407,7 @@ export const TwLanguage = {
   'field_list':'場域列表',
   'software_version':'軟體版本',
   'time.end':'～ ',
+  'modify_content': '變更軟體內容',
   
   // Component Management (元件管理)
   'cm.name':'元件名稱',
