@@ -93,7 +93,7 @@ table.neLog tr td:nth-last-child(2) {
 table.neLog tr td:nth-last-child(3),
 table.neLog tr td:nth-last-child(4) {
   text-align: left;
-  width: 85vw;
+  width: 75vw;
   word-break: break-all;
   //max-width: 530px;          // 限制最大寬度，視需要調整
 }
@@ -184,7 +184,13 @@ table tr td {
   max-height: calc(100vh - 150px); // 設定最大高度
   overflow-y: auto;                // 內容超過最大高度時顯示滾動條
 }
-
+.neLog thead tr th:first-child,
+.userLog thead tr th:first-child,
+.neLog tbody tr td:first-child,
+.userLog tbody tr td:first-child {
+  min-width: 1.5em;
+  width: 3em;
+}
 @media screen and (max-width:1920px) {
   .table table {
     max-height: 70vh;

@@ -703,7 +703,7 @@ div.baseInfo .content-inner ul li label {
   margin: 0 3px;
 }
 .collabsible table th {
-  font-size: .9em;
+  font-size: 1em;
   text-align: center;
 }
 
@@ -973,6 +973,9 @@ ul.treeList li a.btn {
 }
 .alarms .filterBY {
   padding: 1em 2em .5em;
+}
+.collabsible .basicParmType table tbody tr td:nth-child(2) .mat-icon {
+  float: right;
 }
 @media screen and (max-width:1680px) {
   .h30 {

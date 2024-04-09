@@ -491,3 +491,27 @@ mat-dialog-container h5 .mat-icon {
   color: #2a5caf!important;
   background-color: #b6d6f3!important;
 }
+.field-optim-wrap h4 {
+  color: #000!important;
+}
+.fieldOptimization .left-section > div > span > input[type=number] {
+  border-bottom: 1px solid #000!important;
+  color: #000!important;
+}
+.field-optim-wrap table tbody td {
+  color: #000!important;
+}
+.field-optim-wrap > span .table thead th {
+  color: #056897!important;
+  background-color: #c2e7ff!important;
+  border: 1px solid rgba(51, 122, 183, 0.4)!important;
+}
+.fieldOptimization .Performance {
+  background-color: #eaf3ff!important;
+}
+.field-optim-wrap > span .table table td > label span:after, .field-optim-wrap table tbody td > span:after {
+  color: #3c99dd!important;
+}
+.field-optim-wrap label > div:not(.table) {
+  color: #2786b5!important;
+}

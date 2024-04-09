@@ -221,7 +221,7 @@ export class SoftwareInfoComponent implements OnInit {
       'fileName': new FormControl('')
     });
     this.softwarecontent;
-    this.updateModalRef = this.dialog.open(this.updateModal, { id: 'updateModal' });
+    this.updateModalRef = this.dialog.open(this.updateModal, { id: 'softUpdateModal' });
     this.updateModalRef.afterClosed().subscribe(() => {
       this.formValidated = false;
     });

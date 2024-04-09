@@ -156,8 +156,8 @@
 
     </ul>
     <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
       <button type="button" (click)="create()">OK</button>
+      <button type="button" mat-dialog-close>Cancel</button>
     </div>
   </form>
 </ng-template>
@@ -167,8 +167,8 @@
   </h5>
   <p>{{languageService.i18n['confirm_del_soft']}} – {{selectSoftware.uploadinfo}}</p>
   <div class="buttons">
-    <button type="button" mat-dialog-close>Cancel</button>
     <button type="button" (click)="delete()">Delete</button>
+    <button type="button" mat-dialog-close>Cancel</button>
   </div>
 </ng-template>
 
@@ -205,8 +205,8 @@
     </ul>
 
     <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
       <button type="button" mat-dialog-close="OK">Ok</button>
+      <button type="button" mat-dialog-close>Cancel</button>
     </div>
   </form>
 </ng-template>

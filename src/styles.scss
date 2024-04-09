@@ -361,6 +361,7 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
     top: -1px;
     font-weight: bold;
     font-size: 1.1em;
+    white-space: nowrap;
 }
  table thead tr th:first-child {
   border-radius: 5px 0 0 0;
@@ -1485,4 +1486,29 @@ body.tw #fieldOptimizationWindow ul li > label {
 }
 #fieldOptimizationWindow .mat-radio-button ~ .mat-radio-button {
   margin: 3px 0;
+}
+body.tw table.neLog tr td:nth-last-child(2) {
+  width: 15em!important;
+}
+body.tw #nelogDetail ul li > span:first-child,
+body.tw #userlogDetail ul li > span:first-child {
+  width: 4.3em;
+  margin: 0;
+}
+#softUpdateModal {
+  min-width: 30em;
+}
+
+#softUpdateModal .boxTitle {
+  font-size: 1.2em;
+}
+#softUpdateModal ul li > label {
+  width: 7em;
+}
+body.tw #softUpdateModal ul li > label {
+  width: 5em;
+  min-width: initial;
+}
+#userlogDetail {
+  min-width: 32em;
 }

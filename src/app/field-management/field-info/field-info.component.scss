@@ -1395,8 +1395,8 @@ h3 {
   max-height: 50em;
 }
 .bs_list table thead th {
-  min-width: 8em;
-  font-size: .9em;
+  min-width: 8.5em;
+  /* font-size: .9em; */
 }
 .field-optim-wrap table tbody td {
   text-align: center;
@@ -1578,7 +1578,7 @@ h6 {
   margin: .3em 0 0 3em;
   background-color: #232934;
   padding: 1em 2em;
-  width: 55%;
+  width: 45%;
   box-shadow: inset 0 0px 5px rgb(162 193 219 / 40%);
   border-radius: 5px;
 }
@@ -1588,4 +1588,11 @@ h6 {
 }
 .fieldOptimization .Performance ul {
   white-space: nowrap;
+}
+.sonCalculate button {
+  border-radius: 5px!important;
+  background: linear-gradient( 166deg , #1d8ee5 0%, #1e5799 100%);
+  color: #fff;
+  border: none;
+  padding: 10px;
 }

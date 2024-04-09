@@ -124,8 +124,8 @@
       </li>
     </ul>
     <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
       <button type="button" (click)="create()">OK</button>
+      <button type="button" mat-dialog-close>Cancel</button>
     </div>
   </form>
 </ng-template>
@@ -138,8 +138,8 @@
     – {{selectComponent.name}}
   </p>
   <div class="buttons">
-    <button type="button" mat-dialog-close>Cancel</button>
     <button *ngIf="selectComponent.status === 1" type="button" (click)="delete()">Delete</button>
+    <button type="button" mat-dialog-close>Cancel</button>
   </div>
 </ng-template>
 
@@ -163,8 +163,8 @@
       </li>
     </ul>
     <div class="buttons">
-      <button type="button" mat-dialog-close>Cancel</button>
       <button type="button" >Confirm</button>
+      <button type="button" mat-dialog-close>Cancel</button>
     </div>
   </form>
 

@@ -1219,7 +1219,7 @@
 						</div>
 					</form>
 					<!-- 計算按鈕 -->
-					<div class="buttons">
+					<div class="buttons sonCalculate">
 						<button type="button" (click)="calculateSON_Submit()">
 							{{ languageService.i18n['field.sonCalculate'] }}
 						</button>
@@ -1263,11 +1263,11 @@
 				</h4>
 
 				<!-- 清除計算結果並重置設定參數按鈕 -->
-				<div class="buttons">
+				<!-- <div class="buttons">
 					<button type="button" (click)="resetFieldOptimizationForm(); clear_calculateSON();">
 						{{ languageService.i18n['field.clearAndReset'] }}
 					</button>
-				</div>
+				</div> -->
 
 				<div class="tabs">
 					<mat-button-toggle-group name="fieldOptimizationResultType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldOptimizationResultType" (change)="changefieldOptimizationResultType($event)">
@@ -1523,6 +1523,11 @@
 					<button type="button" (click)="clear_calculateSON(); resetFieldOptimizationForm()" mat-dialog-close>
 						{{ languageService.i18n['field.cancelSON'] }}
 					</button>
+					<!-- 清除並重置 -->
+					<button type="button" (click)="resetFieldOptimizationForm(); clear_calculateSON();">
+						{{ languageService.i18n['field.clearAndReset'] }}
+					</button>
+					
 				</div>
 			</span>			
 		</div>
