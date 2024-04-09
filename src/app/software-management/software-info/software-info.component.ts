@@ -227,19 +227,4 @@ export class SoftwareInfoComponent implements OnInit {
     });
   }
 
-  changeType(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    if (e.value === 'imageUrl') {
-      this.updateForm.controls['imageUrl'].setValidators([Validators.required]);
-      this.updateForm.controls['fileName'].setValidators(null);
-      this.updateForm.controls['fileName'].setValue('');
-    } else {
-      this.updateForm.controls['imageUrl'].setValidators(null);
-      this.updateForm.controls['imageUrl'].setValue('');
-      this.updateForm.controls['fileName'].setValidators([Validators.required]);
-    }
-    this.updateForm.controls['imageUrl'].updateValueAndValidity();
-    this.updateForm.controls['fileName'].updateValueAndValidity();
-  }
-
 }

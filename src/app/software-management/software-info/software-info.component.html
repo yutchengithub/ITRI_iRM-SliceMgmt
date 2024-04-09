@@ -66,11 +66,11 @@
     <ul>
       <li>
         <label>{{languageService.i18n['manufacturer']}}: </label>
-        <span><input type="text" [value]="softwareInfo.firm"/></span>
+        <span><input type="text" [(ngModel)]="softwareInfo.firm"/></span>
       </li>
       <li>
         <label>{{languageService.i18n['model']}}: </label>
-        <span><input type="text" [value]="softwareInfo.modelname"/></span>
+        <span><input type="text" [(ngModel)]="softwareInfo.modelname"/></span>
       </li>
       <li><label>{{languageService.i18n['type']}}</label>
         <select [(ngModel)]="softwareInfo.uploadtype" >
@@ -79,24 +79,23 @@
       </li>
       <li>
         <label>{{languageService.i18n['version']}}: </label>
-        <span><input type="text" [value]="softwareInfo.uploadversion"/></span>
+        <span><input type="text" [(ngModel)]="softwareInfo.uploadversion"/></span>
       </li>
       <li>
         <label>{{languageService.i18n['notes']}}: </label>
-        <span><input type="text" [value]="softwareInfo.description"/></span>
+        <span><input type="text" [(ngModel)]="softwareInfo.description"/></span>
       </li>
       <li>
         <label>{{languageService.i18n['ftp.account']}}:</label>
-        <span><input type="text" [value]="softwareInfo.ftpid"/></span>
+        <span><input type="text" [(ngModel)]="softwareInfo.ftpid"/></span>
       </li>
       <li>
         <label>{{languageService.i18n['ftp.password']}}</label>
-        <span><input type="text" [value]="softwareInfo.ftpkey"/></span>
+        <span><input type="text" [(ngModel)]="softwareInfo.ftpkey"/></span>
       </li>
-      
         <label class="boxTitle">{{languageService.i18n['modify_content']}}</label>
         <span class="btn-group">
-          <mat-button-toggle-group [value]="softwarecontent" >
+          <mat-button-toggle-group [(ngModel)]="softwarecontent" >
             <mat-button-toggle value="upload">{{languageService.i18n['upload.file']}}</mat-button-toggle>
             <mat-button-toggle value="url">{{languageService.i18n['url']}}</mat-button-toggle>
           </mat-button-toggle-group>
@@ -108,7 +107,7 @@
           <ng-container *ngIf="softwarecontent == 'url'">
               <div class="url"><input type="text" placeholder="Url"></div>
           </ng-container>
-      </span>
+        </span>
     </ul>
     
     <div class="buttons">
