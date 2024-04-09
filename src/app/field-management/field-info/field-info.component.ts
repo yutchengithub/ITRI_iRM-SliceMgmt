@@ -3576,6 +3576,21 @@ export class FieldInfoComponent implements OnInit {
     console.log( "tempANR: ", tempAnr );
     console.log( "tempPci: ", tempPci );
 
+    // 處理 CCO 結果資料
+    if ( tempCco !== undefined && tempCco.cellIndividualResult ) {
+      
+      // 將 CCO 的個別 Cell 結果加入到 gnbsCco 陣列中
+      tempCco.cellIndividualResult.forEach( res => {
+        this.gnbsCco.push( res );
+      });
+
+      // 取得平均 SINR 值
+      this.resultSinr = tempCco['average_sinr'];
+
+      // 取得覆蓋率
+      this.resultCoverage = tempCco.coverage;
+    }
+
     // 處理 ANR 結果資料
     if ( tempAnr !== undefined && tempAnr.cellIndividualResult ) {
       // 將 ANR 的個別小區結果加入到 gnbsAnr 陣列中
@@ -3651,17 +3666,7 @@ export class FieldInfoComponent implements OnInit {
       }
     }
 
-    // 處理 CCO 結果資料
-    if ( tempCco !== undefined && tempCco.cellIndividualResult ) {
-      // 將 CCO 的個別 Cell 結果加入到 gnbsCco 陣列中
-      tempCco.cellIndividualResult.forEach(res => {
-        this.gnbsCco.push(res);
-      });
-      // 取得平均 SINR 值
-      this.resultSinr = tempCco['average_sinr'];
-      // 取得覆蓋率
-      this.resultCoverage = tempCco.coverage;
-    }
+   
 
     // 更新前端顯示狀態
     this.isPciClass = this.calculationCategories.includes('pci');
