@@ -114,3 +114,11 @@ export interface cco_CellIndividualResult {
   pLMNId_MCC: string;
   cellLocalId: string;
 }
+
+// 用於記錄前端針對 cco 處理的結果 @2024/04/09 Add
+export interface for_handle_cco_CellIndividualResult {
+  name: string;
+  nci: string;
+  originalTxPower: number;
+  newTxPower: number;
+}
