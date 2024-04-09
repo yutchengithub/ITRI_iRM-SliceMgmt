@@ -1277,7 +1277,7 @@
 					</mat-button-toggle-group>
 				</div>
 		
-				<!-- CCO 結果 -->
+				<!-- CCO 結果 ( 已完整 ) @yutchengithub -->
 				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'cco' ">
 					
 					<div *ngIf="isCcoClass">
@@ -1293,11 +1293,11 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr *ngFor="let result of gnbsCco">
-											<td>BS-all-2<br>(NCI=000008108)</td>
-											<td>{{ result.txpower }}</td>
+										<tr *ngFor="let result of processedCcoResults">
+											<td>{{ result.name }}<br>( NCI = {{ result.nci }} )</td>
+											<td>{{ result.originalTxPower }}</td>
 											<td><span class="material-symbols-outlined after">east</span></td>
-											<td class="new">{{ result.txpower }}</td>
+											<td class="new">{{ result.newTxPower }}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -1312,6 +1312,7 @@
 						</label>
 					</div>
 				</div>
+
 				<!-- ANR 結果 -->
 				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'anr' ">
 					<!-- ANR 結果 -->

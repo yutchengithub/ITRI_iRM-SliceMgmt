@@ -26,7 +26,9 @@ import { BsInfoInField }                  from '../../shared/interfaces/Field/Fo
 import { ForCreateOrUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_createField_or_updateField';         // @2024/01/26 Add
 import { ForQueryOrUpdatePmFTPInfo }      from '../../shared/interfaces/Field/For_queryPmFtpInfo_or_updatePmFtpInfo';  // @2024/02/04 Add
 import { ForQuerySonParameter }           from '../../shared/interfaces/Field/For_querySonParameter';                  // @2024/03/30 Add
-import { ForCalculateSon, ForCalculateSonResponse, anr_CellIndividualResult, pci_CellIndividualResult, cco_CellIndividualResult } from '../../shared/interfaces/Field/For_multiCalculateBs';                   // @2024/03/31 Add
+import { ForCalculateSon, ForCalculateSonResponse,
+         anr_CellIndividualResult, pci_CellIndividualResult, 
+         cco_CellIndividualResult, for_handle_cco_CellIndividualResult } from '../../shared/interfaces/Field/For_multiCalculateBs'; // @2024/03/31 Add
 import { BSInfo }              from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2023/12/21 Add
 import { BSInfo_dist, PLMNid } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
@@ -3072,9 +3074,9 @@ export class FieldInfoComponent implements OnInit {
 
     let ccoParameter = '';
 
-    if (this.getFieldSonParameters.ratioAverageSINR !== '0' && this.getFieldSonParameters.ratioAverageSINR !== '') {
+    if ( this.getFieldSonParameters.ratioAverageSINR !== '0' && this.getFieldSonParameters.ratioAverageSINR !== '' ) {
       ccoParameter = 'ratioAverageSINR';
-    } else if (this.getFieldSonParameters.ratioCoverage !== '0' && this.getFieldSonParameters.ratioCoverage !== '') {
+    } else if ( this.getFieldSonParameters.ratioCoverage !== '0' && this.getFieldSonParameters.ratioCoverage !== '' ) {
       ccoParameter = 'maxCoverageRange';
     }
   
@@ -3198,6 +3200,7 @@ export class FieldInfoComponent implements OnInit {
     // @2024/04/09 Add
     // 清空存儲計算結果的變數
     this.gnbsCco = [];
+    this.processedCcoResults = [];
     this.gnbsAnr = [];
     this.gnbsPci = [];
     this.pciCollisions = [];
@@ -3206,7 +3209,6 @@ export class FieldInfoComponent implements OnInit {
     this.pci_collisionRatio = 0;
     this.pci_confusionCount = 0;
     this.pci_confusionRatio = 0;
-
 
     // 重置顯示設定區域的標誌
     // this.showCCOSettings = false;
@@ -3357,6 +3359,7 @@ export class FieldInfoComponent implements OnInit {
     // @2024/04/09 Add
     // 清空存儲計算結果的變數，確保計算結果是最新的
     this.gnbsCco = [];
+    this.processedCcoResults = [];
     this.gnbsAnr = [];
     this.gnbsPci = [];
     this.pciCollisions = [];
@@ -3365,6 +3368,8 @@ export class FieldInfoComponent implements OnInit {
     this.pci_collisionRatio = 0;
     this.pci_confusionCount = 0;
     this.pci_confusionRatio = 0;
+
+    console.log( "gnbsCco: ", this.gnbsCco );
 
     this.isClickCalculate = true;
     this.getQuerySonParameter_Loading = true; // 顯示 Loading Progress Spinner
@@ -3530,6 +3535,9 @@ export class FieldInfoComponent implements OnInit {
   resultSinr: string = '';
   resultCoverage: string = '';
 
+  // 定義新矩陣來儲存處理後的 CCO 結果 @2024/04/09 Add
+  processedCcoResults: for_handle_cco_CellIndividualResult[] = [];
+
   // 宣告變數來儲存 ANR 結果
   gnbsAnr: anr_CellIndividualResult[] = [];
 
@@ -3576,12 +3584,35 @@ export class FieldInfoComponent implements OnInit {
     console.log( "tempANR: ", tempAnr );
     console.log( "tempPci: ", tempPci );
 
-    // 處理 CCO 結果資料
+    // 處理 CCO 結果資料 ( 已完整 )
     if ( tempCco !== undefined && tempCco.cellIndividualResult ) {
       
-      // 將 CCO 的個別 Cell 結果加入到 gnbsCco 陣列中
+      // 清空原有的 CCO 結果陣列
+      this.gnbsCco = [];
+
+      // 在計算開始前清空上一次的 CCO 處理結果
+      this.processedCcoResults = [];
+
+      // 遍歷計算結果中的每個 Cell
       tempCco.cellIndividualResult.forEach( res => {
-        this.gnbsCco.push( res );
+
+          // 查找匹配的基站訊息
+          const matchingBsInfo = this.allSimplifiedBsInfo.find( bsInfo => bsInfo.gNBId === res.gNBId );
+          if ( matchingBsInfo ) {
+
+            // 創建新的 CCO 結果對象，並填入匹配的訊息
+            const ccoResult: for_handle_cco_CellIndividualResult = {
+
+                         name: matchingBsInfo.name,        // 基站名稱
+                          nci: matchingBsInfo.nci,         // NCI
+              originalTxPower: matchingBsInfo['tx-power'], // 原始傳輸功率
+                  newTxPower: res.txpower                  // 新的傳輸功率
+
+            };
+
+            // 將新的結果對象加入到已處理的 CCO 結果矩陣中
+            this.processedCcoResults.push( ccoResult );
+          }
       });
 
       // 取得平均 SINR 值
