@@ -9,13 +9,16 @@ table th {
 }
 thead tr th,
 tbody tr td {
-  width: 20%;    // 將每個列的寬度設置為相等的百分比
+  width: 11%;    // 將每個列的寬度設置為相等的百分比
   text-align: center; // 所有內容都居中對齊
 }
-
+tbody tr td:nth-child(1),
+tbody tr td:nth-child(4) {
+  width: 23%;
+}
 .icon {
   //width: auto;
-  width:4%!important;
+  width:7.5em!important;
   text-align: center;
 }
 

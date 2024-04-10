@@ -974,8 +974,12 @@ ul.treeList li a.btn {
 .alarms .filterBY {
   padding: 1em 2em .5em;
 }
+.collabsible .basicParmType table tbody tr td:nth-child(2) {
+  position: relative;
+}
 .collabsible .basicParmType table tbody tr td:nth-child(2) .mat-icon {
-  float: right;
+  position: absolute;
+  right: 5px;
 }
 @media screen and (max-width:1680px) {
   .h30 {

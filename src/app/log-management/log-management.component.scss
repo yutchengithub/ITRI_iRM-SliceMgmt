@@ -164,7 +164,7 @@ table tbody td.time {
 
 table.userLog th,
 table.userLog td {
-  min-width: 5vw;
+  min-width: 6.1vw;
 }
 table.userLog th.logmsg,
 table.userLog td.logmsg {
@@ -173,7 +173,9 @@ table.userLog td.logmsg {
 table.userLog td.logmsg {
   text-align: left;
 }
-
+table.userLog td:nth-last-child(2) {
+  width: 3vw!important;
+}
 // 對所有的表格單元格應用垂直居中對齊
 table tr td {
   vertical-align: middle;
