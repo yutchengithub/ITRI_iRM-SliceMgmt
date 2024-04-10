@@ -1036,6 +1036,9 @@ export class FieldInfoComponent implements OnInit {
   // Process field info and call getQueryBsInfoForAll
   processFieldInfo() {
 
+    // 輸出開始處理的訊息到控制台
+    console.log('processFieldInfo() - Start');
+
     if ( this.commonService.isLocal ) {
     
       console.log('Start fetching BS info in Local');   // 開始獲取 Local BS 資訊
@@ -1102,6 +1105,12 @@ export class FieldInfoComponent implements OnInit {
       }
       
     }
+
+    // 輸出轉換後的所有基站資訊
+    console.log( '經過簡化轉換後場域內的所有基站資訊有\n( allSimplifiedBsInfo ) :', this.allSimplifiedBsInfo );
+    
+    // 輸出函數結束的訊息到控制台
+    console.log( 'processFieldInfo() - End' );
   }
   
   // @12/26 Add
@@ -1123,13 +1132,13 @@ export class FieldInfoComponent implements OnInit {
     console.log('There are', bsNum, 'BSs in the', this.fieldInfo.name, 'field');
     
     // 將場地內基站的資訊映射為一個 Observable 數組，用於異步請求每個基站的詳細資訊
-    const observables: Observable<BSInfo | BSInfo_dist>[] = bsinfo_Infield.map((originalBsInfoInfield) => {
+    const observables: Observable< BSInfo | BSInfo_dist >[] = bsinfo_Infield.map( ( originalBsInfoInfield ) => {
       // 發起異步請求以獲取每個基站的詳細資訊
       return this.API_Field.queryBsInfo( originalBsInfoInfield.id ).pipe(
-        map((response: BSInfo | BSInfo_dist) => {
+        map( ( response: BSInfo | BSInfo_dist ) => {
 
           // 根據是否包含特定屬性來判斷返回的資訊類型
-          if ('cellInfo' in originalBsInfoInfield) {
+          if ( 'cellInfo' in originalBsInfoInfield ) {
 
             // 如果原始資訊中包含 cellInfo 屬性，則視為 BSInfo_dist 類型
             return response as BSInfo_dist;
@@ -1151,6 +1160,7 @@ export class FieldInfoComponent implements OnInit {
 
         // 遍歷每個異步請求的結果
         results.forEach( result => {
+
           if ( result.bstype === 2 ) {
 
             // 如果結果為 BSInfo_dist 類型，則處理每個子基站資訊
@@ -1161,6 +1171,7 @@ export class FieldInfoComponent implements OnInit {
             // 如果結果為 BSInfo 類型，則直接將轉換後的對象加入到 allSimplifiedData 數組
             allSimplifiedData.push( this.convertBsInfoToSimplifiedFormat( result as BSInfo ) );
           }
+
         });
 
         // 將合併後的所有 SimplifiedBSInfo 對象賦值給 this.allSimplifiedBsInfo 屬性
