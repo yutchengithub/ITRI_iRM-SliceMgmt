@@ -54,7 +54,7 @@ export interface BSInfo {
     nci: string;
   
     NRCellCU: NRCELLCU | null;
-    gNBCUFunction: GNBCUFunction | null;
+    gNBCUFunction: GNBCUFunction;
     peeParametersList_CU: PeeParametersListCU | null;
     vnfParametersList_CU: VnfParametersListCU | null;
   
