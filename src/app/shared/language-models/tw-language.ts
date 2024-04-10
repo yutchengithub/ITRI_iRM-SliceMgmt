@@ -68,9 +68,9 @@ export const TwLanguage = {
   'field.selectBaseStations': '選擇基站',          // @2024/01/31 Add
   'field.setupComplete': '場域設定完成。',          // @2024/01/31 Add
   'field.bsDescription': '基站地點說明',            // @2024/02/01 Add
-  'field.validLongitude': '請輸入有效經度 ( -180.0 ~ 180.0 )',  // @2024/02/02 Add
-  'field.validLatitude' : '請輸入有效緯度 ( -90.0 ~ 90.0 )',    // @2024/02/02 Add
-  'field.validPhoneNumber' : '請輸入有效門號 ( 10 碼 )',        // @2024/02/02 Add
+  'field.validLongitude': '請輸入有效經度(-180.0 ~ 180.0)',  // @2024/02/02 Add
+  'field.validLatitude' : '請輸入有效緯度(-90.0 ~ 90.0)',    // @2024/02/02 Add
+  'field.validPhoneNumber' : '請輸入有效門號(10 碼)',        // @2024/02/02 Add
 
   'field.view':'檢視',
   'field.viewDetail':'詳細',
@@ -156,9 +156,9 @@ export const TwLanguage = {
 
   'field.fieldImageUpload':'場域圖片上傳',      // @2024/02/23 Update
   'field.fieldImageNone':'未有場域圖片',        // @2024/02/23 Update
-  'field.fieldImageNotUploaded': '尚未上傳場域圖片 ( 如室內或室外地圖 )',      // @2024/02/23 Update
+  'field.fieldImageNotUploaded': '尚未上傳場域圖片(如室內或室外地圖)',      // @2024/02/23 Update
   'field.fieldImageNotUploaded1': '尚未上傳場域圖片',      // @2024/02/23 Add
-  'field.fieldImageNotUploaded2': '( 如室內或室外地圖 )',  // @2024/02/23 Add
+  'field.fieldImageNotUploaded2': '(如室內或室外地圖)',  // @2024/02/23 Add
   'field.DeletefieldImage':'刪除該場域圖片',              // @2024/02/23 Update
   'field.confirmDeletefieldImage':'確定刪除該場域圖片？',  // @2024/02/23 Update
 
@@ -180,8 +180,8 @@ export const TwLanguage = {
   'field.applyReminder': '提醒', // @2024/02/22 Add
   
   'field.report':'場域報表',                 // @12/12 Add
-  'field.reportPM':'場域效能 (PM)',          // @12/12 Add
-  'field.reportFM':'告警資訊 (FM)',          // @12/12 Add
+  'field.reportPM':'場域效能(PM)',          // @12/12 Add
+  'field.reportFM':'告警資訊(FM)',          // @12/12 Add
   'field.optim':'場域優化',                  // @12/12 Add
   'field.optimSON':'執行 SON rApps',         // @12/12 Add
   'field.mapModel':'地圖模式',                // @12/12 Add
@@ -417,9 +417,9 @@ export const TwLanguage = {
   'ExportCSV':'匯出過濾結果.csv', 
   'cm.add':'新增元件',
   'cm.type':'元件種類:',
-  'cm.ip':'元件IP位址',
-  'cm.port':'元件Port',
-  'cm.mac':'元件MAC位址',
+  'cm.ip':'元件 IP 位址',
+  'cm.port':'元件 Port',
+  'cm.mac':'元件 MAC 位址',
   'cm.acc':'元件管理帳號',
   'cm.passw':'元件管理密碼',
   'cm.manufacturer':'生產廠商',

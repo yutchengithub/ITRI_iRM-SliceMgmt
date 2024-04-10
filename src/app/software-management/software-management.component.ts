@@ -167,7 +167,7 @@ export class SoftwareManagementComponent implements OnInit {
       //'fileName': new FormControl('', [Validators.required]),
       'session': this.sessionId
     });
-    this.createModalRef = this.dialog.open(this.createModal, { id: 'createModal' });
+    this.createModalRef = this.dialog.open(this.createModal, { id: 'softCreateModal' });
     this.createModalRef.afterClosed().subscribe(() => {
       this.fileMsg = '';
       this.formValidated = false;

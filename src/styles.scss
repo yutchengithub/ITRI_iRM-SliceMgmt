@@ -241,6 +241,19 @@ mat-dialog-container div.buttons button:hover {
 .mat-dialog-container ul li div label {
   min-width: 15em!important;
 }
+#softCreateModal {
+  width: 40em;
+}
+#softCreateModal ul li label {
+  width: 7em;
+}
+body.tw #softCreateModal ul li label {
+  width: 4em;
+  min-width: initial;
+}
+#softCreateModal input[type="text"],
+#softCreateModal textarea,
+#softCreateModal select,
 .mat-dialog-container#createModal input[type="text"],
 .mat-dialog-container#createModal textarea,
 .mat-dialog-container#createModal select {
@@ -1511,4 +1524,10 @@ body.tw #softUpdateModal ul li > label {
 }
 #userlogDetail {
   min-width: 32em;
+}
+body.tw div.baseInfo .content-inner ul li label {
+  width: 7em!important;
+}
+#createComponentModal select {
+  width: 12.6em;
 }
