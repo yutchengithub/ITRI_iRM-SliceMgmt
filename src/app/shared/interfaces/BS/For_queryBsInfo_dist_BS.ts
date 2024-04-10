@@ -80,8 +80,8 @@ export interface BSInfo_dist {
     cellLocalId: string;
     nci: string;
   
-    gNBCUFunction: GNBCUFunction | null;
-    NRCellCU: NRCELLCU | null;
+    gNBCUFunction: GNBCUFunction;
+    NRCellCU: NRCELLCU;
     peeParametersList_CU: PeeParametersListCU | null;
     vnfParametersList_CU: VnfParametersListCU | null;
   
@@ -95,13 +95,13 @@ export interface BSInfo_dist {
     s_NSSAI_leafList_NRCellCU: SNSSAILeafListNRCellCU | null;
   
     gNBDUFunction: GNBDUFunction | null;
-    NRCellDU: NRCELLDU | null;
+    NRCellDU: NRCELLDU;
     peeParametersList_DU: PeeParametersListDU | null;
     vnfParametersList_DU: VnfParametersListDU | null;
   
     EP_F1C_DU: EPF1C_DU | null;
     EP_F1U_DU: EPF1U_DU | null;
-    NRSectorCarrier: NRSectorCarrier | null;
+    NRSectorCarrier: NRSectorCarrier;
   
     BWP: Bwp | null;
     peeParametersList_NRSector: PeeParametersListNRSector | null;
