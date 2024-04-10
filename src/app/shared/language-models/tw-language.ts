@@ -433,6 +433,7 @@ export const TwLanguage = {
   'cm.file':'檔案管理',
   'cm.path':'路徑',
   'cm.download':'下載',
+  'cm.container': '確定要更新單一Container? 其他未儲存之修改將被還原',
   
   // Account Management (帳號管理)
   'user_account':'帳號',

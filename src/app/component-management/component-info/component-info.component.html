@@ -4,7 +4,6 @@
     {{languageService.i18n['cm.info']}} – {{componentInfo.name}}
   </h5>
 
-
   <div class="main collabsible">
     <div class="baseInfo">
       <span>{{languageService.i18n['basic.info']}}:</span>
@@ -12,20 +11,27 @@
       <label for="baseInfo" class="lbl-toggle"></label>
       <div class="collapsible-content">
         <div class="content-inner">
-          
             <ul>
               <li><label>{{languageService.i18n['cm.name']}}</label><span>{{componentInfo.name}}</span></li>
-              <li><label>{{languageService.i18n['cm.type']}}</label><span>{{componentInfo.comtype}}</span></li>
+              <li><label>{{languageService.i18n['cm.type']}}</label><span>{{mapUploadType(componentInfo.comtype)}}</span></li>
               <li><label>{{languageService.i18n['cm.ip']}}</label><span>{{componentInfo.ip}}</span></li>
               <li><label>{{languageService.i18n['cm.port']}}</label><span>{{componentInfo.port}}</span></li>
               <li><label>{{languageService.i18n['cm.acc']}}</label><span>{{componentInfo.account}}</span></li>
               <li><label>{{languageService.i18n['cm.passw']}}</label><span>{{componentInfo.key}}</span></li>
               <li><label>{{languageService.i18n['cm.manufacturer']}}</label><span>{{componentInfo.firm}}</span></li>
               <li><label>{{languageService.i18n['cm.model']}}</label><span>{{componentInfo.modelname}}</span></li>
-              <li><label>{{languageService.i18n['table.Status']}}</label><span>{{componentInfo.status}}</span></li>
-              <li><label>{{languageService.i18n['software_version']}}</label><span>{{componentInfo.port}}</span></li>
+              <li><label>{{languageService.i18n['table.Status']}}</label>
+                <span *ngIf="componentInfo.status === 2" class="greenLight"></span>
+                <span *ngIf="componentInfo.status === 1" class="greenLight"></span>
+              </li>
+              <li><label>{{languageService.i18n['software_version']}}</label>
+                <ng-container *ngFor="let slot of componentInfo.sm?.['software-inventory']?.['software-slot']">
+                    <span *ngIf="slot.active === 'true'">
+                        {{componentInfo.firm}}/{{componentInfo.modelname}} {{slot['build-version']}}
+                    </span>
+                </ng-container>
+            </li>
             </ul>
-          
         </div>
       </div>
     </div>
@@ -159,77 +165,12 @@
         </div>
       </div> -->
 
-      
-      <!-- sample mine <div *ngFor="let key of objectKeys(jsonData)">
-        <div class="collapsible-content">
-          <div class="content-inner">
-            <div class="collabsible">
-              <div>
-                <span>{{ key }}:<button>Update</button></span>
-                <input id="{{ key }}" class="toggle" type="checkbox">
-                <label for="{{ key }}" class="lbl-toggle"></label>
-                <div class="collapsible-content">
-                  <div class="content-inner">
-                    <ul class="treeList">
-                      <ng-container *ngIf="isObject(jsonData[key])">
-                        <li class="SubItem">
-                          <label class="active">{{ key }}</label>
-                          <ul>
-                            <li *ngFor="let subKey of objectKeys(jsonData[key])" class="SubItem">
-                              <ng-container *ngIf="isObject(jsonData[key][subKey])">
-                                <label>{{ subKey }}:</label>
-                              </ng-container>
-                              <ng-container *ngIf="!isObject(jsonData[key][subKey])">
-                                <label>{{ subKey }}:</label>
-                                <ng-container *ngIf="subKey === 'users'">
-                                  <input type="text" [value]="jsonData[key][subKey]">
-                                </ng-container>
-                              </ng-container>
-                              <div *ngIf="isObject(jsonData[key][subKey])">
-                                <ng-container *ngTemplateOutlet="nestedKeys; context: { $implicit: jsonData[key][subKey] }"></ng-container>
-                              </div>
-                            </li>
-                          </ul>
-                        </li>
-                      </ng-container>
-                      <ng-container *ngIf="!isObject(jsonData[key])">
-                        <label>{{ key }}:</label>
-                        <input type="text" [value]="jsonData[key]">
-                      </ng-container>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <ng-template #nestedKeys let-data>
-        <ul class="treeList">
-          <li *ngFor="let subSubKey of objectKeys(data)" class="SubItem">
-            <label>{{ subSubKey }}:</label>
-            <ng-container *ngIf="isObject(data[subSubKey])">
-              <div *ngTemplateOutlet="nestedKeys; context: { $implicit: data[subSubKey] }"></div>
-            </ng-container>
-            <ng-container *ngIf="!isObject(data[subSubKey])">
-              <label>{{ subSubKey }}:</label>
-              <input type="text" [value]="data[subSubKey]">
-            </ng-container>
-          </li>
-        </ul>
-      </ng-template> -->
-
-      <!-- <div class="tree-container" *ngFor="let node of treeData">
-        <ul class="treeList">
-          <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: node }"></ng-container>
-        </ul>
-      </div> -->
-
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="collabsible">
             <div class="tree-container" *ngFor="let node of treeData">
-              <span>{{ node.key }}:<button>Update</button></span>
+              <!-- <span>{{ node.key }}:<button type="button" (click)="update(node.key, node.value)">Update</button></span> -->
+              <span>{{ node.key }}:<button type="button" (click)="openUpdateModal(node.key, node.value)">Update</button></span>
               <input id="{{ node.key }}" class="toggle" type="checkbox">
               <label for="{{ node.key }}" class="lbl-toggle"></label>
               <div class="collapsible-content">
@@ -243,7 +184,7 @@
           </div>
         </div>
       </div>
-      
+
       <ng-template #nodeTemplate let-node>
         <li>
           <label>{{ node.key }}</label>
@@ -261,9 +202,6 @@
           </ng-container>
         </li>
       </ng-template>
-      
-
-      
     </div>
 
     <div>
@@ -305,7 +243,7 @@
                   <tr *ngFor="let info of uploadinfos">
                     <td>{{info.firm}}</td>
                     <td>{{info.modelname}}</td>
-                    <td>{{info.uploadtype}}</td>
+                    <td>{{mapUploadType(info.uploadtype)}}</td>
                     <td>{{info.uploadversion}}</td>
                     <td>{{info.description}}</td>
                     <td>{{info.uploadtime}}</td>
@@ -422,7 +360,18 @@
       </div>
     </div>
   </div>
-  
-
 </div>
+
+<ng-template #updateModal>
+  <h5>{{languageService.i18n['confirm']}}</h5>
+  <p>{{languageService.i18n['cm.container']}}</p>
+  <div class="buttons">
+    <button type="button" (click)="update()"  mat-dialog-close>
+      {{ languageService.i18n['confirm'] }}
+    </button>
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }}
+    </button>
+  </div>
+</ng-template>
 

@@ -429,6 +429,7 @@ export const Enlanguage = {
   'cm.file':'File Management',
   'cm.path':'Path',
   'cm.download':'Download',
+  'cm.container': 'If you update the single container, you will lose all other unsaved changes. Are you sure you want to continue?',
 
   // Account Management
   'user_account':'User',

@@ -3,7 +3,6 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from './../../shared/common.service';
 import { SoftwareList } from './../../software-management/software-management.component';
-import { SoftwareLists } from './../../software-management/software-management.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
@@ -13,6 +12,7 @@ import { FmsgList } from './../../fault-management/fault-management.component';
 import { FaultMessages } from './../../fault-management/fault-management.component';
 import { Subscription } from 'rxjs';
 import { XMLParser } from "fast-xml-parser";
+import * as xmlJs from 'xml-js';
 
 //component Info
 export interface ComponentInfo {
@@ -136,44 +136,58 @@ export class ComponentInfoComponent implements OnInit {
   filteredFmList: FaultMessages[] = [];
   isActive = false;
   jsonData: any = {};
+  xmlString: string = '';
   treeData: TreeNode[] = [];
+  treeKey: string = '';
+  treeValue: any;
   json = {
-    "netconf-server": {
-      "listen": {
-        "endpoint": {
-          "name": "default-ssh",
-          "ssh": {
-            "tcp-server-parameters": {
-              "local-address": "0.0.0.0",
-              "local-port": 11830,
-              "keepalives": {
-                "idle-time": 1,
-                "max-probes": 10,
-                "probe-interval": 5
-              }
-            },
-            "ssh-server-parameters": {
-              "server-identity": {
-                "host-key": {
-                  "name": "default-key",
-                  "public-key": {
-                    "keystore-reference": "genkey"
-                  }
-                }
-              },
-              "client-authentication": {
-                "supported-authentication-methods": {
-                  "publickey": "",
-                  "passsword": "",
-                  "other": "interactive"
-                },
-                "users": ""
-              }
-            }
-          }
+    // "netconf-server": {
+    //   "listen": {
+    //     "endpoint": {
+    //       "name": "default-ssh",
+    //       "ssh": {
+    //         "tcp-server-parameters": {
+    //           "local-address": "0.0.0.0",
+    //           "local-port": 11830,
+    //           "keepalives": {
+    //             "idle-time": 1,
+    //             "max-probes": 10,
+    //             "probe-interval": 5
+    //           }
+    //         },
+    //         "ssh-server-parameters": {
+    //           "server-identity": {
+    //             "host-key": {
+    //               "name": "default-key",
+    //               "public-key": {
+    //                 "keystore-reference": "genkey"
+    //               }
+    //             }
+    //           },
+    //           "client-authentication": {
+    //             "supported-authentication-methods": {
+    //               "publickey": "",
+    //               "passsword": "",
+    //               "other": "interactive"
+    //             },
+    //             "users": ""
+    //           }
+    //         }
+    //       }
+    //     }
+    //   },
+    //   "xmlns": "urn:ietf:params:xml:ns:yang:ietf-netconf-server"
+    // },
+    "keystore": {
+      "asymmetric-keys": {
+        "asymmetric-key": {
+          "name": "genkey",
+          "algorithm": "rsa2048",
+          "public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuC0geCmiQYrqdP5dzTPn\n    /3nMzQJlGSqiGysPOgq9Tm8T+oHO+kuZmXHbNZI8/EB8WyIbsVlnOUIkBJItf3I0\n    c74uBU75mILh9CZahIJ0dsAbrGGEYWpuODJP3/i3oERcWBmrfb9mT/8FLW8/TSXv\n    Yncg2TcOc6XVgfbYVHNacwAccshEcWvEVpxT8hG/8yYUyZFZMW18063ijv3mgkWR",
+          "private-key": "MIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQC4LSB4KaJBiup0\n    /l3NM+f/eczNAmUZKqIbKw86Cr1ObxP6gc76S5mZcds1kjz8QHxbIhuxWWc5QiQE\n    ki1/cjRzvi4FTvmYguH0JlqEgnR2wBusYYRham44Mk/f+LegRFxYGat9v2ZP/wUt\n    bz9NJe9idyDZNw5zpdWB9thUc1pzABxyyERxa8RWnFPyEb/zJhTJkVkxbXzTreKO\n    /eaCRZFsop2TgSXGm5G7DhpZmq3imCYjgNJ1hRZeI40+ayRkzOhE0rz7zer2N8dv\n    ESvK55Aoq/2TnABe0rCV8v7IpdIFyOa2/VGaezZZ+QVbGMTSPuPQnXY2QmxV2Jd3"
         }
       },
-      "xmlns": "urn:ietf:params:xml:ns:yang:ietf-netconf-server"
+      "xmlns": "urn:ietf:params:xml:ns:yang:ietf-keystore"
     }
   };
   activeMap: any = {
@@ -209,9 +223,8 @@ export class ComponentInfoComponent implements OnInit {
     this.sessionId = this.commonService.getSessionId();
     this.route.params.subscribe((params) => {
       this.comId = params['id'];
-      //console.log('id=' + this.comId);
       this.getComponentInfo();
-      this.getFaultMessage();
+      //this.getFaultMessage();
       this.search();
       
     });
@@ -260,15 +273,14 @@ export class ComponentInfoComponent implements OnInit {
           const parser = new XMLParser(parseOption);
           const output = parser.parse(xmldata);
           this.jsonData = output;
+          const xmlData = xmlJs.js2xml(this.jsonData, { compact: true, ignoreComment: true, spaces: 4 });
           this.getfilterQueryUploadFileList();
           const jsonstr = JSON.stringify(output, null, 2);//get in string
+          //console.log('Json string: ',jsonstr);
+          //this.treeData = this.buildTree(this.jsonData);
           this.treeData = this.buildTree(this.jsonData);
-          console.log('Tree Data:', this.treeData);
-          //this.treeData = this.parseJSON(this.json);
-          //console.log('Json output: ',jsonstr);
-          //this.printJson(this.jsonData);
-          //this.loopThroughJSON(this.json);
-          //this.checkType(this.json);
+          //console.log('Tree Data:', this.treeData);
+          console.log(xmlData);
           console.log('Json output: ', this.jsonData);
         },
         (error: any) => {
@@ -277,6 +289,7 @@ export class ComponentInfoComponent implements OnInit {
       );
     }
   }
+  
   buildTree(obj: any): TreeNode[] {
     return Object.entries(obj).map(([key, value]) => {
       const node: TreeNode = { key, value, type: this.checkType(value) };
@@ -287,7 +300,22 @@ export class ComponentInfoComponent implements OnInit {
     });
     
   }
-
+  mapUploadType(uploadType: number): string {
+    switch (uploadType) {
+        case 1:
+            return 'CU';
+        case 2:
+            return 'DU';
+        case 3:
+            return 'RU';
+        case 4:
+            return 'CU+DU';
+        case 5:
+            return 'CU+DU+RU';
+        default:
+            return 'Unknown';
+    }
+  }
   checkType(obj: any): string {
     if (typeof obj === 'object' && obj !== null) {
       return 'object';
@@ -312,56 +340,6 @@ export class ComponentInfoComponent implements OnInit {
         console.log(key + ': ' + obj[key]);
       }
     }
-  }
-  // parseJSON(obj: any): TreeNode[] {
-  //   const nodes: TreeNode[] = [];
-  //   for (const key in obj) {
-  //     if (obj.hasOwnProperty(key)) {
-  //       const value = obj[key];
-  //       if (typeof value === 'object') {
-  //         nodes.push({ key, value, children: this.parseJSON(value) });
-  //         //console.log(typeof value);
-  //       } else {
-  //         nodes.push({ key, value });
-  //         //console.log(typeof value);
-  //       }
-  //     }
-  //   }
-  //   return nodes;
-  // }
-  // printJson(jsonObj: JsonObject, num: number = 0): void {
-  //   for (const key in jsonObj) {
-  //       if (jsonObj.hasOwnProperty(key)) {
-  //           const value = jsonObj[key];
-  //           if (typeof value === 'object' && value !== null) {
-  //               console.log("  ".repeat(num) + `${key}:`);
-  //               this.printJson(value, num + 1);
-  //           } else {
-  //               console.log("  ".repeat(num) + `${key}: ${value}`);
-  //           }
-  //       }
-  //   }
-  // }
-  
-  generatedHtml: string = '';
-  printJson(jsonObj: JsonObject, depth: number = 0): void {
-    for (const key in jsonObj) {
-      if (jsonObj.hasOwnProperty(key)) {
-        const value = jsonObj[key];
-        const indent = '&nbsp;&nbsp;'.repeat(depth); // Indent based on depth
-        this.generatedHtml += `<div>${indent}<span>${key}</span></div>`; // Display key as span
-        if (typeof value === 'object' && value !== null) {
-          // If value is an object, recursively call printJson with increased depth
-          this.printJson(value, depth + 1); // Recursive call for nested objects
-        } else {
-          // If value is not an object, display it as key : value pair
-          this.generatedHtml += `<div>${indent}&nbsp;&nbsp;----${key}: ${value}</div>`;
-        }
-      }
-    }
-  }
-  objectKeys(obj: any): string[] {
-    return Object.keys(obj);
   }
   
   getfilterQueryUploadFileList() {
@@ -498,29 +476,74 @@ export class ComponentInfoComponent implements OnInit {
     this.p = page;
     this.getFaultMessage();
   }
-  
-  nfRunRefresh() {
+
+  openUpdateModal(nodeKey: string, nodeValue: any) {
+    this.treeKey = nodeKey;
+    this.treeValue = nodeValue;
+    this.updateModalRef = this.dialog.open(this.updateModal, { id: 'updateModal' });
+  }
+  update() {
+    const nodeKey = this.treeKey;
+    const nodeValue = this.treeValue;
+    if (this.commonService.isLocal) {
+      /* local file test */
+    } else {
+      const parseOption = {
+        compact: true,
+        ignoreComment: true,
+        ignoreDeclaration: true,
+        ignoreInstruction: true,
+        ignoreAttributes: false,
+        attributesKey: "attr",
+      };
+      const convert = require('xml-js');
+      const jsonObject: { [key: string]: any } = { [nodeKey]: nodeValue };
+      const jsonString: string = JSON.stringify(jsonObject, null, 4);
+      const { xmlns, ...rest } = jsonObject[nodeKey];
+      const adjustedData = {[nodeKey]: {"attr": { "xmlns": xmlns },...rest}};
+      //console.log(adjustedData);
+      //const dd = {"netconf-server":{"attr":{"xmlns":"urn:ietf:params:xml:ns:yang:ietf-netconf-server"},"listen":{"endpoint":{"name":"default-ssh","ssh":{"tcp-server-parameters":{"local-address":"0.0.0.0","keepalives":{"idle-time":"1","max-probes":"10","probe-interval":"5"}},"ssh-server-parameters":{"server-identity":{"host-key":{"name":"default-key","public-key":{"keystore-reference":"genkey"}}},"client-authentication":{"supported-authentication-methods":{"publickey":"","passsword":"","other":"interactive"},"users":""}}}}}}};
+      //console.log(jsonObject);
+      console.log(jsonString);
+      console.log(adjustedData);
+      this.xmlString = convert.js2xml(adjustedData, parseOption);
+      console.log(this.xmlString);
+      //this.xmlString = xmlJs.js2xml(dd, { compact: true, spaces: 4 });
+      // const tt = JSON.parse(jsonString);
+      // const ok = xmlJs.js2xml(tt, { compact: true, spaces: 2 });
+      // console.log(ok);
+      // //this.xmlString = this.xmlString.replace(/\n\s*/g, '');
+      // console.log(this.xmlString);
+      const body: any = {
+        session: this.sessionId,
+        id: this.componentInfo.id,
+        name: this.componentInfo.name,
+        ip: this.componentInfo.ip,
+        port: this.componentInfo.port,
+        account: this.componentInfo.account,
+        key: this.componentInfo.key,
+        comtype: this.componentInfo.comtype,
+        firm: this.componentInfo.firm,
+        modelname: this.componentInfo.modelname,
+        info: {
+          data: this.xmlString
+        }
+      };
+      console.log(body);
+      //console.log(nodeKey);
+      //console.log(nodeValue);
+      this.commonService.updateBsComponent(body).subscribe(
+        () => console.log('Update Successful.')
+      );
+      this.getComponentInfo();
+      this.refresh();
+    }
+    this.getComponentInfo();
+  }
+  refresh() {
     clearTimeout(this.refreshTimeout);
     this.RunRefreshTimeout = window.setTimeout(() => this.getComponentInfo(), this.RunRefreshTime * 1000);
   }
-
-  // getSoftwareList() {
-  //   clearTimeout(this.refreshTimeout);
-  //   if (this.commonService.isLocal) {
-  //     /* local file test */
-  //     this.componentInfosw.uploadinfos = this.commonService.componentInfosw.uploadinfos;
-  //     //this.softwareListDeal();
-  //   } else {
-  //     this.commonService.queryUploadFileList().subscribe(
-  //       res => {
-  //         console.log('Get software list:');
-  //         console.log(res);
-  //         //this.softwareLists = res as SoftwareLists;
-  //         //this.softwareListDeal();
-  //       }
-  //     );
-  //   }
-  // }
 
   softwareDeal() {
     this.fileNameMapSoftware = new Map();
@@ -546,7 +569,6 @@ export class ComponentInfoComponent implements OnInit {
   back() {
     this.router.navigate(['/main/component-mgr']);
   }
-
 
   goFaultMgr() {
     this.router.navigate(['/main/fault-mgr', this.cloudName, 'All']);

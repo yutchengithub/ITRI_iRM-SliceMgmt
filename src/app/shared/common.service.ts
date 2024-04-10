@@ -551,6 +551,12 @@ export class CommonService {
     const bodyStr = JSON.stringify(body);
     return this.http.post(url, bodyStr);
   }
+  updateBsComponent(body: any): Observable<any> {
+    const url = `${this.restPath}/updateBsComponent`;
+    const bodyStr = JSON.stringify(body);
+    return this.http.post(url, bodyStr);
+  }
+
   // Software Mgmt API
   queryUploadFileInfo(fileId: string): Observable<any> {
     const url = `${this.restPath}/queryUploadFileInfo/${this.getSessionId()}/${fileId}`;
