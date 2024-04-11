@@ -3526,7 +3526,7 @@ export class FieldInfoComponent implements OnInit {
 
 
   // @2024/04/11 Update
-  // 發送計算 SON 演算法函數 
+  // 發送計算 SON 演算法函數
   calculateSON_Submit() {
     console.log( "calculateSON_Submit() - Start" );
 
@@ -3709,7 +3709,7 @@ export class FieldInfoComponent implements OnInit {
   // 定義新矩陣來儲存處理後的 ANR 結果 @2024/04/11 Add
   processedAnrResults: ProcessedAnrResult[] = [];
 
- // 宣告變數來儲存 PCI 結果
+  // 宣告變數來儲存 PCI 結果
   gnbsPci: pci_CellIndividualResult[] = [];
 
   // 記錄原始 PCI Collision 資訊
@@ -3863,7 +3863,7 @@ export class FieldInfoComponent implements OnInit {
       });
     }
 
-    
+
     // 處理 PCI 結果資料 ( 已完整 @2024/04/11 )
     if ( tempPci !== undefined ) {
 
