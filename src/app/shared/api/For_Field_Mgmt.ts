@@ -324,6 +324,22 @@ export class apiForFieldMgmt {
     return this.http.post( url, bodyStr );
   }
 
+  /** @2024/04/12 Add
+    * 用於發送參數以套用 multiCalculateBs 返回的計算結果的 API
+    *
+    * @param body 包含套用計算結果所需參數的物件
+    * @returns 一個 Observable,代表 API 的響應結果
+    */
+  multiOptimalBs(body: {}): Observable<any> {
+    // 建立完整的 API URL
+    const url = `${this.restPath}/multiOptimalBs`;
+
+    // 將請求主體轉換為 JSON 字串
+    const bodyStr = JSON.stringify(body);
+
+    // 發送 HTTP POST 請求到指定的 URL,並將請求主體作為參數傳遞
+    return this.http.post(url, bodyStr);
+  }
 
   // For Updating Configurations of All-in-one BS @2024/01/05 Add by yuchen
   updateBs( body: {} ): Observable<any> {
