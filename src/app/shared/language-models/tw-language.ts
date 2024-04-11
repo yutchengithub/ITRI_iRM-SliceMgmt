@@ -186,7 +186,7 @@ export const TwLanguage = {
   'field.optimSON':'執行 SON rApps',         // @12/12 Add
   'field.mapModel':'地圖模式',                // @12/12 Add
   'field.bsList':'基站列表',                  // @12/12 Add
-  'field.bsAntennaCoord':'基站天線位置座標',  // @12/13 Add
+  'field.bsAntennaCoord':'基站天線座標',  // @12/13 Add
   'field.BSstatus':'連線狀態',                // @12/13 Add
   'field.bsAlarm':'告警',                    // @12/13 Add
   'field.legend_all-in-one_bs':'一體式基站',  // @12/28 Add
@@ -269,10 +269,10 @@ export const TwLanguage = {
 
   // 基本訊息區
   'BS.editSettings': '編輯設定',
-  'BS.bsAntennaCoord':'基站天線位置座標',
+  'BS.bsAntennaCoord':'基站天線座標',
   'BS.ruNeName':'網元名稱 ( RU )',
   'BS.latLong':'經緯度',
-  'BS.lastHeartbeatTime': '最後心跳時間',
+  'BS.lastHeartbeatTime': '最後連線時間',
   'BS.neName':'網元名稱',
   'BS.neType':'網元類型',
   'BS.neModel':'網元型號',

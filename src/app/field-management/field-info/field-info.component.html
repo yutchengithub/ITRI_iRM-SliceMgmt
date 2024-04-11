@@ -1286,7 +1286,7 @@
 									</thead>
 									<tbody>
 										<tr *ngFor="let result of processedCcoResults">
-											<td>{{ result.name }}<br>( NCI = {{ result.nci }} )</td>
+											<td matTooltip="NCI = {{ result.nci }}">{{ result.name }}</td>
 											<td>{{ result.originalTxPower }}</td>
 											<td><span class="material-symbols-outlined after">east</span></td>
 											<td class="new">{{ result.newTxPower }}</td>
@@ -1307,7 +1307,7 @@
 
 				<!-- ANR 結果 ( 已完整 @2024/04/11 ) -->
 				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'anr' ">
-					<div *ngIf="isAnrClass">
+					<label *ngIf="isAnrClass">
 						<div class="table">
 							<table>
 								<thead>
@@ -1320,34 +1320,52 @@
 								</thead>
 								<tbody>
 									<tr *ngFor="let result of processedAnrResults">
-										<td>{{ result.name }}<br>( NCI = {{ result.nci }} )</td>
-										<td>
+									  <td matTooltip="NCI = {{ result.nci }}">{{ result.name }}</td>
+									  <td>
+										<label *ngFor="let neighbor of result.originalNeighbors">
+										  <span matTooltip="NCI = {{ neighbor.nci }}">{{ neighbor.name }}</span>
+										</label>
+									  </td>
+									  <td>
+										<span class="material-symbols-outlined after">east</span>
+									  </td>
+									  <td class="new" >
+										<label *ngFor="let neighbor of result.newNeighbors">
+										  <span matTooltip="NCI = {{ neighbor.nci }}">{{ neighbor.name }}</span>
+										</label>
+									  </td>
+									</tr>
+								  </tbody>
+								<!-- <tbody>
+									<tr *ngFor="let result of processedAnrResults">
+										<td matTooltip="NCI = {{ result.nci }}">{{ result.name }}</td>
+										<td matTooltip="NCI = {{ neighbor.nci }}">
 										  <label>
 											<span *ngFor="let neighbor of result.originalNeighbors">
-											  {{ neighbor.name }}<br>( NCI = {{ neighbor.nci }} )
+											  {{ neighbor.name }}
 											</span>
 										  </label>
 										</td>
 										<td><span class="material-symbols-outlined after">east</span></td>
-										<td class="new">
+										<td class="new" matTooltip="NCI = {{ neighbor.nci }}">
 										  <label>
 											<span *ngFor="let neighbor of result.newNeighbors">
-											  {{ neighbor.name }}<br>( NCI = {{ neighbor.nci }} )
+											  {{ neighbor.name }}
 											</span>
 										  </label>
 										</td>
 									</tr>
-								</tbody>
+								</tbody> -->
 							</table>
 						</div>
-					</div>
+					</label>
 				</div>
 				
 				<!-- PCI 結果 ( 已完整 @2024/04/11 ) -->
 				<div class="Field_Infos" *ngIf="fieldOptimizationResultType === 'pci'">
 					<div *ngIf="isPciClass">
 						<label>
-							<div class="table">
+							<div class="table ">
 								<table>
 									<thead>
 										<tr>
@@ -1358,9 +1376,8 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr *ngFor="let result of gnbsPci">
-											<td>{{ getMatchingBsInfo(result.gNBId)?.name }}
-												<br>( NCI = {{ getMatchingBsInfo(result.gNBId)?.nci }} )</td>
+										<tr *ngFor="let result of gnbsPci" matTooltip="NCI = {{ getMatchingBsInfo(result.gNBId)?.nci }}">
+											<td>{{ getMatchingBsInfo(result.gNBId)?.name }}</td>
 											<td>{{ getMatchingBsInfo(result.gNBId)?.pci }}</td>
 											<td><span class="material-symbols-outlined after">east</span></td>
 											<td class="new">{{ result.nrPCI }}</td>
@@ -1373,7 +1390,7 @@
 							<h6>PCI Collisions</h6>
 							<label>
 								<div>Uni-directional pair count = {{ originalPciCollisionTotalCount }}, ratio = {{ originalPciCollisionRatio }} %</div>
-								<div class="table">
+								<div class="table pci">
 									<table>
 										<thead>
 											<tr>
@@ -1392,10 +1409,8 @@
 											<ng-template #originalCollisionData>
 												<tr *ngFor="let collision of originalPciCollisions">
 													<td>{{ collision.collision_pci }}</td>
-													<td>{{ getMatchingBsInfo(collision.source_gNBId)?.name }}
-														<br>( NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }} )</td>
-													<td>{{ getMatchingBsInfo(collision.target_gNBId)?.name }}
-														<br>( NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }} )</td>
+													<td matTooltip="NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.source_gNBId)?.name }}</td>
+													<td matTooltip="NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.target_gNBId)?.name }}</td>
 												</tr>
 											</ng-template>
 										</tbody>
@@ -1404,7 +1419,7 @@
 							</label> <span class="material-symbols-outlined after">east</span>
 							<label>
 								<div>Uni-directional pair count = {{ newPciCollisionTotalCount }}, ratio = {{ newPciCollisionRatio }} %</div>
-								<div class="table">
+								<div class="table pci">
 									<table>
 										<thead>
 											<tr>
@@ -1423,10 +1438,8 @@
 											<ng-template #newCollisionData>
 												<tr *ngFor="let collision of newPciCollisions">
 													<td>{{ collision.collision_pci }}</td>
-													<td>{{ getMatchingBsInfo(collision.source_gNBId)?.name }}
-														<br>( NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }} )</td>
-													<td>{{ getMatchingBsInfo(collision.target_gNBId)?.name }}
-														<br>( NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }} )</td>
+													<td matTooltip="NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.source_gNBId)?.name }}</td>
+													<td matTooltip="NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.target_gNBId)?.name }}</td>
 												</tr>
 											</ng-template>
 										</tbody>
@@ -1438,7 +1451,7 @@
 							<h6>PCI Confusions</h6>
 							<label>
 								<div>Uni-directional pair count = {{ originalPciConfusionTotalCount }}, ratio = {{ originalPciConfusionRatio }} %</div>
-								<div class="table">
+								<div class="table pci">
 									<table>
 										<thead>
 											<tr>
@@ -1458,12 +1471,9 @@
 											<ng-template #originalConfusionData>
 												<tr *ngFor="let confusion of originalPciConfusions">
 													<td>{{ confusion.confusion_pci }}</td>
-													<td>{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}
-														<br>( NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }} )</td>
-													<td>{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}
-														<br>( NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }} )</td>
-													<td>{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}
-														<br>( NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }} )</td>
+													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}</td>
+													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}</td>
+													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}</td>
 												</tr>
 											</ng-template>
 										</tbody>
@@ -1473,7 +1483,7 @@
 							<span class="material-symbols-outlined after">east</span>
 							<label>
 								<div>Uni-directional pair count = {{ newPciConfusionTotalCount }}, ratio = {{ newPciConfusionRatio }} %</div>
-								<div class="table">
+								<div class="table pci">
 									<table>
 										<thead>
 											<tr>
@@ -1493,12 +1503,9 @@
 											<ng-template #newConfusionData>
 												<tr *ngFor="let confusion of newPciConfusions">
 													<td>{{ confusion.confusion_pci }}</td>
-													<td>{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}
-														<br>( NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }} )</td>
-													<td>{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}
-														<br>( NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }} )</td>
-													<td>{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}
-														<br>( NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }} )</td>
+													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}</td>
+													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}</td>
+													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}</td>
 												</tr>
 											</ng-template>
 										</tbody>

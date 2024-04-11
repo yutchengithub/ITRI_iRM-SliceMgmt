@@ -773,7 +773,7 @@ table {
 
 .table table {
   display: block;
-  max-height: 38em;
+  max-height: 25em;
   overflow: auto;
 }
 .table table td {
@@ -1404,14 +1404,14 @@ h3 {
   color: #fff;
   font-size: .9em;
 }
-.field-optim-wrap > span .table table td > label span,
-.field-optim-wrap table tbody td > span {
+.field-optim-wrap > span .table table td  label span,
+.field-optim-wrap table tbody td  span {
   display: inline-block;
   vertical-align: middle;
   text-align: center;
 }
-.field-optim-wrap > span .table table td > label span:after,
-.field-optim-wrap table tbody td > span:after {
+.field-optim-wrap > span .table table td  label:after,
+.field-optim-wrap table tbody td label:after {
   content: '&';
   display: inline-block;
   vertical-align: middle;
@@ -1421,9 +1421,10 @@ h3 {
 .after.material-symbols-outlined {
   color: #3b82f6;
   margin: 0 18px;
+  cursor: initial;
 }
-.field-optim-wrap > span .table table td > label span:last-child::after,
-.field-optim-wrap table tbody td > span:last-child::after {
+.field-optim-wrap > span .table table td label:last-child::after,
+.field-optim-wrap table tbody td label:last-child::after {
   display: none;
 }
 .bs_list table thead th:nth-child(1) {
@@ -1492,16 +1493,22 @@ mat-form-field {
   text-align: left;
 }
 
-.field-optim-wrap > span .table thead th {
+.field-optim-wrap > span .table.pci thead th {
   white-space: nowrap;
   padding: 0 1em;
   line-height: 2em;
   font-size: 14px !important;
   color: #498cc3;
-  border: 1px solid rgba(51, 122, 183, .4);
-  background: transparent;
-  background-color: #07141f;
-
+  border: 1px solid #337ab766;
+  background: linear-gradient(180deg, #337ab7 0px,  #07141f 1px,#07141f 100%);
+  z-index: 999;
+  min-width: 8em;
+}
+.field-optim-wrap > span .table.pci thead tr:first-child th {
+  top: -1px;
+}
+.field-optim-wrap > span .table.pci thead tr:last-child th {
+  top: 27px;
 }
 .field-optim-wrap > span .table thead th .after {
   margin-top: 5px;
@@ -1520,7 +1527,7 @@ h6 {
 .fieldOptimization,
 .fieldOptimization > .Field_Infos {
   margin: 0 1em 0 2em;
-  max-height: 70vh;
+  max-height: 76vh;
   overflow: auto;
 }
 .fieldOptimization .Field_Infos {
