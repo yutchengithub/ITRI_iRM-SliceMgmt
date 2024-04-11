@@ -17,42 +17,92 @@ export interface ForCalculateSon {
   txPowerMin: string;
 }
 
+// 用於儲存 SON 計算回應值用於前端計算 @2024/04/11 Update 
 export interface ForCalculateSonResponse {
   cco: Cco;
   anr: Anr;
   pci: Pci;
 }
 
+// PCI
 export interface Pci {
-  collision_cell: any[];
-  confusion_cell: any[];
-  confusion_count_new: any[];
-  collision_count: any[];
-  confusion_cell_new: any[];
-  confusion_count: any[];
-  collision_cell_new: any[];
-  collision_count_new: any[];
+       collision_cell: pci_Collisioncell[];
+   collision_cell_new: pci_Collisioncell[];
+      collision_count: pci_Collisioncount[];
+  collision_count_new: pci_Collisioncount[];
+
+       confusion_cell: pci_Confusioncell[];
+   confusion_cell_new: pci_Confusioncell[];
+      confusion_count: pci_Confusioncount[];
+  confusion_count_new: pci_Confusioncount[];
+  
   cellIndividualResult: pci_CellIndividualResult[];
 }
 
 export interface pci_CellIndividualResult {
   nrPCI: number;
+  NRCellRelation: pci_NRCellRelation[];
   gNBId: number;
   cellLocalId: string;
-  NRCellRelation: NRCellRelation2[];
   PLMNId_MCC: string;
   PLMNId_MNC: string;
 }
 
-export interface NRCellRelation2 {
+export interface pci_NRCellRelation {
+  cellLocalId: string;
   nRTCI: number;
   gNBId: number;
-  nRPCI: number;
-  cellLocalId: string;
   PLMNId_MCC: string;
+  nRPCI: number;
   PLMNId_MNC: string;
 }
 
+
+export interface pci_Collisioncell {
+  collision_pci: number;
+  source_gNBId: number;
+  source_mcc: string;
+  source_gNBId_length: number;
+  source_cellLocalId: number;
+  target_cellLocalId: number;
+  source_mnc: string;
+  target_gNBId: number;
+  target_gNBId_length: number;
+  target_mcc: string;
+  target_mnc: string;
+}
+
+export interface pci_Confusioncell {
+  confusion_pci: number;
+  confused_mnc: string;
+  source_gNBId: number;
+  source_gNBId_length: number;
+  confused_gNBId_length: number;
+  source_mcc: string;
+  confused_gNBId: number;
+  confused_cellLocalId: number;
+  source_cellLocalId: number;
+  target_cellLocalId: number;
+  source_mnc: string;
+  target_gNBId: number;
+  confused_mcc: string;
+  target_gNBId_length: number;
+  target_mcc: string;
+  target_mnc: string;
+}
+
+export interface pci_Confusioncount {
+  confusion_pci: number;
+  confusion_count: number;
+}
+
+export interface pci_Collisioncount {
+  collision_pci: number;
+  collision_count: number;
+}
+
+
+// ANR
 export interface Anr {
   field: string;
   cellIndividualResult: anr_CellIndividualResult[];
@@ -112,6 +162,8 @@ export interface Neighbor {
   nci: string;
 }
 
+
+// CCO
 export interface Cco {
   field: string;
   average_sinr: string;
