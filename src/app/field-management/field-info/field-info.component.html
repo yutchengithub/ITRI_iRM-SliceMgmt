@@ -1262,13 +1262,6 @@
 					{{ languageService.i18n['field.optimizationResult'] }}
 				</h4>
 
-				<!-- 清除計算結果並重置設定參數按鈕 -->
-				<!-- <div class="buttons">
-					<button type="button" (click)="resetFieldOptimizationForm(); clear_calculateSON();">
-						{{ languageService.i18n['field.clearAndReset'] }}
-					</button>
-				</div> -->
-
 				<div class="tabs">
 					<mat-button-toggle-group name="fieldOptimizationResultType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldOptimizationResultType" (change)="changefieldOptimizationResultType($event)">
 						<mat-button-toggle value="cco" >CCO</mat-button-toggle>
@@ -1279,7 +1272,6 @@
 		
 				<!-- CCO 結果 ( 已完整 ) @yutchengithub -->
 				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'cco' ">
-					
 					<div *ngIf="isCcoClass">
 						<label>
 							<div class="table">
@@ -1313,11 +1305,9 @@
 					</div>
 				</div>
 
-				<!-- ANR 結果 -->
+				<!-- ANR 結果 @2024/04/11 - 已完整 -->
 				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'anr' ">
-					<!-- ANR 結果 -->
 					<div *ngIf="isAnrClass">
-						<!-- <H6>ANR</H6> -->
 						<div class="table">
 							<table>
 								<thead>
@@ -1329,190 +1319,187 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr *ngFor="let result of gnbsAnr">
-										<td>BS-all-2<br>(NCI=000008108)</td>
+									<tr *ngFor="let result of processedAnrResults">
+										<td>{{ result.name }}<br>( NCI = {{ result.nci }} )</td>
 										<td>
-											<!-- <label *ngFor="let relation of result.NRCellRelation"> -->
-											<label>
-												<span>BS-all-1<br>(NCI=000004108)</span>
-												<span>BS-D-1<br>(NCI=00000c108)</span>
-												<span>BS-D-1<br>(NCI=00000c109)</span>
-											</label>
+										  <label>
+											<span *ngFor="let neighbor of result.originalNeighbors">
+											  {{ neighbor.name }}<br>( NCI = {{ neighbor.nci }} )
+											</span>
+										  </label>
 										</td>
 										<td><span class="material-symbols-outlined after">east</span></td>
 										<td class="new">
-											<label>
-												<span>BS-all-1<br>(NCI=000004108)</span>
-												<span>BS-D-1<br>(NCI=00000c108)</span>
-												<span>BS-D-1<br>(NCI=00000c109)</span>
-											</label>
+										  <label>
+											<span *ngFor="let neighbor of result.newNeighbors">
+											  {{ neighbor.name }}<br>( NCI = {{ neighbor.nci }} )
+											</span>
+										  </label>
 										</td>
 									</tr>
 								</tbody>
 							</table>
+						</div>
 					</div>
 				</div>
-				</div>
+				
 				<!-- PCI 結果 -->
 				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'pci' ">
+					<div *ngIf="isPciClass">
+						<label>
+							<div class="table">
+								<table>
+									<thead>
+										<tr>
+											<th>{{ languageService.i18n['field.BSname'] }}</th>
+											<th>{{ languageService.i18n['field.originalPCI'] }}</th>
+											<th><span class="material-symbols-outlined after">east</span></th>
+											<th>{{ languageService.i18n['field.newPCI'] }}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr *ngFor="let result of gnbsPci">
+											<td>BS-all-2<br>(NCI=000008108)</td>
+											<td>{{ result.nrPCI }}</td>
+											<td><span class="material-symbols-outlined after">east</span></td>
+											<td class="new">{{ result.nrPCI }}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</label>
 
-						
-						<div *ngIf="isPciClass">
+						<div>
+							<h6>PCI Collisions</h6>
 							<label>
-								<!-- <h5>PCI</h5> -->
+								<div>Uni-directional pair count = {{ pci_collisionCount }}, ratio = {{ pci_collisionRatio }} %</div>
 								<div class="table">
 									<table>
 										<thead>
 											<tr>
-												<th>{{ languageService.i18n['field.BSname'] }}</th>
-												<th>{{ languageService.i18n['field.originalPCI'] }}</th>
-												<th><span class="material-symbols-outlined after">east</span></th>
-												<th>{{ languageService.i18n['field.newPCI'] }}</th>
-											</tr>
+												<th rowspan="2">PCI</th>
+												<th colspan="2">Original Collision Pairs</th>
+												</tr>
+												<tr>
+													<th>Source</th>
+													<th>Target</th>
+												</tr>
 										</thead>
 										<tbody>
-											<tr *ngFor="let result of gnbsPci">
-												<td>BS-all-2<br>(NCI=000008108)</td>
-												<td>{{ result.nrPCI }}</td>
-												<td><span class="material-symbols-outlined after">east</span></td>
-												<td class="new">{{ result.nrPCI }}</td>
+											<tr>
+												<td>101</td>
+												<td>BS-all-1<br>(NCI=000004108)</td>
+												<td>BS-D-1<br>(NCI=00000c109)</td>
+											</tr>
+											<tr>
+												<td>101</td>
+												<td>BS-all-1<br>(NCI=000004108)</td>
+												<td>BS-D-1<br>(NCI=00000c109)</td>
 											</tr>
 										</tbody>
 									</table>
 								</div>
 							</label>
-
-							<div>
-								<h6>PCI Collisions</h6>
-								<label>
-									<div>Uni-directional pair count = {{ pci_collisionCount }}, ratio = {{ pci_collisionRatio }} %</div>
-									<div class="table">
-										<table>
-											<thead>
-												<tr>
-													<th rowspan="2">PCI</th>
-													<th colspan="2">Collision Pairs</th>
-													</tr>
-													<tr>
-														<th>Source</th>
-														<th>Target</th>
-													</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>101</td>
-													<td>BS-all-1<br>(NCI=000004108)</td>
-													<td>BS-D-1<br>(NCI=00000c109)</td>
-												</tr>
-												<tr>
-													<td>101</td>
-													<td>BS-all-1<br>(NCI=000004108)</td>
-													<td>BS-D-1<br>(NCI=00000c109)</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</label>
-								<span class="material-symbols-outlined after">east</span>
-								<label>
-									<div>Uni-directional pair count = {{ pci_collisionCount }}, ratio = {{ pci_collisionRatio }} %</div>
-									<div class="table">
-										<table>
-											<thead>
-												<tr>
-												<th rowspan="2">PCI</th>
-												<th colspan="2">Collision Pairs</th>
-												</tr>
-												<tr>
-													<th>Source</th>
-													<th>Target</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>101</td>
-													<td>BS-all-1<br>(NCI=000004108)</td>
-													<td>BS-D-1<br>(NCI=00000c109)</td>
-												</tr>
-												<tr>
-													<td>101</td>
-													<td>BS-all-1<br>(NCI=000004108)</td>
-													<td>BS-D-1<br>(NCI=00000c109)</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</label>
-							</div>
-							<div>
-								<h6>PCI Confusions</h6>
-								<label>
-								<div>Uni-directional pair count = {{ pci_confusionCount }}, ratio = {{ pci_confusionRatio }} %</div>
-									<div class="table">
-										<table>
-											<thead>
-												<tr>
-													<th rowspan="2">PCI</th>
-													<th colspan="3">Confusion Pairs</th>
-												</tr>
-												<tr>
-													<th>Source</th>
-													<th>Confused</th>
-													<th>Target</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>101</td>
-													<td>BS-D-1<br>(NCI=00000c109)</td>
-													<td>BS-all-2<br>(NCI=000008108)</td>
-													<td>BS-all-1<br>(NCI=000004108)</td>
-												</tr>
-												<tr>
-													<td>101</td>
-													<td>BS-D-1<br>(NCI=00000c109)</td>
-													<td>BS-all-2<br>(NCI=000008108)</td>
-													<td>BS-all-1<br>(NCI=000004108)</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</label>
-								<span class="material-symbols-outlined after">east</span>
-								<label>
-									<div>Uni-directional pair count = {{ pci_confusionCount }}, ratio = {{ pci_confusionRatio }} %</div>
-									<div class="table">
-										<table>
-											<thead>
-												<tr>
-													<th rowspan="2">PCI</th>
-													<th colspan="3">Confusion Pairs</th>
-												</tr>
-												<tr>
-													<th>Source</th>
-													<th>Confused</th>
-													<th>Target</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>101</td>
-													<td>BS-D-1<br>(NCI=00000c109)</td>
-													<td>BS-all-2<br>(NCI=000008108)</td>
-													<td>BS-all-1<br>(NCI=000004108)</td>
-												</tr>
-												<tr>
-													<td>101</td>
-													<td>BS-D-1<br>(NCI=00000c109)</td>
-													<td>BS-all-2<br>(NCI=000008108)</td>
-													<td>BS-all-1<br>(NCI=000004108)</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</label>
-							</div>
+							<span class="material-symbols-outlined after">east</span>
+							<label>
+								<div>Uni-directional pair count = {{ pci_collisionCount }}, ratio = {{ pci_collisionRatio }} %</div>
+								<div class="table">
+									<table>
+										<thead>
+											<tr>
+											<th rowspan="2">PCI</th>
+											<th colspan="2">New Collision Pairs</th>
+											</tr>
+											<tr>
+												<th>Source</th>
+												<th>Target</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>101</td>
+												<td>BS-all-1<br>(NCI=000004108)</td>
+												<td>BS-D-1<br>(NCI=00000c109)</td>
+											</tr>
+											<tr>
+												<td>101</td>
+												<td>BS-all-1<br>(NCI=000004108)</td>
+												<td>BS-D-1<br>(NCI=00000c109)</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</label>
 						</div>
+						<div>
+							<h6>PCI Confusions</h6>
+							<label>
+							<div>Uni-directional pair count = {{ pci_confusionCount }}, ratio = {{ pci_confusionRatio }} %</div>
+								<div class="table">
+									<table>
+										<thead>
+											<tr>
+												<th rowspan="2">PCI</th>
+												<th colspan="3">Original Confusion Pairs</th>
+											</tr>
+											<tr>
+												<th>Source</th>
+												<th>Confused</th>
+												<th>Target</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>101</td>
+												<td>BS-D-1<br>(NCI=00000c109)</td>
+												<td>BS-all-2<br>(NCI=000008108)</td>
+												<td>BS-all-1<br>(NCI=000004108)</td>
+											</tr>
+											<tr>
+												<td>101</td>
+												<td>BS-D-1<br>(NCI=00000c109)</td>
+												<td>BS-all-2<br>(NCI=000008108)</td>
+												<td>BS-all-1<br>(NCI=000004108)</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</label>
+							<span class="material-symbols-outlined after">east</span>
+							<label>
+								<div>Uni-directional pair count = {{ pci_confusionCount }}, ratio = {{ pci_confusionRatio }} %</div>
+								<div class="table">
+									<table>
+										<thead>
+											<tr>
+												<th rowspan="2">PCI</th>
+												<th colspan="3">New Confusion Pairs</th>
+											</tr>
+											<tr>
+												<th>Source</th>
+												<th>Confused</th>
+												<th>Target</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>101</td>
+												<td>BS-D-1<br>(NCI=00000c109)</td>
+												<td>BS-all-2<br>(NCI=000008108)</td>
+												<td>BS-all-1<br>(NCI=000004108)</td>
+											</tr>
+											<tr>
+												<td>101</td>
+												<td>BS-D-1<br>(NCI=00000c109)</td>
+												<td>BS-all-2<br>(NCI=000008108)</td>
+												<td>BS-all-1<br>(NCI=000004108)</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</label>
+						</div>
+					</div>
 				</div>
 				<div class="buttons">
 					<!-- 套用按鈕 -->
