@@ -1305,7 +1305,7 @@
 					</div>
 				</div>
 
-				<!-- ANR 結果 @2024/04/11 - 已完整 -->
+				<!-- ANR 結果 ( 已完整 @2024/04/11 ) -->
 				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'anr' ">
 					<div *ngIf="isAnrClass">
 						<div class="table">
@@ -1343,8 +1343,8 @@
 					</div>
 				</div>
 				
-				<!-- PCI 結果 -->
-				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'pci' ">
+				<!-- PCI 結果 ( 已完整 @2024/04/11 ) -->
+				<div class="Field_Infos" *ngIf="fieldOptimizationResultType === 'pci'">
 					<div *ngIf="isPciClass">
 						<label>
 							<div class="table">
@@ -1359,8 +1359,9 @@
 									</thead>
 									<tbody>
 										<tr *ngFor="let result of gnbsPci">
-											<td>BS-all-2<br>(NCI=000008108)</td>
-											<td>{{ result.nrPCI }}</td>
+											<td>{{ getMatchingBsInfo(result.gNBId)?.name }}
+												<br>( NCI = {{ getMatchingBsInfo(result.gNBId)?.nci }} )</td>
+											<td>{{ getMatchingBsInfo(result.gNBId)?.pci }}</td>
 											<td><span class="material-symbols-outlined after">east</span></td>
 											<td class="new">{{ result.nrPCI }}</td>
 										</tr>
@@ -1368,47 +1369,16 @@
 								</table>
 							</div>
 						</label>
-
 						<div>
 							<h6>PCI Collisions</h6>
 							<label>
-								<div>Uni-directional pair count = {{ pci_collisionCount }}, ratio = {{ pci_collisionRatio }} %</div>
+								<div>Uni-directional pair count = {{ originalPciCollisionTotalCount }}, ratio = {{ originalPciCollisionRatio }} %</div>
 								<div class="table">
 									<table>
 										<thead>
 											<tr>
 												<th rowspan="2">PCI</th>
 												<th colspan="2">Original Collision Pairs</th>
-												</tr>
-												<tr>
-													<th>Source</th>
-													<th>Target</th>
-												</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>101</td>
-												<td>BS-all-1<br>(NCI=000004108)</td>
-												<td>BS-D-1<br>(NCI=00000c109)</td>
-											</tr>
-											<tr>
-												<td>101</td>
-												<td>BS-all-1<br>(NCI=000004108)</td>
-												<td>BS-D-1<br>(NCI=00000c109)</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</label>
-							<span class="material-symbols-outlined after">east</span>
-							<label>
-								<div>Uni-directional pair count = {{ pci_collisionCount }}, ratio = {{ pci_collisionRatio }} %</div>
-								<div class="table">
-									<table>
-										<thead>
-											<tr>
-											<th rowspan="2">PCI</th>
-											<th colspan="2">New Collision Pairs</th>
 											</tr>
 											<tr>
 												<th>Source</th>
@@ -1416,16 +1386,49 @@
 											</tr>
 										</thead>
 										<tbody>
+											<tr *ngIf="originalPciCollisionTotalCount === 0 && originalPciCollisionRatio === 0; else originalCollisionData">
+												<td colspan="3">None</td>
+											</tr>
+											<ng-template #originalCollisionData>
+												<tr *ngFor="let collision of originalPciCollisions">
+													<td>{{ collision.collision_pci }}</td>
+													<td>{{ getMatchingBsInfo(collision.source_gNBId)?.name }}
+														<br>( NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }} )</td>
+													<td>{{ getMatchingBsInfo(collision.target_gNBId)?.name }}
+														<br>( NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }} )</td>
+												</tr>
+											</ng-template>
+										</tbody>
+									</table>
+								</div>
+							</label> <span class="material-symbols-outlined after">east</span>
+							<label>
+								<div>Uni-directional pair count = {{ newPciCollisionTotalCount }}, ratio = {{ newPciCollisionRatio }} %</div>
+								<div class="table">
+									<table>
+										<thead>
 											<tr>
-												<td>101</td>
-												<td>BS-all-1<br>(NCI=000004108)</td>
-												<td>BS-D-1<br>(NCI=00000c109)</td>
+												<th rowspan="2">PCI</th>
+												<th colspan="2">New Collision Pairs</th>
 											</tr>
 											<tr>
-												<td>101</td>
-												<td>BS-all-1<br>(NCI=000004108)</td>
-												<td>BS-D-1<br>(NCI=00000c109)</td>
+												<th>Source</th>
+												<th>Target</th>
 											</tr>
+										</thead>
+										<tbody>
+											<tr *ngIf="newPciCollisionTotalCount === 0 && newPciCollisionRatio === 0; else newCollisionData">
+												<td colspan="3">None</td>
+											</tr>
+											<ng-template #newCollisionData>
+												<tr *ngFor="let collision of newPciCollisions">
+													<td>{{ collision.collision_pci }}</td>
+													<td>{{ getMatchingBsInfo(collision.source_gNBId)?.name }}
+														<br>( NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }} )</td>
+													<td>{{ getMatchingBsInfo(collision.target_gNBId)?.name }}
+														<br>( NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }} )</td>
+												</tr>
+											</ng-template>
 										</tbody>
 									</table>
 								</div>
@@ -1434,7 +1437,7 @@
 						<div>
 							<h6>PCI Confusions</h6>
 							<label>
-							<div>Uni-directional pair count = {{ pci_confusionCount }}, ratio = {{ pci_confusionRatio }} %</div>
+								<div>Uni-directional pair count = {{ originalPciConfusionTotalCount }}, ratio = {{ originalPciConfusionRatio }} %</div>
 								<div class="table">
 									<table>
 										<thead>
@@ -1449,25 +1452,27 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td>101</td>
-												<td>BS-D-1<br>(NCI=00000c109)</td>
-												<td>BS-all-2<br>(NCI=000008108)</td>
-												<td>BS-all-1<br>(NCI=000004108)</td>
+											<tr *ngIf="originalPciConfusionTotalCount === 0 && originalPciConfusionRatio === 0; else originalConfusionData">
+												<td colspan="4">None</td>
 											</tr>
-											<tr>
-												<td>101</td>
-												<td>BS-D-1<br>(NCI=00000c109)</td>
-												<td>BS-all-2<br>(NCI=000008108)</td>
-												<td>BS-all-1<br>(NCI=000004108)</td>
-											</tr>
+											<ng-template #originalConfusionData>
+												<tr *ngFor="let confusion of originalPciConfusions">
+													<td>{{ confusion.confusion_pci }}</td>
+													<td>{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}
+														<br>( NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }} )</td>
+													<td>{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}
+														<br>( NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }} )</td>
+													<td>{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}
+														<br>( NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }} )</td>
+												</tr>
+											</ng-template>
 										</tbody>
 									</table>
 								</div>
 							</label>
 							<span class="material-symbols-outlined after">east</span>
 							<label>
-								<div>Uni-directional pair count = {{ pci_confusionCount }}, ratio = {{ pci_confusionRatio }} %</div>
+								<div>Uni-directional pair count = {{ newPciConfusionTotalCount }}, ratio = {{ newPciConfusionRatio }} %</div>
 								<div class="table">
 									<table>
 										<thead>
@@ -1482,18 +1487,20 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td>101</td>
-												<td>BS-D-1<br>(NCI=00000c109)</td>
-												<td>BS-all-2<br>(NCI=000008108)</td>
-												<td>BS-all-1<br>(NCI=000004108)</td>
+											<tr *ngIf="newPciConfusionTotalCount === 0 && newPciConfusionRatio === 0; else newConfusionData">
+												<td colspan="4">None</td>
 											</tr>
-											<tr>
-												<td>101</td>
-												<td>BS-D-1<br>(NCI=00000c109)</td>
-												<td>BS-all-2<br>(NCI=000008108)</td>
-												<td>BS-all-1<br>(NCI=000004108)</td>
-											</tr>
+											<ng-template #newConfusionData>
+												<tr *ngFor="let confusion of newPciConfusions">
+													<td>{{ confusion.confusion_pci }}</td>
+													<td>{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}
+														<br>( NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }} )</td>
+													<td>{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}
+														<br>( NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }} )</td>
+													<td>{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}
+														<br>( NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }} )</td>
+												</tr>
+											</ng-template>
 										</tbody>
 									</table>
 								</div>
@@ -1501,20 +1508,24 @@
 						</div>
 					</div>
 				</div>
+
 				<div class="buttons">
+
 					<!-- 套用按鈕 -->
 					<button type="button">
 						{{ languageService.i18n['field.applySON'] }}
 					</button>
+
 					<!-- 取消按鈕 -->
 					<button type="button" (click)="clear_calculateSON(); resetFieldOptimizationForm()" mat-dialog-close>
 						{{ languageService.i18n['field.cancelSON'] }}
 					</button>
+
 					<!-- 清除並重置 -->
 					<button type="button" (click)="resetFieldOptimizationForm(); clear_calculateSON();">
 						{{ languageService.i18n['field.clearAndReset'] }}
 					</button>
-					
+
 				</div>
 			</span>			
 		</div>
