@@ -1376,8 +1376,8 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr *ngFor="let result of gnbsPci" matTooltip="NCI = {{ getMatchingBsInfo(result.gNBId)?.nci }}">
-											<td>{{ getMatchingBsInfo(result.gNBId)?.name }}</td>
+										<tr *ngFor="let result of gnbsPci">
+											<td matTooltip="NCI = {{ getMatchingBsInfo( result.gNBId )?.nci }}">{{ getMatchingBsInfo(result.gNBId)?.name }}</td>
 											<td>{{ getMatchingBsInfo(result.gNBId)?.pci }}</td>
 											<td><span class="material-symbols-outlined after">east</span></td>
 											<td class="new">{{ result.nrPCI }}</td>
