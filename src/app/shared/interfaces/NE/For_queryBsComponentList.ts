@@ -5,8 +5,8 @@ export interface NEList {
 
 export interface NE {
   id: string;
-  bsId: string;
-  bsName: string;
+  bsId?: string;
+  bsName?: string;
   name: string;
   ip: string;
   port: string;

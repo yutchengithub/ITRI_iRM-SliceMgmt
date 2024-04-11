@@ -26,12 +26,15 @@ import { BsInfoInField }                  from '../../shared/interfaces/Field/Fo
 import { ForCreateOrUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_createField_or_updateField';         // @2024/01/26 Add
 import { ForQueryOrUpdatePmFTPInfo }      from '../../shared/interfaces/Field/For_queryPmFtpInfo_or_updatePmFtpInfo';  // @2024/02/04 Add
 import { ForQuerySonParameter }           from '../../shared/interfaces/Field/For_querySonParameter';                  // @2024/03/30 Add
+
 import { ForCalculateSon, ForCalculateSonResponse,
-         anr_CellIndividualResult, pci_CellIndividualResult, 
-         cco_CellIndividualResult, for_handle_cco_CellIndividualResult } from '../../shared/interfaces/Field/For_multiCalculateBs'; // @2024/03/31 Add
-import { BSInfo }              from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2023/12/21 Add
-import { BSInfo_dist, PLMNid, Components_dist, duID, ruID,
- } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
+         anr_CellIndividualResult, ProcessedAnrResult, Neighbor,
+         pci_CellIndividualResult, 
+         cco_CellIndividualResult, ProcessedCcoResult } from '../../shared/interfaces/Field/For_multiCalculateBs'; // @2024/03/31 Add
+
+import { BSInfo } from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2023/12/21 Add
+import { BSInfo_dist, PLMNid,
+         Components_dist, duID, ruID,} from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
 
 // 引入所需 Local Files
@@ -88,6 +91,7 @@ export interface SimplifiedBSInfo {
 }
 
 export interface SimplifiedNeighborInfo {
+         id: string;
   'plmn-id': PLMNid;
         nci: string;
         pci: number;
@@ -1155,6 +1159,8 @@ export class FieldInfoComponent implements OnInit {
     forkJoin( observables ).subscribe({
       next: ( results: ( BSInfo | BSInfo_dist )[] ) => {
 
+        console.log( "取得的基站資訊:", results );
+
         // 初始化一個新數組用於存放所有轉換後的 SimplifiedBSInfo 對象
         const allSimplifiedData: SimplifiedBSInfo[] = [];
 
@@ -1245,10 +1251,16 @@ export class FieldInfoComponent implements OnInit {
 
     // 使用可選鏈和映射來從 bsInfo.anr 中的鄰居訊息創建 SimplifiedNeighborInfo 數組
     const neighbors = bsInfo.anr?.['anr-son-output']?.neighbor.map( neighborItem => ({
+      
+      // 從 neighborItem 取出鄰居 BS 的 id
+      id: neighborItem.id,
+
       // 從 neighborItem 取出'plmn-id'，並假設它在 BSInfo 和 SimplifiedBSInfo 中是相同類型
       'plmn-id': neighborItem['plmn-id'],
+
       // 從 neighborItem 取出 nci
       nci: neighborItem.nci,
+
       // 從 neighborItem 取出pci
       pci: neighborItem.pci
     })) || []; // 如果 bsInfo.anr 是 undefined，則 neighbors 預設為空數組
@@ -1329,12 +1341,18 @@ export class FieldInfoComponent implements OnInit {
         const simplifiedInfos: SimplifiedBSInfo[]  = Dist_bsInfo.extension_info.map((extensionItem) => {
           // 從 Dist_bsInfo.anr 中獲取對應 nci 的鄰居資訊
           const anrNeighbors = Dist_bsInfo.anr[extensionItem.nci]?.['anr-son-output']?.neighbor.map(neighborItem => ({
+
+            // 從 neighborItem 取出鄰居 BS 的 id
+            id: neighborItem.id,
+
             'plmn-id': {
               mcc: neighborItem['plmn-id'].mcc,
               mnc: neighborItem['plmn-id'].mnc
             },
+
             nci: neighborItem.nci,
             pci: neighborItem.pci
+
           })) || [];
 
           // 確認 Dist_bsInfo.components 的類型為 Components_dist
@@ -1408,9 +1426,11 @@ export class FieldInfoComponent implements OnInit {
 
           // 從 Dist_bsInfo.anr 中獲取對應nci的鄰居訊息，並映射為 SimplifiedNeighborInfo 數組
           const anrNeighbors = Dist_bsInfo.anr[anrKey]?.['anr-son-output']?.neighbor.map(neighborItem => ({
-            'plmn-id': neighborItem['plmn-id'], // 提取鄰居的 PLMN ID 訊息
-            nci: neighborItem.nci,              // 提取鄰居的 NCI 訊息
-            pci: neighborItem.pci               // 提取鄰居的 PCI 訊息
+
+            id: neighborItem.id,                // 提取鄰居 BS 的 id
+            'plmn-id': neighborItem['plmn-id'], // 提取鄰居 BS 的 PLMN ID 訊息
+            nci: neighborItem.nci,              // 提取鄰居 BS 的 NCI 訊息
+            pci: neighborItem.pci               // 提取鄰居 BS 的 PCI 訊息
           })) || []; // 如果對應的 ANR 訊息不存在，則使用空數組作為預設值
 
           // 創建一個新的 SimplifiedBSInfo 對象，包含從子基站訊息和 ANR 訊息中提取的數據
@@ -3679,10 +3699,13 @@ export class FieldInfoComponent implements OnInit {
   resultCoverage: string = '';
 
   // 定義新矩陣來儲存處理後的 CCO 結果 @2024/04/09 Add
-  processedCcoResults: for_handle_cco_CellIndividualResult[] = [];
+  processedCcoResults: ProcessedCcoResult[] = [];
 
   // 宣告變數來儲存 ANR 結果
   gnbsAnr: anr_CellIndividualResult[] = [];
+
+  // 定義新矩陣來儲存處理後的 ANR 結果 @2024/04/11 Add
+  processedAnrResults: ProcessedAnrResult[] = [];
 
   // 宣告變數來儲存 PCI 結果
   gnbsPci: pci_CellIndividualResult[] = [];
@@ -3708,7 +3731,7 @@ export class FieldInfoComponent implements OnInit {
   showAnrSense: number | null = null;
   showOptType: boolean | null = null;
 
-  // @2024/04/02 Add
+  // @2024/04/11 Update
   // 處理 SON 計算回傳值的函數
   processCalculationResponse( calculationResponse: ForCalculateSonResponse ) {
 
@@ -3744,7 +3767,7 @@ export class FieldInfoComponent implements OnInit {
           if ( matchingBsInfo ) {
 
             // 創建新的 CCO 結果對象，並填入匹配的訊息
-            const ccoResult: for_handle_cco_CellIndividualResult = {
+            const ccoResult: ProcessedCcoResult = {
 
                          name: matchingBsInfo.name,        // 基站名稱
                           nci: matchingBsInfo.nci,         // NCI
@@ -3764,15 +3787,46 @@ export class FieldInfoComponent implements OnInit {
       // 取得覆蓋率
       this.resultCoverage = tempCco.coverage;
     }
+    
+    // 處理 ANR 結果資料 ( 已完整 @2024/04/11 )
+    // 建立一個 map 來存儲每個基站的原鄰居基站描述
+    const originalNeighborsMap = new Map<string, Neighbor[]>();
 
-    // 處理 ANR 結果資料
-    if ( tempAnr !== undefined && tempAnr.cellIndividualResult ) {
-      // 將 ANR 的個別小區結果加入到 gnbsAnr 陣列中
-      tempAnr.cellIndividualResult.forEach( res => {
-        this.gnbsAnr.push( res );
+    // 處理原鄰居基站的部分
+    this.allSimplifiedBsInfo.forEach(bsInfo => {
+      if (bsInfo.neighbors) {
+        const originalNeighbors = bsInfo.neighbors.map(neighbor => {
+          const neighborBsInfo = this.allSimplifiedBsInfo.find(info => info.nci === neighbor.nci);
+          return neighborBsInfo ? { name: neighborBsInfo.name, nci: neighbor.nci } : null;
+        }).filter((neighbor): neighbor is Neighbor => neighbor !== null) as Neighbor[];
+        originalNeighborsMap.set( String( bsInfo.gNBId), originalNeighbors);
+      }
+    });
+
+    // 處理新鄰居基站的部分
+    if (tempAnr && tempAnr.cellIndividualResult) {
+      this.gnbsAnr = [];
+      this.processedAnrResults = [];
+
+      tempAnr.cellIndividualResult.forEach(anrResult => {
+        const matchingBsInfo = this.allSimplifiedBsInfo.find(bsInfo => bsInfo.gNBId === anrResult.gNBId);
+        if (matchingBsInfo) {
+          const originalNeighbors = originalNeighborsMap.get( String( matchingBsInfo.gNBId ) ) || [];
+          const newNeighbors = anrResult.NRCellRelation.map(rel => {
+            const newNeighborBsInfo = this.allSimplifiedBsInfo.find(bsInfo => bsInfo.gNBId === rel.gNBId);
+            return newNeighborBsInfo ? { name: newNeighborBsInfo.name, nci: newNeighborBsInfo.nci } : null;
+          }).filter((neighbor): neighbor is Neighbor => neighbor !== null) as Neighbor[];
+
+          this.processedAnrResults.push({
+            name: matchingBsInfo.name,
+            nci: matchingBsInfo.nci,
+            originalNeighbors: originalNeighbors,
+            newNeighbors: newNeighbors
+          });
+        }
       });
-      console.log( "gnbsAnr: ",  this.gnbsAnr );
     }
+
 
     // 處理 PCI 結果資料
     if ( tempPci !== undefined ) {
@@ -3840,6 +3894,7 @@ export class FieldInfoComponent implements OnInit {
       }
     }
 
+    
    
 
     // 更新前端顯示狀態

@@ -100,6 +100,18 @@ export interface CellIndividualOffset {
   sinrOffsetCsiRs: string;
 }
 
+export interface ProcessedAnrResult {
+  name: string;
+  nci: string;
+  originalNeighbors: Neighbor[];
+  newNeighbors: Neighbor[];
+}
+
+export interface Neighbor {
+  name: string;
+  nci: string;
+}
+
 export interface Cco {
   field: string;
   average_sinr: string;
@@ -116,7 +128,7 @@ export interface cco_CellIndividualResult {
 }
 
 // 用於記錄前端針對 cco 處理的結果 @2024/04/09 Add
-export interface for_handle_cco_CellIndividualResult {
+export interface ProcessedCcoResult {
   name: string;
   nci: string;
   originalTxPower: number;
