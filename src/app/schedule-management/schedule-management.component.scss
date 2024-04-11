@@ -14,7 +14,7 @@ tbody tr td {
 }
 
 .icon {
-  width: 4%!important;
+  width: 3%!important;
   text-align: center;
 }
 
@@ -89,4 +89,7 @@ td.state {
 }
 td.state > label {
   vertical-align: middle;
+}
+td.icon.state > label:first-child {
+  margin: 0 0.35em 0 2.5em;
 }

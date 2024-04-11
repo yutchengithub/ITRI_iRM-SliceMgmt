@@ -515,3 +515,6 @@ mat-dialog-container h5 .mat-icon {
 .field-optim-wrap label > div:not(.table) {
   color: #2786b5!important;
 }
+.field-optim-wrap > span .table.pci thead th {
+  background: linear-gradient(180deg, #c2e7ff 0px, #c2e7ff 1px, #c2e7ff 100%)!important;
+}

@@ -1492,12 +1492,13 @@ mat-form-field {
 .field-optim-wrap h3 {
   text-align: left;
 }
-
+.field-optim-wrap > span .table thead th {
+  font-size: 15px !important;
+}
 .field-optim-wrap > span .table.pci thead th {
   white-space: nowrap;
   padding: 0 1em;
   line-height: 2em;
-  font-size: 14px !important;
   color: #498cc3;
   border: 1px solid #337ab766;
   background: linear-gradient(180deg, #337ab7 0px,  #07141f 1px,#07141f 100%);
