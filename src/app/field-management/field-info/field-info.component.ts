@@ -3313,7 +3313,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
-  /** @2024/04/11 Update
+  /** @2024/04/12 Update
    *  點擊場域優化視窗的"清除並重置"與"取消"按鈕行為的函數
    *  @method resetFieldOptimizationForm
    *  @returns { void }
@@ -3365,6 +3365,8 @@ export class FieldInfoComponent implements OnInit {
 
     // 如果需要，這裡可以關閉場域優化視窗
     //this.fieldOptimizationWindow_Ref.close();
+
+    this.fieldOptimizationResultType = 'cco'; // 重置場域優化結果頁籤顯示類型為 CCO
 
     console.log("已重置 fieldOptimizationForm 表單回系統內現有設定");
   }
@@ -3678,7 +3680,7 @@ export class FieldInfoComponent implements OnInit {
     console.log( "calculateSON_Submit() - End" );
   }
 
-  /** @2024/04/09 Update
+  /** @2024/04/12 Update
    *  清除場域優化計算結果的函數
    *  @method clear_calculateSON
    *  @returns { void }
@@ -3697,6 +3699,8 @@ export class FieldInfoComponent implements OnInit {
     this.isClickCalculate = false;
 
     console.log("已清除場域優化計算結果");
+
+    this.fieldOptimizationResultType = 'cco'; // 重置場域優化結果頁籤顯示類型為 CCO
 
     // @04/09 Add
     // 清除場域優化計算結果後自動展開優化種類區

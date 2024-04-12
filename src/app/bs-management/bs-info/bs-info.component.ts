@@ -208,7 +208,7 @@ export class BSInfoComponent implements OnInit {
    selectBsPosition: string = "";                     // 用於存儲當前選中的一體式 BS 位置
   selectDistBsPosition: string = "";                  // 用於存儲當前選中的分佈式 BS 位置
   
-  // 用於獲取基站資訊 @2024/03/27 Update
+  // 用於獲取基站資訊 @2024/04/12 Update - 更新計算分佈式 Cell 數方式，改跟基站主頁方法相同
   getQueryBsInfo() {
     console.log( 'getQueryBsInfo() - Start' );
 
@@ -240,11 +240,24 @@ export class BSInfoComponent implements OnInit {
         console.log( 'In local - Get the BSInfo_dist:', this.selectBsInfo_dist );
         //console.log( 'In local - Get the BSInfo_dist position:', this.selectBsInfo_dist.position );
 
-         // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
-         this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
+        // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
+        //this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
+                   // 改用遍歷 components 計算 Cell 數量 @2024/04/12 Add
+        // 如果 bstype 為 2，需要遍歷 components 物件算 Cell 數量，每個 RU 代表一個 Cell
+        let cellCount = 0;
+        for ( const compKey in this.selectBsInfo_dist.components ) {
+          const compVal = this.selectBsInfo_dist.components[compKey];
+          for ( const innerKey in compVal ) {
+            // 取得內層陣列的長度，即 cell 數量
+            cellCount += compVal[innerKey].length;
+          }
+        }
+        // 使用 cellCount 設置 selectBsCellCount
+        this.selectBsCellCount = cellCount;
+
       }
 
-      console.log( `In local - BS Type ${ this.bsType } - Cell Count: ${ this.bsCellCount }` );
+      console.log( `In local - BS Type ${ this.bsType } - Cell Count: ${ this.selectBsCellCount }` );
 
       // @2024/03/27 Add
       // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 
@@ -282,10 +295,24 @@ export class BSInfoComponent implements OnInit {
             // console.log( 'Get the BSInfo_dist position:', this.selectDistBsPosition );
 
             // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
-            this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
+            //this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
+
+            // 改用遍歷 components 計算 Cell 數量 @2024/04/12 Add
+            // 如果 bstype 為 2，需要遍歷 components 物件算 Cell 數量，每個 RU 代表一個 Cell
+            let cellCount = 0;
+            for ( const compKey in this.selectBsInfo_dist.components ) {
+              const compVal = this.selectBsInfo_dist.components[compKey];
+              for ( const innerKey in compVal ) {
+                // 取得內層陣列的長度，即 cell 數量
+                cellCount += compVal[innerKey].length;
+              }
+            }
+            // 使用 cellCount 設置 selectBsCellCount
+            this.selectBsCellCount = cellCount;
+          
           }
           
-          console.log(`BS Type ${ this.bsType } - Cell Count: ${ this.bsCellCount }`);
+          console.log(`BS Type ${ this.bsType } - Cell Count: ${ this.selectBsCellCount }`);
 
           // @2024/03/27 Add
           // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 

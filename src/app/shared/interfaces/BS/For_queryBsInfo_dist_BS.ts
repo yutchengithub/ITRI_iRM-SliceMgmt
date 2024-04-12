@@ -1,26 +1,26 @@
 
-/* ↓ @12/24 Add For API of queryBsInfo for dist BS ↓ */
-// notes: 當物件有可能是空的或可能不在 JSON 中設為"?:"
-export interface BSInfo_dist {
-    info: Info_dist[];
-    extension_info: ExtensionInfo_dist[]; // ok
-    cellInfo: Cellinfo; // ok
-    anr: Anr;           // ok
-    pci: PCI;           // ok 目前沒看到有 BS 這個有值
-    cco: CCO;           // ok 目前沒看到有 BS 這個有值
-    id: string;         // ok
-    name: string;       // ok
-    ip: string;               // ok 不一定有值
-    port: string;             // ok 不一定有值
-    position: string;         // ok dist BS 有定義該參數但都沒有值
-    description: string;      // ok
-    bstype: number;           // ok
-    components: Components_dist;   // ok 可能會出錯
-    status: number;           // ok
-    laston: string;           // ok
-    lastoff: string | null;          // ok
-    'components-info': ComponentsInfo;   // ok 不一定有值
-}
+  /* ↓ @12/24 Add For API of queryBsInfo for dist BS ↓ */
+  // notes: 當物件有可能是空的或可能不在 JSON 中設為"?:"
+  export interface BSInfo_dist {
+      info: Info_dist[] | {};
+      extension_info: ExtensionInfo_dist[]; // ok
+      cellInfo: Cellinfo; // ok
+      anr: Anr;           // ok
+      pci: PCI;           // ok 目前沒看到有 BS 這個有值
+      cco: CCO;           // ok 目前沒看到有 BS 這個有值
+      id: string;         // ok
+      name: string;       // ok
+      ip: string;               // ok 不一定有值
+      port: string;             // ok 不一定有值
+      position: string;         // ok dist BS 有定義該參數但都沒有值
+      description: string;      // ok
+      bstype: number;           // ok
+      components: Components_dist;   // ok 可能會出錯
+      status: number;           // ok
+      laston: string;           // ok
+      lastoff: string | null;          // ok
+      'components-info': ComponentsInfo;   // ok 不一定有值
+  }
 
   /* ↓ @12/26 Add For info:[] ↓ */
 
