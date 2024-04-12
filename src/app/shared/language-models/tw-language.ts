@@ -235,7 +235,7 @@ export const TwLanguage = {
   
   'field.applySON': '套用',
   'field.cancelSON': '取消',
-  
+  "field.confirmApplySonField": "套用此次計算進行優化？", // @2024/04/12 Add
 
 
 

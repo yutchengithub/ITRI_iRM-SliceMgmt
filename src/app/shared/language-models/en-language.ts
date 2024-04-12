@@ -234,7 +234,7 @@ export const Enlanguage = {
 
   'field.applySON': 'Apply',
   'field.cancelSON': 'Cancel',
-
+  "field.confirmApplySonField": "Apply this calculation for optimization ?", // @2024/04/12 Add
 
 
   'field.open': 'Open',

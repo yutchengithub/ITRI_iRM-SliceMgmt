@@ -153,13 +153,23 @@ export interface CellIndividualOffset {
 export interface ProcessedAnrResult {
   name: string;
   nci: string;
-  originalNeighbors: Neighbor[];
-  newNeighbors: Neighbor[];
+  originalNeighbors: anr_Neighbor[];
+  newNeighbors: anr_Neighbor[];
 }
 
-export interface Neighbor {
+export interface anr_Neighbor {
   name: string;
   nci: string;
+
+  // newNeighbors 要另外帶的，用於套用優化算出的 Anr
+  pci:  number;
+  nrarfcn: number;
+  'plmn-id': ApplySon_Plmnid;
+}
+
+export interface ApplySon_Plmnid {
+  mcc: string;
+  mnc: string;
 }
 
 
@@ -179,8 +189,9 @@ export interface cco_CellIndividualResult {
   cellLocalId: string;
 }
 
-// 用於記錄前端針對 cco 處理的結果 @2024/04/09 Add
+// 用於記錄前端針對 cco 處理的結果 @2024/04/12 Update
 export interface ProcessedCcoResult {
+  bsId: string;
   name: string;
   nci: string;
   originalTxPower: number;
