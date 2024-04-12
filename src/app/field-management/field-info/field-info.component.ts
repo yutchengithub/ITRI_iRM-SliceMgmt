@@ -29,14 +29,16 @@ import { ForQuerySonParameter }           from '../../shared/interfaces/Field/Fo
 
 import { ForCalculateSon, ForCalculateSonResponse,
          cco_CellIndividualResult, ProcessedCcoResult,
-         anr_CellIndividualResult, ProcessedAnrResult, Neighbor,
+         anr_CellIndividualResult, ProcessedAnrResult, anr_Neighbor,
          pci_CellIndividualResult, pci_Collisioncell, pci_Collisioncount, pci_Confusioncell, pci_Confusioncount
   } from '../../shared/interfaces/Field/For_multiCalculateBs'; // @2024/03/31 Add
+import { ForApplySon, ApplySon_BsInfo }   from '../../shared/interfaces/Field/For_multiOptimalBs';  // @2024/04/12 Add
 
 import { BSInfo } from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2023/12/21 Add
 import { BSInfo_dist, PLMNid,
          Components_dist, duID, ruID,} from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
-import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';          // @2024/01/25 Update
+import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';                  // @2024/01/25 Update
+
 
 // 引入所需 Local Files
 import { localFieldInfo }            from '../../shared/local-files/Field/For_queryFieldInfo';    // @2024/03/14 Add
@@ -1212,7 +1214,7 @@ export class FieldInfoComponent implements OnInit {
 
         this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
       },
-      error: (error) => {
+      error: ( error ) => {
 
         // 如果在請求過程中出現錯誤，則在控制台輸出錯誤訊息
         console.error('Error fetching BS Infos:', error);
@@ -1240,7 +1242,7 @@ export class FieldInfoComponent implements OnInit {
    * @param {BSInfo} bsInfo - 待轉換的一體式基站資訊對象
    * @returns {SimplifiedBSInfo} 轉換後的簡化基站資訊對象
    * @description
-   * - 使用可選鏈操作符和映射從 bsInfo.anr 中提取鄰居信息，並建立 SimplifiedNeighborInfo 陣列
+   * - 使用可選鏈操作符和映射從 bsInfo.anr 中提取鄰居訊息，並建立 SimplifiedNeighborInfo 陣列
    * - 創建一個 SimplifiedBSInfo 類型的對象，並使用 bsInfo 中的數據填充此對象
    * - 確保當 bsInfo.anr 為 undefined 時，neighbors 默認為空陣列，避免錯誤
    * - 此函數對於一體式基站資訊進行轉換，方便後續的資料處理和顯示
@@ -3193,7 +3195,7 @@ export class FieldInfoComponent implements OnInit {
 
 
 
-// For 場域優化 @2024/04/11 Update ↓
+// For 場域優化 @2024/04/12 Update ↓
 
   getFieldSonParameters: ForQuerySonParameter = {} as ForQuerySonParameter;   // @2024/03/30 Add
 
@@ -3243,20 +3245,6 @@ export class FieldInfoComponent implements OnInit {
     } else if ( this.getFieldSonParameters.ratioCoverage !== '0' && this.getFieldSonParameters.ratioCoverage !== '' ) {
       ccoParameter = 'maxCoverageRange';
     }
-  
-    // 使用獲取的 SON 參數填充表單
-    // this.fieldOptimizationForm.patchValue({
-    //   setSONParameters: {
-    //     cco: true, // 預設勾選 CCO
-    //     anr: true, // 預設勾選 ANR
-    //     pci: true, // 預設勾選 PCI
-    //   },
-    //   ccoSetParameters: ccoParameter,
-    //   ueSyncMinSINR: this.getFieldSonParameters.ueSyncMinSINR,
-    //   pciMax: this.getFieldSonParameters.pciMax,
-    //   pciMin: this.getFieldSonParameters.pciMin
-    //   // ... 填充其他欄位
-    // });
 
     // 使用獲取的 SON 參數填充表單
     this.fieldOptimizationForm.patchValue({
@@ -3267,7 +3255,7 @@ export class FieldInfoComponent implements OnInit {
         ccoSetParameters: ccoParameter, // 從 getFieldSonParameters 獲取的值
         ueSyncMinSINR: this.getFieldSonParameters.ueSyncMinSINR, // 從 getFieldSonParameters 獲取的值
         pciMax: this.getFieldSonParameters.pciMax, // 從 getFieldSonParameters 獲取的值
-        pciMin: this.getFieldSonParameters.pciMin // 從 getFieldSonParameters 獲取的值
+        pciMin: this.getFieldSonParameters.pciMin  // 從 getFieldSonParameters 獲取的值
       }
     });
 
@@ -3311,48 +3299,34 @@ export class FieldInfoComponent implements OnInit {
   createFieldOptimizationForm() {
 
     this.fieldOptimizationForm = this.fb.group({
-
-      // setSONParameters: this.fb.group({
-      //   cco: new FormControl(true), // 設置 CCO 預設為選中
-      //   anr: new FormControl(true), // 設置 ANR 預設為選中 
-      //   pci: new FormControl(true), // 設置 PCI 預設為選中
-      // }),
-      // //ccoSetParameters: new FormControl( this.getFieldSonParameters.ratioAverageSINR ? 'ratioAverageSINR' : 'maxCoverageRange' ), // CCO 單選按鈕依據取回得參數值ratioAverageSINR存在與否進行設定
-      // ccoSetParameters: new FormControl(''), // 設置默認為空字符串
-      // ueSyncMinSINR: new FormControl( this.getFieldSonParameters.ueSyncMinSINR || '' ), // UE 同步最小 SINR 的默認值
-      // pciMax: new FormControl( this.getFieldSonParameters.pciMax || '' ),               // PCI 最大值的默認值
-      // pciMin: new FormControl( this.getFieldSonParameters.pciMin || '' )                // PCI 最小值的默認值
-
       setSONParameters: this.fb.group({
         cco: new FormControl( true ), // 設置 CCO 預設為選中
         anr: new FormControl( true ), // 設置 ANR 預設為選中 
         pci: new FormControl( true ), // 設置 PCI 預設為選中
-        ccoSetParameters: new FormControl( '' ), // 現在放置在正確的位置
-        ueSyncMinSINR: new FormControl( this.getFieldSonParameters.ueSyncMinSINR || '' ), // 現在放置在正確的位置
-        pciMax: new FormControl( this.getFieldSonParameters.pciMax || '' ), // 現在放置在正確的位置
-        pciMin: new FormControl( this.getFieldSonParameters.pciMin || '' ) // 現在放置在正確的位置
+        ccoSetParameters: new FormControl( '' ), // 設置默認為空字符串
+        ueSyncMinSINR: new FormControl( this.getFieldSonParameters.ueSyncMinSINR || '' ),  // UE 同步最小 SINR 的默認值
+        pciMax: new FormControl( this.getFieldSonParameters.pciMax || '' ), // PCI 最大值的默認值
+        pciMin: new FormControl( this.getFieldSonParameters.pciMin || '' )  // PCI 最小值的默認值
       })
-
     });
+
   }
 
-  // @2024/04/11 Update
-  // 點擊 場域優化 視窗的"重置"與"取消"按鈕行為
-  resetFieldOptimizationForm() {
 
-    // 重置整個"場域優化參數"表單
-    // this.fieldOptimizationForm.reset({
-    //   setSONParameters: {
-    //     cco: true, // 默認 CCO 勾選
-    //     anr: true, // 默認 ANR 勾選
-    //     pci: true, // 默認 PCI 勾選
-    //   },
-    //   ccoSetParameters: '',
-    //   ueSyncMinSINR: -7,
-    //   pciMax: 100,
-    //   pciMin: 160
-    //   // ... 設定其他欄位的默認值
-    // });
+  /** @2024/04/11 Update
+   *  點擊場域優化視窗的"清除並重置"與"取消"按鈕行為的函數
+   *  @method resetFieldOptimizationForm
+   *  @returns { void }
+   *  @description
+   *  - 重新載入場域優化表單以反映系統內現有設定
+   *  - 清空計算類別和結果的數據結構
+   *  - 重置所有存儲計算結果的變數
+   *  - 根據需要關閉場域優化視窗
+   *  @note
+   *  - 這個操作是用戶在進行場域設定調整後，如果需要重新開始時使用
+   *  - 重置操作會清除所有當前未保存的變更，恢復到最後一次保存的狀態
+   **/
+  resetFieldOptimizationForm() {
 
     // @2024/04/09 Add
     // 重新取得系統內現有設定 
@@ -3427,7 +3401,7 @@ export class FieldInfoComponent implements OnInit {
     // 斷言 'setSONParameters' 一定是一個 FormGroup
     const setSONParameters = this.fieldOptimizationForm.get('setSONParameters') as FormGroup;
 
-    if (event.checked) {
+    if ( event.checked ) {
       setSONParameters.controls['pci'].setValue( true );
       this.showANRSettings = true;
       this.showPCISettings = true;
@@ -3486,10 +3460,22 @@ export class FieldInfoComponent implements OnInit {
     optimizationTypeHeader?.classList.toggle('active');
   }
 
+
   // @2024/04/08 Add
   fieldOptimizationResultType: string = 'cco'; // 預設選擇顯示 "cco" 
 
-  // 變更場域優化結果頁籤顯示的類型函數 @2024/04/08 Add
+  /** @2024/04/08 Add
+   *  變更場域優化結果頁籤顯示的類型函數
+   *  @method changefieldOptimizationResultType
+   *  @param {MatButtonToggleChange} e - 用戶操作的事件物件
+   *  @returns { void }
+   *  @description
+   *  - 根據用戶的選擇更新場域優化結果的顯示類型
+   *  - 打印當前選擇的場域優化結果類型
+   *  - 提供選項以在切換類型時進行額外操作
+   *  @note
+   *  - 此函數響應用戶的頁籤選擇，動態調整顯示內容
+   **/
   changefieldOptimizationResultType( e: MatButtonToggleChange ) {
     console.log("changefieldOptimizationResultType() - Start");
 
@@ -3525,8 +3511,22 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
-  // @2024/04/11 Update
-  // 發送計算 SON 演算法函數
+  // @2024/04/12 Add for Progress Bar
+  calculateSON_Loading = false; // 用於識別計算"場域優化"資訊的標誌，初始設置為 false 
+
+  /** @2024/04/11 Update
+   *  發送計算 SON 演算法的函數
+   *  @method calculateSON_Submit
+   *  @returns { void }
+   *  @description
+   *  - 初始化計算所需的參數和數據結構
+   *  - 根據場域優化表單設定的參數來構建提交數據
+   *  - 根據執行環境（本地或遠端），發送計算請求
+   *  - 處理回傳的計算結果並更新前端顯示
+   *  - 計算完成後自動縮合優化種類區，並根據計算類型顯示結果頁籤
+   *  @note
+   *  - 這是一個觸發計算並處理回應的整合函數，涉及多個計算類型和數據交互
+   **/
   calculateSON_Submit() {
     console.log( "calculateSON_Submit() - Start" );
 
@@ -3556,7 +3556,7 @@ export class FieldInfoComponent implements OnInit {
     console.log( "gnbsCco: ", this.gnbsCco );
 
     this.isClickCalculate = true;
-    this.getQuerySonParameter_Loading = true; // 顯示 Loading Progress Spinner
+    this.calculateSON_Loading = true; // 顯示 Loading Progress Bar
 
     // 根據使用者選擇的設定，生成 Calculation Categories
     this.calculationCategories = [];
@@ -3594,24 +3594,23 @@ export class FieldInfoComponent implements OnInit {
 
     // 根據用戶選擇的 CCO 參數設置相關值
     if ( ccoSetParam === 'maxCoverageRange' ) {
-
+      
       submitData.ratioCoverage = '100';
       submitData.ratioAverageSINR = '0';
       submitData.ratioFairCapacity = '0';
       submitData.ratioMaxCapacity = '0';
 
     } else if ( ccoSetParam === 'ratioAverageSINR' ) {
-      
+
       submitData.ratioAverageSINR = '100';
       submitData.ratioCoverage = '0';
       submitData.ratioFairCapacity = '0';
       submitData.ratioMaxCapacity = '0';
-
     }
 
 
     if ( this.commonService.isLocal ) {
-      // 本地模式下的處理
+      // Local 模式下的處理
 
       console.log( "本地模擬 SON 計算，提交的數據:", submitData );
 
@@ -3635,7 +3634,7 @@ export class FieldInfoComponent implements OnInit {
       // 計算完成後自動縮合優化種類區
       this.toggleOptimizationType();
 
-      this.getQuerySonParameter_Loading = false; // 計算完成後停止 Loading Progress Spinner
+      this.calculateSON_Loading = false; // 計算完成後停止 Loading Progress Spinner
 
     } else {
 
@@ -3656,12 +3655,12 @@ export class FieldInfoComponent implements OnInit {
           // 計算完成後自動縮合優化種類區
           this.toggleOptimizationType();
 
-          this.getQuerySonParameter_Loading = false; // 計算完成後停止 Loading Progress Spinner
+          this.calculateSON_Loading = false; // 計算完成後停止 Loading Progress Spinner
 
         },
         error: ( error ) => {
           console.error( "SON 計算出錯:", error );
-          this.getQuerySonParameter_Loading = false; // 計算失敗也停止 Loading Progress Spinner
+          this.calculateSON_Loading = false; // 計算失敗也停止 Loading Progress Spinner
         },
       });
     }
@@ -3679,8 +3678,17 @@ export class FieldInfoComponent implements OnInit {
     console.log( "calculateSON_Submit() - End" );
   }
 
-  // @2024/04/09 Update
-  // 清楚場域優化計算結果 
+  /** @2024/04/09 Update
+   *  清除場域優化計算結果的函數
+   *  @method clear_calculateSON
+   *  @returns { void }
+   *  @description
+   *  - 重置場域優化相關的所有標誌和數據結構
+   *  - 輸出操作完成的日誌信息
+   *  - 動態切換優化種類區的展開狀態
+   *  @note
+   *  - 用於清理環境，確保下一次計算的環境是乾淨的
+   **/
   clear_calculateSON() {
 
     this.isCcoClass = false;
@@ -3747,15 +3755,26 @@ export class FieldInfoComponent implements OnInit {
   showAnrSense: number | null = null;
   showOptType: boolean | null = null;
 
-  // @2024/04/11 Update
-  // 處理 SON 計算回傳值的函數
+  /** @2024/04/11 Update
+   *  處理 SON 計算回傳值的函數
+   *  @method processCalculationResponse
+   *  @param {ForCalculateSonResponse} calculationResponse - SON 計算後的回傳數據
+   *  @returns { void }
+   *  @description
+   *  - 打印接收到的計算數據
+   *  - 提取和處理 CCO，ANR，和 PCI 的計算結果
+   *  - 分別更新對應的數據結構以支持後續操作
+   *  - 處理過程中包括對基站訊息的匹配和新舊鄰居數據的整合
+   *  @note
+   *  - 此函數是計算流程的核心部分，確保各項數據正確反映最新計算結果
+   **/
   processCalculationResponse( calculationResponse: ForCalculateSonResponse ) {
 
     // 將取得的回傳值轉換成輸出到控制台上 this.allSimplifiedBsInfo
     console.log( "In processCalculationResponse() - SON calculation:", calculationResponse );
     console.log( "In processCalculationResponse() - this.allSimplifiedBsInfo:", this.allSimplifiedBsInfo );
 
-    console.log( "gnbsCco: ", this.gnbsCco );
+    console.log( "In processCalculationResponse() - this.calculationCategories: ", this.calculationCategories );
     
     // 從回傳值中取出 cco、anr、pci 的結果資料
     const tempCco = calculationResponse.cco;
@@ -3784,11 +3803,11 @@ export class FieldInfoComponent implements OnInit {
 
             // 創建新的 CCO 結果對象，並填入匹配的訊息
             const ccoResult: ProcessedCcoResult = {
-
-                         name: matchingBsInfo.name,        // 基站名稱
-                          nci: matchingBsInfo.nci,         // NCI
-              originalTxPower: matchingBsInfo['tx-power'], // 原始傳輸功率
-                  newTxPower: res.txpower                  // 新的傳輸功率
+                         bsId: matchingBsInfo.id,          // 取得基站 ID @2024/04/12 Add
+                         name: matchingBsInfo.name,        // 取得基站名稱
+                          nci: matchingBsInfo.nci,         // 取得基站 NCI
+              originalTxPower: matchingBsInfo['tx-power'], // 取得基站原始傳輸功率
+                  newTxPower: res.txpower                  // 取得基站新的傳輸功率
 
             };
 
@@ -3803,11 +3822,12 @@ export class FieldInfoComponent implements OnInit {
       // 取得覆蓋率
       this.resultCoverage = tempCco.coverage;
     }
+    console.log("this.processedCcoResults:", this.processedCcoResults );
     
 
     // 處理 ANR 結果資料 ( 已完整 @2024/04/11 )
     // 建立一個 map 來存儲每個基站的原鄰居基站描述
-    const originalNeighborsMap = new Map< string, Neighbor[] >();
+    const originalNeighborsMap = new Map< string, anr_Neighbor[] >();
 
     // 處理原鄰居基站的部分
     // 遍歷所有簡化的基站資訊
@@ -3821,47 +3841,59 @@ export class FieldInfoComponent implements OnInit {
           // 如果找到鄰居基站資訊，則建立 Neighbor 物件，否則返回 null
           return neighborBsInfo ? { name: neighborBsInfo.name, nci: neighbor.nci } : null;
         // 過濾掉 null 值，並將結果斷言為 Neighbor 型別的陣列
-        }).filter( ( neighbor ): neighbor is Neighbor => neighbor !== null ) as Neighbor[];
+        }).filter( ( neighbor ): neighbor is anr_Neighbor => neighbor !== null ) as anr_Neighbor[];
         // 將原鄰居基站資訊存儲到 map 中，使用 gNBId 作為 key
         originalNeighborsMap.set( String( bsInfo.gNBId ), originalNeighbors );
       }
     });
 
-    // 處理新鄰居基站的部分
+    // 處理新鄰居基站的部分 ( 補取得套用優化用所需數據 @2024/04/12 )
     // 如果有 ANR 結果資料
     if ( tempAnr && tempAnr.cellIndividualResult ) {
-      
+
       // 清空原有的 ANR 結果陣列
       this.gnbsAnr = [];
       this.processedAnrResults = [];
-    
+
       // 遍歷每個 ANR 結果
-      tempAnr.cellIndividualResult.forEach( anrResult => {
+      tempAnr.cellIndividualResult.forEach(anrResult => {
         // 找到對應的基站資訊
-        const matchingBsInfo = this.allSimplifiedBsInfo.find( bsInfo => bsInfo.gNBId === anrResult.gNBId );
+        const matchingBsInfo = this.allSimplifiedBsInfo.find(bsInfo => bsInfo.gNBId === anrResult.gNBId);
         // 如果找到對應的基站資訊
         if ( matchingBsInfo ) {
-          // 從 map 中取出原鄰居基站資訊，如果沒有則使用空陣列
+          // 從 map 中取出原鄰居基站資訊,如果沒有則使用空陣列
           const originalNeighbors = originalNeighborsMap.get( String( matchingBsInfo.gNBId ) ) || [];
-          // 將新的鄰居基站資訊轉換為 Neighbor 物件陣列
+          // 將新的鄰居基站資訊轉換為 anr_Neighbor 物件陣列
           const newNeighbors = anrResult.NRCellRelation.map( rel => {
             // 找到對應的新鄰居基站資訊
             const newNeighborBsInfo = this.allSimplifiedBsInfo.find( bsInfo => bsInfo.gNBId === rel.gNBId );
-            // 如果找到新鄰居基站資訊，則建立 Neighbor 物件，否則返回 null
-            return newNeighborBsInfo ? { name: newNeighborBsInfo.name, nci: newNeighborBsInfo.nci } : null;
-          // 過濾掉 null 值，並將結果斷言為 Neighbor 型別的陣列
-          }).filter( ( neighbor ): neighbor is Neighbor => neighbor !== null ) as Neighbor[];
-          
+
+            // 如果找到新鄰居基站資訊,則建立 anr_Neighbor 物件,否則返回 null
+            return newNeighborBsInfo ? {
+              name: newNeighborBsInfo.name,
+              nci: newNeighborBsInfo.nci,
+              pci: rel.nRPCI,       // 從 nRPCI 取得 pci
+              nrarfcn: rel.arfcnDl, // 從 arfcnDl 取得 nrarfcn
+              'plmn-id': {
+                mcc: rel.pLMNId_MCC, // 從 pLMNId_MCC 取得 mcc
+                mnc: rel.pLMNId_MNC // 從 pLMNId_MNC 取得 mnc
+              }
+            } : null;
+
+          // 過濾掉 null 值,並將結果斷言為 anr_Neighbor 型別的陣列
+          }).filter( ( neighbor ): neighbor is anr_Neighbor => neighbor !== null ) as anr_Neighbor[];
+
           // 將處理後的 ANR 結果存儲到陣列中
-          this.processedAnrResults.push( {
+          this.processedAnrResults.push({
             name: matchingBsInfo.name,
             nci: matchingBsInfo.nci,
             originalNeighbors: originalNeighbors,
             newNeighbors: newNeighbors
-          } );
+          });
         }
       });
     }
+    console.log("this.processedAnrResults:", this.processedAnrResults );
 
 
     // 處理 PCI 結果資料 ( 已完整 @2024/04/11 )
@@ -3889,6 +3921,8 @@ export class FieldInfoComponent implements OnInit {
           // 計算當前小區的鄰居 Cell 組合數,並加到總組合數中
           combineCount += ( count * ( count - 1 ) ) / 2;
         });
+
+        console.log("this.gnbsPci:", this.gnbsPci);
       }
 
       // 處理原始 PCI 碰撞的 Cell 資料
@@ -3987,7 +4021,6 @@ export class FieldInfoComponent implements OnInit {
       }
     }
 
-
     // 更新前端顯示狀態
     this.isPciClass = this.calculationCategories.includes('pci');
     this.isAnrClass = this.calculationCategories.includes('anr');
@@ -4013,13 +4046,190 @@ export class FieldInfoComponent implements OnInit {
 
   }
 
-  // @2024/04/11 Add
-  // 取得匹配的基站訊息
+
+  /** @2024/04/11 Add
+   *  取得匹配的基站訊息
+   *  @method getMatchingBsInfo
+   *  @param {number} gNBId - 要匹配的基站全球唯一識別碼
+   *  @returns {SimplifiedBSInfo | undefined} - 返回匹配的基站資訊或未找到時返回undefined
+   *  @description
+   *  - 遍歷存儲的所有簡化基站資訊數據，查找與指定 gNBId 匹配的基站資訊
+   *  @note
+   *  - 這個函數用於快速檢索特定 gNBId 的基站資訊，支援其他函數如優化計算或資訊展示等
+   **/
   getMatchingBsInfo( gNBId: number ): SimplifiedBSInfo | undefined {
     return this.allSimplifiedBsInfo.find( bsInfo => bsInfo.gNBId === gNBId );
   }
 
-// For 場域優化 @2024/04/11 Add ↑
+
+  /** @2024/04/12 Add
+   *  發送套用 SON 計算優化函數
+   *  @method applySON_Submit
+   *  @returns { void }
+   *  @description
+   *  - 記錄函數執行起始
+   *  - 構建提交數據結構，包含 Session ID、是否保存標誌、類型和基站資訊
+   *  - 遍歷 gnbsPci 以收集和匹配基站訊息
+   *  - 根據包含的計算類型（如 'cco', 'anr'），進行基站訊息擴充，包括設定發射功率和波束模式以及更新鄰居資訊
+   *  - 在本地模式下進行模擬，假裝處理成功，進行以下操作：
+   *    - 關閉場域優化視窗
+   *    - 重置場域優化表單並清除計算結果
+   *    - 刷新場域和效能管理參數設定資訊
+   *    - 隱藏場域地圖的載入指示器
+   *  - 在非本地模式下，向服務器發送實際的套用 SON 優化請求，成功後進行相同的關閉、重置和刷新操作，並管理載入指示器
+   *  - 記錄函數執行結束
+   *  @note
+   *  - 功能豐富，結合本地和遠端運算以實現SON優化
+   *  - 本地模式和非本地模式的行為有所不同，但均包括視窗管理、資料刷新及界面反饋
+   **/
+  applySON_Submit() {
+    console.log("applySON_Submit() - Start"); // 記錄函數執行的開始
+
+    const submitData: ForApplySon = {
+      session: this.sessionId,          // 設置 Session ID
+      isSave: true,                     // 指定數據是否保存
+      type: this.calculationCategories, // 設置優化計算的類型
+      bsInfo: [],                       // 初始化基站訊息數組
+    };
+
+    // 循環處理每一個 PCI 結果
+    this.gnbsPci.forEach( pciResult => {
+      const matchingBsInfo = this.getMatchingBsInfo( pciResult.gNBId ); // 從基站訊息中尋找匹配的PCI
+
+      if ( matchingBsInfo ) {
+        const bsInfo: ApplySon_BsInfo = {
+          bsId: matchingBsInfo.id, // 設定基站 ID
+          nci: matchingBsInfo.nci, // 設定基站的 NCI
+          pci: pciResult.nrPCI,    // 設定 PCI
+          neighbor: [],            // 初始化鄰居訊息數組
+        };
+
+        // 處理cco相關設定
+        if ( this.calculationCategories.includes('cco') ) {
+          const ccoResult = this.processedCcoResults.find( cco => cco.nci === matchingBsInfo.nci );
+          if ( ccoResult ) {
+            bsInfo['tx-power'] = ccoResult.newTxPower; // 設置新的發射功率
+            bsInfo['beam-pattern'] = "FINE"; // 設置波束模式
+          }
+        }
+
+        // 處理anr相關設定
+        if ( this.calculationCategories.includes('anr') ) {
+          const anrResult = this.processedAnrResults.find( anr => anr.nci === matchingBsInfo.nci );
+          if ( anrResult ) {
+            bsInfo.neighbor = anrResult.newNeighbors.map( neighbor => ({
+              nci: neighbor.nci, // 鄰居的NCI
+              pci: neighbor.pci || 0, // 鄰居的PCI
+              nrarfcn: neighbor.nrarfcn || 0, // 鄰居的NRARFCN
+              'plmn-id': neighbor['plmn-id'] || { mcc: '', mnc: '' }, // 鄰居的PLMN-ID
+              tac: "",
+              id: "0",
+              enable: "0",
+              alias: "xxxxxxxxxxxxxxxxxx",
+              cio: "",
+              blacklisted: "",
+              'must-include': "",
+              'q-offset': "",
+              'rs-tx-power': "",
+              __itri_default___: 0,
+            }));
+          }
+        }
+
+        submitData.bsInfo.push( bsInfo ); // 添加配置好的基站訊息到提交數據
+      }
+    });
+
+    // 顯示載入場域地圖 BS 資訊的 Spinner
+    this.isMarkersLoading = true;
+
+    if ( this.commonService.isLocal ) {
+      console.log( "本地模擬套用 SON 優化，提交的數據:", submitData ); // 本地模式日誌
+
+      // 套用成功後，關閉場域優化視窗
+      this.fieldOptimizationWindow_Ref.close();
+
+      // 也重置場域優化表單並清除計算結果
+      this.resetFieldOptimizationForm(); 
+      this.clear_calculateSON();
+
+      // 假裝 Local 模式處理成功，此時刷新該場域的所有資訊
+      this.getQueryFieldInfo();
+
+      // 假裝 Local 模式處理成功，此時也刷新該場域的"效能管理參數設定"資訊
+      this.getQueryPmFtpInfo();
+
+      //this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
+
+    } else {
+      console.log( "呼叫實際 API 前,套用 SON 優化所提交的數據:", submitData ); // 實際模式日誌
+
+      // 發送請求到服務器
+      this.API_Field.multiOptimalBs( submitData ).subscribe({
+        next: ( response ) => {
+          console.log( "套用 SON 優化成功:", response ); // 請求成功日誌
+
+          // 套用成功後，先關閉場域優化視窗
+          this.fieldOptimizationWindow_Ref.close();
+
+          // 也重置場域優化表單並清除計算結果
+          this.resetFieldOptimizationForm(); 
+          this.clear_calculateSON();
+
+          // 套用成功後，此時刷新該場域的所有資訊
+          this.getQueryFieldInfo();
+
+          // 套用成功後，此時也刷新該場域的"效能管理參數設定"資訊
+          this.getQueryPmFtpInfo();
+
+          //this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
+
+        },
+        error: ( error ) => {
+          console.error("套用 SON 優化出錯:", error); // 請求失敗日誌
+          //this.isMarkersLoading = false; // 出錯時也應隱藏 spinner
+        },
+      });
+    }
+
+    console.log( "applySON_Submit() - End" ); // 記錄函數執行的結束
+  }
+
+  // @2024/04/12 Add
+  // Control for SON optimization confirmation window
+  @ViewChild('confirmApplySonWindow') confirmApplySonWindow: any;
+  confirmApplySonWindow_Ref!: MatDialogRef<any>;
+  confirmApplySonWindow_Validated = false;
+
+  /** @2024/04/12 Add
+   *  打開套用 SON 優化計算的確認窗口
+   *  @method openConfirmApplySonWindow
+   *  @returns { void }
+   *  @description
+   *  - 初始化確認窗口的驗證狀態為未驗證
+   *  - 打開確認窗口，設置其ID並可選擇性地定義窗口的寬高
+   *  - 訂閱對話框關閉後的事件，當對話框關閉時重置驗證狀態
+   *  @note
+   *  - 此函數為用戶提供最後一步確認機會，以確保他們願意進行優化計算
+   *  - 使用 Angular Material Dialog 組件來實現模態對話框功能
+   * */
+  openConfirmApplySonWindow() {
+    this.confirmApplySonWindow_Validated = false;
+    this.confirmApplySonWindow_Ref = this.dialog.open( this.confirmApplySonWindow, {
+      id: 'confirmApplySonWindow',
+      // width and height can be set as needed or removed
+      // width: '300px', 
+      // height: '200px'
+    });
+
+    // Subscribe to the dialog close event
+    this.confirmApplySonWindow_Ref.afterClosed().subscribe(() => {
+      // Logic after the dialog closes can be added here
+      this.confirmApplySonWindow_Validated = false;
+    });
+  }
+
+// For 場域優化 @2024/04/12 Update ↑
 
 
 

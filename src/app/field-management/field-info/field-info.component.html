@@ -1103,12 +1103,12 @@
 			{{ languageService.i18n['field.confirmPMgmtParameterSet'] }}
 		</label>
 		<div class="buttons buttons-centered">
-		<button type="button" (click)="UpdatePMParameterSetting_Submit()" mat-dialog-close>
-			{{ languageService.i18n['confirm'] }}
-		</button>
-		<button type="button" mat-dialog-close>
-			{{ languageService.i18n['cancel'] }}
-		</button>
+			<button type="button" (click)="UpdatePMParameterSetting_Submit()" mat-dialog-close>
+				{{ languageService.i18n['confirm'] }}
+			</button>
+			<button type="button" mat-dialog-close>
+				{{ languageService.i18n['cancel'] }}
+			</button>
 		</div>
 	</ng-template>
 
@@ -1123,6 +1123,7 @@
 			</button>
 		</div>
 	</ng-template>
+
 
 	<!-- Window of Field Optimization @2024/04/08 Update-->
 	<ng-template #fieldOptimizationWindow>
@@ -1227,35 +1228,34 @@
 				</div>
 			</span>
 	
-			
-				<!-- Calculation Categories 欄位 -->
-				<!-- <label>{{ languageService.i18n['field.calculationCategories'] }}</label>
-				<span *ngIf="calculationCategories.length > 0">
-					<div *ngIf="isClickCalculate">
-						<ul>
-							<li *ngFor="let category of calculationCategories">
-								<label *ngIf="category === 'cco'">{{ languageService.i18n['field.ccoSettings'] }}:</label>
-								<label *ngIf="category === 'anr'">{{ languageService.i18n['field.setANR'] }}:</label>
-								<label *ngIf="category === 'pci'">{{ languageService.i18n['field.setPCI'] }}:</label>
-								<span  *ngIf="category === 'cco'">
-									<span *ngIf="fieldOptimizationForm.get('ccoSetParameters')?.value === 'maxCoverageRange'">
-										{{ languageService.i18n['field.maxCoverageRange'] }}
-									</span>
-									<span *ngIf="fieldOptimizationForm.get('ccoSetParameters')?.value === 'ratioAverageSINR'">
-										{{ languageService.i18n['field.maxSINR'] }}: {{ getFieldSonParameters.ratioAverageSINR }}
-									</span>
+			<!-- Calculation Categories 欄位 -->
+			<!-- <label>{{ languageService.i18n['field.calculationCategories'] }}</label>
+			<span *ngIf="calculationCategories.length > 0">
+				<div *ngIf="isClickCalculate">
+					<ul>
+						<li *ngFor="let category of calculationCategories">
+							<label *ngIf="category === 'cco'">{{ languageService.i18n['field.ccoSettings'] }}:</label>
+							<label *ngIf="category === 'anr'">{{ languageService.i18n['field.setANR'] }}:</label>
+							<label *ngIf="category === 'pci'">{{ languageService.i18n['field.setPCI'] }}:</label>
+							<span  *ngIf="category === 'cco'">
+								<span *ngIf="fieldOptimizationForm.get('ccoSetParameters')?.value === 'maxCoverageRange'">
+									{{ languageService.i18n['field.maxCoverageRange'] }}
 								</span>
-								<span *ngIf="category === 'anr'">
-									{{ languageService.i18n['field.minSignalPower'] }}: {{ fieldOptimizationForm.get('ueSyncMinSINR')?.value }}
+								<span *ngIf="fieldOptimizationForm.get('ccoSetParameters')?.value === 'ratioAverageSINR'">
+									{{ languageService.i18n['field.maxSINR'] }}: {{ getFieldSonParameters.ratioAverageSINR }}
 								</span>
-								<span *ngIf="category === 'pci'">
-									{{ languageService.i18n['field.pciSpacing'] }}: {{ fieldOptimizationForm.get('pciMax')?.value }} ~
-									{{ languageService.i18n['field.pciRange'] }}: {{ fieldOptimizationForm.get('pciMin')?.value }}
-								</span>
-							</li>
-						</ul>
-					</div>
-				</span> -->
+							</span>
+							<span *ngIf="category === 'anr'">
+								{{ languageService.i18n['field.minSignalPower'] }}: {{ fieldOptimizationForm.get('ueSyncMinSINR')?.value }}
+							</span>
+							<span *ngIf="category === 'pci'">
+								{{ languageService.i18n['field.pciSpacing'] }}: {{ fieldOptimizationForm.get('pciMax')?.value }} ~
+								{{ languageService.i18n['field.pciRange'] }}: {{ fieldOptimizationForm.get('pciMin')?.value }}
+							</span>
+						</li>
+					</ul>
+				</div>
+			</span> -->
 			<span>
 				<!-- Calculation Results 欄位 -->
 				<h4 class="inline-block">
@@ -1269,257 +1269,270 @@
 						<mat-button-toggle value="pci" >PCI</mat-button-toggle>
 					</mat-button-toggle-group>
 				</div>
-		
-				<!-- CCO 結果 ( 已完整 ) @yutchengithub -->
-				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'cco' ">
-					<div *ngIf="isCcoClass">
-						<label>
+
+				<!-- 當優化正在計算時顯示加載進度條 -->
+				<ng-container *ngIf="calculateSON_Loading">
+					<div>
+						<!-- 進度條 Bar -->
+						<mat-progress-bar mode="indeterminate" class="custom-color"></mat-progress-bar>
+					</div>
+				</ng-container>
+
+				<!-- 加載完成後顯示計算結果 -->
+				<ng-container *ngIf="!calculateSON_Loading">
+
+					<!-- CCO 結果 ( 已完整 ) @2024/04/09 -->
+					<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'cco' ">
+						<div *ngIf="isCcoClass">
+							
+							<label>
+								<div class="table">
+									<table>
+										<thead>
+											<tr>
+												<th>{{ languageService.i18n['field.BSname'] }}</th>
+												<th>{{ languageService.i18n['field.originalTxPower'] }}</th>
+												<th><span class="material-symbols-outlined after">east</span></th>
+												<th class="new">{{ languageService.i18n['field.newTxPower'] }}</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr *ngFor="let result of processedCcoResults">
+												<td matTooltip="NCI = {{ result.nci }}">{{ result.name }}</td>
+												<td>{{ result.originalTxPower }}</td>
+												<td><span class="material-symbols-outlined after">east</span></td>
+												<td class="new">{{ result.newTxPower }}</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</label>
+							<label class="Performance">
+								<H6>{{ languageService.i18n['field.fieldPerformance'] }}</H6>
+								<ul>
+									<li>SINR: {{ resultSinr }}</li>
+									<li>Coverage: {{ resultCoverage }}</li>
+								</ul>
+							</label>
+						</div>
+					</div>
+
+					<!-- ANR 結果 ( 已完整 @2024/04/11 ) -->
+					<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'anr' ">
+						<label *ngIf="isAnrClass">
 							<div class="table">
 								<table>
 									<thead>
 										<tr>
 											<th>{{ languageService.i18n['field.BSname'] }}</th>
-											<th>{{ languageService.i18n['field.originalTxPower'] }}</th>
+											<th>{{ languageService.i18n['field.originalNeighborBS'] }}</th>
 											<th><span class="material-symbols-outlined after">east</span></th>
-											<th class="new">{{ languageService.i18n['field.newTxPower'] }}</th>
+											<th class="new">{{ languageService.i18n['field.newNeighborBS'] }}</th>
 										</tr>
 									</thead>
 									<tbody>
-										<tr *ngFor="let result of processedCcoResults">
-											<td matTooltip="NCI = {{ result.nci }}">{{ result.name }}</td>
-											<td>{{ result.originalTxPower }}</td>
-											<td><span class="material-symbols-outlined after">east</span></td>
-											<td class="new">{{ result.newTxPower }}</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</label>
-						<label class="Performance">
-							<H6>{{ languageService.i18n['field.fieldPerformance'] }}</H6>
-							<ul>
-								<li>SINR: {{ resultSinr }}</li>
-								<li>Coverage: {{ resultCoverage }}</li>
-							</ul>
-						</label>
-					</div>
-				</div>
-
-				<!-- ANR 結果 ( 已完整 @2024/04/11 ) -->
-				<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'anr' ">
-					<label *ngIf="isAnrClass">
-						<div class="table">
-							<table>
-								<thead>
-									<tr>
-										<th>{{ languageService.i18n['field.BSname'] }}</th>
-										<th>{{ languageService.i18n['field.originalNeighborBS'] }}</th>
-										<th><span class="material-symbols-outlined after">east</span></th>
-										<th class="new">{{ languageService.i18n['field.newNeighborBS'] }}</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr *ngFor="let result of processedAnrResults">
-									  <td matTooltip="NCI = {{ result.nci }}">{{ result.name }}</td>
-									  <td>
-										<label *ngFor="let neighbor of result.originalNeighbors">
-										  <span matTooltip="NCI = {{ neighbor.nci }}">{{ neighbor.name }}</span>
-										</label>
-									  </td>
-									  <td>
-										<span class="material-symbols-outlined after">east</span>
-									  </td>
-									  <td class="new" >
-										<label *ngFor="let neighbor of result.newNeighbors">
-										  <span matTooltip="NCI = {{ neighbor.nci }}">{{ neighbor.name }}</span>
-										</label>
-									  </td>
-									</tr>
-								  </tbody>
-								<!-- <tbody>
-									<tr *ngFor="let result of processedAnrResults">
+										<tr *ngFor="let result of processedAnrResults">
 										<td matTooltip="NCI = {{ result.nci }}">{{ result.name }}</td>
-										<td matTooltip="NCI = {{ neighbor.nci }}">
-										  <label>
-											<span *ngFor="let neighbor of result.originalNeighbors">
-											  {{ neighbor.name }}
-											</span>
-										  </label>
+										<td>
+											<label *ngFor="let neighbor of result.originalNeighbors">
+											<span matTooltip="NCI = {{ neighbor.nci }}">{{ neighbor.name }}</span>
+											</label>
 										</td>
-										<td><span class="material-symbols-outlined after">east</span></td>
-										<td class="new" matTooltip="NCI = {{ neighbor.nci }}">
-										  <label>
-											<span *ngFor="let neighbor of result.newNeighbors">
-											  {{ neighbor.name }}
-											</span>
-										  </label>
+										<td>
+											<span class="material-symbols-outlined after">east</span>
 										</td>
-									</tr>
-								</tbody> -->
-							</table>
-						</div>
-					</label>
-				</div>
-				
-				<!-- PCI 結果 ( 已完整 @2024/04/11 ) -->
-				<div class="Field_Infos" *ngIf="fieldOptimizationResultType === 'pci'">
-					<div *ngIf="isPciClass">
-						<label>
-							<div class="table ">
-								<table>
-									<thead>
-										<tr>
-											<th>{{ languageService.i18n['field.BSname'] }}</th>
-											<th>{{ languageService.i18n['field.originalPCI'] }}</th>
-											<th><span class="material-symbols-outlined after">east</span></th>
-											<th>{{ languageService.i18n['field.newPCI'] }}</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr *ngFor="let result of gnbsPci">
-											<td matTooltip="NCI = {{ getMatchingBsInfo( result.gNBId )?.nci }}">{{ getMatchingBsInfo(result.gNBId)?.name }}</td>
-											<td>{{ getMatchingBsInfo(result.gNBId)?.pci }}</td>
-											<td><span class="material-symbols-outlined after">east</span></td>
-											<td class="new">{{ result.nrPCI }}</td>
+										<td class="new" >
+											<label *ngFor="let neighbor of result.newNeighbors">
+											<span matTooltip="NCI = {{ neighbor.nci }}">{{ neighbor.name }}</span>
+											</label>
+										</td>
 										</tr>
 									</tbody>
+									<!-- <tbody>
+										<tr *ngFor="let result of processedAnrResults">
+											<td matTooltip="NCI = {{ result.nci }}">{{ result.name }}</td>
+											<td matTooltip="NCI = {{ neighbor.nci }}">
+											<label>
+												<span *ngFor="let neighbor of result.originalNeighbors">
+												{{ neighbor.name }}
+												</span>
+											</label>
+											</td>
+											<td><span class="material-symbols-outlined after">east</span></td>
+											<td class="new" matTooltip="NCI = {{ neighbor.nci }}">
+											<label>
+												<span *ngFor="let neighbor of result.newNeighbors">
+												{{ neighbor.name }}
+												</span>
+											</label>
+											</td>
+										</tr>
+									</tbody> -->
 								</table>
 							</div>
 						</label>
-						<div>
-							<h6>PCI Collisions</h6>
+					</div>
+					
+					<!-- PCI 結果 ( 已完整 @2024/04/11 ) -->
+					<div class="Field_Infos" *ngIf="fieldOptimizationResultType === 'pci'">
+						<div *ngIf="isPciClass">
 							<label>
-								<div>Uni-directional pair count = {{ originalPciCollisionTotalCount }}, ratio = {{ originalPciCollisionRatio }} %</div>
-								<div class="table pci">
+								<div class="table ">
 									<table>
 										<thead>
 											<tr>
-												<th rowspan="2">PCI</th>
-												<th colspan="2">Original Collision Pairs</th>
-											</tr>
-											<tr>
-												<th>Source</th>
-												<th>Target</th>
+												<th>{{ languageService.i18n['field.BSname'] }}</th>
+												<th>{{ languageService.i18n['field.originalPCI'] }}</th>
+												<th><span class="material-symbols-outlined after">east</span></th>
+												<th>{{ languageService.i18n['field.newPCI'] }}</th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr *ngIf="originalPciCollisionTotalCount === 0 && originalPciCollisionRatio === 0; else originalCollisionData">
-												<td colspan="3">None</td>
+											<tr *ngFor="let result of gnbsPci">
+												<td matTooltip="NCI = {{ getMatchingBsInfo( result.gNBId )?.nci }}">{{ getMatchingBsInfo(result.gNBId)?.name }}</td>
+												<td>{{ getMatchingBsInfo(result.gNBId)?.pci }}</td>
+												<td><span class="material-symbols-outlined after">east</span></td>
+												<td class="new">{{ result.nrPCI }}</td>
 											</tr>
-											<ng-template #originalCollisionData>
-												<tr *ngFor="let collision of originalPciCollisions">
-													<td>{{ collision.collision_pci }}</td>
-													<td matTooltip="NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.source_gNBId)?.name }}</td>
-													<td matTooltip="NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.target_gNBId)?.name }}</td>
-												</tr>
-											</ng-template>
-										</tbody>
-									</table>
-								</div>
-							</label> <span class="material-symbols-outlined after">east</span>
-							<label>
-								<div>Uni-directional pair count = {{ newPciCollisionTotalCount }}, ratio = {{ newPciCollisionRatio }} %</div>
-								<div class="table pci">
-									<table>
-										<thead>
-											<tr>
-												<th rowspan="2">PCI</th>
-												<th colspan="2">New Collision Pairs</th>
-											</tr>
-											<tr>
-												<th>Source</th>
-												<th>Target</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr *ngIf="newPciCollisionTotalCount === 0 && newPciCollisionRatio === 0; else newCollisionData">
-												<td colspan="3">None</td>
-											</tr>
-											<ng-template #newCollisionData>
-												<tr *ngFor="let collision of newPciCollisions">
-													<td>{{ collision.collision_pci }}</td>
-													<td matTooltip="NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.source_gNBId)?.name }}</td>
-													<td matTooltip="NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.target_gNBId)?.name }}</td>
-												</tr>
-											</ng-template>
 										</tbody>
 									</table>
 								</div>
 							</label>
-						</div>
-						<div>
-							<h6>PCI Confusions</h6>
-							<label>
-								<div>Uni-directional pair count = {{ originalPciConfusionTotalCount }}, ratio = {{ originalPciConfusionRatio }} %</div>
-								<div class="table pci">
-									<table>
-										<thead>
-											<tr>
-												<th rowspan="2">PCI</th>
-												<th colspan="3">Original Confusion Pairs</th>
-											</tr>
-											<tr>
-												<th>Source</th>
-												<th>Confused</th>
-												<th>Target</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr *ngIf="originalPciConfusionTotalCount === 0 && originalPciConfusionRatio === 0; else originalConfusionData">
-												<td colspan="4">None</td>
-											</tr>
-											<ng-template #originalConfusionData>
-												<tr *ngFor="let confusion of originalPciConfusions">
-													<td>{{ confusion.confusion_pci }}</td>
-													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}</td>
-													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}</td>
-													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}</td>
+							<div>
+								<h6>PCI Collisions</h6>
+								<label>
+									<div>Uni-directional pair count = {{ originalPciCollisionTotalCount }}, ratio = {{ originalPciCollisionRatio }} %</div>
+									<div class="table pci">
+										<table>
+											<thead>
+												<tr>
+													<th rowspan="2">PCI</th>
+													<th colspan="2">Original Collision Pairs</th>
 												</tr>
-											</ng-template>
-										</tbody>
-									</table>
-								</div>
-							</label>
-							<span class="material-symbols-outlined after">east</span>
-							<label>
-								<div>Uni-directional pair count = {{ newPciConfusionTotalCount }}, ratio = {{ newPciConfusionRatio }} %</div>
-								<div class="table pci">
-									<table>
-										<thead>
-											<tr>
-												<th rowspan="2">PCI</th>
-												<th colspan="3">New Confusion Pairs</th>
-											</tr>
-											<tr>
-												<th>Source</th>
-												<th>Confused</th>
-												<th>Target</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr *ngIf="newPciConfusionTotalCount === 0 && newPciConfusionRatio === 0; else newConfusionData">
-												<td colspan="4">None</td>
-											</tr>
-											<ng-template #newConfusionData>
-												<tr *ngFor="let confusion of newPciConfusions">
-													<td>{{ confusion.confusion_pci }}</td>
-													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}</td>
-													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}</td>
-													<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}</td>
+												<tr>
+													<th>Source</th>
+													<th>Target</th>
 												</tr>
-											</ng-template>
-										</tbody>
-									</table>
-								</div>
-							</label>
+											</thead>
+											<tbody>
+												<tr *ngIf="originalPciCollisionTotalCount === 0 && originalPciCollisionRatio === 0; else originalCollisionData">
+													<td colspan="3">None</td>
+												</tr>
+												<ng-template #originalCollisionData>
+													<tr *ngFor="let collision of originalPciCollisions">
+														<td>{{ collision.collision_pci }}</td>
+														<td matTooltip="NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.source_gNBId)?.name }}</td>
+														<td matTooltip="NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.target_gNBId)?.name }}</td>
+													</tr>
+												</ng-template>
+											</tbody>
+										</table>
+									</div>
+								</label> <span class="material-symbols-outlined after">east</span>
+								<label>
+									<div>Uni-directional pair count = {{ newPciCollisionTotalCount }}, ratio = {{ newPciCollisionRatio }} %</div>
+									<div class="table pci">
+										<table>
+											<thead>
+												<tr>
+													<th rowspan="2">PCI</th>
+													<th colspan="2">New Collision Pairs</th>
+												</tr>
+												<tr>
+													<th>Source</th>
+													<th>Target</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr *ngIf="newPciCollisionTotalCount === 0 && newPciCollisionRatio === 0; else newCollisionData">
+													<td colspan="3">None</td>
+												</tr>
+												<ng-template #newCollisionData>
+													<tr *ngFor="let collision of newPciCollisions">
+														<td>{{ collision.collision_pci }}</td>
+														<td matTooltip="NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.source_gNBId)?.name }}</td>
+														<td matTooltip="NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.target_gNBId)?.name }}</td>
+													</tr>
+												</ng-template>
+											</tbody>
+										</table>
+									</div>
+								</label>
+							</div>
+							<div>
+								<h6>PCI Confusions</h6>
+								<label>
+									<div>Uni-directional pair count = {{ originalPciConfusionTotalCount }}, ratio = {{ originalPciConfusionRatio }} %</div>
+									<div class="table pci">
+										<table>
+											<thead>
+												<tr>
+													<th rowspan="2">PCI</th>
+													<th colspan="3">Original Confusion Pairs</th>
+												</tr>
+												<tr>
+													<th>Source</th>
+													<th>Confused</th>
+													<th>Target</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr *ngIf="originalPciConfusionTotalCount === 0 && originalPciConfusionRatio === 0; else originalConfusionData">
+													<td colspan="4">None</td>
+												</tr>
+												<ng-template #originalConfusionData>
+													<tr *ngFor="let confusion of originalPciConfusions">
+														<td>{{ confusion.confusion_pci }}</td>
+														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}</td>
+														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}</td>
+														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}</td>
+													</tr>
+												</ng-template>
+											</tbody>
+										</table>
+									</div>
+								</label>
+								<span class="material-symbols-outlined after">east</span>
+								<label>
+									<div>Uni-directional pair count = {{ newPciConfusionTotalCount }}, ratio = {{ newPciConfusionRatio }} %</div>
+									<div class="table pci">
+										<table>
+											<thead>
+												<tr>
+													<th rowspan="2">PCI</th>
+													<th colspan="3">New Confusion Pairs</th>
+												</tr>
+												<tr>
+													<th>Source</th>
+													<th>Confused</th>
+													<th>Target</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr *ngIf="newPciConfusionTotalCount === 0 && newPciConfusionRatio === 0; else newConfusionData">
+													<td colspan="4">None</td>
+												</tr>
+												<ng-template #newConfusionData>
+													<tr *ngFor="let confusion of newPciConfusions">
+														<td>{{ confusion.confusion_pci }}</td>
+														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}</td>
+														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}</td>
+														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}</td>
+													</tr>
+												</ng-template>
+											</tbody>
+										</table>
+									</div>
+								</label>
+							</div>
 						</div>
 					</div>
-				</div>
+
+				</ng-container>
 
 				<div class="buttons">
-
 					<!-- 套用按鈕 -->
-					<button type="button">
+					<button type="button" (click)="openConfirmApplySonWindow()">
 						{{ languageService.i18n['field.applySON'] }}
 					</button>
 
@@ -1532,7 +1545,6 @@
 					<button type="button" (click)="resetFieldOptimizationForm(); clear_calculateSON();">
 						{{ languageService.i18n['field.clearAndReset'] }}
 					</button>
-
 				</div>
 			</span>			
 		</div>
@@ -1544,3 +1556,22 @@
 			</button>
 		</div> -->
   	</ng-template>
+
+	<!-- Confirm Window for SON Optimization Application @2024/04/12 Add -->
+	<ng-template #confirmApplySonWindow>
+		<div>
+			<h5>{{ languageService.i18n['confirm'] }}</h5>
+		</div>  
+		<label class="label-centered">
+			{{ languageService.i18n['field.confirmApplySonField'] }}
+		</label>
+		<div class="buttons buttons-centered">
+			<button type="button" (click)="applySON_Submit()" mat-dialog-close>
+				{{ languageService.i18n['confirm'] }}
+			</button>
+			<button type="button" mat-dialog-close>
+				{{ languageService.i18n['cancel'] }}
+			</button>
+		</div>
+	</ng-template>
+
