@@ -184,9 +184,12 @@ export const TwLanguage = {
   'field.reportFM':'告警資訊(FM)',          // @12/12 Add
   'field.optim':'場域優化',                  // @12/12 Add
   'field.optimSON':'執行 SON rApps',         // @12/12 Add
-  'field.mapModel':'地圖模式',                // @12/12 Add
-  'field.bsList':'基站列表',                  // @12/12 Add
-  'field.bsAntennaCoord':'基站天線座標',  // @12/13 Add
+
+  'field.modeSwitch': '模式切換',    // @2024/04/12 Add
+  'field.mapModel':'場域地圖',       // @2024/04/12 Update
+  'field.bsList':'基站列表',         // @12/12 Add
+
+  'field.bsAntennaCoord':'基站天線座標',      // @12/13 Add
   'field.BSstatus':'連線狀態',                // @12/13 Add
   'field.bsAlarm':'告警',                    // @12/13 Add
   'field.legend_all-in-one_bs':'一體式基站',  // @12/28 Add
@@ -214,7 +217,6 @@ export const TwLanguage = {
   'field.sonCalculate':'計算',
   'field.clearAndReset': '清除並重置',
 
-
   'field.calculationCategories': '計算類別',
 
   'field.calculationResults': '計算結果',
@@ -229,15 +231,12 @@ export const TwLanguage = {
   'field.originalPCI': '原 PCI',
   'field.newPCI': '新 PCI',
   
-
   'field.optimizationType': '優化種類',
   'field.optimizationResult': '優化結果',
   
   'field.applySON': '套用',
   'field.cancelSON': '取消',
   "field.confirmApplySonField": "套用此次計算進行優化？", // @2024/04/12 Add
-
-
 
   'field.open': '開啟',
   'field.anrMode': '最小訊雜比',

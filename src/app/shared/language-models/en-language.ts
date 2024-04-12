@@ -187,8 +187,11 @@ export const Enlanguage = {
   'field.reportFM':'Alarms (FM)',                   // @12/12 Add
   'field.optim':'Field Optimization',               // @12/12 Add
   'field.optimSON':'SON Calculation',               // @12/12 Add
-  'field.mapModel':'Map Mode',                      // @12/12 Add
-  'field.bsList':'BS List',                         // @12/12 Add
+
+  'field.modeSwitch': 'Mode Switch',  // @2024/04/12 Add
+  'field.mapModel':'Field Map',       // @2024/04/12 Update
+  'field.bsList':'BS List',           // @12/12 Add
+
   'field.bsAntennaCoord':'BS Antenna Coordinates',  // @12/13 Add
   'field.BSstatus':'BS Status',                     // @12/13 Add
   'field.bsAlarm':'Alarm',                          // @12/13 Add
