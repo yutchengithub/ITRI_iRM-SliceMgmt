@@ -197,8 +197,7 @@ export class FieldInfoComponent implements OnInit {
     // 建立並初始化各功能所需表單
     this.createBSInfoForm();              // For updateBs API @2024/01/05 Add 
     this.createFieldInfoForm();           // For Field Info in Field Editing  @2024/01/17 Add
-    this.createPMgmtParameterSetForm();   // For Pm Ftp Info in PM Parameter Setting  @2024/02/04 Add
-    this.createFieldOptimizationForm();   // For Son Parameters in Field Optimization  @2024/03/30 Add
+   // this.createFieldOptimizationForm();   // For Son Parameters in Field Optimization  @2024/03/30 Add
   }
 
   // 頁面初始化
@@ -275,7 +274,7 @@ export class FieldInfoComponent implements OnInit {
       });
     }
 
-    this.getQueryPmFtpInfo();  // 此時先取得"效能管理參數設定"資訊 @2024/02/22 Add
+    //this.getQueryPmFtpInfo();  // 此時先取得"效能管理參數設定"資訊 @2024/02/22 Add
   }
 
 // ↑ Page Init ↑
@@ -2028,7 +2027,7 @@ export class FieldInfoComponent implements OnInit {
               // mnc: formValues.mnc !== null && formValues.mnc !== '' ? String(formValues.mnc) : String(this.displayBsInfo!['plmn-id'].mnc),
               // mcc: formValues.mcc !== null && formValues.mcc !== '' ? String(formValues.mcc) : String(this.displayBsInfo!['plmn-id'].mcc)
             },
-            description:      String(this.displayBsInfo!.description),
+            description:      String( this.displayBsInfo!.description ),
             channelbandwidth: String( this.displayBsInfo!.channelbandwidth ),
             tac:              String( this.displayBsInfo!.tac ),
             components:       this.displayBsInfo!.components
@@ -2087,6 +2086,7 @@ export class FieldInfoComponent implements OnInit {
 
             this.isMarkersLoading = false; // 隱藏 spinner
             this.getQueryFieldInfo();      // 立即呼叫以刷新數據
+            
           } else {
 
               // 非 Local，進行正常的更新請求
@@ -3005,6 +3005,8 @@ export class FieldInfoComponent implements OnInit {
 
     this.measurementType = ""; // 先重置用於控制顯示"自定義參數輸入欄位"的變數
 
+    this.createPMgmtParameterSetForm();   // For Pm Ftp Info in PM Parameter Setting  @2024/02/04 Add
+
     this.getQueryPmFtpInfo();  // 取得"效能管理參數設定"資訊
     
     console.log("In openPMgmtParameterSetWindow() - this.PmFtpInfo = ", this.PmFtpInfo);
@@ -3266,10 +3268,13 @@ export class FieldInfoComponent implements OnInit {
   fieldOptimizationWindow_Ref!: MatDialogRef<any>;
   fieldOptimizationWindow_Validated = false;
 
-  // 開啟視窗 - 場域優化 @2024/04/08 Update
+  // 開啟視窗 - 場域優化 @2024/04/12 Update
   openfieldOptimizationWindow() {
 
+    this.createFieldOptimizationForm();   // For Son Parameters in Field Optimization
+
     this.getQuerySonParameter();  // 取得"場域優化參數"資訊
+    
     console.log( "In openfieldOptimizationWindow() - this.getFieldSonParameters = ", this.getFieldSonParameters );
 
     this.fieldOptimizationResultType = 'cco'; // 預設顯示 CCO 頁籤

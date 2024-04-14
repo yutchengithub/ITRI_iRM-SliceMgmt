@@ -74,8 +74,9 @@ import { MatExpansionModule } from '@angular/material/expansion'; // 用於縮�
 import { MatCheckboxModule } from '@angular/material/checkbox'; // @2024/03/30 Add
 
 // Pipe 管道
-import { TruncatePipe } from './shared/pipes/truncate.pipe';  // @11/16 Add by yuchen 
-import { FilterByPipe } from './shared/pipes/filter-by.pipe'; // @2024/03/27 Add
+import { TruncatePipe } from './shared/pipes/truncate.pipe';             // @11/16 Add by yuchen 
+import { FilterByPipe } from './shared/pipes/filter-by.pipe';            // @2024/03/27 Add
+import { ParsePositionPipe } from './shared/pipes/position-parser.pipe'; // @2024/04/11 Add
 
 // import API
 import { apiForFieldMgmt }    from './shared/api/For_Field_Mgmt';     // @2024/03/14 Update
@@ -138,6 +139,7 @@ import { localNEList }            from './shared/local-files/NE/For_queryBsCompo
     // Pipe 管道
     TruncatePipe, // @11/16 Add by yuchen 
     FilterByPipe, // @2024/03/27 Add by yuchen 
+    ParsePositionPipe,  // @2024/04/14 Add
 
     DatePickerFormatDirective,
 
