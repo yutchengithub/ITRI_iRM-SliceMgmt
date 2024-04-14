@@ -11,7 +11,7 @@
     <div class="baseInfo"><!-- 基本訊息區 -->
       <span>
         {{ languageService.i18n['basic.info'] }}
-        <button>{{ languageService.i18n['BS.editSettings'] }}</button>
+        <button (click)="openBsBasicInfoEditWindow()" >{{ languageService.i18n['BS.editSettings'] }}</button>
       </span>
       <input id="baseInfo" class="toggle" type="checkbox">
       <label for="baseInfo" class="lbl-toggle"></label>
@@ -160,8 +160,78 @@
         </div>
       </div>
     </div>
+    
+    <!-- BS Basic Info Edit Window @2024/04/14 Add -->
+    <ng-template #BsBasicInfoEditWindow>
+      <h5 *ngIf=" bsType === '1' ">{{ languageService.i18n['BS.editSettings'] }} – {{ selectBsInfo.name }}</h5>
+      <h5 *ngIf=" bsType === '2' ">{{ languageService.i18n['BS.editSettings'] }} – {{ selectBsInfo_dist.name }}</h5>
+      
+      <form [formGroup]="BsBasicInfoEditForm">
+        <ul>
+          <li>
+            <label>{{ languageService.i18n['BS.name'] }}</label>
+            <span>
+              <input *ngIf="bsType === '1'" type="text" formControlName="bsName" placeholder="{{ selectBsInfo.name }}" class="{{formValidated&&BsBasicInfoEditForm.controls['bsName'].invalid?'required':''}}">
+              <input *ngIf="bsType === '2'" type="text" formControlName="bsName" placeholder="{{ selectBsInfo_dist.name }}" class="{{formValidated&&BsBasicInfoEditForm.controls['bsName'].invalid?'required':''}}">
+            </span>
+          </li>
+          
+          <li>
+            <label>{{ languageService.i18n['BS.description'] }}</label>
+            <span>
+              <input *ngIf="bsType === '1'" type="text" formControlName="description" placeholder="{{ selectBsInfo.description }}" class="{{formValidated&&BsBasicInfoEditForm.controls['description'].invalid?'required':''}}">
+              <input *ngIf="bsType === '2'" type="text" formControlName="description" placeholder="{{ selectBsInfo_dist.description }}" class="{{formValidated&&BsBasicInfoEditForm.controls['description'].invalid?'required':''}}">
+            </span>
+          </li>
+          <li *ngIf="selectBsInfo.bstype === 1">
+            <label>{{ languageService.i18n['BS.bsAntennaCoord'] }}</label>
+            <span class="input_2">
+              <input type="text" formControlName="longitude" placeholder="{{ (selectBsInfo.position | parsePosition).lng }}" class="{{formValidated&&BsBasicInfoEditForm.controls['longitude'].invalid?'required':''}}">
+              <input type="text" formControlName="latitude" placeholder="{{ (selectBsInfo.position | parsePosition).lat }}" class="{{formValidated&&BsBasicInfoEditForm.controls['latitude'].invalid?'required':''}}">
+            </span>
+          </li>
+          <li *ngIf="selectBsInfo_dist.bstype === 2">
+            <label>{{ languageService.i18n['BS.bsAntennaCoord'] }}</label>
+            <div class="table">
+              <table class="par_success">
+                <thead>
+                  <tr>
+                    <th>{{ languageService.i18n['BS.ruNeName'] }}</th>
+                    <th>{{ languageService.i18n['BS.ruLongitude'] }}</th>
+                    <th>{{ languageService.i18n['BS.ruLatitude'] }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- 根據 RU 數量動態生成表格行 -->
+                  <tr *ngFor="let ruInfo of ruIdNamePositionMap | keyvalue; let i = index">
+                    <td>{{ ruInfo.value.name }}</td>
+                    <td>
+                      <!-- 確保 formControlName 與 FormGroup 中的名稱一致 -->
+                      <input type="text" [formControlName]="'longitude_' + i" [placeholder]="(ruInfo.value.position | parsePosition).lng">
+                    </td>
+                    <td>
+                      <!-- 確保 formControlName 與 FormGroup 中的名稱一致 -->
+                      <input type="text" [formControlName]="'latitude_' + i" [placeholder]="(ruInfo.value.position | parsePosition).lat">
+                    </td>
+                  </tr>                  
+                </tbody>
+              </table>
+            </div>
+          </li>
+        </ul>
+        <div class="buttons">
+          <button type="button" (click)="BsBasicInfoEdit_Submit()">
+            {{ languageService.i18n['confirm'] }}
+          </button>
+          <button type="button" mat-dialog-close>
+            {{ languageService.i18n['cancel'] }}
+          </button>
+        </div>
+      </form>
+    </ng-template>
 
-    <div class="topology"><!-- 網元拓樸圖 -->
+
+    <div class="topology"><!-- 網元拓樸圖區 -->
       <span>{{ languageService.i18n['BS.topology'] }}</span>
       <input id="topology" class="toggle" type="checkbox">
       <label for="topology" class="lbl-toggle"></label>
@@ -3215,7 +3285,7 @@
 
       <div class="collapsible-content">
         <div class="content-inner">
-          <form [formGroup]="searchForm">
+          <form [formGroup]="alarmSearchForm">
             <div class="filter">
               <span>
                 <label>{{ languageService.i18n['fm.severity'] }}</label>
@@ -3239,13 +3309,13 @@
             <!-- Search Criteria Summary of current bs fault message @2024/03/31 Add -->
             <div class="filterBY">
               <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;  
-              <span *ngIf="afterSearchForm.controls['severity'].value">
-                <label>{{ languageService.i18n['fm.severity'] }}:&nbsp;</label>{{ afterSearchForm.controls['severity'].value }}
+              <span *ngIf="afterAlarmSearchForm.controls['severity'].value">
+                <label>{{ languageService.i18n['fm.severity'] }}:&nbsp;</label>{{ afterAlarmSearchForm.controls['severity'].value }}
               </span>
-              <span *ngIf="afterSearchForm.controls['from'].value || afterSearchForm.controls['to'].value">
+              <span *ngIf="afterAlarmSearchForm.controls['from'].value || afterAlarmSearchForm.controls['to'].value">
                 <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}:&nbsp;</label>
-                {{ afterSearchForm.controls['from'].value ? (commonService.dealPostDate(afterSearchForm.controls['from'].value) + ' ~ ') : '' }}   
-                {{ afterSearchForm.controls['to'].value ? commonService.dealPostDate(afterSearchForm.controls['to'].value) : '' }}
+                {{ afterAlarmSearchForm.controls['from'].value ? (commonService.dealPostDate(afterAlarmSearchForm.controls['from'].value) + ' ~ ') : '' }}   
+                {{ afterAlarmSearchForm.controls['to'].value ? commonService.dealPostDate(afterAlarmSearchForm.controls['to'].value) : '' }}
               </span>  
             </div>
           </form>
@@ -3392,4 +3462,3 @@
   </div>
 
 </div>
-
