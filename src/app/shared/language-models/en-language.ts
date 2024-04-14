@@ -269,8 +269,8 @@ export const Enlanguage = {
 
   // 基本訊息區
   'BS.editSettings':'Edit Settings',
-  'BS.ruLatitude': 'Latitude',
-  'BS.ruLongitude': 'Longitude',
+  'BS.Latitude': 'Latitude',
+  'BS.Longitude': 'Longitude',
 
   'BS.bsAntennaCoord':'BS Antenna Coordinates',
   'BS.ruNeName':'NE Name ( RU )',
