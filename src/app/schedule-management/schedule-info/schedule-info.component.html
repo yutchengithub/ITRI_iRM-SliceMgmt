@@ -152,16 +152,22 @@
           </ng-container>
         </ul>
 
-        <!-- 執行結果區 @2024/03/24 Add -->
+        <!-- 執行結果區 @2024/04/15 Update -->
         <ul class="ftp_info">
           <h3>{{ languageService.i18n['sm.executionResult'] }}</h3>
 
           <!-- 如 selectScheduleInfo.ticketresult 有值，顯示報表下載讓使用者下載報表 -->
-          <li *ngIf="selectScheduleInfo.ticketresult" class="downloadRPT">
+          <li *ngIf="!isSfUpdateInfoArray( selectScheduleInfo.ticketinfo )" class="downloadRPT">
             <label>{{ languageService.i18n['sm.th_download'] }}</label>
             <span *ngIf="selectScheduleInfo.ticketresult">
               <button mat-icon-button color="primary" (click)="downloadSpecificScheduleReportInList( selectScheduleInfo )">
                 <mat-icon tooltip="{{ languageService.i18n['sm.smDownload'] }}">sim_card_download</mat-icon>
+              </button>
+            </span>
+            <!-- 無報表檔案時顯示的 icon @2024/04/15 Add  -->
+            <span *ngIf="!selectScheduleInfo.ticketresult">
+              <button mat-icon-button color="primary">
+                <mat-icon tooltip="{{ languageService.i18n['sm.notPeriodicExecution'] }}">no_sim</mat-icon>
               </button>
             </span>
           </li>
