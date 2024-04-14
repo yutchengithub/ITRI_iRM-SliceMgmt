@@ -185,10 +185,28 @@
           </li>
           <li *ngIf="selectBsInfo.bstype === 1">
             <label>{{ languageService.i18n['BS.bsAntennaCoord'] }}</label>
-            <span class="input_2">
-              <input type="text" formControlName="longitude" placeholder="{{ (selectBsInfo.position | parsePosition).lng }}" class="{{formValidated&&BsBasicInfoEditForm.controls['longitude'].invalid?'required':''}}">
-              <input type="text" formControlName="latitude" placeholder="{{ (selectBsInfo.position | parsePosition).lat }}" class="{{formValidated&&BsBasicInfoEditForm.controls['latitude'].invalid?'required':''}}">
-            </span>
+            <div class="table">
+              <table class="par_success">
+                <thead>
+                  <tr>
+                    <th>{{ languageService.i18n['BS.Longitude'] }}</th>
+                    <th>{{ languageService.i18n['BS.Latitude'] }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <!-- 確保 formControlName 與 FormGroup 中的名稱一致 -->
+                      <input type="text" formControlName="longitude" placeholder="{{ (selectBsInfo.position | parsePosition).lng }}" class="{{formValidated&&BsBasicInfoEditForm.controls['longitude'].invalid?'required':''}}">
+                    </td>
+                    <td>
+                      <!-- 確保 formControlName 與 FormGroup 中的名稱一致 -->
+                      <input type="text" formControlName="latitude" placeholder="{{ (selectBsInfo.position | parsePosition).lat }}" class="{{formValidated&&BsBasicInfoEditForm.controls['latitude'].invalid?'required':''}}">
+                    </td>
+                  </tr>                  
+                </tbody>
+              </table>
+            </div>
           </li>
           <li *ngIf="selectBsInfo_dist.bstype === 2">
             <label>{{ languageService.i18n['BS.bsAntennaCoord'] }}</label>
@@ -197,8 +215,8 @@
                 <thead>
                   <tr>
                     <th>{{ languageService.i18n['BS.ruNeName'] }}</th>
-                    <th>{{ languageService.i18n['BS.ruLongitude'] }}</th>
-                    <th>{{ languageService.i18n['BS.ruLatitude'] }}</th>
+                    <th>{{ languageService.i18n['BS.Longitude'] }}</th>
+                    <th>{{ languageService.i18n['BS.Latitude'] }}</th>
                   </tr>
                 </thead>
                 <tbody>
