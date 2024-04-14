@@ -230,9 +230,10 @@ F
 // 激活狀態的按鈕樣式 @2024/01/15 update by yuchen
 .button-active {
   color: #ffffff!important;
-  background: #477acd!important;
+  background: transparent;
+  border: none;
   mat-icon {
-    color: rgb(176, 207, 236); // 激活狀態的圖標顏色
+    color: #b0cfec; // 激活狀態的圖標顏色
   }
 }
 
@@ -777,7 +778,7 @@ table {
 }
 .table table td {
   padding: 0.5em 0.1em;
-  white-space: nowrap;
+  /* white-space: nowrap; */
 }
 .table table td label {
   text-align: left;

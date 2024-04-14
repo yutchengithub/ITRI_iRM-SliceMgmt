@@ -377,6 +377,7 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
 .table table th {
     position: sticky;
     top: -1px;
+    z-index: 999;
     font-weight: bold;
     font-size: 1.1em;
     white-space: nowrap;
@@ -1095,25 +1096,28 @@ cursor: pointer;
   padding-top: 0!important;
   padding-bottom: 0!important;
 }
-.mat-menu-item {
+.mat-menu-content button {
   background: transparent;
   color: rgba(0,0,0,.87);
-  border-bottom: 1px solid rgb(109 146 177 / 40%)!important;
+  border-bottom: 1px solid #6d92b166!important;
   line-height: 38px!important;
   height: 38px!important;
 }
-.mat-menu-item[disabled],
-.mat-menu-item[disabled] .mat-menu-submenu-icon,
-.mat-menu-item[disabled] .mat-icon-no-color {
+.mat-menu-content h3 {
+  margin: 0!important;
+  line-height: 2.5em;
+  border-bottom: 1px solid #6d92b166!important;
+}
+.mat-menu-content h3 + .mat-menu-content button {
+  border-bottom: none;
+}
+
+.mat-menu-content h3 ,
+.mat-menu-content h3 .mat-menu-submenu-icon,
+.mat-menu-content h3  .mat-icon-no-color {
   color: #356279;
   background-color: #ccd1d9a3;
   text-align: center;
-}
-.mat-menu-item[disabled] {
-  margin-top: .3em;
-}
-.mat-menu-content .mat-menu-item[disabled]:first-child {
-  margin-top: 0;
 }
 .mat-menu-content .mat-menu-item:nth-child(3),
 .mat-menu-content .mat-menu-item:nth-child(6) {
@@ -1535,4 +1539,14 @@ body.tw div.baseInfo .content-inner ul li label {
 }
 #createComponentModal select {
   width: 12.6em;
+}
+tbody {
+  position: relative;
+}
+.progress-spinner-container {
+  position: absolute;
+  left: 45%;
+  top: 35%;
+  z-index: 1000000;
+  height: initial;
 }

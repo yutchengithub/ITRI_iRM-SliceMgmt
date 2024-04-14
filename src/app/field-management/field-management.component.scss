@@ -227,7 +227,7 @@ mat-stepper {
 ::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel-header-description,
 ::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel table th,
 ::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel table td {
-  white-space: nowrap;
+  /* white-space: nowrap; */
   color: #fff;
 }
 ::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel:not([class*=mat-elevation-z]) {

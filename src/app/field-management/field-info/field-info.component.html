@@ -51,10 +51,10 @@
 			</button>
 			<mat-menu #menu="matMenu">
 				<!-- Field Configuration @2024/01/11 Update -->
-				<button mat-menu-item disabled>
-					<mat-icon>build_circle</mat-icon>
+				<h3>
+					<!-- <mat-icon>build_circle</mat-icon> -->
 					<span>{{ languageService.i18n['field.config'] }}</span>
-				</button>
+				</h3>
 					<button mat-menu-item (click)="openfieldEditWindow()">
 						<span class="material-symbols-outlined">
 							tune
@@ -70,10 +70,10 @@
 					</button>
 	
 				<!-- Field Reports -->
-				<button mat-menu-item disabled>
-				  <mat-icon>report</mat-icon>
+				<h3>
+				  <!-- <mat-icon>report</mat-icon> -->
 				  <span>{{ languageService.i18n['field.report'] }}</span>
-				</button>
+				</h3>
 					<button mat-menu-item (click)="openfieldPMReportWindow()">
 						<span class="material-symbols-outlined">
 							wysiwyg
@@ -89,10 +89,10 @@
 				</button> -->
 
 				<!-- Field Optimization -->
-				<button mat-menu-item disabled>
-					<mat-icon>settings_suggest</mat-icon>
+				<h3>
+					<!-- <mat-icon>settings_suggest</mat-icon> -->
 					<span>{{ languageService.i18n['field.optim'] }}</span>
-				</button>
+				</h3>
 					<button mat-menu-item (click)="openfieldOptimizationWindow()">
 						<span class="material-symbols-outlined">
 							play_circle
@@ -101,10 +101,10 @@
 					</button>
 
 				<!-- Mode Switch @2024/04/12 Add -->
-				<button mat-menu-item disabled>
-					<mat-icon>settings_suggest</mat-icon>
+				<h3>
+					<!-- <mat-icon>settings_suggest</mat-icon> -->
 					<span>{{ languageService.i18n['field.modeSwitch'] }}</span>
-				</button>
+				</h3>
 					<!-- 當 showMapModel 為 true 時顯示 BS 列表按鈕 @12/13 Add -->
 					<button mat-menu-item *ngIf="showMapModel" (click)="toggleMenuButton()">
 							<mat-icon svgIcon="BaseStation" class="svg-icon_BS"></mat-icon>
