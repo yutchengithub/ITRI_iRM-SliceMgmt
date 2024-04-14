@@ -949,10 +949,20 @@ export class BSInfoComponent implements OnInit {
 
           // 輸出更新成功的日誌
           console.log( 'Update BS success', res );
+
           // 關閉所有對話框
-          this.dialog.closeAll();
-          // 重新查詢基站資訊
+          //this.dialog.closeAll();
+
+          // 刷新基站資訊
           this.getQueryBsInfo();
+
+          // 刷新網元資訊
+          this.getNEList(); 
+
+          // 刷新基站告警資訊
+          this.getCurrentBsFmList()
+
+          this.BsBasicInfoEditWindowRef.close(); // 更新讀取完後，關閉編輯設定視窗
         },
         // 錯誤回調函數
         error: ( error ) => {
@@ -997,10 +1007,20 @@ export class BSInfoComponent implements OnInit {
 
           // 輸出更新成功的日誌
           console.log( 'Update Distributed BS success', res );
+          
           // 關閉所有對話框
-          this.dialog.closeAll();
-          // 重新查詢基站資訊
+          //this.dialog.closeAll();
+
+          // 刷新基站資訊
           this.getQueryBsInfo();
+
+          // 刷新網元資訊
+          this.getNEList(); 
+
+          // 刷新基站告警資訊
+          this.getCurrentBsFmList()
+
+          this.BsBasicInfoEditWindowRef.close(); // 更新讀取完後，關閉編輯設定視窗
         },
         // 錯誤回調函數
         error: ( error ) => {
