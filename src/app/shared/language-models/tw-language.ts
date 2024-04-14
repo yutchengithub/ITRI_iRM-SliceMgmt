@@ -268,6 +268,8 @@ export const TwLanguage = {
 
   // 基本訊息區
   'BS.editSettings': '編輯設定',
+  'BS.ruLatitude': '緯度',
+  'BS.ruLongitude': '經度',  
   'BS.bsAntennaCoord':'基站天線座標',
   'BS.ruNeName':'網元名稱 ( RU )',
   'BS.latLong':'經緯度',

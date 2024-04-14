@@ -12,15 +12,21 @@ import { FmsgList } from './../../fault-management/fault-management.component';
 import { FaultMessages } from './../../fault-management/fault-management.component';
 import { ChangeDetectorRef } from '@angular/core';
 
+// import custom pipe modules 
+import { ParsePositionPipe } from '../../shared/pipes/position-parser.pipe'; // @2024/04/14 Add
+
 // import APIs of BS Management
 import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt'; // @2024/03/25 Add
 
 // 引入儲存各個資訊所需的 interfaces
 import { BSInfo, Components }                      from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
+import { ForUpdateBs }                             from '../../shared/interfaces/BS/For_updateBs';             // @2024/04/14 Add
 import { BSInfo_dist, Info_dist, Components_dist } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
+import { ForUpdateDistributedBs, Cellinfo_dist }   from '../../shared/interfaces/BS/For_updateDistributedBs';  // @2024/04/14 Add
+
 import { CurrentBsFmList, FaultMessage } from '../../shared/interfaces/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
-import { NEList, NE, Sm  }               from '../../shared/interfaces/NE/For_queryBsComponentList'; // @2024/03/27 Add
-import { NEInfo }                        from '../../shared/interfaces/NE/For_queryBsComponentInfo'; // @2024/03/29 Add
+import { NEList, NE, Sm  }               from '../../shared/interfaces/NE/For_queryBsComponentList';       // @2024/03/27 Add
+import { NEInfo }                        from '../../shared/interfaces/NE/For_queryBsComponentInfo';       // @2024/03/29 Add
 
 // 引入所需 Local Files
 import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';          // @2024/03/25 Add
@@ -45,7 +51,6 @@ interface bsCurrentFmParams {
   templateUrl: './bs-info.component.html',
   styleUrls: ['./bs-info.component.scss']
 })
-
 export class BSInfoComponent implements OnInit {
 
   sessionId: string = '';   // sessionId 用於存儲當前會話 ID
@@ -94,14 +99,15 @@ export class BSInfoComponent implements OnInit {
 
     // @2024/04/01 Add
     // 使用這些格式化後的值來更新 searchForm 控件的值
-    this.searchForm = this.fb.group({
+    this.alarmSearchForm = this.fb.group({
       'from': new FormControl( `${oneMonthAgoDate.getFullYear()}-${formattedMonth}-${formattedDay} ${formattedHour}:${formattedMinute}` ), 
       'to': new FormControl( `${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}` ),
       'severity': new FormControl( 'All' )
     });
 
     // 建立搜尋表單 
-    this.createSearchForm();
+    this.createAlarmSearchForm();
+    //this.createBsBasicInfoEditForm(); // 用於編輯 BS 基本資訊用 @2024/04/14 Add
 
   }
 
@@ -124,8 +130,8 @@ export class BSInfoComponent implements OnInit {
       console.log('bsId: ' + this.bsID + ', bsName: ' + this.bsName +
                      ', bsType: ' + this.bsType + ', bsCellCount: ' + ',\nsend from /main/bs-mgr');
       
-      // 建立 searchForm 的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。
-      this.afterSearchForm = _.cloneDeep( this.searchForm );
+      // 建立 alarmSearchForm 的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。
+      this.afterAlarmSearchForm = _.cloneDeep( this.alarmSearchForm );
 
       // 初入該頁面就取得此 BS 資訊               
       this.getQueryBsInfo();
@@ -200,6 +206,8 @@ export class BSInfoComponent implements OnInit {
 // ↑ For Bs Parameters Page Control @2024/03/29 Add ↑
 
 
+
+// ↓ 基本資訊區 ↓
 
   isLoadingBsInfo =  true;                            // 加載 BS 資訊狀態的標誌，初始設置為 true
   selectBsInfo:      BSInfo = {} as BSInfo;           // 用於存儲從服務器或 Local Files 獲取的一體式基站資訊
@@ -633,10 +641,383 @@ export class BSInfoComponent implements OnInit {
   }
 
   // @2024/03/29 Add
-  selectNEid: string = ""; // 用於存儲當前選中的網元ID
+  //selectNEid: string = ""; // 用於存儲當前選中的網元ID
+
+
+// ↓ 編輯設定 @2024/04/14 Add ↓
+  
+  // 宣告 BsBasicInfoEditWindow 模板參考變數
+  @ViewChild('BsBasicInfoEditWindow') BsBasicInfoEditWindow!: TemplateRef<any>;
+
+  // 宣告 BsBasicInfoEditForm 表單群組變數
+  BsBasicInfoEditForm: FormGroup = new FormGroup({});
+  
+  // 宣告 BsBasicInfoEditWindowRef 對話框參考變數
+  BsBasicInfoEditWindowRef!: MatDialogRef<any>;
+
+  // @2024/04/14 Add
+  // 建立 BsBasicInfoEditForm 表單群組的方法
+  createBsBasicInfoEditForm() {
+    // 使用 FormBuilder 建立 BsBasicInfoEditForm 表單群組
+    this.BsBasicInfoEditForm = this.fb.group({
+      // 宣告 bsName 表單控制項
+      bsName: '',
+      // 宣告 description 表單控制項
+      description: '',
+      // 宣告 longitude 表單控制項
+      longitude: '',
+      // 宣告 latitude 表單控制項
+      latitude: '',
+      // 使用 generateRuControls() 方法動態生成 RU 控制項
+      ...this.generateRuControls()
+    });
+  }
+
+  // @2024/04/14 Add
+  // 動態生成 RU 控制項的方法
+  generateRuControls(): { [key: string]: any } {
+    // 宣告 controls 物件變數
+    const controls: { [key: string]: any } = {};
+
+    // 若 selectBsInfo_dist 和 ruIdNamePositionMap 存在
+    if (this.selectBsInfo_dist && this.ruIdNamePositionMap) {
+      // 遍歷 ruIdNamePositionMap 的鍵值
+      Object.keys( this.ruIdNamePositionMap ).forEach( ( ruId, index ) => {
+        // 使用 `longitude_${index}` 作為名稱，建立經度表單控制項
+        controls[`longitude_${index}`] = this.fb.control('');
+        // 使用 `latitude_${index}` 作為名稱，建立緯度表單控制項
+        controls[`latitude_${index}`] = this.fb.control('');
+      });
+    }
+
+    // 回傳 controls 物件
+    return controls;
+  }
+
+  // @2024/04/14 Add
+  // 宣告 ParsePositionPipe 位置解析管道
+  private parsePositionPipe = new ParsePositionPipe();
+
+  // @2024/04/14 Add
+  // 更新 BsBasicInfoEditForm 表單群組的方法
+  updateBsBasicInfoEditForm() {
+    // 根據 bsType 決定使用 selectBsInfo 或 selectBsInfo_dist
+    const bsInfo = this.bsType === "1" ? this.selectBsInfo : this.selectBsInfo_dist;
+
+    // 若 bsInfo 存在
+    if (bsInfo) {
+      // 使用 parsePositionPipe 解析位置字串，若無則設為空物件
+      const position = bsInfo.position ? this.parsePositionPipe.transform(bsInfo.position) : { lat: '', lng: '' };
+      
+      // 更新 BsBasicInfoEditForm 表單群組的值
+      this.BsBasicInfoEditForm.patchValue({
+        // 設定 bsName 的值
+        bsName: bsInfo.name || '',
+        // 設定 description 的值
+        description: bsInfo.description || '',
+        // 設定 longitude 的值
+        longitude: position.lng,
+        // 設定 latitude 的值
+        latitude: position.lat
+      });
+    }
+
+    // 若 bsType 為 "2" 且 ruIdNamePositionMap 存在
+    if ( this.bsType === "2" && this.ruIdNamePositionMap ) {
+      // 遍歷 ruIdNamePositionMap 的鍵值對
+      Object.entries(this.ruIdNamePositionMap).forEach(([ruId, ruInfo], index) => {
+        // 使用 parsePositionPipe 解析位置字串
+        const position = this.parsePositionPipe.transform(ruInfo.position);
+        // 取得 `longitude_${index}` 表單控制項
+        const longitudeControl = this.BsBasicInfoEditForm.get(`longitude_${index}`);
+        // 取得 `latitude_${index}` 表單控制項
+        const latitudeControl = this.BsBasicInfoEditForm.get(`latitude_${index}`);
+
+        // 若 longitudeControl 和 latitudeControl 存在
+        if (longitudeControl && latitudeControl) {
+          // 設定 longitudeControl 的值
+          longitudeControl.setValue(position.lng);
+          // 設定 latitudeControl 的值
+          latitudeControl.setValue(position.lat);
+        }
+        // 輸出位置資訊的日誌
+        console.log("updateBsBasicInfoEditForm - RU位置資訊，索引" + index + ": ", position);
+      });
+    }
+  }
+
+  // @2024/04/14 Add
+  // 開啟 BsBasicInfoEditWindow 對話框的方法
+  openBsBasicInfoEditWindow() {
+    // 建立 BsBasicInfoEditForm 表單群組
+    this.createBsBasicInfoEditForm();
+    // 更新 BsBasicInfoEditForm 表單群組的值
+    this.updateBsBasicInfoEditForm();
+    // 開啟 BsBasicInfoEditWindow 對話框
+    this.BsBasicInfoEditWindowRef = this.dialog.open( 
+      this.BsBasicInfoEditWindow, { id: 'BsBasicInfoEditWindowRef' } );
+  }
+
+  // @2024/04/14 Add
+  // 提交 BsBasicInfoEdit 表單的方法
+  BsBasicInfoEdit_Submit() {
+    // 若 BsBasicInfoEditForm 表單有效
+    if ( this.BsBasicInfoEditForm.valid ) {
+      // 取得 BsBasicInfoEditForm 表單的值
+      const formValue = this.BsBasicInfoEditForm.value;
+
+      // 若 bsType 為 "1"
+      if ( this.bsType === "1" ) {
+        // 建立更新一體式基站的資料物件
+        const updateData: ForUpdateBs = {
+          // 設定編輯類型為 1
+          edit_type: 1,
+          // 設定 session 的值
+          session: this.sessionId,
+          // 設定 id 的值
+          id: this.selectBsInfo.id,
+          // 設定 name 的值
+          name: formValue.bsName,
+          // 設定 description 的值
+          description: formValue.description,
+          // 設定 bstype 的值
+          bstype: String( this.selectBsInfo.bstype ),
+          // 設定 position 的值
+          position: `[${formValue.longitude},${formValue.latitude}]`,
+          // 設定 components 的值
+          components: this.selectBsInfo.components,
+          // 設定 pci 的值
+          pci: String( this.selectBsInfo.info['bs-conf'].pci ),
+          // 設定 plmnid 的值
+          plmnid: {
+            // 設定 mnc 的值
+            mnc: String( this.selectBsInfo.info.pLMNId_MNC ),
+            // 設定 mcc 的值
+            mcc: String( this.selectBsInfo.info.pLMNId_MCC )
+          },
+          // 設定 nci 的值
+          nci: String( this.selectBsInfo.info['bs-conf'].nci ),
+          // 設定 gpslatitude 的值
+          gpslatitude: String( formValue.latitude * 1000000 ),
+          // 設定 gpslongitude 的值
+          gpslongitude: String( formValue.longitude * 1000000 ),
+          // 設定 nrarfcndl 的值
+          nrarfcndl: String( this.selectBsInfo.info['bs-conf']['nrarfcn-dl'] ),
+          // 設定 nrarfcnul 的值
+          nrarfcnul: String( this.selectBsInfo.info['bs-conf']['nrarfcn-ul'] ),
+          // 設定 channelbandwidth 的值
+          channelbandwidth: String( this.selectBsInfo.info['bs-conf']['channel-bandwidth'] ),
+          // 設定 txpower 的值
+          txpower: String( this.selectBsInfo.info['bs-conf']['tx-power'] ),
+          // 設定 tac 的值
+          tac: String( this.selectBsInfo.info['bs-conf'].tac ),
+          // 設定 extension_info 的值
+          extension_info: this.selectBsInfo.extension_info
+        };
+
+        // 呼叫 updateBs() 方法更新一體式基站
+        this.updateBs( updateData );
+
+      // 若 bsType 為 "2"
+      } else if (this.bsType === "2") {
+        // 建立更新分佈式基站的 components 資料物件
+        const componentsData: Components_dist = {};
+      
+        // 遍歷 CU
+        for (const cuId in this.selectBsInfo_dist.components) {
+          // 初始化 CU 的 components 資料物件
+          componentsData[cuId] = {};
+          // 遍歷 DU
+          for (const duId in this.selectBsInfo_dist.components[cuId]) {
+            // 初始化 DU 的 components 資料物件
+            componentsData[cuId][duId] = [];
+            // 遍歷 RU
+            for (const ruInfo of this.selectBsInfo_dist.components[cuId][duId]) {
+              // 取得 RU 的 ID
+              const ruId = Object.keys(ruInfo)[0];
+              // 取得 RU 的索引
+              const index = Object.keys(this.ruIdNamePositionMap).findIndex(id => id === ruId);
+              
+              // 取得 RU 的經度表單控制項
+              const longitudeControl = this.BsBasicInfoEditForm.get(`longitude_${index}`);
+              // 取得 RU 的緯度表單控制項
+              const latitudeControl = this.BsBasicInfoEditForm.get(`latitude_${index}`);
+      
+              // 若 longitudeControl 和 latitudeControl 存在
+              if (longitudeControl && latitudeControl) {
+                // 建立 RU 的位置物件
+                const position = {
+                  // 設定經度的值
+                  longitude: longitudeControl.value,
+                  // 設定緯度的值
+                  latitude: latitudeControl.value
+                };
+
+                // 新增 RU 的位置資料到 components 資料物件
+                componentsData[cuId][duId].push({ 
+                  [ruId]: `[${longitudeControl.value},${latitudeControl.value}]`
+                });
+                
+              } else {
+                // 若表單控制項不存在，則使用原始位置
+                componentsData[cuId][duId].push({ [ruId]: ruInfo[ruId] });
+              }
+            }
+          }
+        }
+
+        // 從 extension_info 中獲取 cellinfo 資訊
+        const cellinfo: Cellinfo_dist[] = this.selectBsInfo_dist.extension_info.map( info => ({
+          // 設定 nRPCI 的值
+          nRPCI: info.NRCellDU.db.nRPCI,
+          // 設定 nRTAC 的值
+          nRTAC: info.NRCellDU.db.nRTAC,
+          // 設定 arfcnDL 的值
+          arfcnDL: info.NRCellDU.db.arfcnDL,
+          // 設定 arfcnUL 的值
+          arfcnUL: info.NRCellDU.db.arfcnUL,
+          // 設定 bSChannelBwDL 的值
+          bSChannelBwDL: info.NRCellDU.db.bSChannelBwDL,
+          // 設定 configuredMaxTxPower 的值
+          configuredMaxTxPower: info.NRSectorCarrier.db.configuredMaxTxPower,
+          // 設定 pLMNId_MCC 的值
+          pLMNId_MCC: info.NRCellDU.db.pLMNId_MCC,
+          // 設定 pLMNId_MNC 的值
+          pLMNId_MNC: info.NRCellDU.db.pLMNId_MNC,
+          // 設定 nci 的值
+          nci: info.nci
+        }));
+
+        // 建立更新分佈式基站的資料物件
+        const updateData: ForUpdateDistributedBs = {
+          // 設定編輯類型為 1
+          edit_type: 1,
+          // 設定 session 的值
+          session: this.sessionId,
+          // 設定 id 的值
+          id: this.selectBsInfo_dist.id,
+          // 設定 name 的值
+          name: formValue.bsName,
+          // 設定 bstype 的值
+          bstype: String( this.selectBsInfo_dist.bstype ),
+          // 設定 description 的值
+          description: formValue.description,
+          // 設定 components 的值
+          components: componentsData,
+          // 設定 cellinfo 的值
+          cellinfo: cellinfo,
+          // 設定 extension_info 的值
+          extension_info: this.selectBsInfo_dist.extension_info
+        };
+
+        // 呼叫 updateDistributedBs() 方法更新分佈式基站
+        this.updateDistributedBs( updateData );
+      }
+    }
+  }
+
+  // @2024/04/14 Add
+  // 用於呼叫 API 更新一體式基站 @2024/04/14 Add
+  updateBs( submitData: ForUpdateBs ) {
+
+    if ( this.commonService.isLocal ) {
+      // 本地模式
+
+      // 輸出本地測試環境的日誌
+      console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+      // 輸出要 POST 的資料
+      console.log( "The POST for updateBs():", submitData ); 
+      
+      // // 模擬成功響應
+      // setTimeout(() => {
+      //   this.isModifySuccess = true;
+      //   console.log('All-in-one BS Update successful...');
+      //   this.dialog.closeAll();
+      //   this.getQueryBsInfo();
+      //   setTimeout(() => this.isModifySuccess = false, 4500);
+      // }, 500); // 模擬非同步操作
+
+    } else {
+      // 非本地模式，實際呼叫 API
+
+      // 輸出要 POST 的資料
+      console.log( "The POST for updateBs():", submitData );
+      // 呼叫 API 更新一體式基站
+      this.API_BS.updateBs( submitData ).subscribe({
+        // 成功回調函數
+        next: ( res ) => {
+
+          // 輸出更新成功的日誌
+          console.log( 'Update BS success', res );
+          // 關閉所有對話框
+          this.dialog.closeAll();
+          // 重新查詢基站資訊
+          this.getQueryBsInfo();
+        },
+        // 錯誤回調函數
+        error: ( error ) => {
+          // 輸出更新失敗的日誌
+          console.error( 'Update BS fail', error );
+        }
+      });
+    }
+
+  }
+
+  // @2024/04/14 Add
+  // 用於呼叫 API 更新分布式基站 @2024/04/14 Add
+  updateDistributedBs( submitData: ForUpdateDistributedBs ) {
+
+    if ( this.commonService.isLocal ) {
+      // 本地模式
+
+      // 輸出本地測試環境的日誌
+      console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+      // 輸出要 POST 的資料
+      console.log("The POST for updateDistributedBs():", submitData); 
+
+      // 模擬成功響應
+      // setTimeout(() => {
+      //   this.isModifyError = true; 
+      //   console.log('Disaggregated BS: [CU] + [DU] + [RU] Update error...');
+      //   this.dialog.closeAll();
+      //   this.getQueryBsInfo();
+      //   setTimeout(() => this.isModifyError = false, 4500);
+      // }, 500); // 模擬非同步操作
+
+    } else {
+      // 非本地模式，實際呼叫 API
+
+      // 輸出要 POST 的資料
+      console.log( "The POST for updateDistributedBs():", submitData );
+      // 呼叫 API 更新分布式基站
+      this.API_BS.updateDistributedBs( submitData ).subscribe({
+        // 成功回調函數
+        next: ( res ) => {
+
+          // 輸出更新成功的日誌
+          console.log( 'Update Distributed BS success', res );
+          // 關閉所有對話框
+          this.dialog.closeAll();
+          // 重新查詢基站資訊
+          this.getQueryBsInfo();
+        },
+        // 錯誤回調函數
+        error: ( error ) => {
+          // 輸出更新失敗的日誌
+          console.error( 'Update Distributed BS fail', error );
+        }
+      });
+    }
+
+  }
+  
+// ↑ 編輯設定 @2024/04/14 Add ↑
+
+
+// ↑ 基本資訊區 ↑
 
   
-
 
 // ↓ 繪製拓樸圖區 @2024/03/28 Add ↓
 
@@ -782,8 +1163,8 @@ export class BSInfoComponent implements OnInit {
   pageSize: number = 5;     // 每頁幾筆
   totalItems: number = 0;   // 總筆數
 
-  searchForm!: FormGroup;
-  afterSearchForm!: FormGroup; // 用於儲存並顯示出篩選條件
+  alarmSearchForm!: FormGroup;
+  afterAlarmSearchForm!: FormGroup; // 用於儲存並顯示出篩選條件
   cmpsource: string[];
   fmsgList: FmsgList = {} as FmsgList;
   isSearch: boolean = false;
@@ -834,10 +1215,10 @@ export class BSInfoComponent implements OnInit {
     } else {
 
       // 只保留傳入日期的部分
-      const formattedDate = this.commonService.dealPostDate( this.searchForm.controls['from'].value );
+      const formattedDate = this.commonService.dealPostDate( this.alarmSearchForm.controls['from'].value );
       const start = formattedDate.split(' ')[0]; // 獲取日期部分,例如 '2024-03-10'
       
-      const formattedEnd = this.commonService.dealPostDate( this.searchForm.controls['to'].value );  
+      const formattedEnd = this.commonService.dealPostDate( this.alarmSearchForm.controls['to'].value );  
       const end = formattedEnd.split(' ')[0];    // 獲取日期部分,例如 '2024-03-10'
 
       const params: bsCurrentFmParams = {
@@ -850,7 +1231,7 @@ export class BSInfoComponent implements OnInit {
       };
 
       // 獲取 bsCurrentFmControl 的控制元件
-      const bsCurrentFmControl = this.searchForm.get('severity');
+      const bsCurrentFmControl = this.alarmSearchForm.get('severity');
 
       // 判斷 severity 控制元件是否存在且有值
       if ( bsCurrentFmControl && bsCurrentFmControl.value !== 'All' ) {
@@ -926,13 +1307,13 @@ export class BSInfoComponent implements OnInit {
     }
 
     // 更新顯示的搜尋條件
-    this.afterSearchForm = this.searchForm.value;
+    this.afterAlarmSearchForm = this.alarmSearchForm.value;
 
     this.p = 1; // 當點擊搜尋時,將頁數預設為 1
 
-    const from = this.searchForm.get( 'from' )?.value;
-    const to = this.searchForm.get( 'to' )?.value;
-    const severity = this.searchForm.get( 'severity' )?.value;
+    const from = this.alarmSearchForm.get( 'from' )?.value;
+    const to = this.alarmSearchForm.get( 'to' )?.value;
+    const severity = this.alarmSearchForm.get( 'severity' )?.value;
     
     console.log( 'the search severity is', severity );
     
@@ -940,7 +1321,7 @@ export class BSInfoComponent implements OnInit {
     this.filtered_CurrentBsFmList = [];
     this.isSearch_currentBsFmList = false;
 
-    this.afterSearchForm = _.cloneDeep( this.searchForm );
+    this.afterAlarmSearchForm = _.cloneDeep( this.alarmSearchForm );
 
     this.isLoadingCurrentBsFmList = true; // 設置加載旗標為 true,表示開始加載
 
@@ -973,10 +1354,10 @@ export class BSInfoComponent implements OnInit {
 
 
       // 只保留傳入日期的部分
-      const formattedDate = this.commonService.dealPostDate( this.searchForm.controls['from'].value );
+      const formattedDate = this.commonService.dealPostDate( this.alarmSearchForm.controls['from'].value );
       const start = formattedDate.split(' ')[0]; // 獲取日期部分,例如 '2024-03-10'
       
-      const formattedEnd = this.commonService.dealPostDate( this.searchForm.controls['to'].value );  
+      const formattedEnd = this.commonService.dealPostDate( this.alarmSearchForm.controls['to'].value );  
       const end = formattedEnd.split(' ')[0];    // 獲取日期部分,例如 '2024-03-10'
 
       const params: bsCurrentFmParams = {
@@ -989,7 +1370,7 @@ export class BSInfoComponent implements OnInit {
       };
 
       // 獲取 bsCurrentFmControl 的控制元件
-      const bsCurrentFmControl = this.searchForm.get('severity');
+      const bsCurrentFmControl = this.alarmSearchForm.get('severity');
 
       // 判斷 severity 控制元件是否存在且有值
       if ( bsCurrentFmControl && bsCurrentFmControl.value !== 'All' ) {
@@ -1026,21 +1407,21 @@ export class BSInfoComponent implements OnInit {
     }
 
     // // 更新顯示的搜尋條件
-    // this.afterSearchForm.patchValue({
+    // this.afterAlarmSearchForm.patchValue({
     //   'from': from,
     //   'to': to,
     //   'severity': severity
     // });
 
     // 檢查搜尋表單的值
-    console.log('Search criteria for current bs fault message:', this.afterSearchForm.value);
+    console.log('Search criteria for current bs fault message:', this.afterAlarmSearchForm.value);
 
     console.log("search_currentBsFmList() - End");
   }
 
 
   // 創建搜尋表單 @2024/04/01 Add
-  createSearchForm() {
+  createAlarmSearchForm() {
     const nowTime = this.commonService.getNowTime();
 
     // 創建當前時間的 Date 物件
@@ -1056,13 +1437,13 @@ export class BSInfoComponent implements OnInit {
     const paddedHour = ('0' + from.getHours()).slice(-2);
     const paddedMinute = ('0' + from.getMinutes()).slice(-2);
 
-    this.searchForm = this.fb.group({
+    this.alarmSearchForm = this.fb.group({
       'from': new FormControl(`${from.getFullYear()}-${paddedMonth}-${paddedDay} ${paddedHour}:${paddedMinute}`), 
       'to': new FormControl(`${now.getFullYear()}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`),
       'severity': new FormControl('All') // 告警嚴重程度欄位
     });
 
-    //this.afterSearchForm = _.cloneDeep(this.searchForm); // 深拷貝 searchForm 的值給 afterSearchForm
+    //this.afterAlarmSearchForm = _.cloneDeep(this.alarmSearchForm); // 深拷貝 alarmSearchForm 的值給 afterAlarmSearchForm
   }
 
   // 重置告警搜尋 @2024/03/31 Add  
@@ -1070,9 +1451,9 @@ export class BSInfoComponent implements OnInit {
 
     this.isSearch_currentBsFmList = false;
 
-    this.searchForm.reset();  
-    this.createSearchForm();
-    this.afterSearchForm = _.cloneDeep( this.searchForm );
+    this.alarmSearchForm.reset();  
+    this.createAlarmSearchForm();
+    this.afterAlarmSearchForm = _.cloneDeep( this.alarmSearchForm );
     
     this.p = 1; // 當點擊重置搜尋時,將顯示頁數預設為 1
 
