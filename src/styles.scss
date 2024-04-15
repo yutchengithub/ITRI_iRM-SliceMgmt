@@ -1550,3 +1550,9 @@ tbody {
   z-index: 1000000;
   height: initial;
 }
+#BsBasicInfoEditWindowRef table td input[type="text"] {
+  width: 100%;
+}
+body.tw #BsBasicInfoEditWindowRef ul li > label {
+  min-width: 6em;
+}
