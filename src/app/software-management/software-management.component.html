@@ -110,34 +110,41 @@
           <mat-error *ngIf="formValidated&&createForm.controls['uploadversion'].invalid">Required</mat-error>
         </span>
       </li>
-      <!-- <li>
+      <li>
         <label>{{languageService.i18n['add.method']}}</label>
         <span>
           <mat-button-toggle-group formControlName="method">
             <mat-button-toggle value="upload">{{languageService.i18n['upload.file']}}</mat-button-toggle>
             <mat-button-toggle value="url">{{languageService.i18n['url']}}</mat-button-toggle>
           </mat-button-toggle-group>
-          <ng-template [ngIf]="createForm.controls['method'].value === 'upload'">
-            <div class="upload {{formValidated&&createForm.controls['fileName'].invalid?'required':''}}">
-              <span>{{languageService.i18n['upload']}}
-                <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".zip, .tar" #fileInput>
-              </span>
-              <div>{{createForm.controls['fileName'].value}}</div>
-              <mat-error *ngIf="formValidated&&createForm.controls['fileName'].invalid">is Required</mat-error>
-              <mat-error *ngIf="fileMsg">{{fileMsg}}</mat-error>
-            </div>
-          </ng-template>
-          <ng-template [ngIf]="createForm.controls['method'].value === 'url'">
-            <div class="url"><input type="text" placeholder="Url"></div>
-          </ng-template>
         </span>
       </li>
+
+      <ng-container *ngIf="createForm.controls['method'].value === 'upload'">
+        <li>
+          <label>{{languageService.i18n['upload']}}</label>
+          <span>
+            <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".zip, .tar" #fileInput>
+          </span>
+        </li>
+      </ng-container>
+  
+      <ng-container *ngIf="createForm.controls['method'].value === 'url'">
+        <li>
+          <label>URL</label>
+          <span>
+            <input type="text" formControlName="uploadurl" class="{{formValidated&&createForm.controls['uploadurl'].invalid?'required':''}}">
+            <mat-error *ngIf="formValidated&&createForm.controls['uploadurl'].invalid">Required</mat-error>
+          </span>
+        </li>
+      </ng-container>
+
         <li>
         <label>{{languageService.i18n['notes']}}</label>
         <span>
-          <textarea formControlName="notes"></textarea>
+          <input type="text" formControlName="description" class="{{formValidated&&createForm.controls['description'].invalid?'required':''}}">
         </span>
-      </li> -->
+      </li>
 
       <li>
         <label>{{languageService.i18n['ftp.account']}}</label>

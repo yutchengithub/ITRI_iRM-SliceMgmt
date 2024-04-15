@@ -58,6 +58,7 @@ export class SoftwareManagementComponent implements OnInit {
   createModalRef!: MatDialogRef<any>;
   deleteModalRef!: MatDialogRef<any>;
   createForm!: FormGroup;
+  fileForm!: FormGroup;
   selectSoftware!: Uploadinfos;
   file: any;
   typeMap: Map<number, string> = new Map();
@@ -160,11 +161,17 @@ export class SoftwareManagementComponent implements OnInit {
       'modelname': new FormControl(''),
       'uploadtype': new FormControl(''),
       'uploadversion': new FormControl('', [Validators.required]),
-      //'method': new FormControl('upload'),
-      //'notes': new FormControl(''),
+      'method': new FormControl('upload'),
+      'description': new FormControl(''),
       'ftpid': new FormControl(''),
       'ftpkey': new FormControl(''),
-      //'fileName': new FormControl('', [Validators.required]),
+      'uploadinfo': new FormControl(''),
+      'uploadurl': new FormControl(''),
+      'session': this.sessionId
+    });
+    this.fileForm = this.fb.group({
+      'method': new FormControl('upload'),
+      'fileName': new FormControl(''),
       'session': this.sessionId
     });
     this.createModalRef = this.dialog.open(this.createModal, { id: 'softCreateModal' });
@@ -175,7 +182,6 @@ export class SoftwareManagementComponent implements OnInit {
   }
 
   fileChange(e: any) {
-    // console.log(e);
     this.fileMsg = '';
     let passFile = null;
     const files = e.target.files;
@@ -188,12 +194,13 @@ export class SoftwareManagementComponent implements OnInit {
     }
     if (passFile === null) {
       this.file = null;
-      this.createForm.controls['fileName'].setValue('');
+      this.fileForm.controls['fileName'].setValue('');
+      this.createForm.controls['uploadinfo'].setValue('');
     } else {
       this.file = files[0];
-      this.createForm.controls['fileName'].setValue(files[0].name);
+      this.fileForm.controls['fileName'].setValue(files[0].name);
+      this.createForm.controls['uploadinfo'].setValue(files[0].name);
     }
-    // console.log(files);
   }
 
   create() {
@@ -218,18 +225,28 @@ export class SoftwareManagementComponent implements OnInit {
       this.createModalRef.close();
       this.getSoftwareList();
     } else {
-      const body = this.createForm.value;
+      const { method, ...body } = this.createForm.value;
+      //const body = this.createForm.value;
       body['session'] = this.sessionId;
       this.commonService.uploadFileInfo(body).subscribe(
         (res: any) => {
           console.log('uploadFileInfo:');
           console.log(res);
-          const softwareId = res['softwareId'];
-          const uploadUrl = `${this.commonService.restPath}/uploadFirmware/${this.sessionId}/${softwareId}`;
-          const options = this.commonService.options;
+          const softwareId = res['id'];
+          const uploadFirmware = `${this.commonService.restPath}/uploadFirmware/${this.sessionId}/${softwareId}`;
+          const boundary = 'WebKitFormBoundary' + Math.random().toString(36).substr(2, 10);
           const formData = new FormData();
           formData.append('file', this.file);
-          this.http.post(uploadUrl, formData, options).subscribe(
+          let payload = '';
+          payload += `------${boundary}\r\n`;
+          payload += `Content-Disposition: form-data; name="file"; filename="${this.file.name}"\r\n`;
+          payload += `Content-Type: ${this.file.type}\r\n\r\n`;
+          payload += `${this.file}\r\n`;
+          payload += `------${boundary}--`;
+          const headers = new HttpHeaders({
+            'Content-Type': `multipart/form-data; boundary=----${boundary}`
+          });
+          this.http.post(uploadFirmware, payload, {headers}).subscribe(
             () => {
               this.createModalRef.close();
               this.getSoftwareList();

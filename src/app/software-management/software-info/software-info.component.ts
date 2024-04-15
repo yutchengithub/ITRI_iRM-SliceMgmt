@@ -1,3 +1,4 @@
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,6 +25,10 @@ export interface SoftwareInfo {
   ftpkey: string;
   checksum: string;
   size: number;
+}
+
+interface FileObject {
+  name: string;
 }
 
 @Component({
@@ -76,6 +81,7 @@ export class SoftwareInfoComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public commonService: CommonService,
+    private http: HttpClient,
     private fb: FormBuilder,
     private dialog: MatDialog,
     public languageService: LanguageService
@@ -111,7 +117,7 @@ export class SoftwareInfoComponent implements OnInit {
       this.file = files[0];
       this.createForm.controls['fileName'].setValue(files[0].name);
     }
-    // console.log(files);
+     console.log(files);
   }
 
   mapUploadType(uploadType: number): string {
@@ -146,7 +152,6 @@ export class SoftwareInfoComponent implements OnInit {
       /* local file test */
       this.softwareInfo = this.commonService.softwareInfo;
     } else {
-      console.log(this.softwareInfo.id);
       this.commonService.queryUploadFileInfo(this.cloudId).subscribe(
         res => {
           console.log('getSoftwareInfo:');
@@ -185,27 +190,53 @@ export class SoftwareInfoComponent implements OnInit {
       /* local file test */
       this.updateModalRef.close();
     } else {
+      let fileName: string | null = null;
+      if (this.file) {
+        const file: FileObject = this.file;
+        fileName = file.name;
+      }
+      const uploadinfo = this.file ? fileName : this.softwareInfo.uploadinfo; 
       const body: any = {
         id: this.softwareInfo.id,
         firm: this.softwareInfo.firm,
         modelname: this.softwareInfo.modelname,
         uploadtype: this.softwareInfo.uploadtype,
         description: this.softwareInfo.description,
-        uploadinfo: this.softwareInfo.uploadinfo,
+        uploadinfo: uploadinfo,
         uploadurl: this.softwareInfo.uploadurl,
         ftpid: this.softwareInfo.ftpid,
         ftpkey: this.softwareInfo.ftpkey,
         uploadversion: this.softwareInfo.uploadversion,
         session: this.sessionId
       };
-      console.log("hello");
       console.log(body);
       this.commonService.updateUploadFileInfo(body).subscribe(
         () => console.log('Update Successful.')
       );
+      if (this.file){
+        const uploadFirmware = `${this.commonService.restPath}/uploadFirmware/${this.sessionId}/${this.softwareInfo.id}`;
+        const boundary = 'WebKitFormBoundary' + Math.random().toString(36).substr(2, 10);
+        const formData = new FormData();
+        formData.append('file', this.file);
+        let payload = '';
+        payload += `------${boundary}\r\n`;
+        payload += `Content-Disposition: form-data; name="file"; filename="${this.file.name}"\r\n`;
+        payload += `Content-Type: ${this.file.type}\r\n\r\n`;
+        payload += `${this.file}\r\n`;
+        payload += `------${boundary}--`;
+
+        const headers = new HttpHeaders({
+          'Content-Type': `multipart/form-data; boundary=----${boundary}`
+        });
+        this.http.post(uploadFirmware, payload, {headers}).subscribe(
+          () => {
+            this.updateModalRef.close();
+            this.getSoftwareInfo();
+          }
+        );
+      }
       this.updateModalRef.close();
       this.getSoftwareInfo();
-      this.refresh();
     }
     this.getSoftwareInfo();
   }

@@ -37,24 +37,7 @@
         <li><label>{{languageService.i18n['ftp.password']}}</label>{{softwareInfo.ftpkey}}</li>
       </ul>
     </div>
-    <!-- <label class="boxTitle">{{languageService.i18n['modify_content']}}</label> -->
     <ul class="modify">
-      <!-- <li>
-        <span class="btn-group">
-          <mat-button-toggle-group [(ngModel)]="uploadType" >
-            <mat-button-toggle value="upload">{{languageService.i18n['upload.file']}}</mat-button-toggle>
-            <mat-button-toggle value="url">{{languageService.i18n['url']}}</mat-button-toggle>
-          </mat-button-toggle-group>
-          <ng-container *ngIf="uploadType == 'upload'">
-            <div class="upload">
-              <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".zip, .tar" #fileInput>
-            </div>
-          </ng-container>
-          <ng-container *ngIf="uploadType == 'url'">
-              <div class="url"><input type="text" placeholder="Url"></div>
-          </ng-container>
-      </span>
-      </li> -->
     </ul>
     <div class="buttons">
       <button tooltip="{{languageService.i18n['updateSoftware']}}" (click)="openUpdateModel()">{{languageService.i18n['updateSoftware']}}</button>
