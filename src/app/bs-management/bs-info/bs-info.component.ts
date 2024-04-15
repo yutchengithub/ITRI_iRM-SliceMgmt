@@ -154,10 +154,10 @@ export class BSInfoComponent implements OnInit {
   ngAfterViewInit() {
 
     this.canvas.nativeElement.width  = 1000; // 增加 Canvas 的寬度
-    this.canvas.nativeElement.height = 250; // 增加 Canvas 的寬度
+    this.canvas.nativeElement.height = 250;  // 增加 Canvas 的寬度
 
     // 在獲取基站和網元資訊完成後，手動觸發變更檢測
-   // Promise.all([this.getQueryBsInfo(), this.getNEList()]).then(() => {
+    // Promise.all([this.getQueryBsInfo(), this.getNEList()]).then(() => {
       //this.changeDetectorRef.detectChanges();
       this.drawConnectingLines();
     //});
@@ -178,13 +178,20 @@ export class BSInfoComponent implements OnInit {
   }
 
 
-// ↓ For Bs Parameters Page Control @2024/03/29 Add ↓
+// ↓ For Bs Parameters Page Control @2024/04/15 Update ↓
 
   bsParametersType: string = 'Basic';       // 預設選擇 "Basic"    @2024/03/29 Add 
   //bsParametersType: string = 'Advanced';  // 預設選擇 "Advanced" @2024/03/29 Add
 
-  // @2024/03/29 Add
-  // 變更 changeBsParametersType 視窗顯示類型的函數
+  /**
+   * @2024/03/29 Add
+   * 變更 Bs Parameters 視窗顯示類型的函數
+   * @method changeBsParametersType
+   * @param {MatButtonToggleChange} e - 切換按鈕的事件物件
+   * @description
+   * - 根據當前選擇的 Log 類型載入數據
+   * - 更新當前類型，以便知道哪個 Bs Parameters 類型被選中
+   */
   changeBsParametersType( e: MatButtonToggleChange ) {
 
     // 根據當前選擇的 Log 類型載入數據
@@ -207,6 +214,13 @@ export class BSInfoComponent implements OnInit {
   selectedNci: string = ''; // 當前選擇的NCI
   selectedExtensionInfo: ExtensionInfo | undefined; // 當前選擇的ExtensionInfo
 
+  /**
+   * @2024/03/29 Add
+   * 當選擇的 NCI 發生變化時觸發的函數
+   * @method onSelectedNciChange
+   * @description
+   * - 根據基站類型和選擇的 NCI，更新當前選擇的 ExtensionInfo
+   */
   onSelectedNciChange() {
     if (this.bsType === '1' && this.selectBsInfo) {
       this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci); // 更新當前選擇的ExtensionInfo
@@ -215,6 +229,13 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
+  /**
+   * @2024/04/15 Add
+   * 當點擊搜索按鈕時觸發的函數
+   * @method onSearchClick
+   * @description
+   * - 根據基站類型和選擇的 NCI，更新當前選擇的 ExtensionInfo
+   */
   onSearchClick() {
     if (this.bsType === '1' && this.selectBsInfo) {
       this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
@@ -222,7 +243,15 @@ export class BSInfoComponent implements OnInit {
       this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
     }
   }
-  
+
+  /**
+   * @2024/04/15 Add
+   * 當點擊清除按鈕時觸發的函數
+   * @method onClearClick
+   * @description
+   * - 根據基站類型，將選擇的 NCI 重置為預設值
+   * - 根據重置後的 NCI，更新當前選擇的 ExtensionInfo
+   */
   onClearClick() {
     if (this.bsType === '1' && this.selectBsInfo) {
       this.selectedNci = this.nciList[0];
@@ -233,7 +262,7 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
-// ↑ For Bs Parameters Page Control @2024/03/29 Add ↑
+// ↑ For Bs Parameters Page Control @2024/04/15 Update ↑
 
 
 
@@ -709,7 +738,7 @@ export class BSInfoComponent implements OnInit {
   //selectNEid: string = ""; // 用於存儲當前選中的網元ID
 
 
-// ↓ 編輯設定 @2024/04/14 Add ↓
+  // ↓ 編輯設定 @2024/04/14 Add ↓
   
   // 宣告 BsBasicInfoEditWindow 模板參考變數
   @ViewChild('BsBasicInfoEditWindow') BsBasicInfoEditWindow!: TemplateRef<any>;
@@ -1097,7 +1126,7 @@ export class BSInfoComponent implements OnInit {
 
   }
   
-// ↑ 編輯設定 @2024/04/14 Add ↑
+  // ↑ 編輯設定 @2024/04/14 Add ↑
 
 
 // ↑ 基本資訊區 ↑
