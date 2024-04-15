@@ -1181,6 +1181,13 @@ input[type="password"] {
 .collabsible .toggle:checked+.lbl-toggle { 
   border-radius: 7px;
 } 
+.isAnr tbody tr td:first-child {
+  width: 7em;
+}
+.isAnr td.orig,
+.isAnr td.new {
+  width: 32em;
+}
 @media screen and (max-width: 1366px) {
   .BOX {
     height: 11em;

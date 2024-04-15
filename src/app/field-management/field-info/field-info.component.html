@@ -1325,7 +1325,7 @@
 					<!-- ANR 結果 ( 已完整 @2024/04/11 ) -->
 					<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'anr' ">
 						<label *ngIf="isAnrClass">
-							<div class="table">
+							<div class="table isAnr">
 								<table>
 									<thead>
 										<tr>
@@ -1338,7 +1338,7 @@
 									<tbody>
 										<tr *ngFor="let result of processedAnrResults">
 										<td matTooltip="NCI = {{ result.nci }}">{{ result.name }}</td>
-										<td>
+										<td class="orig">
 											<label *ngFor="let neighbor of result.originalNeighbors">
 											<span matTooltip="NCI = {{ neighbor.nci }}">{{ neighbor.name }}</span>
 											</label>
