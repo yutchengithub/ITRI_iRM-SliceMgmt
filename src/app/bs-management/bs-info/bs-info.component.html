@@ -161,10 +161,9 @@
       </div>
     </div>
     
-    <!-- BS Basic Info Edit Window @2024/04/14 Add -->
+    <!-- BS Basic Info Edit Window @2024/04/15 Update -->
     <ng-template #BsBasicInfoEditWindow>
-      <h5 *ngIf=" bsType === '1' ">{{ languageService.i18n['BS.editSettings'] }} – {{ selectBsInfo.name }}</h5>
-      <h5 *ngIf=" bsType === '2' ">{{ languageService.i18n['BS.editSettings'] }} – {{ selectBsInfo_dist.name }}</h5>
+      <h5>{{ languageService.i18n['BS.editSettings'] }}</h5>
       
       <form [formGroup]="BsBasicInfoEditForm">
         <ul>
