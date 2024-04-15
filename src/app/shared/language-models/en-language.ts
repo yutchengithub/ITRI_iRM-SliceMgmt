@@ -225,6 +225,7 @@ export const Enlanguage = {
   'field.newTxPower': 'New Tx Power',
 
   'field.fieldPerformance': 'Field Performance',
+  'field.fieldPerformanceAnalysis': 'Field Performance Analysis',
 
   'field.originalNeighborBS': 'Original Neighbor BSs',
   'field.newNeighborBS': 'New Neighbor BSs',
@@ -271,6 +272,7 @@ export const Enlanguage = {
   'BS.editSettings':'Edit Settings',
   'BS.Latitude': 'Latitude',
   'BS.Longitude': 'Longitude',
+  'BS.apply':'Apply', 
 
   'BS.bsAntennaCoord':'BS Antenna Coordinates',
   'BS.ruNeName':'NE Name ( RU )',

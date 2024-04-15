@@ -181,6 +181,9 @@ export const TwLanguage = {
   
   'field.report':'場域報表',                 // @12/12 Add
   'field.reportPM':'場域效能(PM)',          // @12/12 Add
+  'field.fieldPerformanceAnalysis': '場域效能分析',
+
+
   'field.reportFM':'告警資訊(FM)',          // @12/12 Add
   'field.optim':'場域優化',                  // @12/12 Add
   'field.optimSON':'執行 SON rApps',         // @12/12 Add
@@ -270,6 +273,8 @@ export const TwLanguage = {
   'BS.editSettings': '編輯設定',
   'BS.Latitude': '緯度',
   'BS.Longitude': '經度',  
+  'BS.apply':'套用', 
+
   'BS.bsAntennaCoord':'基站天線座標',
   'BS.ruNeName':'網元名稱 ( RU )',
   'BS.latLong':'經緯度',
