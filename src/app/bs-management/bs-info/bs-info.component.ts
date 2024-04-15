@@ -19,7 +19,7 @@ import { ParsePositionPipe } from '../../shared/pipes/position-parser.pipe'; // 
 import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt'; // @2024/03/25 Add
 
 // 引入儲存各個資訊所需的 interfaces
-import { BSInfo, Components }                      from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
+import { BSInfo, Components, ExtensionInfo }       from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
 import { ForUpdateBs }                             from '../../shared/interfaces/BS/For_updateBs';             // @2024/04/14 Add
 import { BSInfo_dist, Info_dist, Components_dist } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
 import { ForUpdateDistributedBs, Cellinfo_dist }   from '../../shared/interfaces/BS/For_updateDistributedBs';  // @2024/04/14 Add
@@ -203,6 +203,36 @@ export class BSInfoComponent implements OnInit {
                   '\nLog type displayed after tab switch:', this.bsParametersType );
   }
 
+  nciList: string[] = []; // 存儲NCI列表
+  selectedNci: string = ''; // 當前選擇的NCI
+  selectedExtensionInfo: ExtensionInfo | undefined; // 當前選擇的ExtensionInfo
+
+  onSelectedNciChange() {
+    if (this.bsType === '1' && this.selectBsInfo) {
+      this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci); // 更新當前選擇的ExtensionInfo
+    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+      this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci); // 更新當前選擇的ExtensionInfo
+    }
+  }
+
+  onSearchClick() {
+    if (this.bsType === '1' && this.selectBsInfo) {
+      this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
+    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+      this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
+    }
+  }
+  
+  onClearClick() {
+    if (this.bsType === '1' && this.selectBsInfo) {
+      this.selectedNci = this.nciList[0];
+      this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
+    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+      this.selectedNci = this.nciList[0];
+      this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
+    }
+  }
+
 // ↑ For Bs Parameters Page Control @2024/03/29 Add ↑
 
 
@@ -216,7 +246,18 @@ export class BSInfoComponent implements OnInit {
    selectBsPosition: string = "";                     // 用於存儲當前選中的一體式 BS 位置
   selectDistBsPosition: string = "";                  // 用於存儲當前選中的分佈式 BS 位置
   
-  // 用於獲取基站資訊 @2024/04/12 Update - 更新計算分佈式 Cell 數方式，改跟基站主頁方法相同
+  /**
+   * @2024/04/15 Update
+   * 取得基站資訊
+   * @method getQueryBsInfo
+   * @description
+   * - 用於獲取基站資訊，依據是本地模式或API模式，來自Local文件或服務器
+   * - 處理一體式與分佈式基站的不同數據結構
+   * @note
+   * - 這個函數同時處理兩種類型的基站資訊，根據基站類型計算相應的 Cell 數量
+   * - @2024/04/12 Update - 更新計算分佈式 Cell 數方式，改跟基站主頁方法相同
+   * - @2024/04/15 Add - 新增"基站參數"欄位所需的設值處理
+   */
   getQueryBsInfo() {
     console.log( 'getQueryBsInfo() - Start' );
 
@@ -273,6 +314,18 @@ export class BSInfoComponent implements OnInit {
 
       this.isLoadingBsInfo = false; // Local 模式下，數據加載快速完成，直接設置為 false
 
+      // @2024/04/15 Add
+      // 獲取 NCI 列表並設定預設選擇的 NCI 和 ExtensionInfo
+      if (this.bsType === "1" && this.selectBsInfo) {
+        this.nciList = this.selectBsInfo.extension_info.map(info => info.nci);
+        this.selectedNci = this.nciList[0];
+        this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
+      } else if (this.bsType === "2" && this.selectBsInfo_dist) {
+        this.nciList = this.selectBsInfo_dist.extension_info.map(info => info.nci);
+        this.selectedNci = this.nciList[0];
+        this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
+      }
+
     } else {
       
       // 非 Local 模式: 通過 API 從服務器獲取數據
@@ -327,6 +380,18 @@ export class BSInfoComponent implements OnInit {
           //this.getNEList(); 
 
           this.isLoadingBsInfo = false; // 數據加載完成
+
+          // @2024/04/15 Add
+          // 獲取 NCI 列表並設定預設選擇的 NCI 和 ExtensionInfo
+          if (res.bstype === 1 && this.selectBsInfo) {
+            this.nciList = this.selectBsInfo.extension_info.map(info => info.nci);
+            this.selectedNci = this.nciList[0];
+            this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
+          } else if (res.bstype === 2 && this.selectBsInfo_dist) {
+            this.nciList = this.selectBsInfo_dist.extension_info.map(info => info.nci);
+            this.selectedNci = this.nciList[0];
+            this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
+          }
         },
         error: ( error ) => {
           console.error( 'Error fetching BS info:', error );
@@ -1136,6 +1201,18 @@ export class BSInfoComponent implements OnInit {
 
 // ↑ 繪製拓樸圖區 @2024/03/28 Add ↑
   
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ↓ 網元列表區 @2024/03/29 Add ↓
 
