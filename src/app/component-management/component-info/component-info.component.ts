@@ -147,6 +147,7 @@ export class ComponentInfoComponent implements OnInit {
   filteredFmList: FaultMessages[] = [];
   isActive = false;
   jsonData: any = {};
+  xmlData: any = {};
   xmlString: string = '';
   treeData: TreeNode[] = [];
   treeKey: string = '';
@@ -241,14 +242,13 @@ export class ComponentInfoComponent implements OnInit {
           const parser = new XMLParser(parseOption);
           const output = parser.parse(xmldata);
           this.jsonData = output;
-          const xmlData = xmlJs.js2xml(this.jsonData, { compact: true, ignoreComment: true, spaces: 4 });
+          this.xmlData = xmlJs.js2xml(this.jsonData, { compact: true, ignoreComment: true, spaces: 4 });
           this.getfilterQueryUploadFileList();
           //const jsonstr = JSON.stringify(output, null, 2);
           //console.log('Json string: ',jsonstr);
           //this.treeData = this.buildTree(this.jsonData);
           this.treeData = this.buildTree(this.jsonData);
           //console.log('Tree Data:', this.treeData);
-          //console.log(xmlData);
           console.log('Json output: ', this.jsonData);
         },
         (error: any) => {
@@ -262,8 +262,6 @@ export class ComponentInfoComponent implements OnInit {
   fileMlist(){
     this.commonService.queryFileMList(this.comId).subscribe(
       (res:File) => {
-        console.log(res);
-        
         console.log(res.filename);
       },
       (error: any) => {
@@ -457,15 +455,13 @@ export class ComponentInfoComponent implements OnInit {
     this.getFaultMessage();
   }
 
-  openUpdateDatastoreModal(key: any, value: any) {
+  openUpdateDatastoreModal(tree: any) {
     //console.log("Tree data for node:", node, this.treeData);
-    console.log("Tree data:", this.treeData);
-    // this.treeKey = nodeKey;
-    // this.treeValue = nodeValue;
-    // console.log(this.treeValue);
+    //console.log(tree.keys);
+    console.log("Tree data:", tree);
+    const jsonString: string = JSON.stringify(tree, null, 4);
     // const jsonObject: { [key: string]: any } = { [nodeKey]: nodeValue };
-    // const jsonString: string = JSON.stringify(jsonObject, null, 4);
-    // console.log(jsonString);
+     console.log(jsonString);
     // this.updatedJsonString = jsonString;
     // this.updateModalRef = this.dialog.open(this.updateModal, { 
     //   id: 'updateModal',
@@ -539,6 +535,17 @@ export class ComponentInfoComponent implements OnInit {
     clearTimeout(this.refreshTimeout);
     this.RunRefreshTimeout = window.setTimeout(() => this.getComponentInfo(), this.RunRefreshTime * 1000);
   }
+  exportDatastore() {
+    const blob = new Blob([this.xmlData], { type: 'text/xml' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = this.componentInfo.name+'_datastore.xml';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  
+  
   softwareDeal() {
     this.fileNameMapSoftware = new Map();
     this.softwareList.forEach((row) => {

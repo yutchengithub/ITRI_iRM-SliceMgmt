@@ -53,8 +53,8 @@
           </select>
           <button>Copy</button>
         </span>
-        <button>Export Datastore</button>
-        <button type="button" (click)="openUpdateDatastoreModal(treeData.keys, treeData.values)">Update Datastore</button>
+        <button (click)="exportDatastore()">Export Datastore</button>
+        <!-- <button type="button">Update Datastore</button> -->
       </span>
       <input id="Datastore" class="toggle" type="checkbox">
       <label for="Datastore" class="lbl-toggle"></label>
@@ -168,7 +168,6 @@
         <div class="content-inner">
           <div class="collabsible">
             <div class="tree-container" *ngFor="let node of treeData">
-              <!-- <span>{{ node.key }}:<button type="button" (click)="update(node.key, node.value)">Update</button></span> -->
               <span>{{ node.key }}:<button type="button" (click)="openUpdateModal(node.key, node.value)">Update</button></span>
               <input id="{{ node.key }}" class="toggle" type="checkbox">
               <label for="{{ node.key }}" class="lbl-toggle"></label>
