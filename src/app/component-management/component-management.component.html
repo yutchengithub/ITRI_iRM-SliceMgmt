@@ -25,6 +25,7 @@
         <th>{{languageService.i18n['cm.name']}}</th>
         <th>IP Address</th>
         <th>Port</th>
+        <th>{{languageService.i18n['type']}}</th>
         <th>{{languageService.i18n['table.Status']}}</th>
         <th>{{languageService.i18n['index.view']}}</th>
         <th>{{languageService.i18n['cm.provision']}}</th>
@@ -37,6 +38,7 @@
         <td>{{opt.name}}</td>
         <td>{{opt.ip}}</td>
         <td>{{opt.port}}</td>
+        <td>{{typeText(opt.comtype)}}</td>
         <td class="icon">
           <label *ngIf="opt.status === 2" class="greenLight"></label>
           <label *ngIf="opt.status === 1" class="redLight"></label>

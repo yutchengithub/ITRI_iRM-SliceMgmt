@@ -54,8 +54,7 @@
           <button>Copy</button>
         </span>
         <button>Export Datastore</button>
-        <button>Update Datastore</button>
-      
+        <button type="button" (click)="openUpdateDatastoreModal(treeData.keys, treeData.values)">Update Datastore</button>
       </span>
       <input id="Datastore" class="toggle" type="checkbox">
       <label for="Datastore" class="lbl-toggle"></label>
@@ -198,7 +197,8 @@
           <span *ngIf="!node.children && !node.isTerminal" class="node-value"></span>
           <!-- Display input if child type is string or number -->
           <ng-container *ngIf="node.type === 'string' || node.type === 'number'">
-            <input type="text" [(ngModel)]="node.value" class="node-value">
+            <!-- <input type="text" [(ngModel)]="node.value" class="node-value"> -->
+            <label>{{ node.value }}</label>
           </ng-container>
         </li>
       </ng-template>
@@ -333,7 +333,7 @@
     </div> -->
 
     <div>
-      <span>{{languageService.i18n['cm.file']}}</span>
+      <span>{{languageService.i18n['cm.file']}}<button type="button" (click)="openUploadModal()">{{languageService.i18n['upload']}}</button></span>
       <input id="cm" class="toggle" type="checkbox">
       <label for="cm" class="lbl-toggle"></label>
       <div class="collapsible-content">
@@ -348,10 +348,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>{{componentInfo.name}}</td>
-                  <td>{{componentInfo.firm}}</td>
-                  <td class="center"><mat-icon tooltip="{{languageService.i18n['view_detail']}}">download_for_offline</mat-icon></td>
+                <tr *ngFor="let file of fileMList">
+                  <td>{{ file.filename }}</td>
+                  <td>{{ file.folder }}</td> 
+                  <td class="center"><mat-icon>download_for_offline</mat-icon></td>
                 </tr>
               </tbody>
             </table>
@@ -362,11 +362,48 @@
   </div>
 </div>
 
-<ng-template #updateModal>
-  <h5>{{languageService.i18n['confirm']}}</h5>
-  <p>{{languageService.i18n['cm.container']}}</p>
+<ng-template #updateModal let-data>
+  <h5>{{languageService.i18n['cm.container']}}</h5>
+  <!-- <p>{{languageService.i18n['cm.container']}}</p> -->
+  <textarea class="json-textbox" [(ngModel)]="data.jsonString"></textarea>
   <div class="buttons">
-    <button type="button" (click)="update()"  mat-dialog-close>
+    <button type="button" (click)="update(data.jsonString)"  mat-dialog-close>
+      {{ languageService.i18n['confirm'] }}
+    </button>
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #updateDatastoreModal let-data>
+  <h5>{{languageService.i18n['cm.container']}}</h5>
+  <!-- <p>{{languageService.i18n['cm.container']}}</p> -->
+  <textarea class="json-textbox" [(ngModel)]="data.jsonString"></textarea>
+  <div class="buttons">
+    <button type="button" (click)="update(data.jsonString)"  mat-dialog-close>
+      {{ languageService.i18n['confirm'] }}
+    </button>
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #uploadModal>
+  <h5>{{languageService.i18n['upload_file']}}</h5>
+  <ul>
+    <span class="btn-group">
+      <ng-container *ngIf="softwarecontent == 'upload'">
+        <div class="upload">
+          <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".zip, .tar" #fileInput>
+        </div>
+      </ng-container>
+    </span>
+  </ul>
+
+  <div class="buttons">
+    <button type="button" (click)="uploadFileM()"  mat-dialog-close>
       {{ languageService.i18n['confirm'] }}
     </button>
     <button type="button" mat-dialog-close>

@@ -416,6 +416,7 @@ export const TwLanguage = {
   'software_version':'軟體版本',
   'time.end':'～ ',
   'modify_content': '變更軟體內容',
+  'upload_file':'選擇上傳的檔案',
   
   // Component Management (元件管理)
   'cm.name':'元件名稱',

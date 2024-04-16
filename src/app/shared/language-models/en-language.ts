@@ -414,6 +414,7 @@ export const Enlanguage = {
   'software_version':'Software Version',
   'time.end':'～ ',
   'modify_content': 'Modify Software Content',
+  'upload_file':'Select the file to upload',
   
   // Component Management (元件管理)
   'cm.name':'Component Name',

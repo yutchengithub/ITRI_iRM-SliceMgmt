@@ -1,3 +1,4 @@
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -78,15 +79,23 @@ export interface UploadFileList {
   modelname: string;
   uploadtype: number;
 }
-interface JsonObject {
-  [key: string]: any;
-}
 interface TreeNode {
   key: string;
   value: any;
   type: string;
   children?: TreeNode[];
 }
+export interface FileMList{
+  file: File[];
+}
+interface File {
+  folder: string;
+  filename: string;
+}
+interface FileObject {
+  name: string;
+}
+
 @Component({
   selector: 'app-component-info',
   templateUrl: './component-info.component.html',
@@ -102,6 +111,7 @@ export class ComponentInfoComponent implements OnInit {
   comId: string = '';
   // utilizationPercent: number = 0;
   componentInfo: ComponentInfo = {} as ComponentInfo;
+  fileMList: File[] = [];
   softwareList: SoftwareList[] = [];
   componentInfosw: ComponentInfosw = {} as ComponentInfosw;
   systemSummary: SystemSummary = {} as SystemSummary;
@@ -116,6 +126,7 @@ export class ComponentInfoComponent implements OnInit {
   ListRefreshTime: number = 5;
   @ViewChild('updateModal') updateModal: any;
   @ViewChild('updateIPModal') updateIPModal: any;
+  @ViewChild('uploadModal') uploadModal: any;
   updateModalRef!: MatDialogRef<any>;
   updateIPModalRef!: MatDialogRef<any>;
   updateForm!: FormGroup;
@@ -140,56 +151,11 @@ export class ComponentInfoComponent implements OnInit {
   treeData: TreeNode[] = [];
   treeKey: string = '';
   treeValue: any;
-  json = {
-    // "netconf-server": {
-    //   "listen": {
-    //     "endpoint": {
-    //       "name": "default-ssh",
-    //       "ssh": {
-    //         "tcp-server-parameters": {
-    //           "local-address": "0.0.0.0",
-    //           "local-port": 11830,
-    //           "keepalives": {
-    //             "idle-time": 1,
-    //             "max-probes": 10,
-    //             "probe-interval": 5
-    //           }
-    //         },
-    //         "ssh-server-parameters": {
-    //           "server-identity": {
-    //             "host-key": {
-    //               "name": "default-key",
-    //               "public-key": {
-    //                 "keystore-reference": "genkey"
-    //               }
-    //             }
-    //           },
-    //           "client-authentication": {
-    //             "supported-authentication-methods": {
-    //               "publickey": "",
-    //               "passsword": "",
-    //               "other": "interactive"
-    //             },
-    //             "users": ""
-    //           }
-    //         }
-    //       }
-    //     }
-    //   },
-    //   "xmlns": "urn:ietf:params:xml:ns:yang:ietf-netconf-server"
-    // },
-    "keystore": {
-      "asymmetric-keys": {
-        "asymmetric-key": {
-          "name": "genkey",
-          "algorithm": "rsa2048",
-          "public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuC0geCmiQYrqdP5dzTPn\n    /3nMzQJlGSqiGysPOgq9Tm8T+oHO+kuZmXHbNZI8/EB8WyIbsVlnOUIkBJItf3I0\n    c74uBU75mILh9CZahIJ0dsAbrGGEYWpuODJP3/i3oERcWBmrfb9mT/8FLW8/TSXv\n    Yncg2TcOc6XVgfbYVHNacwAccshEcWvEVpxT8hG/8yYUyZFZMW18063ijv3mgkWR",
-          "private-key": "MIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQC4LSB4KaJBiup0\n    /l3NM+f/eczNAmUZKqIbKw86Cr1ObxP6gc76S5mZcds1kjz8QHxbIhuxWWc5QiQE\n    ki1/cjRzvi4FTvmYguH0JlqEgnR2wBusYYRham44Mk/f+LegRFxYGat9v2ZP/wUt\n    bz9NJe9idyDZNw5zpdWB9thUc1pzABxyyERxa8RWnFPyEb/zJhTJkVkxbXzTreKO\n    /eaCRZFsop2TgSXGm5G7DhpZmq3imCYjgNJ1hRZeI40+ayRkzOhE0rz7zer2N8dv\n    ESvK55Aoq/2TnABe0rCV8v7IpdIFyOa2/VGaezZZ+QVbGMTSPuPQnXY2QmxV2Jd3"
-        }
-      },
-      "xmlns": "urn:ietf:params:xml:ns:yang:ietf-keystore"
-    }
-  };
+  uploadModalRef!: MatDialogRef<any>;
+  softwarecontent = 'upload';
+  fileMsg: string = '';
+  file: any;
+  createForm!: FormGroup;
   activeMap: any = {
     box1 : true,
     box2 : false,
@@ -202,6 +168,7 @@ export class ComponentInfoComponent implements OnInit {
     theme: 'light',     // 'dark' | 'light'
     hideDelay: 250
   };
+  updatedJsonString: string = '';
   isObject(value: any): boolean {
     return typeof value === 'object' && value !== null;
   }
@@ -209,6 +176,7 @@ export class ComponentInfoComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private http: HttpClient,
     public commonService: CommonService,
     private fb: FormBuilder,
     private dialog: MatDialog,
@@ -269,25 +237,38 @@ export class ComponentInfoComponent implements OnInit {
         (res: ComponentInfo) => {
           console.log('queryComponentInfo:', res);
           this.componentInfo = res;
-          const xmldata = this.commonService.bsComponentInfo.info.data;
+          const xmldata = res.info.data;
           const parser = new XMLParser(parseOption);
           const output = parser.parse(xmldata);
           this.jsonData = output;
           const xmlData = xmlJs.js2xml(this.jsonData, { compact: true, ignoreComment: true, spaces: 4 });
           this.getfilterQueryUploadFileList();
-          const jsonstr = JSON.stringify(output, null, 2);//get in string
+          //const jsonstr = JSON.stringify(output, null, 2);
           //console.log('Json string: ',jsonstr);
           //this.treeData = this.buildTree(this.jsonData);
           this.treeData = this.buildTree(this.jsonData);
           //console.log('Tree Data:', this.treeData);
-          console.log(xmlData);
+          //console.log(xmlData);
           console.log('Json output: ', this.jsonData);
         },
         (error: any) => {
           console.error('Error loading ComponentInfo:', error);
         }
       );
+      this.fileMlist();
     }
+  }
+  
+  fileMlist(){
+    this.commonService.queryFileMList(this.comId).subscribe(
+      (res:File) => {
+        console.log(res);
+        
+        console.log(res.filename);
+      },
+      (error: any) => {
+        console.error('Error loading queryFileMList:', error);
+      });
   }
   
   buildTree(obj: any): TreeNode[] {
@@ -364,7 +345,6 @@ export class ComponentInfoComponent implements OnInit {
     }
   }
   
-  // Getter to get the first item in the softwareSlot array or undefined if the array is empty
   get firstSoftwareSlot(): SoftwareSlot | undefined {
     return this.componentInfo?.sm['software-inventory']['software-slot'][0];
   }
@@ -477,14 +457,41 @@ export class ComponentInfoComponent implements OnInit {
     this.getFaultMessage();
   }
 
+  openUpdateDatastoreModal(key: any, value: any) {
+    //console.log("Tree data for node:", node, this.treeData);
+    console.log("Tree data:", this.treeData);
+    // this.treeKey = nodeKey;
+    // this.treeValue = nodeValue;
+    // console.log(this.treeValue);
+    // const jsonObject: { [key: string]: any } = { [nodeKey]: nodeValue };
+    // const jsonString: string = JSON.stringify(jsonObject, null, 4);
+    // console.log(jsonString);
+    // this.updatedJsonString = jsonString;
+    // this.updateModalRef = this.dialog.open(this.updateModal, { 
+    //   id: 'updateModal',
+    //   data: { jsonString: jsonString }
+    // });
+  }
+
   openUpdateModal(nodeKey: string, nodeValue: any) {
     this.treeKey = nodeKey;
     this.treeValue = nodeValue;
-    this.updateModalRef = this.dialog.open(this.updateModal, { id: 'updateModal' });
+    console.log(this.treeValue);
+    const jsonObject: { [key: string]: any } = { [nodeKey]: nodeValue };
+    const jsonString: string = JSON.stringify(jsonObject, null, 4);
+    console.log(jsonString);
+    this.updatedJsonString = jsonString;
+    this.updateModalRef = this.dialog.open(this.updateModal, { 
+      id: 'updateModal',
+      data: { jsonString: jsonString }
+    });
   }
-  update() {
+  update(editedJsonString: string) {
     const nodeKey = this.treeKey;
-    const nodeValue = this.treeValue;
+    const nodeValue = JSON.parse(editedJsonString);
+    const nestedObject = nodeValue[nodeKey];
+    //console.log(nodeKey);
+    //console.log(nodeValue);
     if (this.commonService.isLocal) {
       /* local file test */
     } else {
@@ -497,23 +504,14 @@ export class ComponentInfoComponent implements OnInit {
         attributesKey: "attr",
       };
       const convert = require('xml-js');
-      const jsonObject: { [key: string]: any } = { [nodeKey]: nodeValue };
-      const jsonString: string = JSON.stringify(jsonObject, null, 4);
+      const jsonObject: { [key: string]: any } = { [nodeKey]: nestedObject };
+      //const jsonString: string = JSON.stringify(jsonObject, null, 4);
       const { xmlns, ...rest } = jsonObject[nodeKey];
       const adjustedData = {[nodeKey]: {"attr": { "xmlns": xmlns },...rest}};
-      //console.log(adjustedData);
-      //const dd = {"netconf-server":{"attr":{"xmlns":"urn:ietf:params:xml:ns:yang:ietf-netconf-server"},"listen":{"endpoint":{"name":"default-ssh","ssh":{"tcp-server-parameters":{"local-address":"0.0.0.0","keepalives":{"idle-time":"1","max-probes":"10","probe-interval":"5"}},"ssh-server-parameters":{"server-identity":{"host-key":{"name":"default-key","public-key":{"keystore-reference":"genkey"}}},"client-authentication":{"supported-authentication-methods":{"publickey":"","passsword":"","other":"interactive"},"users":""}}}}}}};
-      //console.log(jsonObject);
-      console.log(jsonString);
+      //console.log(jsonString);
       console.log(adjustedData);
       this.xmlString = convert.js2xml(adjustedData, parseOption);
       console.log(this.xmlString);
-      //this.xmlString = xmlJs.js2xml(dd, { compact: true, spaces: 4 });
-      // const tt = JSON.parse(jsonString);
-      // const ok = xmlJs.js2xml(tt, { compact: true, spaces: 2 });
-      // console.log(ok);
-      // //this.xmlString = this.xmlString.replace(/\n\s*/g, '');
-      // console.log(this.xmlString);
       const body: any = {
         session: this.sessionId,
         id: this.componentInfo.id,
@@ -529,22 +527,18 @@ export class ComponentInfoComponent implements OnInit {
           data: this.xmlString
         }
       };
-      console.log(body);
-      //console.log(nodeKey);
-      //console.log(nodeValue);
+      //console.log(body);
       this.commonService.updateBsComponent(body).subscribe(
         () => console.log('Update Successful.')
       );
       this.getComponentInfo();
-      this.refresh();
     }
-    this.getComponentInfo();
+    //this.getComponentInfo();
   }
   refresh() {
     clearTimeout(this.refreshTimeout);
     this.RunRefreshTimeout = window.setTimeout(() => this.getComponentInfo(), this.RunRefreshTime * 1000);
   }
-
   softwareDeal() {
     this.fileNameMapSoftware = new Map();
     this.softwareList.forEach((row) => {
@@ -614,7 +608,6 @@ export class ComponentInfoComponent implements OnInit {
     this.updateForm.controls['fileName'].updateValueAndValidity();
   }
 
-
   updateNFSuccessful: boolean | null = null; 
   hideUpdateIcon() {
     setTimeout(() => {
@@ -622,7 +615,6 @@ export class ComponentInfoComponent implements OnInit {
     }, 3000);
   }
 
-  
   clickBox(key: string) {
     Object.keys(this.activeMap).forEach((k) => {
       console.log(k)
@@ -630,6 +622,77 @@ export class ComponentInfoComponent implements OnInit {
     });
     this.activeMap[key] = true;
   }
- 
+  fileChange(e: any) {
+    // console.log(e);
+    this.fileMsg = '';
+    let passFile = null;
+    const files = e.target.files;
+    if ('0' in files) {
+      if (files[0].name.indexOf('.zip') >= 0 || files[0].name.indexOf('.tar') >= 0) {
+        passFile = files[0];
+      } else {
+        this.fileMsg = '格式只允許[file].zip 和.tar';
+      }
+    }
+    if (passFile === null) {
+      this.file = null;
+      this.createForm.controls['fileName'].setValue('');
+    } else {
+      this.file = files[0];
+      this.createForm.controls['fileName'].setValue(files[0].name);
+    }
+     console.log(files);
+  }
+
+  openUploadModal() {
+    this.formValidated = false;
+    //this.softwareInfo = softwareInfo;
+    this.updateForm = this.fb.group({
+      'type': new FormControl('imageUrl'),
+      'imageUrl': new FormControl('', [Validators.required]),
+      'fileName': new FormControl('')
+    });
+    this.softwarecontent;
+    this.uploadModalRef = this.dialog.open(this.uploadModal, { id: 'uploadModal' });
+    this.uploadModalRef.afterClosed().subscribe(() => {
+      this.formValidated = false;
+    });
+  }
+
+  uploadFileM() {
+    if (this.commonService.isLocal) {
+      /* local file test */
+      this.updateModalRef.close();
+    } else {
+      let fileName: string | null = null;
+      if (this.file) {
+        const file: FileObject = this.file;
+        fileName = file.name;
+      }
+      if (this.file){
+        const uploadFileM = `${this.commonService.restPath}/uploadFileM/${this.sessionId}/${this.comId}`;
+        const boundary = 'WebKitFormBoundary' + Math.random().toString(36).substr(2, 10);
+        const formData = new FormData();
+        formData.append('file', this.file);
+        let payload = '';
+        payload += `------${boundary}\r\n`;
+        payload += `Content-Disposition: form-data; name="file"; filename="${this.file.name}"\r\n`;
+        payload += `Content-Type: ${this.file.type}\r\n\r\n`;
+        payload += `${this.file}\r\n`;
+        payload += `------${boundary}--`;
+        const headers = new HttpHeaders({
+          'Content-Type': `multipart/form-data; boundary=----${boundary}`
+        });
+        this.http.post(uploadFileM, payload, {headers}).subscribe(
+          () => {
+            this.uploadModalRef.close();
+          }
+        );
+      }
+      this.uploadModalRef.close();
+      this.fileMlist();
+    }
+    this.fileMlist();
+  }
 
 }

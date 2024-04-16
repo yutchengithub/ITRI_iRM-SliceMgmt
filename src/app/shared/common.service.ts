@@ -556,6 +556,10 @@ export class CommonService {
     const bodyStr = JSON.stringify(body);
     return this.http.post(url, bodyStr);
   }
+  queryFileMList(comId: string): Observable<any> {
+    const url = `${this.restPath}/queryFileMList/${this.getSessionId()}/${comId}`;
+    return this.http.get(url);
+  }
 
   // Software Mgmt API
   queryUploadFileInfo(fileId: string): Observable<any> {

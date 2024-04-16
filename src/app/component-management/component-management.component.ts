@@ -70,7 +70,9 @@ export class ComponentManagementComponent implements OnInit {
   comtype: Item[] = [
     { displayName: 'CU', value: '1' },
     { displayName: `DU`, value: '2' },
-    { displayName: `CU+DU+RU`, value: '3' }
+    { displayName: `RU`, value: '3' },
+    { displayName: `CU+DU`, value: '4' },
+    { displayName: `CU+DU+RU`, value: '5' }
   ];
 
   constructor(
