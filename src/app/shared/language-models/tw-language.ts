@@ -190,6 +190,7 @@ export const TwLanguage = {
 
   'field.modeSwitch': '模式切換',    // @2024/04/12 Add
   'field.mapModel':'場域地圖',       // @2024/04/12 Update
+  'field.map':'地圖', 
   'field.bsList':'基站列表',         // @12/12 Add
 
   'field.bsAntennaCoord':'基站天線座標',      // @12/13 Add

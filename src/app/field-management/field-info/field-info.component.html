@@ -6,7 +6,10 @@
 		</button>
 
 		<!-- <span>{{languageService.i18n['field.info']}} – {{fieldName}}</span> -->
-		<span>{{ fieldName }}</span>
+		<span>{{ fieldName }} -
+			<label *ngIf="showMapModel">{{ languageService.i18n['field.map'] }}</label>
+			<label *ngIf="!showMapModel">{{ languageService.i18n['field.bsList'] }}</label>
+		</span>
 
 		<!-- 按鈕容器，根據 showMapModel 的值顯示或隱藏按鈕 -->
 		<span class="fieldMap-button-container">
@@ -148,7 +151,7 @@
 				<label class="boxTitle boxTitleRightAligned">
 					<!-- <span class="title-container" *ngIf="showMapModel">{{ languageService.i18n['field.Map'] }}</span> -->
 					<span class="title-container" *ngIf="showMapModel"></span>
-					<span class="title-container" *ngIf="!showMapModel">{{ languageService.i18n['field.bsList'] }}</span>
+					<!-- <span class="title-container" *ngIf="!showMapModel">{{ languageService.i18n['field.bsList'] }}</span> -->
 				</label>
 				
 				<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->

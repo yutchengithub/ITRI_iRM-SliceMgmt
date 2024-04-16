@@ -190,6 +190,7 @@ export const Enlanguage = {
 
   'field.modeSwitch': 'Mode Switch',  // @2024/04/12 Add
   'field.mapModel':'Field Map',       // @2024/04/12 Update
+  'field.map':'Map', 
   'field.bsList':'BS List',           // @12/12 Add
 
   'field.bsAntennaCoord':'BS Antenna Coordinates',  // @12/13 Add
