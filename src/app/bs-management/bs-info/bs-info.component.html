@@ -327,7 +327,7 @@
     </div>
 
 
-    <!-- 基站參數 -->
+    <!-- 基站參數 @2024/04/16 - 取值顯示、filter 皆以完成，缺點"覆蓋db、gNB"數據功能、缺點特定欄位"編輯"功能  -->
     <div class="parameters">
         <span>
           {{ languageService.i18n['BS.parameters'] }}
@@ -355,10 +355,10 @@
                   </select>
                 </span>
             
-                <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="onSearchClick()">search</span>
+                <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="onBsParamSearchClick()">search</span>
             
                 <!-- Button of clear_search_ScheduleList -->
-                <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="onClearClick()">clear</span>
+                <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="onBsParamClearClick()">clear</span>
             
               </div>
             </form>
@@ -4481,7 +4481,7 @@
       </div>
     </div>
 
-    <div class="neighborBsList"><!-- 鄰居基站列表 -->
+    <div class="neighborBsList"><!-- 鄰居基站列表 @2024/04/16 - 取值顯示、filter 皆以完成，缺點"編輯"、"刪除"、"新增"鄰居功能 -->
       <span>{{ languageService.i18n['BS.neighborBsList'] }}
         <mat-icon tooltip="{{languageService.i18n['sm.create']}}">add</mat-icon>
       </span>
@@ -4492,32 +4492,20 @@
         <div class="content-inner">
           <form>
             <div class="filter">
-              <span><label>Cell:</label>
-                <select>
-                  <option>
-                    Cell#1 (NCI=0x000024001)
-                  </option>
-                  <option>
-                    Cell#2 (NCI=0x000024002)
-                  </option>
-                  <option>
-                    Cell#3 (NCI=0x000024003)
-                  </option>
-                  <option>
-                    Cell#4 (NCI=0x000024004)
+              <span>
+                <label>Cell:</label>
+                <select [(ngModel)]="selectedNeighborNci" name="selectedNeighborNci">
+                  <option *ngFor="let nci of nciList" [value]="nci">
+                    Cell#{{ nciList.indexOf(nci) + 1 }} (NCI=0x{{ nci }})
                   </option>
                 </select>
               </span>
-          
-              <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" >search</span>
-          
-              <!-- Button of clear_search_ScheduleList -->
-              <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined">clear</span>
+              <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="onNeighborSearchClick()">search</span>
+              <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="onNeighborClearClick()">clear</span>
             </div>
           </form>
           
           <div class="table">
-
             <table>
               <thead>
                 <tr>
@@ -4531,53 +4519,22 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>46655</td>
-                  <td>7</td>
-                  <td>0x00001c108</td>
-                  <td>152</td>
-                  <td class="center">
-                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
-                  </td>
-                  <td class="icon"><!-- 刪除按鈕 -->
-                    <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}">delete_forever</mat-icon>
-                  </td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>46655</td>
-                  <td>16</td>
-                  <td>0x000040108</td>
-                  <td>153</td>
-                  <td class="center">
-                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
-                  </td>
-                  <td class="icon"><!-- 刪除按鈕 -->
-                    <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}">delete_forever</mat-icon>
-                  </td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>46655</td>
-                  <td>11</td>
-                  <td>0x00002c108</td>
-                  <td>154</td>
-                  <td class="center">
-                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
-                  </td>
-                  <td class="icon"><!-- 刪除按鈕 -->
-                    <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}">delete_forever</mat-icon>
-                  </td>
+                <tr *ngFor="let neighbor of neighborList; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ neighbor['plmn-id'].mcc + neighbor['plmn-id'].mnc }}</td>
+                  <td>{{ calculateGnbId( neighbor.nci ) }}</td>
+                  <td>0x{{ neighbor.nci }}</td>
+                  <td>{{ neighbor.pci }}</td>
+                  <td><mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                  <td><mat-icon tooltip="{{languageService.i18n['BS.delete']}}">delete_forever</mat-icon></td>
                 </tr>
               </tbody>
             </table>
-
           </div>
-          
         </div>
       </div>
     </div>
+
 
     <div class="alarms"><!-- 基站告警 -->
       <span>{{ languageService.i18n['BS.alarms'] }}</span>

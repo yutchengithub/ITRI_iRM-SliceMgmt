@@ -19,10 +19,10 @@ import { ParsePositionPipe } from '../../shared/pipes/position-parser.pipe'; // 
 import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt'; // @2024/03/25 Add
 
 // 引入儲存各個資訊所需的 interfaces
-import { BSInfo, Components, ExtensionInfo }       from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
-import { ForUpdateBs }                             from '../../shared/interfaces/BS/For_updateBs';             // @2024/04/14 Add
-import { BSInfo_dist, Info_dist, Components_dist } from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
-import { ForUpdateDistributedBs, Cellinfo_dist }   from '../../shared/interfaces/BS/For_updateDistributedBs';  // @2024/04/14 Add
+import { BSInfo, Components, ExtensionInfo, Neighbor }  from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
+import { ForUpdateBs }                                  from '../../shared/interfaces/BS/For_updateBs';             // @2024/04/14 Add
+import { BSInfo_dist, Info_dist, Components_dist }      from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
+import { ForUpdateDistributedBs, Cellinfo_dist }        from '../../shared/interfaces/BS/For_updateDistributedBs';  // @2024/04/14 Add
 
 import { CurrentBsFmList, FaultMessage } from '../../shared/interfaces/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
 import { NEList, NE, Sm  }               from '../../shared/interfaces/NE/For_queryBsComponentList';       // @2024/03/27 Add
@@ -141,7 +141,21 @@ export class BSInfoComponent implements OnInit {
       this.getNEList(); 
 
       // 取得此基站告警資訊 @2024/04/01 Add
-      this.getCurrentBsFmList()
+      this.getCurrentBsFmList();
+
+
+      if (this.bsType === '1' && this.selectBsInfo) {
+        this.nciList = this.selectBsInfo.extension_info.map(info => info.nci);
+        this.selectedNci = this.nciList[0];
+        this.selectedNeighborNci = this.nciList[0]; // 初始化鄰居基站列表的選擇
+        this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+      } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+        this.nciList = this.selectBsInfo_dist.extension_info.map(info => info.nci);
+        this.selectedNci = this.nciList[0];
+        this.selectedNeighborNci = this.nciList[0]; // 初始化鄰居基站列表的選擇
+        this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+      }
+
     });
 
     this.drawConnectingLines();
@@ -176,94 +190,6 @@ export class BSInfoComponent implements OnInit {
   viewNEDetailInfo( NE: NE ) {
     this.router.navigate( ['/main/component-mgr/info', NE.id, NE.bsId] );
   }
-
-
-// ↓ For Bs Parameters Page Control @2024/04/15 Update ↓
-
-  bsParametersType: string = 'Basic';       // 預設選擇 "Basic"    @2024/03/29 Add 
-  //bsParametersType: string = 'Advanced';  // 預設選擇 "Advanced" @2024/03/29 Add
-
-  /**
-   * @2024/03/29 Add
-   * 變更 Bs Parameters 視窗顯示類型的函數
-   * @method changeBsParametersType
-   * @param {MatButtonToggleChange} e - 切換按鈕的事件物件
-   * @description
-   * - 根據當前選擇的 Log 類型載入數據
-   * - 更新當前類型，以便知道哪個 Bs Parameters 類型被選中
-   */
-  changeBsParametersType( e: MatButtonToggleChange ) {
-
-    // 根據當前選擇的 Log 類型載入數據
-    if ( e.value === 'Basic' ) {
-
-      this.bsParametersType = 'Basic';
-
-    } else if ( e.value === 'Advanced' ) {
-
-      this.bsParametersType = 'Advanced';
-    }
-
-    // 更新當前類型，以便知道哪個 Bs Parameters 類型被選中
-    this.bsParametersType = e.value;
-    console.log( '頁面切換後，顯示的 Bs Parameters 類型:', this.bsParametersType+
-                  '\nLog type displayed after tab switch:', this.bsParametersType );
-  }
-
-  nciList: string[] = []; // 存儲NCI列表
-  selectedNci: string = ''; // 當前選擇的NCI
-  selectedExtensionInfo: ExtensionInfo | undefined; // 當前選擇的ExtensionInfo
-
-  /**
-   * @2024/03/29 Add
-   * 當選擇的 NCI 發生變化時觸發的函數
-   * @method onSelectedNciChange
-   * @description
-   * - 根據基站類型和選擇的 NCI，更新當前選擇的 ExtensionInfo
-   */
-  onSelectedNciChange() {
-    if (this.bsType === '1' && this.selectBsInfo) {
-      this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci); // 更新當前選擇的ExtensionInfo
-    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
-      this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci); // 更新當前選擇的ExtensionInfo
-    }
-  }
-
-  /**
-   * @2024/04/15 Add
-   * 當點擊搜索按鈕時觸發的函數
-   * @method onSearchClick
-   * @description
-   * - 根據基站類型和選擇的 NCI，更新當前選擇的 ExtensionInfo
-   */
-  onSearchClick() {
-    if (this.bsType === '1' && this.selectBsInfo) {
-      this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
-    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
-      this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
-    }
-  }
-
-  /**
-   * @2024/04/15 Add
-   * 當點擊清除按鈕時觸發的函數
-   * @method onClearClick
-   * @description
-   * - 根據基站類型，將選擇的 NCI 重置為預設值
-   * - 根據重置後的 NCI，更新當前選擇的 ExtensionInfo
-   */
-  onClearClick() {
-    if (this.bsType === '1' && this.selectBsInfo) {
-      this.selectedNci = this.nciList[0];
-      this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
-    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
-      this.selectedNci = this.nciList[0];
-      this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
-    }
-  }
-
-// ↑ For Bs Parameters Page Control @2024/04/15 Update ↑
-
 
 
 // ↓ 基本資訊區 ↓
@@ -1130,8 +1056,8 @@ export class BSInfoComponent implements OnInit {
 
 
 // ↑ 基本資訊區 ↑
-
   
+
 
 // ↓ 繪製拓樸圖區 @2024/03/28 Add ↓
 
@@ -1229,11 +1155,188 @@ export class BSInfoComponent implements OnInit {
   }
 
 // ↑ 繪製拓樸圖區 @2024/03/28 Add ↑
-  
 
 
 
+// ↓ For Bs Parameters Page Control @2024/04/15 Update ↓
 
+  bsParametersType: string = 'Basic';       // 預設選擇 "Basic"    @2024/03/29 Add 
+  //bsParametersType: string = 'Advanced';  // 預設選擇 "Advanced" @2024/03/29 Add
+
+  /**
+   * @2024/03/29 Add
+   * 變更 Bs Parameters 視窗顯示類型的函數
+   * @method changeBsParametersType
+   * @param {MatButtonToggleChange} e - 切換按鈕的事件物件
+   * @description
+   * - 根據當前選擇的 Log 類型載入數據
+   * - 更新當前類型，以便知道哪個 Bs Parameters 類型被選中
+   */
+  changeBsParametersType( e: MatButtonToggleChange ) {
+
+    // 根據當前選擇的 Log 類型載入數據
+    if ( e.value === 'Basic' ) {
+
+      this.bsParametersType = 'Basic';
+
+    } else if ( e.value === 'Advanced' ) {
+
+      this.bsParametersType = 'Advanced';
+    }
+
+    // 更新當前類型，以便知道哪個 Bs Parameters 類型被選中
+    this.bsParametersType = e.value;
+    console.log( '頁面切換後，顯示的 Bs Parameters 類型:', this.bsParametersType+
+                  '\nLog type displayed after tab switch:', this.bsParametersType );
+  }
+
+  nciList: string[] = []; // 存儲NCI列表
+  selectedNci: string = ''; // 當前選擇的NCI（用於基站參數）
+  selectedExtensionInfo: ExtensionInfo | undefined; // 當前選擇的ExtensionInfo
+
+  /**
+   * @2024/03/29 Add
+   * 當選擇的 NCI 發生變化時觸發的函數（用於基站參數）
+   * @method onBsParamSelectedNciChange
+   * @description
+   * - 根據基站類型和選擇的 NCI，更新當前選擇的 ExtensionInfo
+   */
+  onBsParamSelectedNciChange() {
+    if (this.bsType === '1' && this.selectBsInfo) {
+      this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
+    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+      this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
+    }
+  }
+
+  /**
+   * @2024/04/15 Add
+   * 當點擊搜索按鈕時觸發的函數（用於基站參數）
+   * @method onBsParamSearchClick
+   * @description
+   * - 根據基站類型和選擇的 NCI，更新當前選擇的 ExtensionInfo
+   */
+  onBsParamSearchClick() {
+    if (this.bsType === '1' && this.selectBsInfo) {
+      this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
+    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+      this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
+    }
+  }
+
+  /**
+   * @2024/04/15 Add
+   * 當點擊清除按鈕時觸發的函數（用於基站參數）
+   * @method onBsParamClearClick
+   * @description
+   * - 根據基站類型，將選擇的 NCI 重置為預設值
+   * - 根據重置後的 NCI，更新當前選擇的 ExtensionInfo
+   */
+  onBsParamClearClick() {
+    if (this.bsType === '1' && this.selectBsInfo) {
+      this.selectedNci = this.nciList[0];
+      this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
+    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+      this.selectedNci = this.nciList[0];
+      this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
+    }
+  }
+
+// ↑ For Bs Parameters Page Control @2024/04/15 Update ↑
+
+
+
+// ↓ 鄰居基站列表區 @2024/04/16 Add ↓
+
+  neighborList: Neighbor[] = [];
+  selectedNeighborNci: string = ''; // 當前選擇的NCI（用於鄰居基站列表）
+
+  /**
+   * @2024/04/16 Add
+   * 當選擇的 NCI 發生變化時觸發的函數（用於鄰居基站列表）
+   * @method onNeighborSelectedNciChange
+   * @description
+   * - 根據選擇的 NCI，更新鄰居基站列表
+   */
+  onNeighborSelectedNciChange() {
+    this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+  }
+
+  /**
+   * @2024/04/16 Add
+   * 當點擊搜索按鈕時觸發的函數（用於鄰居基站列表）
+   * @method onNeighborSearchClick
+   * @description
+   * - 根據選擇的 NCI，更新鄰居基站列表
+   */
+  onNeighborSearchClick() {
+    this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+  }
+
+  /**
+   * @2024/04/16 Add
+   * 當點擊清除按鈕時觸發的函數（用於鄰居基站列表）
+   * @method onNeighborClearClick
+   * @description
+   * - 根據基站類型，將選擇的 NCI 重置為預設值
+   * - 根據重置後的 NCI，更新鄰居基站列表
+   */
+  onNeighborClearClick() {
+    if (this.bsType === '1' && this.selectBsInfo) {
+      this.selectedNeighborNci = this.nciList[0];
+    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+      this.selectedNeighborNci = this.nciList[0];
+    }
+    this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+  }
+
+  /**
+   * @2024/04/16 Add
+   * 根據選擇的 NCI 獲取鄰居基站列表
+   * @method getNeighborList
+   * @param {string} nci - 選擇的 NCI
+   * @returns {Neighbor[]} 鄰居基站列表
+   */
+  getNeighborList(nci: string): Neighbor[] {
+    if (this.bsType === '1' && this.selectBsInfo) {
+      return this.selectBsInfo.anr['anr-son-output'].neighbor;
+    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+      return this.selectBsInfo_dist.anr[nci]['anr-son-output'].neighbor;
+    }
+    return [];
+  }
+
+  /**
+   * @2024/04/16 Add
+   * 根據選擇的 NCI 計算 gNB ID
+   * @method calculateGnbId
+   * @param {string} nci - 選擇的 NCI
+   * @returns {number} gNB ID
+   */
+  calculateGnbId(nci: string): number {
+    if (!nci) {
+      return 0;
+    }
+    const gnbIdLength = this.selectedExtensionInfo?.gNBIdLength;
+    if (!gnbIdLength || isNaN(gnbIdLength)) {
+      return 0;
+    }
+    const nciNumber = parseInt(nci, 16);
+    return Math.floor(nciNumber / Math.pow(2, 36 - gnbIdLength));
+  }
+
+  /**
+   * @2024/04/16 Add
+   * 將 16 進制字串轉換為 10 進制數字
+   * @method hexToDecimal
+   * @param {string} hex - 16 進制字串
+   * @returns {number} 10 進制數字
+   */
+  hexToDecimal(hex: string): number {
+    return parseInt(hex, 16);
+  }
+
+// ↑ 鄰居基站列表區 @2024/04/16 Add ↑
 
 
 
