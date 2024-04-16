@@ -312,7 +312,33 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
 .mat-progress-bar-fill::after {
   background-color: #ff5722;
 }
-
+.progressBar {
+  display: block;
+  margin: 2em 0;
+  text-align: center;
+}
+.progressBar div {
+  display: block;
+  margin: 0 auto 0.5em;
+  color: #ffaf88;
+  /* font-weight: bold; */
+  font-style: italic;
+  font-size: 1.25em;
+  text-shadow: 0 0px 9px #f7a46c;
+}
+.progressBar .mat-progress-bar-buffer {
+  background-color: #494a4e;
+}
+.progressBar .material-symbols-outlined {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0 0 .2em;
+  color: #ebb4a7;
+  transform: skewX(-14deg);
+}
+.progressBar .mat-progress-bar-fill::after {
+  background-color: #f39664b8;
+}
 // Radio button 外框 - 未被選擇時的顏色 @2024/02/16 Add
 .mat-radio-button .mat-radio-outer-circle {
   border-color: #bcd3e9; 

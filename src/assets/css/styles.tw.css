@@ -286,10 +286,14 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
   width: 70% !important;
   margin: auto;
 }
+
 .mat-progress-bar-fill::after {
   background-color: #ff5722;
 }
-
+.progressBar {
+  display: block;
+  margin: 2em 0;
+}
  .table {
   display: block;
   margin: 1% 0 0;

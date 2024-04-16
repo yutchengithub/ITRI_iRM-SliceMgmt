@@ -1541,7 +1541,6 @@ h6 {
   overflow: auto;
 }
 .fieldOptimization .Field_Infos {
-  border-top: 2px solid #617d97;
   margin: 0 0 0 1.2em;
   width: 95%;
   padding-top: .5em;
@@ -1557,6 +1556,9 @@ h6 {
 }
 .fieldOptimization .tabs  {
   margin: 0 0 0 1.2em;
+  border-bottom: 2px solid #617d97;
+  width: 96%;
+
 }
 .fieldOptimization .left-section > div {
   margin-bottom: 0.5em;

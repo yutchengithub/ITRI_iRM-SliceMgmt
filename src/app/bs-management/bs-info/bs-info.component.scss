@@ -1001,6 +1001,12 @@ ul.treeList li a.btn {
 .Advanced .collabsible > div:first-child .collapsible-content {
   max-height: max-content;
 }
+.par_success th,.par_success td {
+  text-align: center;
+}
+.par_success td input {
+  text-align: left;
+}
 @media screen and (max-width:1680px) {
   .h30 {
     height: 24em;

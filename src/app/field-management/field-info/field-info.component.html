@@ -1280,9 +1280,10 @@
 
 				<!-- 當優化正在計算時顯示加載進度條 -->
 				<ng-container *ngIf="calculateSON_Loading">
-					<div>
+					<div class="progressBar">
 						<!-- 進度條 Bar -->
-						<mat-progress-bar mode="indeterminate" class="custom-color"></mat-progress-bar>
+						<div>Processing<span class="material-symbols-outlined">sort</span></div>
+						<mat-progress-bar mode="indeterminate"></mat-progress-bar>
 					</div>
 				</ng-container>
 
