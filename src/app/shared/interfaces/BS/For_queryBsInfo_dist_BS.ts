@@ -5,7 +5,7 @@
       info: Info_dist[] | {};
       extension_info: ExtensionInfo_dist[]; // ok
       cellInfo: Cellinfo; // ok
-      anr: Anr;           // ok
+      anr: Anr_dist;           // ok
       pci: PCI;           // ok 目前沒看到有 BS 這個有值
       cco: CCO;           // ok 目前沒看到有 BS 這個有值
       id: string;         // ok
@@ -649,8 +649,8 @@
   
   /* ↓ @12/15 Add For "anr": {} ↓ */
 
-  export interface Anr {
-    [key: string]: AnrWithId; // key 是動態的，例如 "000024001"
+  export interface Anr_dist {
+    [NCI: string]: AnrWithId; // NCI 是動態的，例如 "000024001"
   }
   
   export interface AnrWithId {
