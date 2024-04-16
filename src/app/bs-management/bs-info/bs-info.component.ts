@@ -142,20 +142,6 @@ export class BSInfoComponent implements OnInit {
 
       // 取得此基站告警資訊 @2024/04/01 Add
       this.getCurrentBsFmList();
-
-
-      if (this.bsType === '1' && this.selectBsInfo) {
-        this.nciList = this.selectBsInfo.extension_info.map(info => info.nci);
-        this.selectedNci = this.nciList[0];
-        this.selectedNeighborNci = this.nciList[0]; // 初始化鄰居基站列表的選擇
-        this.neighborList = this.getNeighborList(this.selectedNeighborNci);
-      } else if (this.bsType === '2' && this.selectBsInfo_dist) {
-        this.nciList = this.selectBsInfo_dist.extension_info.map(info => info.nci);
-        this.selectedNci = this.nciList[0];
-        this.selectedNeighborNci = this.nciList[0]; // 初始化鄰居基站列表的選擇
-        this.neighborList = this.getNeighborList(this.selectedNeighborNci);
-      }
-
     });
 
     this.drawConnectingLines();
@@ -269,16 +255,18 @@ export class BSInfoComponent implements OnInit {
 
       this.isLoadingBsInfo = false; // Local 模式下，數據加載快速完成，直接設置為 false
 
-      // @2024/04/15 Add
-      // 獲取 NCI 列表並設定預設選擇的 NCI 和 ExtensionInfo
-      if (this.bsType === "1" && this.selectBsInfo) {
+      // @2024/04/16 Update
+      // 獲取 NCI 列表並設定預設選擇的 NCI 和 ExtensionInfo ( 預設"基站參數"與"鄰居基站列表"的 Cell 為 nciList 中第一筆 )
+      if (this.bsType === '1' && this.selectBsInfo) {
         this.nciList = this.selectBsInfo.extension_info.map(info => info.nci);
         this.selectedNci = this.nciList[0];
-        this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
-      } else if (this.bsType === "2" && this.selectBsInfo_dist) {
+        this.selectedNeighborNci = this.nciList[0]; // 初始化鄰居基站列表的選擇
+        this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+      } else if (this.bsType === '2' && this.selectBsInfo_dist) {
         this.nciList = this.selectBsInfo_dist.extension_info.map(info => info.nci);
         this.selectedNci = this.nciList[0];
-        this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
+        this.selectedNeighborNci = this.nciList[0]; // 初始化鄰居基站列表的選擇
+        this.neighborList = this.getNeighborList(this.selectedNeighborNci);
       }
 
     } else {
@@ -336,16 +324,18 @@ export class BSInfoComponent implements OnInit {
 
           this.isLoadingBsInfo = false; // 數據加載完成
 
-          // @2024/04/15 Add
-          // 獲取 NCI 列表並設定預設選擇的 NCI 和 ExtensionInfo
-          if (res.bstype === 1 && this.selectBsInfo) {
+          // @2024/04/16 Update
+          // 獲取 NCI 列表並設定預設選擇的 NCI 和 ExtensionInfo ( 預設"基站參數"與"鄰居基站列表"的 Cell 為 nciList 中第一筆 )
+          if (this.bsType === '1' && this.selectBsInfo) {
             this.nciList = this.selectBsInfo.extension_info.map(info => info.nci);
             this.selectedNci = this.nciList[0];
-            this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
-          } else if (res.bstype === 2 && this.selectBsInfo_dist) {
+            this.selectedNeighborNci = this.nciList[0]; // 初始化鄰居基站列表的選擇
+            this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+          } else if (this.bsType === '2' && this.selectBsInfo_dist) {
             this.nciList = this.selectBsInfo_dist.extension_info.map(info => info.nci);
             this.selectedNci = this.nciList[0];
-            this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
+            this.selectedNeighborNci = this.nciList[0]; // 初始化鄰居基站列表的選擇
+            this.neighborList = this.getNeighborList(this.selectedNeighborNci);
           }
         },
         error: ( error ) => {
