@@ -1,4 +1,6 @@
 export const TwLanguage = {
+  'loading':"載入中...",
+  'Processing':"處理中...",
 
   'logon':'登入',
   'logon.welcome':'歡迎',

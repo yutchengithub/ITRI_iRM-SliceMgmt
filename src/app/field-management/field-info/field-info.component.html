@@ -317,14 +317,14 @@
 				</div>
 
 				<!-- 在地圖下方放置進度指示器，當 isMarkersLoading 為 true 時顯示 -->
-				<div *ngIf="isMarkersLoading" class="spinner-container">
+				<!-- <div *ngIf="isMarkersLoading" class="spinner-container">
 					<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
-				</div>
+				</div> -->
 				
 				<!-- 在地圖下方放置進度指示器，當 isfieldImage_or_RsrpSinrMapLoading 為 true 時顯示 -->
-				<div *ngIf="isfieldImage_or_RsrpSinrMapLoading" class="spinner-container">
+				<!-- <div *ngIf="isfieldImage_or_RsrpSinrMapLoading" class="spinner-container">
 					<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
-				</div>
+				</div> -->
 
 				<!-- BS List (基站列表) -->
 				<!-- 當 showMapModel 為 false 時才顯示 -->
@@ -817,12 +817,12 @@
 						<!-- <h3>{{ languageService.i18n['field.indoorMap'] }}</h3> -->
 						<div>
 							<!-- 顯示進度條 -->
-							<ng-container *ngIf="isFieldImageOnFieldEditLoading">
-								<div class="progress-spinner-container">
+							<!-- <ng-container *ngIf="isFieldImageOnFieldEditLoading">
+								<div class="progress-spinner-container"> -->
 																									<!-- diameter: 指示器大小-->
-									<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="35"></mat-progress-spinner>
+									<!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="35"></mat-progress-spinner>
 								</div>
-							</ng-container>
+							</ng-container> -->
 							<!-- 顯示場域圖片 -->
 							<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
 								<!-- For local @2024/01/23 Add -->
@@ -884,16 +884,16 @@
 						</thead>
 						<tbody>
 							<!-- 顯示進度條 -->
-							<ng-container *ngIf="isGetQueryBsListLoading">
+							<!-- <ng-container *ngIf="isGetQueryBsListLoading">
 								<tr>
 									<td colspan="6">
-									<div class="progress-spinner-container">
+									<div class="progress-spinner-container"> -->
 																										<!-- diameter: 指示器大小-->
-										<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+										<!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
 									</div>
 									</td>
 								</tr>
-							</ng-container>
+							</ng-container> -->
 							<!-- 顯示數據 -->
 							<ng-container *ngIf="!isGetQueryBsListLoading">
 								<!-- <tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;"> -->
@@ -992,12 +992,12 @@
 		<div><h5>{{ languageService.i18n['field.configPMset'] }}</h5></div>
 		<div class="content">
 			<!-- 顯示進度條 -->
-			<ng-container *ngIf="getQueryPmFtpInfo_Loading">
+			<!-- <ng-container *ngIf="getQueryPmFtpInfo_Loading"> -->
 				<!-- 加載中顯示 spinner -->
-				<div class="progress-spinner-container-for-getQueryPmFtpInfo">
+				<!-- <div class="progress-spinner-container-for-getQueryPmFtpInfo">
 					<mat-progress-spinner mode="indeterminate" diameter="135"></mat-progress-spinner>
 				</div>
-			</ng-container>
+			</ng-container> -->
 
 			<!-- 數據加載完畢後顯示"效能參數設定"資訊 -->
 			<ng-container *ngIf="!getQueryPmFtpInfo_Loading">

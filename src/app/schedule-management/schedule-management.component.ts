@@ -4,12 +4,15 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-import { CommonService } from '../shared/common.service';
-import { LanguageService } from '../shared/service/language.service';
 import { Item } from '../shared/models/item';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
+
+// Services
+import { CommonService } from '../shared/common.service';
+import { LanguageService } from '../shared/service/language.service';
+import { SpinnerService } from '../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
 
 // For import APIs of Schedule Management 
 import { apiForScheduleMgmt }     from '../shared/api/For_Schedule_Mgmt';  // @2024/03/15 Add
@@ -36,6 +39,25 @@ export class ScheduleManagementComponent implements OnInit {
   refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
   refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
 
+  // @2024/04/17 Add
+  // Show spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+
+  // @2024/04/17 Add
+  // Show spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+
+  // Hide spinner @2024/04/17 Add
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
+
   constructor(
     
     private           http: HttpClient,
@@ -44,6 +66,7 @@ export class ScheduleManagementComponent implements OnInit {
     private         dialog: MatDialog,
     private         router: Router,
     private  commonService: CommonService,
+    public  spinnerService: SpinnerService,
     public languageService: LanguageService,
 
     public             API_Schedule: apiForScheduleMgmt,  // API_Schedule 用於排程管理相關的 API 請求
@@ -115,6 +138,8 @@ export class ScheduleManagementComponent implements OnInit {
 
     clearTimeout( this.refreshTimeout ); // 取消之前設定的超時,避免重複或不必要的操作
 
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
+
     if ( this.commonService.isLocal ) {
       // Local 模式: 使用 Local 文件提供的數據
       
@@ -122,6 +147,7 @@ export class ScheduleManagementComponent implements OnInit {
       console.log( 'In local - Get the ScheduleList:', this.scheduleList );
 
       this.isLoadingScheduleList = false; // Local 模式下,數據加載快速完成,直接設置為 false
+      this.hideSpinner();  // 完成後隱藏 spinner
     } else {
 
       // 非 Local 模式: 通過 API 從服務器獲取數據
@@ -136,15 +162,18 @@ export class ScheduleManagementComponent implements OnInit {
           console.log( '排程列表資訊\n( BS List ):', this.scheduleList ); // 取得的 Schedule List 資訊 ( Obtained Schedule List information )
           
           this.isLoadingScheduleList = false; // 數據加載完成
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           // 請求出現錯誤
           console.error( 'Error fetching schedule list:', error );
           this.isLoadingScheduleList = false; // 出錯時設置加載標誌為 false
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         complete: () => {
           // 數據流處理完成（無論成功或失敗）
           console.log( 'Schedule list fetch completed' );
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -366,6 +395,8 @@ export class ScheduleManagementComponent implements OnInit {
   // 用於下載排程列表裡的指定排程報表
   downloadSpecificScheduleReportInList( schedule: Schedule ) {
     console.log("downloadSpecificScheduleReportInList() - Start");
+    
+    this.showProcessingSpinner();
 
     // 將選中的 Schedule 賦值給 selectSchedule
     this.selectSchedule = schedule;
@@ -376,6 +407,7 @@ export class ScheduleManagementComponent implements OnInit {
       // Local 模式下無法下載報表
       console.log( "Local 模式下無法真的下載報表,\n 此點選要下載的報表名稱為:", this.selectSchedule.ticketresult );
 
+      this.hideSpinner();  // 完成後隱藏 spinner
     } else {
 
       // 生產環境下向後端 API 發送請求下載報表
@@ -390,11 +422,13 @@ export class ScheduleManagementComponent implements OnInit {
 
           // 解碼 Base64 字符串並自動下載檔案
           this.commonService.downloadExcelFromBase64( response, fileName );
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           // 處理失敗響應
           console.error( "排程報表下載失敗:", error );
           // 例如顯示錯誤訊息給用戶
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -441,6 +475,7 @@ export class ScheduleManagementComponent implements OnInit {
 
     // 顯示加載指示器
     this.isLoadingScheduleList = true;
+    this.showProcessingSpinner();
 
     // 檢查是否是 Local 環境
     if ( this.commonService.isLocal ) {
@@ -456,6 +491,7 @@ export class ScheduleManagementComponent implements OnInit {
 
       // 關閉加載指示器
       this.isLoadingScheduleList = false;
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
 
@@ -472,6 +508,7 @@ export class ScheduleManagementComponent implements OnInit {
 
           // 關閉加載指示器
           this.isLoadingScheduleList = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           // 刪除失敗的回調,輸出錯誤訊息
@@ -479,11 +516,13 @@ export class ScheduleManagementComponent implements OnInit {
 
           // 關閉加載指示器
           this.isLoadingScheduleList = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         complete: () => {
           // 請求完成後的回調,不管成功或失敗都會執行
           // 關閉加載指示器
           this.isLoadingScheduleList = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }

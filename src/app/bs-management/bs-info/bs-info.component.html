@@ -21,12 +21,12 @@
         <div class="content-inner">
 
           <!-- 當數據正在加載時顯示進度條 @2024/03/27 Add -->
-          <ng-container *ngIf="isLoadingBsInfo">
-            <div class="progress-spinner-container">
+          <!-- <ng-container *ngIf="isLoadingBsInfo">-->
+           <!--  <div class="progress-spinner-container">-->
               <!-- 指示器大小設置 -->
-              <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="100"></mat-progress-spinner>
-            </div>
-          </ng-container>
+              <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="100"></mat-progress-spinner> -->
+            <!-- </div> -->
+          <!-- </ng-container> -->
 
           <!-- 加載完成後顯示 基站資訊 數據 @2024/03/27 Add -->
           <ng-container *ngIf="!isLoadingBsInfo">
@@ -91,20 +91,20 @@
                       <tbody>
 
                         <!-- 當數據正在加載時顯示進度條 @2024/03/27 Add -->
-                        <ng-container *ngIf="isLoadingNEList">
-                          <div class="progress-spinner-container">
+                        <!-- <ng-container *ngIf="isLoadingNEList"> -->
+                          <!-- <div class="progress-spinner-container"> -->
                             <!-- 指示器大小設置 -->
-                            <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner>
-                          </div>
-                        </ng-container>
+                            <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner> -->
+                          <!-- </div> -->
+                        <!-- </ng-container> -->
 
                         <!-- 加載完成後顯示 分佈式基站經緯度資訊 數據 @2024/03/27 Add -->
-                        <ng-container *ngIf="!isLoadingNEList">
+                        <!-- <ng-container *ngIf="!isLoadingNEList"> -->
                           <tr *ngFor="let ruInfo of ruIdNamePositionMap | keyvalue">
                             <td>{{ ruInfo.value.name }}</td>
                             <td>{{ ruInfo.value.position }}</td>
                           </tr>
-                        </ng-container>
+                        <!-- </ng-container> -->
                         
                       </tbody>
                     </table>
@@ -133,15 +133,15 @@
                     <tbody>
 
                       <!-- 當數據正在加載時顯示進度條 @2024/03/27 Add -->
-                      <ng-container *ngIf="isLoadingNEList">
-                        <div class="progress-spinner-container">
+                      <!-- <ng-container *ngIf="isLoadingNEList"> -->
+                        <!-- <div class="progress-spinner-container"> -->
                           <!-- 指示器大小設置 -->
-                          <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner>
-                        </div>
-                      </ng-container>
+                          <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner> -->
+                        <!-- </div> -->
+                      <!-- </ng-container> -->
 
                       <!-- 加載完成後顯示 一體式或分佈式 BS 網元軟體版本資訊 數據 @2024/03/27 Add -->
-                      <ng-container *ngIf="!isLoadingNEList">
+                      <!-- <ng-container *ngIf="!isLoadingNEList"> -->
                         <!-- 一體式或分佈式 BS 共用網元軟體版本表格 -->
                         <tr *ngFor="let swInfo of swVersionMap | keyvalue">
                           <td>{{ swInfo.value.neName }}</td>
@@ -149,7 +149,7 @@
                           <td>{{ swInfo.value.neModel }}</td>
                           <td>{{ swInfo.value.neSFversion }}</td>
                         </tr>
-                      </ng-container>
+                      <!-- </ng-container> -->
 
                     </tbody>
                   </table>
@@ -260,18 +260,19 @@
           <div class="collabsible">
 
             <!-- 當數據正在加載時顯示進度條 @2024/03/29 Add -->
-            <ng-container *ngIf="isLoadingNEList">
-              <div class="progress-spinner-container">
+            <!-- <ng-container *ngIf="isLoadingNEList"> -->
+              <!-- <div class="progress-spinner-container"> -->
                 <!-- 指示器大小設置 -->
-                <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner>
-              </div>
-            </ng-container>
+                <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner> -->
+              <!-- </div> -->
+            <!-- </ng-container> -->
 
             <!-- 使用 Canvas 畫網元拓樸圖 -->
             <canvas #canvas class="topology-canvas"></canvas>
 
             <!-- 加載完成後，如 bsType === '1'，則顯示繪製的一體式 BS 網元拓樸圖 @2024/03/29 Add -->
             <ng-container *ngIf=" bsType === '1' && !isLoadingNEList ">
+            <!-- <ng-container *ngIf=" bsType === '1' "> -->
               <!-- 顯示 一體式基站 拓樸 -->
               <div class="nes-topology">
                 <div>  
@@ -289,6 +290,7 @@
 
             <!-- 加載完成後，如 bsType === '2'，則顯示繪製的分佈式 BS 網元拓樸圖 @2024/03/29 Add -->
             <ng-container *ngIf=" bsType === '2' && !isLoadingNEList ">
+            <!-- <ng-container *ngIf=" bsType === '2' "> -->
               <!-- 顯示 分佈式基站 拓樸 -->
               <div class="nes-topology">   
                 <div *ngFor="let cu of componentArray | filterBy: 'type': 'cu'">
@@ -4595,16 +4597,16 @@
               <tbody>
               
                 <!-- 當數據正在加載時顯示進度條 @2024/03/31 Add -->
-                <ng-container *ngIf="isLoadingCurrentBsFmList">
-                  <tr>
+                <!-- <ng-container *ngIf="isLoadingCurrentBsFmList"> -->
+                  <!-- <tr>
                     <td colspan="8">
-                      <div class="progress-spinner-container">  
+                      <div class="progress-spinner-container">   -->
                         <!-- 指示器大小設置 -->
-                        <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+                        <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
                       </div>
                     </td>
                   </tr>
-                </ng-container>
+                </ng-container> -->
                 
                 <!-- 加載完成後顯示當前 Bs Fm List 的數據 @2024/03/31 Add --> 
                 <ng-container *ngIf="!isLoadingCurrentBsFmList">
@@ -4659,12 +4661,12 @@
               <tbody>
 
                 <!-- 當數據正在加載時顯示進度條 @2024/03/29 Add -->
-                <ng-container *ngIf="isLoadingNEList">
-                  <div class="progress-spinner-container">
+                <!-- <ng-container *ngIf="isLoadingNEList">
+                  <div class="progress-spinner-container"> -->
                     <!-- 指示器大小設置 -->
-                    <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner>
+                    <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="65"></mat-progress-spinner>
                   </div>
-                </ng-container>
+                </ng-container> -->
 
                 <!-- 加載完成後顯示 一體式或分佈式 BS 網元軟體版本資訊 數據 @2024/03/27 Add -->
                 <ng-container *ngIf="!isLoadingNEList">
