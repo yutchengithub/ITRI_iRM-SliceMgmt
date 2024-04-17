@@ -357,6 +357,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
       // 將篩選後的基站列表賦值給顯示用的基站列表
       this.displayedBSs = [...this.BSsNotUsedInO1];
+
+      //this.displayedBSs.forEach(bs => bs.position = this.commonService.formatPosition( bs.position ) );
     };
 
     // 檢查是否在 Local 測試環境

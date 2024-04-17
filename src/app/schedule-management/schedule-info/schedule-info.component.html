@@ -164,11 +164,9 @@
                 <mat-icon tooltip="{{ languageService.i18n['sm.smDownload'] }}">sim_card_download</mat-icon>
               </button>
             </span>
-            <!-- 無報表檔案時顯示的 icon @2024/04/15 Add  -->
+            <!-- 無報表檔案時顯示的 icon @2024/04/18 Update -->
             <span *ngIf="!selectScheduleInfo.ticketresult">
-              <button mat-icon-button color="primary">
-                <mat-icon tooltip="{{ languageService.i18n['sm.notPeriodicExecution'] }}">no_sim</mat-icon>
-              </button>
+                <mat-icon tooltip="{{ languageService.i18n['sm.notPeriodicExecution'] }}">sim_card_download</mat-icon>
             </span>
           </li>
 

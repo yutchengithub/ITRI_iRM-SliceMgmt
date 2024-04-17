@@ -150,12 +150,16 @@ export const Enlanguage = {
   'field.westBound':'West Boundary',                // @2024/01/11 Add
   'field.eastBound':'East Boundary',                // @2024/01/11 Add
   'field.lng':'Longitude',                          // @2024/02/02 Add
-  'field.notificationNum':'Notification Number',    // @2024/01/11 Add
+  //'field.notificationNum':'Notification Number',    // @2024/01/11 Add
+  'field.notificationNum':'Notification',    // @2024/01/11 Add
   'field.fieldBoundsEx':'Field Boundary Diagram',   // @2024/01/18 Add
   'field.editBSs':'Adjust BS Field Allocation',     // @2024/01/28 Add
   'field.cancelEditBSs':'Cancel',                   // @2024/01/28 Add
   'field.selectBSs':'Choose BSs in field',          // @2024/01/18 Add
   'field.confirmFieldEditField': "Confirm to make these field changes ?",  // @2024/01/28 Add
+  'field.showFieldBS': 'Show Field-Only BS',
+  'field.showAllBS': 'Show All BS',
+
   
   'field.fieldImageUpload':'Upload Field Image',      // @2024/02/23 Update
   'field.fieldImageNotUploaded': 'Field image not yet uploaded ( e.g., Indoor or outdoor maps )',  // @2024/02/23 Update
@@ -199,7 +203,7 @@ export const Enlanguage = {
   'field.BSstatus':'BS Status',                     // @12/13 Add
   'field.bsAlarm':'Alarm',                          // @12/13 Add
   'field.legend_all-in-one_bs':'All-in-one BS',     // @12/28 Add
-  'field.legend_dist_bs':'O-RAN BS',                // @12/28 Add
+  'field.legend_dist_bs':'Disaggregated BS',         // @2024/04/18 Update
 
   'field.selectOptimizationParameters': 'Select Optimization Parameters',
   'field.selectCalculationParameters': 'Select Calculation Parameters',
@@ -258,6 +262,8 @@ export const Enlanguage = {
 
   'BS.name':'BS Name',
   'BS.type':'BS Type',
+  'BS.all-in-one':'All-in-one', // @2024/04/18 Add
+  'BS.dist':'Disaggregated',    // @2024/04/18 Add
   'BS.cellCount':'Cell Count',
   'BS.description':'Description',
   'BS.belongField':'Affiliated Field',
