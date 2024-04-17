@@ -351,9 +351,11 @@
 									<td>
 										<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
 										<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
-										
+										<!-- <label *ngIf="opt.bstype === 1">{{ languageService.i18n['BS.all-in-one'] }}</label> -->
+
 										<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
 										<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
+										<!-- <label *ngIf="opt.bstype === 2">{{ languageService.i18n['BS.dist'] }}</label> -->
 									</td>
 									<td>
 										<label>{{ opt.position }}</label>
@@ -367,7 +369,7 @@
 										<mat-icon tooltip="{{ languageService.i18n['field.view'] }}" (click)="viewBSDetailInfo( opt )">remove_red_eye</mat-icon>
 									</td>
 									<td>
-										<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}">warning</mat-icon>
+										<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}" (click)="goFaultMgr()">warning</mat-icon>
 									</td>
 								</tr>
 							</tbody>
@@ -863,7 +865,7 @@
 						[ngClass]="{'field-Edit-bsList-button-active': displayAllBSFlag,
 										'field-Edit-bsList-button-inactive': !displayAllBSFlag}"
 						(click)="toggleAllBSVisibility()">
-						{{ displayAllBSFlag ? languageService.i18n['field.cancelEditBSs'] : languageService.i18n['field.editBSs'] }}
+						{{ displayAllBSFlag ? languageService.i18n['field.showFieldBS'] : languageService.i18n['field.showAllBS'] }}
 				</button>
 
 				<!-- 基站列表 For field Edit @2024/01/11 Add by yuchen -->	
@@ -911,10 +913,10 @@
 									</td>
 									<td>
 										<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
-										<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
+										<label *ngIf="opt.bstype === 1"> A </label>
 										
 										<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
-										<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
+										<label *ngIf="opt.bstype === 2"> D </label>
 									</td>
 									<td>
 										{{ opt.gNBId }}
@@ -938,9 +940,9 @@
 		</div>		
 
 		<div class="buttons">
-			<!-- @2024/01/28 Update -->
+			<!-- @2024/04/18 Update -->
 			<button type="button" (click)="openConfirmFieldEditWindow()" mat-dialog-close>
-				{{ languageService.i18n['confirm'] }}
+				{{ languageService.i18n['field.apply'] }}
 			</button>
 			<!-- @2024/01/28 Update -->
 			<button type="button" (click)="resetFieldEditingForm( fieldName )" mat-dialog-close>
@@ -1097,7 +1099,7 @@
 				{{ languageService.i18n['field.apply'] }}
 			</button>
 			<button type="button" (click)="resetPMgmtParameterSetForm()" mat-dialog-close>
-				{{ languageService.i18n['field.close'] }}
+				{{ languageService.i18n['cancel'] }}
 			</button>
 		</div>
 	</ng-template>

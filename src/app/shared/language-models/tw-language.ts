@@ -155,6 +155,9 @@ export const TwLanguage = {
   'field.cancelEditBSs':'取消',               // @2024/01/28 Add
   'field.selectBSs':'選擇基站',                // @2024/01/18 Add
   'field.confirmFieldEditField': "確認進行場域變更？", // @2024/01/28 Add
+  'field.showFieldBS': '顯示場域內基站',
+  'field.showAllBS': '顯示所有基站',
+
 
   'field.fieldImageUpload':'場域圖片上傳',      // @2024/02/23 Update
   'field.fieldImageNone':'未有場域圖片',        // @2024/02/23 Update
@@ -199,7 +202,7 @@ export const TwLanguage = {
   'field.BSstatus':'連線狀態',                // @12/13 Add
   'field.bsAlarm':'告警',                    // @12/13 Add
   'field.legend_all-in-one_bs':'一體式基站',  // @12/28 Add
-  'field.legend_dist_bs':'O-RAN 基站',       // @12/28 Add
+  'field.legend_dist_bs':'分佈式基站',       // @12/28 Add
   
 
 
@@ -259,6 +262,8 @@ export const TwLanguage = {
   
   'BS.name':'基站名稱',
   'BS.type':'基站類型',
+  'BS.all-in-one':'一體式', // @2024/04/18 Add
+  'BS.dist':'分佈式',       // @2024/04/18 Add
   'BS.cellCount':'Cell 數',
   'BS.description':'基站地點說明',
   'BS.belongField':'隸屬場域',

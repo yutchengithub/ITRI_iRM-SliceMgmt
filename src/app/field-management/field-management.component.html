@@ -270,7 +270,7 @@
 <!-- Confirm Window of Delete Field @2024/01/29 Update -->
 <ng-template #deleteField_ConfirmWindow>
   <!-- 標題部分，使用 languageService.i18n['confirm'] 來國際化確認文字 -->
-  <h5>{{languageService.i18n['confirm']}}</h5>
+  <h5>{{languageService.i18n['field.warningFault']}}</h5>
   
   <!-- 確認刪除的提示信息，展示場域名稱 -->
   <p>{{languageService.i18n['confirm_del_field']}} - {{selectField.name}} ?</p>
@@ -442,7 +442,7 @@
 
 <!-- 删除場域快照確認視窗 @2024/03/09 Update -->
 <ng-template #deleteSpecificFieldSnapshot_ConfirmWindow>
-  <h5>{{ languageService.i18n['confirm'] }}</h5>
+  <h5>{{ languageService.i18n['field.warningFault'] }}</h5>
   <p>{{ languageService.i18n['field.confirm_del_fieldSnapshot'] }} - {{ selectedSnapshot.name }}?</p>
   <div class="buttons">
     <button type="button" (click)="confirmDeleteSpecificFieldSnapshot()" mat-dialog-close>

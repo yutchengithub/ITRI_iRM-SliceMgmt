@@ -41,6 +41,15 @@
           };">
           <td>{{ BS.name }}</td>
           <td>{{ BS.bstype === 1 ? 'A' : 'D' }}</td>
+          <!-- <td> -->
+            <!-- 如果 BS.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
+            <!-- <label *ngIf="BS.bstype === 1"> All-in-one: [CU + DU + RU] </label> -->
+            <!-- <label *ngIf="BS.bstype === 1">{{ languageService.i18n['BS.all-in-one'] }}</label> -->
+
+            <!-- 如果 BS.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
+            <!-- <label *ngIf="BS.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label> -->
+            <!-- <label *ngIf="BS.bstype === 2">{{ languageService.i18n['BS.dist'] }}</label> -->
+          <!-- </td> -->
           <td>{{ BS.cellCount }}</td>
           <td>{{ BS.description }}</td>
           <td>{{ BS.fieldName }}</td>
@@ -71,7 +80,7 @@
 <!-- Confirm Window of Delete BS @2024/03/22 Add -->
 <ng-template #deleteBS_ConfirmWindow>
 
-  <h5>{{languageService.i18n['confirm']}}</h5>
+  <h5>{{languageService.i18n['field.warningFault']}}</h5>
   
   <!-- 確認刪除的提示信息，展示 BS 名稱 -->
   <p>{{ languageService.i18n['BS.confirm_del'] }} - {{ selectBS.name }} ?</p>

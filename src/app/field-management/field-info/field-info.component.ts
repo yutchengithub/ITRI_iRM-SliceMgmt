@@ -2405,6 +2405,7 @@ export class FieldInfoComponent implements OnInit {
       this.BasestationsInField = this.bsList.basestation.filter( bs => bs.selected );
       this.displayedBasestations = this.BasestationsInField; // 同步初始化顯示於 html 上
 
+      
       // 使用 SortAllBSInO1 函數對 O1 內所有基站進行排序
       this.SortAllBasestationsInO1 = this.SortAllBSInO1( [...this.bsList.basestation] );
       

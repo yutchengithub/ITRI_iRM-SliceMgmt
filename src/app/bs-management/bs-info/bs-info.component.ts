@@ -1613,7 +1613,7 @@ export class BSInfoComponent implements OnInit {
 
       this.filtered_CurrentBsFmList = this.currentBsFmList.faultMessage.filter( msg => {
 
-        const msgDate = new Date( msg.timestamp );
+        const msgDate = new Date( msg.modifytime );
         const isAfterFrom = msgDate >= new Date( from );
         const isBeforeTo = msgDate <= new Date( to );
         const isSeverityMatch = severity === 'All' || msg.eventtype === severity;

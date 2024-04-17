@@ -84,7 +84,7 @@ const routes: Routes = [
         ]
       },
       { 
-        path: 'fault-mgr/:cloudName/:nfName', component: FaultManagementComponent
+        path: 'fault-mgr/:fieldName/:nfName', component: FaultManagementComponent
       },
       { 
         path: 'performance-mgr', component: PerformanceManagementComponent 
