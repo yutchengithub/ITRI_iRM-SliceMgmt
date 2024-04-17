@@ -103,16 +103,16 @@
       <tbody>
 
         <!-- 當數據正在加載時顯示進度條 @2024/03/10 Add -->
-        <ng-container *ngIf="isGetUserLogsInfoLoading">
+        <!-- <ng-container *ngIf="isGetUserLogsInfoLoading">
           <tr>
             <td colspan="6">
-              <div class="progress-spinner-container">
+              <div class="progress-spinner-container"> -->
                 <!-- 指示器大小設置 -->
-                <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
-              </div>
+                <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner> -->
+              <!-- </div>
             </td>
           </tr>
-        </ng-container>
+        </ng-container> -->
 
         <!-- 加載完成後顯示 User Logs 的數據 @2024/03/10 Add -->
         <ng-container *ngIf="!isGetUserLogsInfoLoading">
@@ -243,16 +243,16 @@
       <tbody>
 
         <!-- 當數據正在加載時顯示進度條 @2024/03/10 Add -->
-        <ng-container *ngIf="isGetNELogsInfoLoading">
+        <!-- <ng-container *ngIf="isGetNELogsInfoLoading">
           <tr>
             <td colspan="6">
-              <div class="progress-spinner-container">
+              <div class="progress-spinner-container"> -->
                 <!-- 指示器大小設置 -->
-                <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+                <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
               </div>
             </td>
           </tr>
-        </ng-container>
+        </ng-container> -->
 
         <!-- 加載完成後顯示 NE Logs 的數據 @2024/03/10 Add -->
         <ng-container *ngIf="!isGetNELogsInfoLoading">

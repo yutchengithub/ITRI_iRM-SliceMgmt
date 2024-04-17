@@ -1,18 +1,22 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonService } from './../../shared/common.service';
 import { SoftwareList }  from './../../software-management/software-management.component';
 import { SoftwareLists } from './../../software-management/software-management.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary }   from 'src/app/dashboard/dashboard.component';
-import { LanguageService } from 'src/app/shared/service/language.service';
 import { FmsgList }      from './../../fault-management/fault-management.component';
 import { FaultMessages } from './../../fault-management/fault-management.component';
 import { Subscription }  from 'rxjs';
 import { XMLParser }     from "fast-xml-parser";
+
+// Services
+import { CommonService } from '../../shared/common.service';
+import { LanguageService } from '../../shared/service/language.service';
+import { SpinnerService } from '../../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
+
 
 // For import APIs of Schedule Management 
 import { apiForScheduleMgmt } from '../../shared/api/For_Schedule_Mgmt';  // @2024/03/15 Add
@@ -41,7 +45,24 @@ export class ScheduleInfoComponent implements OnInit {
     this.router.navigate(['/main/schedule-mgr']);
   }
 
+  // @2024/04/17 Add
+  // Show spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
 
+  // @2024/04/17 Add
+  // Show spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+
+  // Hide spinner @2024/04/17 Add
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
 
   constructor(
   
@@ -51,6 +72,7 @@ export class ScheduleInfoComponent implements OnInit {
     private         dialog: MatDialog,
     public   commonService: CommonService,
     public languageService: LanguageService,
+    public  spinnerService: SpinnerService,
 
     public             API_Schedule: apiForScheduleMgmt,  // API_Schedule 用於排程管理相關的 API 請求
     public  scheduleInfo_LocalFiles: localScheduleInfo,   // scheduleInfo_LocalFiles 用於從 Local Files 獲取排程資訊
@@ -96,6 +118,8 @@ export class ScheduleInfoComponent implements OnInit {
     this.isLoadingScheduleInfo = true;   // 開始加載數，顯示進度指示器
     clearTimeout( this.refreshTimeout ); // 取消之前設定的超時，避免重複或不必要的操作
 
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
+
     if ( this.commonService.isLocal ) {
 
       // Local 模式: 使用 Local 文件提供的數據
@@ -103,6 +127,7 @@ export class ScheduleInfoComponent implements OnInit {
       console.log( 'In local - Get the ScheduleInfo:', this.selectScheduleInfo );
 
       this.isLoadingScheduleInfo = false; // Local 模式下，數據加載快速完成,直接設置為 false
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
 
@@ -116,15 +141,18 @@ export class ScheduleInfoComponent implements OnInit {
           this.selectScheduleInfo = res; // 更新排程資訊
 
           this.isLoadingScheduleInfo = false; // 數據加載完成
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           // 請求出現錯誤
           console.error( 'Error fetching job ticket info:', error );
           this.isLoadingScheduleInfo = false; // 出錯時設置加載標誌為 false
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         complete: () => {
           // 數據流處理完成（ 無論成功或失敗 ）
           console.log( 'Job ticket info fetch completed' );
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -284,6 +312,8 @@ export class ScheduleInfoComponent implements OnInit {
   downloadSpecificScheduleReportInList( scheduleInfo: ScheduleInfo ) {
     console.log("downloadSpecificScheduleReportInList() - Start");
 
+    this.showProcessingSpinner();
+
     // 將選中的 scheduleInfo 賦值給 selectScheduleInfo
     this.selectScheduleInfo = scheduleInfo;
 
@@ -293,6 +323,7 @@ export class ScheduleInfoComponent implements OnInit {
       // Local 模式下無法下載報表
       console.log( "Local 模式下無法真的下載報表,\n 此點選要下載的報表名稱為:", this.selectScheduleInfo.ticketresult );
 
+      this.hideSpinner();  // 完成後隱藏 spinner
     } else {
 
       // 生產環境下向後端 API 發送請求下載報表
@@ -307,11 +338,14 @@ export class ScheduleInfoComponent implements OnInit {
 
           // 解碼 Base64 字符串並自動下載檔案
           this.commonService.downloadExcelFromBase64( response, fileName );
+
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           // 處理失敗響應
           console.error( "排程報表下載失敗:", error );
           // 例如顯示錯誤訊息給用戶
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }

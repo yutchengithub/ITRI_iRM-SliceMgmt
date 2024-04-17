@@ -2,11 +2,14 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonService } from './../../shared/common.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 
-import { LanguageService } from 'src/app/shared/service/language.service';
+// Services
+import { CommonService } from '../../shared/common.service';
+import { LanguageService } from '../../shared/service/language.service';
+import { SpinnerService } from '../../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
+
 
 // Mat Modules
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
@@ -166,6 +169,25 @@ export class FieldInfoComponent implements OnInit {
     this.router.navigate( ['/main/bs-mgr/info', this.selectBS.id, this.selectBS.name, this.selectBS.bstype ] );
   }
 
+  // @2024/04/17 Add
+  // Show spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+
+  // @2024/04/17 Add
+  // Show spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+
+  // Hide spinner @2024/04/17 Add
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
+
 // ↓ Page Init ↓
 
   constructor(
@@ -181,6 +203,7 @@ export class FieldInfoComponent implements OnInit {
 
     public      languageService: LanguageService,
     public        commonService: CommonService,
+    public spinnerService: SpinnerService,
 
     public            API_Field: apiForFieldMgmt, // @2024/03/14 Update for import API of Field Management
 
@@ -494,6 +517,7 @@ export class FieldInfoComponent implements OnInit {
 
       // 點擊 Field Image 時，開始顯示 Spinner 表載入圖片中
       this.isfieldImage_or_RsrpSinrMapLoading = true;
+      this.showLoadingSpinner();   // 顯示 Loading Spinner
 
       if ( this.activeButton_fieldImage ) {
         // 檢查 Field Image 按鈕是否有被激活。
@@ -523,7 +547,8 @@ export class FieldInfoComponent implements OnInit {
           }
           
           this.isfieldImage_or_RsrpSinrMapLoading = false; // Local 圖片載入完成，隱藏 Spinner
-  
+          this.hideSpinner();  // 完成後隱藏 spinner
+
         } else { // 如非使用 local files
   
           // 跟後端 API 取得場域圖片
@@ -534,17 +559,20 @@ export class FieldInfoComponent implements OnInit {
                   const imageSrc = 'data:image/png;base64,' + response.fieldImage;   // 將 Base64 字符串轉換為圖片 URL
                   this.displayFieldImageOnMap( imageSrc, this.currentOverlayType );  // 在地圖上顯示場域圖片
                 }
+                this.hideSpinner();  // 完成後隱藏 spinner
               },
               // 當圖片獲取失敗時，顯示其錯誤訊息
               error: ( error ) => {
                 console.error( 'Error fetching field image:', error );
                 this.isfieldImage_or_RsrpSinrMapLoading = false;  // 出錯時，也隱藏 Spinner
                 this.openNoFieldImagePromptWindow();              // 未有場域圖片時顯示提示視窗
+                this.hideSpinner();  // 完成後隱藏 spinner
               },
               // 當圖片獲取過程完成時，顯示完成訊息
               complete: () => {
                 console.log( 'Field image fetch completed' );
                 this.isfieldImage_or_RsrpSinrMapLoading = false; // 加載完成，隱藏 Spinner
+                this.hideSpinner();  // 完成後隱藏 spinner
               }
           });
         }
@@ -694,7 +722,8 @@ export class FieldInfoComponent implements OnInit {
   getSinrRsrpImage( overlayType: OverlayType ) {
     
     this.isfieldImage_or_RsrpSinrMapLoading = true; // 點擊 RSRP Map 或 SINR Map 時，開始顯示 Spinner 表載入圖片中
-
+    this.showProcessingSpinner();   // 顯示 Loading Spinner
+    
     // 根據 overlayType 決定 mapType
     const mapType = ( overlayType === OverlayType.SINR ) ? 0 : 1;
 
@@ -716,6 +745,7 @@ export class FieldInfoComponent implements OnInit {
           this.displayImageOnMap( imageSrc_localPath, overlayType );
         }
         this.isfieldImage_or_RsrpSinrMapLoading = false; // Local 圖片載入完成，隱藏 Spinner
+        this.hideSpinner();  // 完成後隱藏 spinner
       } else {
 
         // 從 fieldBounds 提取經緯度
@@ -730,14 +760,18 @@ export class FieldInfoComponent implements OnInit {
           next: ( response ) => {
             const imageSrc = 'data:image/png;base64,' + response.heatMap; // 從後端回應中獲取圖片
             this.displayImageOnMap( imageSrc, overlayType );
+
+            this.hideSpinner();  // 完成後隱藏 spinner
           },
           error: ( error ) => {
             console.error( "Error fetching SINR/RSRP image:", error );
             this.isfieldImage_or_RsrpSinrMapLoading = false; // 出錯時，也隱藏 Spinner
+            this.hideSpinner();  // 完成後隱藏 spinner
           },
           complete: () => {
             console.log( "SINR/RSRP image fetch completed" );
             this.isfieldImage_or_RsrpSinrMapLoading = false; // 加載完成，隱藏 Spinner
+            this.hideSpinner();  // 完成後隱藏 spinner
           }
         });
       }
@@ -885,6 +919,7 @@ export class FieldInfoComponent implements OnInit {
     clearTimeout( this.refreshTimeout );
 
     this.isMarkersLoading = true;
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
     
     if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
 
@@ -947,6 +982,7 @@ export class FieldInfoComponent implements OnInit {
       this.processFieldInfo(); // 處理場域資訊
       
       this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
       
@@ -1016,6 +1052,8 @@ export class FieldInfoComponent implements OnInit {
           // 確保場域資訊已經被賦值後再進行後續處理
           // Ensure field info is assigned before proceeding
           this.processFieldInfo(); // 進行後續處理
+
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
 
@@ -1024,6 +1062,7 @@ export class FieldInfoComponent implements OnInit {
           console.error( '獲取場域資訊出錯:', error );
           console.error( 'Error fetching field info:', error );
           this.isMarkersLoading = false; // 出錯時也應隱藏 spinner @12/28 Add for Progress Spinner
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         complete: () => {
 
@@ -1032,6 +1071,7 @@ export class FieldInfoComponent implements OnInit {
           console.log( '場域資訊獲取完成' );
           console.log( 'Field info fetch completed' );
           //this.isMarkersLoading = false; // 加載完成 @12/28 Add for Progress Spinner
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -4151,6 +4191,7 @@ export class FieldInfoComponent implements OnInit {
 
     // 顯示載入場域地圖 BS 資訊的 Spinner
     this.isMarkersLoading = true;
+    this.showProcessingSpinner();   // 顯示 Loading Spinner
 
     if ( this.commonService.isLocal ) {
       console.log( "本地模擬套用 SON 優化，提交的數據:", submitData ); // 本地模式日誌
@@ -4169,6 +4210,7 @@ export class FieldInfoComponent implements OnInit {
       this.getQueryPmFtpInfo();
 
       //this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
       console.log( "呼叫實際 API 前,套用 SON 優化所提交的數據:", submitData ); // 實際模式日誌
@@ -4192,11 +4234,13 @@ export class FieldInfoComponent implements OnInit {
           this.getQueryPmFtpInfo();
 
           //this.isMarkersLoading = false; // 加載完成，隱藏 Spinner
+          this.hideSpinner();  // 完成後隱藏 spinner
 
         },
         error: ( error ) => {
           console.error("套用 SON 優化出錯:", error); // 請求失敗日誌
           //this.isMarkersLoading = false; // 出錯時也應隱藏 spinner
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
       });
     }

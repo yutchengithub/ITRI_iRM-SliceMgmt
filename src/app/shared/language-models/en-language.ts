@@ -1,4 +1,6 @@
 export const Enlanguage = {
+  'loading':"Loading...",
+  'Processing':"Processing...",
 
   'logon':'Login',
   'logon.welcome':'Welcome to the',

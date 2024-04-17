@@ -11,6 +11,8 @@ import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 import * as XLSX from 'xlsx'; // 用於建立基站時上傳參數檔 @2024/03/31 Add by yuchen 
 
+import { SpinnerService } from '../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
+
 // import APIs of BS Management @2024/03/19 Add 
 import { apiForBSMgmt } from '../shared/api/For_BS_Mgmt';
 
@@ -101,6 +103,25 @@ export class BSManagementComponent implements OnInit {
     { displayName: `CU+DU+RU`, value: '3' }
   ];
 
+  // @2024/04/17 Add
+  // Show spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+
+  // @2024/04/17 Add
+  // Show spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+
+  // Hide spinner @2024/04/17 Add
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
+
   constructor(
     private         dialog: MatDialog,
     private         router: Router,
@@ -108,6 +129,7 @@ export class BSManagementComponent implements OnInit {
     private             fb: FormBuilder,
     private  commonService: CommonService,
     public languageService: LanguageService,
+    public spinnerService: SpinnerService,
 
     public  API_BS: apiForBSMgmt,           // @2024/03/19 Add for import API of BS Management
     
@@ -120,17 +142,24 @@ export class BSManagementComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    //this.showSpinner();  // 顯示 spinner
+
     this.sessionId = this.commonService.getSessionId();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
 
     this.getQueryBsList(); // @2024/03/19 Add for getting BS List
+
+    //this.hideSpinner();  // 出錯時隱藏 spinner
   }
 
   ngOnDestroy() {
     clearTimeout(this.refreshTimeout);
-    if (this.querySoftwareScpt) this.querySoftwareScpt.unsubscribe();
-    if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
+    //if (this.querySoftwareScpt) this.querySoftwareScpt.unsubscribe();
+    //if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
   }
+
+  
+
 
   bsList: BSList = {} as BSList;   // @2024/03/19 Add
   isGetQueryBsListLoading = false; // 用於表示加載 BS List 的 flag，初始設置為 false @2024/03/19 Add for Progress Spinner
@@ -143,6 +172,7 @@ export class BSManagementComponent implements OnInit {
     clearTimeout( this.refreshTimeout );
 
     this.isGetQueryBsListLoading = true; // 開始顯示 Spinner 表載入 BS List 數據中
+    this.showLoadingSpinner();  // 顯示 spinner
 
     // 檢查是否為 local 環境
     if ( this.commonService.isLocal ) { 
@@ -157,6 +187,7 @@ export class BSManagementComponent implements OnInit {
       this.queryBsListDeal();
       
       this.isGetQueryBsListLoading = false; // 加載完成，隱藏 spinner
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else {
       
@@ -171,15 +202,18 @@ export class BSManagementComponent implements OnInit {
           console.log( '基站列表資訊\n( BS List ):', this.bsList ); // 取得的 BS List 資訊 ( Obtained BS List information )
           
           this.isGetQueryBsListLoading = false; // 取得後隱藏 spinner
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           console.error( '獲取基站列表資訊出錯:', error );
           console.error( 'Error fetching - BS List:', error );
           this.isGetQueryBsListLoading = false; // 出錯時也應隱藏 spinner
+          this.hideSpinner();  // 出錯時隱藏 spinner
         },
         complete: () => {
           console.log('基站列表資訊獲取完成');
           console.log( 'BS List - fetch completed' );
+          this.hideSpinner();  // 出錯時隱藏 spinner
         }
       });
     }
@@ -276,6 +310,7 @@ export class BSManagementComponent implements OnInit {
 
     // 顯示加載指示器
     this.isGetQueryBsListLoading = true;
+    this.showProcessingSpinner();  // 顯示 spinner
 
     // 檢查是否是 Local 環境
     if ( this.commonService.isLocal ) {
@@ -291,6 +326,7 @@ export class BSManagementComponent implements OnInit {
 
       // 關閉加載指示器
       this.isGetQueryBsListLoading = false;
+      this.hideSpinner();  // 隱藏 spinner
 
     } else {
 
@@ -306,6 +342,7 @@ export class BSManagementComponent implements OnInit {
 
           // 關閉加載指示器
           this.isGetQueryBsListLoading = false;
+          this.hideSpinner();  // 出錯時隱藏 spinner
         },
         error: ( error ) => {
 
@@ -314,12 +351,14 @@ export class BSManagementComponent implements OnInit {
 
           // 關閉加載指示器
           this.isGetQueryBsListLoading = false;
+          this.hideSpinner();  // 出錯時隱藏 spinner
         },
         complete: () => {
 
           // 請求完成後的回調,不管成功或失敗都會執行
           // 關閉加載指示器
           this.isGetQueryBsListLoading = false;
+          this.hideSpinner();  // 出錯時隱藏 spinner
         }
       });
     }

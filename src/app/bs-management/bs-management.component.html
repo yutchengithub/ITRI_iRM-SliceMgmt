@@ -19,19 +19,19 @@
     <tbody>
 
       <!-- 當數據正在加載時顯示進度條 -->
-      <ng-container *ngIf="isGetQueryBsListLoading">
-        <tr>
-          <td colspan="6">
-            <div class="progress-spinner-container">
+      <!-- <ng-container *ngIf="isGetQueryBsListLoading"> -->
+        <!-- <tr>
+          <td colspan="6"> -->
+            <!-- <div class="progress-spinner-container"> -->
               <!-- 指示器大小設置 -->
-              <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
-            </div>
+              <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner> -->
+            <!-- </div>
           </td>
         </tr>
-      </ng-container>
+      </ng-container> -->
 
       <!-- 加載完成後顯示 BS 列表 數據 -->
-      <ng-container *ngIf="!isGetQueryBsListLoading">
+      <!-- <ng-container *ngIf="!isGetQueryBsListLoading"> -->
         <tr
           *ngFor="let BS of bsList.basestation | paginate: { 
             itemsPerPage: pageSize, 
@@ -56,7 +56,7 @@
             <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}" (click)="openDeleteBS_ConfirmWindow( BS )">delete_forever</mat-icon>
           </td>
         </tr>
-      </ng-container>
+      <!-- </ng-container> -->
     </tbody>
   </table>
 </div>

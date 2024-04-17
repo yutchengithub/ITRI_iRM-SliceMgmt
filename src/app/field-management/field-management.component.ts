@@ -6,8 +6,11 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+
+// Services
 import { CommonService } from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
+import { SpinnerService } from '../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
 
 // For import APIs of Field Management 
 import { apiForFieldMgmt } from '../shared/api/For_Field_Mgmt';  // @2024/01/29 Add 
@@ -45,6 +48,25 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   refreshTimeout!: any;         // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
       refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
 
+  // @2024/04/17 Add
+  // Show spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+
+  // @2024/04/17 Add
+  // Show spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+
+  // Hide spinner @2024/04/17 Add
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
+
   // 類的構造函數，注入了多個依賴項目
   constructor(
 
@@ -52,6 +74,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     private dialog:         MatDialog,       // MatDialog 用於彈出對話框
     public languageService: LanguageService, // LanguageService 用於語言切換和國際化
     private commonService:  CommonService,   // CommonService 提供通用的服務（如 Session ID 獲取）
+    public spinnerService: SpinnerService,
     private fb:             FormBuilder,     // FormBuilder 用於建立表單
 
     public                    API_Field: apiForFieldMgmt,         // API_Field 用於場域管理相關的 API 請求
@@ -120,7 +143,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   getQueryFieldList() {
     console.log('getQueryFieldList() - Start');
     this.isLoading = true; // 開始加載數據，顯示進度指示器
-    
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
+
     clearTimeout( this.refreshTimeout ); // 取消之前設定的超時，避免重複或不必要的操作
     
     if ( this.commonService.isLocal ) {
@@ -130,6 +154,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       console.log( 'In local - getQueryFieldList:', this.fieldList );
 
       this.isLoading = false; //  Local 模式下，數據加載快速完成，直接設置為 false
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
 
@@ -142,6 +167,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
           this.fieldList = res; // 更新場域列表數據
           this.FieldListDeal(); // 調用處理函數，進行數據處理（如分頁）
+
+          this.hideSpinner();  // 完成後隱藏 spinner
           
         },
         error: ( error ) => {
@@ -149,11 +176,13 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           // 請求出現錯誤
           console.error('Error fetching field info:', error);
           this.isLoading = false; // 出錯時設置加載標誌為 false
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         complete: () => {
           // 數據流處理完成（ 無論成功或失敗 ）
           console.log('Field info fetch completed');
           this.isLoading = false; // 數據加載完成
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -723,12 +752,14 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     // 在控制台記錄開始執行函數的訊息
     console.log( "toCreateFieldSnapshot() - Start" );
 
+    this.showProcessingSpinner();   // 顯示 Loading Spinner
+
     // 檢查是否在 Local 環境下模擬執行
     if ( this.commonService.isLocal ) {
 
       //  Local 模式下模擬場域快照建立過程
       console.log( "Local 模擬 ( 無法真的建立 )\n - 要產生快照的場域 ID 為:", this.selectField.id );
-
+      this.hideSpinner();  // 完成後隱藏 spinner
     } else {
 
       console.log( "選擇要產生快照的場域 ID 為:", this.selectField.id );
@@ -743,11 +774,13 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           // 儲存剛建立的場域快照 ID 進指定變數
           this.currentFieldSnapshotID = response.id;
           console.log( "this.currentFieldSnapshotID:", this.currentFieldSnapshotID );
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           // 處理失敗響應
           console.error("場域快照建立失敗:", error);
           // 例如顯示錯誤訊息給用戶
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -772,6 +805,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       id: this.currentFieldSnapshotID
     };
 
+    this.showProcessingSpinner();   // 顯示 Loading Spinner
+
     // 檢查是否在 Local 環境下模擬執行
     if ( this.commonService.isLocal ) {
 
@@ -783,6 +818,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
       // 重置"輸入場域名稱"欄位表單
       this.resetFieldSnapshotSetForm();
+
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
 
@@ -797,11 +834,15 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
           // 重置"輸入場域名稱"欄位表單
           this.resetFieldSnapshotSetForm();
+
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           // 處理失敗響應
           console.error( "快照儲存失敗:", error );
           // 例如顯示錯誤訊息給用戶
+
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -814,12 +855,15 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   downloadCurrentFieldSnapshot() {
     console.log( "downloadCurrentFieldSnapshot() - Start" );
 
+    this.showProcessingSpinner();   // 顯示 Loading Spinner
+
     // 檢查是否在 Local 環境下模擬執行
     if ( this.commonService.isLocal ) {
 
       //  Local 模式下無法下載快照
       //console.log( "Local 模式下無法下載快照，此剛建立的場域快照ID為:", this.currentFieldSnapshotID );
       console.log( "Local 模式下無法真的建立快照，故也無法下載。" );
+      this.showProcessingSpinner();   // 顯示 Loading Spinner
 
     } else {
 
@@ -839,11 +883,14 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
           // 解碼 Base64 字符串並自動下載 .xlsx 文件
           this.commonService.downloadExcelFromBase64( response, fileName );
+
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           // 處理失敗響應
           console.error( "下載剛建立的場域快照失敗:", error );
           // 例如顯示錯誤訊息給用戶
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -856,12 +903,14 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   downloadSpecificFieldSnapshotInList( snapshot: FieldSnapshot ) {
     console.log( "downloadSpecificFieldSnapshotInList() - Start" );
 
+    this.showProcessingSpinner();   // 顯示 Loading Spinner
+
     // 檢查是否在 Local 環境下模擬執行
     if ( this.commonService.isLocal ) {
 
       //  Local 模式下無法下載快照
       console.log( "Local 模式下無法真的下載快照，\n 此點選要下載的快照名稱為:", snapshot.name );
-
+      this.hideSpinner();  // 完成後隱藏 spinner
     } else {
 
       // 生產環境下向後端 API 發送請求下載快照
@@ -892,11 +941,14 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
           // 解碼 Base64 字符串並自動下載 .xlsx 文件
           this.commonService.downloadExcelFromBase64( response, fileName );
+
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           // 處理失敗響應
           console.error( "快照下載失敗:", error );
           // 例如顯示錯誤訊息給用戶
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -941,6 +993,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     clearTimeout( this.refreshTimeout );
 
     this.isGetQueryFieldSnapshotLoading = true; // 設置加載旗標為 true，表示開始加載
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
 
     // 檢查是否在 Local 測試環境
     if ( this.commonService.isLocal ) {
@@ -959,6 +1012,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
       // 設置加載旗標為 false，表示加載完成
       this.isGetQueryFieldSnapshotLoading = false;
+      this.hideSpinner();  // 完成後隱藏 spinner
 
       console.log( '目前 local 環境中，指定場域內已儲存的 Snapshot List:\n', this.getFieldSnapshotList ); 
 
@@ -983,6 +1037,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
           // 設置加載旗標為 false，表示加載完成
           this.isGetQueryFieldSnapshotLoading = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
 
           console.log( '目前指定場域內已儲存的 Snapshot List:\n', this.getFieldSnapshotList );
 
@@ -994,11 +1049,13 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
           // 設置加載旗標為 false，表示加載出錯
           this.isGetQueryFieldSnapshotLoading = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         complete: () => {
 
           // 在控制台中記錄指定場域內的 Snapshot List 獲取完成的訊息
           console.log( 'Snapshot List fetch completed' );
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -1052,7 +1109,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   confirmDeleteSpecificFieldSnapshot() {
 
     this.isGetQueryFieldSnapshotLoading = true; // 設置加載旗標為 true，表示開始加載刪除
-    
+    this.showProcessingSpinner();   // 顯示 Loading Spinner
+
     // 檢查是否是 Local 環境
     if ( this.commonService.isLocal ) {
 
@@ -1067,6 +1125,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
       // 設置加載旗標為 false，表示刪除加載完成
       this.isGetQueryFieldSnapshotLoading = false;
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
 
@@ -1082,12 +1141,14 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
           // 設置加載旗標為 false，表示刪除加載完成
           this.isGetQueryFieldSnapshotLoading = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           console.error( 'Failed to delete snapshot:', error );
 
           // 設置加載旗標為 false，表示刪除加載出錯
           this.isGetQueryFieldSnapshotLoading = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }

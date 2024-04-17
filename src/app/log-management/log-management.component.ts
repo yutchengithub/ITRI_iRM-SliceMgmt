@@ -1,16 +1,19 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { CommonService } from '../shared/common.service';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { LanguageService } from '../shared/service/language.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 //import * as CryptoJS from 'crypto-js'; @11/23 Add by yuchen 
 import * as XLSX from 'xlsx';         // @11/23 Add by yuchen 
 //import { saveAs } from 'file-saver';  // @11/23 Add by yuchen 
+
+// Services
+import { CommonService } from '../shared/common.service';
+import { LanguageService } from '../shared/service/language.service';
+import { SpinnerService } from '../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
 
 // For import APIs of Field Management @2024/03/14 Add 
 import { apiForLogMgmt } from '../shared/api/For_Log_Mgmt';
@@ -98,6 +101,25 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   show200Msg = false;
   show500Msg = false;
 
+  // @2024/04/17 Add
+  // Show spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+
+  // @2024/04/17 Add
+  // Show spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+
+  // Hide spinner @2024/04/17 Add
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
+
 
 // ↓ For Page Init, Destroy ↓
 
@@ -105,6 +127,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     private http: HttpClient,
     public commonService: CommonService,
+    public spinnerService: SpinnerService,
     private fb: FormBuilder,
     private route: ActivatedRoute,
     public languageService: LanguageService,
@@ -376,7 +399,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   UserLogs_getNum = 0;              // 用於記錄取得 User Logs 資訊之次數
   isGetUserLogsInfoLoading = false; // 用於表示加載 User Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
   
-  // @2024/04/05 Update
+  // @2024/04/17 Update
   getUserLogsInfo() {
     console.log( 'getUserLogsInfo() - Start' );
 
@@ -390,6 +413,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     clearTimeout( this.refreshTimeout );
 
     this.isGetUserLogsInfoLoading = true; // 設置加載旗標為 true，表示開始加載
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
 
     if ( this.commonService.isLocal ) {
       // Local Test
@@ -410,6 +434,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       // 設置加載旗標為 false，表示加載完成
       this.isGetUserLogsInfoLoading = false;
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
 
@@ -501,15 +526,18 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
             // 設置加載旗標為 false，表示加載完成
             this.isGetUserLogsInfoLoading = false;
+            this.hideSpinner();  // 完成後隱藏 spinner
           },
           error: ( error ) => {  // 錯誤的 callback
             console.error( 'Error fetching user logs:', error ); // 顯示錯誤訊息
 
             // 設置加載旗標為 false，表示加載出錯
             this.isGetUserLogsInfoLoading = false;
+            this.hideSpinner();  // 完成後隱藏 spinner
           },
           complete: () => {    // 完成的 callback
             console.log( 'User logs fetch completed' );   // 顯示完成訊息
+            this.hideSpinner();  // 完成後隱藏 spinner
           }
         });
 
@@ -552,7 +580,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   NELogs_getNum = 0; // 用於記錄取得 NE Logs 資訊之次數
   isGetNELogsInfoLoading = false; // 用於表示加載 NE Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
   
-  // Get NE Logs @2024/04/05 Update
+  // Get NE Logs @2024/04/17 Update
   getNELogsInfo() {
     console.log( 'getNELogsInfo() - Start' );
     
@@ -563,6 +591,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     clearTimeout( this.refreshTimeout );
 
     this.isGetNELogsInfoLoading = true; // 設置加載旗標為 true，表示開始加載
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
 
     if ( this.commonService.isLocal ) {
       // Local Test
@@ -583,6 +612,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       // 設置加載旗標為 false，表示加載完成
       this.isGetNELogsInfoLoading = false;
+
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
 
@@ -692,15 +723,18 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
           // 設置加載旗標為 false，表示加載完成
           this.isGetNELogsInfoLoading = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {   // 錯誤的 callback
           console.error( 'Error fetching NE logs:', error ); // 顯示錯誤訊息
 
           // 設置加載旗標為 false，表示加載出錯
           this.isGetNELogsInfoLoading = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         complete: () => {     // 完成的 callback
           console.log( 'NE logs fetch completed' );          // 顯示完成訊息
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -746,6 +780,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   getNEList() {
     console.log( 'getNEList() - Start' ); // 輸出開始取得 NE 列表的日誌
 
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
+
     if ( this.commonService.isLocal ) {
 
       // 如果是本地模式
@@ -754,6 +790,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       // 處理獲取的 NE 列表,將 id 和 name 存儲到 neidNamePairs 中
       this.processNEList( this.NEList );
+
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
 
@@ -766,16 +804,21 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           this.NEList = res; // 將獲取到的 NE 列表賦值給 NEList 屬性
           this.processNEList( this.NEList ); // 處理獲取的 NE 列表
 
+          this.hideSpinner();  // 完成後隱藏 spinner
+
         },
         error: ( error ) => {
 
           // 獲取 NE 列表出錯
           console.error( 'Error fetching NE list:', error ); // 輸出錯誤日誌
+
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         complete: () => {
 
           // 獲取 NE 列表完成
           console.log( 'NE list fetch completed' ); // 輸出完成日誌
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -922,8 +965,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     this.afterSearchForm = _.cloneDeep( this.searchForm ); // @12/01 Add by yuchen
 
-
     this.isGetUserLogsInfoLoading = true; // 設置加載旗標為 true，表示開始加載
+    this.showProcessingSpinner();   // 顯示 Loading Spinner
 
     // 如是在 Local 環境測試
     if ( this.commonService.isLocal ) {
@@ -958,6 +1001,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       // 設置加載旗標為 false，表示加載完成
       this.isGetUserLogsInfoLoading = false;
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {  // 如非在 Local 環境測試
 
@@ -1026,12 +1070,14 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
           // 設置加載旗標為 false，表示加載完成
           this.isGetUserLogsInfoLoading = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {  // 錯誤的 callback
           console.error( 'Error searching user logs:', error ); // 顯示錯誤訊息
 
           // 設置加載旗標為 false，表示加載出錯
           this.isGetUserLogsInfoLoading = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
 
@@ -1093,6 +1139,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     this.afterSearchForm = _.cloneDeep( this.searchForm ); // @12/04 Add by yuchen
 
     this.isGetNELogsInfoLoading = true; // 設置加載旗標為 true，表示開始加載
+    this.showProcessingSpinner();   // 顯示 Loading Spinner
 
     // 如果是在 Local 環境測試
     if ( this.commonService.isLocal ) {
@@ -1129,6 +1176,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       // 設置加載旗標為 false，表示加載完成
       this.isGetNELogsInfoLoading = false;
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {  // 如非在 Local 環境測試
 
@@ -1215,12 +1263,14 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
           // 設置加載旗標為 false，表示加載完成
           this.isGetNELogsInfoLoading = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {   // 錯誤的 callback
           console.error( 'Error searching NE logs:', error ); // 顯示錯誤訊息
 
           // 設置加載旗標為 false，表示加載出錯
           this.isGetNELogsInfoLoading = false;
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
 

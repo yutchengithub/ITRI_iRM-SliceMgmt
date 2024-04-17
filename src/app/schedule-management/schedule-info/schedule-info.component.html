@@ -19,12 +19,12 @@
     </label>
 
     <!-- 當數據正在加載時顯示進度條 @2024/03/24 Add -->
-    <ng-container *ngIf="isLoadingScheduleInfo">
-        <div class="progress-spinner-container">
+    <!-- <ng-container *ngIf="isLoadingScheduleInfo">
+        <div class="progress-spinner-container"> -->
           <!-- 指示器大小設置 -->
-          <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="150"></mat-progress-spinner>
+          <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="150"></mat-progress-spinner>
         </div>
-    </ng-container>
+    </ng-container> -->
 
     <!-- 加載完成後顯示 排程資訊 數據 @2024/03/24 Add -->
     <ng-container *ngIf="!isLoadingScheduleInfo">

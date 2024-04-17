@@ -38,10 +38,12 @@ import { MatTooltipModule } from '@angular/material/tooltip'; // @2024/03/08 Add
 import { MatSelectModule } from '@angular/material/select';   // @2024/03/21 Add 
 
 import { NgxPaginationModule } from 'ngx-pagination';
+import { SpinnerModule } from 'src/app/shared/models/spinner/spinner.module';   // @2024/04/17 Add 
+
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Spinner
 import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
-import { CommonService } from './shared/common.service';
+
 import { AuthGuard } from './shared/guard/auth.guard';
 import { HttpErrorInterceptor } from './shared/http-error.interceptor';
 import { DatePickerFormatDirective } from './shared/directive/date-picker-format.directive';
@@ -57,7 +59,7 @@ import { OCloudPerformanceComponent } from './performance-management/o-cloud-per
 import { NfPerformanceComponent } from './performance-management/nf-performance/nf-performance.component';
 import { NfPerformanceInfoComponent } from './performance-management/nf-performance-info/nf-performance-info.component';
 import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
-import { LanguageService } from './shared/service/language.service';
+
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { GoogleMapsModule } from '@angular/google-maps';        // @12/10 Add by yuchen for google maps
@@ -72,6 +74,12 @@ import { MatInputModule } from '@angular/material/input';      // @2024/01/31 Ad
 import { MatStepperModule } from '@angular/material/stepper';  // @2024/01/31 Add
 import { MatExpansionModule } from '@angular/material/expansion'; // 用於縮合效果 @2024/02/29 Add
 import { MatCheckboxModule } from '@angular/material/checkbox'; // @2024/03/30 Add
+
+// Services
+import { CommonService } from './shared/common.service';
+import { LanguageService } from './shared/service/language.service';
+import { SpinnerService } from './shared/service/spinner.service'; // 用於控制顯示 Spinner @2024/04/17 Add
+import { NgxSpinnerModule } from "ngx-spinner";
 
 // Pipe 管道
 import { TruncatePipe } from './shared/pipes/truncate.pipe';             // @11/16 Add by yuchen 
@@ -203,11 +211,16 @@ import { localNEList }            from './shared/local-files/NE/For_queryBsCompo
     MatTooltipModule,   // @2024/03/08 Add 
     MatSelectModule,    // @2024/03/21 Add
     MatCheckboxModule,  // @2024/03/30 Add
+
+    BrowserAnimationsModule,
+    SpinnerModule,// @2024/04/17 Add
+    NgxSpinnerModule
   ],
   providers: [
     AuthGuard,
     LanguageService,
     CommonService,
+    SpinnerService,     // @2024/04/17 Add for Control Spinner
 
     apiForFieldMgmt,    // @2024/03/14 Update for import API of Field Management
     apiForBSMgmt,       // @2024/03/14 Add for import API of BS Management

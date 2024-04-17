@@ -1,16 +1,21 @@
 import { Component, OnInit, TemplateRef, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonService } from '../../shared/common.service';
 import { SoftwareList } from '../../software-management/software-management.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary } from 'src/app/dashboard/dashboard.component';
-import { LanguageService } from 'src/app/shared/service/language.service';
 import { FmsgList } from './../../fault-management/fault-management.component';
 import { FaultMessages } from './../../fault-management/fault-management.component';
 import { ChangeDetectorRef } from '@angular/core';
+
+// Services
+import { CommonService } from '../../shared/common.service';
+import { LanguageService } from '../../shared/service/language.service';
+import { SpinnerService } from '../../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
+
+import { NgxSpinnerService } from 'ngx-spinner';
 
 // import custom pipe modules 
 import { ParsePositionPipe } from '../../shared/pipes/position-parser.pipe'; // @2024/04/14 Add
@@ -65,6 +70,7 @@ export class BSInfoComponent implements OnInit {
     private         dialog: MatDialog,
     public   commonService: CommonService,
     public languageService: LanguageService,
+    public  spinnerService: SpinnerService,
     private changeDetectorRef: ChangeDetectorRef,
 
     public  API_BS: apiForBSMgmt,           // @2024/03/25 Add for import API of BS Management
@@ -120,6 +126,8 @@ export class BSInfoComponent implements OnInit {
   // 頁面初始化 @2024/03/25 Update
   ngOnInit(): void {
 
+    //this.showLoadingSpinner();   // 顯示 Loading Spinner
+
     this.sessionId = this.commonService.getSessionId();
 
     this.route.params.subscribe(( params ) => {
@@ -144,7 +152,11 @@ export class BSInfoComponent implements OnInit {
       this.getCurrentBsFmList();
     });
 
-    this.drawConnectingLines();
+    //this.drawConnectingLines();
+
+   // this.spinner.hide();
+
+    
   }
 
   ngOnDestroy() {
@@ -161,6 +173,9 @@ export class BSInfoComponent implements OnInit {
       //this.changeDetectorRef.detectChanges();
       this.drawConnectingLines();
     //});
+    //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
+
+   // this.hideSpinner();  // 完成後隱藏 spinner
 
   }
 
@@ -177,6 +192,25 @@ export class BSInfoComponent implements OnInit {
     this.router.navigate( ['/main/component-mgr/info', NE.id, NE.bsId] );
   }
 
+  // @2024/04/17 Add
+  // Show spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+
+  // @2024/04/17 Add
+  // Show spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+
+  // Hide spinner @2024/04/17 Add
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
+
 
 // ↓ 基本資訊區 ↓
 
@@ -188,7 +222,7 @@ export class BSInfoComponent implements OnInit {
   selectDistBsPosition: string = "";                  // 用於存儲當前選中的分佈式 BS 位置
   
   /**
-   * @2024/04/15 Update
+   * @2024/04/17 Update
    * 取得基站資訊
    * @method getQueryBsInfo
    * @description
@@ -202,7 +236,9 @@ export class BSInfoComponent implements OnInit {
   getQueryBsInfo() {
     console.log( 'getQueryBsInfo() - Start' );
 
-    this.isLoadingBsInfo = true;         // 開始加載數據，顯示進度指示器
+    this.isLoadingBsInfo = true; // 開始加載數據，顯示進度指示器
+
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
 
     clearTimeout( this.refreshTimeout ); // 取消之前設定的超時，避免重複或不必要的操作
 
@@ -253,8 +289,6 @@ export class BSInfoComponent implements OnInit {
       // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 
       //this.getNEList(); 
 
-      this.isLoadingBsInfo = false; // Local 模式下，數據加載快速完成，直接設置為 false
-
       // @2024/04/16 Update
       // 獲取 NCI 列表並設定預設選擇的 NCI、ExtensionInfo、NeighborList ( 預設"基站參數"與"鄰居基站列表"的 Cell 為 nciList 中第一筆 )
       if ( this.bsType === '1' && this.selectBsInfo ) {
@@ -270,6 +304,9 @@ export class BSInfoComponent implements OnInit {
         this.selectedNeighborNci = this.nciList[0]; // 初始化鄰居基站列表的選擇
         this.neighborList = this.getNeighborList( this.selectedNeighborNci );
       }
+
+      this.isLoadingBsInfo = false; // Local 模式下，數據加載快速完成，直接設置為 false
+     // this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else {
       
@@ -345,9 +382,11 @@ export class BSInfoComponent implements OnInit {
         error: ( error ) => {
           console.error( 'Error fetching BS info:', error );
           this.isLoadingBsInfo = false; // 出錯時設置加載標誌為 false
+          //this.hideSpinner();  // 出錯時隱藏 spinner
         },
         complete: () => {
           console.log( 'BS info fetch completed' );
+          //this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -361,12 +400,13 @@ export class BSInfoComponent implements OnInit {
            NEList: NEList = {} as NEList; // 用於儲存 O1 系統內的網元列表
   isLoadingNEList = true; // 控制加載 NE List 資訊狀態的標誌，初始設置為 true
 
-  // @2024/03/29 Update
+  // @2024/04/17 Update
   // 用於取得 NE 列表資訊的函數
   getNEList() {
     console.log( 'getNEList() - Start' ); // 輸出開始取得 NE 列表的日誌
 
-    this.isLoadingNEList = true;          // 開始加載數據，顯示進度指示器
+    this.isLoadingNEList = true;  // 開始加載數據，顯示進度指示器
+    //this.showLoadingSpinner();    // 顯示 Loading Spinner
 
     if ( this.commonService.isLocal ) {
 
@@ -381,6 +421,8 @@ export class BSInfoComponent implements OnInit {
       this.filterNEListByBSName();       
 
       this.isLoadingNEList = false; // Local 模式下，數據加載快速完成，直接設置為 false
+
+      //this.hideSpinner();  // 完成後隱藏 spinner
 
       this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
 
@@ -399,6 +441,8 @@ export class BSInfoComponent implements OnInit {
           this.filterNEListByBSName();    
 
           this.isLoadingNEList = false; // 數據加載完成
+          
+         // this.hideSpinner();  // 完成後隱藏 spinner
 
           this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
           
@@ -408,6 +452,7 @@ export class BSInfoComponent implements OnInit {
           // 獲取 NE 列表出錯
           console.error( 'Error fetching NE list:', error ); // 輸出錯誤日誌
           this.isLoadingNEList = false; // 出錯時設置加載標誌為 false
+          //this.hideSpinner();  // 出錯時隱藏 spinner
         },
         complete: () => {
 
@@ -415,7 +460,7 @@ export class BSInfoComponent implements OnInit {
           console.log( 'NE list fetch completed' ); // 輸出完成日誌
 
           this.drawConnectingLines();
-          this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -930,9 +975,11 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
-  // @2024/04/14 Add
-  // 用於呼叫 API 更新一體式基站 @2024/04/14 Add
+  // @2024/04/17 Update
+  // 用於呼叫 API 更新一體式基站
   updateBs( submitData: ForUpdateBs ) {
+
+    this.showProcessingSpinner(); // 顯示 Processing Spinner
 
     if ( this.commonService.isLocal ) {
       // 本地模式
@@ -950,6 +997,8 @@ export class BSInfoComponent implements OnInit {
       //   this.getQueryBsInfo();
       //   setTimeout(() => this.isModifySuccess = false, 4500);
       // }, 500); // 模擬非同步操作
+
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else {
       // 非本地模式，實際呼叫 API
@@ -977,20 +1026,25 @@ export class BSInfoComponent implements OnInit {
           this.getCurrentBsFmList()
 
           this.BsBasicInfoEditWindowRef.close(); // 更新讀取完後，關閉編輯設定視窗
+
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         // 錯誤回調函數
         error: ( error ) => {
           // 輸出更新失敗的日誌
           console.error( 'Update BS fail', error );
+          this.hideSpinner();  // 出錯時隱藏 spinner
         }
       });
     }
 
   }
 
-  // @2024/04/14 Add
-  // 用於呼叫 API 更新分布式基站 @2024/04/14 Add
+  // @2024/04/17 Update
+  // 用於呼叫 API 更新分布式基站
   updateDistributedBs( submitData: ForUpdateDistributedBs ) {
+
+    this.showProcessingSpinner(); // 顯示 Processing Spinner
 
     if ( this.commonService.isLocal ) {
       // 本地模式
@@ -1008,6 +1062,8 @@ export class BSInfoComponent implements OnInit {
       //   this.getQueryBsInfo();
       //   setTimeout(() => this.isModifyError = false, 4500);
       // }, 500); // 模擬非同步操作
+
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else {
       // 非本地模式，實際呼叫 API
@@ -1035,18 +1091,21 @@ export class BSInfoComponent implements OnInit {
           this.getCurrentBsFmList()
 
           this.BsBasicInfoEditWindowRef.close(); // 更新讀取完後，關閉編輯設定視窗
+
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         // 錯誤回調函數
         error: ( error ) => {
           // 輸出更新失敗的日誌
           console.error( 'Update Distributed BS fail', error );
+          this.hideSpinner();  // 出錯時隱藏 spinner
         }
       });
     }
 
   }
   
-  // ↑ 編輯設定 @2024/04/14 Add ↑
+  // ↑ 編輯設定 @2024/04/17 Update ↑
 
 
 // ↑ 基本資訊區 ↑
@@ -1347,7 +1406,7 @@ export class BSInfoComponent implements OnInit {
   NEList_InThisBS: NEList = {} as NEList;
 
   // @2024/03/29 Add
-  // 篩選出在 this.bsName 中的網元,並存儲到 NEList_InThisBS 中
+  // 篩選出在 this.bsName 中的網元，並存儲到 NEList_InThisBS 中
   filterNEListByBSName() {
     console.log('filterNEListByBSName() - Start');
 
@@ -1411,12 +1470,13 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
-  // @2024/04/01 Update
+  // @2024/04/17 Update
   // 取得指定基站的當前告警資訊
   getCurrentBsFmList() {
     console.log('getCurrentBsFmList() - Start');
 
     this.isLoadingCurrentBsFmList = true; // 設置加載旗標為 true,表示開始加載
+    //this.showLoadingSpinner();            // 顯示 Loading Spinner
 
     if ( this.commonService.isLocal ) {
       
@@ -1434,6 +1494,8 @@ export class BSInfoComponent implements OnInit {
       console.log("In getCurrentBsFmList() not click search (Local mode) - msgToDisplay:", this.msgToDisplay);
 
       this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載完成
+
+      //this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
 
@@ -1483,6 +1545,8 @@ export class BSInfoComponent implements OnInit {
 
             console.log("In getCurrentBsFmList() not click search - msgToDisplay:", this.msgToDisplay);
 
+            //this.hideSpinner();  // 完成後隱藏 spinner
+
           } else {
             // 如點擊 Search 過
             console.log('In getCurrentBsFmList() click search - res:', res);
@@ -1505,9 +1569,11 @@ export class BSInfoComponent implements OnInit {
           console.error('Error fetching current bs fault message:', error); // 顯示錯誤訊息
 
           this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載出錯
+          //this.hideSpinner();  // 出錯時隱藏 spinner
         },
         complete: () => {    // 完成的 callback
           console.log('Current bs fault message fetch completed');   // 顯示完成訊息
+          //this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
 
@@ -1519,7 +1585,7 @@ export class BSInfoComponent implements OnInit {
   // 告警嚴重程度選項 @2024/04/01 Add
   severitys: string[] = ['CRITICAL', 'MAJOR', 'MINOR', 'WARNING'];
   
-  // 搜尋基站告警 @2024/04/01 Add
+  // 搜尋基站告警 @2024/04/17 Update
   search_currentBsFmList() {
     console.log( 'search_currentBsFmList() - Start' );
 
@@ -1547,6 +1613,7 @@ export class BSInfoComponent implements OnInit {
     this.afterAlarmSearchForm = _.cloneDeep( this.alarmSearchForm );
 
     this.isLoadingCurrentBsFmList = true; // 設置加載旗標為 true,表示開始加載
+    this.showProcessingSpinner(); // 顯示 Processing Spinner
 
     if ( this.commonService.isLocal ) {
 
@@ -1572,6 +1639,7 @@ export class BSInfoComponent implements OnInit {
       console.log( "In search_currentBsFmList() in Local mode - msgToDisplay:", this.msgToDisplay );
 
       this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載完成
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else {  // 如非在 Local 環境測試
 
@@ -1619,11 +1687,13 @@ export class BSInfoComponent implements OnInit {
           console.log( "In search_currentBsFmList() - msgToDisplay:", this.msgToDisplay );
 
           this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載完成
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {  // 錯誤的 callback
           console.error( 'Error searching current bs fault message:', error ); // 顯示錯誤訊息
 
-          this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false,表示加載出錯
+          this.isLoadingCurrentBsFmList = false; // 設置加載旗標為 false，表示加載出錯
+          this.hideSpinner();  // 出錯時隱藏 spinner
         }
       });
 
