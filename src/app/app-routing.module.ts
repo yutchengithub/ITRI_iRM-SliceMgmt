@@ -79,7 +79,8 @@ const routes: Routes = [
         path: 'component-mgr',
         children: [
           { path: '', component: ComponentManagementComponent },
-          { path: 'info/:id/:name', component: ComponentInfoComponent }
+          // { path: 'info/:id/:name', component: ComponentInfoComponent },
+          { path: 'info/:id', component: ComponentInfoComponent }
         ]
       },
       { 

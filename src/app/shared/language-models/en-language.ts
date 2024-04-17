@@ -440,6 +440,9 @@ export const Enlanguage = {
   'cm.path':'Path',
   'cm.download':'Download',
   'cm.container': 'If you update the single container, you will lose all other unsaved changes. Are you sure you want to continue?',
+  'cm.notice' : 'Notice',
+  'cm.applysoftware' : 'Software Apply Success',
+  'cm.restart' : 'Reboot',
 
   // Account Management
   'user_account':'User',

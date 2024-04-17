@@ -127,6 +127,10 @@ export class ComponentInfoComponent implements OnInit {
   @ViewChild('updateModal') updateModal: any;
   @ViewChild('updateIPModal') updateIPModal: any;
   @ViewChild('uploadModal') uploadModal: any;
+  @ViewChild('noticeApplySoftwareModal') noticeApplySoftwareModal: any;
+  @ViewChild('applySoftwareStatusModal') applySoftwareStatusModal: any;
+  applySoftwareStatusModalRef!: MatDialogRef<any>;
+  applySoftwareModalRef!: MatDialogRef<any>;
   updateModalRef!: MatDialogRef<any>;
   updateIPModalRef!: MatDialogRef<any>;
   updateForm!: FormGroup;
@@ -171,6 +175,7 @@ export class ComponentInfoComponent implements OnInit {
   };
   updatedJsonString: string = '';
   selectedSlotName: string = '';
+  activateSuccess: boolean = false;
   isObject(value: any): boolean {
     return typeof value === 'object' && value !== null;
   }
@@ -203,6 +208,7 @@ export class ComponentInfoComponent implements OnInit {
     clearTimeout(this.refreshTimeout);
   }
   getComponentInfo() {
+    this.activateSuccess = false;
     const parseOption = {
       cdataTagName: "![CDATA[",
       cdataPositionChar: "\\c",
@@ -541,6 +547,16 @@ export class ComponentInfoComponent implements OnInit {
     this.selectedSlotName = slotName;
   }
 
+  openApplySoftwareModal() {
+    this.applySoftwareModalRef = this.dialog.open(this.noticeApplySoftwareModal, {
+      id: 'noticeApplySoftwareModal'
+    });
+  }
+  openApplySoftwareStatusModal() {
+    this.applySoftwareModalRef = this.dialog.open(this.applySoftwareStatusModal, {
+      id: 'applySoftwareStatusModal'
+    });
+  }
   applySoftware(){
     const body: any = {
       session: this.sessionId,
@@ -548,10 +564,39 @@ export class ComponentInfoComponent implements OnInit {
       slotName: this.selectedSlotName,
       uploadid: this.uploadinfos[0].id,
     };
-    console.log(body);
+    this.openApplySoftwareStatusModal();
+    const checkStatus = () => {
+      this.commonService.queryApplySoftwareStatusInfo(this.componentInfo.id).subscribe(
+          res => {
+              //console.log(res);
+              if (res.includes("Activate Success")) {
+                  console.log("Activate Success achieved:", res);
+                  this.applySoftwareModalRef.close();
+                  this.openApplySoftwareModal();
+                  this.activateSuccess = true;
+              } else {
+                 setTimeout(checkStatus, 1000);
+              }
+          }
+      );
+    };
+    checkStatus();
     this.commonService.applySoftware(body).subscribe(
-      () => console.log('Update Successful.')
+        () => {
+            console.log('Applying Software.');
+        }
     );
+  }
+
+  resetBs(){
+    const body: any = {
+      session: this.sessionId,
+      componentid: this.componentInfo.id
+    };
+    this.commonService.resetBs(body).subscribe();
+    this.getComponentInfo();
+    this.refresh();
+    //this.back();
   }
 
   exportDatastore(data: any) {

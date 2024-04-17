@@ -150,16 +150,16 @@ export class ComponentManagementComponent implements OnInit {
   openCreateModal() {
     this.formValidated = false;
     this.createForm = this.fb.group({
+      'session': this.sessionId,
       'name': new FormControl('', [Validators.required]),
       'ip': new FormControl('', [Validators.required]),
-      'mac': new FormControl('', [Validators.required]),
-      'comtype': new FormControl('', [Validators.required]),
       'port': new FormControl('', [Validators.required]),
       'account': new FormControl('', [Validators.required]),
       'key': new FormControl('', [Validators.required]),
+      'comtype': new FormControl('', [Validators.required]),
       'firm': new FormControl('', [Validators.required]),
-      'modelname': new FormControl('', [Validators.required]),
-      'sessionid': this.sessionId
+      'modelname': new FormControl('', [Validators.required])
+      
     });
     this.createModalRef = this.dialog.open(this.createComponentModal, { id: 'createComponentModal' });
     this.createModalRef.afterClosed().subscribe(() => {
@@ -190,7 +190,6 @@ export class ComponentManagementComponent implements OnInit {
     // console.log(files);
   }
   
-
   create() {
     this.formValidated = true;
     if (!this.createForm.valid) {
@@ -219,16 +218,18 @@ export class ComponentManagementComponent implements OnInit {
 
     } else {
       const body = this.createForm.value;
-      if (this.createForm.controls['uploadtype'].value === 'CU') {
-        body['uploadtype'] = 1;
-      } else if (this.createForm.controls['uploadtype'].value === 'DU') {
-        body['uploadtype'] = 2;
-      } else if (this.createForm.controls['uploadtype'].value === 'CU+DU+RU') {
-        body['uploadtype'] = 3;
-      } else {
-        body['uploadtype'] = 0;
+      if (this.createForm.controls['comtype'].value === 'CU') {
+        body['comtype'] = 1;
+      } else if (this.createForm.controls['comtype'].value === 'DU') {
+        body['comtype'] = 2;
+      } else if (this.createForm.controls['comtype'].value === 'RU') {
+        body['comtype'] = 3;
+      } else if (this.createForm.controls['comtype'].value === 'CU+DU') {
+        body['comtype'] = 4;  
+      } else if (this.createForm.controls['comtype'].value === 'CU+DU+RU') {
+        body['comtype'] = 5;
       }
-      body['sessionid'] = this.sessionId;
+      console.log(body);
       this.commonService.createBsComponent(body).subscribe(
         res => {
           console.log('createBsComponent:');
@@ -306,7 +307,18 @@ export class ComponentManagementComponent implements OnInit {
       this.deleteModalRef.close();
       this.getComponentList();
     } else {
-      this.commonService.deleteSoftware(this.selectComponent.id).subscribe(
+      const removeBsBody: any = {
+        session: this.sessionId,
+        id:this.selectComponent.id,
+      };
+      const httpOptions = {
+        // 設定 HTTP 標頭
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
+        }),
+        body: removeBsBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
+      };
+      this.commonService.removeBsComponent(httpOptions).subscribe(
         res => {
           this.deleteModalRef.close();
           this.getComponentList();
@@ -347,17 +359,19 @@ export class ComponentManagementComponent implements OnInit {
       body['uploadtype'] = 1;
     } else if (this.createForm.controls['uploadtype'].value === 'DU') {
       body['uploadtype'] = 2;
-    } else if (this.createForm.controls['uploadtype'].value === 'CU+DU') {
+    } else if (this.createForm.controls['uploadtype'].value === 'RU') {
       body['uploadtype'] = 3;
-    } else {
-      body['uploadtype'] = 0;
+    } else if (this.createForm.controls['uploadtype'].value === 'CU+DU') {
+      body['uploadtype'] = 4;  
+    } else if (this.createForm.controls['uploadtype'].value === 'CU+DU+RU') {
+      body['uploadtype'] = 5;
     }
     body['sessionid'] = this.sessionId;
     console.log(body);
   }
 
   viewPage(componentList: Components) {
-    this.router.navigate(['/main/component-mgr/info', componentList.id, componentList.bsId]);
+    this.router.navigate(['/main/component-mgr/info', componentList.id]);
   }
 
   clearSetting() {

@@ -43,7 +43,7 @@
         <!-- <td>{{opt.sm?.['software-inventory']?.['software-slot'][0]?.files?.version}}</td> -->
         <td class="icon">
           <label *ngIf="opt.status === 2" class="greenLight"></label>
-          <label *ngIf="opt.status === 1" class="redLight"></label>
+          <label *ngIf="opt.status === 0" class="greyLight"></label>
         </td>
         <td class="icon">
           <mat-icon tooltip="{{languageService.i18n['index.view']}}" (click)="viewPage(opt)">remove_red_eye</mat-icon>
@@ -68,6 +68,13 @@
   <form [formGroup]="createForm" >
     <ul class="addcomponent-ul-li-label">
       <li>
+        <label>{{languageService.i18n['cm.name']}}</label>
+        <span>
+          <input type="text" formControlName="name" class="{{formValidated&&createForm.controls['name'].invalid?'required':''}}">
+          <mat-error *ngIf="formValidated&&createForm.controls['name'].invalid">Required</mat-error>
+        </span>
+      </li>
+      <li>
         <label>{{languageService.i18n['cm.type']}}</label>
         <span>
           <select formControlName="comtype" class="{{formValidated&&createForm.controls['comtype'].invalid?'required':''}}">
@@ -89,13 +96,6 @@
         <span>
           <input type="text" formControlName="port" class="{{formValidated&&createForm.controls['port'].invalid?'required':''}}">
           <mat-error *ngIf="formValidated&&createForm.controls['port'].invalid">Required</mat-error>
-        </span>
-      </li>
-      <li>
-        <label>{{languageService.i18n['cm.mac']}}</label>
-        <span>
-          <input type="text" formControlName="mac" class="{{formValidated&&createForm.controls['mac'].invalid?'required':''}}">
-          <mat-error *ngIf="formValidated&&createForm.controls['mac'].invalid">Required</mat-error>
         </span>
       </li>
       <li>
@@ -136,13 +136,14 @@
 
 <ng-template #deleteModal>
   <h5 *ngIf="selectComponent.status === 1">{{languageService.i18n['cm.delete']}}</h5>
-  <h5 *ngIf="selectComponent.status === 0"><mat-icon class="error-icon">warning</mat-icon>{{languageService.i18n['cm.error']}}</h5>
-  <p>
+  <h5 *ngIf="selectComponent.status === 2"><mat-icon class="error-icon">warning</mat-icon>{{languageService.i18n['cm.error']}}</h5>
+  <ul>
+    <label>
     {{selectComponent.status === 1 ? languageService.i18n['cm.confirm_del'] : languageService.i18n['cm.unable_del']}}
-    – {{selectComponent.name}}
-  </p>
+    – {{selectComponent.name}}</label>
+  </ul>
   <div class="buttons">
-    <button *ngIf="selectComponent.status === 1" type="button" (click)="delete()">Delete</button>
+    <button type="button" (click)="delete()">Delete</button>
     <button type="button" mat-dialog-close>Cancel</button>
   </div>
 </ng-template>

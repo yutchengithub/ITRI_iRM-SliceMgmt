@@ -21,8 +21,8 @@
               <li><label>{{languageService.i18n['cm.manufacturer']}}</label><span>{{componentInfo.firm}}</span></li>
               <li><label>{{languageService.i18n['cm.model']}}</label><span>{{componentInfo.modelname}}</span></li>
               <li><label>{{languageService.i18n['table.Status']}}</label>
+                <span *ngIf="componentInfo.status === 0" class="greyLight"></span>
                 <span *ngIf="componentInfo.status === 2" class="greenLight"></span>
-                <span *ngIf="componentInfo.status === 1" class="greenLight"></span>
               </li>
               <li><label>{{languageService.i18n['software_version']}}</label>
                 <ng-container *ngFor="let slot of componentInfo.sm?.['software-inventory']?.['software-slot']">
@@ -209,6 +209,10 @@
       <label for="softInfo" class="lbl-toggle"></label>
       <div class="collapsible-content">
         <div class="content-inner">
+          <!-- <div *ngIf="activateSuccess" class="center-span"> -->
+            <div *ngIf="activateSuccess" class="center-span">  
+            <span style="color: white;">{{languageService.i18n['cm.applysoftware']}}<button type="button" (click)="resetBs()">{{languageService.i18n['cm.restart']}}</button></span>
+          </div>
           <div class="panel">
             <label *ngFor="let software of componentInfo?.sm?.['software-inventory']?.['software-slot']" [for]="'radio-' + software.name">
               <input type="radio" [id]="'radio-' + software.name" name="software-group" (change)="handleRadioChange(software.name)">
@@ -410,4 +414,30 @@
     </button>
   </div>
 </ng-template>
+
+<ng-template #noticeApplySoftwareModal>
+  <h5>{{languageService.i18n['cm.notice']}}</h5>
+  <ul>
+    <label class="text-center">{{languageService.i18n['cm.applysoftware']}}</label>
+  </ul>
+
+  <div class="buttons">
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #applySoftwareStatusModal>
+  <h5>{{languageService.i18n['cm.notice']}}</h5>
+  <ul>
+    <label class="text-center">Applying Software.....</label>
+  </ul>
+  <div class="buttons">
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }}
+    </button>
+  </div>
+</ng-template>
+
 

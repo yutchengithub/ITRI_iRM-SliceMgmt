@@ -442,6 +442,9 @@ export const TwLanguage = {
   'cm.path':'路徑',
   'cm.download':'下載',
   'cm.container': '確定要更新單一Container? 其他未儲存之修改將被還原',
+  'cm.notice' : '通知',
+  'cm.applysoftware' : '軟體套用成功',
+  'cm.restart' : '重啟',
   
   // Account Management (帳號管理)
   'user_account':'帳號',

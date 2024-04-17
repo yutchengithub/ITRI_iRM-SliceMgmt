@@ -538,9 +538,13 @@ export class CommonService {
     return this.http.get(url);
   }
   createBsComponent(body: any): Observable<any> {
-    const url = `${this.restPath}/createBsComponent/${this.getSessionId()}`;
+    const url = `${this.restPath}/createBsComponent`;
     const bodyStr = JSON.stringify(body);
     return this.http.post(url, bodyStr);
+  }
+  removeBsComponent(httpOptions: any): Observable<any> {
+    const url = `${this.restPath}/removeBsComponent`;
+    return this.http.delete( url, httpOptions );
   }
   queryBsComponentInfo(comId: string): Observable<any> {
     const url = `${this.restPath}/queryBsComponentInfo/${this.getSessionId()}/${comId}`;
@@ -567,6 +571,15 @@ export class CommonService {
   }
   setProvisioning(body: any): Observable<any> {
     const url = `${this.restPath}/setProvisioning`;
+    const bodyStr = JSON.stringify(body);
+    return this.http.post(url, bodyStr);
+  }
+  queryApplySoftwareStatusInfo(comId: string): Observable<any> {
+    const url = `${this.restPath}/queryApplySoftwareStatusInfo/${this.getSessionId()}/${comId}`;
+    return this.http.get(url);
+  }
+  resetBs(body: any): Observable<any> {
+    const url = `${this.restPath}/resetBs`;
     const bodyStr = JSON.stringify(body);
     return this.http.post(url, bodyStr);
   }

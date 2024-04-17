@@ -3,6 +3,21 @@
   overflow: auto;
   max-height: 86vh;
 }
+.center-span {
+  display: flex;
+  align-items: center; /* Vertical alignment */
+  justify-content: center; /* Horizontal alignment */
+  height: 100%; /* Ensure div takes up full height of parent */
+}
+
+.center-span span {
+  display: flex;
+  align-items: center; /* Vertical alignment */
+}
+
+.center-span button {
+  margin-left: auto; /* Align button to the right */
+}
 .filter{
   padding: 0;
   width: 96%;
