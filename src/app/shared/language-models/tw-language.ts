@@ -139,6 +139,7 @@ export const TwLanguage = {
   'field.neighboringBSList':'鄰近基站列表',
   'field.config':'場域配置',                  // @12/12 Add
   'field.edit':'場域編輯',                    // @2024/01/11 Add
+  'field.fieldImageEdit':'場域圖片編輯',
   'field.editInfo':'場域資訊',                // @2024/01/11 Add
   'field.northBound':'場域北界',              // @2024/01/11 Add
   'field.southBound':'場域南界',              // @2024/01/11 Add

@@ -64,6 +64,11 @@
 						</span>
 						<span>{{ languageService.i18n['field.edit'] }}</span>
 					</button>
+					<!-- 新增場域圖片編輯的選單  @2024/04/18 Add -->
+					<!-- <button mat-menu-item (click)="openFieldImageEditWindow()">
+						<span class="material-symbols-outlined">image</span>
+						<span>{{ languageService.i18n['field.fieldImageEdit'] }}</span>
+					</button> -->
 					<!-- PM Parameter Setting @2024/02/05 Update -->
 					<button mat-menu-item (click)="openPMgmtParameterSetWindow()">
 						<span class="material-symbols-outlined">
@@ -950,6 +955,34 @@
 			</button>
 		</div>
 
+	</ng-template>
+
+	<!-- 場域圖片編輯視窗 @2024/04/18 Add -->
+	<ng-template #fieldImageEdit>
+		<div>
+			<h3>{{ languageService.i18n['field.indoorMap'] }}</h3>
+			<div>
+				<!-- 顯示進度條 -->
+				<ng-container *ngIf="isFieldImageOnFieldEditLoading">
+					<div class="progress-spinner-container">
+						<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="35"></mat-progress-spinner>
+					</div>
+				</ng-container>
+				<!-- 顯示場域圖片 -->
+				<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
+					<div class="preview">
+						<div class="center">{{ languageService.i18n['field.preview'] }}</div>
+						<mat-icon title="{{ languageService.i18n['field.DeletefieldImage'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon> <img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}"> <img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}"> </div>
+					<div id="noImageMessage" style="display: none;"> <span class="material-symbols-outlined"> error </span> {{ languageService.i18n['field.fieldImageNotUploaded1'] }}
+						<br> {{ languageService.i18n['field.fieldImageNotUploaded2'] }} </div>
+				</ng-container>
+			</div>
+			<div class="button-container">
+				<!-- 按鈕，用於觸發隱藏的 input 元素 -->
+				<button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()"> {{ languageService.i18n['field.fieldImageUpload'] }} </button>
+				<!-- 隱藏的文件輸入元素，僅接受 PNG 和 JPG 圖片 -->
+				<input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".png, .jpg, .jpeg"> </div>
+			</div>
 	</ng-template>
 	
 	<!-- Window of confirm-delete-dialog for Field Editing @2024/01/28 Update -->

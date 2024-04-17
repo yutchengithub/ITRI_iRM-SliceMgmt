@@ -143,6 +143,7 @@ export const Enlanguage = {
   'field.neighboringBSList':'Neighboring BS List',
   'field.config':'Field Configuration',             // @12/12 Add
   'field.edit':'Field Editing',                     // @2024/01/11 Add
+  'field.fieldImageEdit':'Field Image Editing',
   'field.editInfo':'Field Information',             // @2024/01/11 Add
   'field.northBound':'North Boundary',              // @2024/01/11 Add
   'field.southBound':'South Boundary',              // @2024/01/11 Add

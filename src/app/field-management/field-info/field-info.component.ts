@@ -2304,6 +2304,19 @@ export class FieldInfoComponent implements OnInit {
     this.getfieldImage_forFieldEdit();
   }
 
+  // 場域圖片編輯視窗開啟函數 @2024/04/18 Add
+  @ViewChild('fieldImageEdit') fieldImageEdit: any;
+  fieldImageEdit_Ref!: MatDialogRef<any>;
+
+  openFieldImageEditWindow() {
+    this.fieldImageEdit_Ref = this.dialog.open(this.fieldImageEdit, {
+    id: 'fieldImageEdit',
+    // width 和 height 可以根據需要設置或去掉
+    // width: '300px',
+    // height: '200px'
+    });
+  }
+
   fieldEditType: string = 'Field_Infos';      // 預設選擇 "Field Infos"  
   //fieldEditType: string = 'BS_List';        // 預設選擇 "BS List"   
   isFirstEnterInBSListPage: boolean = false;  // 用於檢測是不是第一次進 "BS List" 頁 @2024/01/27 Add
