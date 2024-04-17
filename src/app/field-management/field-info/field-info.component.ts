@@ -257,6 +257,7 @@ export class FieldInfoComponent implements OnInit {
         // 此方法將根據場域的邊界值調整地圖的縮放等級，
         // 確保用戶可以看到完整的場域範圍。
         this.adjustMapZoom();
+        
       });
     }
     // 如果 this.map.googleMap 尚未定義，可能表示地圖尚未完全初始化。
@@ -296,7 +297,7 @@ export class FieldInfoComponent implements OnInit {
         });
       });
     }
-
+    
     //this.getQueryPmFtpInfo();  // 此時先取得"效能管理參數設定"資訊 @2024/02/22 Add
   }
 
@@ -1053,7 +1054,7 @@ export class FieldInfoComponent implements OnInit {
           // Ensure field info is assigned before proceeding
           this.processFieldInfo(); // 進行後續處理
 
-          this.hideSpinner();  // 完成後隱藏 spinner
+          //this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
 
@@ -1071,7 +1072,12 @@ export class FieldInfoComponent implements OnInit {
           console.log( '場域資訊獲取完成' );
           console.log( 'Field info fetch completed' );
           //this.isMarkersLoading = false; // 加載完成 @12/28 Add for Progress Spinner
-          this.hideSpinner();  // 完成後隱藏 spinner
+          
+          window.setTimeout(() => {
+
+            this.hideSpinner();  // 完成後隱藏 spinner
+
+          }, 2800 ); // 設定 10000 ms ( s ) 後執行
         }
       });
     }
@@ -1135,7 +1141,7 @@ export class FieldInfoComponent implements OnInit {
       }
 
       this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
-
+      //this.hideSpinner();  // 完成後隱藏 spinner
     } else {
 
       // 確認 fieldInfo 和 fieldInfo.bsinfo 是否已經被定義
@@ -1149,6 +1155,7 @@ export class FieldInfoComponent implements OnInit {
           this.getQueryBsInfoForAll( this.fieldInfo.bsNum, this.fieldInfo.bsinfo );
         }
       }
+      //this.hideSpinner();  // 完成後隱藏 spinner
       
     }
 
@@ -1157,6 +1164,7 @@ export class FieldInfoComponent implements OnInit {
     
     // 輸出函數結束的訊息到控制台
     console.log( 'processFieldInfo() - End' );
+    //this.hideSpinner();  // 完成後隱藏 spinner
   }
   
   // @12/26 Add
@@ -1266,6 +1274,7 @@ export class FieldInfoComponent implements OnInit {
         console.log("In getQueryBsInfoForAll() - allSimplifiedBsInfo", this.allSimplifiedBsInfo );
 
         this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
+        //this.hideSpinner();  // 完成後隱藏 spinner
       }
     });
 
@@ -2456,6 +2465,7 @@ export class FieldInfoComponent implements OnInit {
           this.SortAllBasestationsInO1 = this.SortAllBSInO1( this.bsList.basestation );
           
           this.isGetQueryBsListLoading = false; // 取得後隱藏 spinner
+          //this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           console.error( '獲取基站列表資訊出錯:', error );
@@ -2465,6 +2475,7 @@ export class FieldInfoComponent implements OnInit {
         complete: () => {
           console.log('基站列表資訊獲取完成');
           console.log( 'BS List - fetch completed' );
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -2754,6 +2765,8 @@ export class FieldInfoComponent implements OnInit {
   imageSrcLocal: string = './assets/img/fieldImage_for_local.png'; // 用於保存本地圖片路徑 @2024/01/23 Add
   getfieldImage_forFieldEdit() {
 
+    this.showLoadingSpinner(); 
+
     if ( this.commonService.isLocal ) { // 檢查是否為使用 local files
 
       console.log( "is local in getfieldImage_forFieldEdit");
@@ -2768,6 +2781,7 @@ export class FieldInfoComponent implements OnInit {
       this.removeImageInLocal_flag = false; // @2024/01/24 Add
 
       this.isFieldImageOnFieldEditLoading = false; // 載入 local 圖片完也停止顯示 Spinner
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else { // 如非使用 local files
 
@@ -2787,11 +2801,13 @@ export class FieldInfoComponent implements OnInit {
             //this.isFieldImageOnFieldEditLoading = false;   // 載入完成停止顯示 Spinner
           }
             //this.isFieldImageOnFieldEditLoading = false;   // 載入完成停止顯示 Spinner
+            this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: (error) => {
           console.error('Error fetching field image:', error);
           // 出錯時，也顯示提示訊息
           this.displayNoImageMessage();
+          this.hideSpinner();  // 完成後隱藏 spinner
           //this.isFieldImageOnFieldEditLoading = false;  // 載入出錯也停止顯示 Spinner
         }
       });
