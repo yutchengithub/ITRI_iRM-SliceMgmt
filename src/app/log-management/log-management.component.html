@@ -1,6 +1,6 @@
 <h5>{{languageService.i18n['index.menu_logMgr']}}</h5>
 
-<div class="table">
+<div>
 
   <div class="logTab">
     <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
@@ -88,6 +88,7 @@
     </form>
 
 
+    <div  class="table">
     <table class="userLog">
       <thead>
         <tr>
@@ -132,6 +133,7 @@
         </ng-container>
       </tbody>
     </table>
+  </div>
       <!-- pagination @11/01 Add by yuchen --> 
       <!-- <span class="total">{{languageService.i18n['UserLog.total1']}} {{userLogsToDisplay.length}} {{languageService.i18n['UserLog.total2']}}</span> -->
       <!-- 使用 getTotalLogsText 函數來決定顯示 'User Log' 還是 'User Logs' @11/21 Add by yuchen -->
@@ -226,7 +228,7 @@
       </div>
 
     </form>
-
+<div class="table">
     <table class="neLog">
       <thead>
         <tr>
@@ -277,6 +279,7 @@
         </ng-container>
       </tbody>
     </table>
+    </div>
     
     <!-- pagination @10/31 changed by yuchen --> 
     <!--<span class="total">{{languageService.i18n['NElog.total1']}} {{neLogsToDisplay.length}} {{languageService.i18n['NElog.total2']}}</span>-->

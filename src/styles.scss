@@ -981,7 +981,7 @@ p-calendar #time {
   height: 1.5rem;
 }
 .p-datepicker table td {
-  padding: 0.25rem;
+  padding: 0.1rem 0.25rem;
 }
 .p-datepicker table tbody tr:nth-child(even) td {
   background-color: #eee!important;
@@ -1005,7 +1005,9 @@ p-calendar #time {
 }
 .filter .p-calendar .p-datepicker {
   margin: 0;
+  padding: 0 0.5rem;
   top: 5vh !important;
+  min-width: 13em;
 }
 .filter input[type=text] {
   max-width: 10em;
@@ -1581,4 +1583,33 @@ tbody {
 }
 body.tw #BsBasicInfoEditWindowRef ul li > label {
   min-width: 6em;
+}
+ngx-spinner .ngx-spinner-overlay {
+  background-color: #080c10a8!important;
+}
+.ngx-spinner-overlay > div:not(.loading-text) {
+  color: #36c6ff!important;
+}
+.loading-text {
+  top: 57%!important;
+  left: 50.2%!important;
+}
+.loading-text p {
+  font-size: 18px;
+  color: #fff;
+  text-shadow: 0 0 5px #167ccd;
+}
+.p-datepicker .p-timepicker ,
+.p-datepicker .p-datepicker-header {
+  padding: 0!important;
+}
+.p-datepicker table th {
+  padding: 0.25rem 0.5rem!important;
+}
+.p-datepicker .p-timepicker span {
+  font-size: 1.15rem!important;
+}
+.p-datepicker .p-timepicker button {
+  width: 1.3rem!important;
+  height: 1.3rem!important;
 }
