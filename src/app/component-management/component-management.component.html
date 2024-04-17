@@ -29,6 +29,7 @@
         <th>{{languageService.i18n['table.Status']}}</th>
         <th>{{languageService.i18n['index.view']}}</th>
         <th>{{languageService.i18n['cm.provision']}}</th>
+        <!-- <th>{{languageService.i18n['software_version']}}</th> -->
         <th>{{languageService.i18n['table.delete']}}</th>
       </tr>
     </thead>
@@ -39,6 +40,7 @@
         <td>{{opt.ip}}</td>
         <td>{{opt.port}}</td>
         <td>{{typeText(opt.comtype)}}</td>
+        <!-- <td>{{opt.sm?.['software-inventory']?.['software-slot'][0]?.files?.version}}</td> -->
         <td class="icon">
           <label *ngIf="opt.status === 2" class="greenLight"></label>
           <label *ngIf="opt.status === 1" class="redLight"></label>
@@ -145,29 +147,21 @@
   </div>
 </ng-template>
 
-
 <ng-template #provisionModal>
 <h5>{{languageService.i18n['cm.provision']}} - {{selectComponent.name}}</h5>
   <form [formGroup]="provisionForm">
     <ul>
-      <li>
-        <label>{{languageService.i18n['add.method']}}</label>
-        <span>
-          <div class="upload {{formValidated&&provisionForm.controls['fileName'].invalid?'required':''}}">
-            <span>{{languageService.i18n['upload']}}
-              <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".zip, .tar" #fileInput>
-            </span>
-            <div>{{provisionForm.controls['fileName'].value}}</div>
-            <mat-error *ngIf="formValidated&&provisionForm.controls['fileName'].invalid">is Required</mat-error>
-            <mat-error *ngIf="fileMsg">{{fileMsg}}</mat-error>
+      <span class="btn-group">
+        <ng-container>
+          <div class="upload">
+            <input type="file" name="uploadedFile" (change)="fileChange($event)" accept=".xml" #fileInput>
           </div>
-        </span>
-      </li>
+        </ng-container>
+      </span>
     </ul>
     <div class="buttons">
-      <button type="button" >Confirm</button>
+      <button type="button" (click)="uploadProvisioning()">Confirm</button>
       <button type="button" mat-dialog-close>Cancel</button>
     </div>
   </form>
-
 </ng-template>

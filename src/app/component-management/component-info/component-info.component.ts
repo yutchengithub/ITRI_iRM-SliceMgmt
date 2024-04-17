@@ -170,6 +170,7 @@ export class ComponentInfoComponent implements OnInit {
     hideDelay: 250
   };
   updatedJsonString: string = '';
+  selectedSlotName: string = '';
   isObject(value: any): boolean {
     return typeof value === 'object' && value !== null;
   }
@@ -535,8 +536,26 @@ export class ComponentInfoComponent implements OnInit {
     clearTimeout(this.refreshTimeout);
     this.RunRefreshTimeout = window.setTimeout(() => this.getComponentInfo(), this.RunRefreshTime * 1000);
   }
-  exportDatastore() {
-    const blob = new Blob([this.xmlData], { type: 'text/xml' });
+
+  handleRadioChange(slotName: string) {
+    this.selectedSlotName = slotName;
+  }
+
+  applySoftware(){
+    const body: any = {
+      session: this.sessionId,
+      componentid: this.componentInfo.id,
+      slotName: this.selectedSlotName,
+      uploadid: this.uploadinfos[0].id,
+    };
+    console.log(body);
+    this.commonService.applySoftware(body).subscribe(
+      () => console.log('Update Successful.')
+    );
+  }
+
+  exportDatastore(data: any) {
+    const blob = new Blob([data], { type: 'text/xml' });
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
     link.download = this.componentInfo.name+'_datastore.xml';
@@ -678,19 +697,10 @@ export class ComponentInfoComponent implements OnInit {
       }
       if (this.file){
         const uploadFileM = `${this.commonService.restPath}/uploadFileM/${this.sessionId}/${this.comId}`;
-        const boundary = 'WebKitFormBoundary' + Math.random().toString(36).substr(2, 10);
         const formData = new FormData();
         formData.append('file', this.file);
-        let payload = '';
-        payload += `------${boundary}\r\n`;
-        payload += `Content-Disposition: form-data; name="file"; filename="${this.file.name}"\r\n`;
-        payload += `Content-Type: ${this.file.type}\r\n\r\n`;
-        payload += `${this.file}\r\n`;
-        payload += `------${boundary}--`;
-        const headers = new HttpHeaders({
-          'Content-Type': `multipart/form-data; boundary=----${boundary}`
-        });
-        this.http.post(uploadFileM, payload, {headers}).subscribe(
+        const headers = new HttpHeaders();
+        this.http.post(uploadFileM, formData, {headers}).subscribe(
           () => {
             this.uploadModalRef.close();
           }

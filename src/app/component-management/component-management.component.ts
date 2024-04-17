@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -28,7 +28,12 @@ export interface Components {
   modelname: string;
   status: number;
 }
-
+interface FileObject {
+  name: string;
+}
+interface ProvisionFile {
+  provisioningFile: string;
+}
 @Component({
   selector: 'app-component-management',
   templateUrl: './component-management.component.html',
@@ -66,6 +71,7 @@ export class ComponentManagementComponent implements OnInit {
   isSearch: boolean = false;
   querySoftwareScpt!: Subscription;
   querySWAdvanceSearchScpt!: Subscription;
+  provisionFile: ProvisionFile = {} as ProvisionFile;
 
   comtype: Item[] = [
     { displayName: 'CU', value: '1' },
@@ -74,6 +80,7 @@ export class ComponentManagementComponent implements OnInit {
     { displayName: `CU+DU`, value: '4' },
     { displayName: `CU+DU+RU`, value: '5' }
   ];
+  componentId: string= '';
 
   constructor(
     private dialog: MatDialog,
@@ -167,10 +174,10 @@ export class ComponentManagementComponent implements OnInit {
     let passFile = null;
     const files = e.target.files;
     if ('0' in files) {
-      if (files[0].name.indexOf('.zip') >= 0 || files[0].name.indexOf('.tar') >= 0) {
+      if (files[0].name.indexOf('.xml') >= 0) {
         passFile = files[0];
       } else {
-        this.fileMsg = '格式只允許[file].zip 和.tar';
+        this.fileMsg = '格式只允許[file].xml';
       }
     }
     if (passFile === null) {
@@ -245,6 +252,7 @@ export class ComponentManagementComponent implements OnInit {
     this.provisionForm = this.fb.group({
       'fileName': new FormControl('', [Validators.required])
     });
+    this.componentId = componentList.id;
     this.selectComponent = componentList;
     this.provisionModalRef = this.dialog.open(this.provisionModal, { id: 'provisionModal' });
     this.provisionModalRef.afterClosed().subscribe(() => {
@@ -252,6 +260,39 @@ export class ComponentManagementComponent implements OnInit {
       this.formValidated = false;
     });
   }
+
+  uploadProvisioning() {
+    if (this.commonService.isLocal) {
+        /* local file test */
+    } else {
+        if (this.file) {
+            const uploadProvisioning = `${this.commonService.restPath}/uploadProvisioning/${this.sessionId}/${this.componentId}`;
+            const formData = new FormData();
+            formData.append('file', this.file);
+
+            const headers = new HttpHeaders();
+            this.http.post<ProvisionFile>(uploadProvisioning, formData, { headers }).subscribe(
+                res => {
+                    const provisioningFile = res.provisioningFile;
+                    console.log(provisioningFile);
+                    this.provisionModalRef.close();
+                    const body: any = {
+                        session: this.sessionId,
+                        id: this.componentId,
+                        provisioningFile: res.provisioningFile,
+                    };
+                    this.commonService.setProvisioning(body).subscribe(
+                        () => console.log('setProvisioning Successful.')
+                    );
+                    this.provisionModalRef.close()
+                    this.getComponentList();
+                }
+            );
+        }
+    }
+    this.getComponentList();
+}
+
 
   delete() {
     if (this.commonService.isLocal) {

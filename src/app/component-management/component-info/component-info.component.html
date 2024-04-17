@@ -53,7 +53,7 @@
           </select>
           <button>Copy</button>
         </span>
-        <button (click)="exportDatastore()">Export Datastore</button>
+        <button (click)="exportDatastore(componentInfo.info.data)">Export Datastore</button>
         <!-- <button type="button">Update Datastore</button> -->
       </span>
       <input id="Datastore" class="toggle" type="checkbox">
@@ -210,8 +210,8 @@
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="panel">
-                <label *ngFor="let software of componentInfo?.sm?.['software-inventory']?.['software-slot']" [for]="'radio-' + software.name">
-              <input type="radio" [id]="'radio-' + software.name" name="software-group">
+            <label *ngFor="let software of componentInfo?.sm?.['software-inventory']?.['software-slot']" [for]="'radio-' + software.name">
+              <input type="radio" [id]="'radio-' + software.name" name="software-group" (change)="handleRadioChange(software.name)">
               <div>
                 <ul>
                   <li><label>Software</label><span>{{ software.name }}</span></li>
@@ -223,8 +223,8 @@
                 </ul>
               </div>
             </label>
-          </div>
 
+          </div>
             <div class="table">
               <table>
                 <thead>
@@ -247,7 +247,7 @@
                     <td>{{info.description}}</td>
                     <td>{{info.uploadtime}}</td>
                     <td class="center">
-                      <mat-icon tooltip="{{languageService.i18n['view_detail']}}">cloud_download</mat-icon>
+                      <mat-icon (click)= "applySoftware()" tooltip="{{languageService.i18n['view_detail']}}">cloud_download</mat-icon>
                     </td>
                   </tr>
                 </tbody>

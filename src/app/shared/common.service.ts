@@ -560,6 +560,16 @@ export class CommonService {
     const url = `${this.restPath}/queryFileMList/${this.getSessionId()}/${comId}`;
     return this.http.get(url);
   }
+  applySoftware(body: any): Observable<any> {
+    const url = `${this.restPath}/applySoftware`;
+    const bodyStr = JSON.stringify(body);
+    return this.http.post(url, bodyStr);
+  }
+  setProvisioning(body: any): Observable<any> {
+    const url = `${this.restPath}/setProvisioning`;
+    const bodyStr = JSON.stringify(body);
+    return this.http.post(url, bodyStr);
+  }
 
   // Software Mgmt API
   queryUploadFileInfo(fileId: string): Observable<any> {

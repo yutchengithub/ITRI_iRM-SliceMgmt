@@ -234,19 +234,10 @@ export class SoftwareManagementComponent implements OnInit {
           console.log(res);
           const softwareId = res['id'];
           const uploadFirmware = `${this.commonService.restPath}/uploadFirmware/${this.sessionId}/${softwareId}`;
-          const boundary = 'WebKitFormBoundary' + Math.random().toString(36).substr(2, 10);
           const formData = new FormData();
           formData.append('file', this.file);
-          let payload = '';
-          payload += `------${boundary}\r\n`;
-          payload += `Content-Disposition: form-data; name="file"; filename="${this.file.name}"\r\n`;
-          payload += `Content-Type: ${this.file.type}\r\n\r\n`;
-          payload += `${this.file}\r\n`;
-          payload += `------${boundary}--`;
-          const headers = new HttpHeaders({
-            'Content-Type': `multipart/form-data; boundary=----${boundary}`
-          });
-          this.http.post(uploadFirmware, payload, {headers}).subscribe(
+          const headers = new HttpHeaders();
+          this.http.post(uploadFirmware, formData, {headers}).subscribe(
             () => {
               this.createModalRef.close();
               this.getSoftwareList();
