@@ -1008,6 +1008,9 @@ ul.treeList li a.btn {
 .par_success td input {
   text-align: left;
 }
+.alarms .content-inner {
+  min-height: 24em;
+}
 @media screen and (max-width:1680px) {
   .h30 {
     height: 24em;
