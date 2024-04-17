@@ -4,8 +4,10 @@ import { HttpClient } from '@angular/common/http';
 import * as _ from 'lodash';
 import { Router } from '@angular/router';
 
-import { CommonService } from '../shared/common.service';														
+// Services
+import { CommonService } from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
+import { SpinnerService } from '../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
 
 // For import interfaces
 import { FieldSummary }     from '../shared/interfaces/Field/For_queryFieldSummaryInfo';  // @2024/03/14 Add by yuchen
@@ -41,10 +43,30 @@ export class DashboardComponent implements OnInit {
   /* CRITICAL,MAJOR,MINOR,WARNING */
   severitys: string[];
 
+  // @2024/04/17 Add
+  // Show spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+
+  // @2024/04/17 Add
+  // Show spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+
+  // Hide spinner @2024/04/17 Add
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
+
   constructor(
 
     private                   http: HttpClient, 
     public           commonService: CommonService, 
+    public          spinnerService: SpinnerService,
     private                 router: Router, 
     public         languageService: LanguageService,
 
@@ -71,6 +93,7 @@ export class DashboardComponent implements OnInit {
   getfieldSummaryInfo() {
 
     this.isFieldSummaryLoading = true; // 開始加載數據，顯示進度指示器
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
 
     if ( this.commonService.isLocal ) {
       // local file test
@@ -86,6 +109,7 @@ export class DashboardComponent implements OnInit {
       console.log( 'fieldSummaryInfo:', this.fieldSummary );		
 
       this.isFieldSummaryLoading = false; //  Local 模式下，數據加載快速完成，直接設置為 false
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
 
@@ -97,6 +121,7 @@ export class DashboardComponent implements OnInit {
           this.fieldSummary = res as FieldSummary;
 
           this.isFieldSummaryLoading = false; // 數據加載完成
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       );
     }
@@ -107,6 +132,7 @@ export class DashboardComponent implements OnInit {
   getfieldListInfo() {
 
     this.isFieldListLoading = true; // 開始加載數據，顯示進度指示器
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
 
     if ( this.commonService.isLocal ) {
       /* local file test */
@@ -114,6 +140,7 @@ export class DashboardComponent implements OnInit {
       this.fieldList = this.fieldList_LocalFiles.fieldList_local;
 
       this.isFieldListLoading = false; //  Local 模式下，數據加載快速完成，直接設置為 false
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
 
@@ -126,6 +153,7 @@ export class DashboardComponent implements OnInit {
           this.fieldList = res as FieldList;
 
           this.isFieldListLoading = false; // 數據加載完成
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       );
     }

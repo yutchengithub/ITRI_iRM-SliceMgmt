@@ -2834,6 +2834,7 @@ export class FieldInfoComponent implements OnInit {
     console.log('getQueryPmFtpInfo() - Start'); // 獲取效能參數設定資訊 - 啟動
 
     this.getQueryPmFtpInfo_Loading = true; // 顯示 Loading Progress Spinner @2024/02/22 Add
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
 
     if ( this.commonService.isLocal ) { // 檢查是否為使用 Local files
       console.log('Fetching PM FTP Info from local files');       // 從 Local files 獲取 PM FTP 資訊
@@ -2871,6 +2872,7 @@ export class FieldInfoComponent implements OnInit {
       }
 
       this.getQueryPmFtpInfo_Loading = false; // 不管是否找到匹配對象，停止 Loading Progress Spinner @2024/02/22 Add
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else {
       console.log( 'Fetching PM FTP Info from API '); // 從 API 獲取 PM FTP 資訊
@@ -2903,10 +2905,12 @@ export class FieldInfoComponent implements OnInit {
           }     
 
           this.getQueryPmFtpInfo_Loading = false; // 取得後停止 Loading Progress Spinner @2024/02/22 Add
+          this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           console.error( 'Error fetching PM FTP Info:', error ); // 獲取 PM FTP 資訊出錯
           this.getQueryPmFtpInfo_Loading = false; // 取得後停止 Loading Progress Spinner @2024/02/22 Add
+          this.hideSpinner();  // 出錯時隱藏 spinner
         },
         complete: () => {
           console.log( 'PM FTP Info fetch completed' );          // PM FTP 資訊獲取完成
@@ -3135,7 +3139,8 @@ export class FieldInfoComponent implements OnInit {
   UpdatePMParameterSetting_Submit() {
     console.log("UpdatePMParameterSetting_Submit() - Start");
     this.getQueryPmFtpInfo_Loading = true; // 顯示 Loading Progress Spinner @2024/02/22 Add
-  
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
+
     let metricValue; // 宣告變數來儲存將要提交的 metric 值
 
     // 根據量測類型來決定 metric 值的內容
@@ -3174,6 +3179,7 @@ export class FieldInfoComponent implements OnInit {
 
       this.getQueryPmFtpInfo_Loading = false;  // 更新完成後停止 Loading Progress Spinner @2024/02/22 Add
       this.PMgmtParameterSetWindowRef.close(); // 更新讀取完後，關閉效能參數設定視窗
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else {
 
@@ -3189,11 +3195,14 @@ export class FieldInfoComponent implements OnInit {
 
           this.getQueryPmFtpInfo_Loading = false; // 更新完成後停止 Loading Progress Spinner @2024/02/22 Add
           this.PMgmtParameterSetWindowRef.close(); // 更新讀取完後，關閉效能參數設定視窗
+          this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
+
         },
         error: ( error ) => {
           console.error( "更新效能參數設定出錯:", error );
           this.getQueryPmFtpInfo_Loading = false;  // 更新失敗也停止 Loading Progress Spinner @2024/02/22 Add
           // this.PMgmtParameterSetWindowRef.close(); // 更新失敗也關閉效能參數設定視窗
+          this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
         },
       });
     }
@@ -3248,6 +3257,7 @@ export class FieldInfoComponent implements OnInit {
   // 取得 場域優化參數 用函數
   getQuerySonParameter() {
     this.getQuerySonParameter_Loading = true; // 顯示加載中的提示
+    this.showLoadingSpinner();   // 顯示 Loading Spinner
   
     if ( this.commonService.isLocal ) { // 如果是本地模式
 
@@ -3256,6 +3266,7 @@ export class FieldInfoComponent implements OnInit {
       this.populateFieldOptimizationForm();
 
       this.getQuerySonParameter_Loading = false; // 隱藏加載中的提示
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else { // 如果是 API 模式
 
@@ -3266,10 +3277,12 @@ export class FieldInfoComponent implements OnInit {
           this.getFieldSonParameters = res; // 將 API 回應賦值給變數
           this.populateFieldOptimizationForm();
           this.getQuerySonParameter_Loading = false; // 隱藏加載中的提示
+          this.hideSpinner();  // 出錯時隱藏 spinner
         },
         error: ( error ) => {
           console.error('Error fetching SON parameters:', error);
           this.getQuerySonParameter_Loading = false; // 隱藏加載中的提示
+          this.hideSpinner();  // 出錯時隱藏 spinner
         },
         complete: () => console.log('SON parameters fetch completed')
       });

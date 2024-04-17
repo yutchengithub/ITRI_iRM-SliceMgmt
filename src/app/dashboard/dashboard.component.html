@@ -5,10 +5,10 @@
       <label class="boxTitle">{{ languageService.i18n['num_fields'] }}
 
         <!-- 當數據正在加載時顯示進度條 @2024/03/14 Add -->
-        <ng-container *ngIf="isFieldSummaryLoading">
+        <!-- <ng-container *ngIf="isFieldSummaryLoading"> -->
           <!-- 指示器大小設置 -->
-          <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="70"></mat-progress-spinner>
-        </ng-container>
+          <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="70"></mat-progress-spinner>
+        </ng-container> -->
 
         <!-- 加載完成後顯示場域數量 @2024/03/14 Add -->
         <ng-container *ngIf="!isFieldSummaryLoading">
@@ -21,12 +21,12 @@
     <span>
       <img src="assets/img/gNB01.svg">
       <label class="boxTitle">{{ languageService.i18n['num_BSs'] }}
-        
+
         <!-- 當數據正在加載時顯示進度條 @2024/03/14 Add -->
-        <ng-container *ngIf="isFieldSummaryLoading">
+        <!-- <ng-container *ngIf="isFieldSummaryLoading"> -->
           <!-- 指示器大小設置 -->
-          <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="70"></mat-progress-spinner>
-        </ng-container>
+          <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="70"></mat-progress-spinner>
+        </ng-container> -->
 
         <!-- 加載完成後顯示 BS 數量 @2024/03/14 Add -->
         <ng-container *ngIf="!isFieldSummaryLoading">
@@ -39,12 +39,12 @@
     <span>
       <img src="assets/img/ues.svg">
       <label class="boxTitle">{{languageService.i18n['num_UEs']}}
-              
+
         <!-- 當數據正在加載時顯示進度條 @2024/03/14 Add -->
-        <ng-container *ngIf="isFieldSummaryLoading">
+        <!-- <ng-container *ngIf="isFieldSummaryLoading"> -->
           <!-- 指示器大小設置 -->
-          <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="60"></mat-progress-spinner>
-        </ng-container>
+          <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="60"></mat-progress-spinner>
+        </ng-container> -->
 
         <!-- 加載完成後顯示 UE 數量 @2024/03/14 Add -->
         <ng-container *ngIf="!isFieldSummaryLoading">
@@ -54,7 +54,7 @@
       </label>
     </span>
   </div>
- 
+
   <div class="rightArea">
     <div class="table">
       <h5>{{ languageService.i18n['field_list'] }}</h5>
@@ -75,16 +75,16 @@
         <tbody>
 
           <!-- 當數據正在加載時顯示進度條 @2024/03/14 Add -->
-          <ng-container *ngIf="isFieldListLoading">
+          <!-- <ng-container *ngIf="isFieldListLoading">
             <tr>
               <td colspan="6">
-                <div class="progress-spinner-container">
+                <div class="progress-spinner-container"> -->
                   <!-- 指示器大小設置 -->
-                  <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+                  <!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
                 </div>
               </td>
             </tr>
-          </ng-container>
+          </ng-container> -->
 
           <!-- 加載完成後顯示場域數據 @2024/03/14 Add -->
           <ng-container *ngIf="!isFieldListLoading">

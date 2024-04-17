@@ -250,6 +250,8 @@ export const Enlanguage = {
   'field.sinr': 'SINR',
 
   'field.optimize': 'Optimize',
+  'field.calculating': 'Calculating',
+
   
   // BS Management ( 基站管理 )
   'BS.list':'BS List',

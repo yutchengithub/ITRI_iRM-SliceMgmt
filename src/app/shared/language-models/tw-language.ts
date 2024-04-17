@@ -250,6 +250,8 @@ export const TwLanguage = {
   'field.sinr': '訊雜比(SINR值)',
 
   'field.optimize': '執行優化',
+  'field.calculating': '計算中',
+
 
 
   // BS Management ( 基站管理 )

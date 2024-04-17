@@ -1282,7 +1282,7 @@
 				<ng-container *ngIf="calculateSON_Loading">
 					<div class="progressBar">
 						<!-- 進度條 Bar -->
-						<div>Processing<span class="material-symbols-outlined">sort</span></div>
+						<div>{{ languageService.i18n['field.calculating'] }}<span class="material-symbols-outlined">sort</span></div>
 						<mat-progress-bar mode="indeterminate"></mat-progress-bar>
 					</div>
 				</ng-container>

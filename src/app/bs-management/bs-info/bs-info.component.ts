@@ -15,8 +15,6 @@ import { CommonService } from '../../shared/common.service';
 import { LanguageService } from '../../shared/service/language.service';
 import { SpinnerService } from '../../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
 
-import { NgxSpinnerService } from 'ngx-spinner';
-
 // import custom pipe modules 
 import { ParsePositionPipe } from '../../shared/pipes/position-parser.pipe'; // @2024/04/14 Add
 
@@ -184,14 +182,6 @@ export class BSInfoComponent implements OnInit {
     this.router.navigate( ['/main/bs-mgr'] );
   }
 
-  /** @2024/03/29 Add
-   * 導航到選定基站的詳細資訊頁面。
-   * @param BS 從 BS 列表中選擇的 BS 物件。
-   */
-  viewNEDetailInfo( NE: NE ) {
-    this.router.navigate( ['/main/component-mgr/info', NE.id, NE.bsId] );
-  }
-
   // @2024/04/17 Add
   // Show spinner of Loading Title 
   showLoadingSpinner() {
@@ -306,7 +296,7 @@ export class BSInfoComponent implements OnInit {
       }
 
       this.isLoadingBsInfo = false; // Local 模式下，數據加載快速完成，直接設置為 false
-     // this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else {
       
@@ -1394,12 +1384,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-
-
-
-
-
-// ↓ 網元列表區 @2024/03/29 Add ↓
+// ↓ 網元列表區 @2024/04/17 Update ↓
 
   // @2024/03/29 Add
   // 用於儲存所有於此 BS 內的網元
@@ -1434,7 +1419,16 @@ export class BSInfoComponent implements OnInit {
     console.log( 'filterNEListByBSName() - End' );
   }
 
-// ↑ 網元列表區 @2024/03/29 Add ↑
+  /** @2024/04/17 Update
+   * 導航到選定基站的詳細資訊頁面。
+   * @param NE 從 NE 列表中選擇的 NE 物件。
+   */
+   viewNEDetailInfo( NE: NE ) {
+    // this.router.navigate( ['/main/component-mgr/info', NE.id, NE.bsId] );
+    this.router.navigate( ['/main/component-mgr/info', NE.id] );
+  }
+
+// ↑ 網元列表區 @2024/04/17 Update ↑
 
 
 
