@@ -2614,6 +2614,7 @@ export class FieldInfoComponent implements OnInit {
             
             // 更新成功後重新獲取場域訊息
             this.getQueryFieldInfo();
+           // this.getfieldImage_forFieldEdit();
           },
           error: ( error ) => {
             // 處理錯誤響應
