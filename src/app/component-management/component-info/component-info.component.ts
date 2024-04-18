@@ -85,9 +85,6 @@ interface TreeNode {
   type: string;
   children?: TreeNode[];
 }
-export interface FileMList{
-  file: File[];
-}
 interface File {
   folder: string;
   filename: string;
@@ -268,9 +265,9 @@ export class ComponentInfoComponent implements OnInit {
   
   fileMlist(){
     this.commonService.queryFileMList(this.comId).subscribe(
-      (res:File) => {
-        console.log(res.filename);
-      },
+      (res: File[]) => {
+        this.fileMList = res;
+    },
       (error: any) => {
         console.error('Error loading queryFileMList:', error);
       });
