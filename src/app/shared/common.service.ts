@@ -57,6 +57,7 @@ export class CommonService {
 
       isLocal !: boolean;
      restPath !: string;
+
       options = { headers: new HttpHeaders({ 'Content-Type': 'multipart/form-data' }) };
     severitys: string[] = ['CRITICAL', 'MAJOR', 'MINOR', 'WARNING'];
   statusTypes: string[] = ['New', 'Cleared'];
@@ -140,6 +141,23 @@ export class CommonService {
   removeSessionId() {
     window.sessionStorage.removeItem('sessionId');
   }
+
+
+  // @2024/04/22 Add  
+  userId: string = ''; // 用於儲存登入的使用者 ID
+
+  // @2024/04/22 Add  
+  // 用於設定登入的使用者 ID
+  setUserId( userId: string ) {
+    this.userId = userId;
+  }
+
+  // @2024/04/22 Add  
+  // 用於取得登入的使用者 ID
+  getUserId(): string {
+    return this.userId;
+  }
+
 
   colorOne(): string {
     const styleType = window.sessionStorage.getItem('styleType');

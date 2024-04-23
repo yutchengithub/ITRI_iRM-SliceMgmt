@@ -24,8 +24,9 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
     // 語系預設
-    if (navigator.language === 'zh-TW') {
+    if ( navigator.language === 'zh-TW' ) {
       this.languageService.language = 'TW';
     } else {
       this.languageService.language = 'EN';
@@ -33,27 +34,31 @@ export class LoginComponent implements OnInit {
     this.languageService.setLanguage();
 
     // window.sessionStorage.setItem('401_error', 'logon.401');  // 測試 httpErrorMsg
-    if (window.sessionStorage.getItem('401_error')) {
-      this.showErrMssage(window.sessionStorage.getItem('401_error') as string)
+    if ( window.sessionStorage.getItem('401_error') ) {
+      this.showErrMssage( window.sessionStorage.getItem('401_error') as string )
     }
   }
 
   onLoggedin() {
+
     this.errorPorperty = '';
     window.sessionStorage.removeItem('401_error');
-    if (this.userId === '' || this.password === '') {
+
+    if ( this.userId === '' || this.password === '' ) {
       this.showErrMssage('logon.required_error');     // 顯示"請輸入帳密"訊息
       return;
     }
 
-    if (this.commonService.isLocal) {
+    if ( this.commonService.isLocal ) {
 
-      if (this.userId.toLowerCase() === 'admin' && this.password.toLowerCase() === 'admin') {
+      if ( this.userId.toLowerCase() === 'admin' && this.password.toLowerCase() === 'admin' ) {
 
         this.commonService.setSessionId('sessionId_test_0800'); // 預設的 local Session ID ( 無任何作用 )
-        this.router.navigate(['/main/dashboard']);
+        this.commonService.setUserId( this.userId );            // 設置使用者的登入名稱 ID @2024/04/22 Add
+        
+        this.router.navigate( ['/main/dashboard'] );
       } else {
-        this.showErrMssage(this.languageService.i18n['logon.password_error']);  // 顯示"輸入帳密錯誤"訊息
+        this.showErrMssage( this.languageService.i18n['logon.password_error'] );  // 顯示"輸入帳密錯誤"訊息
       }
 
     } else {
@@ -66,34 +71,38 @@ export class LoginComponent implements OnInit {
       };
 
       // 調整為 RxJS 新版本 ( Observer ) 語法 @11/28 changed by yuchen
-      this.http.post(url, JSON.stringify(body)).subscribe({
-        next: (res: any) => {
-          if (res !== 'userID or password invalid') {
-            this.commonService.setSessionId(res['session']); // 儲存 sessionId @11/28 sessionId -> session 以符合後端 API 的 Response
-            console.log(res['session']);
-            if(res.role === 1){
-              this.router.navigate(['/main/account-mgr'], { queryParams: { role: res.role } });
+      this.http.post( url, JSON.stringify( body ) ).subscribe({
+        next: ( res: any ) => {
+          if ( res !== 'userID or password invalid' ) {
+
+            this.commonService.setSessionId( res['session'] ); // 儲存 sessionId @11/28 sessionId -> session 以符合後端 API 的 Response
+            console.log( res['session'] );
+
+            this.commonService.setUserId( this.userId ); // 設置使用者的登入名稱 ID @2024/04/22 Add
+
+            if( res.role === 1 ){
+              this.router.navigate( ['/main/account-mgr'], { queryParams: { role: res.role } } );
             }
-            else if (res.role === 2){
-              this.router.navigate(['/main/dashboard'], { queryParams: { role: res.role } }); // 導向主頁
+            else if ( res.role === 2 ){
+              this.router.navigate( ['/main/dashboard'], { queryParams: { role: res.role } } ); // 導向主頁
             }      
           } else {
-            this.showErrMssage(this.languageService.i18n['logon.password_error']);  // 顯示"輸入帳密錯誤"訊息
+            this.showErrMssage( this.languageService.i18n['logon.password_error'] );  // 顯示"輸入帳密錯誤"訊息
           }
          // this.router.navigate(['/main/dashboard']);       // 導向主頁
         },
-        error: (err: ResponseMessage) => {
-          this.showErrMssage(err.respMsg as string);
+        error: ( err: ResponseMessage ) => {
+          this.showErrMssage( err.respMsg as string );
         },
         complete: () => {
-          console.log('Login request completed');
+          console.log( 'Login request completed' );
         }
       });
     }
   }
 
-  keypressHandler(event: any) {
-    if (event.keyCode === 13) {
+  keypressHandler( event: any ) {
+    if ( event.keyCode === 13 ) {
       this.onLoggedin();
     }
   }
@@ -101,7 +110,7 @@ export class LoginComponent implements OnInit {
   /**
    * @param property i18n key
    */
-  showErrMssage(property: string) {
+  showErrMssage( property: string ) {
     this.errorPorperty = property;
   }
 
