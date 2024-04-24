@@ -52,7 +52,7 @@ export const Enlanguage = {
   'search_criteria':'Filter By',   // @12/04 Add by yuchen
   'clear_search':'Search Reset',   // @11/24 Add by yuchen
   'close': 'Close',                // @2024/01/22 Add
-  
+  'clear_select':'Select Reset',   // @2024/04/25 Add
 
   // Field Management ( 場域管理 ) @11/30 Add by yuchen
   'field.list':'Field List',
@@ -298,7 +298,22 @@ export const Enlanguage = {
 
   // 網元拓樸區
   'BS.topology':'BS Topology',
+
   'BS.parameters':'BS Parameters',
+  'BS.basic': 'Basic',
+  'BS.advanced': 'Advanced',
+  'BS.allSyncOptions': 'All Sync Options',
+  'BS.syncAction': 'Sync Action',
+  'BS.syncWithNMSSettings': 'Sync with NMS Settings',
+  'BS.syncWithBSSettings': 'Sync with BS Settings',
+  'BS.nmsSettingValue': 'NMS Setting Value',
+  'BS.bsSettingValue': 'BS Setting Value',  
+  'BS.parametersItem': 'Parameters',
+  'BS.mismatch': 'Mismatch',
+  'BS.mismatchYes': 'Yes',
+  'BS.mismatchNo': 'No',
+
+
   'BS.neighborBsList':'Neighbor BS List',
   'BS.alarms':'BS Alarms',
   'BS.neList':'NE List',

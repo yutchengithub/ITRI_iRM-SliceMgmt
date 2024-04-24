@@ -51,6 +51,7 @@ export const TwLanguage = {
   'search_criteria':'篩選條件',  // @12/04 Add by yuchen
   'clear_search':'搜尋重置',     // @11/24 Add by yuchen
   'close': '關閉',              // @2024/01/22 Add
+  'clear_select':'選擇重置',   // @2024/04/25 Add
 
   // Field Management (場域管理) @11/30 Add by yuchen
   'field.list':'場域列表',
@@ -296,7 +297,23 @@ export const TwLanguage = {
   'BS.neSFversion':'軟體版本',
 
   'BS.topology':'基站組態',
+
   'BS.parameters':'基站參數',
+  'BS.basic': '基本',
+  'BS.advanced': '進階',
+  'BS.allSyncOptions': '同步所有設定選項',
+  'BS.syncAction': '同步操作',
+  'BS.syncWithNMSSettings': '依照網管設定同步',
+  'BS.syncWithBSSettings': '依照基站設定同步',
+  'BS.nmsSettingValue': '網管設定值',
+  'BS.bsSettingValue': '基站設定值',
+  'BS.parametersItem': '參數項目',
+  'BS.mismatch': '是否不符',
+  'BS.mismatchYes': '是',
+  'BS.mismatchNo': '否',
+  
+
+
   'BS.neighborBsList':'鄰居基站列表',
   'BS.alarms':'基站告警',
   'BS.neList':'網元列表',
