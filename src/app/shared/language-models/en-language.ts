@@ -52,7 +52,7 @@ export const Enlanguage = {
   'search_criteria':'Filter By',   // @12/04 Add by yuchen
   'clear_search':'Search Reset',   // @11/24 Add by yuchen
   'close': 'Close',                // @2024/01/22 Add
-  
+  'clear_select':'Select Reset',   // @2024/04/25 Add
 
   // Field Management ( 場域管理 ) @11/30 Add by yuchen
   'field.list':'Field List',

@@ -350,17 +350,20 @@
             <form>
               <div class="filter">
                 <span><label>Cell:</label>
-                  <select [(ngModel)]="selectedNci" name="selectedNci">
+                  <select [(ngModel)]="selectedNci" name="selectedNci" (change)="onBsParamSelectedNciChange()">
                     <option *ngFor="let nci of nciList" [value]="nci">
                       Cell#{{ nciList.indexOf(nci) + 1 }} (NCI=0x{{ nci }})
                     </option>
                   </select>
                 </span>
             
-                <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="onBsParamSearchClick()">search</span>
+                <!-- <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="onBsParamSearchClick()">search</span> -->
+        
+                <!-- <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="onBsParamClearClick()">clear</span> -->
             
-                <!-- Button of clear_search_ScheduleList -->
-                <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="onBsParamClearClick()">clear</span>
+                <span tooltip="{{ languageService.i18n['clear_select'] }}" class="material-symbols-outlined" (click)="onBsParamClearClick()">
+                  restart_alt
+                </span>
             
               </div>
             </form>
@@ -4616,14 +4619,17 @@
             <div class="filter">
               <span>
                 <label>Cell:</label>
-                <select [(ngModel)]="selectedNeighborNci" name="selectedNeighborNci">
+                <select [(ngModel)]="selectedNeighborNci" name="selectedNeighborNci" (change)="onNeighborSelectedNciChange()">
                   <option *ngFor="let nci of nciList" [value]="nci">
                     Cell#{{ nciList.indexOf(nci) + 1 }} (NCI=0x{{ nci }})
                   </option>
                 </select>
               </span>
-              <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="onNeighborSearchClick()">search</span>
-              <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="onNeighborClearClick()">clear</span>
+              <!-- <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="onNeighborSearchClick()">search</span> -->
+              <!-- <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="onNeighborClearClick()">clear</span> -->
+              <span tooltip="{{ languageService.i18n['clear_select'] }}" class="material-symbols-outlined" (click)="onNeighborClearClick()">
+                restart_alt
+              </span>
             </div>
           </form>
           

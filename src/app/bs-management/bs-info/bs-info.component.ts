@@ -1233,24 +1233,35 @@ export class BSInfoComponent implements OnInit {
                   '\nLog type displayed after tab switch:', this.bsParametersType );
   }
 
-  nciList: string[] = []; // 存儲NCI列表
+  nciList: string[] = [];   // 存儲NCI列表
   selectedNci: string = ''; // 當前選擇的NCI（用於基站參數）
   selectedExtensionInfo: ExtensionInfo | undefined; // 當前選擇的ExtensionInfo
 
   /**
-   * @2024/03/29 Add
-   * 當選擇的 NCI 發生變化時觸發的函數（用於基站參數）
+   * @2024/04/25 Update
+   * 當選擇的 NCI 發生變化時觸發的函數（ 用於基站參數 ）
    * @method onBsParamSelectedNciChange
    * @description
    * - 根據基站類型和選擇的 NCI，更新當前選擇的 ExtensionInfo
    */
+  // onBsParamSelectedNciChange() {
+  //   if (this.bsType === '1' && this.selectBsInfo) {
+  //     this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
+  //   } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+  //     this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
+  //   }
+  // }
   onBsParamSelectedNciChange() {
-    if (this.bsType === '1' && this.selectBsInfo) {
-      this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
-    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
-      this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
+    if ( this.selectedNci ) {
+      if ( this.bsType === '1' && this.selectBsInfo ) {
+        this.selectedExtensionInfo = this.selectBsInfo.extension_info.find( info => info.nci === this.selectedNci );
+      } else if ( this.bsType === '2' && this.selectBsInfo_dist ) {
+        this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find( info => info.nci === this.selectedNci );
+      }
+      // Additional logic to update the displayed data as needed
     }
   }
+  
 
   /**
    * @2024/04/15 Add
