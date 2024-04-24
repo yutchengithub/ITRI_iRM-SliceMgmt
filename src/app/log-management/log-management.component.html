@@ -17,7 +17,9 @@
         <!-- userid Filter for User Logs @11/20 Add by yuchen -->
         <span style="margin-left: 1px;">
           <label style="margin-right: 5px !important">{{languageService.i18n['UserLog.userid']}}</label>
-          <input formControlName="UserID" class="userid-input">
+          <!-- <input formControlName="UserID" class="userid-input"> -->
+          <!-- 修改 UserID 的輸入欄位，增加 [disabled]="isUserIdDisabled" @2024/04/24 Add -->
+          <input formControlName="UserID" class="userid-input" [disabled]="isUserIdDisabled">
         </span>
 
         <span><label>{{languageService.i18n['UserLog.logtype']}}</label>
@@ -150,7 +152,9 @@
         <!-- userid Filter for NE Logs @11/20 Add by yuchen -->
         <span style="margin-left: 1px;">
           <label style="margin-right: 5px !important">{{languageService.i18n['NElog.userid']}}</label>
-          <input formControlName="UserID" class="userid-input">
+          <!-- <input formControlName="UserID" class="userid-input"> -->
+          <!-- 修改 UserID 的輸入欄位，增加 [disabled]="isUserIdDisabled" @2024/04/24 Add -->
+          <input formControlName="UserID" class="userid-input" [disabled]="isUserIdDisabled"> 
         </span>
 
         <!-- NE Name Filter for NE Logs @11/22 Add by yuchen -->

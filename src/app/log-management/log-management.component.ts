@@ -225,6 +225,10 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     
     // 如存在對 NE Logs 的 API 請求訂閱，同樣取消訂閱
     if ( this.queryUserNetconfLog ) this.queryUserNetconfLog.unsubscribe();
+
+    // @2024/04/24 Add
+    // 如存在對 NE List 的 API 請求訂閱，同樣取消訂閱
+    if ( this.queryBsComponentList ) this.queryBsComponentList.unsubscribe();
   }
 
 // ↑ For Page Init, Destroy ↑
@@ -288,7 +292,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       this.type = 'NE_Logs';
       this.getNELogsInfo();    // 取得 NE Logs 數據 ( Local 模式下會獲取未經篩選的 NE Logs )
-      this.getNEList();        // 取得 NE List 數據，並將 NE 的 name 和 id 製成對應表 
+      //this.getNEList();        // 取得 NE List 數據，並將 NE 的 name 和 id 製成對應表 
     }
 
     // 更新當前類型，以便知道哪個 Log 類型被選中
@@ -357,7 +361,10 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   searchForm!: FormGroup;      // 用於儲存篩選條件
   afterSearchForm!: FormGroup; // 用於儲存並顯示出篩選條件
 
-  // 建立搜尋表單 @11/28 Updated - 調整為顯示當前時間往回推一個月的時間
+  // 在類別內新增一個屬性，用於控制 UserID 欄位是否被禁用
+  isUserIdDisabled: boolean = false; // @2024/04/24 Add
+
+  // 建立搜尋表單 @2024/04/24 Updated
   createSearchForm() {
     const nowTime = this.commonService.getNowTime();
 
@@ -383,6 +390,19 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       'NELogType': new FormControl('All'),    // NE Logs 類型欄位
       'keyword': new FormControl('')          // 新增關鍵字欄位 @11/13 Add by yuchen 
     });
+
+    // 從 CommonService 中獲取當前登錄的使用者 ID
+    const currentUserId = this.commonService.getUserId();
+
+    // 判斷使用者 ID 是否為 'admin'
+    if ( currentUserId !== 'admin' ) {
+      this.isUserIdDisabled = true;
+      this.searchForm.get('UserID')?.setValue( currentUserId ); // 自動設定 UserID
+      this.searchForm.get('UserID')?.disable(); // 禁用 UserID 欄位
+    } else {
+      this.isUserIdDisabled = false;
+      this.searchForm.get('UserID')?.enable(); // 確保 UserID 欄位是啟用的
+    }
   }
 
 // ↑ For Create FormGroup ↑ 
@@ -399,7 +419,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   UserLogs_getNum = 0;              // 用於記錄取得 User Logs 資訊之次數
   isGetUserLogsInfoLoading = false; // 用於表示加載 User Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
   
-  // @2024/04/17 Update
+  // @2024/04/24 Update
   getUserLogsInfo() {
     console.log( 'getUserLogsInfo() - Start' );
 
@@ -459,13 +479,29 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           limit: 10                                               // 設定每頁顯示的 Logs 數量限制
         };
 
-        // 獲取 userid 的控制元件
-        const userIdControl = this.searchForm.get('UserID');
+        // @2024/04/24 Add
+        // 從 CommonService 中獲取當前登錄的使用者 ID
+        const currentUserId = this.commonService.getUserId();
 
-        // 判斷 keyword 控制元件是否存在且有值
-        if ( userIdControl && userIdControl.value !== '' ) {
-          params.userid = userIdControl.value;
+        // @2024/04/24 Add
+        if ( currentUserId !== 'admin' ) {
+          // 確保使用者 ID 參數總是被設置為當前登錄的使用者 ID
+          params.userid = currentUserId;
+        } else {
+          // 如果有在表單中輸入 UserID，則使用該值
+          const formUserId = this.searchForm.get('UserID')?.value;
+          if ( formUserId ) {
+            params.userid = formUserId;
+          }
         }
+
+        // 獲取 userid 的控制元件
+        // const userIdControl = this.searchForm.get('UserID');
+
+        // // 判斷 keyword 控制元件是否存在且有值
+        // if ( userIdControl && userIdControl.value !== '' ) {
+        //   params.userid = userIdControl.value;
+        // }
 
         // 獲取 UserLogType 的控制元件
         const userLogTypeControl = this.searchForm.get('UserLogType');
@@ -485,7 +521,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
         // @2024/03/14 Update
         // 使用 API_Log 中的 queryLogList() 發起 HTTP GET 請求
-        this.API_Log.queryLogList( params ).subscribe({
+        this.queryLogList = this.API_Log.queryLogList( params ).subscribe({
           next: ( res ) => {    // 成功的 callback
 
             if ( !this.isSearch_userLogs ) {
@@ -526,7 +562,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
             // 設置加載旗標為 false，表示加載完成
             this.isGetUserLogsInfoLoading = false;
-            this.hideSpinner();  // 完成後隱藏 spinner
+            //this.hideSpinner();  // 完成後隱藏 spinner
           },
           error: ( error ) => {  // 錯誤的 callback
             console.error( 'Error fetching user logs:', error ); // 顯示錯誤訊息
@@ -540,7 +576,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
             this.hideSpinner();  // 完成後隱藏 spinner
           }
         });
-
+        console.log( "SafeSubscriber of queryLogList:", this.queryLogList );
       }
 
     console.log( "getUserLogsInfo() - End" );
@@ -575,12 +611,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   // queryUserNetconfLog 同樣用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
   queryUserNetconfLog!: Subscription;
 
-  // Get NE Logs @2024/03/11 Update
+  // Get NE Logs @2024/04/24 Update
   NELogsList: NELogsList = {} as NELogsList;
   NELogs_getNum = 0; // 用於記錄取得 NE Logs 資訊之次數
   isGetNELogsInfoLoading = false; // 用於表示加載 NE Logs 的 flag，初始設置為 false @2024/03/10 Add for Progress Spinner
   
-  // Get NE Logs @2024/04/17 Update
+  // Get NE Logs @2024/04/24 Update
   getNELogsInfo() {
     console.log( 'getNELogsInfo() - Start' );
     
@@ -641,11 +677,27 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       };
 
       // 獲取 userid 的控制元件
-      const userIdControl = this.searchForm.get( 'UserID' );
+      // const userIdControl = this.searchForm.get( 'UserID' );
 
-      // 判斷 keyword 控制元件是否存在且有值
-      if ( userIdControl && userIdControl.value !== '' ) {
-        params.userid = userIdControl.value;
+      // // 判斷 keyword 控制元件是否存在且有值
+      // if ( userIdControl && userIdControl.value !== '' ) {
+      //   params.userid = userIdControl.value;
+      // }
+
+      // @2024/04/24 Add
+      // 從 CommonService 中獲取當前登錄的使用者 ID
+      const currentUserId = this.commonService.getUserId();
+
+      // @2024/04/24 Add
+      if ( currentUserId !== 'admin' ) {
+        // 確保使用者 ID 參數總是被設置為當前登錄的使用者 ID
+        params.userid = currentUserId;
+      } else {
+        // 如果有在表單中輸入 UserID，則使用該值
+        const formUserId = this.searchForm.get('UserID')?.value;
+        if ( formUserId ) {
+          params.userid = formUserId;
+        }
       }
 
       // @2024/03/14 Add
@@ -682,7 +734,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       // @2024/03/14 Update
       // 使用 API_Log 中的 queryUserNetconfLog() 發起 HTTP GET 請求 
-      this.API_Log.queryUserNetconfLog( params ).subscribe( {
+      this.queryUserNetconfLog = this.API_Log.queryUserNetconfLog( params ).subscribe( {
         next: ( res ) => { // 成功的 callback
 
           if ( !this.isSearch_neLogs ) {
@@ -723,7 +775,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
           // 設置加載旗標為 false，表示加載完成
           this.isGetNELogsInfoLoading = false;
-          this.hideSpinner();  // 完成後隱藏 spinner
+          //this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {   // 錯誤的 callback
           console.error( 'Error fetching NE logs:', error ); // 顯示錯誤訊息
@@ -733,10 +785,15 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           this.hideSpinner();  // 完成後隱藏 spinner
         },
         complete: () => {     // 完成的 callback
-          console.log( 'NE logs fetch completed' );          // 顯示完成訊息
+          console.log( 'NE logs fetch completed' ); // 顯示完成訊息
           this.hideSpinner();  // 完成後隱藏 spinner
+
+          // @2024/04/24 Add
+          this.getNEList();    // 取得 NE List 數據，並將 NE 的 name 和 id 製成對應表
         }
       });
+
+      console.log( "SafeSubscriber of queryUserNetconfLog:", this.queryUserNetconfLog );
     }
 
     console.log( "getNELogsInfo() - End" );
@@ -768,6 +825,10 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     } as NELogsList;
   }
 
+  // @2024/04/24 Add
+  // queryBsComponentList 同樣用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
+  queryBsComponentList!: Subscription;
+
   // @2024/03/14 Add
   // 定義 NEList 物件，並使用類型斷言將其初始化為空物件
   NEList: NEList = {} as NEList;
@@ -775,10 +836,14 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   // 定義 neidNamePairs 陣列，用於儲存網元 id 與 name 的對應關係
   neidNamePairs: NEidNamePair[] = []; // 存儲 id 和 name 的對應關係
 
-  // @2024/03/14 Add
+  // @2024/04/24 Update
   // 用於取得 NE 列表資訊的函數
   getNEList() {
     console.log( 'getNEList() - Start' ); // 輸出開始取得 NE 列表的日誌
+
+    // @2024/04/24 Add
+    // 清除之前設置的定時器以避免重複執行
+    clearTimeout( this.refreshTimeout );
 
     this.showLoadingSpinner();   // 顯示 Loading Spinner
 
@@ -795,16 +860,20 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     } else {
 
+      // @2024/04/24 Add
+      // 取消之前的任何 API 訂閱
+      if ( this.queryBsComponentList ) this.queryBsComponentList.unsubscribe();
+
       // 如果非本地模式
       // 從後端 API 獲取 NE 列表
-      this.API_Log.queryBsComponentList().subscribe({
+      this.queryBsComponentList = this.API_Log.queryBsComponentList().subscribe({
         next: ( res ) => {
 
           // 成功獲取 NE 列表
           this.NEList = res; // 將獲取到的 NE 列表賦值給 NEList 屬性
           this.processNEList( this.NEList ); // 處理獲取的 NE 列表
 
-          this.hideSpinner();  // 完成後隱藏 spinner
+          //this.hideSpinner();  // 完成後隱藏 spinner
 
         },
         error: ( error ) => {
@@ -932,7 +1001,101 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
 // ↓ For click "Search" ↓
 
-  // For search User Logs @2024/03/12 Update
+  // @2024/04/24 Add
+  // 用於根據用戶身份調整參數並進行搜尋的通用 Log 搜尋函數
+  private searchLogs( params: UserLogsParams | NELogsParams, isUserLog: boolean ) {
+
+    const currentUserId = this.commonService.getUserId();
+
+    if ( currentUserId !== 'admin' ) {
+      // 對於非 admin 用戶，總是使用當前用戶的 ID 進行搜索
+      params.userid = currentUserId;
+    } else {
+      // 對於 admin 用戶，檢查表單中是否填寫了 UserID
+      const formUserId = this.searchForm.get('UserID')?.value;
+      if ( formUserId ) {
+        params.userid = formUserId;
+      } else {
+        delete params.userid; // 如果沒有填寫，則不應包括 userid 參數
+      }
+    }
+
+    // 根據是 User Logs 還是 NE Logs，調用相應的 API
+    const apiCall = isUserLog ? this.API_Log.queryLogList( params ) : this.API_Log.queryUserNetconfLog( params );
+    apiCall.subscribe({
+      next: ( res ) => {    // 成功的 callback
+
+        if( isUserLog ){
+
+          console.log( 'In search_UserLogs() - res:', res );
+          
+          // 傳回的數據 res 已是篩選過的，故直接放入 filtered_UserLogs
+          this.filtered_UserLogs = res.loginfo;
+          this.totalLogs = res.logNumber;       // 更新記錄的 Log 總數
+
+          // 處理非 Local 模式下的 logtime 格式 (篩選後的結果)
+          this.filtered_UserLogs.forEach(log => {
+            log.logtime = this.commonService.formatTimeWithoutSecondsFraction(log.logtime);
+          });
+
+          this.isSearch_userLogs = true;        // Search 完畢，設置標記為 true，以便 userLogsToDisplay 切換成顯示 filtered_UserLogs
+          console.log( "In search_UserLogs() - userLogsToDisplay:", this.userLogsToDisplay );
+
+        } else {
+
+          console.log( 'In search_NELogs() - res:', res );
+
+          // 傳回的數據 res 已是篩選過的，故直接放入 filtered_NELogs
+          this.filtered_NELogs = res.loginfo;
+          this.totalLogs = res.logNumber;     // 更新記錄的 Log 總數
+
+          // @2024/04/05 Add
+          // 處理非 Local 模式下的 logtime 格式 (篩選後的結果)
+          this.filtered_NELogs.forEach( log => {
+            log.logtime = this.commonService.formatTimeWithoutSecondsFraction( log.logtime );
+          });
+
+          this.isSearch_neLogs = true;        // Search 完畢，設置標記為 true，以便 neLogsToDisplay 切換成顯示 filtered_NELogs
+          console.log( "In search_NELogs() - neLogsToDisplay:", this.neLogsToDisplay );
+        }
+        
+      },
+      error: ( error ) => {  // 錯誤的 callback
+
+        if( isUserLog ){
+          console.error( 'Error searching user logs:', error ); // 顯示錯誤訊息
+
+          // 設置加載旗標為 false，表示加載出錯
+          this.isGetUserLogsInfoLoading = false;
+
+        } else {
+          console.error( 'Error searching NE logs:', error ); // 顯示錯誤訊息
+
+          // 設置加載旗標為 false，表示加載出錯
+          this.isGetNELogsInfoLoading = false;
+        }
+        this.hideSpinner();  // 失敗後隱藏 spinner
+
+      },
+      complete: () => {  // 完成的 callback
+
+        if( isUserLog ){
+          console.log( 'User logs searching completed' ); // 顯示完成訊息
+
+          // 設置加載旗標為 false，表示加載完成
+          this.isGetUserLogsInfoLoading = false;
+        } else {
+          console.log( 'NE logs searching completed' );   // 顯示完成訊息
+
+          // 設置加載旗標為 false，表示加載完成
+          this.isGetNELogsInfoLoading = false;
+        }
+        this.hideSpinner();  // 完成後隱藏 spinner
+      }
+    });
+  }
+
+  // For search User Logs @2024/04/24 Update
   filtered_UserLogs: UserLogsInfo[] = [];
   isSearch_userLogs: boolean = false;
   search_UserLogs() {
@@ -1024,12 +1187,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       };
 
       // 獲取 userid 的控制元件
-      const userIdControl = this.searchForm.get('UserID');
+      // const userIdControl = this.searchForm.get('UserID');
 
-      // 判斷 keyword 控制元件是否存在且有值
-      if ( userIdControl && userIdControl.value !== '' ) {
-        params.userid = userIdControl.value;
-      }
+      // // 判斷 keyword 控制元件是否存在且有值
+      // if ( userIdControl && userIdControl.value !== '' ) {
+      //   params.userid = userIdControl.value;
+      // }
 
       // 獲取 UserLogType 的控制元件
       const userLogTypeControl = this.searchForm.get('UserLogType');
@@ -1047,39 +1210,43 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         params.keyword = keyWordControl.value;
       }
 
+      // @2024/04/24 Add
+      // 調用通用搜索函數，傳入參數和標識這是 User Logs 的搜索
+      this.searchLogs( params, true );
+
       // 使用 API_Log 中的 queryLogList() 發起 HTTP GET 請求
-      this.API_Log.queryLogList( params ).subscribe({
-        next: ( res ) => {    // 成功的 callback
+      // this.API_Log.queryLogList( params ).subscribe({
+      //   next: ( res ) => {    // 成功的 callback
   
-          console.log( 'In search_UserLogs() - res:', res );
+      //     console.log( 'In search_UserLogs() - res:', res );
           
-          // 傳回的數據 res 已是篩選過的，故直接放入 filtered_UserLogs
-          this.filtered_UserLogs = res.loginfo;
-          this.totalLogs = res.logNumber;       // 更新記錄的 Log 總數
+      //     // 傳回的數據 res 已是篩選過的，故直接放入 filtered_UserLogs
+      //     this.filtered_UserLogs = res.loginfo;
+      //     this.totalLogs = res.logNumber;       // 更新記錄的 Log 總數
 
-          // @2024/04/05 Add
-          // 處理非 Local 模式下的 logtime 格式 (篩選後的結果)
-          this.filtered_UserLogs.forEach(log => {
-            log.logtime = this.commonService.formatTimeWithoutSecondsFraction(log.logtime);
-          });
+      //     // @2024/04/05 Add
+      //     // 處理非 Local 模式下的 logtime 格式 (篩選後的結果)
+      //     this.filtered_UserLogs.forEach(log => {
+      //       log.logtime = this.commonService.formatTimeWithoutSecondsFraction(log.logtime);
+      //     });
 
-          this.isSearch_userLogs = true;        // Search 完畢，設置標記為 true，以便 userLogsToDisplay 切換成顯示 filtered_UserLogs
-          console.log( "In search_UserLogs() - userLogsToDisplay:", this.userLogsToDisplay );
+      //     this.isSearch_userLogs = true;        // Search 完畢，設置標記為 true，以便 userLogsToDisplay 切換成顯示 filtered_UserLogs
+      //     console.log( "In search_UserLogs() - userLogsToDisplay:", this.userLogsToDisplay );
 
-          // this.UserloginfoDeal();   // 調用處理 User Log 訊息的函數
+      //     // this.UserloginfoDeal();   // 調用處理 User Log 訊息的函數
 
-          // 設置加載旗標為 false，表示加載完成
-          this.isGetUserLogsInfoLoading = false;
-          this.hideSpinner();  // 完成後隱藏 spinner
-        },
-        error: ( error ) => {  // 錯誤的 callback
-          console.error( 'Error searching user logs:', error ); // 顯示錯誤訊息
+      //     // 設置加載旗標為 false，表示加載完成
+      //     this.isGetUserLogsInfoLoading = false;
+      //     this.hideSpinner();  // 完成後隱藏 spinner
+      //   },
+      //   error: ( error ) => {  // 錯誤的 callback
+      //     console.error( 'Error searching user logs:', error ); // 顯示錯誤訊息
 
-          // 設置加載旗標為 false，表示加載出錯
-          this.isGetUserLogsInfoLoading = false;
-          this.hideSpinner();  // 完成後隱藏 spinner
-        }
-      });
+      //     // 設置加載旗標為 false，表示加載出錯
+      //     this.isGetUserLogsInfoLoading = false;
+      //     this.hideSpinner();  // 完成後隱藏 spinner
+      //   }
+      // });
 
     }
 
@@ -1104,7 +1271,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     
   }  
 
-  // For search NE Logs @2024/03/14 Update
+  // For search NE Logs @2024/04/24 Update
   filtered_NELogs: NELogsInfo[] = [];
   isSearch_neLogs: boolean = false;
   search_NELogs() {
@@ -1200,12 +1367,12 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       };
 
       // 獲取 userid 的控制元件
-      const userIdControl = this.searchForm.get( 'UserID' );
+      // const userIdControl = this.searchForm.get( 'UserID' );
 
-      // 判斷 keyword 控制元件是否存在且有值
-      if ( userIdControl && userIdControl.value !== '' ) {
-        params.userid = userIdControl.value;
-      }
+      // // 判斷 keyword 控制元件是否存在且有值
+      // if ( userIdControl && userIdControl.value !== '' ) {
+      //   params.userid = userIdControl.value;
+      // }
 
       // @2024/03/14 Add
       // 獲取 neName 的控制元件
@@ -1240,39 +1407,43 @@ export class LogManagementComponent implements OnInit, OnDestroy {
         params.keyword = keyWordControl.value;
       }
 
-      // 使用 API_Log 中的 queryUserNetconfLog() 發起 HTTP GET 請求 
-      this.API_Log.queryUserNetconfLog( params ).subscribe( {
-        next: ( res ) => { // 成功的 callback
+      // @2024/04/24 Add
+      // 調用通用搜索函數，傳入參數和標識這是 NE Logs 的搜索
+      this.searchLogs( params, false );
 
-          console.log( 'In search_NELogs() - res:', res );
+      // // 使用 API_Log 中的 queryUserNetconfLog() 發起 HTTP GET 請求 
+      // this.API_Log.queryUserNetconfLog( params ).subscribe( {
+      //   next: ( res ) => { // 成功的 callback
 
-          // 傳回的數據 res 已是篩選過的，故直接放入 filtered_NELogs
-          this.filtered_NELogs = res.loginfo;
-          this.totalLogs = res.logNumber;     // 更新記錄的 Log 總數
+      //     console.log( 'In search_NELogs() - res:', res );
 
-          // @2024/04/05 Add
-          // 處理非 Local 模式下的 logtime 格式 (篩選後的結果)
-          this.filtered_NELogs.forEach( log => {
-            log.logtime = this.commonService.formatTimeWithoutSecondsFraction( log.logtime );
-          });
+      //     // 傳回的數據 res 已是篩選過的，故直接放入 filtered_NELogs
+      //     this.filtered_NELogs = res.loginfo;
+      //     this.totalLogs = res.logNumber;     // 更新記錄的 Log 總數
 
-          this.isSearch_neLogs = true;        // Search 完畢，設置標記為 true，以便 neLogsToDisplay 切換成顯示 filtered_NELogs
-          console.log( "In search_NELogs() - neLogsToDisplay:", this.neLogsToDisplay );
+      //     // @2024/04/05 Add
+      //     // 處理非 Local 模式下的 logtime 格式 (篩選後的結果)
+      //     this.filtered_NELogs.forEach( log => {
+      //       log.logtime = this.commonService.formatTimeWithoutSecondsFraction( log.logtime );
+      //     });
 
-          // this.NEloginfoDeal();  // 調用處理 NE Log 訊息的函數
+      //     this.isSearch_neLogs = true;        // Search 完畢，設置標記為 true，以便 neLogsToDisplay 切換成顯示 filtered_NELogs
+      //     console.log( "In search_NELogs() - neLogsToDisplay:", this.neLogsToDisplay );
 
-          // 設置加載旗標為 false，表示加載完成
-          this.isGetNELogsInfoLoading = false;
-          this.hideSpinner();  // 完成後隱藏 spinner
-        },
-        error: ( error ) => {   // 錯誤的 callback
-          console.error( 'Error searching NE logs:', error ); // 顯示錯誤訊息
+      //     // this.NEloginfoDeal();  // 調用處理 NE Log 訊息的函數
 
-          // 設置加載旗標為 false，表示加載出錯
-          this.isGetNELogsInfoLoading = false;
-          this.hideSpinner();  // 完成後隱藏 spinner
-        }
-      });
+      //     // 設置加載旗標為 false，表示加載完成
+      //     this.isGetNELogsInfoLoading = false;
+      //     this.hideSpinner();  // 完成後隱藏 spinner
+      //   },
+      //   error: ( error ) => {   // 錯誤的 callback
+      //     console.error( 'Error searching NE logs:', error ); // 顯示錯誤訊息
+
+      //     // 設置加載旗標為 false，表示加載出錯
+      //     this.isGetNELogsInfoLoading = false;
+      //     this.hideSpinner();  // 完成後隱藏 spinner
+      //   }
+      // });
 
     }
 
