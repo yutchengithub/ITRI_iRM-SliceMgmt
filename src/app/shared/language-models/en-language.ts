@@ -298,7 +298,22 @@ export const Enlanguage = {
 
   // 網元拓樸區
   'BS.topology':'BS Topology',
+
   'BS.parameters':'BS Parameters',
+  'BS.basic': 'Basic',
+  'BS.advanced': 'Advanced',
+  'BS.allSyncOptions': 'All Sync Options',
+  'BS.syncAction': 'Sync Action',
+  'BS.syncWithNMSSettings': 'Sync with NMS Settings',
+  'BS.syncWithBSSettings': 'Sync with BS Settings',
+  'BS.nmsSettingValue': 'NMS Setting Value',
+  'BS.bsSettingValue': 'BS Setting Value',  
+  'BS.parametersItem': 'Parameters',
+  'BS.mismatch': 'Mismatch',
+  'BS.mismatchYes': 'Yes',
+  'BS.mismatchNo': 'No',
+
+
   'BS.neighborBsList':'Neighbor BS List',
   'BS.alarms':'BS Alarms',
   'BS.neList':'NE List',

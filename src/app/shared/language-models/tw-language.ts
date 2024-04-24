@@ -296,7 +296,23 @@ export const TwLanguage = {
   'BS.neSFversion':'軟體版本',
 
   'BS.topology':'基站組態',
+
   'BS.parameters':'基站參數',
+  'BS.basic': '基本',
+  'BS.advanced': '進階',
+  'BS.allSyncOptions': '同步所有設定選項',
+  'BS.syncAction': '同步操作',
+  'BS.syncWithNMSSettings': '依照網管設定同步',
+  'BS.syncWithBSSettings': '依照基站設定同步',
+  'BS.nmsSettingValue': '網管設定值',
+  'BS.bsSettingValue': '基站設定值',
+  'BS.parametersItem': '參數項目',
+  'BS.mismatch': '是否不符',
+  'BS.mismatchYes': '是',
+  'BS.mismatchNo': '否',
+  
+
+
   'BS.neighborBsList':'鄰居基站列表',
   'BS.alarms':'基站告警',
   'BS.neList':'網元列表',
