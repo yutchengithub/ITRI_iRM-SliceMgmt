@@ -171,6 +171,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     });
 
     this.createSearchForm(); // 初始化並創建篩選 Logs 用的 FormGroup
+    this.getNEList();        // 於頁面載入最初期時先取得網元列表 @2024/04/24 Add
   }
 
   /**
@@ -178,6 +179,9 @@ export class LogManagementComponent implements OnInit, OnDestroy {
    * 主要用於設定 Component 的初始狀態，包括預設的 Log 類型、sessionId、以及設定路由參數相關的應對處理。
    */
   ngOnInit(){
+
+    console.log("此時 userLogsToDisplay:", this.userLogsToDisplay);
+    console.log("此時 neLogsToDisplay:", this.neLogsToDisplay);
 
     // 設定預設的 Log 類型，用於 Component 初次載入時顯示相應的 Log Lists
     this.type = 'User_Logs';
@@ -212,6 +216,10 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       this.getNELogsInfo();   // 預設初始化時取得 NE Logs 資訊
     }
 
+    //this.getNEList();
+  }
+
+  ngAfterViewInit() {
   }
 
   // 銷毀 Component 時的清理工作
@@ -789,7 +797,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           this.hideSpinner();  // 完成後隱藏 spinner
 
           // @2024/04/24 Add
-          this.getNEList();    // 取得 NE List 數據，並將 NE 的 name 和 id 製成對應表
+          //this.getNEList();    // 取得 NE List 數據，並將 NE 的 name 和 id 製成對應表
         }
       });
 

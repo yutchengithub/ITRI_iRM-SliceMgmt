@@ -37,6 +37,13 @@ export class apiForBSMgmt {
     return this.http.get< BSInfo >( url ); // 告訴 HttpClient 期望的響應類型是 BSInfo
   }
 
+  // @2024/04/24 Add
+  // 取得未被使用的網元列表
+  queryUnusedNeList(): Observable<any> {
+    const url = `${this.restPath}/queryUnusedNeList/${this.sessionId}`;
+    return this.http.get( url );
+  }
+
   // For Updating Configurations of All-in-one BS
   updateBs( body: {} ): Observable<any> {
 
