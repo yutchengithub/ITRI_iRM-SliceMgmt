@@ -15,24 +15,32 @@ export class apiForScheduleMgmt {
     private commonService: CommonService 
   ) {}
 
-  restPath = this.commonService.restPath;         // Get the root path 
-  sessionId = this.commonService.getSessionId();  // Get the Session ID 
+  restPath = this.commonService.restPath;           // Get the root path 
+  //sessionId = this.commonService.getSessionId();  // Get the Session ID 
 
+  // @2024/04/24 Update
   // 取得現有的 Schedule List 用
   queryJobTicketList(): Observable<any> {    
 
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
     // 構建 API URL
-    const url = `${this.restPath}/queryJobTicketList/${this.sessionId}`;
+    const url = `${this.restPath}/queryJobTicketList/${sessionId}`;
 
     // 發起 HTTP GET 請求
     return this.http.get( url );
   }
 
+  // @2024/04/24 Update
   // 取得現有對應到的 Schedule 資訊用
   queryJobTicketInfo( jobId: string ): Observable<any> { 
 
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
     // 構建 API URL
-    const url = `${this.restPath}/queryJobTicketInfo/${this.sessionId}/${jobId}`;
+    const url = `${this.restPath}/queryJobTicketInfo/${sessionId}/${jobId}`;
 
     // 發起 HTTP GET 請求
     return this.http.get(url);
@@ -48,27 +56,33 @@ export class apiForScheduleMgmt {
     return this.http.post( url, bodyStr );
   }
 
-  // @2024/03/22 Add
+  // @2024/04/24 Update
   // 下載 Schedule 報表用 as an .xlsx file 
   getReportFile( jobId: string ): Observable<any> { 
 
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
     // 構建 API URL
-    const url = `${this.restPath}/getReportFile/${this.sessionId}/${jobId}`;
+    const url = `${this.restPath}/getReportFile/${sessionId}/${jobId}`;
     
     // 發起 HTTP GET 請求
     return this.http.get( url );
   }
 
-  // @2024/03/22 Add
+  // @2024/04/24 Update
   // Remove Schedule of selection
   removeJobTicket( jobId: string ): Observable<any> { 
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
 
     const url = `${this.restPath}/removeJobTicket`;
 
     // 準備請求體(JSON)，包含所有後端所需的參數
     const removeJobBody = {
       id: jobId,
-      session: this.sessionId
+      session: sessionId
     };
 
     // 定義 HTTP 請求選項

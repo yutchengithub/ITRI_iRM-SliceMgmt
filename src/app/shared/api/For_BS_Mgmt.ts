@@ -19,28 +19,39 @@ export class apiForBSMgmt {
   ) {}
   
   restPath = this.commonService.restPath;         // Get the root path  @2024/01/08
-  sessionId = this.commonService.getSessionId();  // Get the Session ID @2024/01/08
+  //sessionId = this.commonService.getSessionId();  // Get the Session ID @2024/01/08
 
+  // @2024/04/24 Update
   // Get a list of BSs that are not limited to being within the specified field
   queryBsList(): Observable<any> {
     
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
     // 構建 API URL
-    const url = `${this.restPath}/queryBsList/${this.sessionId}`;
+    const url = `${this.restPath}/queryBsList/${sessionId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get( url );
   }
 
-  // 取得指定 id 的基站所有資訊
+  // 取得指定 id 的基站所有資訊 @2024/04/24 Update
   queryBsInfo( bsId: string ): Observable< BSInfo | BSInfo_dist >  {
-    const url = `${this.restPath}/queryBsInfo/${this.sessionId}/${bsId}`;
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
+    const url = `${this.restPath}/queryBsInfo/${sessionId}/${bsId}`;
     return this.http.get< BSInfo >( url ); // 告訴 HttpClient 期望的響應類型是 BSInfo
   }
 
   // @2024/04/24 Add
   // 取得未被使用的網元列表
   queryUnusedNeList(): Observable<any> {
-    const url = `${this.restPath}/queryUnusedNeList/${this.sessionId}`;
+    
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
+    const url = `${this.restPath}/queryUnusedNeList/${sessionId}`;
     return this.http.get( url );
   }
 
@@ -64,8 +75,11 @@ export class apiForBSMgmt {
     return this.http.post( url, bodyStr );
   }
 
-  // Remove BS of selection @2024/03/22 Add
+  // Remove BS of selection @2024/04/24 Update
   removeBs( bsId: string ): Observable<any> { 
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
     
     // 構建 API URL
     const url = `${this.restPath}/removeBs`;
@@ -73,7 +87,7 @@ export class apiForBSMgmt {
     // 準備請求體(JSON)，包含所有後端所需的參數
     const removeBsBody = {
       id: bsId,
-      session: this.sessionId
+      session: sessionId
     };
 
     // 定義 HTTP 請求選項
@@ -96,28 +110,34 @@ export class apiForBSMgmt {
     return this.http.delete( url, httpOptions );
   }
 
-  // Get a list of NEs  @2024/03/27 Add
+  // Get a list of NEs  @2024/04/24 Update
   queryBsComponentList(): Observable<any> {
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
   
     // 構建 API URL
-    const url = `${this.restPath}/queryBsComponentList/${this.sessionId}`;
+    const url = `${this.restPath}/queryBsComponentList/${sessionId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get( url );
   }
 
-  // @2024/03/29
+  // @2024/04/24 Update
   // 取得 BS 中指定 id 的 NE 所有資訊
   queryBsComponentInfo( neId: string ): Observable< any >  {
 
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
     // 構建 API URL
-    const url = `${this.restPath}/queryBsComponentInfo/${this.sessionId}/${neId}`;
+    const url = `${this.restPath}/queryBsComponentInfo/${sessionId}/${neId}`;
 
     // 發起 HTTP GET 請求
     return this.http.get( url );
   }
 
-  /** @2024/03/31 Add
+  /** @2024/04/24 Upadte
     * 取得指定基站的當前告警資訊
     * @param bsId 基站 ID
     * @param params 其他查詢參數
@@ -125,8 +145,11 @@ export class apiForBSMgmt {
     */
   queryCurrentBsFaultMessage( bsId: string, params: any ): Observable<any> {
 
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
     // 組合 API 的 URL，包含 session ID 和基站 ID
-    const url = `${this.restPath}/queryCurrentBsFaultMessage/${this.sessionId}/${bsId}`;
+    const url = `${this.restPath}/queryCurrentBsFaultMessage/${sessionId}/${bsId}`;
     
     // 發送 HTTP GET 請求到指定的 URL，並將 params 物件作為查詢參數傳遞給請求
     return this.http.get( url, { params } );

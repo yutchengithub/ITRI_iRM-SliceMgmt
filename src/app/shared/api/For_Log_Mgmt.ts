@@ -16,35 +16,56 @@ export class apiForLogMgmt {
   ) {}
 
   restPath = this.commonService.restPath;         // Get the root path 
-  sessionId = this.commonService.getSessionId();  // Get the Session ID 
+  //sessionId = this.commonService.getSessionId();  // Get the Session ID 
 
-  // 取得 User Logs 用
+  // 取得 User Logs 用 @2024/04/24 Update
   queryLogList( params: any ): Observable<any> {
-    const url = `${this.restPath}/queryLogList/${this.sessionId}`;
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
+    const url = `${this.restPath}/queryLogList/${sessionId}`;
     return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
   }
 
+  // @2024/04/24 Update
   // 下載 User Logs 用 ( 後端無 keyword 選項可篩選下載 )
   getDumpLogList( params: any ): Observable<any> {
-    const url = `${this.restPath}/getDumpLogList/${this.sessionId}`;
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
+    const url = `${this.restPath}/getDumpLogList/${sessionId}`;
     return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
   }
 
-  // 取得 NE Logs 用
+  // 取得 NE Logs 用 @2024/04/24 Update
   queryUserNetconfLog( params: any ): Observable<any> { 
-    const url = `${this.restPath}/queryUserNetconfLog/${this.sessionId}`;
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
+    const url = `${this.restPath}/queryUserNetconfLog/${sessionId}`;
     return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
   }
 
-  // 下載 NE Logs 用
+  // 下載 NE Logs 用 @2024/04/24 Update
   getDumpUserNetconfLog( params: any ): Observable<any> {
-    const url = `${this.restPath}/getDumpUserNetconfLog/${this.sessionId}`;
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+    
+    const url = `${this.restPath}/getDumpUserNetconfLog/${sessionId}`;
     return this.http.get( url, { params } );  // 將參數物件傳遞給 HTTP GET 請求
   }
 
-  // 取得 NE 列表用
+  // 取得 NE 列表用 @2024/04/24 Update
   queryBsComponentList(): Observable<any> {
-    const url = `${this.restPath}/queryBsComponentList/${this.sessionId}`;
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
+    const url = `${this.restPath}/queryBsComponentList/${sessionId}`;
     return this.http.get( url );
   }
 

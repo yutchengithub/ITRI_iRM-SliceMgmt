@@ -19,14 +19,17 @@ export class apiForFieldMgmt {
   ) {}
   
   restPath = this.commonService.restPath;         // Get the root path  @2024/01/08
-  sessionId = this.commonService.getSessionId();  // Get the Session ID @2024/01/08
+  //sessionId = this.commonService.getSessionId();  // Get the Session ID @2024/01/08
 
 
-  // Get Lists of Field @11/30 Add by yuchen
+  // Get Lists of Field @2024/04/24 Update
   queryFieldList(): Observable<any> {
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
     
     // 構建 API URL
-    const url = `${this.restPath}/queryFieldList/${this.sessionId}`;
+    const url = `${this.restPath}/queryFieldList/${sessionId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get(url);
@@ -42,8 +45,11 @@ export class apiForFieldMgmt {
     return this.http.post( url, bodyStr );
   }
 
-  // Remove Field of selection @2024/01/29 Add by yuchen
+  // Remove Field of selection @2024/04/24 Update
   removeField( fieldId: string ): Observable<any> { 
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
       
     // 構建 API URL
     const url = `${this.restPath}/removeField`;
@@ -51,7 +57,7 @@ export class apiForFieldMgmt {
     // 準備請求體(JSON)，包含所有後端所需的參數
     const removeFieldBody = {
       id: fieldId,
-      session: this.sessionId
+      session: sessionId
     };
 
     // 定義 HTTP 請求選項
@@ -75,32 +81,41 @@ export class apiForFieldMgmt {
   }
 
 
-  // For create a snapshot of specific field  @2024/03/06 Add by yuchen
+  // For create a snapshot of specific field  @2024/04/24 Update
   createFieldSnapshot( fieldId: string ): Observable<any> {
 
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+    
     const url = `${this.restPath}/createFieldSnapshot`;
 
     // 準備請求體，包含所有後端所需的參數
     const bodyStr = {
-      session: this.sessionId,
+      session: sessionId,
       fieldid: fieldId
     };
     
     return this.http.post( url, bodyStr );
   }
 
-  // Get Snapshot's list of specific field @2024/03/06 Add by yuchen
+  // Get Snapshot's list of specific field @2024/04/24 Update
   queryFieldSnapshotList( fieldId: string ): Observable<any> {
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
   
     // 構建 API URL
-    const url = `${this.restPath}/queryFieldSnapshotList/${this.sessionId}/${fieldId}`;
+    const url = `${this.restPath}/queryFieldSnapshotList/${sessionId}/${fieldId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get(url);
   }
 
-  // Call to remove a snapshot of selection @2024/03/07 Update by yuchen
+  // Call to remove a snapshot of selection @2024/04/24 Update
   removeFieldSnapshotInfo( SnapshotId: string ): Observable<any> { 
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
   
     // 構建 API URL
     const url = `${this.restPath}/removeFieldSnapshotInfo`;
@@ -108,7 +123,7 @@ export class apiForFieldMgmt {
     // 準備請求體(JSON)，包含所有後端所需的參數
     const removeFieldSnapshotInfoBody = {
       id: SnapshotId,
-      session: this.sessionId
+      session: sessionId
     };
 
     // 定義 HTTP 請求選項
@@ -131,11 +146,14 @@ export class apiForFieldMgmt {
     return this.http.delete( url, httpOptions );
   }
 
-  // Download the specified snapshot as an .xlsx file @2024/03/06 Add by yuchen
+  // Download the specified snapshot as an .xlsx file @2024/04/24 Update
   getDumpFieldSnapshot( snapshotId: string ): Observable<any> {
 
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
     // 構建 API URL
-    const url = `${this.restPath}/getDumpFieldSnapshot/${this.sessionId}/${snapshotId}`;
+    const url = `${this.restPath}/getDumpFieldSnapshot/${sessionId}/${snapshotId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get(url);
@@ -152,11 +170,14 @@ export class apiForFieldMgmt {
   }
 
 
-  // Get Information of Fields @12/05 Add by yuchen
+  // Get Information of Fields @2024/04/24 Update
   queryFieldInfo( fieldId: string ): Observable<any> {
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
     
     // 構建 API URL
-    const url = `${this.restPath}/queryFieldInfo/${this.sessionId}/${fieldId}`;
+    const url = `${this.restPath}/queryFieldInfo/${sessionId}/${fieldId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get(url);
@@ -173,36 +194,50 @@ export class apiForFieldMgmt {
   }
 
 
-  // 取得指定 id 基站所有資訊 @2024/02/05 Add - 從 commonService.ts 移入
+  // 取得指定 id 基站所有資訊 @2024/04/24 Update
   queryBsInfo( bsId: string ): Observable< BSInfo | BSInfo_dist >  {
-    const url = `${this.restPath}/queryBsInfo/${this.sessionId}/${bsId}`;
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
+    const url = `${this.restPath}/queryBsInfo/${sessionId}/${bsId}`;
     return this.http.get< BSInfo >( url ); // 告訴 HttpClient 期望的響應類型是 BSInfo
   }
 
-  // @2024/01/16 Add by yuchen
+  // @2024/04/24 Update
   // Get a list of BSs that are not limited to being within the specified field
   queryBsList(): Observable<any> {
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
     
     // 構建 API URL
-    const url = `${this.restPath}/queryBsList/${this.sessionId}`;
+    const url = `${this.restPath}/queryBsList/${sessionId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get( url );
   }
 
-  // Get Image of the Field  @2024/01/02 Add by yuchen
+  // Get Image of the Field  @2024/04/24 Update
   queryFieldImage( fieldId: string ): Observable<any> { 
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
     
     // 構建 API URL
-    const url = `${this.restPath}/queryFieldImage/${this.sessionId}/${fieldId}`;
+    const url = `${this.restPath}/queryFieldImage/${sessionId}/${fieldId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get(url);
   }
 
-  // Upload Field Image  @2024/01/18 Add by yuchen
+  // Upload Field Image @2024/04/24 Update
   uploadFieldImage( fieldId: string, file: File ): Observable<any> {
-    const url = `${this.restPath}/uploadFieldImage/${this.sessionId}/${fieldId}`;
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
+    const url = `${this.restPath}/uploadFieldImage/${sessionId}/${fieldId}`;
 
     // 創建 FormData 物件並附加文件
     const formData: FormData = new FormData();
@@ -212,8 +247,11 @@ export class apiForFieldMgmt {
     return this.http.post( url, formData );
   }
 
-  // Call to remove the Field Image @2024/01/10 Add by yuchen
+  // Call to remove the Field Image @2024/04/24 Update
   removeFieldImage( fieldId: string ): Observable<any> { 
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
     
     // 構建 API URL
     const url = `${this.restPath}/removeFieldImage`;
@@ -221,7 +259,7 @@ export class apiForFieldMgmt {
     // 準備請求體(JSON)，包含所有後端所需的參數
     const removeFieldImageBody = {
       fieldid: fieldId,
-      session: this.sessionId
+      session: sessionId
     };
 
     // 定義 HTTP 請求選項
@@ -244,16 +282,19 @@ export class apiForFieldMgmt {
     return this.http.delete( url, httpOptions );
   }
 
-  // Get SINR or RSRP map @2024/01/04 Update by yuchen
+  // Get SINR or RSRP map @2024/04/24 Update
   bsHeatMap( fieldId: string, leftLongitude: number, leftLatitude: number, rightLongitude: number,
              rightLatitude: number, mapType: number ): Observable<any> {
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();         
     
     // 構建 API URL，指向後端的 bsHeatMap 路徑
     const url = `${this.restPath}/bsHeatMap`;
   
     // 準備請求體，包含所有後端所需的參數
     const requestBody = {
-      session: this.sessionId,
+      session: sessionId,
       fieldId: fieldId,
       'left-longitude': String(Math.round(leftLongitude * 1000000)),    // 轉為字符串
       'left-latitude': String(Math.round(rightLatitude * 1000000)),     // 轉為字符串
@@ -277,11 +318,14 @@ export class apiForFieldMgmt {
   }
 
 
-  // For Get PM Parameter Setting @2024/02/04 Add by yuchen
+  // For Get PM Parameter Setting @2024/04/24 Update
   queryPmFtpInfo( fieldId: string ): Observable< any > { 
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
   
     // 構建 API URL
-    const url = `${this.restPath}/queryPmFtpInfo/${this.sessionId}/${fieldId}`;
+    const url = `${this.restPath}/queryPmFtpInfo/${sessionId}/${fieldId}`;
   
     // 發起 HTTP GET 請求
     return this.http.get( url );
@@ -297,11 +341,14 @@ export class apiForFieldMgmt {
     return this.http.post( url, bodyStr );
   }
 
-  // For Get SON parameters @2024/03/30 Add by yuchen
+  // For Get SON parameters @2024/04/24 Update
   querySonParameter(): Observable<any> {
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
       
     // 構建 API URL
-    const url = `${this.restPath}/querySonParameter/${this.sessionId}`;
+    const url = `${this.restPath}/querySonParameter/${sessionId}`;
 
     // 發起 HTTP GET 請求
     return this.http.get( url );
@@ -314,6 +361,7 @@ export class apiForFieldMgmt {
    * @returns 一個 Observable，代表 API 的響應結果
    */
   multiCalculateBs( body: {} ): Observable<any> {
+    
     // 建立完整的 API URL
     const url = `${this.restPath}/multiCalculateBs`;
 
@@ -331,6 +379,7 @@ export class apiForFieldMgmt {
     * @returns 一個 Observable,代表 API 的響應結果
     */
   multiOptimalBs(body: {}): Observable<any> {
+
     // 建立完整的 API URL
     const url = `${this.restPath}/multiOptimalBs`;
 
