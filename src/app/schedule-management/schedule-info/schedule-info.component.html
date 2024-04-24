@@ -59,7 +59,7 @@
         <!-- 內容訊息區 @2024/03/24 Add -->
         <ul class="file_url_info">
           <h3>{{ languageService.i18n['sm.contentInfo'] }}</h3>
-          <li>
+          <li *ngIf="!isSfUpdateInfoArray( selectScheduleInfo.ticketinfo )">
             <!-- 顯示是否為"週期性執行"的區域 -->
             <label>{{ languageService.i18n['sm.periodicExecution'] }}</label>
             <span *ngIf=" selectScheduleInfo.executedtype === '0' ">{{ languageService.i18n['sm.notPeriodicExecution'] }}</span>
