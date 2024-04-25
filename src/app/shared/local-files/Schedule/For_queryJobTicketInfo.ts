@@ -151,19 +151,9 @@
             "iscustomized": 1,
             "customizedkpi": {
               "0": {
-                "name": "DRB",
-                "describe": "DRB",
-                "kpi": "DRB.UEThpUl"
-              },
-              "1": {
-                "name": "UECNTX",
-                "describe": "UECNTX",
-                "kpi": "UECNTX.ConnEstabSucc"
-              },
-              "2": {
-                "name": "VR",
-                "describe": "VR",
-                "kpi": "VR.VDiskUsageMean"
+                "name": "test",
+                "describe": "test",
+                "kpi": "DRB.EstabSucc/DRB.EstabAtt"
               }
             }
           }
@@ -524,19 +514,19 @@
             "iscustomized": 1,
             "customizedkpi": {
               "0": {
-                "name": "RRC",
-                "describe": "RRC",
-                "kpi": "RRC.ConnEstabSuccgnb.RRC.ConnEstab.mo-Signalling"
+                "name": "test",
+                "describe": "test",
+                "kpi": "DRB.EstabSucc/DRB.EstabAtt"
               },
               "1": {
-                "name": "UECNTX",
-                "describe": "UECNTX",
-                "kpi": "UECNTX.ConnEstabSucc.mo-SignallingUECNTX.ConnEstabAtt.mo-Signalling"
+                "name": "test1",
+                "describe": "test1",
+                "kpi": "UECNTX.ConnEstabSucc.mo-Signalling/UECNTX.ConnEstabAtt.mo-Signalling"
               },
               "2": {
-                "name": "VMemoryUsageMean",
-                "describe": "VMemoryUsageMean",
-                "kpi": "VOLTAGEPEE.EnergyCapacity.DiskDRB.PdcpSduVolumeDlVR.VMemoryUsageMean"
+                "name": "test2",
+                "describe": "test2",
+                "kpi": "(VOLTAGEPEE.EnergyCapacity+DiskDRB.PdcpSduVolumeDlVR)/VMemoryUsageMean"
               }
             }
           }
