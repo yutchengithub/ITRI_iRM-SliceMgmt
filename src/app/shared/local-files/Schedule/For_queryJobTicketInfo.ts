@@ -151,9 +151,19 @@
             "iscustomized": 1,
             "customizedkpi": {
               "0": {
-                "name": "RSRP",
-                "describe": "Reference Signal Received Power",
-                "kpi": ">= -95dBm && <= -85dBm"
+                "name": "DRB",
+                "describe": "DRB",
+                "kpi": "DRB.UEThpUl"
+              },
+              "1": {
+                "name": "UECNTX",
+                "describe": "UECNTX",
+                "kpi": "UECNTX.ConnEstabSucc"
+              },
+              "2": {
+                "name": "VR",
+                "describe": "VR",
+                "kpi": "VR.VDiskUsageMean"
               }
             }
           }
@@ -514,19 +524,19 @@
             "iscustomized": 1,
             "customizedkpi": {
               "0": {
-                "name": "RSRP",
-                "describe": "Reference Signal Received Power",
-                "kpi": ">= -95dBm && <= -85dBm"
+                "name": "RRC",
+                "describe": "RRC",
+                "kpi": "RRC.ConnEstabSuccgnb.RRC.ConnEstab.mo-Signalling"
               },
               "1": {
-                "name": "RSRQ",
-                "describe": "Reference Signal Received Quality",
-                "kpi": ">= -19.5dB && <= -3dB"
+                "name": "UECNTX",
+                "describe": "UECNTX",
+                "kpi": "UECNTX.ConnEstabSucc.mo-SignallingUECNTX.ConnEstabAtt.mo-Signalling"
               },
               "2": {
-                "name": "SINR",
-                "describe": "Signal to Interference plus Noise Ratio",
-                "kpi": ">= 20dB"
+                "name": "VMemoryUsageMean",
+                "describe": "VMemoryUsageMean",
+                "kpi": "VOLTAGEPEE.EnergyCapacity.DiskDRB.PdcpSduVolumeDlVR.VMemoryUsageMean"
               }
             }
           }
