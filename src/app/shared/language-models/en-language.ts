@@ -484,6 +484,7 @@ export const Enlanguage = {
   'sm.select_field':'Field',
   'sm.th_create':'Create Schedule',
   'sm.th_time':'Schedule Time',
+  'sm.scheduledExecutionTime': 'Scheduled Run Time',
   'sm.th_type':'Type',
   'sm.th_state':'State',
   'sm.th_download':'Download Report',
@@ -516,6 +517,8 @@ export const Enlanguage = {
   'sm.contentInfo': 'Content Information',
   'sm.periodicExecution': 'Periodic Execution',
   'sm.notPeriodicExecution': 'None',
+  'sm.reportDataRange': 'Report Data Range',
+
 
   // tickettype = 0
   'sm.neCurrentVersion': 'Current Version',

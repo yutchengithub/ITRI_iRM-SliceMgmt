@@ -488,6 +488,7 @@ export const TwLanguage = {
   'sm.create_type':'排程類型',
   'sm.th_create':'建立排程',
   'sm.th_time':'排程時間',
+  'sm.scheduledExecutionTime': '排程執行時間',
   'sm.th_type':'類型',
   'sm.th_state':'執行狀態',
   'sm.th_download':'報表下載',
@@ -520,6 +521,8 @@ export const TwLanguage = {
   'sm.contentInfo':'內容訊息',
   'sm.periodicExecution': '週期性執行',
   'sm.notPeriodicExecution': '無',
+  'sm.reportDataRange': '報表資料區間',
+
 
   // tickettype = 0
   'sm.neCurrentVersion': '現有版本',

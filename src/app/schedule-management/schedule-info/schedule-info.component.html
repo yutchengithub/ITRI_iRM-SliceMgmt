@@ -42,10 +42,6 @@
               <span *ngIf=" selectScheduleInfo.tickettype === '4' ">{{ languageService.i18n['sm.sfReport'] }}</span>
           </li>
           <li>
-            <label>{{ languageService.i18n['sm.th_time'] }}</label>
-              <span>{{ selectScheduleInfo.executedtime }}</span>
-          </li>
-          <li>
             <label>{{ languageService.i18n['sm.th_state'] }}</label>
             <span><span class="icon" [class]="getTicketStatusInfo( selectScheduleInfo ).icon"></span>
               &zwnj;{{ getTicketStatusInfo( selectScheduleInfo ).message }}</span>
@@ -53,6 +49,10 @@
           <li>
             <label>{{ languageService.i18n['sm.executeField'] }}</label>
               <span>{{ selectScheduleInfo.fieldname }}</span>
+          </li>
+          <li>
+            <label>{{ languageService.i18n['sm.scheduledExecutionTime'] }}</label>
+              <span>{{ selectScheduleInfo.executedtime }}</span>
           </li>
         </ul>
 
@@ -101,16 +101,16 @@
               </li>
             </ng-container>
 
-            <!-- 排程為 "產出效能管理報表" 時的顯示內容 @2024/03/24 Add -->
+            <!-- 排程為 "產出效能管理報表" 時的顯示內容 @2024/04/25 Update -->
             <ng-container *ngIf="isPmReportInfoArray( selectScheduleInfo.ticketinfo )">
               <li>
-                <label>{{ languageService.i18n['sm.startDate'] }}</label>
-                <span>{{ selectScheduleInfo.ticketinfo[0].start }}</span>
+                <label>{{ languageService.i18n['sm.reportDataRange'] }}</label>
+                <span>{{ selectScheduleInfo.ticketinfo[0].start }}<br>&nbsp;~ {{ selectScheduleInfo.ticketinfo[0].end }}</span>
               </li>
-              <li>
+              <!-- <li>
                 <label>{{ languageService.i18n['sm.endDate'] }}</label>
                 <span>{{ selectScheduleInfo.ticketinfo[0].end }}</span>
-              </li>
+              </li> -->
               <li>
                 <label>{{ languageService.i18n['sm.kpiType'] }}</label>
                 <span *ngIf="selectScheduleInfo.ticketinfo[0].iscustomized === 0">3GPP</span>
@@ -138,16 +138,17 @@
               </ng-container>
             </ng-container>
 
-            <!-- 排程為 "產出故障管理報表" 或 "產出軟體管理報表" 時的顯示內容 @2024/03/24 Add -->
+            <!-- 排程為 "產出故障管理報表" 或 "產出軟體管理報表" 時的顯示內容 @2024/04/25 Update -->
             <ng-container *ngIf="isSfOrfmReportInfoArray( selectScheduleInfo.ticketinfo )">
               <li>
-                <label>{{ languageService.i18n['sm.startDate'] }}</label>
-                <span>{{ selectScheduleInfo.ticketinfo[0].start }}</span>
+                <label>{{ languageService.i18n['sm.reportDataRange'] }}</label>
+                <span>{{ selectScheduleInfo.ticketinfo[0].start }}<br>&nbsp;~ {{ selectScheduleInfo.ticketinfo[0].end }}</span>
               </li>
-              <li>
+              
+              <!-- <li>
                 <label>{{ languageService.i18n['sm.endDate'] }}</label>
                 <span>{{ selectScheduleInfo.ticketinfo[0].end }}</span>
-              </li>
+              </li> -->
             </ng-container>
           </ng-container>
         </ul>
