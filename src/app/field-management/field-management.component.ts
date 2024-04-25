@@ -293,7 +293,6 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   // 用於跟踪場域建立表單的驗證狀態
   fieldCreationFormValidated = false; // 默認為 false，表示尚未驗證
 
-
   // 打開"場域建立"視窗 @2024/02/01 Add
   openfieldCreationWindow() {
 

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CommonService } from '../shared/common.service';
@@ -9,6 +9,8 @@ import { Item } from '../shared/models/item';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
+import { ElementRef } from '@angular/core';
+
 import * as XLSX from 'xlsx'; // 用於建立基站時上傳參數檔 @2024/03/31 Add by yuchen 
 
 import { SpinnerService } from '../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
@@ -16,46 +18,13 @@ import { SpinnerService } from '../shared/service/spinner.service';    // 用於
 // import APIs of BS Management @2024/03/19 Add 
 import { apiForBSMgmt } from '../shared/api/For_BS_Mgmt';
 
-// 引入儲存各個資訊所需的 interfaces @2024/03/19 Add 
-import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList';
+// 引入儲存各個資訊所需的 interfaces 
+import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList';   // @2024/03/19 Add 
+import { UnusedNE }     from '../shared/interfaces/NE/For_queryUnusedNeList';    // @2024/04/26 Add
 
-// 引入所需 Local Files @2024/03/19 Add 
-import { localBSList } from '../shared/local-files/BS/For_queryBsList';
-
-export interface ComponentLists {
-  components: Components[];
-}
-
-export interface Components {
-  id: string;
-  bsId: string;
-  bsName: string;
-  name: string;
-  ip: string;
-  port: string;
-  account: string;
-  key: string;
-  comtype: number;
-  firm: string;
-  modelname: string;
-  status: number;
-}
-
-export interface SoftwareLists {
-  uploadinfos: Uploadinfos[];
-}
-
-export interface Uploadinfos {
-  id: string;
-  firm: string;
-  modelname: string;
-  uploadtime: string;
-  uploadtype: number;
-  uploadversion: string;
-  description: string;
-  uploadinfo: string;
-  uploadurl: string;
-}
+// 引入所需 Local Files
+import { localBSList } from '../shared/local-files/BS/For_queryBsList';          // @2024/03/19 Add 
+import { localNEList } from '../shared/local-files/NE/For_queryBsComponentList'; // @2024/04/26 Add
 
 @Component({
   selector: 'app-bs-management',
@@ -134,11 +103,15 @@ export class BSManagementComponent implements OnInit {
     public  API_BS: apiForBSMgmt,           // @2024/03/19 Add for import API of BS Management
     
     public  bsList_LocalFiles: localBSList, // @2024/03/19 Add for import BS List Local Files 
+    public  neList_LocalFiles: localNEList, // @2024/04/26 Add neList_LocalFiles 用於從 Local 文件獲取 NE 列表數據
 
   ) {
     this.comtype.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
     this.createSearchForm();
     this.createAdvancedForm();
+
+    this.createBsCreationForm();
+    this.initializeElementsForm();
   }
 
   ngOnInit(): void {
@@ -149,6 +122,8 @@ export class BSManagementComponent implements OnInit {
 
     this.getQueryBsList(); // @2024/03/19 Add for getting BS List
 
+    
+
     //this.hideSpinner();  // 出錯時隱藏 spinner
   }
 
@@ -157,8 +132,6 @@ export class BSManagementComponent implements OnInit {
     //if (this.querySoftwareScpt) this.querySoftwareScpt.unsubscribe();
     //if (this.querySWAdvanceSearchScpt) this.querySWAdvanceSearchScpt.unsubscribe();
   }
-
-  
 
 
   bsList: BSList = {} as BSList;   // @2024/03/19 Add
@@ -386,6 +359,314 @@ export class BSManagementComponent implements OnInit {
 
 
 // ↑ For Delete BS @2024/03/22 Add ↑
+
+
+// ↓ For Create BS @2024/04/26 Add ↓
+
+  // @2024/04/26 Add
+  UnusedNEList: UnusedNE[] = [];
+  isLoadingUnusedNEList = true;
+
+  // @2024/04/26 Add
+  // 用於取得 Unused NE 列表資訊的函數
+  getUnusedNEList() {
+    console.log( 'getUnusedNEList() - Start' ); // 輸出開始取得 Unused NE 列表的日誌
+
+    this.isLoadingUnusedNEList = true;  // 開始加載數據，顯示進度指示器
+    this.showLoadingSpinner();          // 顯示 Loading Spinner
+
+    if ( this.commonService.isLocal ) {
+
+      // 如果是本地模式
+      // 從本地文件中獲取 Unused NE 列表
+      //this.UnusedNEList = this.neList_LocalFiles.neList_local;
+
+      // 假設 processNEList 方法會更新 CUOptions, DUOptions, 和 RUOptions
+      this.processUnusedNEList( this.UnusedNEList );  
+      console.log( 'In Local - UnusedNEList', this.UnusedNEList );
+
+      this.isLoadingUnusedNEList = false; // Local 模式下，數據加載快速完成，直接設置為 false
+
+      this.hideSpinner();  // 完成後隱藏 spinner
+
+    } else {
+
+      // 如果非本地模式
+      // 從後端 API 獲取 Unused NE 列表
+      this.API_BS.queryUnusedNeList().subscribe({
+        next: ( res ) => {
+
+          // 成功獲取 Unused NE 列表
+          this.UnusedNEList = res; // 將獲取到的 UnusedNE 列表賦值給 UnusedNEList 屬性
+          console.log( 'From Server - UnusedNEList', this.UnusedNEList );
+
+          // 將取得的未被使用 NE 列表進行分類
+          this.processUnusedNEList( this.UnusedNEList );
+
+          this.isLoadingUnusedNEList = false; // 數據加載完成
+          
+          // this.hideSpinner();  // 完成後隱藏 spinner
+        },
+        error: ( error ) => {
+
+          // 獲取 NE 列表出錯
+          console.error( 'Error fetching Unused NE list:', error ); // 輸出錯誤日誌
+          this.isLoadingUnusedNEList = false; // 出錯時設置加載標誌為 false
+          this.hideSpinner();  // 出錯時隱藏 spinner
+        },
+        complete: () => {
+
+          // 獲取 Unused NE 列表完成
+          console.log( 'Unused NE list fetch completed' ); // 輸出完成日誌
+          this.hideSpinner();  // 完成後隱藏 spinner
+        }
+      });
+    }
+
+    console.log( 'getUnusedNEList() - End' ); // 輸出結束取得 Unused NE 列表的日誌
+  }
+
+  // 儲存各類未使用網元數據用 @2024/04/26 Add
+        CUOptions: UnusedNE[] = []; // 用於儲存 CU 網元
+        DUOptions: UnusedNE[] = []; // 用於儲存 DU 網元
+        RUOptions: UnusedNE[] = []; // 用於儲存 RU 網元
+      CUDUOptions: UnusedNE[] = []; // 用於儲存 CU+DU 網元
+  allInOneOptions: UnusedNE[] = []; // 用於儲存 All-In-One 網元
+
+  // @2024/04/26 Add
+  // 用於將取得的未使用網元列表進行分類放入對應數組
+  processUnusedNEList( UnusedNEList: UnusedNE[] ) {
+    UnusedNEList.forEach( ne => {
+      switch ( ne.comtype ) {
+        case 1:
+          this.CUOptions.push( ne) ;
+          break;
+        case 2:
+          this.DUOptions.push( ne );
+          break;
+        case 3:
+          this.RUOptions.push( ne );
+          break;
+        case 4:
+          this.CUDUOptions.push( ne );
+          break;
+        case 5:
+          this.allInOneOptions.push( ne );
+          break;
+      }
+    });
+  }
+
+  // 引用 "基站建立" 視窗組件  @2024/04/26 Add
+  // 使用 ViewChild 裝飾器引用模板中的 'bsCreationWindow' 元素
+  @ViewChild('bsCreationWindow') bsCreationWindow: any;
+
+  // @2024/04/26 Add
+  // 用於存儲對 MatDialogRef 的引用
+  bsCreationWindowRef!: MatDialogRef<any>; // 用於控制 "基站建立" 視窗的開啟和關閉
+
+  // @2024/04/26 Add
+  // 用於跟踪 "基站建立" 表單的驗證狀態 
+  bsCreationFormValidated = false; // 默認為 false，表示尚未驗證
+
+  // @2024/04/26 Add
+  // 打開 "基站建立" 視窗
+  openBsCreationWindow() {
+
+    // 表單驗證狀態重置
+    this.bsCreationFormValidated = false;
+
+    // 打開 "基站建立" 視窗
+    this.bsCreationWindowRef = this.dialog.open( this.bsCreationWindow, {
+      id: 'bsCreationWindow',
+      // 這裡可以設置對話框的寬高，也可以使用 CSS 來設置
+    });
+
+    // 訂閱視窗關閉事件，並在關閉時重置表單驗證狀態
+    this.bsCreationWindowRef.afterClosed().subscribe(() => {
+      this.bsCreationFormValidated = false;
+      // 可以在這裡進行一些清理工作，例如重置表單等
+    });
+
+    // 彈出視窗打開時加載未使用 NE 列表數據
+    this.getUnusedNEList();
+
+    this.resetBsCreationForm(); // 初始化所有輸入的"基站建立"設定
+  }
+
+  isLinear = false; // 先關閉一定要輸入完東西才可以點下一步
+  bsFormGroup_Name!: FormGroup;
+  bsFormGroup_Type!: FormGroup;
+  bsFormGroup_Elements!: FormGroup;
+  bsFormGroup_Description!: FormGroup;
+
+  // @2024/04/26 Add
+  // 初始化每個用於「創建基站」流程的 FormGroup
+  createBsCreationForm() {
+    // 步驟 1: 設定基站名稱
+    this.bsFormGroup_Name = this.fb.group({
+      BSName: ['', Validators.required]
+    });
+
+    // 步驟 2: 設定基站類型
+    this.bsFormGroup_Type = this.fb.group({
+      BSType: ['', Validators.required],
+      DUNumber: [{value: '', disabled: true}, [Validators.required, Validators.min(1)]],
+      RUNumber: [{value: '', disabled: true}, [Validators.required, Validators.min(1)]]
+    });
+
+    // 步驟 3: 設定網元和 GPS
+    // 將在後面程式中動態處理
+    this.bsFormGroup_Elements = this.fb.group({
+      // ...
+      DUElements: this.fb.array([]),
+      RUElements: this.fb.array([])
+    });
+
+    // 步驟 4: 設定基站地點描述和上傳配置文件
+    this.bsFormGroup_Description = this.fb.group({
+      LocationDescription: ['', Validators.required],
+      ConfigurationFile: [null, Validators.required]
+    });
+  }
+
+  // @2024/04/26 Add
+  // 用於重置所有輸入的"基站建立"設定
+  resetBsCreationForm() {
+    console.log("Resetting bs creation form settings.");
+
+    // 重置各個步驟的 FormGroup
+    this.bsFormGroup_Name.reset();
+    this.bsFormGroup_Type.reset();
+    this.bsFormGroup_Elements.reset();
+    this.bsFormGroup_Description.reset();
+
+    // 如果還有其他相關的狀態需要重置，也應該在這裡進行
+    // 例如，如果有分頁或過濾器的狀態，也應該一併重置
+
+    console.log("BS creation form settings have been reset.");
+  }
+
+
+
+  // 處理基站類型選擇的變化
+  onBSTypeChange(typeValue: string) {
+    if (typeValue === '分佈式') {
+      this.bsFormGroup_Type.get('DUNumber')?.enable();
+      this.bsFormGroup_Type.get('RUNumber')?.enable();
+    } else {
+      this.bsFormGroup_Type.get('DUNumber')?.disable();
+      this.bsFormGroup_Type.get('RUNumber')?.disable();
+    }
+  }
+
+  // 假設我們已經有了從後端獲取的網元選項列表
+  //networkElementOptions: NetworkElement[] = []; // 這應該是一個包含網元的陣列
+  gpsLocationPattern = /^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/;
+
+  // 初始化步驟 3 的 FormGroup
+  initializeElementsForm() {
+    this.bsFormGroup_Elements = this.fb.group({
+      allInOneElement: [''],
+      gpsLocationAllInOne: ['', [Validators.pattern(this.gpsLocationPattern)]],
+      CUElement: [''],
+      DUElements: this.fb.array([]),
+      RUElements: this.fb.array([])
+    });
+  }
+
+  // 根據選定的 DU 和 RU 數量動態增加表單控件
+  updateElementsForm(DUNumber: number, RUNumber: number) {
+
+    // 清空現有的表單控件
+    const DUElementsArray = this.bsFormGroup_Elements.get('DUElements') as FormArray;
+    if ( DUElementsArray ) {
+      DUElementsArray.clear();
+      // ...
+    }
+
+    const RUElementsArray = this.bsFormGroup_Elements.get('RUElements') as FormArray;
+    if ( RUElementsArray ) {
+      RUElementsArray.clear();
+      // ...
+    }
+
+    // 動態添加 DU 控件
+    for (let i = 0; i < DUNumber; i++) {
+      DUElementsArray.push(this.fb.group({
+        DUElement: ['', Validators.required],
+      }));
+    }
+
+    // 動態添加 RU 控件
+    for (let i = 0; i < RUNumber; i++) {
+      RUElementsArray.push(this.fb.group({
+        RUElement: ['', Validators.required],
+        gpsLocationRU: ['', [Validators.pattern(this.gpsLocationPattern)]],
+        connectedDU: ['', Validators.required],
+      }));
+    }
+  }
+
+  get DUElementsFormArray(): FormArray {
+    return this.bsFormGroup_Elements.get('DUElements') as FormArray;
+  }
+  
+  get RUElementsFormArray(): FormArray {
+    return this.bsFormGroup_Elements.get('RUElements') as FormArray;
+  }
+  
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
+  triggerFileInput() {
+    // 觸發文件輸入元素的點擊事件
+    this.fileInput.nativeElement.click();
+  }
+
+  onFileSelected(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    let file: File | null = null;
+
+    if (element.files && element.files.length > 0) {
+      file = element.files.item(0);
+    }
+
+    // 處理文件的代碼...
+    if (file) {
+      // 調用你用於處理文件的方法
+      this.handleFile(file);
+    }
+  }
+
+  handleFile(file: File) {
+    const reader: FileReader = new FileReader();
+    reader.onload = (e: any) => {
+      const bstr: string = e.target.result;
+      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+
+      const wsname: string = wb.SheetNames[0];
+      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+
+      const data = XLSX.utils.sheet_to_json(ws);
+      console.log(data);
+      // 進一步處理 data 或保存
+    };
+    reader.readAsBinaryString(file);
+  }
+
+  // 表單提交時的處理函數
+  onSubmit() {
+    if (this.bsFormGroup_Name.valid && this.bsFormGroup_Type.valid && this.bsFormGroup_Elements.valid && this.bsFormGroup_Description.valid) {
+      // 處理提交表單數據
+    }
+  }
+
+
+// ↑ For Create BS @2024/04/26 Add ↑
+
+
+
+
 
 
   
@@ -636,3 +917,40 @@ export class BSManagementComponent implements OnInit {
   }
 
 }
+
+
+export interface ComponentLists {
+  components: Components[];
+}
+
+export interface Components {
+  id: string;
+  bsId: string;
+  bsName: string;
+  name: string;
+  ip: string;
+  port: string;
+  account: string;
+  key: string;
+  comtype: number;
+  firm: string;
+  modelname: string;
+  status: number;
+}
+
+export interface SoftwareLists {
+  uploadinfos: Uploadinfos[];
+}
+
+export interface Uploadinfos {
+  id: string;
+  firm: string;
+  modelname: string;
+  uploadtime: string;
+  uploadtype: number;
+  uploadversion: string;
+  description: string;
+  uploadinfo: string;
+  uploadurl: string;
+}
+
