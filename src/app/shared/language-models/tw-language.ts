@@ -49,9 +49,9 @@ export const TwLanguage = {
   'cancel':'取消',
   'search':'搜尋',
   'search_criteria':'篩選條件',  // @12/04 Add by yuchen
-  'clear_search':'搜尋重置',     // @11/24 Add by yuchen
+  'clear_search':'重置搜尋',     // @11/24 Add by yuchen
   'close': '關閉',              // @2024/01/22 Add
-  'clear_select':'選擇重置',   // @2024/04/25 Add
+  'clear_select':'重置選擇',   // @2024/04/25 Add
 
   // Field Management (場域管理) @11/30 Add by yuchen
   'field.list':'場域列表',
