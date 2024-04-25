@@ -10,9 +10,9 @@ import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 // Services
-import { CommonService } from '../shared/common.service';
+import { CommonService }   from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
-import { SpinnerService } from '../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
+import { SpinnerService }  from '../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
 
 // For import APIs of Schedule Management 
 import { apiForScheduleMgmt }     from '../shared/api/For_Schedule_Mgmt';  // @2024/03/15 Add
@@ -23,11 +23,20 @@ import { ScheduleList, Schedule } from '../shared/interfaces/Schedule/For_queryJ
 // For import local files of Schedule Management 
 import { localScheduleList }      from '../shared/local-files/Schedule/For_queryJobTicketList'; // @2024/03/15 Add
 
-// 定義 State 類型
+
+// @2024/04/25 Add 
+// 定義 Schedule Type 介面
+interface ScheduleType {
+  displayName: string;
+  value: string;
+}
+
+// 定義 Schedule State 介面
 interface State {
   displayName: string;
   value: string;
 }
+
 @Component({
   selector: 'app-schedule-management',
   templateUrl: './schedule-management.component.html',
@@ -65,7 +74,7 @@ export class ScheduleManagementComponent implements OnInit {
     private          route: ActivatedRoute,
     private         dialog: MatDialog,
     private         router: Router,
-    private  commonService: CommonService,
+    public   commonService: CommonService,
     public  spinnerService: SpinnerService,
     public languageService: LanguageService,
 
@@ -73,10 +82,30 @@ export class ScheduleManagementComponent implements OnInit {
     public  scheduleList_LocalFiles: localScheduleList,   // scheduleList_LocalFiles 用於從 Local Files 獲取排程列表數據
   
   ) {
+    
+    // 取得現在時間
+    const nowTime = this.commonService.getNowTime();
+    console.log("getNowTime: ", nowTime);
+    
+    // 創建一個新的 Date 物件，代表當前時間
+    const currentDate = new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`);
+    
+    // 創建一個新的 Date 物件，並將月份往回設置一個月
+    const oneMonthAgoDate = new Date(currentDate);
+    oneMonthAgoDate.setMonth(oneMonthAgoDate.getMonth() - 1);
+    
+    // 確保月份和日期是兩位數的格式，如 "02" 代表 2 月
+    const formattedMonth = ('0' + (oneMonthAgoDate.getMonth() + 1)).slice(-2);
+    const formattedDay = ('0' + oneMonthAgoDate.getDate()).slice(-2);
+    const formattedHour = ('0' + oneMonthAgoDate.getHours()).slice(-2);
+    const formattedMinute = ('0' + oneMonthAgoDate.getMinutes()).slice(-2);
 
-    // 使用這些格式化後的值來更新 searchForm 控件的值
+      // 使用這些格式化後的值來更新 searchForm 控件的值
     this.searchForm = this.fb.group({  
-      'State': new FormControl( 'All' ),   // Only for Schedule List
+       'from': new FormControl( `${oneMonthAgoDate.getFullYear()}-${formattedMonth}-${formattedDay} ${formattedHour}:${formattedMinute}` ), 
+         'to': new FormControl( `${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}` ),
+       'Type': new FormControl( 'All' ),  // Schedule Type
+      'State': new FormControl( 'All' ),  // Schedule State
     });
 
     this.createSearchForm(); // 初始化並創建篩選 Schedule List 用的 FormGroup
@@ -95,20 +124,29 @@ export class ScheduleManagementComponent implements OnInit {
       if ( params['State'] && params['State'] !== 'All' ) {
         this.searchForm.controls['State'].setValue( params['State'] );
       }
+      if ( params['Type'] && params['Type'] !== 'All' ) {
+        this.searchForm.controls['Type'].setValue( params['Type'] );
+      }
     } );
 
     // 建立 searchForm 的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。
     this.afterSearchForm = _.cloneDeep( this.searchForm );
 
+    // 取得排程列表數據
     this.getQueryJobTicketList();
 
+    // 訂閱語系切換事件，以便在語言變更時更新排程類型和狀態的顯示訊息
     this.languageService.languageChanged.subscribe(
-      ( language ) => this.updateTicketStatusInfo()
+      ( language ) => this.updateScheduleTypeStatusInfo(),
     );
   }
 
   ngOnDestroy() {
     clearTimeout( this.refreshTimeout );
+
+    // @2024/04/25 Add
+    // 如存在對 Schedule List 的 API 請求訂閱，則取消訂閱
+    if ( this.queryJobTicketList ) this.queryJobTicketList.unsubscribe();
   }
 
   p: number = 1;            // 當前頁數
@@ -120,18 +158,16 @@ export class ScheduleManagementComponent implements OnInit {
   }
 
 
-
-
   scheduleList: ScheduleList = {} as ScheduleList; // 用於存儲從伺服器或 Local 文件獲取的排程列表數據
   isLoadingScheduleList = true; // 加載狀態的標誌, 初始設置為 true
 
   // queryJobTicketList 用於管理 HTTP 的訂閱請求,'!' 確保在使用前已賦值。
   queryJobTicketList!: Subscription; // @2024/03/15 Add
 
-  /** @2024/03/17 Add
-   * 用於獲取 Schedule List。
-   * 根據是否處於 Local 模式,它會從 Local 文件或通過 API 從伺服器獲取排程資訊。
-   */
+  /** @2024/04/25 Update
+    * 用於獲取 Schedule List。
+    * 根據是否處於 Local 模式,它會從 Local 文件或通過 API 從伺服器獲取排程資訊。
+    */
   getQueryJobTicketList() {
     console.log( 'getQueryJobTicketList() - Start' );
     this.isLoadingScheduleList = true; // 開始加載數據,顯示進度指示器
@@ -148,7 +184,12 @@ export class ScheduleManagementComponent implements OnInit {
 
       this.isLoadingScheduleList = false; // Local 模式下,數據加載快速完成,直接設置為 false
       this.hideSpinner();  // 完成後隱藏 spinner
+
     } else {
+
+      // @2024/04/25 Add
+      // 取消之前的任何 API 訂閱
+      if ( this.queryJobTicketList ) this.queryJobTicketList.unsubscribe();
 
       // 非 Local 模式: 通過 API 從服務器獲取數據
       this.queryJobTicketList = this.API_Schedule.queryJobTicketList().subscribe({
@@ -162,7 +203,7 @@ export class ScheduleManagementComponent implements OnInit {
           console.log( '排程列表資訊\n( BS List ):', this.scheduleList ); // 取得的 Schedule List 資訊 ( Obtained Schedule List information )
           
           this.isLoadingScheduleList = false; // 數據加載完成
-          this.hideSpinner();  // 完成後隱藏 spinner
+          //this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           // 請求出現錯誤
@@ -180,6 +221,7 @@ export class ScheduleManagementComponent implements OnInit {
 
     console.log( 'getQueryJobTicketList() - End' );
   }
+
   // 進一步處理 Schedule List @2024/03/21 Add
   scheduleListDeal() {
     this.totalItems = this.scheduleList.jobticket.length;
@@ -200,7 +242,7 @@ export class ScheduleManagementComponent implements OnInit {
   }
 
 
-// ↓ 控制顯示排程狀態的 icon 與訊息 ↓
+// ↓ 控制顯示排程狀態的 icon 與訊息，以及排程類型的訊息 @2024/04/25 Update ↓
 
   // @2024/03/21 Add
   // 用於存儲排程狀態對應的 icon 和訊息
@@ -213,9 +255,9 @@ export class ScheduleManagementComponent implements OnInit {
     { icon: 'yellowLight', message: this.languageService.i18n['sm.jobPartialSuccessString'] }
   ];
 
-  // @2024/03/21 Add
+  // @2024/04/25 Update
   // 根據排程狀態獲取對應的圖示和訊息
-  getTicketStatusInfo( schedule: Schedule ) {
+  getScheduleStatusInfo( schedule: Schedule ) {
     // 將 schedule.ticketstatus 從字符串轉換為數字
     const ticketStatus = parseInt( schedule.ticketstatus );
     // 將 schedule.executedtype 從字符串轉換為數字
@@ -228,10 +270,10 @@ export class ScheduleManagementComponent implements OnInit {
         // 返回 ticketStatusInfo 中索引為 1 的項目
         return this.ticketStatusInfo[1];
       } else if ( executedType === 2 ) {
-        // 返回一個自定義的對象,包含圖示和消息
+        // 返回一個自定義的對象，包含圖示和消息
         return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobWeeklyString'] + ' )' };
       } else if ( executedType === 3 ) {
-        // 返回一個自定義的對象,包含圖示和消息
+        // 返回一個自定義的對象，包含圖示和消息
         return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobMonthlyString'] + ' )' };
       }
     }
@@ -240,21 +282,21 @@ export class ScheduleManagementComponent implements OnInit {
     return this.ticketStatusInfo[ticketStatus];
   }
 
-  // @2024/03/21 Add
-  // 用於控制當語系切換時根據排程狀態，顯示對應的 icon 或中英文字訊息
-  updateTicketStatusInfo() {
+  // @2024/04/25 Update
+  // 更新排程狀態和類型的顯示訊息，以對應當前用戶選擇的語言設定。這確保了用戶介面中相關訊息的多語言一致性。
+  updateScheduleTypeStatusInfo() {
 
-    // 重新初始化 ticketStatusInfo 數組，以正確顯示對應的語言訊息於表格的狀態欄中
+    // 更新 ticketStatusInfo 以顯示表格中的狀態欄位的多語言訊息
     this.ticketStatusInfo = [
-      { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] },
-      { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobDailyString'] + ' )' },
-      { icon: 'blueLight', message: this.languageService.i18n['sm.jobOnGoingString'] },
-      { icon: 'greenLight', message: this.languageService.i18n['sm.jobSuccessString'] },
-      { icon: 'redLight', message: this.languageService.i18n['sm.jobFailString'] },
+      { icon:  ' grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] },
+      { icon:   'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobDailyString'] + ' )' },
+      { icon:   'blueLight', message: this.languageService.i18n['sm.jobOnGoingString'] },
+      { icon:  'greenLight', message: this.languageService.i18n['sm.jobSuccessString'] },
+      { icon:    'redLight', message: this.languageService.i18n['sm.jobFailString'] },
       { icon: 'yellowLight', message: this.languageService.i18n['sm.jobPartialSuccessString'] }
     ];
 
-    // 重新初始化 States 數組，以正確顯示對應的語言於下拉式選單中
+    // 更新 States 以反映執行狀態下拉式選單的多語言選項
     this.States = [
       { displayName: 'All', value: 'All' },
       { displayName: this.languageService.i18n['sm.jobSchedulingString'],     value: '0' }, // 假設 '0' 和 '1' 都代表 'Scheduling'
@@ -263,15 +305,37 @@ export class ScheduleManagementComponent implements OnInit {
       { displayName: this.languageService.i18n['sm.jobFailString'],           value: '4' },
       { displayName: this.languageService.i18n['sm.jobPartialSuccessString'], value: '5' }
     ];
+
+    // 更新 Types 以反映排程類型下拉式選單的多語言選項
+    this.Types = [
+      { displayName: 'All', value: 'All' },
+      { displayName: this.languageService.i18n['sm.sfUpdate'], value: '0' },
+      { displayName: this.languageService.i18n['sm.caReport'], value: '1' },
+      { displayName: this.languageService.i18n['sm.pmReport'], value: '2' },
+      { displayName: this.languageService.i18n['sm.fmReport'], value: '3' },
+      { displayName: this.languageService.i18n['sm.sfReport'], value: '4' }
+    ];
   }
 
-// ↑ 控制顯示排程狀態的 icon 與訊息 ↑
+// ↑ 控制顯示排程狀態的 icon 與訊息，以及排程類型的訊息 @2024/04/25 Update ↑
 
 
-// ↓ For Create FormGroup @2024/03/21 Add ↓
+
+// ↓ For Create FormGroup @2024/04/25 Update ↓
 
   searchForm!: FormGroup;      // 用於儲存篩選條件
   afterSearchForm!: FormGroup; // 用於儲存並顯示出篩選條件
+
+  // @2024/04/25 Add
+  // 定義所有的類型及其對應的 tickettype
+  Types: ScheduleType[] = [
+    { displayName: 'All', value: 'All' },
+    { displayName: this.languageService.i18n['sm.sfUpdate'], value: '0' },
+    { displayName: this.languageService.i18n['sm.caReport'], value: '1' },
+    { displayName: this.languageService.i18n['sm.pmReport'], value: '2' },
+    { displayName: this.languageService.i18n['sm.fmReport'], value: '3' },
+    { displayName: this.languageService.i18n['sm.sfReport'], value: '4' }
+  ];
 
   // @2024/03/21 Add
   // 定義所有可能的狀態及其對應的 ticketstatus
@@ -284,19 +348,39 @@ export class ScheduleManagementComponent implements OnInit {
     { displayName: this.languageService.i18n['sm.jobPartialSuccessString'], value: '5' }
   ];
 
-  // 建立搜尋表單 @2024/03/21 Add
-  // 使用 States 更新建立表單控件的選項
+  // @2024/04/25 Update
+  // 建立搜尋表單並初始化控制項
   createSearchForm() {
+
+    const nowTime = this.commonService.getNowTime();
+
+    // 創建當前時間的 Date 物件
+    const now = new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`);
+
+    // 創建往回推一個月的時間之 Date 物件
+    const from = new Date(now);
+    from.setMonth(from.getMonth() - 1);
+
+    // 格式化日期時間以符合兩位數格式
+    const  paddedMonth = ('0' + (from.getMonth() + 1)).slice(-2);
+    const    paddedDay = ('0' + from.getDate()).slice(-2);
+    const   paddedHour = ('0' + from.getHours()).slice(-2);
+    const paddedMinute = ('0' + from.getMinutes()).slice(-2);
+
     this.searchForm = this.fb.group({
-      'State': new FormControl( this.States[0].value ), // 使用預設值 'All'
+      'from': new FormControl(`${from.getFullYear()}-${paddedMonth}-${paddedDay} ${paddedHour}:${paddedMinute}`), 
+         'to': new FormControl(`${now.getFullYear()}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`),
+      'State': new FormControl('All'), // 狀態，預設 'All'
+       'Type': new FormControl('All'), // 類型，預設 'All'
     });
-    this.afterSearchForm = _.cloneDeep( this.searchForm ); // Ensure afterSearchForm is also initialized
+
+    this.afterSearchForm = _.cloneDeep(this.searchForm); // 保存一份 searchForm 的深拷貝供後續使用
   }
 
   filtered_ScheduleList: Schedule[] = []; 
   isSearch_scheduleList: boolean = false;
 
-  // @2024/03/21 Add
+  // @2024/04/25 Update
   // For search Schedule List
   search_ScheduleList() {
     console.log('search_ScheduleList() - Start');
@@ -315,43 +399,45 @@ export class ScheduleManagementComponent implements OnInit {
     this.filtered_ScheduleList = []; // 存儲篩選結果的陣列
     this.isSearch_scheduleList = false;
     
+    // 從表單獲取篩選條件
     const selectedStateValue = this.searchForm.get('State')?.value || 'All';
+    const selectedTypeValue = this.searchForm.get('Type')?.value || 'All';
+    const executionTimeFrom = this.searchForm.get('from')?.value;
+    const executionTimeTo = this.searchForm.get('to')?.value;
 
-    this.filtered_ScheduleList = this.scheduleList.jobticket.filter( schedule => {
-      if ( selectedStateValue === 'All' ) {
-        return true; // 如果選擇 "All"，則不過濾任何任務
-      } else if ( selectedStateValue === '0' ) {
-        return schedule.ticketstatus.toString() === '0' || schedule.ticketstatus.toString() === '1';
-        // 當選擇 "Scheduling" 時，接受 ticketstatus 為 0 或 1 的任務
-      } else {
-        return schedule.ticketstatus.toString() === selectedStateValue;
-        // 對於其他選擇，直接比較 ticketstatus 和選擇的值
-      }
+    // 應用篩選條件
+    this.filtered_ScheduleList = this.scheduleList.jobticket.filter(schedule => {
+      const isStateMatch = selectedStateValue === 'All' || schedule.ticketstatus.toString() === selectedStateValue;
+      const isTypeMatch = selectedTypeValue === 'All' || schedule.tickettype === selectedTypeValue;
+      const isTimeMatch = (!executionTimeFrom || new Date(schedule.executedtime) >= new Date(executionTimeFrom)) &&
+                          (!executionTimeTo || new Date(schedule.executedtime) <= new Date(executionTimeTo));
+
+      return isStateMatch && isTypeMatch && isTimeMatch;
     });
-    
-    console.log("篩選後的 filtered_ScheduleList :", this.filtered_ScheduleList );
 
     this.isSearch_scheduleList = true; // 標記搜尋完成
-
     this.totalItems = this.filtered_ScheduleList.length; // 確保更新 totalItems 以反映搜尋結果的數量
 
+    console.log("篩選後的 filtered_ScheduleList :", this.filtered_ScheduleList );
     console.log("search_ScheduleList() - End");
   }
 
-  // @2024/03/21 Add
+  // @2024/04/25 Update
   // 重置 Schedule List 搜尋
   clear_search_ScheduleList() {
 
     this.isSearch_scheduleList = false;
 
     this.searchForm.reset();
+
+    // 重新設定表單的初始值
     this.createSearchForm();
+
     this.afterSearchForm = _.cloneDeep( this.searchForm );
     
     this.p = 1; // 當點擊重置搜尋時，將顯示頁數預設為 1
 
     this.getQueryJobTicketList();
-    
   } 
 
   // 用於顯示 ScheduleList 數據 @2024/03/21 Add

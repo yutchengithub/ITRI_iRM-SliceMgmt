@@ -488,6 +488,8 @@ export const Enlanguage = {
   'sm.th_create':'Create Schedule',
   'sm.th_time':'Schedule Time',
   'sm.scheduledExecutionTime': 'Scheduled Run Time',
+  'sm.scheduledExecutionTimeTo':'～',   
+  'sm.scheduleType': 'Schedule Type',
   'sm.th_type':'Type',
   'sm.th_state':'State',
   'sm.th_download':'Download Report',
