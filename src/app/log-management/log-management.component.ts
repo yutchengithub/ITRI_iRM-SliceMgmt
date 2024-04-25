@@ -217,9 +217,11 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     }
 
     //this.getNEList();
+    this.createSearchForm(); // 初始化並創建篩選 Logs 用的 FormGroup
   }
 
   ngAfterViewInit() {
+    this.createSearchForm(); // 初始化並創建篩選 Logs 用的 FormGroup
   }
 
   // 銷毀 Component 時的清理工作

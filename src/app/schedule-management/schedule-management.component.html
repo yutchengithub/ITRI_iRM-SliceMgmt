@@ -1,5 +1,5 @@
 <h5>{{ languageService.i18n['index.menu_scheduleMgr'] }}
-  <mat-icon tooltip="{{ languageService.i18n['sm.create'] }}" (click)="openCreateModal()">add</mat-icon>
+  <mat-icon tooltip="{{ languageService.i18n['sm.th_create'] }}" (click)="openCreateModal()">add</mat-icon>
 </h5>
 <form [formGroup]="searchForm">
   <div class="filter">
@@ -35,8 +35,6 @@
   </div>
 </form>
   
-
-
 <div class="table">
   <table>
     <thead>
@@ -144,7 +142,7 @@
 
 
 <ng-template #createScheduleModal>
-  <h5>{{languageService.i18n['sm.th_create']}}</h5>
+  <h5>{{ languageService.i18n['sm.createWindowTitle'] }}</h5>
   <form [formGroup]="createForm" >
     <ul class="addschedule-ul-li-label">
       <li>

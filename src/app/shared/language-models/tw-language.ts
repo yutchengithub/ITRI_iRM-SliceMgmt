@@ -261,7 +261,9 @@ export const TwLanguage = {
 
   // BS Management ( 基站管理 )
   'BS.list':'基站列表',
-  
+  'BS.createWindowTitle':'基站建立',
+  'BS.create':'建立基站',
+
   'BS.name':'基站名稱',
   'BS.type':'基站類型',
   'BS.all-in-one':'一體式', // @2024/04/18 Add
@@ -486,6 +488,7 @@ export const TwLanguage = {
   'sm.select_type':'排程類型',
   'sm.select_field':'場域',
   'sm.create_type':'排程類型',
+  'sm.createWindowTitle':'排程建立',
   'sm.th_create':'建立排程',
   'sm.th_time':'排程時間',
   'sm.scheduledExecutionTime': '排程執行時間',
