@@ -260,6 +260,8 @@ export const Enlanguage = {
   
   // BS Management ( 基站管理 )
   'BS.list':'BS List',
+  'BS.createWindowTitle':'BS Creation',
+  'BS.create':'Create BS',
 
   'BS.name':'BS Name',
   'BS.type':'BS Type',
@@ -482,8 +484,12 @@ export const Enlanguage = {
   // Schedule Management @2024/03/18 Update
   'sm.select_type':'Schedule Type',
   'sm.select_field':'Field',
+  'sm.createWindowTitle':'Schedule Creation',
   'sm.th_create':'Create Schedule',
   'sm.th_time':'Schedule Time',
+  'sm.scheduledExecutionTime': 'Scheduled Run Time',
+  'sm.scheduledExecutionTimeTo':'～',   
+  'sm.scheduleType': 'Schedule Type',
   'sm.th_type':'Type',
   'sm.th_state':'State',
   'sm.th_download':'Download Report',
@@ -516,6 +522,8 @@ export const Enlanguage = {
   'sm.contentInfo': 'Content Information',
   'sm.periodicExecution': 'Periodic Execution',
   'sm.notPeriodicExecution': 'None',
+  'sm.reportDataRange': 'Report Data Range',
+
 
   // tickettype = 0
   'sm.neCurrentVersion': 'Current Version',

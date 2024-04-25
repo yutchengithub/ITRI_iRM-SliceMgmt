@@ -217,9 +217,11 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     }
 
     //this.getNEList();
+    this.createSearchForm(); // 初始化並創建篩選 Logs 用的 FormGroup
   }
 
   ngAfterViewInit() {
+    this.createSearchForm(); // 初始化並創建篩選 Logs 用的 FormGroup
   }
 
   // 銷毀 Component 時的清理工作
@@ -978,11 +980,11 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     // 複製 NE Log 的詳細資訊以供顯示
     this.neLogdetail = {
-      userid: NELogsinfo.userid,
+         userid: NELogsinfo.userid,
       operation: NELogsinfo.operation,
-      req_data: NELogsinfo.req_data,
+       req_data: NELogsinfo.req_data,
       resp_data: NELogsinfo.resp_data,
-      logtime: NELogsinfo.logtime,
+        logtime: NELogsinfo.logtime,
       comp_name: NELogsinfo.comp_name  // @11/22 Add by yuchen 
     };
 

@@ -1,9 +1,37 @@
 <h5>{{ languageService.i18n['index.menu_scheduleMgr'] }}
-  <mat-icon tooltip="{{ languageService.i18n['sm.create'] }}" (click)="openCreateModal()">add</mat-icon>
+  <mat-icon tooltip="{{ languageService.i18n['sm.th_create'] }}" (click)="openCreateModal()">add</mat-icon>
 </h5>
 <form [formGroup]="searchForm">
   <div class="filter">
-    <span><label>{{ languageService.i18n['sm.th_state'] }}</label>
+
+    <!-- 日期選擇器 - 排程執行時間 @2024/04/25 Add  -->
+    <span>
+      <label>{{ languageService.i18n['sm.scheduledExecutionTime'] }}&nbsp;</label>
+      <span>
+        <p-calendar formControlName="from" [showTime]="true" inputId="scheduledExecutionStartTime" dateFormat="yy-mm-dd"></p-calendar>
+      </span>
+    </span>
+    <span>
+      <label>{{ languageService.i18n['sm.scheduledExecutionTimeTo'] }}&nbsp;</label>
+      <span style="margin-left: 3px;">
+        <p-calendar formControlName="to" [showTime]="true" inputId="scheduledExecutionEndTime" dateFormat="yy-mm-dd"></p-calendar>
+      </span>
+    </span>
+
+    <!-- 下拉式選單 - 類型 @2024/04/25 Add -->
+    <span>
+      <label>{{ languageService.i18n['sm.scheduleType'] }}</label>
+      <select formControlName="Type">
+        <option *ngFor="let type of Types" [ngValue]="type.value">
+          {{ type.displayName }}
+        </option>
+      </select>
+      <mat-error *ngIf="searchForm.controls['Type'].invalid">Required</mat-error>
+    </span>
+
+    <!-- 下拉式選單 - 執行狀態 @2024/04/25 Add -->
+    <span>
+      <label>{{ languageService.i18n['sm.th_state'] }}</label>
       <select formControlName="State">
         <option *ngFor="let state of States" [ngValue]="state.value">
           {{ state.displayName }}
@@ -21,28 +49,52 @@
   <!-- Search Criteria Summary of Schedule List -->
   <div class="filterBY">
     <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
-    <span *ngIf="afterSearchForm && afterSearchForm.controls['State'] && afterSearchForm.controls['State'].value">
-      <label>{{ languageService.i18n['sm.th_state'] }}:&nbsp;</label>
-      <label *ngIf="afterSearchForm.controls['State'].value === 'All'">All</label>
-      <span *ngIf="afterSearchForm.controls['State'].value === '0' || afterSearchForm.controls['State'].value === '1'">
-        {{ languageService.i18n['sm.jobSchedulingString'] }}
+
+      <!-- 日期選擇器 - 排程執行時間 @2024/04/25 Add  -->
+      <span *ngIf="afterSearchForm.controls['from'].value || afterSearchForm.controls['to'].value">
+        <label>{{ languageService.i18n['sm.scheduledExecutionTime'] }}:&nbsp;</label>
+        {{ afterSearchForm.controls['from'].value ? ( commonService.dealPostDate(afterSearchForm.controls['from'].value ) + ' ~ ') : '' }}
+        {{ afterSearchForm.controls['to'].value ? commonService.dealPostDate( afterSearchForm.controls['to'].value ) : '' }}
       </span>
-      <label *ngIf="afterSearchForm.controls['State'].value === '2'">{{ languageService.i18n['sm.jobOnGoingString'] }}</label>
-      <label *ngIf="afterSearchForm.controls['State'].value === '3'">{{ languageService.i18n['sm.jobSuccessString'] }}</label>
-      <label *ngIf="afterSearchForm.controls['State'].value === '4'">{{ languageService.i18n['sm.jobFailString'] }}</label>
-      <label *ngIf="afterSearchForm.controls['State'].value === '5'">{{ languageService.i18n['sm.jobPartialSuccessString'] }}</label>
-    </span>
+
+      <!-- 下拉式選單 - 類型 @2024/04/25 Add -->
+      <span *ngIf="afterSearchForm && afterSearchForm.controls['Type'] && afterSearchForm.controls['Type'].value">
+        <label>{{ languageService.i18n['sm.scheduleType'] }}:&nbsp;</label>
+        <label *ngIf="afterSearchForm.controls['Type'].value === 'All'">All</label>
+        <label *ngIf="afterSearchForm.controls['Type'].value === '0' ">
+          {{ languageService.i18n['sm.sfUpdate'] }}
+        </label>
+        <label *ngIf=" afterSearchForm.controls['Type'].value === '1' ">
+          {{ languageService.i18n['sm.caReport'] }}</label>
+        <label *ngIf=" afterSearchForm.controls['Type'].value === '2' ">
+          {{ languageService.i18n['sm.pmReport'] }}</label>
+        <label *ngIf=" afterSearchForm.controls['Type'].value === '3' ">
+          {{ languageService.i18n['sm.fmReport'] }}</label>
+        <label *ngIf=" afterSearchForm.controls['Type'].value === '4' ">
+          {{ languageService.i18n['sm.sfReport'] }}</label>
+      </span>
+
+      <!-- 下拉式選單 - 執行狀態 @2024/04/25 Add -->
+      <span *ngIf="afterSearchForm && afterSearchForm.controls['State'] && afterSearchForm.controls['State'].value">
+        <label>{{ languageService.i18n['sm.th_state'] }}:&nbsp;</label>
+        <label *ngIf="afterSearchForm.controls['State'].value === 'All'">All</label>
+        <span *ngIf="afterSearchForm.controls['State'].value === '0' || afterSearchForm.controls['State'].value === '1'">
+          {{ languageService.i18n['sm.jobSchedulingString'] }}
+        </span>
+        <label *ngIf=" afterSearchForm.controls['State'].value === '2' ">{{ languageService.i18n['sm.jobOnGoingString'] }}</label>
+        <label *ngIf=" afterSearchForm.controls['State'].value === '3' ">{{ languageService.i18n['sm.jobSuccessString'] }}</label>
+        <label *ngIf=" afterSearchForm.controls['State'].value === '4' ">{{ languageService.i18n['sm.jobFailString'] }}</label>
+        <label *ngIf=" afterSearchForm.controls['State'].value === '5' ">{{ languageService.i18n['sm.jobPartialSuccessString'] }}</label>
+      </span>
   </div>
 </form>
   
-
-
 <div class="table">
   <table>
     <thead>
       <tr>
-        <th>{{ languageService.i18n['sm.th_time'] }}</th>
-        <th>{{ languageService.i18n['sm.th_type'] }}</th>
+        <th>{{ languageService.i18n['sm.scheduledExecutionTime'] }}</th>
+        <th>{{ languageService.i18n['sm.scheduleType'] }}</th>
         <th class="icon state">{{ languageService.i18n['sm.th_state'] }}</th>
         <th class="icon">{{ languageService.i18n['sm.th_view'] }}</th>
         <th class="icon">{{ languageService.i18n['sm.th_download'] }}</th>
@@ -80,8 +132,8 @@
             <label *ngIf=" schedule.tickettype === '4' ">{{ languageService.i18n['sm.sfReport'] }}</label>
           </td>
           <td class="icon state">
-            <label [class]="getTicketStatusInfo( schedule ).icon"></label>
-            &zwnj;<label>{{ getTicketStatusInfo( schedule ).message }}</label>
+            <label [class]="getScheduleStatusInfo( schedule ).icon"></label>
+            &zwnj;<label>{{ getScheduleStatusInfo( schedule ).message }}</label>
           </td>
           <td class="icon">
             <mat-icon tooltip="{{ languageService.i18n['sm.view_detail'] }}" (click)="viewScheduleDetailInfo( schedule )"> remove_red_eye </mat-icon>
@@ -144,7 +196,7 @@
 
 
 <ng-template #createScheduleModal>
-  <h5>{{languageService.i18n['sm.th_create']}}</h5>
+  <h5>{{ languageService.i18n['sm.createWindowTitle'] }}</h5>
   <form [formGroup]="createForm" >
     <ul class="addschedule-ul-li-label">
       <li>

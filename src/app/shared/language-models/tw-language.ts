@@ -49,9 +49,9 @@ export const TwLanguage = {
   'cancel':'取消',
   'search':'搜尋',
   'search_criteria':'篩選條件',  // @12/04 Add by yuchen
-  'clear_search':'搜尋重置',     // @11/24 Add by yuchen
+  'clear_search':'重置搜尋',     // @11/24 Add by yuchen
   'close': '關閉',              // @2024/01/22 Add
-  'clear_select':'選擇重置',   // @2024/04/25 Add
+  'clear_select':'重置選擇',   // @2024/04/25 Add
 
   // Field Management (場域管理) @11/30 Add by yuchen
   'field.list':'場域列表',
@@ -261,7 +261,9 @@ export const TwLanguage = {
 
   // BS Management ( 基站管理 )
   'BS.list':'基站列表',
-  
+  'BS.createWindowTitle':'基站建立',
+  'BS.create':'建立基站',
+
   'BS.name':'基站名稱',
   'BS.type':'基站類型',
   'BS.all-in-one':'一體式', // @2024/04/18 Add
@@ -486,9 +488,13 @@ export const TwLanguage = {
   'sm.select_type':'排程類型',
   'sm.select_field':'場域',
   'sm.create_type':'排程類型',
+  'sm.createWindowTitle':'排程建立',
   'sm.th_create':'建立排程',
   'sm.th_time':'排程時間',
+  'sm.scheduledExecutionTime': '排程執行時間',
+  'sm.scheduledExecutionTimeTo':'～', 
   'sm.th_type':'類型',
+  'sm.scheduleType': '排程類型',
   'sm.th_state':'執行狀態',
   'sm.th_download':'報表下載',
   'sm.th_view':'檢視',
@@ -520,6 +526,8 @@ export const TwLanguage = {
   'sm.contentInfo':'內容訊息',
   'sm.periodicExecution': '週期性執行',
   'sm.notPeriodicExecution': '無',
+  'sm.reportDataRange': '報表資料區間',
+
 
   // tickettype = 0
   'sm.neCurrentVersion': '現有版本',

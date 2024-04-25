@@ -1,7 +1,7 @@
 <div class="ocloudInfo component bs-info">
   <h5>
     <button (click)="back()"><span class="material-icons">arrow_back</span>Back</button>
-      {{ languageService.i18n['BS.info'] }} – {{ bsName }} / 
+      {{ languageService.i18n['BS.info'] }} – {{ bsName }} /
     <label *ngIf=" bsType === '1' ">All-in-one:&thinsp;[CU + DU + RU]</label>
     <label *ngIf=" bsType === '2' ">Disaggregated:&thinsp;[CU] + [DU] + [RU]</label>
   </h5>
@@ -105,7 +105,7 @@
                             <td>{{ ruInfo.value.position }}</td>
                           </tr>
                         <!-- </ng-container> -->
-                        
+
                       </tbody>
                     </table>
                   </div>
@@ -154,18 +154,18 @@
                     </tbody>
                   </table>
                 </div>
-              </li>            
+              </li>
             </ul>
           </ng-container>
 
         </div>
       </div>
     </div>
-    
+
     <!-- BS Basic Info Edit Window @2024/04/15 Update -->
     <ng-template #BsBasicInfoEditWindow>
       <h5>{{ languageService.i18n['BS.editSettings'] }}</h5>
-      
+
       <form [formGroup]="BsBasicInfoEditForm">
         <ul>
           <li>
@@ -175,7 +175,7 @@
               <input *ngIf="bsType === '2'" type="text" formControlName="bsName" placeholder="{{ selectBsInfo_dist.name }}" class="{{formValidated&&BsBasicInfoEditForm.controls['bsName'].invalid?'required':''}}">
             </span>
           </li>
-          
+
           <li>
             <label>{{ languageService.i18n['BS.description'] }}</label>
             <span>
@@ -203,7 +203,7 @@
                       <!-- 確保 formControlName 與 FormGroup 中的名稱一致 -->
                       <input type="text" formControlName="latitude" placeholder="{{ (selectBsInfo.position | parsePosition).lat }}" class="{{formValidated&&BsBasicInfoEditForm.controls['latitude'].invalid?'required':''}}">
                     </td>
-                  </tr>                  
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -231,7 +231,7 @@
                       <!-- 確保 formControlName 與 FormGroup 中的名稱一致 -->
                       <input type="text" [formControlName]="'latitude_' + i" [placeholder]="(ruInfo.value.position | parsePosition).lat">
                     </td>
-                  </tr>                  
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -254,7 +254,7 @@
       <span>{{ languageService.i18n['BS.topology'] }}</span>
       <input id="topology" class="toggle" type="checkbox">
       <label for="topology" class="lbl-toggle"></label>
-      
+
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="collabsible">
@@ -275,7 +275,7 @@
             <!-- <ng-container *ngIf=" bsType === '1' "> -->
               <!-- 顯示 一體式基站 拓樸 -->
               <div class="nes-topology">
-                <div>  
+                <div>
                   <div tooltip="{{ getComponentName( allInOneNEID ) }}" class="ne-info all-in-one-ne-info"
                           [style.left.px] = "getAllInOnePosition().x"
                             [style.top.px] = "getAllInOnePosition().y" >
@@ -292,7 +292,7 @@
             <ng-container *ngIf=" bsType === '2' && !isLoadingNEList ">
             <!-- <ng-container *ngIf=" bsType === '2' "> -->
               <!-- 顯示 分佈式基站 拓樸 -->
-              <div class="nes-topology">   
+              <div class="nes-topology">
                 <div *ngFor="let cu of componentArray | filterBy: 'type': 'cu'">
                   <!-- 顯示 CU 的資訊 -->
                   <div tooltip="{{ getComponentName(cu.id) }}" class="ne-info cu-info" [style.left.px]="getCuPosition(cu).x" [style.top.px]="getCuPosition(cu).y">
@@ -322,7 +322,7 @@
                 </div>
               </div>
             </ng-container>
-  
+
           </div>
         </div>
       </div>
@@ -333,7 +333,7 @@
     <div class="parameters">
         <span>
           {{ languageService.i18n['BS.parameters'] }}
-          
+
           <div class="logTab">
             <mat-button-toggle-group name="bsParametersType" [(ngModel)]="bsParametersType" (change)="changeBsParametersType($event)">
               <mat-button-toggle value="Basic">{{ languageService.i18n['BS.basic'] }}</mat-button-toggle>
@@ -343,35 +343,32 @@
         </span>
         <input id="bsParameters" class="toggle" type="checkbox">
         <label for="bsParameters" class="lbl-toggle"></label>
-        
+
         <div class="collapsible-content">
           <div class="content-inner">
-            
+
             <form>
               <div class="filter">
-                <span><label>Cell:</label>
+                <span>
+                  <!-- <label>Cell:</label> -->
                   <select [(ngModel)]="selectedNci" name="selectedNci" (change)="onBsParamSelectedNciChange()">
                     <option *ngFor="let nci of nciList" [value]="nci">
                       Cell#{{ nciList.indexOf(nci) + 1 }} (NCI=0x{{ nci }})
                     </option>
                   </select>
                 </span>
-            
-                <!-- <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="onBsParamSearchClick()">search</span> -->
-        
-                <!-- <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="onBsParamClearClick()">clear</span> -->
-            
                 <span tooltip="{{ languageService.i18n['clear_select'] }}" class="material-symbols-outlined" (click)="onBsParamClearClick()">
                   restart_alt
                 </span>
-            
+                <!-- <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="onBsParamSearchClick()">search</span> -->
+                <!-- <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="onBsParamClearClick()">clear</span> -->
               </div>
             </form>
-      
+
             <!-- Basic @2024/04/15 ok -->
             <div class="collabsible" *ngIf="bsParametersType === 'Basic'">
               <span class="forALL_btn">
-                {{ languageService.i18n['BS.allSyncOptions'] }}: 
+                {{ languageService.i18n['BS.allSyncOptions'] }}:
                 <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
                 <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
               </span>
@@ -2245,7 +2242,7 @@
                       </div>
                     </div>
                   </div>
-                  
+
                   <!-- vnfParametersList_DU @2024/04/15 ok -->
                   <div>
                     <span>vnfParametersList_DU</span>
@@ -2738,7 +2735,7 @@
                                 <tr>
                                   <td>nRPCI</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.nRPCI }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.nRPCI }}</td>
@@ -2753,7 +2750,7 @@
                                 <tr>
                                   <td>nRTAC</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.nRTAC }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.nRTAC }}</td>
@@ -2768,7 +2765,7 @@
                                 <tr>
                                   <td>administrativeState</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.administrativeState }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.administrativeState }}</td>
@@ -2783,7 +2780,7 @@
                                 <tr>
                                   <td>arfcnDL</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.arfcnDL }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.arfcnDL }}</td>
@@ -2798,7 +2795,7 @@
                                 <tr>
                                   <td>arfcnUL</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.arfcnUL }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.arfcnUL }}</td>
@@ -2813,7 +2810,7 @@
                                 <tr>
                                   <td>arfcnSUL</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.arfcnSUL }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.arfcnSUL }}</td>
@@ -2828,7 +2825,7 @@
                                 <tr>
                                   <td>bSChannelBwDL</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwDL }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.bSChannelBwDL }}</td>
@@ -2843,7 +2840,7 @@
                                 <tr>
                                   <td>bSChannelBwUL</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwUL }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.bSChannelBwUL }}</td>
@@ -2858,7 +2855,7 @@
                                 <tr>
                                   <td>bSChannelBwSUL</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwSUL }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.bSChannelBwSUL }}</td>
@@ -2873,7 +2870,7 @@
                                 <tr>
                                   <td>ssbFrequency</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.ssbFrequency }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.ssbFrequency }}</td>
@@ -2888,7 +2885,7 @@
                                 <tr>
                                   <td>ssbPeriodicity</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.ssbPeriodicity }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.ssbPeriodicity }}</td>
@@ -2903,7 +2900,7 @@
                                 <tr>
                                   <td>ssbSubCarrierSpacing</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.ssbSubCarrierSpacing }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.ssbSubCarrierSpacing }}</td>
@@ -2918,7 +2915,7 @@
                                 <tr>
                                   <td>ssbOffset</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.ssbOffset }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.ssbOffset }}</td>
@@ -2933,7 +2930,7 @@
                                 <tr>
                                   <td>ssbDuration</td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.db?.ssbDuration }}
-                                  
+
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.ssbDuration }}</td>
@@ -3637,7 +3634,7 @@
                       </div>
                     </div>
                   </div>
-                  
+
                   <!-- NRSectorCarrier @2024/04/15 ok -->
                   <div>
                     <span>NRSectorCarrier</span>
@@ -4618,21 +4615,21 @@
           <form>
             <div class="filter">
               <span>
-                <label>Cell:</label>
+                <!-- <label>Cell:</label> -->
                 <select [(ngModel)]="selectedNeighborNci" name="selectedNeighborNci" (change)="onNeighborSelectedNciChange()">
                   <option *ngFor="let nci of nciList" [value]="nci">
                     Cell#{{ nciList.indexOf(nci) + 1 }} (NCI=0x{{ nci }})
                   </option>
                 </select>
               </span>
-              <!-- <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="onNeighborSearchClick()">search</span> -->
-              <!-- <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="onNeighborClearClick()">clear</span> -->
               <span tooltip="{{ languageService.i18n['clear_select'] }}" class="material-symbols-outlined" (click)="onNeighborClearClick()">
                 restart_alt
               </span>
+              <!-- <span tooltip="{{ languageService.i18n['search'] }}" class="material-icons" (click)="onNeighborSearchClick()">search</span> -->
+              <!-- <span tooltip="{{ languageService.i18n['clear_search'] }}" class="material-symbols-outlined" (click)="onNeighborClearClick()">clear</span> -->
             </div>
           </form>
-          
+
           <div class="table">
             <table>
               <thead>
@@ -4677,51 +4674,51 @@
                 <label>{{ languageService.i18n['fm.severity'] }}</label>
                 <select formControlName="severity">
                   <option value="All">All</option>
-                  <option *ngFor="let severit of severitys" [value]="severit">{{ commonService.textTransfer( severit ) }}</option>  
+                  <option *ngFor="let severit of severitys" [value]="severit">{{ commonService.textTransfer( severit ) }}</option>
                 </select>
               </span>
               <span>
-                <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}</label> 
+                <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}</label>
                 <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
               </span>
-              <span>  
+              <span>
                 <label>{{ languageService.i18n['BS.alarmLatestUpdateTimeRangeEnd'] }}&ensp;</label>
-                <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>  
+                <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
               </span>
               <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_currentBsFmList()">search</span>
               <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search_currentBsFmList()">clear</span>
             </div>
-            
+
             <!-- Search Criteria Summary of current bs fault message @2024/03/31 Add -->
             <div class="filterBY">
-              <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;  
+              <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
               <span *ngIf="afterAlarmSearchForm.controls['severity'].value">
                 <label>{{ languageService.i18n['fm.severity'] }}:&nbsp;</label>{{ afterAlarmSearchForm.controls['severity'].value }}
               </span>
               <span *ngIf="afterAlarmSearchForm.controls['from'].value || afterAlarmSearchForm.controls['to'].value">
                 <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}:&nbsp;</label>
-                {{ afterAlarmSearchForm.controls['from'].value ? (commonService.dealPostDate(afterAlarmSearchForm.controls['from'].value) + ' ~ ') : '' }}   
+                {{ afterAlarmSearchForm.controls['from'].value ? (commonService.dealPostDate(afterAlarmSearchForm.controls['from'].value) + ' ~ ') : '' }}
                 {{ afterAlarmSearchForm.controls['to'].value ? commonService.dealPostDate(afterAlarmSearchForm.controls['to'].value) : '' }}
-              </span>  
+              </span>
             </div>
           </form>
-          
+
           <div class="table">
             <table>
               <thead>
                 <tr>
                   <th>{{ languageService.i18n['BS.No'] }}</th>
-                  <th>{{ languageService.i18n['fm.field'] }}</th>  
+                  <th>{{ languageService.i18n['fm.field'] }}</th>
                   <th>{{ languageService.i18n['fm.BS'] }}</th>
                   <th>{{ languageService.i18n['BS.neName'] }}</th>
                   <th>{{ languageService.i18n['fm.alarm'] }}</th>
-                  <th>{{ languageService.i18n['fm.severity'] }}</th> 
+                  <th>{{ languageService.i18n['fm.severity'] }}</th>
                   <th>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}</th>
                   <th>{{ languageService.i18n['BS.processingFmStatus'] }}</th>
                 </tr>
               </thead>
               <tbody>
-              
+
                 <!-- 當數據正在加載時顯示進度條 @2024/03/31 Add -->
                 <!-- <ng-container *ngIf="isLoadingCurrentBsFmList"> -->
                   <!-- <tr>
@@ -4733,14 +4730,14 @@
                     </td>
                   </tr>
                 </ng-container> -->
-                
-                <!-- 加載完成後顯示當前 Bs Fm List 的數據 @2024/03/31 Add --> 
+
+                <!-- 加載完成後顯示當前 Bs Fm List 的數據 @2024/03/31 Add -->
                 <ng-container *ngIf="!isLoadingCurrentBsFmList">
-                  <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, 
+                  <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p,
                                           totalItems: totalItems, id: 'currentBsFmList' }; let i = index">
                     <td>{{ (p - 1) * pageSize + i + 1 }}</td>
                     <td>{{ opt.fieldName }}</td>
-                    <td>{{ opt.bsName }}</td>  
+                    <td>{{ opt.bsName }}</td>
                     <td>{{ opt.compname }}</td>
                     <td>{{ opt.probablecause }}</td>
                     <td>{{ opt.eventtype }}</td>
@@ -4751,15 +4748,15 @@
                       <label *ngIf=" opt.processstatus === '1' " class="greenLight"></label>
                     </td>
                   </tr>
-                  <tr class="notFind" *ngIf=" totalItems === 0 ">  
+                  <tr class="notFind" *ngIf=" totalItems === 0 ">
                     <td colspan="8">{{ languageService.i18n['no_results'] }}</td>
                   </tr>
                 </ng-container>
               </tbody>
             </table>
-            <!-- pagination -->      
+            <!-- pagination -->
             <span class="total">{{languageService.i18n['fm.total1']}} {{totalItems}} {{languageService.i18n['fm.total2']}}</span>
-            <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" 
+            <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination"
                                     previousLabel="" nextLabel="" id="currentBsFmList"></pagination-controls>
           </div>
         </div>
@@ -4797,10 +4794,10 @@
                 <!-- 加載完成後顯示 一體式或分佈式 BS 網元軟體版本資訊 數據 @2024/03/27 Add -->
                 <ng-container *ngIf="!isLoadingNEList">
                   <tr
-                    *ngFor="let NE of NEList_InThisBS.components | paginate: { 
-                                itemsPerPage: pageSize, 
-                                  currentPage: p, 
-                                    totalItems: totalItems, 
+                    *ngFor="let NE of NEList_InThisBS.components | paginate: {
+                                itemsPerPage: pageSize,
+                                  currentPage: p,
+                                    totalItems: totalItems,
                                       id: 'PageDisplay_of_NEList'
                             };">
                     <td>{{ NE.name }}</td>
@@ -4835,11 +4832,11 @@
       <span>{{ languageService.i18n['BS.performance'] }}</span>
       <input id="performance" class="toggle" type="checkbox">
       <label for="performance" class="lbl-toggle"></label>
-      
+
       <div class="collapsible-content">
         <div class="content-inner">
           <div class="collabsible">
-      
+
           </div>
         </div>
       </div>

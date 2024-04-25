@@ -1,5 +1,5 @@
 <h5>{{languageService.i18n['index.menu_BSMgr']}}
-  <mat-icon tooltip="{{languageService.i18n['sm.create']}}" (click)="openCreateModal()">add</mat-icon>
+  <mat-icon tooltip="{{ languageService.i18n['BS.create'] }}" (click)="openCreateModal()">add</mat-icon>
 </h5>
 
 <div class="table">
@@ -102,7 +102,7 @@
 
 
 <ng-template #createBSModal>
-  <h5>{{ languageService.i18n['sm.th_create'] }}</h5>
+  <h5>{{ languageService.i18n['BS.createWindowTitle'] }}</h5>
   <form [formGroup]="createForm" >
     <ul class="addBS-ul-li-label">
       <li>

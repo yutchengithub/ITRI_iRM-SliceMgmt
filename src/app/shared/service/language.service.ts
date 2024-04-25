@@ -9,7 +9,7 @@ import { TwLanguage } from '../language-models/tw-language';
 })
 export class LanguageService {
 
-  // 定義一個事件發射器,用於通知語言變化
+  // 定義一個事件發射器，用於通知語言變化
   @Output() languageChanged = new EventEmitter();
 
   language = 'TW'; // 'EN' | 'TW'
@@ -75,20 +75,20 @@ export class LanguageService {
 
     // 檢查是否已經存在語言樣式的 <link> 元素
     if ( existingLinkElement ) {
-      // 如果存在,則更新該 <link> 元素的 href 屬性,指向新的樣式表文件
+      // 如果存在，則更新該 <link> 元素的 href 屬性，指向新的樣式表文件
       existingLinkElement.href = `assets/css/styles.${language.toLowerCase()}.css`;
     } else {
-      // 如果不存在,則創建新的 <link> 元素
+      // 如果不存在，則創建新的 <link> 元素
       const linkElement = document.createElement('link');
-      // 設置新 <link> 元素的 id,以便將來可以識別和選擇它
+      // 設置新 <link> 元素的 id，以便將來可以識別和選擇它
       linkElement.id = 'language-stylesheet';
-      // 設置 <link> 元素的 rel 屬性,表明它是一個樣式表
+      // 設置 <link> 元素的 rel 屬性，表明它是一個樣式表
       linkElement.rel = 'stylesheet';
-      // 設置 <link> 元素的 type 屬性,表明它的類型是文字/樣式表
+      // 設置 <link> 元素的 type 屬性，表明它的類型是文字/樣式表
       linkElement.type = 'text/css';
-      // 設置 <link> 元素的 href 屬性,指向對應語言的樣式表文件
+      // 設置 <link> 元素的 href 屬性，指向對應語言的樣式表文件
       linkElement.href = `assets/css/styles.${language.toLowerCase()}.css`;
-      // 將新創建的 <link> 元素加入到 <head> 元素中,使其生效
+      // 將新創建的 <link> 元素加入到 <head> 元素中，使其生效
       head.appendChild( linkElement );
     }
   }
@@ -98,7 +98,7 @@ export class LanguageService {
     const body = document.body;
     // 移除 <body> 上的 'en' 和 'tw' 類
     body.classList.remove('en', 'tw');
-    // 假設您的樣式表中用 'en' 代表英文,'tw' 代表繁體中文
+    // 假設您的樣式表中用 'en' 代表英文，'tw' 代表繁體中文
     const classToAdd = language.toLowerCase() === 'en' ? 'en' : 'tw';
     // 為 <body> 添加對應的語言類
     body.classList.add( classToAdd );
