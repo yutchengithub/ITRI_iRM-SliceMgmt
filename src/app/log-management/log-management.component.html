@@ -160,7 +160,7 @@
         <!-- NE Name Filter for NE Logs @11/22 Add by yuchen -->
         <span style="margin-left: 1px;">
           <label style="margin-right: 5px !important">{{languageService.i18n['NElog.comp_name']}}</label>
-          <input formControlName="neName" class="userid-input-neName">
+          <input formControlName="neName" class="userid-input-neName" >
         </span>
 
         <span><label>{{languageService.i18n['NElog.operation']}}</label>
@@ -174,7 +174,7 @@
         <!-- Keyword Filter @11/03 add by yuchen -->
         <span style="margin-left: 1px;">
           <label style="margin-right: 5px !important">{{languageService.i18n['NElog.logKeywordString']}}</label>
-          <input formControlName = "keyword">
+          <input formControlName = "keyword" [disabled]="false">
         </span>
 
         <!-- NE Logs 的日期選擇器 -->

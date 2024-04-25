@@ -401,8 +401,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       'keyword': new FormControl('')          // 新增關鍵字欄位 @11/13 Add by yuchen 
     });
 
+    
     // 從 CommonService 中獲取當前登錄的使用者 ID
     const currentUserId = this.commonService.getUserId();
+
+    // 暫時關閉方便外包調整 @2024/04/25
+    this.searchForm.get('UserID')?.setValue( currentUserId ); // 自動設定 UserID
+    this.searchForm.get('UserID')?.disable(); // 禁用 UserID 欄位
 
     // 判斷使用者 ID 是否為 'admin'
     if ( currentUserId !== 'admin' ) {
@@ -411,7 +416,9 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       this.searchForm.get('UserID')?.disable(); // 禁用 UserID 欄位
     } else {
       this.isUserIdDisabled = false;
-      this.searchForm.get('UserID')?.enable(); // 確保 UserID 欄位是啟用的
+
+      // 暫時關閉方便外包調整 @2024/04/25
+      //this.searchForm.get('UserID')?.enable(); // 確保 UserID 欄位是啟用的
     }
   }
 

@@ -350,7 +350,7 @@
             <form>
               <div class="filter">
                 <span>
-                  <!-- <label>Cell:</label> -->
+                  <label>Cell:</label>
                   <select [(ngModel)]="selectedNci" name="selectedNci" (change)="onBsParamSelectedNciChange()">
                     <option *ngFor="let nci of nciList" [value]="nci">
                       Cell#{{ nciList.indexOf(nci) + 1 }} (NCI=0x{{ nci }})
@@ -4615,7 +4615,7 @@
           <form>
             <div class="filter">
               <span>
-                <!-- <label>Cell:</label> -->
+                <label>Cell:</label>
                 <select [(ngModel)]="selectedNeighborNci" name="selectedNeighborNci" (change)="onNeighborSelectedNciChange()">
                   <option *ngFor="let nci of nciList" [value]="nci">
                     Cell#{{ nciList.indexOf(nci) + 1 }} (NCI=0x{{ nci }})
