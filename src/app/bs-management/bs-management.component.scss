@@ -41,3 +41,145 @@ input[type="file"] {
 ul li > label {
   min-width: 7em;
 }
+
+
+
+// 整個 mat-stepper 區的設定 @2024/02/02 Add 
+mat-stepper {
+  background-color: #232934; 
+}
+
+//  @2024/02/02 Add 
+.mat-form-field {
+  margin-top: 16px;
+  background-color: rgb(255, 255, 255); // 輸入框背景底色
+
+  box-shadow: 0 4px 8px 0 rgba(216, 201, 201, 0.2);
+  transition: 0.3s;
+
+  padding: 5px;
+  flex: 1;       // 讓所有 form-field 元素彈性地占滿可用空間
+
+  max-width: 300px;
+  margin: 2.5px; // 移除 mat-form-field 的外邊距
+  width: calc( 50% - 10px ); // 設置寬度為容器的 50% 減去假設間距的一半
+}
+
+// @2024/02/02 Add 
+.mat-stepper-boundary-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; // 確保子元素從左邊開始排列
+}
+
+// @2024/02/01 Add 
+.mat-stepper-boundary-row {
+  display: flex;
+  justify-content: space-between; // 在子元素之間添加平均空間
+  //margin-bottom: 0px; // 下方間距，可根據需要調整
+}
+
+// 設定輸入視窗的使用者輸入的字體大小 @2024/02/02 Add 
+.custom-stepper .mat-input-element {
+  color: #151b24; 
+  font-size: 13px; 
+}
+
+// 設定輸入視窗的標題字體大小 @2024/02/02 Add 
+::ng-deep .mat-form-field-label {
+  color: #3f4e69;
+  font-size: 13px; 
+}
+
+// 設定輸入視窗的 placeholder @2024/02/02 Add 
+::ng-deep .mat-input-element::placeholder {
+  font-size: 12px; 
+}
+
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+  /* 設定輸入框聚焦時的浮動標籤字體顏色 */
+  color: #3f4e69; 
+}
+
+::ng-deep #bsCreationWindow .next button {
+  background-color: #4e92ff;
+  color: #fff;
+  margin: 0 0.5em 0 0;
+}
+::ng-deep #bsCreationWindow .mat-form-field {
+  background-color: transparent;
+  box-shadow: none;
+}
+::ng-deep #bsCreationWindow .mat-vertical-stepper-header {
+  height: 0;
+/*   border-top: 1px solid rgb(53 119 177 / 40%);
+ */}
+::ng-deep #bsCreationWindow .mat-step-header .mat-step-icon-selected {
+  background-color: #4e92ff;
+  border: 0;
+  z-index: 999;
+}
+::ng-deep #bsCreationWindow .custom-stepper .mat-input-element {
+  color: #fff;
+  font-size: 15px;
+}
+::ng-deep #bsCreationWindow mat-stepper {
+  background-color: transparent;
+}
+::ng-deep #bsCreationWindow .mat-stepper-horizontal, .mat-stepper-vertical {
+  background-color: transparent;
+}
+::ng-deep #bsCreationWindow .mat-form-field-label {
+    color: #ffffff;
+    font-family: Microsoft JhengHei;
+}
+::ng-deep #bsCreationWindow .mat-error {
+    padding: 0.5em;
+}
+::ng-deep .mat-stepper-vertical-line::before {
+  border-left-color: #394a65;
+}
+::ng-deep .mat-step-header .mat-step-icon {
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #919191;
+}
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-underline::before {
+  background-color: #ffffff6b;
+}
+
+::ng-deep #bsCreationWindow .mat-input-element::placeholder {
+  color: #ffa9a9;
+}
+::ng-deep #bsCreationWindow .table table th {
+  white-space: nowrap;
+  font-size: 14px;
+}
+::ng-deep #bsCreationWindow .table table thead tr th:first-child,
+::ng-deep #bsCreationWindow .table table tbody tr td:first-child {
+  width: 1.5em;
+}
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: transparent;
+}
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-underline::before {
+  background-color: #ffffff6b;
+}
+::ng-deep .mat-step-header .mat-step-label.mat-step-label {
+  font-family: Microsoft JhengHei;
+}
+::ng-deep #bsCreationWindow .mat-step-text-label {
+  color: #fff;
+}
+
+.button-modifyConfiguration {
+  background-color: #2982e7e8; // Button 背景色
+  color: white;                // Button 文字顏色
+  display: inline-block;
+  justify-content: center;
+  align-items: center;
+  height: 10%;
+  margin: 15px auto 10px;
+  padding: 2px 15px;      // 按鈕大小
+}
+

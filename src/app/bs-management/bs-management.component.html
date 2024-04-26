@@ -1,5 +1,5 @@
 <h5>{{languageService.i18n['index.menu_BSMgr']}}
-  <mat-icon tooltip="{{ languageService.i18n['BS.create'] }}" (click)="openCreateModal()">add</mat-icon>
+  <mat-icon tooltip="{{ languageService.i18n['BS.create'] }}" (click)="openBsCreationWindow()">add</mat-icon>
 </h5>
 
 <div class="table">
@@ -98,6 +98,227 @@
     </button>
   </div>
 </ng-template>
+
+
+<!-- Window of Create BS @2024/04/26 Add -->
+<ng-template #bsCreationWindow>
+  <div>
+    <!-- 欄位標題 - 基站建立 -->
+    <h5>{{ languageService.i18n['BS.createWindowTitle'] }}</h5>
+  </div>
+
+  <!-- 創建基站的步驟結構 -->
+  <mat-stepper class="custom-stepper" orientation="vertical" [linear]="isLinear" #stepper>
+
+    <!-- 步驟 1: 輸入基站名稱 -->
+    <mat-step [stepControl]="bsFormGroup_Name">
+      <form [formGroup]="bsFormGroup_Name">
+        <ng-template matStepLabel>{{ languageService.i18n['BS.setBSName'] }}</ng-template>
+        <mat-form-field appearance="fill">
+          <mat-label>{{ languageService.i18n['BS.name'] }}</mat-label>
+          <input matInput formControlName="BSName" required>
+        </mat-form-field>
+        <!-- 操作按鈕 -->
+        <div class="next">
+          <!-- 下一步按鈕 -->
+          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+        </div>
+      </form>
+    </mat-step>
+    
+    <!-- 步驟 2: 選擇基站類型 -->
+    <mat-step [stepControl]="bsFormGroup_Type">
+      <form [formGroup]="bsFormGroup_Type">
+        <ng-template matStepLabel>{{ languageService.i18n['BS.setBSType'] }}</ng-template>
+        <mat-form-field appearance="fill">
+          <mat-label>{{ languageService.i18n['BS.type'] }}</mat-label>
+          <mat-select formControlName="BSType" (selectionChange)="onBSTypeChange($event.value)">
+            <mat-option value="全一體式">{{ languageService.i18n['BS.all-in-one'] }}</mat-option>
+            <mat-option value="分佈式">{{ languageService.i18n['BS.dist'] }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+        <!-- DU 和 RU 數量欄位將根據條件啟用 -->
+        <mat-form-field appearance="fill">
+          <mat-label>{{ languageService.i18n['BS.duNumber'] }}</mat-label>
+          <input matInput formControlName="DUNumber" type="number" min="1">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>{{ languageService.i18n['BS.ruNumber'] }}</mat-label>
+          <input matInput formControlName="RUNumber" type="number" min="1">
+        </mat-form-field>
+        <!-- 操作按鈕 -->
+        <div class="next">
+          <!-- 上一步按鈕 -->
+          <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
+          <!-- 下一步按鈕 -->
+          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- 步驟 3: 選擇網元並設定 GPS 位置 -->
+    <mat-step [stepControl]="bsFormGroup_Elements">
+      <form [formGroup]="bsFormGroup_Elements">
+        <ng-template matStepLabel>{{ languageService.i18n['BS.setNEAndCoordinates'] }}</ng-template>
+        <!-- 全一體式網元選擇 -->
+        <ng-container *ngIf="bsFormGroup_Type.get('BSType')?.value === '全一體式'">
+          <mat-form-field appearance="fill">
+            <mat-label>{{ languageService.i18n['BS.selectIntegratedNE'] }}</mat-label>
+            <mat-select formControlName="allInOneElement">
+              <mat-option *ngFor="let allInOne of allInOneOptions" [value]="allInOne.id">
+                {{ allInOne.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- 網元的 GPS 位置 -->
+          <mat-form-field appearance="fill">
+            <mat-label>{{ languageService.i18n['BS.gpsLocation'] }}</mat-label>
+            <input matInput formControlName="gpsLocationAllInOne" placeholder="緯度, 經度">
+          </mat-form-field>
+
+        </ng-container>
+
+        <!-- 分佈式網元選擇 -->
+        <ng-container *ngIf=" bsFormGroup_Type.get('BSType')?.value === '分佈式' ">
+          <!-- CU 選擇 -->
+          <mat-form-field appearance="fill">
+            <mat-label>{{ languageService.i18n['BS.selectCUNE'] }}</mat-label>
+            <mat-select formControlName="CUElement">
+              <mat-option *ngFor="let cu of CUOptions" [value]="cu.id">
+                {{ cu.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- DU 選擇 -->
+          <div formArrayName="DUElements">
+            <div *ngFor="let du of DUElementsFormArray.controls; let i = index" [formGroupName]="i">
+              <mat-form-field appearance="fill">
+                <mat-label>{{ languageService.i18n['BS.selectDUNE'] }} {{ i + 1 }}</mat-label>
+                <mat-select formControlName="DUElement">
+                  <mat-option *ngFor="let element of DUOptions" [value]="element.id">
+                    {{ element.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- RU 選擇 -->
+          <div formArrayName="RUElements">
+            <div *ngFor="let ru of RUElementsFormArray.controls; let i = index" [formGroupName]="i">
+              <mat-form-field appearance="fill">
+                <mat-label>{{ languageService.i18n['BS.selectRUNE'] }} {{ i + 1 }}</mat-label>
+                <mat-select formControlName="RUElement">
+                  <mat-option *ngFor="let element of RUOptions" [value]="element.id">
+                    {{ element.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <!-- RU GPS 位置 -->
+              <mat-form-field appearance="fill">
+                <mat-label>{{ languageService.i18n['BS.gpsLocation'] }} {{ i + 1 }}</mat-label>
+                <input matInput formControlName="gpsLocationRU" placeholder="緯度, 經度">
+              </mat-form-field>
+              <!-- RU 連接到的 DU -->
+              <mat-form-field appearance="fill">
+                <mat-label>連接到的 DU {{ i + 1 }}</mat-label>
+                <mat-select formControlName="connectedDU">
+                  <mat-option *ngFor="let du of DUOptions" [value]="du.id">
+                    {{ du.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+        </ng-container>
+        <!-- 操作按鈕 -->
+        <div class="next">
+          <!-- 上一步按鈕 -->
+          <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
+          <!-- 下一步按鈕 -->
+          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- 步驟 4: 設定基站地點說明與上傳配置文件 -->
+    <mat-step [stepControl]="bsFormGroup_Description">
+      <form [formGroup]="bsFormGroup_Description">
+        <ng-template matStepLabel>{{ languageService.i18n['BS.setBSLocationDescriptionAndUploadParameters'] }}</ng-template>
+        <mat-form-field appearance="fill">
+          <mat-label>{{ languageService.i18n['BS.description'] }}</mat-label>
+          <textarea matInput formControlName="LocationDescription"></textarea>
+        </mat-form-field>
+        <!-- <mat-form-field appearance="fill">
+          <div class="button-container">
+            <button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()">
+              {{ languageService.i18n['field.fileUpload'] }}
+            </button>
+            <input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".xlsx">
+          </div>
+        </mat-form-field> -->
+        <!-- 這裡是上傳文件的按鈕和輸入，已移出 mat-form-field -->
+        <div class="button-container">
+          <button mat-flat-button class="button-modifyConfiguration">
+            {{ languageService.i18n['BS.generateParameterSampleFile'] }}
+          </button>
+        </div>
+        <div class="button-container">
+          <button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()">
+            {{ languageService.i18n['BS.uploadParameterFile'] }}
+          </button>
+          <input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".xlsx">
+        </div>
+        <!-- 操作按鈕 -->
+        <div class="next">
+          <!-- 上一步按鈕 -->
+          <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
+          <!-- 下一步按鈕 -->
+          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- 步驟完成提示 -->
+    <mat-step>
+      <!-- 步驟標籤 -->
+      <ng-template matStepLabel>{{ languageService.i18n['field.createDone'] }}</ng-template>
+      <!-- 完成提示訊息 -->
+      <p>{{ languageService.i18n['BS.setupComplete'] }}</p>
+      <!-- 操作按鈕 -->
+      <div class="next">
+        <!-- 上一步按鈕 -->
+        <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
+        <!-- 重置步驟按鈕 -->
+        <button mat-button (click)="stepper.reset(); resetBsCreationForm()">{{ languageService.i18n['field.createReset'] }}</button>
+      </div>
+    </mat-step>
+
+  </mat-stepper>
+
+  <!-- 按鈕組容器，用於對齊並中心顯示按鈕 -->
+  <div class="buttons buttons-centered">
+    <!-- 確認按鈕：點擊時呼叫 FieldCreation_Submit() 方法來提交"基站建立"的資料，並關閉對話框 -->
+    <button type="button" (click)="onSubmit()" mat-dialog-close>
+      {{ languageService.i18n['confirm'] }}
+    </button>
+    <!-- 取消按鈕：點擊時呼叫 resetBsCreationForm() 方法來重置"基站建立"的表單，並關閉對話框 -->
+    <button type="button" (click)="resetBsCreationForm()" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }}
+    </button>
+  </div>
+
+</ng-template>
+
+
+
+
+
+
 
 
 
