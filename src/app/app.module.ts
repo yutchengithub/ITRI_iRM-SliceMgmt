@@ -105,12 +105,13 @@ import { localBSInfo }          from './shared/local-files/BS/For_queryBsInfo'; 
 import { localBSList }          from './shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
 import { localCurrentBsFmList } from './shared/local-files/BS/For_queryCurrentBsFaultMessage';  // @2024/03/31 Add
 
-import { localScheduleList }      from './shared/local-files/Schedule/For_queryJobTicketList';    // @2024/03/15 Add   
-import { localScheduleInfo }      from './shared/local-files/Schedule/For_queryJobTicketInfo';    // @2024/03/15 Add 
+import { localScheduleList }    from './shared/local-files/Schedule/For_queryJobTicketList';    // @2024/03/15 Add   
+import { localScheduleInfo }    from './shared/local-files/Schedule/For_queryJobTicketInfo';    // @2024/03/15 Add 
 
-import { localUserLogsList }      from './shared/local-files/Log/For_queryLogList';               // @2024/03/14 Add 
-import { localNELogsList }        from './shared/local-files/Log/For_queryUserNetconfLog';        // @2024/03/14 Add
-import { localNEList }            from './shared/local-files/NE/For_queryBsComponentList';        // @2024/03/14 Add
+import { localUserLogsList }    from './shared/local-files/Log/For_queryLogList';               // @2024/03/14 Add 
+import { localNELogsList }      from './shared/local-files/Log/For_queryUserNetconfLog';        // @2024/03/14 Add
+import { localNEList }          from './shared/local-files/NE/For_queryBsComponentList';        // @2024/03/14 Add
+import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeList';           // @2024/04/26 Add
 
 @NgModule({
   declarations: [
@@ -245,7 +246,7 @@ import { localNEList }            from './shared/local-files/NE/For_queryBsCompo
     localUserLogsList,        // @2024/03/14 Add for import Local files of User Logs List
     localNELogsList,          // @2024/03/14 Add for import Local files of NE Logs List
     localNEList,              // @2024/03/14 Add for import Local files of NE List
-
+    localUnusedNEList,        // @2024/04/26 Add for import Local files of unused NE List
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
