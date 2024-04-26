@@ -406,8 +406,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     const currentUserId = this.commonService.getUserId();
 
     // 暫時關閉方便外包調整 @2024/04/25
-    this.searchForm.get('UserID')?.setValue( currentUserId ); // 自動設定 UserID
-    this.searchForm.get('UserID')?.disable(); // 禁用 UserID 欄位
+    //this.searchForm.get('UserID')?.setValue( currentUserId ); // 自動設定 UserID
+    //this.searchForm.get('UserID')?.disable(); // 禁用 UserID 欄位
 
     // 判斷使用者 ID 是否為 'admin'
     if ( currentUserId !== 'admin' ) {
@@ -418,7 +418,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       this.isUserIdDisabled = false;
 
       // 暫時關閉方便外包調整 @2024/04/25
-      //this.searchForm.get('UserID')?.enable(); // 確保 UserID 欄位是啟用的
+      this.searchForm.get('UserID')?.enable(); // 確保 UserID 欄位是啟用的
     }
   }
 
