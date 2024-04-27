@@ -469,6 +469,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
       console.log( "In getUserLogsInfo() not click search ( Local mode ) - userLogsToDisplay:", this.userLogsToDisplay );
 
+      this.search_UserLogs();
+
       // 設置加載旗標為 false，表示加載完成
       this.isGetUserLogsInfoLoading = false;
       this.hideSpinner();  // 完成後隱藏 spinner
@@ -662,6 +664,8 @@ export class LogManagementComponent implements OnInit, OnDestroy {
       });
 
       console.log( "In getNELogsInfo() not click search ( Local mode ) - neLogsToDisplay:", this.neLogsToDisplay );
+      
+      this.search_NELogs();
 
       // 設置加載旗標為 false，表示加載完成
       this.isGetNELogsInfoLoading = false;
