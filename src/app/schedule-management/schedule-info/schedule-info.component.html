@@ -28,7 +28,7 @@
 
     <!-- 加載完成後顯示 排程資訊 數據 @2024/03/24 Add -->
     <ng-container *ngIf="!isLoadingScheduleInfo">
-      <div class="center" [ngClass]="{'kpiTable': shouldApplyKpiTableStyle()}">
+      <div [ngClass]="{'kpiTable': shouldApplyKpiTableStyle()}">
         
         <!-- 基本訊息區 @2024/03/24 Add -->
         <ul class="Software_info">
@@ -105,7 +105,7 @@
             <ng-container *ngIf="isPmReportInfoArray( selectScheduleInfo.ticketinfo )">
               <li>
                 <label>{{ languageService.i18n['sm.reportDataRange'] }}</label>
-                <span>{{ selectScheduleInfo.ticketinfo[0].start }}<br>&nbsp;~ {{ selectScheduleInfo.ticketinfo[0].end }}</span>
+                <span>{{ selectScheduleInfo.ticketinfo[0].start }} ~ {{ selectScheduleInfo.ticketinfo[0].end }}</span>
               </li>
               <!-- <li>
                 <label>{{ languageService.i18n['sm.endDate'] }}</label>
@@ -142,7 +142,7 @@
             <ng-container *ngIf="isSfOrfmReportInfoArray( selectScheduleInfo.ticketinfo )">
               <li>
                 <label>{{ languageService.i18n['sm.reportDataRange'] }}</label>
-                <span>{{ selectScheduleInfo.ticketinfo[0].start }}<br>&nbsp;~ {{ selectScheduleInfo.ticketinfo[0].end }}</span>
+                <span>{{ selectScheduleInfo.ticketinfo[0].start }} ~ {{ selectScheduleInfo.ticketinfo[0].end }}</span>
               </li>
               
               <!-- <li>

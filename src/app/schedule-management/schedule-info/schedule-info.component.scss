@@ -2,7 +2,7 @@
   font-size: 12px;
   display: inline-block;
   vertical-align: top;
-  margin: 0 1% 0 0;
+  margin: 0 2% 1% 0;
 }
 .basicInfo ul li {
   font-size: 1.35em;
@@ -14,7 +14,7 @@
   vertical-align: top;
 }
 ul.Software_info li label {
-  width: 7.5em;
+  width: 10em;
 }
 ul.ftp_info li > label {
   width: 9em;
@@ -47,6 +47,7 @@ ul.file_url_info li label + span {
   line-height: 2;
   text-align: center;
   padding: 0;
+  margin-left: -4%;
 }
 .BOX {
   position: relative;
@@ -197,13 +198,16 @@ body.tw ul.file_url_info li label {
 }
 .basicInfo table td {
   text-align: center;
-  width: initial;
+  width: 13em;
   min-width: initial;
   white-space: initial;
  /*  border: 1px solid ; */
   padding:5px;
   word-break: break-word;
   font-size: 15px;
+}
+.basicInfo table tbody tr td:first-child {
+  width: 10em;
 }
 .basicInfo table th {
   text-align: center;
@@ -219,12 +223,13 @@ body.tw ul.file_url_info li label {
   position: sticky;
   top: -1px;
 }
-.Software_info {
-  width: 28%;
-}
 .file_url_info,
+.Software_info {
+  width: 47%;
+}
+/* .file_url_info, */
 .ftp_info {
-  width: 34%;
+  width: 47%;
 }
 .downloadRPT span button {
   color: #3b82f6;
@@ -233,15 +238,15 @@ body.tw ul.file_url_info li label {
   line-height: initial;
 }
 .par_success th,.par_success td {
-  width: 11.5em !important;
+  width: 16.5em !important;
 }
-.ocloudInfo.schedule .kpiTable .ftp_info,
+/* .ocloudInfo.schedule .kpiTable .ftp_info,
 .ocloudInfo.schedule .kpiTable .Software_info {
   width: 28%!important;
-}
-.ocloudInfo.schedule .kpiTable .file_url_info {
+} */
+/* .ocloudInfo.schedule .kpiTable .file_url_info {
   width: 38%!important;
-}
+} */
 .ocloudInfo.schedule .kpiTable .file_url_info .table {
   width: 96%;
   margin: auto;
@@ -259,11 +264,14 @@ table tbody tr td[rowspan="2"] {
 .caReport ul.file_url_info li label {
   width: 12.5em;
 }
-.sfReport ul.file_url_info li label,
-.sfUpdate ul.file_url_info li label,
-.fmReport ul.file_url_info li label,
-.pmReport ul.file_url_info li label {
+
+.sfUpdate ul.file_url_info li label {
   width: 9em;
+}
+.sfReport ul.file_url_info li label ,
+.pmReport ul.file_url_info li label ,
+.fmReport ul.file_url_info li label{
+  width: 9.5em;
 }
 .sfReport .ul.Software_info li label {
   width: 5em;

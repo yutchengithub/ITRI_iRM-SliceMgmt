@@ -193,6 +193,12 @@ table tr td {
   min-width: 1.5em;
   width: 3em;
 }
+
+input:disabled {
+  background-color: #c2c8d1;
+  cursor: not-allowed;
+  padding: 0 8px;
+}
 @media screen and (max-width:1920px) {
   .table table {
     max-height: 70vh;

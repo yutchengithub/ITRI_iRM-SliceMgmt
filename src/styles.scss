@@ -1398,19 +1398,23 @@ body.tw .Snapshot_UI02 + .mat-accordion {
   margin: 3.8em 1em 0!important;
 }
 body.tw .schedule .fmReport ul.ftp_info li label,
-body.tw .schedule .ftp_info li > label,
-body.tw .schedule .Software_info li label{
+body.tw .schedule .ftp_info li > label {
   width: 5em!important;
+}
+body.tw .schedule .Software_info li label{
+  width: 7em!important;
 }
 body.tw .caReport ul.file_url_info li label {
   width: 9em!important;
 }
 
-body.tw .fmReport .file_url_info li label,
-body.tw .sfUpdate .file_url_info li label,
-body.tw .pmReport .file_url_info li label ,
-body.tw .sfReport .file_url_info li label {
+body.tw .sfUpdate .file_url_info li label {
   width: 6em!important;
+}
+body.tw .fmReport .file_url_info li label,
+body.tw .sfReport .file_url_info li label,
+body.tw .pmReport .file_url_info li label {
+  width: 7em!important;
 }
 @media screen and (max-width:1920px) {
  /*  .table table {
