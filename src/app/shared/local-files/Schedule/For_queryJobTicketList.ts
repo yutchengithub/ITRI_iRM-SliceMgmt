@@ -1,9 +1,75 @@
 
- // Interfaces of ScheduleList @2024/03/15 Add
- import { ScheduleList } from './../../interfaces/Schedule/For_queryJobTicketList';                       
+// Interfaces of ScheduleList @2024/03/15 Add
+import { ScheduleList } from './../../interfaces/Schedule/For_queryJobTicketList';    
+ 
+// @2024/04/28 Add
+// 引入 moment 模組：moment 是一個用於日期和執行時間處理的庫，非常適合用於解析、驗證、操作和格式化日期。
+// 在此項目中，我們使用 moment 來計算從當前日期往回推一個月的執行時間，這是為了確保在本地模式下能夠得到正確的執行時間，以對應特定的 Schedule 管理需求。
+import * as moment from 'moment';
+
+// @2024/04/28 Add
+// 引入 node-schedule 模組：node-schedule 允許在 Node.js 中安排任務，例如定期執行腳本。
+// 我們使用它來安排每月自動更新 Schedule 執行時間的任務，確保在本地模式下， Schedule 的執行時間總是從今天算起往回推一個月，以保持 Schedule 的時效性和準確性。
+import { scheduleJob } from 'node-schedule';
 
  // Local Files for general ScheduleList @2024/03/21 Update
  export class localScheduleList {
+
+      /**
+       * @2024/04/28 Add
+       * 啟動時立即更新 Schedule 執行時間並設定每月自動更新的排程
+       * @constructor
+       * @description
+       * - 在類實例化時立即調用 updateScheduleRunTimes 方法來更新 Schedule 執行時間
+       * - 使用 node-schedule 排程在每月的第一天午夜自動更新 Schedule 執行時間
+       * - 這確保了 Schedule 執行時間在應用啟動時和每月都保持最新
+       */
+       constructor() {
+        // Immediately update log times on startup
+        this.updateScheduleRunTimes();
+        console.log('Initial Scheduled Run Times have been updated!');
+    
+        // Schedule to update log times on the first day of every month at midnight
+        scheduleJob('0 0 1 * *', () => {
+            this.updateScheduleRunTimes();
+            console.log('Scheduled Run Times have been updated monthly!');
+        });
+      }
+    
+      /**
+      * @2024/04/28 Add
+      * 更新本地 Schedule 檔案中的 executedtime 至過去一個月內的隨機執行時間點
+      * @function updateScheduleRunTimes
+      * @description
+      * - 遍歷 scheduleList_local 中的每條 jobticket.executedtime 記錄
+      * - 為每條 Schedule 記錄生成一個隨機執行時間，該執行時間是從當前執行時間往回推的 0 到 30 天內
+      * - 這樣可以讓每條 Schedule 的執行時間都是過去一個月內的隨機執行時間點，而不是集中在同一天
+      * - 使用 moment.js 來處理執行日期時間的生成和格式化
+      */
+      updateScheduleRunTimes(): void {
+        this.scheduleList_local.jobticket.forEach( schedule => {
+  
+            // 從當前執行時間開始
+            let executedtime = moment();
+    
+            // 隨機選擇從 0 到 30 天的執行時間
+            let daysToSubtract    = Math.floor( Math.random() * 30 );
+            let hoursToSubtract   = Math.floor( Math.random() * 24 );
+            let minutesToSubtract = Math.floor( Math.random() * 60 );
+            let secondsToSubtract = Math.floor( Math.random() * 60 );
+    
+            // 往回推算隨機天數、小時、分鐘、秒數
+            executedtime = executedtime.subtract( daysToSubtract, 'days' );
+            executedtime = executedtime.subtract( hoursToSubtract, 'hours' );
+            executedtime = executedtime.subtract( minutesToSubtract, 'minutes' );
+            executedtime = executedtime.subtract( secondsToSubtract, 'seconds' );
+    
+            // 更新 executedtime 為隨機生成的過去執行時間
+            schedule.executedtime = executedtime.format("YYYY-MM-DD HH:mm:ss");
+        });
+    
+        console.log('所有 Schedule 執行時間已經更新為一個月內的隨機時間點。');
+      }
 
     // For getQueryJobTicketList() Get local queryJobTicketList
     scheduleList_local: ScheduleList = {
