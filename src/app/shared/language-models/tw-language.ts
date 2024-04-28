@@ -71,8 +71,8 @@ export const TwLanguage = {
   'field.selectBaseStations': '選擇基站',          // @2024/01/31 Add
   'field.setupComplete': '場域設定完成。',          // @2024/01/31 Add
   'field.bsDescription': '基站地點說明',            // @2024/02/01 Add
-  'field.validLongitude': '請輸入有效經度(-180.0 ~ 180.0)',  // @2024/02/02 Add
-  'field.validLatitude' : '請輸入有效緯度(-90.0 ~ 90.0)',    // @2024/02/02 Add
+  'field.validLongitude': '請輸入有效經度 ( -180.0 ~ 180.0 )',  // @2024/02/02 Add
+  'field.validLatitude' : '請輸入有效緯度 ( -90.0 ~ 90.0 )',    // @2024/02/02 Add
   'field.validPhoneNumber' : '請輸入有效門號(10 碼)',        // @2024/02/02 Add
 
   'field.view':'檢視',
@@ -263,17 +263,39 @@ export const TwLanguage = {
   'BS.list':'基站列表',
   'BS.createWindowTitle':'基站建立',
   'BS.create':'建立基站',
+  
   'BS.setBSName': '設定基站名稱',
+  'BS.enterBSName': '請輸入基站名稱',
+  'BS.nameExists': '此名稱已存在',
+
   'BS.setBSType': '設定基站類型',
   'BS.setNEAndCoordinates': '設定網元與座標',
+  'BS.selectBSType': '請選擇基站類型',
+  'BS.selectDUNumber': '請選擇 DU 數量',
+  'BS.selectRUNumber': '請選擇 RU 數量',
+
   'BS.duNumber': 'DU 數量',
   'BS.cuNumber': 'CU 數量',
   'BS.ruNumber': 'RU 數量',
   'BS.gpsLocation': 'GPS 位置',
-  'BS.selectIntegratedNE': '選擇一體式網元',
+  'BS.selectIntegratedNE': '選擇網元',
+  'BS.selectNE': '請選擇一個網元',
   'BS.selectCUNE': '選擇 CU',
+  'BS.requiredCU': '請選擇一個 CU',
   'BS.selectDUNE': '選擇 DU',
+  'BS.requiredDU': '請選擇一個 DU',
   'BS.selectRUNE': '選擇 RU',
+  'BS.requiredRU': '請選擇一個 RU',
+  'BS.setCU': '設定 CU',
+  'BS.setDU': '設定 DU',
+  'BS.setRU': '設定 RU',
+  'BS.setGPSLocation': '設定 GPS 位置',
+  'BS.setConnectedDU': '設定連接的 DU',
+  'BS.selectConnectedDU': '請選擇一個 DU 連接到',
+
+  'BS.setLatitude': '設定緯度',
+  'BS.setLongitude': '設定經度', 
+
   'BS.setBSLocationDescriptionAndUploadParameters': '設定基站地點說明與上傳基站參數檔',
   'BS.generateParameterSampleFile': '產生基站參數樣本檔 (.xlsx)',
   'BS.uploadParameterFile': '上傳基站參數檔 (.xlsx)',

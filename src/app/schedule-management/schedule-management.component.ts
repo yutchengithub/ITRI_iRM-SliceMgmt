@@ -164,7 +164,7 @@ export class ScheduleManagementComponent implements OnInit {
   // queryJobTicketList 用於管理 HTTP 的訂閱請求,'!' 確保在使用前已賦值。
   queryJobTicketList!: Subscription; // @2024/03/15 Add
 
-  /** @2024/04/25 Update
+  /** @2024/04/28 Update
     * 用於獲取 Schedule List。
     * 根據是否處於 Local 模式,它會從 Local 文件或通過 API 從伺服器獲取排程資訊。
     */
@@ -181,6 +181,8 @@ export class ScheduleManagementComponent implements OnInit {
       
       this.scheduleList = this.scheduleList_LocalFiles.scheduleList_local;
       console.log( 'In local - Get the ScheduleList:', this.scheduleList );
+
+      this.search_ScheduleList();
 
       this.isLoadingScheduleList = false; // Local 模式下,數據加載快速完成,直接設置為 false
       this.hideSpinner();  // 完成後隱藏 spinner
@@ -199,6 +201,7 @@ export class ScheduleManagementComponent implements OnInit {
           console.log( 'Get the ScheduleList:', res );
 
           this.scheduleList = res; // 更新排程列表數據
+          this.search_ScheduleList();
           this.scheduleListDeal();
           console.log( '排程列表資訊\n( BS List ):', this.scheduleList ); // 取得的 Schedule List 資訊 ( Obtained Schedule List information )
           

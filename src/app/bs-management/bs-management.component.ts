@@ -3,16 +3,14 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { CommonService } from '../shared/common.service';
-import { LanguageService } from '../shared/service/language.service';
-import { Item } from '../shared/models/item';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
-import { ElementRef } from '@angular/core';
+import { ElementRef } from '@angular/core'; 
+import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 
-import * as XLSX from 'xlsx'; // 用於建立基站時上傳參數檔 @2024/03/31 Add by yuchen 
-
+// Services
+import { CommonService } from '../shared/common.service';
+import { LanguageService } from '../shared/service/language.service';
 import { SpinnerService } from '../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
 
 // import APIs of BS Management @2024/03/19 Add 
@@ -23,9 +21,10 @@ import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList';  
 import { UnusedNE }     from '../shared/interfaces/NE/For_queryUnusedNeList';    // @2024/04/26 Add
 
 // 引入所需 Local Files
-import { localBSList } from '../shared/local-files/BS/For_queryBsList';             // @2024/03/19 Add 
-//import { localNEList } from '../shared/local-files/NE/For_queryBsComponentList';    // @2024/04/26 Add
+import { localBSList } from '../shared/local-files/BS/For_queryBsList';             // @2024/03/19 Add
 import { localUnusedNEList } from '../shared/local-files/NE/For_queryUnusedNeList'; // @2024/04/26 Add
+
+import * as XLSX from 'xlsx'; // 用於建立基站時上傳參數檔 @2024/03/31 Add by yuchen 
 
 @Component({
   selector: 'app-bs-management',
@@ -33,65 +32,36 @@ import { localUnusedNEList } from '../shared/local-files/NE/For_queryUnusedNeLis
   styleUrls: ['./bs-management.component.scss'],
 })
 export class BSManagementComponent implements OnInit {
+  
   sessionId: string = '';
-  softwareLists: SoftwareLists = {} as SoftwareLists;
-  componentList: ComponentLists = {} as ComponentLists;
-  @ViewChild('createBSModal') createBSModal: any;
-  @ViewChild('deleteModal') deleteModal: any;
-  @ViewChild('provisionModal') provisionModal: any;
-  @ViewChild('advancedModal') advancedModal: any;
-  advancedModalRef!: MatDialogRef<any>;
-  advancedForm!: FormGroup;
-  afterAdvancedForm!: FormGroup;
   refreshTimeout!: any;
-  isSettingAdvanced = true;
-  createModalRef!: MatDialogRef<any>;
-  deleteModalRef!: MatDialogRef<any>;
-  provisionModalRef!: MatDialogRef<any>;
-  createForm!: FormGroup;
-  provisionForm!: FormGroup;
-  selectSoftware!: Uploadinfos;
-  BSstatus: number=-1;
-  nfTypeList: string[] = ['CU', 'DU', 'CU+DU'];
-  file: any;
-  typeMap: Map<number, string> = new Map();
+
   p: number = 1;            // 當前頁數
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
-  fileMsg: string = '';
-  formValidated = false;
-  searchForm!: FormGroup;
-  afterSearchForm!: FormGroup;
-  updateForm!: FormGroup;
-  isSearch: boolean = false;
 
-  comtype: Item[] = [
-    { displayName: 'CU', value: '1' },
-    { displayName: `DU`, value: '2' },
-    { displayName: `CU+DU+RU`, value: '3' }
-  ];
+  pageChanged( page: number ) {
+    this.p = page;
+  }
 
   // @2024/04/17 Add
-  // Show spinner of Loading Title 
+  // Show Spinner of Loading Title 
   showLoadingSpinner() {
     this.spinnerService.isLoading = true;
     this.spinnerService.show();
   }
 
   // @2024/04/17 Add
-  // Show spinner of Processing Title
+  // Show Spinner of Processing Title
   showProcessingSpinner() {
     this.spinnerService.isLoading = false;
     this.spinnerService.show();
   }
-
-  // Hide spinner @2024/04/17 Add
+  
+  // @2024/04/17 Add
+  // Hide Spinner
   hideSpinner() {
     this.spinnerService.hide();
-  }
-
-  pageChanged(page: number) {
-    this.p = page;
   }
 
   constructor(
@@ -105,14 +75,13 @@ export class BSManagementComponent implements OnInit {
 
     public  API_BS: apiForBSMgmt,           // @2024/03/19 Add for import API of BS Management
     
-    public        bsList_LocalFiles: localBSList,       // @2024/03/19 Add for import BS List Local Files 
-    //public  neList_LocalFiles: localNEList,           // @2024/04/26 Add neList_LocalFiles 用於從 Local 文件獲取 NE 列表數據
+    public        bsList_LocalFiles: localBSList,       // @2024/03/19 Add for import BS List Local Files
     public  unusedNEList_LocalFiles: localUnusedNEList, // @2024/04/26 Add unusedNEList_LocalFiles 用於從 Local 文件獲取未使用 NE 列表數據
 
   ) {
 
-    this.createBsCreationForm();
-    this.initializeElementsForm();
+    //this.createBsCreationForm();
+    //this.initializeElementsForm();
   }
 
   ngOnInit(): void {
@@ -120,9 +89,13 @@ export class BSManagementComponent implements OnInit {
     this.sessionId = this.commonService.getSessionId();
 
     this.getQueryBsList(); // @2024/03/19 Add for getting BS List
-    
-    this.afterSearchForm = _.cloneDeep(this.searchForm);
+    //this.createBsCreationForm( this.bsList.basestation ); // 確保 bsList 可用後再創建表單
+   //this.initializeElementsForm();
   }
+
+  ngAfterViewInit() {
+  }
+
 
   ngOnDestroy() {
     clearTimeout( this.refreshTimeout );
@@ -192,7 +165,9 @@ export class BSManagementComponent implements OnInit {
     console.log( 'getQueryBsList() - End' ); // getQueryBsList() end
   }
 
+  // @2024/04/28 Update - 多加入創建建立基站用表單
   queryBsListDeal() {
+
     this.totalItems = this.bsList.basestation.length;
   
     // 遍歷 basestation 陣列
@@ -476,6 +451,8 @@ export class BSManagementComponent implements OnInit {
     // 表單驗證狀態重置
     this.bsCreationFormValidated = false;
 
+    this.createBsCreationForm( this.bsList.basestation ); // 確保 bsList 可用後再創建表單
+
     // 打開 "基站建立" 視窗
     this.bsCreationWindowRef = this.dialog.open( this.bsCreationWindow, {
       id: 'bsCreationWindow',
@@ -494,33 +471,54 @@ export class BSManagementComponent implements OnInit {
     this.resetBsCreationForm(); // 初始化所有輸入的"基站建立"設定
   }
 
-  isLinear = false; // 先關閉一定要輸入完東西才可以點下一步
+  isLinear = true; // 先關閉，開啟表一定要輸入完東西才可以點下一步
   bsFormGroup_Name!: FormGroup;
   bsFormGroup_Type!: FormGroup;
   bsFormGroup_Elements!: FormGroup;
   bsFormGroup_Description!: FormGroup;
 
-  // @2024/04/26 Add
+  // @2024/04/28 Add
+  // 設定 DU 可選擇的數量選項 - 目前最多設為 4 個 ( 可依未來規格調整進行擴充 )
+  duNumberOptions = [ 1, 2, 3, 4 ]; 
+
+  // @2024/04/28 Add
+  // 設定 RU 可選擇的數量選項 - 目前最多設為 16 個 ( 可依未來規格調整進行擴充 )
+  ruNumberOptions = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
+
+  // @2024/04/28 Add
+  // 使用 Basestation[] 替代 any[] 以獲得更強的類型檢查
+  uniqueBSNameValidator( bsList: Basestation[] ): ValidatorFn {
+    return ( control: AbstractControl ): ValidationErrors | null => {
+      // 使用 ‘some’ 方法檢查是否存在具有相同名稱的基站
+      const nameExists = bsList.some( bs => bs.name === control.value );
+      // 如果名稱存在，返回錯誤物件
+      return nameExists ? { uniqueBSName: true } : null;
+    };
+  }
+
+  // @2024/04/28 Update - 改為接收 bsList 為參數
   // 初始化每個用於「創建基站」流程的 FormGroup
-  createBsCreationForm() {
+  createBsCreationForm( bsList: Basestation[] ) {
+
     // 步驟 1: 設定基站名稱
     this.bsFormGroup_Name = this.fb.group({
-      BSName: ['', Validators.required]
+      BSName: ['', [Validators.required, this.uniqueBSNameValidator( bsList )]]
     });
 
     // 步驟 2: 設定基站類型
     this.bsFormGroup_Type = this.fb.group({
       BSType: ['', Validators.required],
-      DUNumber: [{value: '', disabled: true}, [Validators.required, Validators.min(1)]],
-      RUNumber: [{value: '', disabled: true}, [Validators.required, Validators.min(1)]]
+      // DUNumber: [{value: '', disabled: true}, [Validators.required, Validators.min(1)]], // 如是讓使用者自行輸入數量，則需要設定 disabled
+      // RUNumber: [{value: '', disabled: true}, [Validators.required, Validators.min(1)]]  // 如是讓使用者自行輸入數量，則需要設定 disabled
+      DUNumber: ['', [Validators.required]], // 改為下拉選單控制，故不再設置 disabled
+      RUNumber: ['', [Validators.required]]  // 改為下拉選單控制，故不再設置 disabled
     });
 
     // 步驟 3: 設定網元和 GPS
-    // 將在後面程式中動態處理
-    this.bsFormGroup_Elements = this.fb.group({
-      // ...
-      DUElements: this.fb.array([]),
-      RUElements: this.fb.array([])
+    //this.initializeElementsForm(); // 初始方法
+    this.bsFormGroup_Elements = this.fb.group({}); // 創建一個空的 FormGroup，避免控制台報錯
+    this.bsFormGroup_Type.get('BSType')?.valueChanges.subscribe( ( bsType ) => {
+      this.initializeElementsForm( bsType );
     });
 
     // 步驟 4: 設定基站地點描述和上傳配置文件
@@ -538,74 +536,13 @@ export class BSManagementComponent implements OnInit {
     // 重置各個步驟的 FormGroup
     this.bsFormGroup_Name.reset();
     this.bsFormGroup_Type.reset();
-    this.bsFormGroup_Elements.reset();
+    this.bsFormGroup_Elements?.reset();
     this.bsFormGroup_Description.reset();
 
     // 如果還有其他相關的狀態需要重置，也應該在這裡進行
     // 例如，如果有分頁或過濾器的狀態，也應該一併重置
 
     console.log("BS creation form settings have been reset.");
-  }
-
-
-
-  // 處理基站類型選擇的變化
-  onBSTypeChange(typeValue: string) {
-    if (typeValue === '分佈式') {
-      this.bsFormGroup_Type.get('DUNumber')?.enable();
-      this.bsFormGroup_Type.get('RUNumber')?.enable();
-    } else {
-      this.bsFormGroup_Type.get('DUNumber')?.disable();
-      this.bsFormGroup_Type.get('RUNumber')?.disable();
-    }
-  }
-
-  // 假設我們已經有了從後端獲取的網元選項列表
-  //networkElementOptions: NetworkElement[] = []; // 這應該是一個包含網元的陣列
-  gpsLocationPattern = /^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/;
-
-  // 初始化步驟 3 的 FormGroup
-  initializeElementsForm() {
-    this.bsFormGroup_Elements = this.fb.group({
-      allInOneElement: [''],
-      gpsLocationAllInOne: ['', [Validators.pattern(this.gpsLocationPattern)]],
-      CUElement: [''],
-      DUElements: this.fb.array([]),
-      RUElements: this.fb.array([])
-    });
-  }
-
-  // 根據選定的 DU 和 RU 數量動態增加表單控件
-  updateElementsForm(DUNumber: number, RUNumber: number) {
-
-    // 清空現有的表單控件
-    const DUElementsArray = this.bsFormGroup_Elements.get('DUElements') as FormArray;
-    if ( DUElementsArray ) {
-      DUElementsArray.clear();
-      // ...
-    }
-
-    const RUElementsArray = this.bsFormGroup_Elements.get('RUElements') as FormArray;
-    if ( RUElementsArray ) {
-      RUElementsArray.clear();
-      // ...
-    }
-
-    // 動態添加 DU 控件
-    for (let i = 0; i < DUNumber; i++) {
-      DUElementsArray.push(this.fb.group({
-        DUElement: ['', Validators.required],
-      }));
-    }
-
-    // 動態添加 RU 控件
-    for (let i = 0; i < RUNumber; i++) {
-      RUElementsArray.push(this.fb.group({
-        RUElement: ['', Validators.required],
-        gpsLocationRU: ['', [Validators.pattern(this.gpsLocationPattern)]],
-        connectedDU: ['', Validators.required],
-      }));
-    }
   }
 
   get DUElementsFormArray(): FormArray {
@@ -615,40 +552,262 @@ export class BSManagementComponent implements OnInit {
   get RUElementsFormArray(): FormArray {
     return this.bsFormGroup_Elements.get('RUElements') as FormArray;
   }
+
+  // @2024/04/28 Add
+  // 處理基站類型選擇的變化
+  onBSTypeChange( typeValue: string ) {
+    if ( typeValue === 'dist' ) {
+
+      // 啟用 DU 和 RU 的選擇
+      this.bsFormGroup_Type.get('DUNumber')?.enable();
+      this.bsFormGroup_Type.get('RUNumber')?.enable();
   
+      /* 在使用者設定好數量時，立即更新下個步驟產生對應 DU、RU 設定數量
+
+        // 可能需要更新 DU 和 RU 表單控制項的值
+        // 通常是基於用戶之前的選擇或者一個預設值
+        const DUNumber = this.bsFormGroup_Type.get('DUNumber')?.value || 0;
+        const RUNumber = this.bsFormGroup_Type.get('RUNumber')?.value || 0;
+        
+        // 根據 DU 和 RU 的數量來更新或初始化 FormArray
+        this.updateElementsForm( DUNumber, RUNumber );
+      */
+
+    } else {
+
+      // 如非選擇分佈式，則禁用 DU 和 RU 的選擇
+      this.bsFormGroup_Type.get('DUNumber')?.disable();
+      this.bsFormGroup_Type.get('RUNumber')?.disable();
+
+      // 可能還需要清除步驟 3 中的表單元素
+      this.clearDuRuElementsForm();
+    }
+  }
+
+  prepareForStep3() {
+    if ( this.bsFormGroup_Type.get('BSType')?.value === 'dist' ) {
+
+      // 從表單獲取 DU 和 RU 的數量
+      const DUNumber = this.bsFormGroup_Type.get('DUNumber')?.value || 0;
+      const RUNumber = this.bsFormGroup_Type.get('RUNumber')?.value || 0;
+  
+      // 更新 DU 和 RU 的 FormArray
+      this.updateElementsForm( DUNumber, RUNumber );
+  
+      // 顯示 DU、RU 用表單的驗證狀態，用於檢查表單是否已過驗證
+      console.log('DU FormArray Valid?', this.DUElementsFormArray.valid);
+      console.log('RU FormArray Valid?', this.RUElementsFormArray.valid);
+    }
+  }
+
+  // @2024/04/28 Add
+  // 檢查第四步驟之前的表單是否有通過驗證用的函數
+  checkBefore4StepsFormsValidity() {
+    console.log( 'BS Name FormGroup Valid?', this.bsFormGroup_Name.valid );
+    console.log( 'BS Type FormGroup Valid?', this.bsFormGroup_Type.valid );
+    console.log( 'BS Elements FormGroup Valid?', this.bsFormGroup_Elements.valid );
+  
+    // 如所有 FormGroup 都有效，則可進下一步
+    if ( this.bsFormGroup_Name.valid && this.bsFormGroup_Type.valid &&
+           this.bsFormGroup_Elements.valid ) {
+
+      // 所有表單如都有效，就進下一步
+      console.log('All forms are valid, can proceed to the next step.');
+
+      return true;
+    } else {
+
+      // 有一個或多個表單無效，則不能進下一步
+      console.log('One or more forms are invalid, cannot proceed to the next step.');
+      return false;
+    }
+  }
+
+
+  // @2024/04/28 Add
+  // 檢查所有表單是否有通過驗證用的函數
+  checkAllFormsValidity() {
+    console.log('BS Name FormGroup Valid?', this.bsFormGroup_Name.valid);
+    console.log('BS Type FormGroup Valid?', this.bsFormGroup_Type.valid);
+    console.log('BS Elements FormGroup Valid?', this.bsFormGroup_Elements.valid);
+    console.log('BS Description FormGroup Valid?', this.bsFormGroup_Description.valid);
+  
+    // 如所有 FormGroup 都有效，則可進下一步
+    if ( this.bsFormGroup_Name.valid && this.bsFormGroup_Type.valid &&
+          this.bsFormGroup_Elements.valid && this.bsFormGroup_Description.valid ) {
+
+      // 所有表單如都有效，就進下一步
+      console.log('All forms are valid, can proceed to the next step.');
+
+      return true;
+
+    } else {
+
+      // 有一個或多個表單無效，則不能進下一步
+      console.log('One or more forms are invalid, cannot proceed to the next step.');
+      return false;
+    }
+  }
+  
+  // @2024/04/28 Add
+  // For Toggle CU Set
+  toggleNeCuSet() {
+    const neCuSetHeader = document.querySelector('.ne-cu-set-wrap label');
+    neCuSetHeader?.classList.toggle('active');
+  }
+
+  // @2024/04/28 Add
+  // For Toggle DU Set
+  toggleNeDuSet() {
+    const neDuSetHeader = document.querySelector('.ne-du-set-wrap label');
+    neDuSetHeader?.classList.toggle('active');
+  }
+
+  // @2024/04/28 Add
+  // For Toggle RU Set
+  toggleNeRuSet() {
+    const neRuSetHeader = document.querySelector('.ne-ru-set-wrap label');
+    neRuSetHeader?.classList.toggle('active');
+  }
+
+  // @2024/04/28 Add
+  // 經度正則表達式: -180 到 180
+  // longitudePattern = /^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/; // 如小數輸入超過 6 位會報錯
+  longitudePattern = /^(-?(1[0-7][0-9]|0?[0-9]{1,2})(\.[0-9]+)?|180(\.0+)?)$/;
+
+  // @2024/04/28 Add
+  // 緯度正則表達式: -90 到 90
+  // latitudePattern = /^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/; // 如小數輸入超過 6 位會報錯
+  latitudePattern = /^(-?[0-8]?[0-9](\.[0-9]+)?|90(\.0+)?)$/;
+
+  // @2024/04/28 Add
+  // 初始化步驟 3 的 FormGroup
+  initializeElementsForm( bsType: string ) {
+    if ( bsType === 'allInOne' ) {
+      this.bsFormGroup_Elements = this.fb.group({
+        allInOneElement: ['', Validators.required],
+        allInOneLongitude: ['', [Validators.required, Validators.pattern( this.longitudePattern )]],
+        allInOneLatitude: ['', [Validators.required, Validators.pattern( this.latitudePattern )]],
+      });
+    } else if ( bsType === 'dist' ) {
+      this.bsFormGroup_Elements = this.fb.group({
+        CUElement: ['', Validators.required],
+        DUElements: this.fb.array([]),
+        RUElements: this.fb.array([]),
+      });
+    }
+  }
+
+  // 清除所有相關的表單控件
+  clearDuRuElementsForm() {
+    if ( this.bsFormGroup_Elements?.contains('DUElements') ) {
+      const DUElementsArray = this.bsFormGroup_Elements.get('DUElements') as FormArray;
+      DUElementsArray.clear();
+    }
+    if ( this.bsFormGroup_Elements?.contains('RUElements') ) {
+      const RUElementsArray = this.bsFormGroup_Elements.get('RUElements') as FormArray;
+      RUElementsArray.clear();
+    }
+    console.log("已清空 bsFormGroup_Elements - DUElements、RUElements 的 formArray");
+  }
+
+  // @2024/04/28 Add
+  // 依據使用者設定的 DU、RU 數量設置對應數量的設定表單
+  updateElementsForm( DUNumber: number, RUNumber: number ) {
+    // 這裡調用的是初始化 FormArray 的方法
+    this.initializeDUElementsForm( DUNumber ); // 調用一個新方法來處理 DU 表單陣列的初始化
+    this.initializeRUElementsForm( RUNumber ); // 調用一個新方法來處理 RU 表單陣列的初始化
+  }
+
+  // @2024/04/28 Add
+  // 依據使用者設定數量設置對應數量的 DU 設定表單
+  initializeDUElementsForm( DUNumber: number ) {
+    const DUElementsArray = this.bsFormGroup_Elements.get('DUElements') as FormArray;
+    DUElementsArray.clear();
+    for (let i = 0; i < DUNumber; i++) {
+      DUElementsArray.push(this.fb.group({
+        DUElement: ['', Validators.required],
+        // 其他需要的表單控制項
+      }));
+    }
+  }
+
+  // @2024/04/28 Add
+  // 依據使用者設定數量設置對應數量的 RU 設定表單
+  initializeRUElementsForm( RUNumber: number ) {
+    const RUElementsArray = this.bsFormGroup_Elements.get('RUElements') as FormArray;
+    RUElementsArray.clear();
+    for ( let i = 0; i < RUNumber; i++ ) {
+      RUElementsArray.push(this.fb.group({
+        RUElement:   ['', Validators.required ],
+        longitude:   ['', [ Validators.required, Validators.pattern( this.longitudePattern ) ]], // 新增的經度表單控制項
+        latitude:    ['', [ Validators.required, Validators.pattern( this.latitudePattern ) ]],  // 新增的緯度表單控制項
+        connectedDU: ['', Validators.required ],
+      }));
+    }
+  }
+  
+  
+  /**
+    * @2024/04/28 Add
+    * 使用 ViewChild 裝飾器引用 DOM 中的 'fileInput' 元素。
+    */
   @ViewChild('fileInput') fileInput!: ElementRef;
 
+  /**
+    * @2024/04/28 Add
+    * 觸發文件輸入元素的點擊事件。
+    */
   triggerFileInput() {
-    // 觸發文件輸入元素的點擊事件
-    this.fileInput.nativeElement.click();
+  // 觸發文件輸入元素的點擊事件
+  this.fileInput.nativeElement.click();
   }
 
-  onFileSelected(event: Event) {
+  /**
+    * @2024/04/28 Add
+    * 用於儲存上傳的檔案名稱。
+    */
+  selectedFileName: string = '';
+
+  /**
+    * @2024/04/28 Add
+    * 當用戶選擇檔案時觸發。
+    * @param event 文件選擇事件。
+    */
+  onFileSelected( event: Event ) {
+    // 從事件中獲取目標元素
     const element = event.currentTarget as HTMLInputElement;
+    // 初始化文件變數為 null
     let file: File | null = null;
-
-    if (element.files && element.files.length > 0) {
-      file = element.files.item(0);
+    // 如果元素有文件且文件數量大於 0
+    if ( element.files && element.files.length > 0 ) {
+      // 獲取第一個文件
+      file = element.files.item( 0 );
     }
-
-    // 處理文件的代碼...
-    if (file) {
+    // 如果有選擇文件
+    if ( file ) {
+      // 將選擇的檔案設置到 ConfigurationFile 控件上
+      this.bsFormGroup_Description.patchValue({
+        ConfigurationFile: file
+      });
+      // 更新 selectedFileName 的值
+      this.selectedFileName = file.name;
       // 調用你用於處理文件的方法
-      this.handleFile(file);
+      this.handleBsParametersFile( file );
     }
   }
 
-  handleFile(file: File) {
+  handleBsParametersFile( file: File ) {
     const reader: FileReader = new FileReader();
-    reader.onload = (e: any) => {
+    reader.onload = ( e: any ) => {
       const bstr: string = e.target.result;
-      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+      const wb: XLSX.WorkBook = XLSX.read( bstr, { type: 'binary' } );
 
       const wsname: string = wb.SheetNames[0];
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
 
-      const data = XLSX.utils.sheet_to_json(ws);
-      console.log(data);
+      const data = XLSX.utils.sheet_to_json( ws );
+      console.log( data );
       // 進一步處理 data 或保存
     };
     reader.readAsBinaryString(file);
@@ -665,40 +824,3 @@ export class BSManagementComponent implements OnInit {
 // ↑ For Create BS @2024/04/26 Add ↑
 
 }
-
-
-export interface ComponentLists {
-  components: Components[];
-}
-
-export interface Components {
-  id: string;
-  bsId: string;
-  bsName: string;
-  name: string;
-  ip: string;
-  port: string;
-  account: string;
-  key: string;
-  comtype: number;
-  firm: string;
-  modelname: string;
-  status: number;
-}
-
-export interface SoftwareLists {
-  uploadinfos: Uploadinfos[];
-}
-
-export interface Uploadinfos {
-  id: string;
-  firm: string;
-  modelname: string;
-  uploadtime: string;
-  uploadtype: number;
-  uploadversion: string;
-  description: string;
-  uploadinfo: string;
-  uploadurl: string;
-}
-
