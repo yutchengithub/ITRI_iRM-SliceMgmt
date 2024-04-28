@@ -1416,6 +1416,19 @@ body.tw .sfReport .file_url_info li label,
 body.tw .pmReport .file_url_info li label {
   width: 7em!important;
 }
+#bsCreationWindow {
+  min-width: 50em;
+  min-height: 45em;
+}
+#bsCreationWindow .mat-form-field-wrapper {
+  transform: translateY(-22px);
+}
+#bsCreationWindow .mat-select-value {
+  color: #fff;
+}
+#bsCreationWindow .mat-form-field-appearance-fill.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  transform: translateY(-0.5em) scale(0.75);
+}
 @media screen and (max-width:1920px) {
  /*  .table table {
       font-size: 1em;
