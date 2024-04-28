@@ -201,7 +201,7 @@ export class ScheduleManagementComponent implements OnInit {
           console.log( 'Get the ScheduleList:', res );
 
           this.scheduleList = res; // 更新排程列表數據
-          this.search_ScheduleList();
+          //this.search_ScheduleList();
           this.scheduleListDeal();
           console.log( '排程列表資訊\n( BS List ):', this.scheduleList ); // 取得的 Schedule List 資訊 ( Obtained Schedule List information )
           

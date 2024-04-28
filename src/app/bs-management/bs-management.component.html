@@ -179,7 +179,7 @@
 
         <div class="next">
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
-          <button mat-button matStepperNext (click)="prepareForStep3(); stepper.next();">{{ languageService.i18n['field.createNext'] }}</button>
+          <button mat-button matStepperNext (click)="prepareForStep3();">{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
     </mat-step>
@@ -363,6 +363,10 @@
         <mat-form-field appearance="fill">
           <mat-label>{{ languageService.i18n['BS.description'] }}</mat-label>
           <textarea matInput formControlName="LocationDescription"></textarea>
+          <!-- 顯示必填錯誤 -->
+          <mat-error *ngIf="bsFormGroup_Description.get('LocationDescription')?.touched && bsFormGroup_Description.get('LocationDescription')?.hasError('required')">
+            {{ languageService.i18n['BS.enterBSLocationDescription'] }} <!-- 提示輸入基站地點描述 -->
+          </mat-error>
         </mat-form-field>
 
         <!-- 這裡是上傳文件的按鈕和輸入，已移出 mat-form-field -->
@@ -376,8 +380,17 @@
             {{ languageService.i18n['BS.uploadParameterFile'] }}
           </button>
           <input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".xlsx">
-          <!-- 顯示選擇的檔案名稱 -->
-          <span style="position: relative; left: 10px;" *ngIf="selectedFileName">{{ selectedFileName }}</span>
+            <!-- 如未有檔案，則顯示示意的檔案名稱 -->
+            <span style="position: relative; left: 10px;" *ngIf="!selectedFileName">
+              {{ languageService.i18n['BS.ex'] }}: BS_parameters_1x1x2_sample.xlsx</span>
+            <!-- 如有檔案，則顯示選擇的檔案名稱 -->
+            <span style="position: relative; left: 10px;" *ngIf="selectedFileName">
+              {{ languageService.i18n['BS.uploaded'] }}: {{ selectedFileName }}
+            </span>
+            <!-- 如未上傳檔案，則顯示錯誤提示 -->
+            <mat-error *ngIf="bsFormGroup_Description.get('ConfigurationFile')?.touched && bsFormGroup_Description.get('ConfigurationFile')?.hasError('required')">
+              {{ languageService.i18n['BS.uploadBSParameterFile'] }} <!-- 提示上傳配置文件 -->
+            </mat-error>
         </div>
 
         <!-- 操作按鈕 -->
@@ -385,7 +398,7 @@
           <!-- 上一步按鈕 -->
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
           <!-- 下一步按鈕 -->
-          <button mat-button matStepperNext (click)="checkAllFormsValidity(); stepper.next();">{{ languageService.i18n['field.createNext'] }}</button>
+          <button mat-button matStepperNext (click)="checkAndMarkFileAsTouched(); checkAllFormsValidity()">{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
     </mat-step>

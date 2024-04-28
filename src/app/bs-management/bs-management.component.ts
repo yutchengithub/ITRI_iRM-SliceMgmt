@@ -471,7 +471,7 @@ export class BSManagementComponent implements OnInit {
     this.resetBsCreationForm(); // 初始化所有輸入的"基站建立"設定
   }
 
-  isLinear = true; // 先關閉，開啟表一定要輸入完東西才可以點下一步
+  isLinear = false; // 先關閉，開啟表一定要輸入完東西才可以點下一步
   bsFormGroup_Name!: FormGroup;
   bsFormGroup_Type!: FormGroup;
   bsFormGroup_Elements!: FormGroup;
@@ -796,6 +796,17 @@ export class BSManagementComponent implements OnInit {
       this.handleBsParametersFile( file );
     }
   }
+
+  // @2024/04/28 Add
+  // 檢查是否已上傳檔案並標記為 touched
+  checkAndMarkFileAsTouched() {
+    // 檢查 ConfigurationFile 控件是否有值
+    if ( !this.bsFormGroup_Description.get('ConfigurationFile')?.value ) {
+      // 如果沒有值，則標記為 touched 以顯示錯誤信息
+      this.bsFormGroup_Description.get('ConfigurationFile')?.markAsTouched();
+    }
+  }
+
 
   handleBsParametersFile( file: File ) {
     const reader: FileReader = new FileReader();
