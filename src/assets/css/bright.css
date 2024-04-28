@@ -518,3 +518,6 @@ mat-dialog-container h5 .mat-icon {
 .field-optim-wrap > span .table.pci thead th {
   background: linear-gradient(180deg, #c2e7ff 0px, #c2e7ff 1px, #c2e7ff 100%)!important;
 }
+#bsCreationWindow .mat-select-value {
+  color: initial!important;
+}
