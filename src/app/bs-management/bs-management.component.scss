@@ -212,7 +212,12 @@ mat-stepper {
     font-family: Microsoft JhengHei;
 }
 ::ng-deep #bsCreationWindow .mat-error {
-    padding: 0.5em;
+  padding: 0.5em;
+  font-size: 12PX;
+}
+::ng-deep #bsCreationWindow .error_def {
+  margin: 0 0 10px;
+  max-width: 19em;
 }
 ::ng-deep .mat-stepper-vertical-line::before {
   border-left-color: #394a65;
