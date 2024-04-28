@@ -299,6 +299,10 @@ export const TwLanguage = {
   'BS.setBSLocationDescriptionAndUploadParameters': '設定基站地點說明與上傳基站參數檔',
   'BS.generateParameterSampleFile': '產生基站參數樣本檔 (.xlsx)',
   'BS.uploadParameterFile': '上傳基站參數檔 (.xlsx)',
+  'BS.ex': "例",
+  'BS.enterBSLocationDescription': '請輸入基站地點說明',
+  'BS.uploadBSParameterFile': '請上傳一個基站參數檔',
+  'BS.uploaded': '已上傳',
   'BS.setupComplete': '基站設定完成。',
 
   'BS.name':'基站名稱',
