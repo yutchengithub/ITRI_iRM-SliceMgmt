@@ -42,6 +42,84 @@ ul li > label {
   min-width: 7em;
 }
 
+.step-3-content {
+  max-height: 325px;
+  overflow-y: auto; 
+}
+
+// For Toggle CU Set @2024/04/28 Add
+.ne-cu-set-wrap label.active {
+  display: list-item;
+  display: list-item;
+  font-size: 15px;
+}
+.ne-cu-set-wrap label.active + .ne-cu-set-container {
+  display:block;
+}
+.ne-cu-set-wrap label + .ne-cu-set-container {
+  display:none;
+}
+.ne-cu-set-wrap label .material-symbols-outlined {
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  font-size: 15px;
+  color: #3daaff;
+  transform: rotate( 180deg );
+  transition: all .25s;
+}
+.ne-cu-set-wrap label.active .material-symbols-outlined {
+  transform: rotate( 0deg );
+}
+
+// For Toggle DU Set @2024/04/28 Add
+.ne-du-set-wrap label.active {
+  display: list-item;
+  font-size: 15px;
+}
+.ne-du-set-wrap label.active + .ne-du-set-container {
+  display:block;
+}
+.ne-du-set-wrap label + .ne-du-set-container {
+  display:none;
+}
+.ne-du-set-wrap label .material-symbols-outlined {
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  font-size: 15px;
+  color: #3daaff;
+  transform: rotate( 180deg );
+  transition: all .25s;
+}
+.ne-du-set-wrap label.active .material-symbols-outlined {
+  transform: rotate( 0deg );
+}
+
+// For Toggle RU Set @2024/04/28 Add
+.ne-ru-set-wrap label.active {
+  display: list-item;
+  display: list-item;
+  font-size: 15px;
+}
+.ne-ru-set-wrap label.active + .ne-ru-set-container {
+  display:block;
+}
+.ne-ru-set-wrap label + .ne-ru-set-container {
+  display:none;
+}
+.ne-ru-set-wrap label .material-symbols-outlined {
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  font-size: 15px;
+  color: #3daaff;
+  transform: rotate( 180deg );
+  transition: all .25s;
+}
+.ne-ru-set-wrap label.active .material-symbols-outlined {
+  transform: rotate( 0deg );
+}
 
 
 // 整個 mat-stepper 區的設定 @2024/02/02 Add 
