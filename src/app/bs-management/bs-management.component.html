@@ -364,7 +364,7 @@
           <mat-label>{{ languageService.i18n['BS.description'] }}</mat-label>
           <textarea matInput formControlName="LocationDescription"></textarea>
           <!-- 顯示必填錯誤 -->
-          <mat-error *ngIf="bsFormGroup_Description.get('LocationDescription')?.touched && bsFormGroup_Description.get('LocationDescription')?.hasError('required')">
+          <mat-error class="error_def" *ngIf="bsFormGroup_Description.get('LocationDescription')?.touched && bsFormGroup_Description.get('LocationDescription')?.hasError('required')">
             {{ languageService.i18n['BS.enterBSLocationDescription'] }} <!-- 提示輸入基站地點描述 -->
           </mat-error>
         </mat-form-field>
