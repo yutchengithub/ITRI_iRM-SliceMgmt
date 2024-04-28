@@ -471,7 +471,7 @@ export class BSManagementComponent implements OnInit {
     this.resetBsCreationForm(); // 初始化所有輸入的"基站建立"設定
   }
 
-  isLinear = false; // 先關閉，開啟表一定要輸入完東西才可以點下一步
+  isLinear = true; // 先關閉，開啟表一定要輸入完東西才可以點下一步
   bsFormGroup_Name!: FormGroup;
   bsFormGroup_Type!: FormGroup;
   bsFormGroup_Elements!: FormGroup;
@@ -528,7 +528,7 @@ export class BSManagementComponent implements OnInit {
     });
   }
 
-  // @2024/04/26 Add
+  // @2024/04/28 Update
   // 用於重置所有輸入的"基站建立"設定
   resetBsCreationForm() {
     console.log("Resetting bs creation form settings.");
@@ -538,6 +538,9 @@ export class BSManagementComponent implements OnInit {
     this.bsFormGroup_Type.reset();
     this.bsFormGroup_Elements?.reset();
     this.bsFormGroup_Description.reset();
+
+    // 重置上傳檔案名稱
+    this.selectedFileName = '';
 
     // 如果還有其他相關的狀態需要重置，也應該在這裡進行
     // 例如，如果有分頁或過濾器的狀態，也應該一併重置

@@ -302,6 +302,7 @@ export const TwLanguage = {
   'BS.ex': "例",
   'BS.enterBSLocationDescription': '請輸入基站地點說明',
   'BS.uploadBSParameterFile': '請上傳一個基站參數檔',
+  'BS.notUploaded': '未上傳',
   'BS.uploaded': '已上傳',
   'BS.setupComplete': '基站設定完成。',
 

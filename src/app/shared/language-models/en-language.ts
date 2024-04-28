@@ -303,6 +303,7 @@ export const Enlanguage = {
   'BS.enterBSLocationDescription': 'Please Enter BS Location Description',
   'BS.uploadBSParameterFile': 'Please Upload a BS Parameter File',
   'BS.uploaded': 'Uploaded',
+  'BS.notUploaded': 'Not Uploaded',
   'BS.setupComplete': 'BS Setup Complete.', 
 
   'BS.name':'BS Name',
