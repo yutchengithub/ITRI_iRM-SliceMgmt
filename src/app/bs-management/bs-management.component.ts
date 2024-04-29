@@ -17,8 +17,10 @@ import { SpinnerService } from '../shared/service/spinner.service';    // 用於
 import { apiForBSMgmt } from '../shared/api/For_BS_Mgmt';
 
 // 引入儲存各個資訊所需的 interfaces 
-import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList';   // @2024/03/19 Add 
-import { UnusedNE }     from '../shared/interfaces/NE/For_queryUnusedNeList';    // @2024/04/26 Add
+import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList';       // @2024/03/19 Add 
+import { UnusedNE }            from '../shared/interfaces/NE/For_queryUnusedNeList'; // @2024/04/26 Add
+import { CreateBs, Component_All, ComponentsInfo_All }               from '../shared/interfaces/BS/For_createBs';            // @2024/04/29 Add
+import { CreateDistributedBs, Components_Dist, ComponentsInfo_Dist } from '../shared/interfaces/BS/For_createDistributedBs'; // @2024/04/29 Add
 
 // 引入所需 Local Files
 import { localBSList } from '../shared/local-files/BS/For_queryBsList';             // @2024/03/19 Add
