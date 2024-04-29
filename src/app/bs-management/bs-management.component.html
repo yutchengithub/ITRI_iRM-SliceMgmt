@@ -271,7 +271,7 @@
                   <!-- 選擇 DU @2024/04/29 Update  -->
                   <mat-form-field appearance="fill">
                     <mat-label>{{ languageService.i18n['BS.selectDUNE'] }}#{{ i + 1 }}</mat-label>
-                    <mat-select formControlName="DUElement" (selectionChange)="updateDUOptions()">
+                    <mat-select formControlName="DUElement" (selectionChange)="updateDUOptions(); updateConnectedDUOptions()">
                       <mat-option *ngFor="let du of DUOptions" [value]="du.id" [disabled]="selectedDUIds.includes(du.id) && du.id !== duControl.get('DUElement')?.value">
                         {{ du.name }}
                       </mat-option>
