@@ -48,9 +48,8 @@ ul li > label {
 }
 
 // For Toggle CU Set @2024/04/28 Add
+.ne-du-set-wrap label.active,
 .ne-cu-set-wrap label.active {
-  display: list-item;
-  display: list-item;
   font-size: 15px;
 }
 .ne-cu-set-wrap label.active + .ne-cu-set-container {
@@ -74,7 +73,6 @@ ul li > label {
 
 // For Toggle DU Set @2024/04/28 Add
 .ne-du-set-wrap label.active {
-  display: list-item;
   font-size: 15px;
 }
 .ne-du-set-wrap label.active + .ne-du-set-container {
@@ -97,10 +95,12 @@ ul li > label {
 }
 
 // For Toggle RU Set @2024/04/28 Add
-.ne-ru-set-wrap label.active {
-  display: list-item;
-  display: list-item;
+.ne-cu-set-wrap label.active,
+.ne-ru-set-wrap label.active,
+.ne-du-set-wrap label.active  {
   font-size: 15px;
+  top: -5px;
+  position: relative;
 }
 .ne-ru-set-wrap label.active + .ne-ru-set-container {
   display:block;
@@ -135,7 +135,7 @@ mat-stepper {
   box-shadow: 0 4px 8px 0 rgba(216, 201, 201, 0.2);
   transition: 0.3s;
 
-  padding: 5px;
+  padding: 5px 5px 0;
   flex: 1;       // 讓所有 form-field 元素彈性地占滿可用空間
 
   max-width: 300px;
@@ -214,6 +214,7 @@ mat-stepper {
 ::ng-deep #bsCreationWindow .mat-error {
   padding: 0.5em;
   font-size: 12PX;
+  max-width: 19em;
 }
 ::ng-deep #bsCreationWindow .error_def {
   margin: 0 0 10px;
@@ -262,7 +263,25 @@ mat-stepper {
   justify-content: center;
   align-items: center;
   height: 10%;
-  margin: 15px auto 10px;
+ /*  margin: 15px auto 10px; */
   padding: 2px 15px;      // 按鈕大小
 }
-
+.step-3-content > span {
+  position: relative;
+  z-index: 999;
+  margin: -5px 0 0;
+}
+.step-3-content .mat-form-field {
+  width: 100%;
+}
+.button-container {
+  margin: -5px 0 10px 20px;
+}
+.sample_download button {
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: #66ccff;
+  margin: 0 1em;
+  font-size: 15px;
+}

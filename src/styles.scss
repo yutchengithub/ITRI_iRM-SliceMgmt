@@ -1630,3 +1630,12 @@ ngx-spinner .ngx-spinner-overlay {
   width: 1.3rem!important;
   height: 1.3rem!important;
 }
+#bsCreationWindow .mat-select-arrow {
+  color: rgba(255, 255, 255, .54)!important; 
+}
+#bsCreationWindow .mat-form-field-appearance-fill .mat-form-field-infix {
+   padding: .5em 0 .25em 0!important;
+}
+#bsCreationWindow .mat-form-field-label-wrapper {
+  top: -0.83375em!important;
+}

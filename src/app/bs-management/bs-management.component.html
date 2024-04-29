@@ -150,31 +150,33 @@
         </mat-form-field>
 
         <ng-container *ngIf="bsFormGroup_Type.get('BSType')?.value === 'dist'">
-          <!-- DU 數量選擇 -->
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['BS.duNumber'] }}</mat-label>
-            <mat-select formControlName="DUNumber">
-              <mat-option *ngFor="let num of duNumberOptions" [value]="num">
-                {{ num }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="bsFormGroup_Type.get('DUNumber')?.touched && bsFormGroup_Type.get('DUNumber')?.hasError('required')">
-              {{ languageService.i18n['BS.selectDUNumber'] }}
-            </mat-error>
-          </mat-form-field>
+          <div>
+            <!-- DU 數量選擇 -->
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['BS.duNumber'] }}</mat-label>
+              <mat-select formControlName="DUNumber">
+                <mat-option *ngFor="let num of duNumberOptions" [value]="num">
+                  {{ num }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="bsFormGroup_Type.get('DUNumber')?.touched && bsFormGroup_Type.get('DUNumber')?.hasError('required')">
+                {{ languageService.i18n['BS.selectDUNumber'] }}
+              </mat-error>
+            </mat-form-field>
 
-          <!-- RU 數量選擇 -->
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['BS.ruNumber'] }}</mat-label>
-            <mat-select formControlName="RUNumber">
-              <mat-option *ngFor="let num of ruNumberOptions" [value]="num">
-                {{ num }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="bsFormGroup_Type.get('RUNumber')?.touched && bsFormGroup_Type.get('RUNumber')?.hasError('required')">
-              {{ languageService.i18n['BS.selectRUNumber'] }}
-            </mat-error>
-          </mat-form-field>
+            <!-- RU 數量選擇 -->
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['BS.ruNumber'] }}</mat-label>
+              <mat-select formControlName="RUNumber">
+                <mat-option *ngFor="let num of ruNumberOptions" [value]="num">
+                  {{ num }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="bsFormGroup_Type.get('RUNumber')?.touched && bsFormGroup_Type.get('RUNumber')?.hasError('required')">
+                {{ languageService.i18n['BS.selectRUNumber'] }}
+              </mat-error>
+            </mat-form-field>
+          </div>
         </ng-container>
 
         <div class="next">
@@ -209,24 +211,25 @@
             </mat-error>
           </mat-form-field>
 
+          <div>
+            <!-- 設定 All-In-One 網元經度位置 -->
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['BS.setLongitude'] }}</mat-label>
+              <input matInput formControlName="allInOneLongitude" placeholder="{{ languageService.i18n['field.lng'] }} ( -180.0 ~ 180.0 )" required>
+              <mat-error *ngIf="bsFormGroup_Elements.get('allInOneLongitude')?.touched && bsFormGroup_Elements.get('allInOneLongitude')?.invalid">
+                {{ languageService.i18n['field.validLongitude'] }}
+              </mat-error>
+            </mat-form-field>
 
-          <!-- 設定 All-In-One 網元經度位置 -->
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['BS.setLongitude'] }}</mat-label>
-            <input matInput formControlName="allInOneLongitude" placeholder="{{ languageService.i18n['field.lng'] }} ( -180.0 ~ 180.0 )" required>
-            <mat-error *ngIf="bsFormGroup_Elements.get('allInOneLongitude')?.touched && bsFormGroup_Elements.get('allInOneLongitude')?.invalid">
-              {{ languageService.i18n['field.validLongitude'] }}
-            </mat-error>
-          </mat-form-field>
-
-          <!-- 設定 All-In-One 網元緯度位置 -->
-          <mat-form-field appearance="fill">
-            <mat-label>{{ languageService.i18n['BS.setLatitude'] }}</mat-label>
-            <input matInput formControlName="allInOneLatitude" placeholder="{{ languageService.i18n['field.lat'] }} ( -90.0 ~ 90.0 )" required>
-            <mat-error *ngIf="bsFormGroup_Elements.get('allInOneLatitude')?.touched && bsFormGroup_Elements.get('allInOneLatitude')?.invalid">
-              {{ languageService.i18n['field.validLatitude'] }}
-            </mat-error>
-          </mat-form-field>
+            <!-- 設定 All-In-One 網元緯度位置 -->
+            <mat-form-field appearance="fill">
+              <mat-label>{{ languageService.i18n['BS.setLatitude'] }}</mat-label>
+              <input matInput formControlName="allInOneLatitude" placeholder="{{ languageService.i18n['field.lat'] }} ( -90.0 ~ 90.0 )" required>
+              <mat-error *ngIf="bsFormGroup_Elements.get('allInOneLatitude')?.touched && bsFormGroup_Elements.get('allInOneLatitude')?.invalid">
+                {{ languageService.i18n['field.validLatitude'] }}
+              </mat-error>
+            </mat-form-field>
+          </div>
 
         </ng-container>
 
@@ -235,7 +238,7 @@
         <ng-container *ngIf=" bsFormGroup_Type.get('BSType')?.value === 'dist' && bsFormGroup_Elements" style="max-height: 100px; overflow-y: auto;">
 
           <!-- 設定 CU -->
-          <div class="ne-cu-set-wrap">
+          <span class="ne-cu-set-wrap">
             <label class="active" (click)="toggleNeCuSet()">
               {{ languageService.i18n['BS.setCU'] }}
               <span class="material-symbols-outlined">expand_more</span>
@@ -256,10 +259,10 @@
               </mat-form-field>
 
             </div>
-          </div>
+          </span>
 
           <!-- 設定 DU -->
-          <div class="ne-du-set-wrap">
+          <span class="ne-du-set-wrap">
             <label class="active" (click)="toggleNeDuSet()">
               {{ languageService.i18n['BS.setDU'] }}
               <span class="material-symbols-outlined">expand_more</span>
@@ -284,7 +287,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </span>
 
           <!-- 設定 RU -->
           <div class="ne-ru-set-wrap">
@@ -309,24 +312,6 @@
                     </mat-error>
                   </mat-form-field>
 
-                  <!-- 設定 RU 經度位置 -->
-                  <mat-form-field appearance="fill">
-                    <mat-label>RU#{{ i + 1 }} - {{ languageService.i18n['BS.setLongitude'] }}</mat-label>
-                    <input matInput formControlName="longitude" placeholder="{{ languageService.i18n['field.lng'] }} ( -180.0 ~ 180.0 )" required>
-                    <mat-error *ngIf="ruControl.get('longitude')?.invalid && ruControl.get('longitude')?.touched">
-                      {{ languageService.i18n['field.validLongitude'] }}
-                    </mat-error>
-                  </mat-form-field>
-
-                  <!-- 設定 RU 緯度位置 -->
-                  <mat-form-field appearance="fill">
-                    <mat-label>RU#{{ i + 1 }} - {{ languageService.i18n['BS.setLatitude'] }}</mat-label>
-                    <input matInput formControlName="latitude" placeholder="{{ languageService.i18n['field.lat'] }} ( -90.0 ~ 90.0 )" required>
-                    <mat-error *ngIf="ruControl.get('latitude')?.invalid && ruControl.get('latitude')?.touched">
-                      {{ languageService.i18n['field.validLatitude'] }}
-                    </mat-error>
-                  </mat-form-field>
-                  
                   <!-- 設定 RU 連接到的 DU -->
                   <mat-form-field appearance="fill">
                     <mat-label>RU#{{ i + 1 }} - {{ languageService.i18n['BS.setConnectedDU'] }}</mat-label>
@@ -339,6 +324,27 @@
                       {{ languageService.i18n['BS.selectConnectedDU'] }} RU#{{ i + 1 }}
                     </mat-error>
                   </mat-form-field>
+
+                  <div>
+                    <!-- 設定 RU 經度位置 -->
+                    <mat-form-field appearance="fill">
+                      <mat-label>RU#{{ i + 1 }} - {{ languageService.i18n['BS.setLongitude'] }}</mat-label>
+                      <input matInput formControlName="longitude" placeholder="{{ languageService.i18n['field.lng'] }} ( -180.0 ~ 180.0 )" required>
+                      <mat-error *ngIf="ruControl.get('longitude')?.invalid && ruControl.get('longitude')?.touched">
+                        {{ languageService.i18n['field.validLongitude'] }}
+                      </mat-error>
+                    </mat-form-field>
+
+                    <!-- 設定 RU 緯度位置 -->
+                    <mat-form-field appearance="fill">
+                      <mat-label>RU#{{ i + 1 }} - {{ languageService.i18n['BS.setLatitude'] }}</mat-label>
+                      <input matInput formControlName="latitude" placeholder="{{ languageService.i18n['field.lat'] }} ( -90.0 ~ 90.0 )" required>
+                      <mat-error *ngIf="ruControl.get('latitude')?.invalid && ruControl.get('latitude')?.touched">
+                        {{ languageService.i18n['field.validLatitude'] }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                 
                 </div>
               </div>
             </div>
@@ -370,16 +376,26 @@
         </mat-form-field>
 
         <!-- 這裡是上傳文件的按鈕和輸入，已移出 mat-form-field -->
-        <div class="button-container">
+        <!-- <div class="button-container">
           <button mat-flat-button class="button-modifyConfiguration">
             {{ languageService.i18n['BS.generateParameterSampleFile'] }}
           </button>
-        </div>
+        </div> -->
         <div class="button-container">
           <button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()">
             {{ languageService.i18n['BS.uploadParameterFile'] }}
           </button>
-          <input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".xlsx">
+          <span class="sample_download">
+            <button mat-flat-button class="button-modifyConfiguration">
+              <span class="material-symbols-outlined">
+                downloading
+                </span>
+              {{ languageService.i18n['BS.generateParameterSampleDownload'] }} 
+              <!-- {{ languageService.i18n['BS.generateParameterSampleFile'] }} -->
+            </button>
+          </span>
+          <div>
+            <input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".xlsx">
             <!-- 如未有檔案，則顯示示意的檔案名稱 -->
             <span style="position: relative; left: 10px;" *ngIf="!selectedFileName">
               <!-- {{ languageService.i18n['BS.ex'] }}: BS_parameters_1x1x2_sample.xlsx -->
@@ -393,6 +409,7 @@
             <mat-error *ngIf="bsFormGroup_Description.get('ConfigurationFile')?.touched && bsFormGroup_Description.get('ConfigurationFile')?.hasError('required')">
               {{ languageService.i18n['BS.uploadBSParameterFile'] }} <!-- 提示上傳配置文件 -->
             </mat-error>
+          </div>
         </div>
 
         <!-- 操作按鈕 -->

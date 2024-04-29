@@ -300,6 +300,7 @@ export const Enlanguage = {
 
   'BS.setBSLocationDescriptionAndUploadParameters': 'Set BS Location Description and Upload BS Parameter File',
   'BS.generateParameterSampleFile': 'Generate BS Parameter Sample File (.xlsx)',
+  'BS.generateParameterSampleDownload': 'Sample Download (.xlsx)',
   'BS.uploadParameterFile': 'Upload BS Parameter File (.xlsx)',
   'BS.ex': "ex",
   'BS.enterBSLocationDescription': 'Please Enter BS Location Description',
