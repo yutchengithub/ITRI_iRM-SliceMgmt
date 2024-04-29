@@ -266,6 +266,7 @@ export const TwLanguage = {
   
   'BS.setBSName': '設定基站名稱',
   'BS.enterBSName': '請輸入基站名稱',
+  'BS.nameUsedInAccount': '此帳號下已存在相同基站名稱',
   'BS.nameExists': '此名稱已存在',
 
   'BS.setBSType': '設定基站類型',

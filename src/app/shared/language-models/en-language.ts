@@ -266,6 +266,8 @@ export const Enlanguage = {
   'BS.setBSName': 'Set BS Name',
   'BS.enterBSName': 'Please Enter BS Name',
   'BS.nameExists': 'This name already exists',
+  'BS.nameUsedInAccount': 'This BS name already used in this account',
+
 
   'BS.setBSType': 'Set BS Type',
   'BS.selectBSType': 'Please Select Base Station Type',

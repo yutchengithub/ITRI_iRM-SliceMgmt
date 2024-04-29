@@ -119,7 +119,7 @@
           <input matInput formControlName="BSName" required>
           <!-- 顯示唯一性錯誤 -->
           <mat-error *ngIf="bsFormGroup_Name.get('BSName')?.touched && bsFormGroup_Name.get('BSName')?.hasError('uniqueBSName')">
-            {{ languageService.i18n['BS.nameExists'] }}
+            {{ languageService.i18n['BS.nameUsedInAccount'] }}
           </mat-error>
           <!-- 顯示必填錯誤 -->
           <mat-error *ngIf="bsFormGroup_Name.get('BSName')?.touched && bsFormGroup_Name.get('BSName')?.hasError('required')">
