@@ -17,14 +17,36 @@ import { SpinnerService } from '../shared/service/spinner.service';    // 用於
 import { apiForBSMgmt } from '../shared/api/For_BS_Mgmt';
 
 // 引入儲存各個資訊所需的 interfaces 
-import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList';   // @2024/03/19 Add 
-import { UnusedNE }     from '../shared/interfaces/NE/For_queryUnusedNeList';    // @2024/04/26 Add
+import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList';       // @2024/03/19 Add 
+import { UnusedNE }            from '../shared/interfaces/NE/For_queryUnusedNeList'; // @2024/04/26 Add
+import { CreateBs, Component_All, ComponentsInfo_All }               from '../shared/interfaces/BS/For_createBs';            // @2024/04/29 Add
+import { CreateDistributedBs, Components_Dist, duID, ruID, ComponentsInfo_Dist } from '../shared/interfaces/BS/For_createDistributedBs'; // @2024/04/29 Add
 
 // 引入所需 Local Files
 import { localBSList } from '../shared/local-files/BS/For_queryBsList';             // @2024/03/19 Add
 import { localUnusedNEList } from '../shared/local-files/NE/For_queryUnusedNeList'; // @2024/04/26 Add
 
 import * as XLSX from 'xlsx'; // 用於建立基站時上傳參數檔 @2024/03/31 Add by yuchen 
+
+// @2024/04/29 Add
+// 用於使用者建立基站時，記錄設定 CU 或 DU 的相關資訊
+export interface CuOrDu_selectRecord {
+  type: string,
+    id: string,
+  name: string,
+}
+
+// @2024/04/29 Add 
+// 用於使用者建立基站時，記錄設定 RU 的相關資訊
+export interface Ru_selectRecord {
+    type: string,
+      id: string,
+    name: string,
+    duid: string,
+  duName: string,
+  position?:string
+}
+
 
 @Component({
   selector: 'app-bs-management',
@@ -414,7 +436,7 @@ export class BSManagementComponent implements OnInit {
     UnusedNEList.forEach( ne => {
       switch ( ne.comtype ) {
         case 1:
-          this.CUOptions.push( ne) ;
+          this.CUOptions.push( ne ) ;
           break;
         case 2:
           this.DUOptions.push( ne );
@@ -463,12 +485,20 @@ export class BSManagementComponent implements OnInit {
     this.bsCreationWindowRef.afterClosed().subscribe(() => {
       this.bsCreationFormValidated = false;
       // 可以在這裡進行一些清理工作，例如重置表單等
+      this.resetBsCreationForm(); // 初始化所有輸入的"基站建立"設定
     });
 
     // 彈出視窗打開時加載未使用 NE 列表數據
     this.getUnusedNEList();
 
     this.resetBsCreationForm(); // 初始化所有輸入的"基站建立"設定
+
+    console.log("When Open BS Creation Window the bsComponents", this.bsComponents );
+    console.log("When Open BS Creation Window the selectedDUIds", this.selectedDUIds );
+    console.log("When Open BS Creation Window the selectedRUIds", this.selectedRUIds );
+    console.log("When Open BS Creation Window the connectedDUOptions", this.connectedDUOptions );
+    console.log("When Open BS Creation Window the selectedFileName", this.selectedFileName );
+    console.log("When Open BS Creation Window the bsCreationData", this.bsCreationData );
   }
 
   isLinear = true; // 先關閉，開啟表一定要輸入完東西才可以點下一步
@@ -528,7 +558,19 @@ export class BSManagementComponent implements OnInit {
     });
   }
 
-  // @2024/04/28 Update
+  
+  // @2024/04/29 Add
+  // 用於收集當發送 POST 建立基站時所需的承載資訊，
+  // 存儲用戶在表單中選擇的所有數據的服務或元件屬性
+  bsCreationData: any = {
+    name: null,
+    bstype: null,
+    description: null,
+    components: null,
+    componentsInfo: null
+  };
+
+  // @2024/04/29 Update
   // 用於重置所有輸入的"基站建立"設定
   resetBsCreationForm() {
     console.log("Resetting bs creation form settings.");
@@ -539,8 +581,35 @@ export class BSManagementComponent implements OnInit {
     this.bsFormGroup_Elements?.reset();
     this.bsFormGroup_Description.reset();
 
+    // 重置 bsComponents
+    this.bsComponents = {};
+
+    // 重置已選擇的 DU 和 RU IDs
+    this.selectedDUIds = [];
+    this.selectedRUIds = [];
+
+    // 重置可選擇的連接 DU 選項
+    this.connectedDUOptions = [];
+
+    // 重置 RUElementsFormArray 中的 connectedDU 控制項
+    if (this.bsFormGroup_Elements?.contains('RUElements')) {
+      const RUElementsArray = this.bsFormGroup_Elements.get('RUElements') as FormArray;
+      RUElementsArray.controls.forEach(control => {
+        control.get('connectedDU')?.reset();
+      });
+    }
+
     // 重置上傳檔案名稱
     this.selectedFileName = '';
+
+    // 重置 bsCreationData
+    this.bsCreationData = {
+      name: null,
+      bstype: null,
+      description: null,
+      components: null,
+      componentsInfo: null
+    };
 
     // 如果還有其他相關的狀態需要重置，也應該在這裡進行
     // 例如，如果有分頁或過濾器的狀態，也應該一併重置
@@ -556,9 +625,55 @@ export class BSManagementComponent implements OnInit {
     return this.bsFormGroup_Elements.get('RUElements') as FormArray;
   }
 
-  // @2024/04/28 Add
+  // @2024/04/30 Update
+  // 用於每步驟刷新收集建立基站 POST 所需之 JSON 數據
+  updateBsCreationData() {
+      this.bsCreationData.name = this.bsFormGroup_Name.get('BSName')?.value;
+      this.bsCreationData.description = this.bsFormGroup_Description.get('LocationDescription')?.value;
+  
+      const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
+      this.bsCreationData.bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
+  
+      if (this.bsCreationData.bstype === "1") {
+          const selectedId = this.bsFormGroup_Elements.get('allInOneElement')?.value;
+          this.bsCreationData.components = [{ type: 'cu+du+ru', id: selectedId }];
+      } else if (this.bsCreationData.bstype === "2") {
+          const cu = this.bsFormGroup_Elements.get('CUElement')?.value;
+          const duElements = this.DUElementsFormArray.value.map((du: any) => ({ id: du.DUElement }));
+          const ruElements = this.RUElementsFormArray.value.map((ru: any) => ({
+              id: ru.RUElement,
+              position: `[${ru.latitude}, ${ru.longitude}]`,
+              duid: ru.connectedDU
+          }));
+  
+          // Define components with the appropriate type
+          const components: Components_Dist = {};
+  
+          components[cu] = duElements.reduce((acc: duID, du: any) => {
+              const filteredRUs = ruElements.filter((ru: any) => ru.duid === du.id);
+              const ruMap: ruID = filteredRUs.reduce((ruAcc: ruID, ru: any) => {
+                  ruAcc[ru.id] = ru.position;
+                  return ruAcc;
+              }, {});
+              
+              acc[du.id] = [ruMap];  // Adjust this if the structure needs to be different
+              return acc;
+          }, {});
+  
+          this.bsCreationData.components = components;
+      }
+  
+      console.log("bsCreationData for POST:", this.bsCreationData);
+  }
+  
+  
+  // @2024/04/29 Update
   // 處理基站類型選擇的變化
   onBSTypeChange( typeValue: string ) {
+
+    // 監聽用戶的選擇並更新 bstype
+    this.bsCreationData.bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
+
     if ( typeValue === 'dist' ) {
 
       // 啟用 DU 和 RU 的選擇
@@ -604,7 +719,7 @@ export class BSManagementComponent implements OnInit {
   }
 
   // @2024/04/28 Add
-  // 檢查第四步驟之前的表單是否有通過驗證用的函數
+  // 檢查進第四步驟之前的表單是否有通過驗證用的函數
   checkBefore4StepsFormsValidity() {
     console.log( 'BS Name FormGroup Valid?', this.bsFormGroup_Name.valid );
     console.log( 'BS Type FormGroup Valid?', this.bsFormGroup_Type.valid );
@@ -625,7 +740,6 @@ export class BSManagementComponent implements OnInit {
       return false;
     }
   }
-
 
   // @2024/04/28 Add
   // 檢查所有表單是否有通過驗證用的函數
@@ -673,12 +787,12 @@ export class BSManagementComponent implements OnInit {
     neRuSetHeader?.classList.toggle('active');
   }
 
-  // @2024/04/28 Add
+  // 用於定義經度驗證格式 @2024/04/28 Add
   // 經度正則表達式: -180 到 180
   // longitudePattern = /^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/; // 如小數輸入超過 6 位會報錯
   longitudePattern = /^(-?(1[0-7][0-9]|0?[0-9]{1,2})(\.[0-9]+)?|180(\.0+)?)$/;
 
-  // @2024/04/28 Add
+  // 用於定義緯度驗證格式 @2024/04/28 Add
   // 緯度正則表達式: -90 到 90
   // latitudePattern = /^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/; // 如小數輸入超過 6 位會報錯
   latitudePattern = /^(-?[0-8]?[0-9](\.[0-9]+)?|90(\.0+)?)$/;
@@ -749,8 +863,313 @@ export class BSManagementComponent implements OnInit {
       }));
     }
   }
+
+
+  // @2024/04/29 Add
+  // 用於記錄使用者選擇的網元資訊
+  bsComponents: {
+    all?: Component_All[];
+     cu?: CuOrDu_selectRecord[];
+     du?: CuOrDu_selectRecord[];
+     ru?: Ru_selectRecord[];
+  } = {};
+
+  onStep3Submit() {
+    const bstype = this.bsFormGroup_Type.get('BSType')?.value;
+    if (bstype === 'allInOne') {
+      this.updateBsComponentsForAllInOne();
+    } else if (bstype === 'dist') {
+      this.updateBsComponentsForDistributed();
+    }
+  }
+
+  updateBsComponentsForAllInOne() {
+    const selectedId = this.bsFormGroup_Elements.get('allInOneElement')?.value;
+    const longitude = this.bsFormGroup_Elements.get('allInOneLongitude')?.value;
+    const latitude = this.bsFormGroup_Elements.get('allInOneLatitude')?.value;
+    const position = `[${longitude},${latitude}]`;
+  
+    if (selectedId) {
+      this.bsComponents.all = [{
+        type: 'cu+du+ru',
+        id: selectedId,
+        position: position
+      }];
+    }
+  
+    console.log("selected All-In-One ID:", selectedId);
+    console.log("this.bsComponents:", this.bsComponents);
+  }
+  
+  duCount: number = 0;
+  ruCount: number = 0;
+
+  // @2024/04/30 Update
+  updateBsComponentsForDistributed() {
+    const selectedCUId = this.bsFormGroup_Elements.get('CUElement')?.value;
+    if (selectedCUId) {
+      this.bsComponents.cu = [{
+        type: 'cu',
+        id: selectedCUId,
+        name: this.CUOptions.find(cu => cu.id === selectedCUId)?.name || ''
+      }];
+    }
+  
+    this.bsComponents.du = this.DUElementsFormArray.controls
+      .filter(du => du.get('DUElement')?.value)
+      .map(du => {
+        const id = du.get('DUElement')?.value;
+        return {
+          type: 'du',
+          id: id,
+          name: this.DUOptions.find(duOption => duOption.id === id)?.name || ''
+        };
+      });
+  
+    this.bsComponents.ru = this.RUElementsFormArray.controls
+      .filter(ru => ru.get('RUElement')?.value)
+      .map(ru => {
+        const id = ru.get('RUElement')?.value;
+        const connectedDUId = ru.get('connectedDU')?.value;
+        const longitude = ru.get('longitude')?.value;
+        const latitude = ru.get('latitude')?.value;
+        const position = `[${longitude},${latitude}]`;
+  
+        return {
+          type: 'ru',
+          id: id,
+          name: this.RUOptions.find(ruOption => ruOption.id === id)?.name || '',
+          duid: connectedDUId,
+          duName: this.DUOptions.find(du => du.id === connectedDUId)?.name || '',
+          position: position
+        };
+      });
+
+      // 計算 duCount 和 ruCount
+      this.duCount = this.bsComponents.du?.length || 0;
+      this.ruCount = this.bsComponents.ru?.length || 0;
+
+      console.log("selectedCUId:", selectedCUId);
+      console.log("this.bsComponents:", this.bsComponents);
+      console.log("this.duCount:", this.duCount);
+      console.log("this.ruCount:", this.ruCount);
+  }
+  
+
+  // 儲存已選擇的 DU IDs
+  selectedDUIds: string[] = [];
+
+  // 更新 DU 選項
+  updateDUOptions() {
+    this.DUElementsFormArray.controls.forEach((control, index) => {
+      const selectedDUId = control.get('DUElement')?.value;
+      if (selectedDUId) {
+        this.selectedDUIds[index] = selectedDUId;
+      }
+    });
+  
+    this.DUElementsFormArray.controls.forEach((control, index) => {
+      const filteredDUOptions = this.DUOptions.filter(du => !this.selectedDUIds.includes(du.id) || du.id === this.selectedDUIds[index]);
+      control.get('DUElement')?.setValidators([Validators.required]);
+      control.get('DUElement')?.updateValueAndValidity();
+    });
+  }
+  
+  // 儲存已選擇的 RU IDs
+  selectedRUIds: string[] = [];
+
+  // 更新 RU 選項
+  updateRUOptions() {
+    this.RUElementsFormArray.controls.forEach((control, index) => {
+      const selectedRUId = control.get('RUElement')?.value;
+      if (selectedRUId) {
+        this.selectedRUIds[index] = selectedRUId;
+      }
+    });
+  
+    this.RUElementsFormArray.controls.forEach((control, index) => {
+      const filteredRUOptions = this.RUOptions.filter(ru => !this.selectedRUIds.includes(ru.id) || ru.id === this.selectedRUIds[index]);
+      control.get('RUElement')?.setValidators([Validators.required]);
+      control.get('RUElement')?.updateValueAndValidity();
+    });
+  }
+
+  connectedDUOptions: UnusedNE[] = []; // 用於儲存 DU 網元
+
+  // 更新已連接的 DU 選項
+  // updateConnectedDUOptions() {
+  //   const uniqueSelectedDUIds = Array.from(new Set(this.selectedDUIds));
+  //   this.connectedDUOptions = this.DUOptions.filter(du => uniqueSelectedDUIds.includes(du.id));
+  //   console.log("In updateConnectedDUOptions(), the connectedDUOptions:", this.connectedDUOptions  );
+  // }
+
+  updateConnectedDUOptions() {
+    const uniqueSelectedDUIds = Array.from(new Set(this.selectedDUIds));
+    this.connectedDUOptions = this.DUOptions.filter(du => uniqueSelectedDUIds.includes(du.id));
+  
+    // 去重操作: 過濾掉 connectedDUOptions 中的重複數據
+    this.connectedDUOptions = this.connectedDUOptions.filter((du, index, self) =>
+      index === self.findIndex((d) => d.id === du.id)
+    );
+  
+    console.log("In updateConnectedDUOptions(), the connectedDUOptions:", this.connectedDUOptions);
+  }
   
   
+
+
+  // @2024/04/30 Add
+  // 產生基站參數樣本檔案用
+  generateSampleConf() {
+    console.log(this.bsComponents);
+
+    const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
+    const bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
+
+    this.http.get('assets/BS_parameters_sample.xlsx', { responseType: 'arraybuffer' })
+    .subscribe(
+      (buffer: ArrayBuffer) => {
+        const workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
+        console.log(workbook);
+        if (bstype === "1") {
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['gNBCUFunction'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['NRCellCU'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['gNBDUFunction'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['NRCellDU'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
+        } else {
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['gNBCUFunction'], [[this.bsComponents.cu![0].id]], { origin: 'A2' })
+        }
+        const cuKeys = [{ f: 'gNBCUFunction!D2' }, { f: 'gNBCUFunction!E2' }, { f: 'gNBCUFunction!G2' }, { f: 'gNBCUFunction!H2' }];
+        XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_CU'], [cuKeys], { origin: 'B2' });
+        XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_CU'], [cuKeys], { origin: 'B2' });
+        XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_NgC'], [cuKeys], { origin: 'B2' });
+        XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_NgU'], [cuKeys], { origin: 'B2' });
+        for (let i = 0; i < this.duCount; i++) {
+          const originIndex = 'B' + (i + 2);
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1C_CU'], [cuKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1U_CU'], [cuKeys], { origin: originIndex });
+        }
+        for (let i = 0; i < this.ruCount; i++) {
+          let cuKeys: any[] = [];
+          if (bstype === "1") {
+            cuKeys = [this.bsComponents.all![0].id, '', ...cuKeys];
+          } else {
+            cuKeys = [this.bsComponents.ru![i].id, '', ...cuKeys];
+          }
+          const originIndex = 'A' + (i + 2);
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['NRCellCU'], [cuKeys], { origin: originIndex });
+          if (bstype === "2") {
+            workbook.Sheets['NRCellCU']['A' + (i + 2)].c = [{ a: 'iRM', t: this.bsComponents.ru![i].name }];
+            workbook.Sheets['NRCellCU']['A' + (i + 2)].c.hidden = true;
+          }
+        }
+        for (let i = 0; i < this.ruCount; i++) {
+          const originIndex = 'B' + (i + 2);
+          const cellCuKeys = [
+            { f: 'NRCellCU!C' + (i + 2) },
+            { f: 'NRCellCU!D' + (i + 2) },
+            { f: 'NRCellCU!E' + (i + 2) },
+            { f: 'NRCellCU!F' + (i + 2) },
+            { f: 'NRCellCU!G' + (i + 2) }
+          ];
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_NRCellCU'], [cellCuKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_NRCellCU'], [cellCuKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['s_NSSAI_leafList_NRCellCU'], [cellCuKeys], { origin: originIndex });
+        }
+        for (let i = 0; i < this.duCount; i++) {
+          let cuKeys: any[] = [];
+          if (bstype === "1") {
+            cuKeys = [this.bsComponents.all![0].id, '', '', '', ...cuKeys];
+          } else {
+            cuKeys = [this.bsComponents.du![i].id, '', '', '', ...cuKeys];
+          }
+          const originIndex = 'A' + (i + 2);
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['gNBDUFunction'], [cuKeys], { origin: originIndex });
+          if (bstype === "2") {
+            workbook.Sheets['gNBDUFunction']['A' + (i + 2)].c = [{ a: 'iRM', t: this.bsComponents.du![i].name }];
+            workbook.Sheets['gNBDUFunction']['A' + (i + 2)].c.hidden = true;
+          }
+          const duKeys = [
+            { f: 'gNBDUFunction!C' + (i + 2) },
+            { f: 'gNBDUFunction!E' + (i + 2) },
+            { f: 'gNBDUFunction!F' + (i + 2) },
+            { f: 'gNBDUFunction!G' + (i + 2) },
+            { f: 'gNBDUFunction!H' + (i + 2) }
+          ];
+          const duOriginIndex = 'B' + (i + 2);
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_DU'], [duKeys], { origin: duOriginIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_DU'], [duKeys], { origin: duOriginIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1C_DU'], [duKeys], { origin: duOriginIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1U_DU'], [duKeys], { origin: duOriginIndex });
+        }
+        for (let i = 0; i < this.ruCount; i++) {
+          const duIndex = this.getDuIndexByRuIndex(i);
+          let duKeys: any[] = [];
+          if (duIndex >= 0) {
+            if (bstype === "1") {
+              duKeys = [this.bsComponents.all![0].id, '', ...duKeys, { f: 'NRCellCU!G' + (i + 2) }];
+            } else {
+              duKeys = [this.bsComponents.ru![i].id, '', ...duKeys, { f: 'NRCellCU!G' + (i + 2) }];
+            }
+          }
+          const originIndex = 'A' + (i + 2);
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['NRCellDU'], [duKeys], { origin: originIndex });
+          if (bstype === "2") {
+            workbook.Sheets['NRCellDU']['A' + (i + 2)].c = [{ a: 'iRM', t: this.bsComponents.ru![i].name }];
+            workbook.Sheets['NRCellDU']['A' + (i + 2)].c.hidden = true;
+          }
+
+          const cellDuKeys = ['', { f: 'NRCellDU!C' + (i + 2) }, { f: 'NRCellDU!D' + (i + 2) }, { f: 'NRCellDU!E' + (i + 2) }, { f: 'NRCellDU!F' + (i + 2) }, { f: 'NRCellDU!G' + (i + 2) }, { f: 'NRCellDU!H' + (i + 2) }];
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_NRCellDU'], [cellDuKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_NRCellDU'], [cellDuKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['s_NSSAI_leafList_NRCellDU'], [cellDuKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['NRSectorCarrierRef_NRCellDU'], [cellDuKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['bWPRef_leafList_NRCellDU'], [cellDuKeys], { origin: originIndex });
+
+          const nrSectorKeys = ['', { f: 'NRSectorCarrierRef_NRCellDU!B' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!C' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!D' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!E' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!F' + (i + 2) }];
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['NRSectorCarrier'], [nrSectorKeys], { origin: originIndex });
+
+          const nrSectorKeys2 = ['', { f: 'NRSectorCarrier!B' + (i + 2) }, { f: 'NRSectorCarrier!C' + (i + 2) }, { f: 'NRSectorCarrier!D' + (i + 2) }, { f: 'NRSectorCarrier!E' + (i + 2) }, { f: 'NRSectorCarrier!F' + (i + 2) }, { f: 'NRSectorCarrier!A' + (i + 2) }];
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_NRSector'], [nrSectorKeys2], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_NRSector'], [nrSectorKeys2], { origin: originIndex });
+
+          const bwpRefKey = ['', { f: 'bWPRef_leafList_NRCellDU!B' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!C' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!D' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!E' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!F' + (i + 2) }];
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['BWP'], [bwpRefKey], { origin: originIndex });
+
+          const bwpKeys = ['', { f: 'BWP!B' + (i + 2) }, { f: 'BWP!C' + (i + 2) }, { f: 'BWP!D' + (i + 2) }, { f: 'BWP!E' + (i + 2) }, { f: 'BWP!F' + (i + 2) }, { f: 'BWP!A' + (i + 2) }];
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_BWP'], [bwpKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_BWP'], [bwpKeys], { origin: originIndex });
+        }
+
+        XLSX.writeFile(workbook, 'BS_parameters_sample.xlsx');
+      },
+      (error) => {
+        console.error('Error fetching file:', error);
+      }
+    );
+  }
+
+  getDuIndexByRuIndex( ruIndex: number ): number {
+
+    const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
+    const bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
+
+    if ( bstype === "1" ) {
+      return 0;
+    }
+  
+    const duId = this.bsComponents.ru![ruIndex].duid;
+    for (let i = 0; i < this.bsComponents.du!.length; i++) {
+      if (duId === this.bsComponents.du![i].id) {
+        return i;
+      }
+    }
+  
+    return -1;
+  }
+
+
+
   /**
     * @2024/04/28 Add
     * 使用 ViewChild 裝飾器引用 DOM 中的 'fileInput' 元素。
