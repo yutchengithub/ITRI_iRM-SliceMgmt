@@ -348,4 +348,5 @@
   export interface Component_All {
     type: string;
     id: string;
+    position?:string
   }

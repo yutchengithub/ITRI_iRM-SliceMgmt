@@ -181,7 +181,7 @@
 
         <div class="next">
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
-          <button mat-button matStepperNext (click)="prepareForStep3(); updateBsCreationData();">{{ languageService.i18n['field.createNext'] }}</button>
+          <button mat-button matStepperNext (click)="prepareForStep3();">{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
     </mat-step>
@@ -357,7 +357,7 @@
           <!-- 上一步按鈕 -->
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
           <!-- 下一步按鈕 -->
-          <button mat-button matStepperNext (click)="onStep3Submit(); checkBefore4StepsFormsValidity();">{{ languageService.i18n['field.createNext'] }}</button>
+          <button mat-button matStepperNext (click)="onStep3Submit(); updateBsCreationData(); checkBefore4StepsFormsValidity();">{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
     </mat-step>
@@ -386,7 +386,7 @@
             {{ languageService.i18n['BS.uploadParameterFile'] }}
           </button>
           <span class="sample_download">
-            <button mat-flat-button class="button-modifyConfiguration">
+            <button mat-flat-button class="button-modifyConfiguration" (click)="generateSampleConf();">
               <span class="material-symbols-outlined">
                 downloading
                 </span>
