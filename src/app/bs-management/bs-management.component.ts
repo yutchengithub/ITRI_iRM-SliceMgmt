@@ -17,14 +17,36 @@ import { SpinnerService } from '../shared/service/spinner.service';    // 用於
 import { apiForBSMgmt } from '../shared/api/For_BS_Mgmt';
 
 // 引入儲存各個資訊所需的 interfaces 
-import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList';   // @2024/03/19 Add 
-import { UnusedNE }     from '../shared/interfaces/NE/For_queryUnusedNeList';    // @2024/04/26 Add
+import { BSList, Basestation } from '../shared/interfaces/BS/For_queryBsList';       // @2024/03/19 Add 
+import { UnusedNE }            from '../shared/interfaces/NE/For_queryUnusedNeList'; // @2024/04/26 Add
+import { CreateBs, Component_All, ComponentsInfo_All }               from '../shared/interfaces/BS/For_createBs';            // @2024/04/29 Add
+import { CreateDistributedBs, Components_Dist, ComponentsInfo_Dist } from '../shared/interfaces/BS/For_createDistributedBs'; // @2024/04/29 Add
 
 // 引入所需 Local Files
 import { localBSList } from '../shared/local-files/BS/For_queryBsList';             // @2024/03/19 Add
 import { localUnusedNEList } from '../shared/local-files/NE/For_queryUnusedNeList'; // @2024/04/26 Add
 
 import * as XLSX from 'xlsx'; // 用於建立基站時上傳參數檔 @2024/03/31 Add by yuchen 
+
+// @2024/04/29 Add
+// 用於使用者建立基站時，記錄設定 CU 或 DU 的相關資訊
+export interface CuOrDu_selectRecord {
+  type: string,
+    id: string,
+  name: string
+}
+
+// @2024/04/29 Add 
+// 用於使用者建立基站時，記錄設定 RU 的相關資訊
+export interface Ru_selectRecord {
+    type: string,
+      id: string,
+    name: string,
+    duid: string,
+  duName: string,
+  position?:string
+}
+
 
 @Component({
   selector: 'app-bs-management',
@@ -414,7 +436,7 @@ export class BSManagementComponent implements OnInit {
     UnusedNEList.forEach( ne => {
       switch ( ne.comtype ) {
         case 1:
-          this.CUOptions.push( ne) ;
+          this.CUOptions.push( ne ) ;
           break;
         case 2:
           this.DUOptions.push( ne );
@@ -469,6 +491,13 @@ export class BSManagementComponent implements OnInit {
     this.getUnusedNEList();
 
     this.resetBsCreationForm(); // 初始化所有輸入的"基站建立"設定
+
+    console.log("When Open BS Creation Window the bsComponents", this.bsComponents );
+    console.log("When Open BS Creation Window the selectedDUIds", this.selectedDUIds );
+    console.log("When Open BS Creation Window the selectedRUIds", this.selectedRUIds );
+    console.log("When Open BS Creation Window the connectedDUOptions", this.connectedDUOptions );
+    console.log("When Open BS Creation Window the selectedFileName", this.selectedFileName );
+    console.log("When Open BS Creation Window the bsCreationData", this.bsCreationData );
   }
 
   isLinear = true; // 先關閉，開啟表一定要輸入完東西才可以點下一步
@@ -528,7 +557,19 @@ export class BSManagementComponent implements OnInit {
     });
   }
 
-  // @2024/04/28 Update
+  
+  // @2024/04/29 Add
+  // 用於收集當發送 POST 建立基站時所需的承載資訊，
+  // 存儲用戶在表單中選擇的所有數據的服務或元件屬性
+  bsCreationData: any = {
+    name: null,
+    bstype: null,
+    description: null,
+    components: null,
+    componentsInfo: null
+  };
+
+  // @2024/04/29 Update
   // 用於重置所有輸入的"基站建立"設定
   resetBsCreationForm() {
     console.log("Resetting bs creation form settings.");
@@ -539,8 +580,27 @@ export class BSManagementComponent implements OnInit {
     this.bsFormGroup_Elements?.reset();
     this.bsFormGroup_Description.reset();
 
+    // 重置 bsComponents
+    this.bsComponents = {};
+
+    // 重置已選擇的 DU 和 RU IDs
+    this.selectedDUIds = [];
+    this.selectedRUIds = [];
+
+    // 重置可選擇的連接 DU 選項
+    this.connectedDUOptions = [];
+
     // 重置上傳檔案名稱
     this.selectedFileName = '';
+
+    // 重置 bsCreationData
+    this.bsCreationData = {
+      name: null,
+      bstype: null,
+      description: null,
+      components: null,
+      componentsInfo: null
+    };
 
     // 如果還有其他相關的狀態需要重置，也應該在這裡進行
     // 例如，如果有分頁或過濾器的狀態，也應該一併重置
@@ -556,9 +616,24 @@ export class BSManagementComponent implements OnInit {
     return this.bsFormGroup_Elements.get('RUElements') as FormArray;
   }
 
-  // @2024/04/28 Add
+  // @2024/04/29 Add
+  // 用於每步驟刷新收集建立基站 POST 所需之 JSON 數據
+  updateBsCreationData() {
+    this.bsCreationData.name = this.bsFormGroup_Name.get('BSName')?.value;
+    this.bsCreationData.description = this.bsFormGroup_Description.get('LocationDescription')?.value;
+    // 當你準備更新 components 和 componentsInfo 時，將他們加入到這裡
+
+    // 顯示此時收集到的數據 
+    console.log("bsCreationData for POST:", this.bsCreationData);
+  }
+  
+  // @2024/04/29 Update
   // 處理基站類型選擇的變化
   onBSTypeChange( typeValue: string ) {
+
+    // 監聽用戶的選擇並更新 bstype
+    this.bsCreationData.bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
+
     if ( typeValue === 'dist' ) {
 
       // 啟用 DU 和 RU 的選擇
@@ -604,7 +679,7 @@ export class BSManagementComponent implements OnInit {
   }
 
   // @2024/04/28 Add
-  // 檢查第四步驟之前的表單是否有通過驗證用的函數
+  // 檢查進第四步驟之前的表單是否有通過驗證用的函數
   checkBefore4StepsFormsValidity() {
     console.log( 'BS Name FormGroup Valid?', this.bsFormGroup_Name.valid );
     console.log( 'BS Type FormGroup Valid?', this.bsFormGroup_Type.valid );
@@ -625,7 +700,6 @@ export class BSManagementComponent implements OnInit {
       return false;
     }
   }
-
 
   // @2024/04/28 Add
   // 檢查所有表單是否有通過驗證用的函數
@@ -673,12 +747,12 @@ export class BSManagementComponent implements OnInit {
     neRuSetHeader?.classList.toggle('active');
   }
 
-  // @2024/04/28 Add
+  // 用於定義經度驗證格式 @2024/04/28 Add
   // 經度正則表達式: -180 到 180
   // longitudePattern = /^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/; // 如小數輸入超過 6 位會報錯
   longitudePattern = /^(-?(1[0-7][0-9]|0?[0-9]{1,2})(\.[0-9]+)?|180(\.0+)?)$/;
 
-  // @2024/04/28 Add
+  // 用於定義緯度驗證格式 @2024/04/28 Add
   // 緯度正則表達式: -90 到 90
   // latitudePattern = /^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/; // 如小數輸入超過 6 位會報錯
   latitudePattern = /^(-?[0-8]?[0-9](\.[0-9]+)?|90(\.0+)?)$/;
@@ -749,6 +823,124 @@ export class BSManagementComponent implements OnInit {
       }));
     }
   }
+
+
+  // @2024/04/29 Add
+  // 用於記錄使用者選擇的網元資訊
+  bsComponents: {
+    all?: Component_All[];
+     cu?: CuOrDu_selectRecord[];
+     du?: CuOrDu_selectRecord[];
+     ru?: Ru_selectRecord[];
+  } = {};
+
+  onStep3Submit() {
+    const bstype = this.bsFormGroup_Type.get('BSType')?.value;
+    if (bstype === 'allInOne') {
+      this.updateBsComponentsForAllInOne();
+    } else if (bstype === 'dist') {
+      this.updateBsComponentsForDistributed();
+    }
+  }
+
+  updateBsComponentsForAllInOne() {
+    const selectedId = this.bsFormGroup_Elements.get('allInOneElement')?.value;
+    if (selectedId) {
+      this.bsComponents.all = [{
+        type: 'cu+du+ru',
+        id: selectedId
+      }];
+    }
+    console.log("selected All-In-One ID:", selectedId);
+    console.log("this.bsComponents:", this.bsComponents);
+  }
+  
+  updateBsComponentsForDistributed() {
+    const selectedCUId = this.bsFormGroup_Elements.get('CUElement')?.value;
+    if (selectedCUId) {
+      this.bsComponents.cu = [{
+        type: 'cu',
+        id: selectedCUId,
+        name: this.CUOptions.find(cu => cu.id === selectedCUId)?.name || ''
+      }];
+    }
+  
+    this.bsComponents.du = this.DUElementsFormArray.controls
+      .filter(du => du.get('DUElement')?.value)
+      .map(du => {
+        const id = du.get('DUElement')?.value;
+        return {
+          type: 'du',
+          id: id,
+          name: this.DUOptions.find(duOption => duOption.id === id)?.name || ''
+        };
+      });
+  
+    this.bsComponents.ru = this.RUElementsFormArray.controls
+      .filter(ru => ru.get('RUElement')?.value)
+      .map(ru => {
+        const id = ru.get('RUElement')?.value;
+        const connectedDUId = ru.get('connectedDU')?.value;
+        return {
+          type: 'ru',
+          id: id,
+          name: this.RUOptions.find(ruOption => ruOption.id === id)?.name || '',
+          duid: connectedDUId,
+          duName: this.DUOptions.find(du => du.id === connectedDUId)?.name || ''
+        };
+      });
+
+      console.log("selectedCUId:", selectedCUId);
+      console.log("this.bsComponents:", this.bsComponents);
+  }
+  
+
+  // 儲存已選擇的 DU IDs
+  selectedDUIds: string[] = [];
+
+  // 更新 DU 選項
+  updateDUOptions() {
+    this.DUElementsFormArray.controls.forEach((control, index) => {
+      const selectedDUId = control.get('DUElement')?.value;
+      if (selectedDUId) {
+        this.selectedDUIds[index] = selectedDUId;
+      }
+    });
+  
+    this.DUElementsFormArray.controls.forEach((control, index) => {
+      const filteredDUOptions = this.DUOptions.filter(du => !this.selectedDUIds.includes(du.id) || du.id === this.selectedDUIds[index]);
+      control.get('DUElement')?.setValidators([Validators.required]);
+      control.get('DUElement')?.updateValueAndValidity();
+    });
+  }
+  
+  // 儲存已選擇的 RU IDs
+  selectedRUIds: string[] = [];
+
+  // 更新 RU 選項
+  updateRUOptions() {
+    this.RUElementsFormArray.controls.forEach((control, index) => {
+      const selectedRUId = control.get('RUElement')?.value;
+      if (selectedRUId) {
+        this.selectedRUIds[index] = selectedRUId;
+      }
+    });
+  
+    this.RUElementsFormArray.controls.forEach((control, index) => {
+      const filteredRUOptions = this.RUOptions.filter(ru => !this.selectedRUIds.includes(ru.id) || ru.id === this.selectedRUIds[index]);
+      control.get('RUElement')?.setValidators([Validators.required]);
+      control.get('RUElement')?.updateValueAndValidity();
+    });
+  }
+
+  connectedDUOptions: UnusedNE[] = []; // 用於儲存 DU 網元
+
+  // 更新已連接的 DU 選項
+  updateConnectedDUOptions() {
+    this.connectedDUOptions = this.DUOptions.filter(du => this.selectedDUIds.includes(du.id));
+  }
+
+  
   
   
   /**

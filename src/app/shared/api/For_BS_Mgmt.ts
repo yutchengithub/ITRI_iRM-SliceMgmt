@@ -55,8 +55,30 @@ export class apiForBSMgmt {
     return this.http.get( url );
   }
 
+  // @2024/04/29 Add
+  // For create Base Station
+  createBs( body: {} ): Observable< any > {
+
+    const url = `${this.restPath}/createBs`;
+
+    const bodyStr = JSON.stringify( body );
+
+    return this.http.post( url, bodyStr );
+  }
+
+  // @2024/04/29 Add
+  // For create Distributed Base Station
+  createDistributedBs( body: {} ): Observable<any> {
+
+    const url = `${this.restPath}/createDistributedBs`;
+
+    const bodyStr = JSON.stringify( body );
+
+    return this.http.post( url, bodyStr );
+  }
+
   // For Updating Configurations of All-in-one BS
-  updateBs( body: {} ): Observable<any> {
+  updateBs( body: {} ): Observable< any > {
 
     const url = `${this.restPath}/updateBs`;
     

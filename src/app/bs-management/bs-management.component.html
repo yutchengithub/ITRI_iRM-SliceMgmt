@@ -129,7 +129,7 @@
         <!-- 操作按鈕 -->
         <div class="next">
           <!-- 下一步按鈕 -->
-          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+          <button mat-button matStepperNext (click)="updateBsCreationData();">{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
     </mat-step>
@@ -181,13 +181,13 @@
 
         <div class="next">
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
-          <button mat-button matStepperNext (click)="prepareForStep3();">{{ languageService.i18n['field.createNext'] }}</button>
+          <button mat-button matStepperNext (click)="prepareForStep3(); updateBsCreationData();">{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
     </mat-step>
 
 
-    <!-- 步驟 3: 選擇網元並設定 GPS 位置 -->
+    <!-- 步驟 3: 選擇網元並設定 GPS 位置 @2024/04/29 Update -->
     <mat-step [stepControl]="bsFormGroup_Elements">
       <form [formGroup]="bsFormGroup_Elements" class="step-3-content">
         <ng-template matStepLabel>{{ languageService.i18n['BS.setNEAndCoordinates'] }}
@@ -198,10 +198,10 @@
         <!-- 設定 All-In-One 網元 -->
         <ng-container *ngIf="bsFormGroup_Type?.get('BSType')?.value === 'allInOne' && bsFormGroup_Elements && bsFormGroup_Elements.contains('allInOneElement')">
 
-          <!-- 選擇 All-In-One 網元 -->
+          <!-- 選擇 All-In-One 網元 @2024/04/29 Update -->
           <mat-form-field appearance="fill">
             <mat-label>{{ languageService.i18n['BS.selectIntegratedNE'] }}</mat-label>
-            <mat-select formControlName="allInOneElement">
+            <mat-select formControlName="allInOneElement" (selectionChange)="updateBsComponentsForAllInOne()">
               <mat-option *ngFor="let allInOne of allInOneOptions" [value]="allInOne.id">
                 {{ allInOne.name }}
               </mat-option>
@@ -271,11 +271,11 @@
               <div formArrayName="DUElements">
                 <div *ngFor="let duControl of DUElementsFormArray.controls; let i = index" [formGroupName]="i">
 
-                  <!-- 選擇 DU  -->
+                  <!-- 選擇 DU @2024/04/29 Update  -->
                   <mat-form-field appearance="fill">
                     <mat-label>{{ languageService.i18n['BS.selectDUNE'] }}#{{ i + 1 }}</mat-label>
-                    <mat-select formControlName="DUElement">
-                      <mat-option *ngFor="let du of DUOptions" [value]="du.id">
+                    <mat-select formControlName="DUElement" (selectionChange)="updateDUOptions(); updateConnectedDUOptions()">
+                      <mat-option *ngFor="let du of DUOptions" [value]="du.id" [disabled]="selectedDUIds.includes(du.id) && du.id !== duControl.get('DUElement')?.value">
                         {{ du.name }}
                       </mat-option>
                     </mat-select>
@@ -299,11 +299,11 @@
               <div formArrayName="RUElements">
                 <div *ngFor="let ruControl of RUElementsFormArray.controls; let i = index" [formGroupName]="i">
 
-                  <!-- 選擇 RU  -->
+                  <!-- 選擇 RU @2024/04/29 Update  -->
                   <mat-form-field appearance="fill">
                     <mat-label>{{ languageService.i18n['BS.selectRUNE'] }}#{{ i + 1 }}</mat-label>
-                    <mat-select formControlName="RUElement">
-                      <mat-option *ngFor="let ru of RUOptions" [value]="ru.id">
+                    <mat-select formControlName="RUElement" (selectionChange)="updateRUOptions()">
+                      <mat-option *ngFor="let ru of RUOptions" [value]="ru.id" [disabled]="selectedRUIds.includes(ru.id) && ru.id !== ruControl.get('RUElement')?.value">
                         {{ ru.name }}
                       </mat-option>
                     </mat-select>
@@ -316,7 +316,7 @@
                   <mat-form-field appearance="fill">
                     <mat-label>RU#{{ i + 1 }} - {{ languageService.i18n['BS.setConnectedDU'] }}</mat-label>
                     <mat-select formControlName="connectedDU">
-                      <mat-option *ngFor="let du of DUOptions" [value]="du.id">
+                      <mat-option *ngFor="let du of connectedDUOptions" [value]="du.id">
                         {{ du.name }}
                       </mat-option>
                     </mat-select>
@@ -357,7 +357,7 @@
           <!-- 上一步按鈕 -->
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
           <!-- 下一步按鈕 -->
-          <button mat-button matStepperNext (click)="checkBefore4StepsFormsValidity();">{{ languageService.i18n['field.createNext'] }}</button>
+          <button mat-button matStepperNext (click)="onStep3Submit(); checkBefore4StepsFormsValidity();">{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
     </mat-step>
@@ -368,7 +368,7 @@
         <ng-template matStepLabel>{{ languageService.i18n['BS.setBSLocationDescriptionAndUploadParameters'] }}</ng-template>
         <mat-form-field appearance="fill">
           <mat-label>{{ languageService.i18n['BS.description'] }}</mat-label>
-          <textarea matInput formControlName="LocationDescription"></textarea>
+          <input matInput formControlName="LocationDescription" required>
           <!-- 顯示必填錯誤 -->
           <mat-error class="error_def" *ngIf="bsFormGroup_Description.get('LocationDescription')?.touched && bsFormGroup_Description.get('LocationDescription')?.hasError('required')">
             {{ languageService.i18n['BS.enterBSLocationDescription'] }} <!-- 提示輸入基站地點描述 -->
@@ -417,7 +417,7 @@
           <!-- 上一步按鈕 -->
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
           <!-- 下一步按鈕 -->
-          <button mat-button matStepperNext (click)="checkAndMarkFileAsTouched(); checkAllFormsValidity()">{{ languageService.i18n['field.createNext'] }}</button>
+          <button mat-button matStepperNext (click)="updateBsCreationData(); checkAndMarkFileAsTouched(); checkAllFormsValidity()">{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
     </mat-step>
