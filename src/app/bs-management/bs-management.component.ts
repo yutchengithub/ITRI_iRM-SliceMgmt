@@ -1230,28 +1230,76 @@ export class BSManagementComponent implements OnInit {
   }
 
 
-  handleBsParametersFile( file: File ) {
+  handleBsParametersFile(file: File) {
     const reader: FileReader = new FileReader();
-    reader.onload = ( e: any ) => {
+    reader.onload = (e: any) => {
       const bstr: string = e.target.result;
-      const wb: XLSX.WorkBook = XLSX.read( bstr, { type: 'binary' } );
-
-      const wsname: string = wb.SheetNames[0];
-      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-
-      const data = XLSX.utils.sheet_to_json( ws );
-      console.log( data );
-      // 進一步處理 data 或保存
+      const workbook: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+  
+      const allData: { [key: string]: any[] } = {};
+  
+      workbook.SheetNames.forEach(function(sheetName) {
+        const object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        allData[sheetName] = object;
+      });
+  
+      // 將處理後的資料存儲在 bsCreationData.componentsInfo 中
+      this.bsCreationData.componentsInfo = allData;
     };
     reader.readAsBinaryString(file);
   }
 
-  // 表單提交時的處理函數
-  onSubmit() {
-    if (this.bsFormGroup_Name.valid && this.bsFormGroup_Type.valid && this.bsFormGroup_Elements.valid && this.bsFormGroup_Description.valid) {
-      // 處理提交表單數據
-    }
+// 表單提交時的處理函數
+onSubmit() {
+  // 獲取基站類型
+  const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
+  const bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
+
+  // 根據基站類型構建提交數據
+  const submitData: any = {
+    ...this.bsCreationData
+  };
+
+  // 如果是一體式基站,添加位置信息
+  if (bstype === "1") {
+    submitData.position = this.bsComponents.all?.[0].position;
   }
+
+  // 檢查是否在 Local 環境下模擬執行
+  if (this.commonService.isLocal) {
+    // Local 模式下模擬基站建立過程
+    console.log("Local 模擬基站建立,提交的數據:", submitData);
+    // Local 模式建立成功後,執行其他操作...
+  } else {
+    // 生產環境下向後端 API 發送基站建立請求
+    const apiObservable = bstype === "1"
+      ? this.API_BS.createBs(submitData)
+      : this.API_BS.createDistributedBs(submitData);
+
+    apiObservable.subscribe({
+      next: (response) => {
+        // 處理成功響應
+        console.log("基站建立成功:", response);
+        // 建立成功後,執行其他操作...
+        this.getQueryBsList(); // 刷新
+      },
+      error: (error) => {
+        // 處理失敗響應
+        console.error("基站建立失敗:", error);
+        // 例如顯示錯誤訊息給用戶
+      }
+    });
+  }
+
+  // 關閉基站建立視窗
+  this.bsCreationWindowRef.close();
+
+  // 重置基站建立表單,清空所有已填寫的資料
+  this.resetBsCreationForm();
+
+  // 在控制台記錄函數執行結束的訊息
+  console.log("onSubmit() - End");
+}
 
 
 // ↑ For Create BS @2024/04/26 Add ↑
