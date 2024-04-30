@@ -1257,6 +1257,7 @@ onSubmit() {
 
   // 根據基站類型構建提交數據
   const submitData: any = {
+    session: this.sessionId,
     ...this.bsCreationData
   };
 
