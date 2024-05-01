@@ -518,6 +518,18 @@ mat-dialog-container h5 .mat-icon {
 .field-optim-wrap > span .table.pci thead th {
   background: linear-gradient(180deg, #c2e7ff 0px, #c2e7ff 1px, #c2e7ff 100%)!important;
 }
+#bsCreationWindow .mat-select-arrow,
+#bsCreationWindow .mat-form-field-label,
 #bsCreationWindow .mat-select-value {
   color: initial!important;
+}
+#bsCreationWindow .custom-stepper .mat-input-element ,
+#bsCreationWindow .mat-step-text-label {
+  color: #000!important;
+}
+.sample_download button {
+  color: #5588db!important;
+}
+#bsCreationWindow .mat-step-header .mat-step-icon-selected {
+  color: #fff!important;
 }
