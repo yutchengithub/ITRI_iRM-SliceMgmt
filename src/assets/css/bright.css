@@ -328,7 +328,7 @@ ul + .buttons button {
   border: 1px solid #498cc3!important;
 }
 .collabsible .filter {
-  background-color: transparent!important;
+  background-color: #c5cfdb5c !important;
 }
 .main.collabsible > div > .lbl-toggle {
   background: initial!important;
@@ -436,10 +436,10 @@ mat-dialog-container h5 .mat-icon {
   color: #fff!important;
 }
 #fieldCreationWindow .mat-step-text-label {
-  color: #333;
+  color: #333!important;
 }
 .mat-form-field-appearance-fill .mat-form-field-underline::before {
-  background-color: #333;
+  background-color: #333!important;
 }
 .mat-step-header .mat-step-icon {
   background-color: #fff;
@@ -448,13 +448,13 @@ mat-dialog-container h5 .mat-icon {
   border: 1px solid #919191;
 }
 #fieldCreationWindow .mat-step-header .mat-step-icon-selected {
-  color: #fff;
+  color: #fff!important;
 }
 #fieldCreationWindow .custom-stepper .mat-input-element {
-  color: #333;
+  color: #333!important;
 }
 #fieldCreationWindow .mat-form-field-label {
-  color: #333;
+  color: #333!important;
 }
 #provisionModal ul li > span {
   color: #000;
@@ -518,6 +518,9 @@ mat-dialog-container h5 .mat-icon {
 .field-optim-wrap > span .table.pci thead th {
   background: linear-gradient(180deg, #c2e7ff 0px, #c2e7ff 1px, #c2e7ff 100%)!important;
 }
+#fieldCreationWindow .mat-step-text-label,
+.ocloudInfo.component.bs-info .alarms .filterBY ,
+.ocloudInfo.component.bs-info .collabsible .forALL_btn,
 #bsCreationWindow .mat-select-arrow,
 #bsCreationWindow .mat-form-field-label,
 #bsCreationWindow .mat-select-value {
@@ -532,4 +535,12 @@ mat-dialog-container h5 .mat-icon {
 }
 #bsCreationWindow .mat-step-header .mat-step-icon-selected {
   color: #fff!important;
+}
+.ocloudInfo.component.bs-info .collabsible .collabsible > div {
+  border-bottom: none;
+}
+.filterBY .material-symbols-outlined ~ span {
+  background-color: #d1e2ed!important;
+  color: #066abf!important;
+  font-size: 1em!important;
 }
