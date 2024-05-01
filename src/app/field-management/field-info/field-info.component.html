@@ -1335,9 +1335,9 @@
 										<thead>
 											<tr>
 												<th>{{ languageService.i18n['field.BSname'] }}</th>
-												<th>{{ languageService.i18n['field.originalTxPower'] }}</th>
+												<th>{{ languageService.i18n['field.originalTxPower'] }} (dBm)</th>
 												<th><span class="material-symbols-outlined after">east</span></th>
-												<th class="new">{{ languageService.i18n['field.newTxPower'] }}</th>
+												<th class="new">{{ languageService.i18n['field.newTxPower'] }} (dBm)</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -1355,7 +1355,7 @@
 								<H6>{{ languageService.i18n['field.fieldPerformance'] }}</H6>
 								<ul>
 									<li>SINR: {{ resultSinr }}</li>
-									<li>Coverage: {{ resultCoverage }}</li>
+									<li>Coverage: {{ resultCoverage }} %</li>
 								</ul>
 							</label>
 						</div>

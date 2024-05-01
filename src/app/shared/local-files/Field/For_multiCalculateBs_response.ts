@@ -8,7 +8,7 @@
     // For calculateSON_Submit() Get local CalculateSonResponse
 
     // 只有原鄰居基站多的狀況 04/11 Add 
-    /*
+    
       calculateSonResponse_local: ForCalculateSonResponse = {
         "cco": {
           "field": "e6700d701f8b41f8950e",
@@ -2198,10 +2198,10 @@
           ]
         }
       };
-    */
+  
     
     // 原鄰居基站多、新鄰居基站也多的狀況 04/12 Add 
-    calculateSonResponse_local: ForCalculateSonResponse = {
+    /*calculateSonResponse_local: ForCalculateSonResponse = {
       "cco": {
         "average_sinr": "-4.752979",
         "cellIndividualResult": [
@@ -5241,5 +5241,5 @@
         "collision_cell_new": [],
         "collision_count_new": []
       }
-    };
+    };*/
 }
