@@ -397,12 +397,12 @@
           <div>
             <input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".xlsx">
             <!-- 如未有檔案，則顯示示意的檔案名稱 -->
-            <span style="position: relative; left: 10px;" *ngIf="!selectedFileName">
+            <span style="position: relative; left: 10px; top: 4.5px;" *ngIf="!selectedFileName">
               <!-- {{ languageService.i18n['BS.ex'] }}: BS_parameters_1x1x2_sample.xlsx -->
               {{ languageService.i18n['BS.notUploaded'] }}
             </span>
             <!-- 如有檔案，則顯示選擇的檔案名稱 -->
-            <span style="position: relative; left: 10px;" *ngIf="selectedFileName">
+            <span style="position: relative; left: 10px; top: 4.5px;" *ngIf="selectedFileName">
               {{ languageService.i18n['BS.uploaded'] }}: {{ selectedFileName }}
             </span>
             <!-- 如未上傳檔案，則顯示錯誤提示 -->
