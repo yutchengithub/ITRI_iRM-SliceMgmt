@@ -4,6 +4,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 
 // Services
 import { CommonService } from '../../shared/common.service';
@@ -201,16 +202,16 @@ export class FieldInfoComponent implements OnInit {
     private ngZone: NgZone,
     // private messageService: MessageService
 
-    public      languageService: LanguageService,
-    public        commonService: CommonService,
-    public spinnerService: SpinnerService,
+    public languageService: LanguageService,
+    public   commonService: CommonService,
+    public  spinnerService: SpinnerService,
 
-    public            API_Field: apiForFieldMgmt, // @2024/03/14 Update for import API of Field Management
+    public       API_Field: apiForFieldMgmt, // @2024/03/14 Update for import API of Field Management
 
-    public  fieldInfo_LocalFiles: localFieldInfo,           // @2024/03/14 Add for import Field Info Local Files
-    public     bsInfo_LocalFiles: localBSInfo,              // @2023/12/27 Add for import BS Info Local Files
-    public     bsList_LocalFiles: localBSList,              // @2024/01/16 Add for import BS List Local Files local
-    public  pmFtpInfo_LocalFiles: localPmFTPInfo,           // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+    public    fieldInfo_LocalFiles: localFieldInfo,           // @2024/03/14 Add for import Field Info Local Files
+    public       bsInfo_LocalFiles: localBSInfo,              // @2023/12/27 Add for import BS Info Local Files
+    public       bsList_LocalFiles: localBSList,              // @2024/01/16 Add for import BS List Local Files local
+    public    pmFtpInfo_LocalFiles: localPmFTPInfo,           // @2024/02/04 Add for import info of PM Parameter Setting Local Files
     public    fieldSonParameters_LocalFiles: localFieldSonParameters,    // @2024/03/30 Add for import info of Field Son Parameters Local Files
     public  calculateSonResponse_LocalFiles: localCalculateSonResponse,  // @2024/03/31 Add for import info of Calculate Son Response Local Files
   ) {
@@ -299,6 +300,25 @@ export class FieldInfoComponent implements OnInit {
     }
     
     //this.getQueryPmFtpInfo();  // 此時先取得"效能管理參數設定"資訊 @2024/02/22 Add
+  }
+
+  ngOnDestroy() {
+    clearTimeout( this.refreshTimeout );
+    if ( this.queryFieldImage ) this.queryFieldImage.unsubscribe();
+    if ( this.bsHeatMap ) this.bsHeatMap.unsubscribe();
+    if ( this.queryFieldInfo ) this.queryFieldInfo.unsubscribe();
+    if ( this.queryBsInfo ) this.queryBsInfo.unsubscribe();
+    if ( this.updateBs ) this.updateBs.unsubscribe();
+    if ( this.updateDistributedBs ) this.updateDistributedBs.unsubscribe();
+    if ( this.queryBsList ) this.queryBsList.unsubscribe();
+    if ( this.updateField ) this.updateField.unsubscribe();
+    if ( this.uploadFieldImage ) this.uploadFieldImage.unsubscribe();
+    if ( this.removeFieldImage ) this.removeFieldImage.unsubscribe();
+    if ( this.queryPmFtpInfo ) this.queryPmFtpInfo.unsubscribe();
+    if ( this.updatePmFtpInfo ) this.updatePmFtpInfo.unsubscribe();
+    if ( this.querySonParameter ) this.querySonParameter.unsubscribe();
+    if ( this.multiCalculateBs ) this.multiCalculateBs.unsubscribe();
+    if ( this.multiOptimalBs ) this.multiOptimalBs.unsubscribe();
   }
 
 // ↑ Page Init ↑
@@ -511,6 +531,8 @@ export class FieldInfoComponent implements OnInit {
     this.fieldImageOverlayVisible = false; 
   }
 
+  queryFieldImage!: Subscription;
+
   // 獲取並顯示場域圖片 
   // @2024/01/24 Update
   getfieldImage(){
@@ -553,7 +575,7 @@ export class FieldInfoComponent implements OnInit {
         } else { // 如非使用 local files
   
           // 跟後端 API 取得場域圖片
-          this.API_Field.queryFieldImage( this.fieldId ).subscribe({
+          this.queryFieldImage = this.API_Field.queryFieldImage( this.fieldId ).subscribe({
               next: ( response ) => {
                 // 當接收到圖片數據時，處理 Base64 編碼的圖片
                 if ( response && response.fieldImage ) {
@@ -719,6 +741,8 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
+  bsHeatMap!: Subscription;
+
   // @2024/01/10 Update
   getSinrRsrpImage( overlayType: OverlayType ) {
     
@@ -756,7 +780,7 @@ export class FieldInfoComponent implements OnInit {
         const rightLatitude = this.fieldBounds.south; // 南邊界緯度
 
         // 調用後端 API 獲取 SINR 或 RSRP 圖片
-        this.API_Field.bsHeatMap( this.fieldId, leftLongitude, leftLatitude,
+        this.bsHeatMap = this.API_Field.bsHeatMap( this.fieldId, leftLongitude, leftLatitude,
                                        rightLongitude, rightLatitude, mapType ).subscribe({
           next: ( response ) => {
             const imageSrc = 'data:image/png;base64,' + response.heatMap; // 從後端回應中獲取圖片
@@ -909,6 +933,7 @@ export class FieldInfoComponent implements OnInit {
     };
   }
   
+  queryFieldInfo!: Subscription;
   isMarkersLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
 
   // @2024/01/02 Add - 儲存場域邊界點
@@ -1175,6 +1200,8 @@ export class FieldInfoComponent implements OnInit {
   // 用於存儲當前選中的基站簡化資訊，以便在前端的「基站資訊」欄位中顯示
   displayBsInfo: SimplifiedBSInfo | null = null;
 
+  queryBsInfo!: Subscription;
+
   // 用於獲取場地內所有 BS 的資訊 @2024/03/19 Update - 關閉預設顯示第一筆 BS 資訊為預設點擊 icon 
   // Get the All infos of BSs in the field 
   getQueryBsInfoForAll( bsNum: number, bsinfo_Infield: BsInfoInField[] ) {
@@ -1206,7 +1233,7 @@ export class FieldInfoComponent implements OnInit {
     });
 
     // 使用 forkJoin 等待所有 Observable 完成，然後處理它們的結果
-    forkJoin( observables ).subscribe({
+    this.queryBsInfo = forkJoin( observables ).subscribe({
       next: ( results: ( BSInfo | BSInfo_dist )[] ) => {
 
         console.log( "取得的基站資訊:", results );
@@ -1982,6 +2009,9 @@ export class FieldInfoComponent implements OnInit {
     return !isNaN(parsed) ? parsed * 1000000 : defaultValue;
   }
 
+  updateBs!: Subscription;
+  updateDistributedBs!: Subscription;
+
   modifyConfig_click_NUM: number = 0;
   // 更新 BS 配置 Submit 時用的函數 @2024/01/15 Update 
   ModifyConfig_Submit( bsName: string ,bsType: number ) {
@@ -2047,7 +2077,7 @@ export class FieldInfoComponent implements OnInit {
 
     } else { // 如果有變更
 
-      const post_BS_body: any = {
+        const post_BS_body: any = {
 
             // User can modify:
             name:      formValues.bsName !== null && formValues.bsName !== ''
@@ -2080,7 +2110,7 @@ export class FieldInfoComponent implements OnInit {
             channelbandwidth: String( this.displayBsInfo!.channelbandwidth ),
             tac:              String( this.displayBsInfo!.tac ),
             components:       this.displayBsInfo!.components
-          };
+        };
 
           // 如果為有效的經緯度值
           if (post_BS_body.gpslongitude !== undefined && post_BS_body.gpslatitude !== undefined) {
@@ -2143,7 +2173,7 @@ export class FieldInfoComponent implements OnInit {
 
                 // For All-in-one BS
                 console.log( "The POST for updateBs():", post_BS_body );
-                this.API_Field.updateBs( post_BS_body ).subscribe({
+                this.updateBs = this.API_Field.updateBs( post_BS_body ).subscribe({
                   next: ( response ) => {
 
                    this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
@@ -2180,7 +2210,7 @@ export class FieldInfoComponent implements OnInit {
 
                 // For Disaggregated BS: [CU] + [DU] + [RU]
                 console.log( "The POST for updateDistributedBs():", post_BS_body );
-                this.API_Field.updateDistributedBs( post_BS_body ).subscribe({
+                this.updateDistributedBs = this.API_Field.updateDistributedBs( post_BS_body ).subscribe({
                   next: ( response ) => {
 
                     this.getQueryFieldInfo(); // 確保這個函數會重新獲取最新的數據並更新頁面
@@ -2385,7 +2415,7 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
-
+  queryBsList!: Subscription;
   bsList: BSList = {} as BSList;   // @2024/01/16 Add
   selectedBsInfos: Bsinfo[] = [];  // 用於存儲選中的基站 ID @2024/01/26 Add
   isGetQueryBsListLoading = false; // 用於表示加載 BS List 的 flag，初始設置為 false @2024/01/17 Add for Progress Spinner
@@ -2437,7 +2467,7 @@ export class FieldInfoComponent implements OnInit {
       console.log('Start fetching BS List from API'); // 開始獲取 BS List 資訊
 
       // Use API_Field's queryBsList() to make an HTTP GET request
-      this.API_Field.queryBsList().subscribe({
+      this.queryBsList = this.API_Field.queryBsList().subscribe({
         next: ( res: BSList ) => {
 
           // 遍歷 API 傳回的基站列表 ( res.basestation )
@@ -2563,6 +2593,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
+  updateField!: Subscription;
   /** @2024/02/01 Update
    * 提交場域編輯訊息。
    * 如果是本地模式，則模擬數據更新過程；
@@ -2605,7 +2636,7 @@ export class FieldInfoComponent implements OnInit {
     } else {
 
         // 非本地模式，向服務器發送 POST 請求
-        this.API_Field.updateField( submitData ).subscribe({
+        this.updateField = this.API_Field.updateField( submitData ).subscribe({
 
           next: ( response ) => {
 
@@ -2670,6 +2701,8 @@ export class FieldInfoComponent implements OnInit {
     this.fileInput.nativeElement.click();
   }
 
+  uploadFieldImage!: Subscription;
+
   // For upload Field Image @2024/01/18 Add
   // 當在前端選擇了檔案後觸發的事件處理函數，通常用於上傳檔案
   onFileSelected( event: any ) {
@@ -2682,7 +2715,7 @@ export class FieldInfoComponent implements OnInit {
       this.isFieldImageOnFieldEditLoading = true;
       
       // 調用 API 服務上傳檔案，傳遞場域 ID 和選擇的檔案
-      this.API_Field.uploadFieldImage( this.fieldId, file ).subscribe({
+      this.uploadFieldImage = this.API_Field.uploadFieldImage( this.fieldId, file ).subscribe({
         next: ( response ) => {
 
           // 如上傳成功，打印成功訊息和響應
@@ -2726,8 +2759,11 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
+  removeFieldImage!: Subscription;
+
   // 用於記錄 Local 環境下圖片的刪除狀態 @2024/01/24 Add
   removeImageInLocal_flag: boolean = false;
+
   // 刪除顯示室內(場域)圖片 @2024/01/28 Update
   removeIndoorImage() {
 
@@ -2746,7 +2782,7 @@ export class FieldInfoComponent implements OnInit {
 
     } else {
 
-      this.API_Field.removeFieldImage( this.fieldId ).subscribe({
+      this.removeFieldImage = this.API_Field.removeFieldImage( this.fieldId ).subscribe({
         next: () => {
           // 刪除成功，重新獲取圖片顯示狀態
           this.getfieldImage_forFieldEdit();
@@ -2789,7 +2825,7 @@ export class FieldInfoComponent implements OnInit {
       //this.isFieldImageOnFieldEditLoading = true;
 
       // 從後端 API 獲取場域圖片
-      this.API_Field.queryFieldImage( this.fieldId ).subscribe({
+      this.queryFieldImage = this.API_Field.queryFieldImage( this.fieldId ).subscribe({
         next: ( response ) => {
           // 處理 Base64 編碼的圖片
           if ( response && response.fieldImage ) {
@@ -2857,6 +2893,8 @@ export class FieldInfoComponent implements OnInit {
 
   measurementType: string = ""; // 用於控制"量測類型"的選擇，預設為 "" ( off ) @2024/02/16 Add
 
+  queryPmFtpInfo!: Subscription;
+
   // @2024/02/22 Add for Progress Spinner
   getQueryPmFtpInfo_Loading = false; // 用於識別載入"效能管理參數設定"資訊的標誌，初始設置為 false 
 
@@ -2908,7 +2946,7 @@ export class FieldInfoComponent implements OnInit {
     } else {
       console.log( 'Fetching PM FTP Info from API '); // 從 API 獲取 PM FTP 資訊
 
-      this.API_Field.queryPmFtpInfo( this.fieldId ).subscribe({
+      this.queryPmFtpInfo = this.API_Field.queryPmFtpInfo( this.fieldId ).subscribe({
         next: ( res: ForQueryOrUpdatePmFTPInfo ) => {
           console.log('Fetched PM FTP Info from API:', res); // 從 API 獲取的 PM FTP 資訊
           this.PmFtpInfo = res; // 更新 PM FTP 資訊
@@ -3165,6 +3203,8 @@ export class FieldInfoComponent implements OnInit {
     });
   }
 
+  updatePmFtpInfo!: Subscription;
+
   // @2024/02/24 Update
   // 提交 PMgmt Parameter Setting 參數更新用
   UpdatePMParameterSetting_Submit() {
@@ -3217,7 +3257,7 @@ export class FieldInfoComponent implements OnInit {
       console.log( "呼叫實際 API 前，更新效能參數設定所提交的數據:", submitData );
 
       // 向伺服器發送更新請求
-      this.API_Field.updatePmFtpInfo( submitData ).subscribe({
+      this.updatePmFtpInfo = this.API_Field.updatePmFtpInfo( submitData ).subscribe({
         next: ( response ) => {
           console.log( "效能參數設定更新成功:", response );
 
@@ -3281,6 +3321,8 @@ export class FieldInfoComponent implements OnInit {
 
   getFieldSonParameters: ForQuerySonParameter = {} as ForQuerySonParameter;   // @2024/03/30 Add
 
+  querySonParameter!: Subscription;
+
   // @2024/02/22 Add for Progress Spinner
   getQuerySonParameter_Loading = false; // 用於識別載入"場域優化參數"資訊狀態的標誌，初始設置為 false 
 
@@ -3301,7 +3343,7 @@ export class FieldInfoComponent implements OnInit {
 
     } else { // 如果是 API 模式
 
-      this.API_Field.querySonParameter().subscribe({
+      this.querySonParameter = this.API_Field.querySonParameter().subscribe({
 
         next: ( res: ForQuerySonParameter ) => {
 
@@ -3604,6 +3646,7 @@ export class FieldInfoComponent implements OnInit {
 
   // @2024/04/12 Add for Progress Bar
   calculateSON_Loading = false; // 用於識別計算"場域優化"資訊的標誌，初始設置為 false 
+  multiCalculateBs!: Subscription;
 
   /** @2024/04/11 Update
    *  發送計算 SON 演算法的函數
@@ -3732,7 +3775,7 @@ export class FieldInfoComponent implements OnInit {
       console.log( "呼叫實際 API 前，SON 計算所提交的數據:", submitData );
 
       // 向伺服器發送 SON 計算請求
-      this.API_Field.multiCalculateBs( submitData ).subscribe({
+      this.multiCalculateBs = this.API_Field.multiCalculateBs( submitData ).subscribe({
         next: ( response: ForCalculateSonResponse ) => {
 
           console.log( "SON 計算成功:", response );
@@ -3848,7 +3891,7 @@ export class FieldInfoComponent implements OnInit {
   showAnrSense: number | null = null;
   showOptType: boolean | null = null;
 
-  /** @2024/04/11 Update
+  /** @2024/05/02 Update
    *  處理 SON 計算回傳值的函數
    *  @method processCalculationResponse
    *  @param {ForCalculateSonResponse} calculationResponse - SON 計算後的回傳數據
@@ -3911,9 +3954,18 @@ export class FieldInfoComponent implements OnInit {
 
       // 取得平均 SINR 值
       this.resultSinr = tempCco['average_sinr'];
+      // 使用 parseFloat() 將字串轉換為數字型態
+      // 使用 toFixed(1) 將小數點後保留一位，並返回字串型態的結果
+      this.resultSinr = parseFloat(this.resultSinr).toFixed(1);
+      // 此時 this.resultSinr 的型態為字串（string）
 
       // 取得覆蓋率
       this.resultCoverage = tempCco.coverage;
+      // 使用 parseFloat() 將字串轉換為數字型態
+      // 將原本的小數值乘以 100，轉換為百分比形式
+      // 使用 toFixed(1) 將小數點後保留一位，並返回字串型態的結果
+      this.resultCoverage = (parseFloat(this.resultCoverage) * 100).toFixed(1);
+      // 此時 this.resultCoverage 的型態為字串（string）
     }
     console.log("this.processedCcoResults:", this.processedCcoResults );
     
@@ -4036,9 +4088,10 @@ export class FieldInfoComponent implements OnInit {
 
         // 如果鄰居 Cell 的總數大於 0
         if ( neighborCount > 0 ) {
-
-          // 計算原始 PCI 碰撞的比率
-          this.originalPciCollisionRatio = Number( ( this.originalPciCollisionTotalCount / ( neighborCount / 2 ) ).toFixed( 3 ) ) * 100;
+          // 計算原始 PCI 碰撞的比率，並四捨五入到小數點後一位
+          this.originalPciCollisionRatio = Number(
+            ((this.originalPciCollisionTotalCount / (neighborCount / 2)) * 100).toFixed(1)
+          );
         }
       }
 
@@ -4059,10 +4112,11 @@ export class FieldInfoComponent implements OnInit {
         this.newPciCollisionTotalCount = tempPci.collision_count_new.reduce( ( sum, item) => sum + item.collision_count, 0 ) / 2;
 
         // 如果鄰居 Cell 的總數大於 0
-        if ( neighborCount > 0 ) {
-
-          // 計算新的 PCI 碰撞的比率
-          this.newPciCollisionRatio = Number( ( this.newPciCollisionTotalCount / ( neighborCount / 2 ) ).toFixed( 3 ) ) * 100;
+        if (neighborCount > 0) {
+          // 計算新的 PCI 碰撞的比率，並四捨五入到小數點後一位
+          this.newPciCollisionRatio = Number(
+            ((this.newPciCollisionTotalCount / (neighborCount / 2)) * 100).toFixed(1)
+          );
         }
       }
 
@@ -4083,10 +4137,11 @@ export class FieldInfoComponent implements OnInit {
         this.originalPciConfusionTotalCount = tempPci.confusion_count.reduce( ( sum, item ) => sum + item.confusion_count, 0 ) / 2;
 
         // 如果鄰居 Cell 的組合數大於 0
-        if ( combineCount > 0 ) {
-
-          // 計算原始 PCI 混淆的比率
-          this.originalPciConfusionRatio = Number( ( this.originalPciConfusionTotalCount / combineCount ).toFixed( 3 ) ) * 100;
+        if (combineCount > 0) {
+          // 計算原始 PCI 混淆的比率，並四捨五入到小數點後一位
+          this.originalPciConfusionRatio = Number(
+            ((this.originalPciConfusionTotalCount / combineCount) * 100).toFixed(1)
+          );
         }
       }
 
@@ -4107,9 +4162,11 @@ export class FieldInfoComponent implements OnInit {
         this.newPciConfusionTotalCount = tempPci.confusion_count_new.reduce((sum, item) => sum + item.confusion_count, 0) / 2;
 
         // 如果鄰居 Cell 的組合數大於 0
-        if ( combineCount > 0 ) {
-          // 計算新的 PCI 混淆的比率
-          this.newPciConfusionRatio = Number( ( this.newPciConfusionTotalCount / combineCount ).toFixed( 3 ) ) * 100;
+        if (combineCount > 0) {
+          // 計算新的 PCI 混淆的比率，並四捨五入到小數點後一位
+          this.newPciConfusionRatio = Number(
+            ((this.newPciConfusionTotalCount / combineCount) * 100).toFixed(1)
+          );
         }
       }
     }
@@ -4175,6 +4232,7 @@ export class FieldInfoComponent implements OnInit {
    *  - 功能豐富，結合本地和遠端運算以實現SON優化
    *  - 本地模式和非本地模式的行為有所不同，但均包括視窗管理、資料刷新及界面反饋
    **/
+  multiOptimalBs!: Subscription;
   applySON_Submit() {
     console.log("applySON_Submit() - Start"); // 記錄函數執行的開始
 
@@ -4260,7 +4318,7 @@ export class FieldInfoComponent implements OnInit {
       console.log( "呼叫實際 API 前,套用 SON 優化所提交的數據:", submitData ); // 實際模式日誌
 
       // 發送請求到服務器
-      this.API_Field.multiOptimalBs( submitData ).subscribe({
+      this.multiOptimalBs = this.API_Field.multiOptimalBs( submitData ).subscribe({
         next: ( response ) => {
           console.log( "套用 SON 優化成功:", response ); // 請求成功日誌
 
