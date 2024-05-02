@@ -3300,7 +3300,7 @@ export class FieldInfoComponent implements OnInit {
   openfieldPMReportWindow() {
     this.fieldPMReportWindow_Validated = false;
     this.fieldPMReportWindow_Ref = this.dialog.open( this.fieldPMReportWindow, {
-      id: 'fieldOptimizationWindow',
+      id: 'fieldPMReportWindow',
       // width 和 height 可以根據需要設置或去掉
       // width: '300px', 
       // height: '200px'
@@ -3593,11 +3593,10 @@ export class FieldInfoComponent implements OnInit {
     optimizationTypeHeader?.classList.toggle('active');
   }
 
-
   // @2024/04/08 Add
   fieldOptimizationResultType: string = 'cco'; // 預設選擇顯示 "cco" 
 
-  /** @2024/04/08 Add
+  /** @2024/05/02 Update
    *  變更場域優化結果頁籤顯示的類型函數
    *  @method changefieldOptimizationResultType
    *  @param {MatButtonToggleChange} e - 用戶操作的事件物件
@@ -3613,27 +3612,26 @@ export class FieldInfoComponent implements OnInit {
     console.log("changefieldOptimizationResultType() - Start");
 
     // 根據用戶當前的選擇來設定場域優化結果顯示的類型
-    if ( e.value === 'cco' ) {
+    /*
+      if ( e.value === 'cco' ) {
 
-      // 如果選擇的是 CCO 頁面
-      this.fieldOptimizationResultType = 'cco'; // 設定場域優化結果顯示類型為 CCO
+        // 如果選擇的是 CCO 頁面
+        this.fieldOptimizationResultType = 'cco'; // 設定場域優化結果顯示類型為 CCO
 
-      // TODO: 在這裡添加任何需要在切換到 CCO 頁面時執行的操作
+      } else if ( e.value === 'anr' ) {
 
-    } else if ( e.value === 'anr' ) {
+        // 如果選擇的是 ANR 頁面
+        this.fieldOptimizationResultType = 'anr'; // 設定場域優化結果顯示類型為 ANR
 
-      // 如果選擇的是 ANR 頁面
-      this.fieldOptimizationResultType = 'anr'; // 設定場域優化結果顯示類型為 ANR
+      } else if ( e.value === 'pci' ) {
 
-      // TODO: 在這裡添加任何需要在切換到 ANR 頁面時執行的操作
+        // 如果選擇的是 PCI 頁面
+        this.fieldOptimizationResultType = 'pci'; // 設定場域優化結果顯示類型為 PCI
+      }
+    */
 
-    } else if ( e.value === 'pci' ) {
-
-      // 如果選擇的是 PCI 頁面
-      this.fieldOptimizationResultType = 'pci'; // 設定場域優化結果顯示類型為 PCI
-
-      // TODO: 在這裡添加任何需要在切換到 PCI 頁面時執行的操作
-    }
+    // @2024/05/02 Add
+    this.fieldOptimizationResultType = e.value;
 
     // 輸出場域優化結果顯示類型的變更結果
     console.log("頁面切換後，顯示的場域優化結果類型:", this.fieldOptimizationResultType + "\n Optimization result type displayed after tab switch:",
@@ -3648,7 +3646,7 @@ export class FieldInfoComponent implements OnInit {
   calculateSON_Loading = false; // 用於識別計算"場域優化"資訊的標誌，初始設置為 false 
   multiCalculateBs!: Subscription;
 
-  /** @2024/04/11 Update
+  /** @2024/05/02 Update
    *  發送計算 SON 演算法的函數
    *  @method calculateSON_Submit
    *  @returns { void }
@@ -3702,6 +3700,16 @@ export class FieldInfoComponent implements OnInit {
     }
     if ( this.fieldOptimizationForm.get( 'setSONParameters.pci' )?.value ) {
       this.calculationCategories.push( 'pci' );
+    }
+
+    // @2024/05/02 Add
+    // 根據計算類別設置初始頁籤 
+    if (this.calculationCategories.includes('cco')) {
+      this.fieldOptimizationResultType = 'cco';
+    } else if (this.calculationCategories.includes('anr')) {
+      this.fieldOptimizationResultType = 'anr';  
+    } else if (this.calculationCategories.includes('pci')) {
+      this.fieldOptimizationResultType = 'pci';
     }
 
     const formData = this.fieldOptimizationForm.value.setSONParameters;
