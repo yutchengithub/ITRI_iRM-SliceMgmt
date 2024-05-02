@@ -1010,7 +1010,7 @@ export class BSManagementComponent implements OnInit {
   
 
 
-  // @2024/04/30 Add
+  // @2024/05/02 Update
   // 產生基站參數樣本檔案用
   generateSampleConf() {
     console.log(this.bsComponents);
@@ -1018,9 +1018,8 @@ export class BSManagementComponent implements OnInit {
     const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
     const bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
 
-    this.http.get('assets/BS_parameters_sample.xlsx', { responseType: 'arraybuffer' })
-    .subscribe(
-      (buffer: ArrayBuffer) => {
+    this.http.get('assets/BS_parameters_sample.xlsx', { responseType: 'arraybuffer' }).subscribe({
+      next: ( buffer: ArrayBuffer ) => {
         const workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
         console.log(workbook);
         if (bstype === "1") {
@@ -1135,10 +1134,13 @@ export class BSManagementComponent implements OnInit {
 
         XLSX.writeFile(workbook, 'BS_parameters_sample.xlsx');
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching file:', error);
+      },
+      complete: () => {
+        console.log('基站參數配置樣本檔(.xlsx) - 產生成功');
       }
-    );
+    });
   }
 
   getDuIndexByRuIndex( ruIndex: number ): number {
