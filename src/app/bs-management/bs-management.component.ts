@@ -101,14 +101,13 @@ export class BSManagementComponent implements OnInit {
     public  unusedNEList_LocalFiles: localUnusedNEList, // @2024/04/26 Add unusedNEList_LocalFiles 用於從 Local 文件獲取未使用 NE 列表數據
 
   ) {
-    this.getQueryBsList(); // @2024/03/19 Add for getting BS List
-    this.createBsCreationForm( this.bsList.basestation ); // 確保 bsList 可用後再創建表單
   }
 
   ngOnInit(): void {
 
     this.sessionId = this.commonService.getSessionId();
-    
+    this.getQueryBsList(); // @2024/03/19 Add for getting BS List
+    //this.createBsCreationForm( this.bsList.basestation ); // 確保 bsList 可用後再創建表單
   }
 
   ngAfterViewInit() {
