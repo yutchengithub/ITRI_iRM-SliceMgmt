@@ -1010,36 +1010,66 @@ export class BSManagementComponent implements OnInit {
   
 
 
-  // @2024/05/02 Update
-  // 產生基站參數樣本檔案用
+  /** @2024/05/02 Update
+   *  產生基站參數樣本檔案
+   *  @method generateSampleConf
+   *  @returns { void }
+   *  @description
+   *  - 根據使用者選擇的基站類型（單體或分佈式），生成對應的基站參數配置樣本檔案
+   *  - 使用 XLSX 庫讀取預設的樣本 Excel 檔案，並根據使用者的設置修改相應的單元格內容
+   *  - 處理不同類型的基站（CU、DU、RU）的參數配置，包括 gNBCUFunction、NRCellCU、gNBDUFunction、NRCellDU 等
+   *  - 使用 XLSX 的工具函數（如 sheet_add_aoa）向 Excel 檔案的指定工作表中寫入數據
+   *  - 生成的樣本檔案包含了基站的各個組件（如 CU、DU、RU）的參數配置，以及它們之間的關聯關係
+   *  - 最終將修改後的 Excel 檔案寫入到本地，供使用者下載
+   *  @note
+   *  - 這個函數涉及到複雜的 Excel 操作，需要對 XLSX 庫有一定的了解
+   *  - 函數中使用了大量的硬編碼索引（如 'A2'、'B2' 等），這使得代碼的可讀性和維護性降低
+   *  - 可以考慮將一些常量或重複使用的字串提取出來，定義為單獨的變數，以提高代碼的可讀性
+   **/
+  sampleFileName = 'BS_parameters_sample.xlsx';
   generateSampleConf() {
-    console.log(this.bsComponents);
-
+    console.log( this.bsComponents ); // 打印基站組件的相關信息
+   
+    // 獲取使用者選擇的基站類型（單體或分佈式）
     const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
+    // 根據基站類型設置對應的數字標識（1：單體，2：分佈式）
     const bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
-
-    this.http.get('assets/BS_parameters_sample.xlsx', { responseType: 'arraybuffer' }).subscribe({
+   
+    // 發送 HTTP GET 請求，獲取預設的基站參數樣本 Excel 檔案
+    this.http.get( 'assets/' + this.sampleFileName, { responseType: 'arraybuffer' } ).subscribe({
       next: ( buffer: ArrayBuffer ) => {
+        // 使用 XLSX 庫讀取 Excel 檔案
         const workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
-        console.log(workbook);
+        console.log(workbook); // 打印讀取到的 Excel 工作簿對象
+        
+        // 根據基站類型，向相應的工作表中寫入數據
         if (bstype === "1") {
+          // 單體基站，寫入 gNBCUFunction、NRCellCU、gNBDUFunction、NRCellDU 工作表
           XLSX.utils.sheet_add_aoa(workbook.Sheets['gNBCUFunction'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['NRCellCU'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['gNBDUFunction'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['NRCellDU'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
         } else {
+          // 分佈式基站，只寫入 gNBCUFunction 工作表
           XLSX.utils.sheet_add_aoa(workbook.Sheets['gNBCUFunction'], [[this.bsComponents.cu![0].id]], { origin: 'A2' })
         }
+        
+        // 定義 CU 的參數配置鍵
         const cuKeys = [{ f: 'gNBCUFunction!D2' }, { f: 'gNBCUFunction!E2' }, { f: 'gNBCUFunction!G2' }, { f: 'gNBCUFunction!H2' }];
+        // 向 peeParametersList_CU、vnfParametersList_CU、EP_NgC、EP_NgU 工作表寫入 CU 的參數配置鍵
         XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_CU'], [cuKeys], { origin: 'B2' });
         XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_CU'], [cuKeys], { origin: 'B2' });
         XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_NgC'], [cuKeys], { origin: 'B2' });
         XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_NgU'], [cuKeys], { origin: 'B2' });
+   
+        // 根據 DU 的數量，向 EP_F1C_CU、EP_F1U_CU 工作表寫入 CU 的參數配置鍵
         for (let i = 0; i < this.duCount; i++) {
           const originIndex = 'B' + (i + 2);
           XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1C_CU'], [cuKeys], { origin: originIndex });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1U_CU'], [cuKeys], { origin: originIndex });
         }
+   
+        // 根據 RU 的數量，向 NRCellCU 工作表寫入 CU 的參數配置鍵
         for (let i = 0; i < this.ruCount; i++) {
           let cuKeys: any[] = [];
           if (bstype === "1") {
@@ -1054,6 +1084,8 @@ export class BSManagementComponent implements OnInit {
             workbook.Sheets['NRCellCU']['A' + (i + 2)].c.hidden = true;
           }
         }
+   
+        // 根據 RU 的數量，向 peeParametersList_NRCellCU、vnfParametersList_NRCellCU、s_NSSAI_leafList_NRCellCU 工作表寫入 NRCellCU 的參數配置鍵
         for (let i = 0; i < this.ruCount; i++) {
           const originIndex = 'B' + (i + 2);
           const cellCuKeys = [
@@ -1067,6 +1099,8 @@ export class BSManagementComponent implements OnInit {
           XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_NRCellCU'], [cellCuKeys], { origin: originIndex });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['s_NSSAI_leafList_NRCellCU'], [cellCuKeys], { origin: originIndex });
         }
+   
+        // 根據 DU 的數量，向 gNBDUFunction 工作表寫入 DU 的參數配置鍵
         for (let i = 0; i < this.duCount; i++) {
           let cuKeys: any[] = [];
           if (bstype === "1") {
@@ -1080,6 +1114,8 @@ export class BSManagementComponent implements OnInit {
             workbook.Sheets['gNBDUFunction']['A' + (i + 2)].c = [{ a: 'iRM', t: this.bsComponents.du![i].name }];
             workbook.Sheets['gNBDUFunction']['A' + (i + 2)].c.hidden = true;
           }
+   
+          // 定義 DU 的參數配置鍵
           const duKeys = [
             { f: 'gNBDUFunction!C' + (i + 2) },
             { f: 'gNBDUFunction!E' + (i + 2) },
@@ -1088,11 +1124,14 @@ export class BSManagementComponent implements OnInit {
             { f: 'gNBDUFunction!H' + (i + 2) }
           ];
           const duOriginIndex = 'B' + (i + 2);
+          // 向 peeParametersList_DU、vnfParametersList_DU、EP_F1C_DU、EP_F1U_DU 工作表寫入 DU 的參數配置鍵
           XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_DU'], [duKeys], { origin: duOriginIndex });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_DU'], [duKeys], { origin: duOriginIndex });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1C_DU'], [duKeys], { origin: duOriginIndex });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1U_DU'], [duKeys], { origin: duOriginIndex });
         }
+   
+        // 根據 RU 的數量，向 NRCellDU 工作表寫入 DU 的參數配置鍵
         for (let i = 0; i < this.ruCount; i++) {
           const duIndex = this.getDuIndexByRuIndex(i);
           let duKeys: any[] = [];
@@ -1109,59 +1148,85 @@ export class BSManagementComponent implements OnInit {
             workbook.Sheets['NRCellDU']['A' + (i + 2)].c = [{ a: 'iRM', t: this.bsComponents.ru![i].name }];
             workbook.Sheets['NRCellDU']['A' + (i + 2)].c.hidden = true;
           }
-
+   
+          // 定義 NRCellDU 的參數配置鍵
           const cellDuKeys = ['', { f: 'NRCellDU!C' + (i + 2) }, { f: 'NRCellDU!D' + (i + 2) }, { f: 'NRCellDU!E' + (i + 2) }, { f: 'NRCellDU!F' + (i + 2) }, { f: 'NRCellDU!G' + (i + 2) }, { f: 'NRCellDU!H' + (i + 2) }];
+          // 向 peeParametersList_NRCellDU、vnfParametersList_NRCellDU、s_NSSAI_leafList_NRCellDU、NRSectorCarrierRef_NRCellDU、bWPRef_leafList_NRCellDU 工作表寫入 NRCellDU 的參數配置鍵
           XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_NRCellDU'], [cellDuKeys], { origin: originIndex });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_NRCellDU'], [cellDuKeys], { origin: originIndex });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['s_NSSAI_leafList_NRCellDU'], [cellDuKeys], { origin: originIndex });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['NRSectorCarrierRef_NRCellDU'], [cellDuKeys], { origin: originIndex });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['bWPRef_leafList_NRCellDU'], [cellDuKeys], { origin: originIndex });
-
+   
+          // 定義 NRSectorCarrier 的參數配置鍵
           const nrSectorKeys = ['', { f: 'NRSectorCarrierRef_NRCellDU!B' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!C' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!D' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!E' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!F' + (i + 2) }];
+          // 向 NRSectorCarrier 工作表寫入 NRSectorCarrier 的參數配置鍵
           XLSX.utils.sheet_add_aoa(workbook.Sheets['NRSectorCarrier'], [nrSectorKeys], { origin: originIndex });
-
+   
+          // 定義 NRSectorCarrier 的參數配置鍵（第二部分）
           const nrSectorKeys2 = ['', { f: 'NRSectorCarrier!B' + (i + 2) }, { f: 'NRSectorCarrier!C' + (i + 2) }, { f: 'NRSectorCarrier!D' + (i + 2) }, { f: 'NRSectorCarrier!E' + (i + 2) }, { f: 'NRSectorCarrier!F' + (i + 2) }, { f: 'NRSectorCarrier!A' + (i + 2) }];
+          // 向 peeParametersList_NRSector、vnfParametersList_NRSector 工作表寫入 NRSectorCarrier 的參數配置鍵（第二部分）
           XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_NRSector'], [nrSectorKeys2], { origin: originIndex });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_NRSector'], [nrSectorKeys2], { origin: originIndex });
-
+   
+          // 定義 BWP 的參數配置鍵
           const bwpRefKey = ['', { f: 'bWPRef_leafList_NRCellDU!B' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!C' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!D' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!E' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!F' + (i + 2) }];
+          // 向 BWP 工作表寫入 BWP 的參數配置鍵
           XLSX.utils.sheet_add_aoa(workbook.Sheets['BWP'], [bwpRefKey], { origin: originIndex });
 
+          // 定義 BWP 的參數配置鍵（第二部分）
           const bwpKeys = ['', { f: 'BWP!B' + (i + 2) }, { f: 'BWP!C' + (i + 2) }, { f: 'BWP!D' + (i + 2) }, { f: 'BWP!E' + (i + 2) }, { f: 'BWP!F' + (i + 2) }, { f: 'BWP!A' + (i + 2) }];
+          // 向 peeParametersList_BWP、vnfParametersList_BWP 工作表寫入 BWP 的參數配置鍵（第二部分）
           XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_BWP'], [bwpKeys], { origin: originIndex });
           XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_BWP'], [bwpKeys], { origin: originIndex });
         }
 
-        XLSX.writeFile(workbook, 'BS_parameters_sample.xlsx');
+        // 將修改後的 Excel 工作簿寫入到本地檔案
+        XLSX.writeFile( workbook, this.sampleFileName );
       },
-      error: (error) => {
+      error: ( error ) => {
+        // 處理獲取檔案時的錯誤
         console.error('Error fetching file:', error);
       },
       complete: () => {
+        // 在完成生成樣本檔案後，記錄一條成功訊息
         console.log('基站參數配置樣本檔(.xlsx) - 產生成功');
       }
     });
   }
 
+  /** @2024/04/30 Add 
+    * 根據 RU 的索引獲取對應的 DU 索引
+    * @param {number} ruIndex - RU 的索引
+    * @returns {number} - 對應的 DU 索引，如果沒有找到則返回 -1
+    */
   getDuIndexByRuIndex( ruIndex: number ): number {
 
+    // 獲取使用者選擇的基站類型（單體或分佈式）
     const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
-    const bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
 
+    // 根據基站類型設置對應的數字標識（1：單體，2：分佈式）
+    const bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
+  
+    // 如果是單體基站，直接返回 0，因為只有一個 DU
     if ( bstype === "1" ) {
       return 0;
     }
   
+    // 獲取指定 RU 對應的 DU ID
     const duId = this.bsComponents.ru![ruIndex].duid;
-    for (let i = 0; i < this.bsComponents.du!.length; i++) {
-      if (duId === this.bsComponents.du![i].id) {
+  
+    // 遍歷所有的 DU
+    for ( let i = 0; i < this.bsComponents.du!.length; i++ ) {
+      // 如果找到了匹配的 DU ID，返回對應的索引
+      if ( duId === this.bsComponents.du![i].id ) {
         return i;
       }
     }
   
+    // 如果沒有找到匹配的 DU，返回 -1
     return -1;
   }
-
 
 
   /**
