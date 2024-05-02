@@ -351,101 +351,100 @@ export class BSManagementComponent implements OnInit {
 // ↑ For Delete BS @2024/03/22 Add ↑
 
 
-
-// ↓ For Create BS @2024/04/26 Add ↓
-
-  // @2024/04/26 Add
-  UnusedNEList: UnusedNE[] = [];
-  isLoadingUnusedNEList = true;
-  queryUnusedNeList!: Subscription;
+// ↓ For Create BS @2024/05/02 Update ↓
 
   // @2024/04/26 Add
-  // 用於取得 Unused NE 列表資訊的函數
+  UnusedNEList: UnusedNE[] = [];    // 存儲未被使用的網元列表
+  isLoadingUnusedNEList = true;     // 表示是否正在加載未使用的網元列表
+  queryUnusedNeList!: Subscription; // 用於存儲從 API 請求獲得未使用網元列表的訂閱對象
+
+  /** @2024/04/26 Add
+   *  用於取得未使用網元列表資訊
+   *  @method getUnusedNEList
+   *  @returns {void}
+   *  @description
+   *    - 根據運行模式（本地或服務器），從不同來源獲取未使用網元列表
+   */
   getUnusedNEList() {
-    console.log( 'getUnusedNEList() - Start' ); // 輸出開始取得 Unused NE 列表的日誌
+    console.log('getUnusedNEList() - Start'); // 標記開始獲取數據
 
-    this.isLoadingUnusedNEList = true;  // 開始加載數據，顯示進度指示器
-    this.showLoadingSpinner();          // 顯示 Loading Spinner
+    this.isLoadingUnusedNEList = true;  // 開始加載數據
+    this.showLoadingSpinner();          // 顯示加載中的提示
 
     if ( this.commonService.isLocal ) {
 
-      // 如果是本地模式
-      // 從本地文件中獲取 Unused NE 列表
+      // 如果是本地模式，從本地文件中獲取數據
       this.UnusedNEList = this.unusedNEList_LocalFiles.unusedNEList_local;
-
-      // 假設 processNEList 方法會更新 CUOptions, DUOptions, 和 RUOptions
-      this.processUnusedNEList( this.UnusedNEList );  
+      this.processUnusedNEList( this.UnusedNEList );  // 處理獲得的列表
       console.log( 'In Local - UnusedNEList:', this.UnusedNEList );
 
-      this.isLoadingUnusedNEList = false; // Local 模式下，數據加載快速完成，直接設置為 false
-
-      this.hideSpinner();  // 完成後隱藏 spinner
+      this.isLoadingUnusedNEList = false; // 標記加載完成
+      this.hideSpinner();  // 隱藏加載提示
 
     } else {
 
-      // 如果非本地模式
-      // 從後端 API 獲取 Unused NE 列表
+      // 非本地模式，從後端 API 獲取數據
       this.queryUnusedNeList = this.API_BS.queryUnusedNeList().subscribe({
         next: ( res ) => {
 
-          // 成功獲取 Unused NE 列表
-          this.UnusedNEList = res; // 將獲取到的 UnusedNE 列表賦值給 UnusedNEList 屬性
+          this.UnusedNEList = res; // 更新網元列表
+
           console.log( 'From Server - UnusedNEList:', this.UnusedNEList );
 
-          // 將取得的未被使用 NE 列表進行分類
-          this.processUnusedNEList( this.UnusedNEList );
+          this.processUnusedNEList( this.UnusedNEList ); // 處理獲得的列表
+          this.isLoadingUnusedNEList = false; // 標記加載完成
 
-          this.isLoadingUnusedNEList = false; // 數據加載完成
-          
-          // this.hideSpinner();  // 完成後隱藏 spinner
+          //this.hideSpinner();  // 隱藏加載提示
         },
         error: ( error ) => {
-
-          // 獲取 NE 列表出錯
-          console.error( 'Error fetching Unused NE list:', error ); // 輸出錯誤日誌
-          this.isLoadingUnusedNEList = false; // 出錯時設置加載標誌為 false
-          this.hideSpinner();  // 出錯時隱藏 spinner
+          console.error( 'Error fetching Unused NE list:', error );
+          this.isLoadingUnusedNEList = false; // 標記加載完成
+          this.hideSpinner();  // 隱藏加載提示
         },
         complete: () => {
-
-          // 獲取 Unused NE 列表完成
-          console.log( 'Unused NE list fetch completed' ); // 輸出完成日誌
-          this.hideSpinner();  // 完成後隱藏 spinner
+          console.log('Unused NE list fetch completed'); // 標記獲取完成
+          this.hideSpinner();  // 隱藏加載提示
         }
       });
     }
 
-    console.log( 'getUnusedNEList() - End' ); // 輸出結束取得 Unused NE 列表的日誌
+    console.log('getUnusedNEList() - End'); // 標記結束獲取數據
   }
 
-  // 儲存各類未使用網元數據用 @2024/04/26 Add
+  // 用於儲存各類未使用的網元數據 @2024/04/26 Add
         CUOptions: UnusedNE[] = []; // 用於儲存 CU 網元
         DUOptions: UnusedNE[] = []; // 用於儲存 DU 網元
         RUOptions: UnusedNE[] = []; // 用於儲存 RU 網元
       CUDUOptions: UnusedNE[] = []; // 用於儲存 CU+DU 網元
   allInOneOptions: UnusedNE[] = []; // 用於儲存 All-In-One 網元
 
-  // @2024/04/26 Add
-  // 用於將取得的未使用網元列表進行分類放入對應數組
+  /** @2024/04/26 Add
+   *  將取得的未使用網元列表進行分類放入對應數組
+   *  @method processUnusedNEList
+   *  @param { UnusedNE[] } UnusedNEList - 未使用的網元列表
+   *  @returns { void }
+   *  @description
+   *    - 將獲取的網元根據類型分類到相應的選項中
+   */
   processUnusedNEList( UnusedNEList: UnusedNE[] ) {
     UnusedNEList.forEach( ne => {
-      switch ( ne.comtype ) {
-        case 1:
-          this.CUOptions.push( ne ) ;
-          break;
-        case 2:
-          this.DUOptions.push( ne );
-          break;
-        case 3:
-          this.RUOptions.push( ne );
-          break;
-        case 4:
-          this.CUDUOptions.push( ne );
-          break;
-        case 5:
-          this.allInOneOptions.push( ne );
-          break;
-      }
+        switch ( ne.comtype ) {
+          case 1: // CU 網元
+            this.CUOptions.push( ne );
+            break;
+          case 2: // DU 網元
+            this.DUOptions.push( ne );
+            break;
+          case 3: // RU 網元
+            this.RUOptions.push( ne );
+            break;
+          case 4: // CUDU 網元
+            this.CUDUOptions.push( ne );
+            break
+          case 5: // All-In-One 網元
+            this.allInOneOptions.push( ne );
+            break;
+        }
     });
   }
 
@@ -461,16 +460,22 @@ export class BSManagementComponent implements OnInit {
   // 用於跟踪 "基站建立" 表單的驗證狀態 
   bsCreationFormValidated = false; // 默認為 false，表示尚未驗證
 
-  // @2024/04/26 Add
-  // 打開 "基站建立" 視窗
+  /** @2024/04/26 Add
+   *  打開 "基站建立" 視窗
+   *  @method openBsCreationWindow
+   *  @returns {void}
+   *  @description
+   *    - 初始化並打開基站建立視窗，設置表單，並監聽視窗關閉事件
+   */
   openBsCreationWindow() {
 
     // 表單驗證狀態重置
     this.bsCreationFormValidated = false;
 
-    this.createBsCreationForm( this.bsList.basestation ); // 確保 bsList 可用後再創建表單
+    // 確保 bsList 可用後再創建表單
+    this.createBsCreationForm( this.bsList.basestation );
 
-    // 打開 "基站建立" 視窗
+    // 打開 "基站建立" 對話框
     this.bsCreationWindowRef = this.dialog.open( this.bsCreationWindow, {
       id: 'bsCreationWindow',
       // 這裡可以設置對話框的寬高，也可以使用 CSS 來設置
@@ -479,27 +484,39 @@ export class BSManagementComponent implements OnInit {
     // 訂閱視窗關閉事件，並在關閉時重置表單驗證狀態
     this.bsCreationWindowRef.afterClosed().subscribe(() => {
       this.bsCreationFormValidated = false;
-      // 可以在這裡進行一些清理工作，例如重置表單等
-      this.resetBsCreationForm(); // 初始化所有輸入的"基站建立"設定
+      // 進行一些清理工作，例如重置表單
+      this.resetBsCreationForm();
     });
 
-    // 彈出視窗打開時加載未使用 NE 列表數據
+    // 打開視窗時加載未使用網元列表數據
     this.getUnusedNEList();
 
-    this.resetBsCreationForm(); // 初始化所有輸入的"基站建立"設定
+    // 初始化所有輸入的"基站建立"設定
+    this.resetBsCreationForm();
 
-    console.log("When Open BS Creation Window the bsComponents", this.bsComponents );
-    console.log("When Open BS Creation Window the selectedDUIds", this.selectedDUIds );
-    console.log("When Open BS Creation Window the selectedRUIds", this.selectedRUIds );
-    console.log("When Open BS Creation Window the connectedDUOptions", this.connectedDUOptions );
-    console.log("When Open BS Creation Window the selectedFileName", this.selectedFileName );
-    console.log("When Open BS Creation Window the bsCreationData", this.bsCreationData );
+    // 輸出相關的狀態信息
+    console.log("When Open BS Creation Window the bsComponents", this.bsComponents);
+    console.log("When Open BS Creation Window the selectedDUIds", this.selectedDUIds);
+    console.log("When Open BS Creation Window the selectedRUIds", this.selectedRUIds);
+    console.log("When Open BS Creation Window the connectedDUOptions", this.connectedDUOptions);
+    console.log("When Open BS Creation Window the selectedFileName", this.selectedFileName);
+    console.log("When Open BS Creation Window the bsCreationData", this.bsCreationData);
   }
 
-  isLinear = true; // 先關閉，開啟表一定要輸入完東西才可以點下一步
+
+  // 表示是否為線性流程，用戶必須按順序完成每個步驟
+  isLinear = true;
+
+  // 儲存基站名稱表單組
   bsFormGroup_Name!: FormGroup;
+
+  // 儲存基站類型表單組
   bsFormGroup_Type!: FormGroup;
+
+  // 儲存基站元素設定表單組
   bsFormGroup_Elements!: FormGroup;
+
+  // 儲存基站描述和文件上傳表單組
   bsFormGroup_Description!: FormGroup;
 
   // @2024/04/28 Add
@@ -509,39 +526,45 @@ export class BSManagementComponent implements OnInit {
   // @2024/04/28 Add
   // 設定 RU 可選擇的數量選項 - 目前最多設為 16 個 ( 可依未來規格調整進行擴充 )
   ruNumberOptions = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
-
-  // @2024/04/28 Add
-  // 使用 Basestation[] 替代 any[] 以獲得更強的類型檢查
-  uniqueBSNameValidator( bsList: Basestation[] ): ValidatorFn {
+  
+  /** @2024/04/28 Add
+   *  使用 Basestation[] 替代 any[] 以獲得更強的類型檢查
+   *  @method uniqueBSNameValidator
+   *  @param { Basestation[] } bsList - 基站列表
+   *  @returns { ValidatorFn } 返回一個表單驗證器函數
+   */
+  uniqueBSNameValidator(bsList: Basestation[]): ValidatorFn {
     return ( control: AbstractControl ): ValidationErrors | null => {
-      // 使用 ‘some’ 方法檢查是否存在具有相同名稱的基站
+      // 使用 'some' 方法檢查是否存在具有相同名稱的基站
       const nameExists = bsList.some( bs => bs.name === control.value );
       // 如果名稱存在，返回錯誤物件
       return nameExists ? { uniqueBSName: true } : null;
     };
   }
 
-  // @2024/04/28 Update - 改為接收 bsList 為參數
-  // 初始化每個用於「創建基站」流程的 FormGroup
+
+  /** @2024/04/28 Update - 改為會接收 bsList 為參數
+   *  初始化每個用於「創建基站」流程的 FormGroup
+   *  @method createBsCreationForm
+   *  @param { Basestation[] } bsList - 基站列表，用於名稱檢查
+   *  @returns { void }
+   */
   createBsCreationForm( bsList: Basestation[] ) {
 
-    // 步驟 1: 設定基站名稱
+    // 步驟 1: 設定基站名稱，加入唯一名稱驗證
     this.bsFormGroup_Name = this.fb.group({
-      BSName: ['', [Validators.required, this.uniqueBSNameValidator( bsList )]]
+      BSName: ['', [Validators.required, this.uniqueBSNameValidator(bsList)]]
     });
 
-    // 步驟 2: 設定基站類型
+    // 步驟 2: 設定基站類型和 DU、RU 的數量
     this.bsFormGroup_Type = this.fb.group({
-      BSType: ['', Validators.required],
-      // DUNumber: [{value: '', disabled: true}, [Validators.required, Validators.min(1)]], // 如是讓使用者自行輸入數量，則需要設定 disabled
-      // RUNumber: [{value: '', disabled: true}, [Validators.required, Validators.min(1)]]  // 如是讓使用者自行輸入數量，則需要設定 disabled
-      DUNumber: ['', [Validators.required]], // 改為下拉選單控制，故不再設置 disabled
-      RUNumber: ['', [Validators.required]]  // 改為下拉選單控制，故不再設置 disabled
+        BSType: ['', Validators.required],
+      DUNumber: ['', [Validators.required]], // 使用下拉選單控制
+      RUNumber: ['', [Validators.required]]  // 使用下拉選單控制
     });
 
-    // 步驟 3: 設定網元和 GPS
-    //this.initializeElementsForm(); // 初始方法
-    this.bsFormGroup_Elements = this.fb.group({}); // 創建一個空的 FormGroup，避免控制台報錯
+    // 步驟 3: 基於基站類型動態初始化網元和 GPS 表單
+    this.bsFormGroup_Elements = this.fb.group({});
     this.bsFormGroup_Type.get('BSType')?.valueChanges.subscribe( ( bsType ) => {
       this.initializeElementsForm( bsType );
     });
@@ -549,34 +572,25 @@ export class BSManagementComponent implements OnInit {
     // 步驟 4: 設定基站地點描述和上傳配置文件
     this.bsFormGroup_Description = this.fb.group({
       LocationDescription: ['', Validators.required],
-      ConfigurationFile: [null, Validators.required]
+        ConfigurationFile: [null, Validators.required]
     });
   }
 
-  
-  // @2024/04/29 Add
-  // 用於收集當發送 POST 建立基站時所需的承載資訊，
-  // 存儲用戶在表單中選擇的所有數據的服務或元件屬性
-  bsCreationData: any = {
-    name: null,
-    bstype: null,
-    description: null,
-    components: null,
-    componentsInfo: null
-  };
-
-  // @2024/04/29 Update
-  // 用於重置所有輸入的"基站建立"設定
+  /** @2024/04/29 Update
+   *  用於重置所有輸入的"基站建立"設定
+   *  @method resetBsCreationForm
+   *  @returns { void }
+   */
   resetBsCreationForm() {
     console.log("Resetting bs creation form settings.");
 
     // 重置各個步驟的 FormGroup
     this.bsFormGroup_Name.reset();
     this.bsFormGroup_Type.reset();
-    this.bsFormGroup_Elements?.reset();
+    this.bsFormGroup_Elements.reset();
     this.bsFormGroup_Description.reset();
 
-    // 重置 bsComponents
+    // 重置 bsComponents 網元信息
     this.bsComponents = {};
 
     // 重置已選擇的 DU 和 RU IDs
@@ -587,9 +601,9 @@ export class BSManagementComponent implements OnInit {
     this.connectedDUOptions = [];
 
     // 重置 RUElementsFormArray 中的 connectedDU 控制項
-    if (this.bsFormGroup_Elements?.contains('RUElements')) {
+    if ( this.bsFormGroup_Elements?.contains('RUElements') ) {
       const RUElementsArray = this.bsFormGroup_Elements.get('RUElements') as FormArray;
-      RUElementsArray.controls.forEach(control => {
+      RUElementsArray.controls.forEach( control => {
         control.get('connectedDU')?.reset();
       });
     }
@@ -606,176 +620,188 @@ export class BSManagementComponent implements OnInit {
       componentsInfo: null
     };
 
-    // 如果還有其他相關的狀態需要重置，也應該在這裡進行
-    // 例如，如果有分頁或過濾器的狀態，也應該一併重置
-
     console.log("BS creation form settings have been reset.");
   }
 
+  /**
+   * 獲取 DU 表單陣列
+   * @returns { FormArray }
+   */
   get DUElementsFormArray(): FormArray {
     return this.bsFormGroup_Elements.get('DUElements') as FormArray;
   }
-  
+
+  /**
+   * 獲取 RU 表單陣列
+   * @returns { FormArray }
+   */
   get RUElementsFormArray(): FormArray {
     return this.bsFormGroup_Elements.get('RUElements') as FormArray;
   }
 
-  // @2024/04/30 Update
-  // 用於每步驟刷新收集建立基站 POST 所需之 JSON 數據
-  updateBsCreationData() {
-      this.bsCreationData.name = this.bsFormGroup_Name.get('BSName')?.value;
-      this.bsCreationData.description = this.bsFormGroup_Description.get('LocationDescription')?.value;
-  
-      const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
-      this.bsCreationData.bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
-  
-      if (this.bsCreationData.bstype === "1") {
-          const selectedId = this.bsFormGroup_Elements.get('allInOneElement')?.value;
-          this.bsCreationData.components = [{ type: 'cu+du+ru', id: selectedId }];
-      } else if (this.bsCreationData.bstype === "2") {
-          const cu = this.bsFormGroup_Elements.get('CUElement')?.value;
-          const duElements = this.DUElementsFormArray.value.map((du: any) => ({ id: du.DUElement }));
-          const ruElements = this.RUElementsFormArray.value.map((ru: any) => ({
-              id: ru.RUElement,
-              position: `[${ru.latitude}, ${ru.longitude}]`,
-              duid: ru.connectedDU
-          }));
-  
-          // Define components with the appropriate type
-          const components: Components_Dist = {};
-          components[cu] = duElements.reduce((acc: duID, du: any) => {
-            const filteredRUs = ruElements.filter((ru: any) => ru.duid === du.id);
-            const ruMap: ruID[] = filteredRUs.map((ru: any) => ({
-              [ru.id]: ru.position
-            }));
-            acc[du.id] = ruMap;
-            return acc;
-          }, {});
-  
-          this.bsCreationData.components = components;
-      }
-  
-      console.log("bsCreationData for POST:", this.bsCreationData);
-  }
-  
-  
-  // @2024/04/29 Update
-  // 處理基站類型選擇的變化
+
+  /** @2024/04/29 Update
+   *  處理基站類型選擇的變化
+   *  @method onBSTypeChange
+   *  @param { string } typeValue - 使用者選擇的基站類型
+   *  @returns { void }
+   *  @description
+   *    - 根據選擇的基站類型更新表單狀態和驗證要求
+   */
   onBSTypeChange( typeValue: string ) {
 
-    // 監聽用戶的選擇並更新 bstype
+    // 監聽用戶的選擇並更新 bsCreationData 中的 bstype
     this.bsCreationData.bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
 
+    // 判斷基站類型是否為分佈式 ('dist')
     if ( typeValue === 'dist' ) {
 
-      // 啟用 DU 和 RU 的選擇
+      // 啟用 DU 和 RU 的數量選擇
       this.bsFormGroup_Type.get('DUNumber')?.enable();
       this.bsFormGroup_Type.get('RUNumber')?.enable();
-  
-      /* 在使用者設定好數量時，立即更新下個步驟產生對應 DU、RU 設定數量
 
-        // 可能需要更新 DU 和 RU 表單控制項的值
-        // 通常是基於用戶之前的選擇或者一個預設值
-        const DUNumber = this.bsFormGroup_Type.get('DUNumber')?.value || 0;
-        const RUNumber = this.bsFormGroup_Type.get('RUNumber')?.value || 0;
-        
-        // 根據 DU 和 RU 的數量來更新或初始化 FormArray
-        this.updateElementsForm( DUNumber, RUNumber );
-      */
+      // 如果已有預設的 DU 和 RU 數量，立即更新相應的表單
+      const DUNumber = this.bsFormGroup_Type.get('DUNumber')?.value || 0;
+      const RUNumber = this.bsFormGroup_Type.get('RUNumber')?.value || 0;
 
+      // 根據 DU 和 RU 的數量來更新或初始化 FormArray
+      this.updateElementsForm( DUNumber, RUNumber );
     } else {
 
-      // 如非選擇分佈式，則禁用 DU 和 RU 的選擇
+      // 如非分佈式選擇，則禁用 DU 和 RU 的數量選擇
       this.bsFormGroup_Type.get('DUNumber')?.disable();
       this.bsFormGroup_Type.get('RUNumber')?.disable();
 
-      // 可能還需要清除步驟 3 中的表單元素
+      // 清除步驟 3 中的表單元素，以重置表單狀態
       this.clearDuRuElementsForm();
     }
   }
 
+
+  /** @2024/04/28 Add
+   *  準備進入第三步
+   *  @method prepareForStep3
+   *  @returns {void}
+   *  @description
+   *    - 根據基站類型為 'dist' 時更新 DU 和 RU 的表單數量及驗證狀態
+   */
   prepareForStep3() {
+
+    // 檢查基站類型是否為 'dist'
     if ( this.bsFormGroup_Type.get('BSType')?.value === 'dist' ) {
 
-      // 從表單獲取 DU 和 RU 的數量
+      // 從表單獲取 DU 和 RU 的數量，預設為 0
       const DUNumber = this.bsFormGroup_Type.get('DUNumber')?.value || 0;
       const RUNumber = this.bsFormGroup_Type.get('RUNumber')?.value || 0;
-  
-      // 更新 DU 和 RU 的 FormArray
+
+      // 更新 DU 和 RU 的表單陣列
       this.updateElementsForm( DUNumber, RUNumber );
-  
-      // 顯示 DU、RU 用表單的驗證狀態，用於檢查表單是否已過驗證
-      console.log('DU FormArray Valid?', this.DUElementsFormArray.valid);
-      console.log('RU FormArray Valid?', this.RUElementsFormArray.valid);
+
+      // 輸出 DU 和 RU 表單的驗證狀態
+      console.log( 'DU FormArray Valid?', this.DUElementsFormArray.valid );
+      console.log( 'RU FormArray Valid?', this.RUElementsFormArray.valid );
     }
   }
 
-  // @2024/04/28 Add
-  // 檢查進第四步驟之前的表單是否有通過驗證用的函數
+  /** @2024/04/28 Add
+   *  檢查進第四步驟之前的表單是否有通過驗證
+   *  @method checkBefore4StepsFormsValidity
+   *  @returns { boolean }
+   *  @description
+   *    - 檢查基站名稱、類型和元素表單組的驗證狀態，決定是否可進入下一步
+   */
   checkBefore4StepsFormsValidity() {
+    
+    // 輸出基站名稱、類型和元素表單組的驗證狀態
     console.log( 'BS Name FormGroup Valid?', this.bsFormGroup_Name.valid );
     console.log( 'BS Type FormGroup Valid?', this.bsFormGroup_Type.valid );
     console.log( 'BS Elements FormGroup Valid?', this.bsFormGroup_Elements.valid );
-  
+
     // 如所有 FormGroup 都有效，則可進下一步
     if ( this.bsFormGroup_Name.valid && this.bsFormGroup_Type.valid &&
-           this.bsFormGroup_Elements.valid ) {
+          this.bsFormGroup_Elements.valid ) {
 
       // 所有表單如都有效，就進下一步
-      console.log('All forms are valid, can proceed to the next step.');
-
+      console.log( 'All forms are valid, can proceed to the next step.' );
       return true;
     } else {
 
       // 有一個或多個表單無效，則不能進下一步
-      console.log('One or more forms are invalid, cannot proceed to the next step.');
+      console.log( 'One or more forms are invalid, cannot proceed to the next step.' );
       return false;
     }
   }
 
-  // @2024/04/28 Add
-  // 檢查所有表單是否有通過驗證用的函數
+  /** @2024/04/28 Add
+   *  檢查所有表單是否有通過驗證
+   *  @method checkAllFormsValidity
+   *  @returns { boolean }
+   *  @description
+   *    - 檢查所有表單組的驗證狀態，決定是否可進入下一步
+   */
   checkAllFormsValidity() {
-    console.log('BS Name FormGroup Valid?', this.bsFormGroup_Name.valid);
-    console.log('BS Type FormGroup Valid?', this.bsFormGroup_Type.valid);
-    console.log('BS Elements FormGroup Valid?', this.bsFormGroup_Elements.valid);
-    console.log('BS Description FormGroup Valid?', this.bsFormGroup_Description.valid);
-  
+
+    // 輸出所有表單組的驗證狀態
+    console.log( 'BS Name FormGroup Valid?', this.bsFormGroup_Name.valid );
+    console.log( 'BS Type FormGroup Valid?', this.bsFormGroup_Type.valid );
+    console.log( 'BS Elements FormGroup Valid?', this.bsFormGroup_Elements.valid );
+    console.log( 'BS Description FormGroup Valid?', this.bsFormGroup_Description.valid );
+
     // 如所有 FormGroup 都有效，則可進下一步
     if ( this.bsFormGroup_Name.valid && this.bsFormGroup_Type.valid &&
-          this.bsFormGroup_Elements.valid && this.bsFormGroup_Description.valid ) {
-
+            this.bsFormGroup_Elements.valid && this.bsFormGroup_Description.valid ) {
+      
       // 所有表單如都有效，就進下一步
-      console.log('All forms are valid, can proceed to the next step.');
-
+      console.log( 'All forms are valid, can proceed to the next step.' );
       return true;
 
     } else {
 
       // 有一個或多個表單無效，則不能進下一步
-      console.log('One or more forms are invalid, cannot proceed to the next step.');
+      console.log( 'One or more forms are invalid, cannot proceed to the next step.' );
       return false;
     }
   }
-  
-  // @2024/04/28 Add
-  // For Toggle CU Set
+
+  /** @2024/04/28 Add
+   *  切換 CU 設置面板的顯示狀態
+   *  @method toggleNeCuSet
+   *  @returns {void}
+   *  @description
+   *    - 切換 CU 設置面板的顯示或隱藏
+   */
   toggleNeCuSet() {
+    // 選擇 CU 設置面板的標頭元素
     const neCuSetHeader = document.querySelector('.ne-cu-set-wrap label');
+    // 切換 'active' 類，用於顯示或隱藏
     neCuSetHeader?.classList.toggle('active');
   }
 
-  // @2024/04/28 Add
-  // For Toggle DU Set
+  /** @2024/04/28 Add
+   *  切換 DU 設置面板的顯示狀態
+   *  @method toggleNeDuSet
+   *  @returns {void}
+   *  @description
+   *    - 切換 DU 設置面板的顯示或隱藏
+   */
   toggleNeDuSet() {
+    // 選擇 DU 設置面板的標頭元素
     const neDuSetHeader = document.querySelector('.ne-du-set-wrap label');
+    // 切換 'active' 類，用於顯示或隱藏
     neDuSetHeader?.classList.toggle('active');
   }
 
-  // @2024/04/28 Add
-  // For Toggle RU Set
+  /** @2024/04/28 Add
+   *  切換 RU 設置面板的顯示狀態
+   *  @method toggleNeRuSet
+   *  @returns {void}
+   *  @description
+   *    - 切換 RU 設置面板的顯示或隱藏
+   */
   toggleNeRuSet() {
+    // 選擇 RU 設置面板的標頭元素
     const neRuSetHeader = document.querySelector('.ne-ru-set-wrap label');
+    // 切換 'active' 類，用於顯示或隱藏
     neRuSetHeader?.classList.toggle('active');
   }
 
@@ -789,16 +815,29 @@ export class BSManagementComponent implements OnInit {
   // latitudePattern = /^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/; // 如小數輸入超過 6 位會報錯
   latitudePattern = /^(-?[0-8]?[0-9](\.[0-9]+)?|90(\.0+)?)$/;
 
-  // @2024/04/28 Add
-  // 初始化步驟 3 的 FormGroup
+  /**
+   * @2024/04/28 Add
+   * 初始化步驟 3 的 FormGroup
+   * @method initializeElementsForm
+   * @param bsType 基站類型
+   * @returns {void}
+   * @description
+   * - 根據基站類型初始化不同的表單組
+   */
   initializeElementsForm( bsType: string ) {
+
     if ( bsType === 'allInOne' ) {
+
+      // 初始化 all-in-one 類型的表單
       this.bsFormGroup_Elements = this.fb.group({
-        allInOneElement: ['', Validators.required],
+          allInOneElement: ['', Validators.required],
         allInOneLongitude: ['', [Validators.required, Validators.pattern( this.longitudePattern )]],
-        allInOneLatitude: ['', [Validators.required, Validators.pattern( this.latitudePattern )]],
+         allInOneLatitude: ['', [Validators.required, Validators.pattern( this.latitudePattern ) ]],
       });
+
     } else if ( bsType === 'dist' ) {
+      
+      // 初始化分布式類型的表單
       this.bsFormGroup_Elements = this.fb.group({
         CUElement: ['', Validators.required],
         DUElements: this.fb.array([]),
@@ -807,51 +846,78 @@ export class BSManagementComponent implements OnInit {
     }
   }
 
-  // 清除所有相關的表單控件
+  /**
+   * 清除所有相關的表單控件
+   * @method clearDuRuElementsForm
+   * @returns {void}
+   * @description
+   * - 清空 DU 和 RU 表單陣列
+   */
   clearDuRuElementsForm() {
     if ( this.bsFormGroup_Elements?.contains('DUElements') ) {
       const DUElementsArray = this.bsFormGroup_Elements.get('DUElements') as FormArray;
-      DUElementsArray.clear();
+      DUElementsArray.clear();  // 清空 DU 表單陣列
     }
     if ( this.bsFormGroup_Elements?.contains('RUElements') ) {
       const RUElementsArray = this.bsFormGroup_Elements.get('RUElements') as FormArray;
-      RUElementsArray.clear();
+      RUElementsArray.clear();  // 清空 RU 表單陣列
     }
     console.log("已清空 bsFormGroup_Elements - DUElements、RUElements 的 formArray");
   }
 
-  // @2024/04/28 Add
-  // 依據使用者設定的 DU、RU 數量設置對應數量的設定表單
+  /**
+   * @2024/04/28 Add
+   * 依據使用者設定的 DU、RU 數量設置對應數量的設定表單
+   * @method updateElementsForm
+   * @param DUNumber DU 數量
+   * @param RUNumber RU 數量
+   * @returns {void}
+   * @description
+   * - 根據提供的 DU 和 RU 數量初始化對應的表單陣列
+   */
   updateElementsForm( DUNumber: number, RUNumber: number ) {
-    // 這裡調用的是初始化 FormArray 的方法
-    this.initializeDUElementsForm( DUNumber ); // 調用一個新方法來處理 DU 表單陣列的初始化
-    this.initializeRUElementsForm( RUNumber ); // 調用一個新方法來處理 RU 表單陣列的初始化
+    this.initializeDUElementsForm( DUNumber );  // 初始化 DU 表單陣列
+    this.initializeRUElementsForm( RUNumber );  // 初始化 RU 表單陣列
   }
 
-  // @2024/04/28 Add
-  // 依據使用者設定數量設置對應數量的 DU 設定表單
+  /**
+   * @2024/04/28 Add
+   * 依據使用者設定數量設置對應數量的 DU 設定表單
+   * @method initializeDUElementsForm
+   * @param DUNumber DU 數量
+   * @returns {void}
+   * @description
+   * - 為每個 DU 創建一個表單控制項，並加入到 DUElements 表單陣列中
+   */
   initializeDUElementsForm( DUNumber: number ) {
     const DUElementsArray = this.bsFormGroup_Elements.get('DUElements') as FormArray;
-    DUElementsArray.clear();
-    for (let i = 0; i < DUNumber; i++) {
-      DUElementsArray.push(this.fb.group({
+    DUElementsArray.clear();  // 先清空現有的表單陣列
+    for ( let i = 0; i < DUNumber; i++ ) {
+      DUElementsArray.push( this.fb.group({
         DUElement: ['', Validators.required],
-        // 其他需要的表單控制項
+        // 可以根據需求添加其他控制項
       }));
     }
   }
 
-  // @2024/04/28 Add
-  // 依據使用者設定數量設置對應數量的 RU 設定表單
+  /**
+   * @2024/04/28 Add
+   * 依據使用者設定數量設置對應數量的 RU 設定表單
+   * @method initializeRUElementsForm
+   * @param RUNumber RU 數量
+   * @returns {void}
+   * @description
+   * - 為每個 RU 創建一個表單控制項，包含位置和連接的 DU，並加入到 RUElements 表單陣列中
+   */
   initializeRUElementsForm( RUNumber: number ) {
     const RUElementsArray = this.bsFormGroup_Elements.get('RUElements') as FormArray;
-    RUElementsArray.clear();
+    RUElementsArray.clear();  // 先清空現有的表單陣列
     for ( let i = 0; i < RUNumber; i++ ) {
       RUElementsArray.push(this.fb.group({
-        RUElement:   ['', Validators.required ],
-        longitude:   ['', [ Validators.required, Validators.pattern( this.longitudePattern ) ]], // 新增的經度表單控制項
-        latitude:    ['', [ Validators.required, Validators.pattern( this.latitudePattern ) ]],  // 新增的緯度表單控制項
-        connectedDU: ['', Validators.required ],
+        RUElement:   ['', Validators.required],
+        longitude:   ['', [Validators.required, Validators.pattern(this.longitudePattern)]],  // 經度
+        latitude:    ['', [Validators.required, Validators.pattern(this.latitudePattern)]],   // 緯度
+        connectedDU: ['', Validators.required],  // RU 可連接的 DU
       }));
     }
   }
@@ -866,156 +932,225 @@ export class BSManagementComponent implements OnInit {
      ru?: Ru_selectRecord[];
   } = {};
 
+  /**
+   * @2024/04/29 Add
+   * 提交步驟 3 的表單並更新網元訊息
+   * @method onStep3Submit
+   * @returns {void}
+   * @description
+   * - 根據基站類型，更新不同類型基站的網元訊息
+   */
   onStep3Submit() {
+    // 從表單中獲取基站類型
     const bstype = this.bsFormGroup_Type.get('BSType')?.value;
+    // 根據基站類型調用相應的更新函數
     if (bstype === 'allInOne') {
-      this.updateBsComponentsForAllInOne();
+      this.updateBsComponentsForAllInOne();  // 更新 all-in-one 型基站的網元訊息
     } else if (bstype === 'dist') {
-      this.updateBsComponentsForDistributed();
+      this.updateBsComponentsForDistributed();  // 更新分布式基站的網元訊息
     }
   }
 
+  /**
+   * 更新 all-in-one 型基站的網元訊息
+   * @method updateBsComponentsForAllInOne
+   * @returns {void}
+   * @description
+   * - 更新 all-in-one 型基站的網元訊息，包括位置和網元 ID
+   */
   updateBsComponentsForAllInOne() {
+    // 從表單中獲取選擇的網元 ID 和位置訊息
     const selectedId = this.bsFormGroup_Elements.get('allInOneElement')?.value;
-    const longitude = this.bsFormGroup_Elements.get('allInOneLongitude')?.value;
-    const latitude = this.bsFormGroup_Elements.get('allInOneLatitude')?.value;
+    const  longitude = this.bsFormGroup_Elements.get('allInOneLongitude')?.value;
+    const   latitude = this.bsFormGroup_Elements.get('allInOneLatitude')?.value;
+    // 格式化位置數據為字串
     const position = `[${longitude},${latitude}]`;
-  
-    if (selectedId) {
+
+    // 如果有選擇的網元 ID，則更新 bsComponents 對象
+    if ( selectedId ) {
       this.bsComponents.all = [{
-        type: 'cu+du+ru',
-        id: selectedId,
-        position: position
+        type: 'cu+du+ru',  // 指定網元類型
+        id: selectedId,    // 網元 ID
+        position: position // 網元位置
       }];
     }
-  
-    console.log("selected All-In-One ID:", selectedId);
-    console.log("this.bsComponents:", this.bsComponents);
-  }
-  
-  duCount: number = 0;
-  ruCount: number = 0;
 
-  // @2024/04/30 Update
+    // 輸出選擇的組件訊息和位置
+    console.log( "selected All-In-One ID:", selectedId );
+    console.log( "this.bsComponents:", this.bsComponents );
+  }
+
+
+  // @2024/04/30 Add 
+  duCount: number = 0; // 記錄已選擇的 DU 網元數量
+  ruCount: number = 0; // 記錄已選擇的 RU 網元數量
+
+  /**
+   * @2024/04/30 Update
+   * 更新分布式基站的網元訊息
+   * @method updateBsComponentsForDistributed
+   * @returns {void}
+   * @description
+   * - 根據表單選擇更新分布式基站的 CU、DU、RU 網元訊息，並計算各網元數量
+   */
   updateBsComponentsForDistributed() {
+    // 從表單中獲取選擇的 CU ID
     const selectedCUId = this.bsFormGroup_Elements.get('CUElement')?.value;
-    if (selectedCUId) {
+    // 如果選擇了 CU，則更新 bsComponents 對象
+    if ( selectedCUId ) {
       this.bsComponents.cu = [{
         type: 'cu',
         id: selectedCUId,
-        name: this.CUOptions.find(cu => cu.id === selectedCUId)?.name || ''
+        name: this.CUOptions.find( cu => cu.id === selectedCUId )?.name || ''
       }];
     }
-  
+    
+    // 過濾並映射 DUElements 表單陣列，生成 DU 網元訊息列表
     this.bsComponents.du = this.DUElementsFormArray.controls
-      .filter(du => du.get('DUElement')?.value)
-      .map(du => {
+      .filter( du => du.get('DUElement')?.value )
+      .map( du => {
         const id = du.get('DUElement')?.value;
         return {
           type: 'du',
           id: id,
-          name: this.DUOptions.find(duOption => duOption.id === id)?.name || ''
+          name: this.DUOptions.find( duOption => duOption.id === id )?.name || ''
         };
       });
-  
+    
+    // 過濾並映射 RUElements 表單陣列，生成 RU 網元訊息列表
     this.bsComponents.ru = this.RUElementsFormArray.controls
-      .filter(ru => ru.get('RUElement')?.value)
-      .map(ru => {
+      .filter( ru => ru.get('RUElement')?.value )
+      .map( ru => {
         const id = ru.get('RUElement')?.value;
         const connectedDUId = ru.get('connectedDU')?.value;
         const longitude = ru.get('longitude')?.value;
         const latitude = ru.get('latitude')?.value;
         const position = `[${longitude},${latitude}]`;
-  
+
         return {
           type: 'ru',
           id: id,
-          name: this.RUOptions.find(ruOption => ruOption.id === id)?.name || '',
+          name: this.RUOptions.find( ruOption => ruOption.id === id )?.name || '',
           duid: connectedDUId,
-          duName: this.DUOptions.find(du => du.id === connectedDUId)?.name || '',
+          duName: this.DUOptions.find( du => du.id === connectedDUId )?.name || '',
           position: position
         };
       });
 
-      // 計算 duCount 和 ruCount
-      this.duCount = this.bsComponents.du?.length || 0;
-      this.ruCount = this.bsComponents.ru?.length || 0;
+    // 計算選中的 DU 和 RU 網元的數量
+    this.duCount = this.bsComponents.du?.length || 0;
+    this.ruCount = this.bsComponents.ru?.length || 0;
 
-      console.log("selectedCUId:", selectedCUId);
-      console.log("this.bsComponents:", this.bsComponents);
-      console.log("this.duCount:", this.duCount);
-      console.log("this.ruCount:", this.ruCount);
+    // 輸出選擇的 CU ID 和網元訊息，以及 DU 和 RU 的數量
+    console.log( "selectedCUId:", selectedCUId);
+    console.log( "this.bsComponents:", this.bsComponents );
+    console.log( "this.duCount:", this.duCount );
+    console.log( "this.ruCount:", this.ruCount );
   }
-  
+
 
   // 儲存已選擇的 DU IDs
   selectedDUIds: string[] = [];
 
-  // 更新 DU 選項
+  /**
+   * @2024/05/02 Update
+   * 更新 DU 選項
+   * @method updateDUOptions
+   * @returns {void}
+   * @description
+   * - 更新表單中 DU 選項的顯示，防止顯示重複的選項
+   */
   updateDUOptions() {
-    this.DUElementsFormArray.controls.forEach((control, index) => {
-      const selectedDUId = control.get('DUElement')?.value;
-      if (selectedDUId) {
-        this.selectedDUIds[index] = selectedDUId;
+    // 遍歷表單控件，獲取每個控件中選擇的 DU ID
+    this.DUElementsFormArray.controls.forEach( ( control, index ) => {
+      const selectedDUId = control.get('DUElement')?.value;  // 從表單控件中獲取 DU ID
+      if ( selectedDUId ) {
+        this.selectedDUIds[index] = selectedDUId;  // 若有選擇，則更新 selectedDUIds 數組
       }
     });
-  
-    this.DUElementsFormArray.controls.forEach((control, index) => {
-      const filteredDUOptions = this.DUOptions.filter(du => !this.selectedDUIds.includes(du.id) || du.id === this.selectedDUIds[index]);
-      control.get('DUElement')?.setValidators([Validators.required]);
-      control.get('DUElement')?.updateValueAndValidity();
+
+    // 使用 Set 去除重複的 DU ID
+    const uniqueSelectedDUIds = Array.from( new Set( this.selectedDUIds ) );
+
+    // 更新每個控件的選項，避免顯示已選擇的選項
+    this.DUElementsFormArray.controls.forEach(( control, index ) => {
+      const filteredDUOptions = this.DUOptions.filter( du => !uniqueSelectedDUIds.includes(du.id) || du.id === this.selectedDUIds[index] );
+      const uniqueFilteredDUOptions = filteredDUOptions.filter(( du, idx, self ) =>
+        idx === self.findIndex( d => d.id === du.id )  // 確保選項不重複
+      );
+      control.get('DUElement')?.setValidators([Validators.required]);  // 設定驗證器為必填
+      control.get('DUElement')?.updateValueAndValidity();  // 更新表單控件的有效性狀態
     });
   }
-  
+
   // 儲存已選擇的 RU IDs
   selectedRUIds: string[] = [];
 
-  // 更新 RU 選項
+  /**
+   * @2024/05/02 Update
+   * 更新 RU 選項
+   * @method updateRUOptions
+   * @returns {void}
+   * @description
+   * - 更新表單中 RU 選項的顯示，防止顯示重複的選項
+   */
   updateRUOptions() {
+    // 遍歷 RUElementsFormArray 的控件，獲取選擇的 RU ID
     this.RUElementsFormArray.controls.forEach((control, index) => {
-      const selectedRUId = control.get('RUElement')?.value;
+      const selectedRUId = control.get('RUElement')?.value;  // 從表單控件中獲取 RU ID
       if (selectedRUId) {
-        this.selectedRUIds[index] = selectedRUId;
+        this.selectedRUIds[index] = selectedRUId;  // 若有選擇，則更新 selectedRUIds 數組
       }
     });
-  
+
+    // 使用 Set 去除重複的 RU ID
+    const uniqueSelectedRUIds = Array.from(new Set(this.selectedRUIds));
+
+    // 更新每個控件的選項，避免顯示已選擇的選項
     this.RUElementsFormArray.controls.forEach((control, index) => {
-      const filteredRUOptions = this.RUOptions.filter(ru => !this.selectedRUIds.includes(ru.id) || ru.id === this.selectedRUIds[index]);
-      control.get('RUElement')?.setValidators([Validators.required]);
-      control.get('RUElement')?.updateValueAndValidity();
+      const filteredRUOptions = this.RUOptions.filter(ru => !uniqueSelectedRUIds.includes(ru.id) || ru.id === this.selectedRUIds[index]);
+      const uniqueFilteredRUOptions = filteredRUOptions.filter((ru, idx, self) =>
+        idx === self.findIndex(r => r.id === ru.id)  // 確保選項不重複
+      );
+      control.get('RUElement')?.setValidators([Validators.required]);  // 設定驗證器為必填
+      control.get('RUElement')?.updateValueAndValidity();  // 更新表單控件的有效性狀態
     });
   }
 
-  connectedDUOptions: UnusedNE[] = []; // 用於儲存 DU 網元
+  // 用於儲存 RU 可連接的 DU 網元
+  connectedDUOptions: UnusedNE[] = []; 
 
-  // 更新已連接的 DU 選項
-  // updateConnectedDUOptions() {
-  //   const uniqueSelectedDUIds = Array.from(new Set(this.selectedDUIds));
-  //   this.connectedDUOptions = this.DUOptions.filter(du => uniqueSelectedDUIds.includes(du.id));
-  //   console.log("In updateConnectedDUOptions(), the connectedDUOptions:", this.connectedDUOptions  );
-  // }
-
+  /** @2024/04/30 Add
+    * 更新已連接的 DU 選項
+    * @method updateConnectedDUOptions
+    * @returns {void}
+    * @description
+    * - 更新連接到的 DU 選項，去除重複項目
+    */
   updateConnectedDUOptions() {
+    // 使用 Set 去除 selectedDUIds 中的重複項目
     const uniqueSelectedDUIds = Array.from(new Set(this.selectedDUIds));
+    // 過濾 DUOptions 以得到與選擇的 ID 相符的選項
     this.connectedDUOptions = this.DUOptions.filter(du => uniqueSelectedDUIds.includes(du.id));
-  
-    // 去重操作: 過濾掉 connectedDUOptions 中的重複數據
+
+    // 去重複項目操作：過濾掉 connectedDUOptions 中的重複數據
     this.connectedDUOptions = this.connectedDUOptions.filter((du, index, self) =>
-      index === self.findIndex((d) => d.id === du.id)
+      index === self.findIndex((d) => d.id === du.id)  // 根據 ID 去重
     );
-  
+
+    // 輸出當前已連接的 DU 選項
     console.log("In updateConnectedDUOptions(), the connectedDUOptions:", this.connectedDUOptions);
   }
-  
-  
 
+  // 定義 Sample 檔名稱 @2024/05/02 Add
+  sampleFileName = 'BS_parameters_sample.xlsx'; 
 
   /** @2024/05/02 Update
    *  產生基站參數樣本檔案
    *  @method generateSampleConf
    *  @returns { void }
    *  @description
-   *  - 根據使用者選擇的基站類型（單體或分佈式），生成對應的基站參數配置樣本檔案
+   *  - 根據使用者選擇的基站類型（一體式或分佈式），生成對應的基站參數配置樣本檔案
    *  - 使用 XLSX 庫讀取預設的樣本 Excel 檔案，並根據使用者的設置修改相應的單元格內容
    *  - 處理不同類型的基站（CU、DU、RU）的參數配置，包括 gNBCUFunction、NRCellCU、gNBDUFunction、NRCellDU 等
    *  - 使用 XLSX 的工具函數（如 sheet_add_aoa）向 Excel 檔案的指定工作表中寫入數據
@@ -1026,68 +1161,71 @@ export class BSManagementComponent implements OnInit {
    *  - 函數中使用了大量的硬編碼索引（如 'A2'、'B2' 等），這使得代碼的可讀性和維護性降低
    *  - 可以考慮將一些常量或重複使用的字串提取出來，定義為單獨的變數，以提高代碼的可讀性
    **/
-  sampleFileName = 'BS_parameters_sample.xlsx';
   generateSampleConf() {
-    console.log( this.bsComponents ); // 打印基站組件的相關信息
+    console.log( this.bsComponents ); // 打印基站組件的相關訊息
    
-    // 獲取使用者選擇的基站類型（單體或分佈式）
+    // 獲取使用者選擇的基站類型（一體式或分佈式）
     const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
-    // 根據基站類型設置對應的數字標識（1：單體，2：分佈式）
+
+    // 根據基站類型設置對應的數字標識（1：一體式，2：分佈式）
     const bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
    
     // 發送 HTTP GET 請求，獲取預設的基站參數樣本 Excel 檔案
     this.http.get( 'assets/' + this.sampleFileName, { responseType: 'arraybuffer' } ).subscribe({
       next: ( buffer: ArrayBuffer ) => {
         // 使用 XLSX 庫讀取 Excel 檔案
-        const workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
-        console.log(workbook); // 打印讀取到的 Excel 工作簿對象
+        const workbook = XLSX.read( new Uint8Array( buffer ), { type: 'array' } );
+        console.log( workbook ); // 打印讀取到的 Excel 工作簿對象
         
         // 根據基站類型，向相應的工作表中寫入數據
-        if (bstype === "1") {
-          // 單體基站，寫入 gNBCUFunction、NRCellCU、gNBDUFunction、NRCellDU 工作表
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['gNBCUFunction'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['NRCellCU'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['gNBDUFunction'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['NRCellDU'], [[this.bsComponents.all![0].id]], { origin: 'A2' });
+        if ( bstype === "1" ) {
+
+          // 一體式基站，寫入 gNBCUFunction、NRCellCU、gNBDUFunction、NRCellDU 工作表
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['gNBCUFunction'], [[this.bsComponents.all![0].id]], { origin: 'A2' } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['NRCellCU'], [[this.bsComponents.all![0].id]], { origin: 'A2' } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['gNBDUFunction'], [[this.bsComponents.all![0].id]], { origin: 'A2' } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['NRCellDU'], [[this.bsComponents.all![0].id]], { origin: 'A2' } );
+
         } else {
+
           // 分佈式基站，只寫入 gNBCUFunction 工作表
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['gNBCUFunction'], [[this.bsComponents.cu![0].id]], { origin: 'A2' })
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['gNBCUFunction'], [[this.bsComponents.cu![0].id]], { origin: 'A2' } )
         }
         
         // 定義 CU 的參數配置鍵
         const cuKeys = [{ f: 'gNBCUFunction!D2' }, { f: 'gNBCUFunction!E2' }, { f: 'gNBCUFunction!G2' }, { f: 'gNBCUFunction!H2' }];
         // 向 peeParametersList_CU、vnfParametersList_CU、EP_NgC、EP_NgU 工作表寫入 CU 的參數配置鍵
-        XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_CU'], [cuKeys], { origin: 'B2' });
-        XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_CU'], [cuKeys], { origin: 'B2' });
-        XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_NgC'], [cuKeys], { origin: 'B2' });
-        XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_NgU'], [cuKeys], { origin: 'B2' });
+        XLSX.utils.sheet_add_aoa( workbook.Sheets['peeParametersList_CU'], [cuKeys], { origin: 'B2' } );
+        XLSX.utils.sheet_add_aoa( workbook.Sheets['vnfParametersList_CU'], [cuKeys], { origin: 'B2' } );
+        XLSX.utils.sheet_add_aoa( workbook.Sheets['EP_NgC'], [cuKeys], { origin: 'B2' } );
+        XLSX.utils.sheet_add_aoa( workbook.Sheets['EP_NgU'], [cuKeys], { origin: 'B2' } );
    
         // 根據 DU 的數量，向 EP_F1C_CU、EP_F1U_CU 工作表寫入 CU 的參數配置鍵
-        for (let i = 0; i < this.duCount; i++) {
-          const originIndex = 'B' + (i + 2);
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1C_CU'], [cuKeys], { origin: originIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1U_CU'], [cuKeys], { origin: originIndex });
+        for ( let i = 0; i < this.duCount; i++ ) {
+          const originIndex = 'B' + ( i + 2 );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['EP_F1C_CU'], [cuKeys], { origin: originIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['EP_F1U_CU'], [cuKeys], { origin: originIndex } );
         }
    
         // 根據 RU 的數量，向 NRCellCU 工作表寫入 CU 的參數配置鍵
-        for (let i = 0; i < this.ruCount; i++) {
+        for ( let i = 0; i < this.ruCount; i++ ) {
           let cuKeys: any[] = [];
-          if (bstype === "1") {
+          if ( bstype === "1" ) {
             cuKeys = [this.bsComponents.all![0].id, '', ...cuKeys];
           } else {
             cuKeys = [this.bsComponents.ru![i].id, '', ...cuKeys];
           }
-          const originIndex = 'A' + (i + 2);
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['NRCellCU'], [cuKeys], { origin: originIndex });
-          if (bstype === "2") {
-            workbook.Sheets['NRCellCU']['A' + (i + 2)].c = [{ a: 'iRM', t: this.bsComponents.ru![i].name }];
-            workbook.Sheets['NRCellCU']['A' + (i + 2)].c.hidden = true;
+          const originIndex = 'A' + ( i + 2 );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['NRCellCU'], [cuKeys], { origin: originIndex } );
+          if ( bstype === "2" ) {
+            workbook.Sheets['NRCellCU']['A' + ( i + 2 )].c = [{ a: 'iRM', t: this.bsComponents.ru![i].name }];
+            workbook.Sheets['NRCellCU']['A' + ( i + 2 )].c.hidden = true;
           }
         }
    
         // 根據 RU 的數量，向 peeParametersList_NRCellCU、vnfParametersList_NRCellCU、s_NSSAI_leafList_NRCellCU 工作表寫入 NRCellCU 的參數配置鍵
-        for (let i = 0; i < this.ruCount; i++) {
-          const originIndex = 'B' + (i + 2);
+        for ( let i = 0; i < this.ruCount; i++ ) {
+          const originIndex = 'B' + ( i + 2 );
           const cellCuKeys = [
             { f: 'NRCellCU!C' + (i + 2) },
             { f: 'NRCellCU!D' + (i + 2) },
@@ -1095,22 +1233,22 @@ export class BSManagementComponent implements OnInit {
             { f: 'NRCellCU!F' + (i + 2) },
             { f: 'NRCellCU!G' + (i + 2) }
           ];
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_NRCellCU'], [cellCuKeys], { origin: originIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_NRCellCU'], [cellCuKeys], { origin: originIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['s_NSSAI_leafList_NRCellCU'], [cellCuKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['peeParametersList_NRCellCU'], [cellCuKeys], { origin: originIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['vnfParametersList_NRCellCU'], [cellCuKeys], { origin: originIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['s_NSSAI_leafList_NRCellCU'], [cellCuKeys], { origin: originIndex } );
         }
    
         // 根據 DU 的數量，向 gNBDUFunction 工作表寫入 DU 的參數配置鍵
-        for (let i = 0; i < this.duCount; i++) {
+        for ( let i = 0; i < this.duCount; i++ ) {
           let cuKeys: any[] = [];
-          if (bstype === "1") {
+          if ( bstype === "1" ) {
             cuKeys = [this.bsComponents.all![0].id, '', '', '', ...cuKeys];
           } else {
             cuKeys = [this.bsComponents.du![i].id, '', '', '', ...cuKeys];
           }
-          const originIndex = 'A' + (i + 2);
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['gNBDUFunction'], [cuKeys], { origin: originIndex });
-          if (bstype === "2") {
+          const originIndex = 'A' + ( i + 2 );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['gNBDUFunction'], [cuKeys], { origin: originIndex } );
+          if ( bstype === "2" ) {
             workbook.Sheets['gNBDUFunction']['A' + (i + 2)].c = [{ a: 'iRM', t: this.bsComponents.du![i].name }];
             workbook.Sheets['gNBDUFunction']['A' + (i + 2)].c.hidden = true;
           }
@@ -1123,20 +1261,20 @@ export class BSManagementComponent implements OnInit {
             { f: 'gNBDUFunction!G' + (i + 2) },
             { f: 'gNBDUFunction!H' + (i + 2) }
           ];
-          const duOriginIndex = 'B' + (i + 2);
+          const duOriginIndex = 'B' + ( i + 2 );
           // 向 peeParametersList_DU、vnfParametersList_DU、EP_F1C_DU、EP_F1U_DU 工作表寫入 DU 的參數配置鍵
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_DU'], [duKeys], { origin: duOriginIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_DU'], [duKeys], { origin: duOriginIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1C_DU'], [duKeys], { origin: duOriginIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['EP_F1U_DU'], [duKeys], { origin: duOriginIndex });
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['peeParametersList_DU'], [duKeys], { origin: duOriginIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['vnfParametersList_DU'], [duKeys], { origin: duOriginIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['EP_F1C_DU'], [duKeys], { origin: duOriginIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['EP_F1U_DU'], [duKeys], { origin: duOriginIndex } );
         }
    
         // 根據 RU 的數量，向 NRCellDU 工作表寫入 DU 的參數配置鍵
-        for (let i = 0; i < this.ruCount; i++) {
-          const duIndex = this.getDuIndexByRuIndex(i);
+        for ( let i = 0; i < this.ruCount; i++ ) {
+          const duIndex = this.getDuIndexByRuIndex( i );
           let duKeys: any[] = [];
-          if (duIndex >= 0) {
-            if (bstype === "1") {
+          if ( duIndex >= 0 ) {
+            if ( bstype === "1" ) {
               duKeys = [this.bsComponents.all![0].id, '', ...duKeys, { f: 'NRCellCU!G' + (i + 2) }];
             } else {
               duKeys = [this.bsComponents.ru![i].id, '', ...duKeys, { f: 'NRCellCU!G' + (i + 2) }];
@@ -1144,7 +1282,7 @@ export class BSManagementComponent implements OnInit {
           }
           const originIndex = 'A' + (i + 2);
           XLSX.utils.sheet_add_aoa(workbook.Sheets['NRCellDU'], [duKeys], { origin: originIndex });
-          if (bstype === "2") {
+          if ( bstype === "2" ) {
             workbook.Sheets['NRCellDU']['A' + (i + 2)].c = [{ a: 'iRM', t: this.bsComponents.ru![i].name }];
             workbook.Sheets['NRCellDU']['A' + (i + 2)].c.hidden = true;
           }
@@ -1152,33 +1290,33 @@ export class BSManagementComponent implements OnInit {
           // 定義 NRCellDU 的參數配置鍵
           const cellDuKeys = ['', { f: 'NRCellDU!C' + (i + 2) }, { f: 'NRCellDU!D' + (i + 2) }, { f: 'NRCellDU!E' + (i + 2) }, { f: 'NRCellDU!F' + (i + 2) }, { f: 'NRCellDU!G' + (i + 2) }, { f: 'NRCellDU!H' + (i + 2) }];
           // 向 peeParametersList_NRCellDU、vnfParametersList_NRCellDU、s_NSSAI_leafList_NRCellDU、NRSectorCarrierRef_NRCellDU、bWPRef_leafList_NRCellDU 工作表寫入 NRCellDU 的參數配置鍵
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_NRCellDU'], [cellDuKeys], { origin: originIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_NRCellDU'], [cellDuKeys], { origin: originIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['s_NSSAI_leafList_NRCellDU'], [cellDuKeys], { origin: originIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['NRSectorCarrierRef_NRCellDU'], [cellDuKeys], { origin: originIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['bWPRef_leafList_NRCellDU'], [cellDuKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['peeParametersList_NRCellDU'], [cellDuKeys], { origin: originIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['vnfParametersList_NRCellDU'], [cellDuKeys], { origin: originIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['s_NSSAI_leafList_NRCellDU'], [cellDuKeys], { origin: originIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['NRSectorCarrierRef_NRCellDU'], [cellDuKeys], { origin: originIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['bWPRef_leafList_NRCellDU'], [cellDuKeys], { origin: originIndex } );
    
           // 定義 NRSectorCarrier 的參數配置鍵
           const nrSectorKeys = ['', { f: 'NRSectorCarrierRef_NRCellDU!B' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!C' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!D' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!E' + (i + 2) }, { f: 'NRSectorCarrierRef_NRCellDU!F' + (i + 2) }];
           // 向 NRSectorCarrier 工作表寫入 NRSectorCarrier 的參數配置鍵
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['NRSectorCarrier'], [nrSectorKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['NRSectorCarrier'], [nrSectorKeys], { origin: originIndex } );
    
           // 定義 NRSectorCarrier 的參數配置鍵（第二部分）
           const nrSectorKeys2 = ['', { f: 'NRSectorCarrier!B' + (i + 2) }, { f: 'NRSectorCarrier!C' + (i + 2) }, { f: 'NRSectorCarrier!D' + (i + 2) }, { f: 'NRSectorCarrier!E' + (i + 2) }, { f: 'NRSectorCarrier!F' + (i + 2) }, { f: 'NRSectorCarrier!A' + (i + 2) }];
           // 向 peeParametersList_NRSector、vnfParametersList_NRSector 工作表寫入 NRSectorCarrier 的參數配置鍵（第二部分）
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_NRSector'], [nrSectorKeys2], { origin: originIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_NRSector'], [nrSectorKeys2], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['peeParametersList_NRSector'], [nrSectorKeys2], { origin: originIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['vnfParametersList_NRSector'], [nrSectorKeys2], { origin: originIndex } );
    
           // 定義 BWP 的參數配置鍵
           const bwpRefKey = ['', { f: 'bWPRef_leafList_NRCellDU!B' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!C' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!D' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!E' + (i + 2) }, { f: 'bWPRef_leafList_NRCellDU!F' + (i + 2) }];
           // 向 BWP 工作表寫入 BWP 的參數配置鍵
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['BWP'], [bwpRefKey], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['BWP'], [bwpRefKey], { origin: originIndex } );
 
           // 定義 BWP 的參數配置鍵（第二部分）
           const bwpKeys = ['', { f: 'BWP!B' + (i + 2) }, { f: 'BWP!C' + (i + 2) }, { f: 'BWP!D' + (i + 2) }, { f: 'BWP!E' + (i + 2) }, { f: 'BWP!F' + (i + 2) }, { f: 'BWP!A' + (i + 2) }];
           // 向 peeParametersList_BWP、vnfParametersList_BWP 工作表寫入 BWP 的參數配置鍵（第二部分）
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['peeParametersList_BWP'], [bwpKeys], { origin: originIndex });
-          XLSX.utils.sheet_add_aoa(workbook.Sheets['vnfParametersList_BWP'], [bwpKeys], { origin: originIndex });
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['peeParametersList_BWP'], [bwpKeys], { origin: originIndex } );
+          XLSX.utils.sheet_add_aoa( workbook.Sheets['vnfParametersList_BWP'], [bwpKeys], { origin: originIndex } );
         }
 
         // 將修改後的 Excel 工作簿寫入到本地檔案
@@ -1197,18 +1335,19 @@ export class BSManagementComponent implements OnInit {
 
   /** @2024/04/30 Add 
     * 根據 RU 的索引獲取對應的 DU 索引
+    * @method getDuIndexByRuIndex
     * @param {number} ruIndex - RU 的索引
     * @returns {number} - 對應的 DU 索引，如果沒有找到則返回 -1
     */
   getDuIndexByRuIndex( ruIndex: number ): number {
 
-    // 獲取使用者選擇的基站類型（單體或分佈式）
+    // 獲取使用者選擇的基站類型（一體式或分佈式）
     const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
 
-    // 根據基站類型設置對應的數字標識（1：單體，2：分佈式）
+    // 根據基站類型設置對應的數字標識（1：一體式，2：分佈式）
     const bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
   
-    // 如果是單體基站，直接返回 0，因為只有一個 DU
+    // 如果是一體式基站，直接返回 0，因為只有一個 DU
     if ( bstype === "1" ) {
       return 0;
     }
@@ -1228,140 +1367,259 @@ export class BSManagementComponent implements OnInit {
     return -1;
   }
 
-
   /**
-    * @2024/04/28 Add
-    * 使用 ViewChild 裝飾器引用 DOM 中的 'fileInput' 元素。
-    */
+   * @2024/04/28 Add
+   * 引用 DOM 中的 'fileInput' 元素
+   * @ViewChild - Angular 裝飾器,用於訪問模板中的 DOM 元素
+   * @type { ElementRef }
+   */
   @ViewChild('fileInput') fileInput!: ElementRef;
 
   /**
-    * @2024/04/28 Add
-    * 觸發文件輸入元素的點擊事件。
-    */
+   * @2024/04/28 Add
+   * 觸發文件輸入元素的點擊事件
+   * @method triggerFileInput
+   * @returns {void}
+   * @description
+   * - 直接操作 DOM,觸發 input 元素的 click 事件
+   */
   triggerFileInput() {
-  // 觸發文件輸入元素的點擊事件
-  this.fileInput.nativeElement.click();
+    // 使用 nativeElement 屬性訪問實際的 DOM 元素並調用 click 方法
+    this.fileInput.nativeElement.click();
   }
 
   /**
-    * @2024/04/28 Add
-    * 用於儲存上傳的檔案名稱。
-    */
+   * @2024/04/28 Add
+   * 儲存用戶選擇的文件名
+   * @type {string} 初始化為空字符串
+   */
   selectedFileName: string = '';
 
   /**
-    * @2024/04/28 Add
-    * 當用戶選擇檔案時觸發。
-    * @param event 文件選擇事件。
-    */
+   * @2024/04/28 Add
+   * 文件選擇事件處理函數
+   * @method onFileSelected
+   * @param event 文件選擇事件
+   * @returns {void}
+   * @description
+   * - 處理文件輸入元素的 change 事件, 獲取選擇的文件
+   */
   onFileSelected( event: Event ) {
-    // 從事件中獲取目標元素
+    // 從事件中獲取當前目標元素，並將其轉型為 HTMLInputElement
     const element = event.currentTarget as HTMLInputElement;
-    // 初始化文件變數為 null
-    let file: File | null = null;
-    // 如果元素有文件且文件數量大於 0
+    let file: File | null = null;  // 定義一個變量來存儲選擇的文件，初始化為 null
+
+    // 檢查該輸入元素是否有文件被選擇
     if ( element.files && element.files.length > 0 ) {
-      // 獲取第一個文件
-      file = element.files.item( 0 );
+        // 獲取第一個選擇的文件
+        file = element.files.item( 0 );
     }
-    // 如果有選擇文件
+
+    // 如果有文件被選擇
     if ( file ) {
-      // 將選擇的檔案設置到 ConfigurationFile 控件上
-      this.bsFormGroup_Description.patchValue({
-        ConfigurationFile: file
-      });
-      // 更新 selectedFileName 的值
-      this.selectedFileName = file.name;
-      // 調用你用於處理文件的方法
-      this.handleBsParametersFile( file );
+        // 更新表單控件 'ConfigurationFile' 的值
+        this.bsFormGroup_Description.patchValue( {ConfigurationFile: file} );
+        // 更新選擇的文件名稱，用於顯示或其他邏輯
+        this.selectedFileName = file.name;
+        // 調用處理文件的方法
+        this.handleBsParametersFile( file );
     }
   }
 
-  // @2024/04/28 Add
-  // 檢查是否已上傳檔案並標記為 touched
+  /**
+  * @2024/04/28 Add
+  * 檢查文件是否已上傳並標記為 touched
+  * @method checkAndMarkFileAsTouched
+  * @returns {void}
+  * @description
+  * - 用於表單驗證, 確保用戶已選擇文件
+  */
   checkAndMarkFileAsTouched() {
-    // 檢查 ConfigurationFile 控件是否有值
+    // 檢查表單控件 'ConfigurationFile' 是否有文件被選擇
     if ( !this.bsFormGroup_Description.get('ConfigurationFile')?.value ) {
-      // 如果沒有值，則標記為 touched 以顯示錯誤信息
-      this.bsFormGroup_Description.get('ConfigurationFile')?.markAsTouched();
+        // 若無文件被選擇，將該表單控件標記為 touched，用於觸發任何相關的驗證消息顯示
+        this.bsFormGroup_Description.get('ConfigurationFile')?.markAsTouched();
     }
   }
 
+  /** @2024/05/02 Update
+   *  處理基站參數文件
+   *  @param {File} file 上傳的文件
+   *  @method handleBsParametersFile
+   *  @returns {void}
+   *  @description
+   *  - 讀取文件並解析為 JSON 對象
+   */
+  handleBsParametersFile( file: File ) {
 
-  handleBsParametersFile(file: File) {
+    // 創建 FileReader 實例，用於讀取文件
     const reader: FileReader = new FileReader();
-    reader.onload = (e: any) => {
-      const bstr: string = e.target.result;
-      const workbook: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
-  
+
+    // 當文件讀取完成時觸發的事件
+    reader.onload = ( e: any ) => {
+      // 從事件中提取 ArrayBuffer，即文件的二進制數據
+      const arrayBuffer: ArrayBuffer = e.target.result;
+
+      // 使用 XLSX.read 函數來讀取 ArrayBuffer，指定讀取類型為 'array'
+      const workbook: XLSX.WorkBook = XLSX.read( arrayBuffer, { type: 'array' } );
+      // 初始化一個空對象來存儲從每個工作表解析出來的數據
       const allData: { [key: string]: any[] } = {};
-  
-      workbook.SheetNames.forEach(function(sheetName) {
-        const object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-        allData[sheetName] = object;
+
+      // 遍歷所有工作表的名稱
+      workbook.SheetNames.forEach( function( sheetName ) {
+        // 將每個工作表轉換為 JSON 對象
+        const object = XLSX.utils.sheet_to_json( workbook.Sheets[sheetName] );
+        // 將轉換後的數據儲存到 allData 對象中
+        allData[sheetName] = object;  // 儲存處理後的數據
       });
-  
-      // 將處理後的資料存儲在 bsCreationData.componentsInfo 中
-      this.bsCreationData.componentsInfo = allData;
+
+      // 將解析的數據存儲到應用的 state 或 model 中
+      this.bsCreationData.componentsInfo = allData;  // 更新應用數據
     };
-    reader.readAsBinaryString(file);
+
+    // 使用 readAsArrayBuffer 方法讀取文件，這是一種安全且更新的方法來處理文件數據
+    reader.readAsArrayBuffer( file );
   }
 
-// 表單提交時的處理函數
-onSubmit() {
-  // 獲取基站類型
-  const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
-  const bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
 
-  // 根據基站類型構建提交數據
-  const submitData: any = {
-    session: this.sessionId,
-    ...this.bsCreationData
+  // @2024/04/29 Add
+  // 用於收集當發送 POST 建立基站時所需的承載資訊，
+  // 存儲用戶在表單中選擇的所有數據的服務或元件屬性
+  bsCreationData: any = {
+    name: null,
+    bstype: null,
+    description: null,
+    components: null,
+    componentsInfo: null
   };
 
-  // 如果是一體式基站,添加位置信息
-  if (bstype === "1") {
-    submitData.position = this.bsComponents.all?.[0].position;
+  /** @2024/04/30 Update
+   *  用於每步驟刷新收集建立基站 POST 所需之 JSON 數據
+   *  @method updateBsCreationData
+   *  @returns {void}
+   *  @description
+   *    - 依據用戶在表單中的輸入，更新用於提交基站建立請求的數據
+   */
+  updateBsCreationData() {
+
+    // 從基站名稱表單控件獲取值並賦予基站建立數據對象
+    this.bsCreationData.name = this.bsFormGroup_Name.get('BSName')?.value;
+
+    // 從基站描述表單控件獲取值並賦予基站建立數據對象
+    this.bsCreationData.description = this.bsFormGroup_Description.get('LocationDescription')?.value;
+
+    // 從基站類型表單控件獲取值，並轉換為對應的數據代碼
+    const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
+    this.bsCreationData.bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
+
+    // 根據基站類型進行不同的數據處理
+    if ( this.bsCreationData.bstype === "1" ) {
+      // 若為 All-In-One 類型，僅需記錄一個綜合網元 ID
+      const selectedId = this.bsFormGroup_Elements.get('allInOneElement')?.value;
+      this.bsCreationData.components = [ { type: 'cu+du+ru', id: selectedId } ];
+    } else if ( this.bsCreationData.bstype === "2" ) {
+      // 若為分佈式，則需記錄 CU、DU、RU 的 ID 和配置
+      const cu = this.bsFormGroup_Elements.get('CUElement')?.value;
+      // 映射 DU 表單陣列中的所有值，收集 DU ID
+      const duElements = this.DUElementsFormArray.value.map( ( du: any ) => ( { id: du.DUElement } ) );
+      // 映射 RU 表單陣列中的所有值，收集 RU ID 和位置
+      const ruElements = this.RUElementsFormArray.value.map( ( ru: any ) => ({
+        id: ru.RUElement,
+        position: `[${ru.latitude}, ${ru.longitude}]`,
+        duid: ru.connectedDU
+      }));
+
+      // 組織分佈式網元結構
+      const components: Components_Dist = {};
+
+      // 對 DU 進行迭代，並對每個 DU 的相關 RU 數據進行處理
+      components[cu] = duElements.reduce( ( acc: duID, du: any ) => {
+        const filteredRUs = ruElements.filter( ( ru: any ) => ru.duid === du.id );
+        const ruMap: ruID[] = filteredRUs.map( ( ru: any ) => ({
+          [ru.id]: ru.position
+        }));
+        acc[du.id] = ruMap;
+        return acc;
+      }, {});
+
+      // 將組織好的網元結構賦予基站建立數據對象
+      this.bsCreationData.components = components;
+    }
+
+    // 輸出最終用於提交的基站建立數據
+    console.log( "bsCreationData for POST:", this.bsCreationData );
   }
 
-  // 檢查是否在 Local 環境下模擬執行
-  if (this.commonService.isLocal) {
-    // Local 模式下模擬基站建立過程
-    console.log("Local 模擬基站建立,提交的數據:", submitData);
-    // Local 模式建立成功後,執行其他操作...
-  } else {
-    // 生產環境下向後端 API 發送基站建立請求
-    const apiObservable = bstype === "1"
-      ? this.API_BS.createBs(submitData)
-      : this.API_BS.createDistributedBs(submitData);
+  /**
+   * @2024/04/30 Add
+   * 表單提交事件處理
+   * @method BsCreation_Submit
+   * @returns {void}
+   * @description
+   * - 處理基站建立表單的提交,根據基站類型構建數據並執行相應的 API 調用
+   */
+  BsCreation_Submit() {
+    console.log("BsCreation_Submit() - Start");
 
-    apiObservable.subscribe({
-      next: (response) => {
-        // 處理成功響應
-        console.log("基站建立成功:", response);
-        // 建立成功後,執行其他操作...
-        this.getQueryBsList(); // 刷新
-      },
-      error: (error) => {
-        // 處理失敗響應
-        console.error("基站建立失敗:", error);
-        // 例如顯示錯誤訊息給用戶
-      }
-    });
+    // 獲取表單控件 'BSType' 的值，用於後續判斷基站的類型
+    const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
+    // 決定基站類型: "1" 表示一體式基站, "2" 表示分布式基站, 若無匹配則為 null
+    const bstype = typeValue === 'allInOne' ? "1" : typeValue === 'dist' ? "2" : null;
+
+    // 構建提交數據，包括會話ID和其他基站建立相關數據
+    const submitData: any = {
+      session: this.sessionId,
+      ...this.bsCreationData
+    };
+
+    // 若為一體式基站，添加位置訊息至提交數據中
+    if ( bstype === "1" ) {
+      submitData.position = this.bsComponents.all?.[0].position;
+    }
+
+    // 判斷是否處於本地模式以進行模擬或生產環境下進行實際API調用
+    if ( this.commonService.isLocal ) {
+
+      // 本地模式下僅打印模擬的提交數據
+      console.log("Local 模擬基站建立，提交的數據:", submitData);
+
+    } else {
+
+      // 生產環境下根據基站類型執行對應的API調用
+      const apiObservable = bstype === "1"
+        ? this.API_BS.createBs( submitData )
+        : this.API_BS.createDistributedBs( submitData );
+
+      apiObservable.subscribe({
+
+        next: ( response ) => {
+
+          // 處理API成功響應，通常包括日誌輸出及後續處理
+          console.log("基站建立成功:", response);
+
+          // 基站建立成功後刷新基站列表
+          this.getQueryBsList();
+
+        },
+        error: ( error ) => {
+          // 處理API失敗響應，通常為錯誤日誌輸出
+          console.error( "基站建立失敗:", error );
+        }
+      });
+    }
+
+    // 關閉基站建立窗口
+    this.bsCreationWindowRef.close();
+
+    // 重置基站建立表單，清空所有已填寫的資料
+    this.resetBsCreationForm();
+
+    // 函數執行完畢時在控制台輸出
+    console.log("BsCreation_Submit() - End");
   }
 
-  // 關閉基站建立視窗
-  this.bsCreationWindowRef.close();
 
-  // 重置基站建立表單,清空所有已填寫的資料
-  this.resetBsCreationForm();
+// ↑ For Create BS @2024/05/02 Update ↑
 
-  // 在控制台記錄函數執行結束的訊息
-  console.log("onSubmit() - End");
-}
-
-
-// ↑ For Create BS @2024/04/26 Add ↑
 
 }

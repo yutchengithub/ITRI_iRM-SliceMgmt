@@ -441,8 +441,8 @@
 
   <!-- 按鈕組容器，用於對齊並中心顯示按鈕 -->
   <div class="buttons buttons-centered">
-    <!-- 確認按鈕：點擊時呼叫 FieldCreation_Submit() 方法來提交"基站建立"的資料，並關閉對話框 -->
-    <button type="button" (click)="onSubmit()" mat-dialog-close>
+    <!-- 確認按鈕：點擊時呼叫 BsCreation_Submit() 方法來提交"基站建立"的資料，並關閉對話框 -->
+    <button type="button" (click)="BsCreation_Submit()" mat-dialog-close>
       {{ languageService.i18n['confirm'] }}
     </button>
     <!-- 取消按鈕：點擊時呼叫 resetBsCreationForm() 方法來重置"基站建立"的表單，並關閉對話框 -->
