@@ -643,16 +643,13 @@ export class BSManagementComponent implements OnInit {
   
           // Define components with the appropriate type
           const components: Components_Dist = {};
-  
           components[cu] = duElements.reduce((acc: duID, du: any) => {
-              const filteredRUs = ruElements.filter((ru: any) => ru.duid === du.id);
-              const ruMap: ruID = filteredRUs.reduce((ruAcc: ruID, ru: any) => {
-                  ruAcc[ru.id] = ru.position;
-                  return ruAcc;
-              }, {});
-              
-              acc[du.id] = [ruMap];  // Adjust this if the structure needs to be different
-              return acc;
+            const filteredRUs = ruElements.filter((ru: any) => ru.duid === du.id);
+            const ruMap: ruID[] = filteredRUs.map((ru: any) => ({
+              [ru.id]: ru.position
+            }));
+            acc[du.id] = ruMap;
+            return acc;
           }, {});
   
           this.bsCreationData.components = components;
