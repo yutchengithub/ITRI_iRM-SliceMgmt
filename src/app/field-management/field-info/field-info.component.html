@@ -1306,13 +1306,15 @@
 				</h4>
 
 				<div class="tabs">
+					
+					<!-- @2024/05/02 Update - 依據選擇的計算項目控制顯示/隱藏頁籤 -->
 					<mat-button-toggle-group name="fieldOptimizationResultType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldOptimizationResultType" (change)="changefieldOptimizationResultType($event)">
-						<mat-button-toggle value="cco" >CCO</mat-button-toggle>
-						<mat-button-toggle value="anr" >ANR</mat-button-toggle>
-						<mat-button-toggle value="pci" >PCI</mat-button-toggle>
+						<mat-button-toggle *ngIf="calculationCategories.includes('cco')" value="cco">CCO</mat-button-toggle>
+						<mat-button-toggle *ngIf="calculationCategories.includes('anr')" value="anr">ANR</mat-button-toggle>
+						<mat-button-toggle *ngIf="calculationCategories.includes('pci')" value="pci">PCI</mat-button-toggle>
 					</mat-button-toggle-group>
 				</div>
-
+				
 				<!-- 當優化正在計算時顯示加載進度條 -->
 				<ng-container *ngIf="calculateSON_Loading">
 					<div class="progressBar">
