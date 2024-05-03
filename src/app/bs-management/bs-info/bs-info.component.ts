@@ -36,6 +36,8 @@ import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';      
 import { localNEList } from '../../shared/local-files/NE/For_queryBsComponentList'; // @2024/03/27 Add
 import { localCurrentBsFmList } from '../../shared/local-files/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
 
+// @2024/05/03 Add
+import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
 
 // 2024/04/01 Add
 // 搜尋基站告警用
@@ -66,10 +68,12 @@ export class BSInfoComponent implements OnInit {
     private          route: ActivatedRoute,
     private             fb: FormBuilder,
     private         dialog: MatDialog,
-    public   commonService: CommonService,
-    public languageService: LanguageService,
-    public  spinnerService: SpinnerService,
+    private          location: Location,      // @2024/05/03 Add
+    public      commonService: CommonService,
+    public    languageService: LanguageService,
+    public     spinnerService: SpinnerService,
     private changeDetectorRef: ChangeDetectorRef,
+    
 
     public  API_BS: apiForBSMgmt,           // @2024/03/25 Add for import API of BS Management
     public  bsInfo_LocalFiles: localBSInfo, // @2024/03/25 Add for import BS Info Local Files 
@@ -173,13 +177,13 @@ export class BSInfoComponent implements OnInit {
     //});
     //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
 
-   // this.hideSpinner();  // 完成後隱藏 spinner
-
   }
 
-  // 用於返回 BS 主頁 @2024/03/25 Add
+  // @2024/05/03 Update
+  // 返回使用的前個頁面
   back() {
-    this.router.navigate( ['/main/bs-mgr'] );
+    this.location.back();
+    //this.router.navigate( ['/main/bs-mgr'] ); // 返回 BS 主頁
   }
 
   // @2024/04/17 Add

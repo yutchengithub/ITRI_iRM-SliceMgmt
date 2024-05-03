@@ -15,6 +15,9 @@ import { Subscription } from 'rxjs';
 import { XMLParser } from "fast-xml-parser";
 import * as xmlJs from 'xml-js';
 
+// @2024/05/03 Add
+import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
+
 //component Info
 export interface ComponentInfo {
   id: string;
@@ -184,6 +187,7 @@ export class ComponentInfoComponent implements OnInit {
     public commonService: CommonService,
     private fb: FormBuilder,
     private dialog: MatDialog,
+    private       location: Location,      // @2024/05/03 Add
     public languageService: LanguageService
   ) {
     this.severitys = this.commonService.severitys;
@@ -628,8 +632,11 @@ export class ComponentInfoComponent implements OnInit {
     return this.commonService.severityText(severity);
   }
 
+  // @2024/05/03 Update
+  // 返回使用的前個頁面
   back() {
-    this.router.navigate(['/main/component-mgr']);
+    this.location.back();
+    //this.router.navigate( ['/main/component-mgr'] ); // 返回 NE 主頁
   }
 
   goFaultMgr() {

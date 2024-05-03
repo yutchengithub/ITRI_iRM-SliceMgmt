@@ -45,14 +45,15 @@ export const TwLanguage = {
   'table.delete':'刪除',
   
   // Common Items (共用項目)
+  "back": '返回',
   'ok':'確定',
   'confirm':'確認',             // @2024/01/10 Add by yuchen
   'cancel':'取消',
   'search':'搜尋',
   'search_criteria':'篩選條件',  // @12/04 Add by yuchen
   'clear_search':'重置搜尋',     // @11/24 Add by yuchen
-  'close': '關閉',              // @2024/01/22 Add
-  'clear_select':'重置選擇',   // @2024/04/25 Add
+  'close': '關閉',               // @2024/01/22 Add
+  'clear_select':'重置選擇',     // @2024/04/25 Add
 
   // Field Management (場域管理) @11/30 Add by yuchen
   'field.list':'場域列表',
@@ -207,8 +208,6 @@ export const TwLanguage = {
   'field.legend_all-in-one_bs':'一體式基站',  // @12/28 Add
   'field.legend_dist_bs':'分佈式基站',       // @12/28 Add
   
-
-
   'field.selectOptimizationParameters': '選擇優化參數',
   'field.selectCalculationParameters': '選擇計算參數',
 

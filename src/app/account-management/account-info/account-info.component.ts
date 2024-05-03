@@ -10,6 +10,9 @@ import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
 
+// @2024/05/03 Add
+import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
+
 export interface AccountInfo {
   id: string;
   key: string;
@@ -75,6 +78,7 @@ export class AccountInfoComponent implements OnInit {
     public commonService: CommonService,
     private fb: FormBuilder,
     private dialog: MatDialog,
+    private       location: Location,      // @2024/05/03 Add
     public languageService: LanguageService
   ) {
     this.severitys = this.commonService.severitys;
@@ -94,6 +98,13 @@ export class AccountInfoComponent implements OnInit {
       console.log('cloudId=' + this.cloudId + ', cloudName=' + this.cloudName);
       this.getAccountInfo();
     });
+  }
+
+  // @2024/05/03 Update
+  // 返回使用的上個頁面
+  back() {
+    this.location.back();
+    // this.router.navigate(['/main/account-mgr']); // 返回 account 主頁
   }
 
   roleDisplayName(role: string): string {
@@ -171,9 +182,6 @@ export class AccountInfoComponent implements OnInit {
   nfRefresh() {
     // refresh
     this.accInfoRefreshTimeout = window.setTimeout(() => this.getAccountInfo(), this.accInfoRefreshTime * 1000);
-  }
-  back() {
-    this.router.navigate(['/main/account-mgr']);
   }
 
   openUpdateModel() {

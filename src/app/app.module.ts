@@ -101,17 +101,22 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 
-import { FormBuilder, FormGroup } from '@angular/forms';       // @2024/01/31 Add
-import { MatInputModule } from '@angular/material/input';      // @2024/01/31 Add
-import { MatStepperModule } from '@angular/material/stepper';  // @2024/01/31 Add
+import { MatInputModule }     from '@angular/material/input';     // @2024/01/31 Add
+import { MatStepperModule }   from '@angular/material/stepper';   // @2024/01/31 Add
 import { MatExpansionModule } from '@angular/material/expansion'; // 用於縮合效果 @2024/02/29 Add
-import { MatCheckboxModule } from '@angular/material/checkbox'; // @2024/03/30 Add
+import { MatCheckboxModule }  from '@angular/material/checkbox';  // @2024/03/30 Add
+
+// @2024/05/03 Add
+import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
 
 // Services
 import { CommonService } from './shared/common.service';
 import { LanguageService } from './shared/service/language.service';
-import { SpinnerService } from './shared/service/spinner.service'; // 用於控制顯示 Spinner @2024/04/17 Add
+import { SpinnerService } from './shared/service/spinner.service';        // 用於控制顯示 Spinner @2024/04/17 Add
+import { FieldStateService } from './shared/service/field-state.service'; // 用於跟蹤場域頁面的 showMapModel 的顯示模式狀態 @2024/05/03 Add
+import { NavigationService } from './shared/service/navigation.service';  // 用於跟蹤路由歷史 @2024/05/03 Add
 import { NgxSpinnerModule } from "ngx-spinner";
+
 
 // Pipe 管道
 import { TruncatePipe } from './shared/pipes/truncate.pipe';             // @11/16 Add by yuchen 
@@ -249,7 +254,7 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     MatCheckboxModule,  // @2024/03/30 Add
 
     BrowserAnimationsModule,
-    SpinnerModule,// @2024/04/17 Add
+    SpinnerModule,      // @2024/04/17 Add
     NgxSpinnerModule
   ],
   providers: [
@@ -257,6 +262,9 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     LanguageService,
     CommonService,
     SpinnerService,     // @2024/04/17 Add for Control Spinner
+    Location,           // 在 providers 中提供 Location 服務，用於控制瀏覽器的歷史記錄導航 @2024/05/03 Add
+    FieldStateService,  // 用於跟蹤場域頁面的 showMapModel 的顯示模式狀態 @2024/05/03 Add
+    NavigationService,  // 用於跟蹤路由歷史 @2024/05/03 Add
 
     apiForFieldMgmt,    // @2024/03/14 Update for import API of Field Management
     apiForBSMgmt,       // @2024/03/14 Add for import API of BS Management

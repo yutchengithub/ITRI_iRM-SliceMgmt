@@ -1,7 +1,7 @@
 <div class="ocloudInfo software">
   <h5>
     <button (click)="back()">
-      <span class="material-icons">arrow_back</span>Back
+      <span class="material-icons">arrow_back</span>{{ languageService.i18n['back'] }}
     </button>
     Software {{languageService.i18n['information']}} – {{softwareInfo.firm}}/{{softwareInfo.modelname}} {{mapUploadType(softwareInfo.uploadtype)}} {{softwareInfo.uploadversion}}
   </h5>
