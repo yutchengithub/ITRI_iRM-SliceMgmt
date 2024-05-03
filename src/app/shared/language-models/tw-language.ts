@@ -20,6 +20,7 @@ export const TwLanguage = {
   'index.menu_componentMgr':'網元管理',
   'index.menu_faultMgr':'故障管理',
   'index.menu_performMgr':'效能管理',
+  'index.menu_sliceMgr':'切片管理',
   'index.menu_softwareMgr':'軟體管理',
   'index.menu_scheduleMgr':'排程管理',
   'index.menu_accountMgr':'帳號管理',
@@ -636,8 +637,11 @@ export const TwLanguage = {
   'NElog.total':'項網元日誌訊息',               // @11/21 changed by yuchen
   'NElog.logKeywordString':'請求 / 回應數據',   // @11/17 changed by yuchen
   'NElog.detail':'網元日誌詳細訊息',            // @11/03 add by yuchen
-  'NElog.detailclose':'關閉',                 // @11/03 add by yuchen
-  'NElog.ExportCSV':'匯出網元日誌為 .csv',      // @11/07 add by yuchen
-  'NElog.ExportXLSX':'匯出網元日誌為 .xlsx',    // @11/23 Add by yuchen
-  'NElog.Export':'匯出網元日誌'                 // @2024/03/13 Add by yuchen
+  'NElog.detailclose':'關閉',                // @11/03 add by yuchen
+  'NElog.ExportCSV':'匯出網元日誌為 .csv',   // @11/07 add by yuchen
+  'NElog.ExportXLSX':'匯出網元日誌為 .xlsx', // @11/23 Add by yuchen
+  'NElog.Export':'匯出網元日誌',             // @2024/03/13 Add by yuchen
+
+  // Slice Management ( 切片管理 )
+  'slice.info':'切片詳細資訊',
 }
