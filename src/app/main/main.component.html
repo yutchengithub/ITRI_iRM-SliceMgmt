@@ -38,8 +38,16 @@
           <li (click)="changePage(pageRourter['field-management'])" class="{{page === 'field-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_fieldMgr']}}"><mat-icon>map</mat-icon><label>{{languageService.i18n['index.menu_fieldMgr']}}</label></li> <!-- @11/30 Update by yuchen -->
           <li (click)="changePage(pageRourter['bs-management'])" class="{{page === 'bs-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_BSMgr']}}"><mat-icon svgIcon="BaseStation" class="svg-icon_BS"></mat-icon><label>{{languageService.i18n['index.menu_BSMgr']}}</label></li> <!-- @12/27 Add by yuchen -->
           <li (click)="changePage(pageRourter['component-management'])" class="{{page === 'component-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_componentMgr']}}"><mat-icon>view_in_ar</mat-icon><label>{{languageService.i18n['index.menu_componentMgr']}}</label></li>
+          
+          <!-- 計畫面 - 切片管理顯示順序 ( 網元故障管理之間 ) @2024/05/03 Add by yuchen -->
+          <!-- <li (click)="changePage( pageRourter['slice-management'] )" class="{{ page === 'slice-management'?'active':'' }}" tooltip="{{ languageService.i18n['index.menu_sliceMgr'] }}">	<mat-icon>storage</mat-icon><label>{{languageService.i18n['index.menu_sliceMgr']}}</label></li> -->
+          
           <li (click)="changePage(pageRourter['fault-management'])" class="{{page === 'fault-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_faultMgr']}}"><mat-icon>warning</mat-icon><label>{{languageService.i18n['index.menu_faultMgr']}}</label></li>
           <li (click)="changePage(pageRourter['performance-management'])" class="{{page === 'performance-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_performMgr']}}"><mat-icon>trending_up</mat-icon><label>{{languageService.i18n['index.menu_performMgr']}}</label></li>
+          
+          <!-- 非計畫面 - 切片管理顯示順序 ( 效能軟體管理之間 ) @2024/05/03 Add by yuchen -->
+          <li (click)="changePage( pageRourter['slice-management'] )" class="{{ page === 'slice-management'?'active':'' }}" tooltip="{{ languageService.i18n['index.menu_sliceMgr'] }}">	<mat-icon>storage</mat-icon><label>{{languageService.i18n['index.menu_sliceMgr']}}</label></li>
+          
           <li (click)="changePage(pageRourter['software-management'])" class="{{page === 'software-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_softwareMgr']}}"><mat-icon>display_settings</mat-icon><label>{{languageService.i18n['index.menu_softwareMgr']}}</label></li>     
           <li (click)="changePage(pageRourter['schedule-management'])" class="{{page === 'schedule-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_scheduleMgr']}}">	<mat-icon>schedule</mat-icon><label>{{languageService.i18n['index.menu_scheduleMgr']}}</label></li> <!-- @11/20 Add by yuchen -->
           <li (click)="changePage(pageRourter['log-management'])" class="{{page === 'log-management'?'active':''}}" tooltip="{{languageService.i18n['index.menu_logMgr']}}"><mat-icon>fact_check</mat-icon><label>{{languageService.i18n['index.menu_logMgr']}}</label></li>                    <!-- @10/25 Add by yuchen -->
@@ -58,8 +66,16 @@
       <li (click)="changePage(pageRourter['field-management'])" class="{{page === 'field-management'?'active':''}}"><mat-icon>map</mat-icon><label>{{languageService.i18n['index.menu_fieldMgr']}}</label></li> <!-- @11/30 Update by yuchen -->
       <li (click)="changePage(pageRourter['bs-management'])" class="{{page === 'bs-management'?'active':''}}"><mat-icon svgIcon="BaseStation" class="svg-icon_BS"></mat-icon><label>{{languageService.i18n['index.menu_BSMgr']}}</label></li> <!-- @12/27 Add by yuchen -->
       <li (click)="changePage(pageRourter['component-management'])" class="{{page === 'component-management'?'active':''}}"><mat-icon>view_in_ar</mat-icon><label>{{languageService.i18n['index.menu_componentMgr']}}</label></li>
-      <li (click)="changePage(pageRourter['fault-management'])" class="{{page === 'fault-management'?'active':''}}" ><mat-icon>warning</mat-icon><label>{{languageService.i18n['index.menu_faultMgr']}}</label></li>
-      <li (click)="changePage(pageRourter['performance-management'])" class="{{page === 'performance-management'?'active':''}}" ><mat-icon>trending_up</mat-icon><label>{{languageService.i18n['index.menu_performMgr']}}</label></li>
+      
+      <!-- 計畫面 - 切片管理顯示順序( 網元故障管理之間 ) @2024/05/03 Add by yuchen -->
+      <!-- <li (click)="changePage( pageRourter['slice-management'] )" class="{{ page === 'slice-management'?'active':'' }}"><mat-icon>storage</mat-icon><label>{{languageService.i18n['index.menu_sliceMgr']}}</label></li>  -->
+      
+      <li (click)="changePage( pageRourter['fault-management'] )" class="{{page === 'fault-management'?'active':''}}" ><mat-icon>warning</mat-icon><label>{{languageService.i18n['index.menu_faultMgr']}}</label></li>
+      <li (click)="changePage( pageRourter['performance-management'] )" class="{{page === 'performance-management'?'active':''}}" ><mat-icon>trending_up</mat-icon><label>{{languageService.i18n['index.menu_performMgr']}}</label></li>
+      
+      <!-- 非計畫面 - 切片管理顯示順序 ( 效能軟體管理之間 ) @2024/05/03 Add by yuchen -->
+      <li (click)="changePage( pageRourter['slice-management'] )" class="{{ page === 'slice-management'?'active':'' }}"><mat-icon>storage</mat-icon><label>{{languageService.i18n['index.menu_sliceMgr']}}</label></li> 
+      
       <li (click)="changePage(pageRourter['software-management'])" class="{{page === 'software-management'?'active':''}}"><mat-icon>display_settings</mat-icon><label>{{languageService.i18n['index.menu_softwareMgr']}}</label></li>
       <li (click)="changePage(pageRourter['schedule-management'])" class="{{page === 'schedule-management'?'active':''}}"><mat-icon>schedule</mat-icon><label>{{languageService.i18n['index.menu_scheduleMgr']}}</label></li> <!-- @11/20 Add by yuchen -->
       <li (click)="changePage(pageRourter['log-management'])" class="{{page === 'log-management'?'active':''}}"><mat-icon>fact_check</mat-icon><label>{{languageService.i18n['index.menu_logMgr']}}</label></li>              <!-- @10/25 Add by yuchen -->

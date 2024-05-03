@@ -20,6 +20,7 @@ export const Enlanguage = {
   'index.menu_componentMgr':'NE Management',
   'index.menu_faultMgr':'Fault Management',
   'index.menu_performMgr':'Performance Management',
+  'index.menu_sliceMgr':'Slice Management',
   'index.menu_softwareMgr':'Software Management',
   'index.menu_scheduleMgr':'Schedule Management',
   'index.menu_logMgr':'Log Management',
@@ -635,6 +636,10 @@ export const Enlanguage = {
   'NElog.detail':'NE Log Detail',  // @11/03 Add by yuchen
   'NElog.detailclose':'Close',     // @11/03 Add by yuchen
   'NElog.ExportCSV':'Export NE Logs to .csv',   // @11/07 Add by yuchen
-  'NElog.ExportXLSX':'Export NE Logs to .xlsx',  // @11/23 Add by yuchen
-  'NElog.Export':'Export NE Logs'                // @2024/03/13 Add by yuchen
+  'NElog.ExportXLSX':'Export NE Logs to .xlsx', // @11/23 Add by yuchen
+  'NElog.Export':'Export NE Logs',              // @2024/03/13 Add by yuchen
+
+
+  // Slice Management ( 切片管理 )
+  'slice.info':'Slice Detailed Information',
 }

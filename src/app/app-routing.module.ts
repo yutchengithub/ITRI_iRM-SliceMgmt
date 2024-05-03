@@ -17,7 +17,7 @@ import { FieldInfoComponent } from './field-management/field-info/field-info.com
 
 // 基站管理 頁     @12/27 Add by yuchen 
 import { BSManagementComponent } from './bs-management/bs-management.component';                        
-import { BSInfoComponent } from './bs-management/bs-info/bs-info.component';                             // 基站管理資訊  @12/27 Add by yuchen 
+import { BSInfoComponent } from './bs-management/bs-info/bs-info.component'; // 基站管理資訊  @12/27 Add by yuchen 
 
 // 元件管理頁
 import { ComponentManagementComponent } from './component-management/component-management.component';
@@ -30,6 +30,10 @@ import { FaultManagementComponent } from './fault-management/fault-management.co
 import { PerformanceManagementComponent } from './performance-management/performance-management.component';  
 import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
 import { NfPerformanceInfoComponent } from './performance-management/nf-performance-info/nf-performance-info.component';
+
+// 切片管理 頁 @2024/05/03 Add by Yuchen
+import { SliceManagementComponent } from './slice-management/slice-management.component';     
+import { SliceInfoComponent } from './slice-management/slice-info/slice-info.component'; // 切片管理資訊頁
 
 // 軟體管理 頁
 import { SoftwareManagementComponent } from './software-management/software-management.component';     
@@ -88,6 +92,14 @@ const routes: Routes = [
       },
       { 
         path: 'performance-mgr', component: PerformanceManagementComponent 
+      },
+      { 
+        // Slice Management @2024/05/03 Add by Yuchen
+        path: 'slice-mgr',
+        children: [
+          { path: '', component: SliceManagementComponent },
+          { path: 'info/:id/:type', component: SliceInfoComponent }
+        ]
       },
       {
         path: 'software-mgr',
