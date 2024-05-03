@@ -13,15 +13,15 @@ import { DashboardComponent } from './dashboard/dashboard.component';   // 主�
 
 // 場域管理
 import { FieldManagementComponent } from './field-management/field-management.component'; 
-import { FieldInfoComponent } from './field-management/field-info/field-info.component';
+import { FieldInfoComponent }       from './field-management/field-info/field-info.component';
 
 // 基站管理 頁     @12/27 Add by yuchen 
 import { BSManagementComponent } from './bs-management/bs-management.component';                        
-import { BSInfoComponent } from './bs-management/bs-info/bs-info.component'; // 基站管理資訊  @12/27 Add by yuchen 
+import { BSInfoComponent }       from './bs-management/bs-info/bs-info.component'; // 基站管理資訊  @12/27 Add by yuchen 
 
 // 元件管理頁
 import { ComponentManagementComponent } from './component-management/component-management.component';
-import { ComponentInfoComponent } from './component-management/component-info/component-info.component';
+import { ComponentInfoComponent }       from './component-management/component-info/component-info.component';
 
 // 故障管理頁
 import { FaultManagementComponent } from './fault-management/fault-management.component';  
@@ -29,30 +29,30 @@ import { FaultManagementComponent } from './fault-management/fault-management.co
 // 效能管理 頁
 import { PerformanceManagementComponent } from './performance-management/performance-management.component';  
 import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
-import { NfPerformanceInfoComponent } from './performance-management/nf-performance-info/nf-performance-info.component';
+import { NfPerformanceInfoComponent }     from './performance-management/nf-performance-info/nf-performance-info.component';
 
 // 切片管理 頁 @2024/05/03 Add by Yuchen
 import { SliceManagementComponent } from './slice-management/slice-management.component';     
-import { SliceInfoComponent } from './slice-management/slice-info/slice-info.component'; // 切片管理資訊頁
+import { SliceInfoComponent }       from './slice-management/slice-info/slice-info.component'; // 切片管理資訊頁
 
 // 軟體管理 頁
 import { SoftwareManagementComponent } from './software-management/software-management.component';     
-import { SoftwareInfoComponent } from './software-management/software-info/software-info.component';
+import { SoftwareInfoComponent }       from './software-management/software-info/software-info.component';
 
 // 排程管理 頁 @11/20 Add by yuchen
 import { ScheduleManagementComponent } from './schedule-management/schedule-management.component';     
-import { ScheduleInfoComponent } from './schedule-management/schedule-info/schedule-info.component'; // 排程管理資訊  @11/20 Add by yuchen 
+import { ScheduleInfoComponent }       from './schedule-management/schedule-info/schedule-info.component'; // 排程管理資訊  @11/20 Add by yuchen 
 
 // 日誌管理 頁  @10/25 Add by yuchen 
-import { LogManagementComponent } from './log-management/log-management.component';   
+import { LogManagementComponent }     from './log-management/log-management.component';   
 
 // 帳號管理 頁
 import { AccountManagementComponent } from './account-management/account-management.component';      
-import { AccountInfoComponent } from './account-management/account-info/account-info.component';
+import { AccountInfoComponent }       from './account-management/account-info/account-info.component';
 
 // O2 的 ( 最後刪掉 )
-import { NfManagementComponent } from './nf-management/nf-management.component';      // NF管理
-import { NfInfoComponent } from './nf-management/nf-info/nf-info.component';
+import { NfManagementComponent } from './nf-management/nf-management.component';   // NF 管理
+import { NfInfoComponent }       from './nf-management/nf-info/nf-info.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },

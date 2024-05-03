@@ -11,6 +11,9 @@ import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
 import { Item } from 'src/app/shared/models/item';
 
+// @2024/05/03 Add
+import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
+
 export interface SoftwareInfo {
   id: string;
   firm: string;
@@ -84,7 +87,9 @@ export class SoftwareInfoComponent implements OnInit {
     private http: HttpClient,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    public languageService: LanguageService
+    public languageService: LanguageService,
+    private location: Location,  // @2024/05/03 Add
+
   ) {
     this.uploadtypeUI.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
   }
@@ -181,20 +186,27 @@ export class SoftwareInfoComponent implements OnInit {
     }
   }
 
+  // @2024/05/03 Update
+  // 返回使用的前個頁面
   back() {
-    this.router.navigate(['/main/software-mgr']);
+    this.location.back();
+    //this.router.navigate( ['/main/software-mgr'] ); // 返回 software 主頁
   }
 
   update() {
-    if (this.commonService.isLocal) {
+    if ( this.commonService.isLocal ) {
       /* local file test */
+
       this.updateModalRef.close();
+
     } else {
       let fileName: string | null = null;
-      if (this.file) {
+
+      if ( this.file ) {
         const file: FileObject = this.file;
         fileName = file.name;
       }
+
       const uploadinfo = this.file ? fileName : this.softwareInfo.uploadinfo; 
       const body: any = {
         id: this.softwareInfo.id,
@@ -209,16 +221,20 @@ export class SoftwareInfoComponent implements OnInit {
         uploadversion: this.softwareInfo.uploadversion,
         session: this.sessionId
       };
-      console.log(body);
-      this.commonService.updateUploadFileInfo(body).subscribe(
+
+      console.log( body );
+      this.commonService.updateUploadFileInfo( body ).subscribe(
         () => console.log('Update Successful.')
       );
-      if (this.file){
+
+      if ( this.file ){
+
         const uploadFirmware = `${this.commonService.restPath}/uploadFirmware/${this.sessionId}/${this.softwareInfo.id}`;
         const formData = new FormData();
         formData.append('file', this.file);
         const headers = new HttpHeaders();
-        this.http.post(uploadFirmware, formData, {headers}).subscribe(
+
+        this.http.post( uploadFirmware, formData, {headers} ).subscribe(
           () => {
             this.updateModalRef.close();
             this.getSoftwareInfo();
@@ -230,19 +246,27 @@ export class SoftwareInfoComponent implements OnInit {
     }
     this.getSoftwareInfo();
   }
+
   refresh() {
-    this.softwareInfoRefreshTimeout = window.setTimeout(() => this.getSoftwareInfo(), this.softwareInfoRefreshTime * 1000);
+    this.softwareInfoRefreshTimeout = window.setTimeout( () => this.getSoftwareInfo(), this.softwareInfoRefreshTime * 1000 );
   }
+
   openUpdateModel() {
+
     this.formValidated = false;
+
     //this.softwareInfo = softwareInfo;
+
     this.updateForm = this.fb.group({
       'type': new FormControl('imageUrl'),
       'imageUrl': new FormControl('', [Validators.required]),
       'fileName': new FormControl('')
     });
+
     this.softwarecontent;
-    this.updateModalRef = this.dialog.open(this.updateModal, { id: 'softUpdateModal' });
+
+    this.updateModalRef = this.dialog.open( this.updateModal, { id: 'softUpdateModal' } );
+
     this.updateModalRef.afterClosed().subscribe(() => {
       this.formValidated = false;
     });

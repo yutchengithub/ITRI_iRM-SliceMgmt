@@ -2,7 +2,7 @@
 <div class="ocloudInfo schedule" [ngClass]="getDynamicClasses( selectScheduleInfo )">
   <h5>
     <button (click)="back()">
-      <span class="material-icons">arrow_back</span>Back
+      <span class="material-icons">arrow_back</span>{{ languageService.i18n['back'] }}
     </button>
     {{languageService.i18n['sm.info']}} – 
     <label *ngIf=" selectScheduleInfo.tickettype === '0' ">{{ languageService.i18n['sm.sfUpdate'] }}</label>

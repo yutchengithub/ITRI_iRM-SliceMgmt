@@ -46,6 +46,7 @@ export const Enlanguage = {
   'table.delete':'Delete',
   
   // Common Items
+  "back": 'Back',
   'ok':'OK',
   'confirm':'Confirm',  // @2024/01/10 Add by yuchen
   'cancel':'Cancel',

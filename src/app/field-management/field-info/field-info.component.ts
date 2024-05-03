@@ -7,10 +7,11 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
 // Services
-import { CommonService } from '../../shared/common.service';
-import { LanguageService } from '../../shared/service/language.service';
-import { SpinnerService } from '../../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
-
+import { CommonService }     from '../../shared/common.service';
+import { LanguageService }   from '../../shared/service/language.service';
+import { SpinnerService }    from '../../shared/service/spinner.service';     // 用於控制顯示 Spinner @2024/04/17 Add
+import { FieldStateService } from '../../shared/service/field-state.service'; // 用於跟蹤場域頁面的 showMapModel 的顯示模式狀態 @2024/05/03 Add
+import { NavigationService } from '../../shared/service/navigation.service';  // 用於跟蹤路由歷史 @2024/05/03 Add
 
 // Mat Modules
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
@@ -20,6 +21,9 @@ import { forkJoin, Observable } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';          // @2023/12/13 Add for use 'detectChanges()'
 import { environment } from 'src/environments/environment'; // @2023/12/20 Add for import Google Maps API Key
 import { NgZone } from '@angular/core';
+
+// @2024/05/03 Add
+import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
 
 // import APIs of Field Management @2024/03/14 Update 
 import { apiForFieldMgmt } from '../../shared/api/For_Field_Mgmt';
@@ -42,7 +46,6 @@ import { BSInfo } from '../../shared/interfaces/BS/For_queryBsInfo_BS';       //
 import { BSInfo_dist, PLMNid,
          Components_dist, duID, ruID,} from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';                  // @2024/01/25 Update
-
 
 // 引入所需 Local Files
 import { localFieldInfo }            from '../../shared/local-files/Field/For_queryFieldInfo';    // @2024/03/14 Add
@@ -134,9 +137,11 @@ export class FieldInfoComponent implements OnInit {
   fieldId: string = '';     // @12/05 Add by yuchen
   fieldName: string = '';   // @12/05 Add by yuchen
 
-  // 返回 Field Management 主頁
+  // @2024/05/03 Update
+  // 返回使用的前個頁面
   back() {
-    this.router.navigate( ['/main/field-mgr'] );
+    this.location.back();
+    //this.router.navigate( ['/main/field-mgr'] ); // 返回 Field 主頁
   }
 
   // For Fault Alarms: 
@@ -156,18 +161,21 @@ export class FieldInfoComponent implements OnInit {
 
   selectBS!: SimplifiedBSInfo;  // 用於存儲當前選中的 BS 訊息 @2024/03/22 Add
 
-  /** @2024/03/22 Add
+  /** @2024/05/03 Update
    * 導航到選定基站的詳細資訊頁面。
    * @param BS 從 BS 列表中選擇的 BS 物件。
    */
   viewBSDetailInfo( BS: SimplifiedBSInfo ) {
 
     this.selectBS = BS; // 設定當前選擇的 BS。
+
     console.log( "View Detail of the BS id:", this.selectBS.id, "and the BS name: ", this.selectBS.name,
                    "and the BS type: ", this.selectBS.bstype ); // 輸出選擇的基站 ID、名稱和類型。
-    
+
+    this.fieldStateService.showMapModel = this.showMapModel; // 保存當前場域資訊頁的顯示模式=
+
     // 導航到 BS 管理的詳細資訊頁面，帶上 BS 的 ID、名稱、類型作為路由參數。
-    this.router.navigate( ['/main/bs-mgr/info', this.selectBS.id, this.selectBS.name, this.selectBS.bstype ] );
+    this.router.navigate( ['/main/bs-mgr/info', this.selectBS.id, this.selectBS.name, this.selectBS.bstype] );
   }
 
   // @2024/04/17 Add
@@ -196,49 +204,96 @@ export class FieldInfoComponent implements OnInit {
     private  route: ActivatedRoute,
     private     fb: FormBuilder,
     private dialog: MatDialog,
+
     // @12/13 Add - 使用 detectChanges() 方法用於手動觸發 Angular 的變更檢測機制，
     //              確保當數據模型更新後，相關的視圖能夠及時反映
-    private    cdr: ChangeDetectorRef,
-    private ngZone: NgZone,
-    // private messageService: MessageService
+    private      cdr: ChangeDetectorRef,
 
-    public languageService: LanguageService,
-    public   commonService: CommonService,
-    public  spinnerService: SpinnerService,
+    private   ngZone: NgZone,
+    private location: Location,  // @2024/05/03 Add
 
-    public       API_Field: apiForFieldMgmt, // @2024/03/14 Update for import API of Field Management
+    public    languageService: LanguageService,
+    public      commonService: CommonService,
+    public     spinnerService: SpinnerService,
+    private navigationService: NavigationService, // 用於跟蹤路由歷史 @2024/05/03 Add
+    private fieldStateService: FieldStateService, // 用於跟蹤場域頁面的 showMapModel 的顯示模式狀態 @2024/05/03 Add
 
-    public    fieldInfo_LocalFiles: localFieldInfo,           // @2024/03/14 Add for import Field Info Local Files
-    public       bsInfo_LocalFiles: localBSInfo,              // @2023/12/27 Add for import BS Info Local Files
-    public       bsList_LocalFiles: localBSList,              // @2024/01/16 Add for import BS List Local Files local
-    public    pmFtpInfo_LocalFiles: localPmFTPInfo,           // @2024/02/04 Add for import info of PM Parameter Setting Local Files
-    public    fieldSonParameters_LocalFiles: localFieldSonParameters,    // @2024/03/30 Add for import info of Field Son Parameters Local Files
-    public  calculateSonResponse_LocalFiles: localCalculateSonResponse,  // @2024/03/31 Add for import info of Calculate Son Response Local Files
+    public       API_Field: apiForFieldMgmt,        // @2024/03/14 Update for import API of Field Management
+
+    public    fieldInfo_LocalFiles: localFieldInfo, // @2024/03/14 Add for import Field Info Local Files
+    public       bsInfo_LocalFiles: localBSInfo,    // @2023/12/27 Add for import BS Info Local Files
+    public       bsList_LocalFiles: localBSList,    // @2024/01/16 Add for import BS List Local Files local
+    public    pmFtpInfo_LocalFiles: localPmFTPInfo, // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+    public    fieldSonParameters_LocalFiles: localFieldSonParameters,   // @2024/03/30 Add for import info of Field Son Parameters Local Files
+    public  calculateSonResponse_LocalFiles: localCalculateSonResponse, // @2024/03/31 Add for import info of Calculate Son Response Local Files
   ) {
 
-    this.severitys = this.commonService.severitys;         // 取得告警資訊種類名稱
+    this.severitys = this.commonService.severitys;  // 取得告警資訊種類名稱
 
     // 建立並初始化各功能所需表單
     this.createBSInfoForm();              // For updateBs API @2024/01/05 Add 
     this.createFieldInfoForm();           // For Field Info in Field Editing  @2024/01/17 Add
-   // this.createFieldOptimizationForm();   // For Son Parameters in Field Optimization  @2024/03/30 Add
+   // this.createFieldOptimizationForm(); // For Son Parameters in Field Optimization  @2024/03/30 Add
+
   }
 
-  // 頁面初始化
+  // 頁面初始化時執行的方法
   ngOnInit(){
+    // 從 commonService 獲取會話 ID 並存儲在 sessionId 變數中
     this.sessionId = this.commonService.getSessionId();
-    console.log( 'The sessionId is', this.sessionId ); // @2024/01/05 Add 
+    // 在控制台打印會話 ID，用於調試
+    console.log( 'The sessionId is', this.sessionId );
 
-    this.route.params.subscribe(( params ) => {
+    // 訂閱路由參數變化
+    this.route.params.subscribe( params => {
+
+      // 從路由參數中提取 fieldId 和 fieldName，並存儲
       this.fieldId = params['id'];
       this.fieldName = params['name'];
-      console.log( 'fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr' );
 
+      // 打印 fieldId 和 fieldName 到控制台，用於調試
+      console.log('fieldId: ' + this.fieldId + ', fieldName: ' + this.fieldName + ',\nsend from /main/field-mgr');
+
+      // @2024/05/03 Add
+      // 調用 updateViewMode 方法以刷新顯示模式
+      this.updateViewMode();
+
+      // 調用 getQueryFieldInfo 方法以獲取場域資訊
       this.getQueryFieldInfo();
     });
 
-  //this.createFieldOptimizationForm();
+    // 此行被註釋掉，用於之後可能的表單優化功能
+    //this.createFieldOptimizationForm();
   }
+
+  /** @2024/05/03 Add
+   * 更新顯示模式
+   * @method updateViewMode
+   * @returns {void}
+   * @description
+   *    - 根據用戶從哪個頁面返回，調整場域資訊頁面的顯示模式（地圖模式或列表模式）
+   */
+  private updateViewMode() {
+
+    // 調用 navigationService 獲取上一個訪問的 URL
+    const previousUrl = this.navigationService.getPreviousUrl();
+    
+    // 檢查上一個 URL 是否包含特定基站資訊頁面的路徑
+    if ( previousUrl.includes('/main/bs-mgr/info') ) {
+
+      // 如果是從基站資訊頁面返回，保持當前的顯示模式不變
+      this.fieldStateService.showMapModel = this.fieldStateService.showMapModel;
+
+    } else {
+      
+      // 如果不是從基站資訊頁面返回，設置顯示模式為地圖模式
+      this.fieldStateService.showMapModel = true;
+    }
+    
+    // 從 fieldStateService 更新組件的 showMapModel 狀態，以反映最新的顯示模式
+    this.showMapModel = this.fieldStateService.showMapModel;
+  }
+
 
   // @2024/03/19 Update
   // ngAfterViewInit 是 Angular 在組件視圖初始化後會呼叫的生命週期事件。
@@ -803,7 +858,7 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  showMapModel: boolean = true;                   // 控制是否顯示地圖模式的 Flag    @12/13 Add
+  showMapModel: boolean = true;                   // 控制是否顯示地圖模式的 Flag   @12/13 Add
   recordColorbar: 'RSRP' | 'SINR' | null = null;  // 用於記錄 Colorbar 狀態的 Flag @12/13 Add
   recordShowNeighborLines: boolean = false; 
 
@@ -3826,7 +3881,7 @@ export class FieldInfoComponent implements OnInit {
    *  @returns { void }
    *  @description
    *  - 重置場域優化相關的所有標誌和數據結構
-   *  - 輸出操作完成的日誌信息
+   *  - 輸出操作完成的日誌訊息
    *  - 動態切換優化種類區的展開狀態
    *  @note
    *  - 用於清理環境，確保下一次計算的環境是乾淨的

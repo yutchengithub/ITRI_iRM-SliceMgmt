@@ -12,6 +12,9 @@ import { FaultMessages } from './../../fault-management/fault-management.compone
 import { Subscription }  from 'rxjs';
 import { XMLParser }     from "fast-xml-parser";
 
+// @2024/05/03 Add
+import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
+
 // Services
 import { CommonService } from '../../shared/common.service';
 import { LanguageService } from '../../shared/service/language.service';
@@ -40,9 +43,11 @@ export class SliceInfoComponent implements OnInit {
   refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
   refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
 
-  // 返回 Slice Management 主頁
+  // @2024/05/03 Update
+  // 返回使用的前個頁面
   back() {
-    this.router.navigate(['/main/slice-mgr']);
+    this.location.back();
+    //this.router.navigate( ['/main/slice-mgr'] ); // 返回 Slice 主頁
   }
 
   // @2024/04/17 Add
@@ -70,6 +75,7 @@ export class SliceInfoComponent implements OnInit {
     private         router: Router,
     private          route: ActivatedRoute,
     private         dialog: MatDialog,
+    private       location: Location,        // @2024/05/03 Add
     public   commonService: CommonService,
     public languageService: LanguageService,
     public  spinnerService: SpinnerService,
