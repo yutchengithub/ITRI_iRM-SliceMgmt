@@ -130,8 +130,8 @@ export class CommonService {
     });
   }
   
-  setSessionId(sessionId: string) {
-    window.sessionStorage.setItem('sessionId', sessionId);
+  setSessionId( sessionId: string ) {
+    window.sessionStorage.setItem( 'sessionId', sessionId );
   }
 
   getSessionId(): string {
