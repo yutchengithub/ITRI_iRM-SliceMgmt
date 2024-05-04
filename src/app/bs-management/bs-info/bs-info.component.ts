@@ -215,10 +215,10 @@ export class BSInfoComponent implements OnInit {
   selectBsCellCount: number = 0;                      // 用於存儲當前選中的 BS Cell 數量
    selectBsPosition: string = "";                     // 用於存儲當前選中的一體式 BS 位置
   selectDistBsPosition: string = "";                  // 用於存儲當前選中的分佈式 BS 位置
-  gNBIdLength: number = 0;  // 用於存儲 gNBIdLength，以便後續可能會計算 NCI 或 cellLocalId
+  gNBIdLength: number = 0;  // 用於存儲 gNBIdLength，以便後續可能會計算 NCI 或 cellLocalId @2024/05/04 Add
   
   /**
-   * @2024/04/17 Update
+   * @2024/05/04 Update
    * 取得基站資訊
    * @method getQueryBsInfo
    * @description
@@ -247,8 +247,12 @@ export class BSInfoComponent implements OnInit {
         this.selectBsInfo        = this.bsInfo_LocalFiles.bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo;
         this.selectBsInfo.laston = this.commonService.formatTimeWithoutSecondsFraction( this.selectBsInfo.laston ); // 處理時間格式
         this.selectBsPosition    = this.commonService.formatPosition( this.selectBsInfo.position );                 // 處理位置訊息格式
+        
         console.log( 'In local - Get the BSInfo:', this.selectBsInfo );
         console.log( 'In local - Get the BSInfo position:', this.selectBsPosition );
+
+        this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;  // 取得 gNBIdLength @2024/05/04 Add
+        console.log( 'In local - Get the BSInfo gNBIdLength:', this.gNBIdLength );
 
         // 一體式基站，直接將 Cell 數量設為 1
         this.selectBsCellCount = 1;
@@ -261,6 +265,9 @@ export class BSInfoComponent implements OnInit {
         //this.selectDistBsPosition     = this.commonService.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
         console.log( 'In local - Get the BSInfo_dist:', this.selectBsInfo_dist );
         //console.log( 'In local - Get the BSInfo_dist position:', this.selectBsInfo_dist.position );
+
+        this.gNBIdLength = this.selectBsInfo_dist.extension_info[0].gNBIdLength;  // 取得 gNBIdLength @2024/05/04 Add
+        console.log( 'In local - Get the BSInfo_dist gNBIdLength:', this.gNBIdLength );
 
         // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
         //this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
@@ -321,6 +328,9 @@ export class BSInfoComponent implements OnInit {
             console.log( 'Get the BSInfo:', this.selectBsInfo );
             console.log( 'Get the BSInfo position:', this.selectBsPosition );
 
+            this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;  // 取得 gNBIdLength @2024/05/04 Add
+            console.log( 'Get the BSInfo gNBIdLength:', this.gNBIdLength );
+
             // 一體式基站，直接將 Cell 數量設為 1
             this.selectBsCellCount = 1;
 
@@ -335,6 +345,9 @@ export class BSInfoComponent implements OnInit {
 
             // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
             //this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
+
+            this.gNBIdLength = this.selectBsInfo_dist.extension_info[0].gNBIdLength;  // 取得 gNBIdLength @2024/05/04 Add
+            console.log( 'Get the BSInfo_dist gNBIdLength:', this.gNBIdLength );
 
             // 改用遍歷 components 計算 Cell 數量 @2024/04/12 Add
             // 如果 bstype 為 2，需要遍歷 components 物件算 Cell 數量，每個 RU 代表一個 Cell
