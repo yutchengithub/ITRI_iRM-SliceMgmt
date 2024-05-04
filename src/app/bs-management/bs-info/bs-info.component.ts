@@ -26,6 +26,7 @@ import { BSInfo, Components, ExtensionInfo, Neighbor }  from '../../shared/inter
 import { ForUpdateBs }                                  from '../../shared/interfaces/BS/For_updateBs';             // @2024/04/14 Add
 import { BSInfo_dist, Info_dist, Components_dist }      from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
 import { ForUpdateDistributedBs, Cellinfo_dist }        from '../../shared/interfaces/BS/For_updateDistributedBs';  // @2024/04/14 Add
+import { ForAddOrEditOrDeleteNeighborBs }               from '../../shared/interfaces/BS/For_optimalBs';            // @2024/05/04 Add
 
 import { CurrentBsFmList, FaultMessage } from '../../shared/interfaces/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
 import { NEList, NE, Sm  }               from '../../shared/interfaces/NE/For_queryBsComponentList';       // @2024/03/27 Add

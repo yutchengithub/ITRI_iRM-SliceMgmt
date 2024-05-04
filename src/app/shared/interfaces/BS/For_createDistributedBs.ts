@@ -1,6 +1,6 @@
 
   // @2024/04/29 Add
-  // 用於建立 Distributed BS 時 Submit 用的 interface
+  // 用於建立 Distributed BS 時 POST 用的 interface
   export interface CreateDistributedBs {
     session: string;
     name: string;

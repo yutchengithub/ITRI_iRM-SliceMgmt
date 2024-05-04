@@ -23,7 +23,7 @@ export class apiForBSMgmt {
 
   // @2024/04/24 Update
   // Get a list of BSs that are not limited to being within the specified field
-  queryBsList(): Observable<any> {
+  queryBsList(): Observable< any > {
     
     // 每次調用 API 時都動態獲取最新的 sessionId
     const sessionId = this.commonService.getSessionId();
@@ -34,19 +34,9 @@ export class apiForBSMgmt {
     return this.http.get( url );
   }
 
-  // 取得指定 id 的基站所有資訊 @2024/04/24 Update
-  queryBsInfo( bsId: string ): Observable< BSInfo | BSInfo_dist >  {
-
-    // 每次調用 API 時都動態獲取最新的 sessionId
-    const sessionId = this.commonService.getSessionId();
-
-    const url = `${this.restPath}/queryBsInfo/${sessionId}/${bsId}`;
-    return this.http.get< BSInfo >( url ); // 告訴 HttpClient 期望的響應類型是 BSInfo
-  }
-
   // @2024/04/24 Add
   // 取得未被使用的網元列表
-  queryUnusedNeList(): Observable<any> {
+  queryUnusedNeList(): Observable< any > {
     
     // 每次調用 API 時都動態獲取最新的 sessionId
     const sessionId = this.commonService.getSessionId();
@@ -68,13 +58,30 @@ export class apiForBSMgmt {
 
   // @2024/04/29 Add
   // For create Distributed Base Station
-  createDistributedBs( body: {} ): Observable<any> {
+  createDistributedBs( body: {} ): Observable< any > {
 
     const url = `${this.restPath}/createDistributedBs`;
 
     const bodyStr = JSON.stringify( body );
 
     return this.http.post( url, bodyStr );
+  }
+
+  /** @2024/04/24 Update
+   *  取得指定 id 的基站所有資訊
+   *  @method queryBsInfo
+   *  @param { string } bsId - 基站的唯一識別碼
+   *  @returns { Observable< BSInfo | BSInfo_dist > }
+   *  @description
+   *    - 根據基站ID獲取該基站的詳細資訊，包括標準資料和可能的擴展資料
+   */
+  queryBsInfo( bsId: string ): Observable< BSInfo | BSInfo_dist > {
+
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
+    const url = `${this.restPath}/queryBsInfo/${sessionId}/${bsId}`;
+    return this.http.get< BSInfo >( url ); // 告訴 HttpClient 期望的響應類型是 BSInfo
   }
 
   // For Updating Configurations of All-in-one BS
@@ -88,7 +95,7 @@ export class apiForBSMgmt {
   }
 
   // For Updating Configurations of Distributed BS
-  updateDistributedBs( body: {} ): Observable<any> {
+  updateDistributedBs( body: {} ): Observable< any > {
 
     const url = `${this.restPath}/updateDistributedBs`;
     
@@ -97,8 +104,25 @@ export class apiForBSMgmt {
     return this.http.post( url, bodyStr );
   }
 
+  /** @2024/05/04 Add
+   *  這 API 用於基站資訊頁面，針對鄰居基站配置進行新增、編輯與刪除操作
+   *  @method optimalBs
+   *  @returns { Observable< any > }
+   *  @description
+   *    - 用於處理基站資訊頁面中鄰居基站的配置，包括新增、編輯或刪除
+   */
+  optimalBs( body: {} ): Observable< any > {
+
+    const url = `${this.restPath}/optimalBs`;  // 組合 API 的 URL，使用 restPath 作為基底路徑
+
+    const bodyStr = JSON.stringify( body ); // 將輸入的物件轉換為 JSON 字符串格式
+
+    return this.http.post( url, bodyStr );  // 使用 HttpClient 的 POST 方法發送請求並返回 Observable
+  }
+
+
   // Remove BS of selection @2024/04/24 Update
-  removeBs( bsId: string ): Observable<any> { 
+  removeBs( bsId: string ): Observable< any > { 
 
     // 每次調用 API 時都動態獲取最新的 sessionId
     const sessionId = this.commonService.getSessionId();
@@ -165,7 +189,7 @@ export class apiForBSMgmt {
     * @param params 其他查詢參數
     * @returns 返回一個 Observable 物件，發出 API 返回的資料
     */
-  queryCurrentBsFaultMessage( bsId: string, params: any ): Observable<any> {
+  queryCurrentBsFaultMessage( bsId: string, params: any ): Observable< any > {
 
     // 每次調用 API 時都動態獲取最新的 sessionId
     const sessionId = this.commonService.getSessionId();
