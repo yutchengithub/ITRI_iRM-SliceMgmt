@@ -228,6 +228,7 @@ export class BSInfoComponent implements OnInit {
    * - 這個函數同時處理兩種類型的基站資訊，根據基站類型計算相應的 Cell 數量
    * - @2024/04/12 Update - 更新計算分佈式 Cell 數方式，改跟基站主頁方法相同
    * - @2024/04/15 Add - 新增"基站參數"欄位所需的設值處理
+   * - @2024/05/04 Add - 新增取得 gNBIdLength
    */
   getQueryBsInfo() {
     console.log( 'getQueryBsInfo() - Start' );
@@ -251,7 +252,9 @@ export class BSInfoComponent implements OnInit {
         console.log( 'In local - Get the BSInfo:', this.selectBsInfo );
         console.log( 'In local - Get the BSInfo position:', this.selectBsPosition );
 
-        this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;  // 取得 gNBIdLength @2024/05/04 Add
+        // @2024/05/04 Add
+        // 取得 gNBIdLength - 避免 info 為空的狀況都從 extension_info 中取得
+        this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;
         console.log( 'In local - Get the BSInfo gNBIdLength:', this.gNBIdLength );
 
         // 一體式基站，直接將 Cell 數量設為 1
@@ -266,7 +269,9 @@ export class BSInfoComponent implements OnInit {
         console.log( 'In local - Get the BSInfo_dist:', this.selectBsInfo_dist );
         //console.log( 'In local - Get the BSInfo_dist position:', this.selectBsInfo_dist.position );
 
-        this.gNBIdLength = this.selectBsInfo_dist.extension_info[0].gNBIdLength;  // 取得 gNBIdLength @2024/05/04 Add
+        // @2024/05/04 Add
+        // 取得 gNBIdLength - 避免 info 為空的狀況都從 extension_info 中取得
+        this.gNBIdLength = this.selectBsInfo_dist.extension_info[0].gNBIdLength;
         console.log( 'In local - Get the BSInfo_dist gNBIdLength:', this.gNBIdLength );
 
         // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
@@ -328,7 +333,9 @@ export class BSInfoComponent implements OnInit {
             console.log( 'Get the BSInfo:', this.selectBsInfo );
             console.log( 'Get the BSInfo position:', this.selectBsPosition );
 
-            this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;  // 取得 gNBIdLength @2024/05/04 Add
+            // @2024/05/04 Add
+            // 取得 gNBIdLength - 避免 info 為空的狀況都從 extension_info 中取得
+            this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;
             console.log( 'Get the BSInfo gNBIdLength:', this.gNBIdLength );
 
             // 一體式基站，直接將 Cell 數量設為 1
@@ -346,7 +353,9 @@ export class BSInfoComponent implements OnInit {
             // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
             //this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
 
-            this.gNBIdLength = this.selectBsInfo_dist.extension_info[0].gNBIdLength;  // 取得 gNBIdLength @2024/05/04 Add
+            // @2024/05/04 Add
+            // 取得 gNBIdLength - 避免 info 為空的狀況都從 extension_info 中取得
+            this.gNBIdLength = this.selectBsInfo_dist.extension_info[0].gNBIdLength;  
             console.log( 'Get the BSInfo_dist gNBIdLength:', this.gNBIdLength );
 
             // 改用遍歷 components 計算 Cell 數量 @2024/04/12 Add
