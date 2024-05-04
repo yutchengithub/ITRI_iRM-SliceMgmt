@@ -215,6 +215,7 @@ export class BSInfoComponent implements OnInit {
   selectBsCellCount: number = 0;                      // 用於存儲當前選中的 BS Cell 數量
    selectBsPosition: string = "";                     // 用於存儲當前選中的一體式 BS 位置
   selectDistBsPosition: string = "";                  // 用於存儲當前選中的分佈式 BS 位置
+  gNBIdLength: number = 0;  // 用於存儲 gNBIdLength，以便後續可能會計算 NCI 或 cellLocalId
   
   /**
    * @2024/04/17 Update
