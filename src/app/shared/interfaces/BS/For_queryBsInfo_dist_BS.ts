@@ -676,7 +676,7 @@
     'must-include': string;
     'q-offset': string;
     'rs-tx-power': string;
-    '__itri_default___': number;
+    '__itri_default___'?: number;
   }
   
   /* ↑ @12/15 Add For "anr": {} ↑ */

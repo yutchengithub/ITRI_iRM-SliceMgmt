@@ -357,10 +357,26 @@ export const TwLanguage = {
   'BS.mismatch': '是否不符',
   'BS.mismatchYes': '是',
   'BS.mismatchNo': '否',
-  
-
 
   'BS.neighborBsList':'鄰居基站列表',
+  'BS.editNeighborBS': '編輯鄰居基站',
+  'BS.addNeighborBS': '新增鄰居基站',  
+  'BS.enterHexNCI': '請輸入十六進位 NCI',
+  'BS.nciIsRequired': 'NCI 為必填。',
+  'BS.enterExactHexChars': '請輸入正確的 9 個十六進位字符。',
+  'BS.onlyHexCharsAllowed': '只允許使用十六進位字符。',
+  'BS.enterGNBID': '請輸入 gNB ID',
+  'BS.enterPCI': '請輸入 PCI',
+  'BS.enterMCC': '請輸入 MCC',
+  'BS.enterMNC': '請輸入 MNC',
+  'BS.enterNRARFCN': '請輸入 NRARFCN',
+  'BS.gnbIDIsRequired': 'gNB ID 為必填。',
+  'BS.pciIsRequired': 'PCI 為必填。',
+  'BS.mccIsRequired': 'MCC 為必填。',
+  'BS.mncIsRequired': 'MNC 為必填。',
+  'BS.nrarfcnIsRequired': 'NRARFCN 為必填。',
+
+
   'BS.alarms':'基站告警',
   'BS.neList':'網元列表',
   'BS.performance':'基站效能',

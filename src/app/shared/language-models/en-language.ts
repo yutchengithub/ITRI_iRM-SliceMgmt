@@ -363,8 +363,25 @@ export const Enlanguage = {
   'BS.mismatchYes': 'Yes',
   'BS.mismatchNo': 'No',
 
-
   'BS.neighborBsList':'Neighbor BS List',
+  'BS.editNeighborBS': 'Edit Neighbor BS',
+  'BS.addNeighborBS': 'Add Neighbor BS',
+  'BS.enterHexNCI': 'Please Enter Hexadecimal NCI',
+  'BS.nciIsRequired': 'NCI is required.',
+  'BS.enterExactHexChars': 'Please enter exactly 9 hexadecimal characters.',
+  'BS.onlyHexCharsAllowed': 'Only hexadecimal characters are allowed.',
+  'BS.enterGNBID': 'Please Enter gNB ID',
+  'BS.enterPCI': 'Please Enter PCI',
+  'BS.enterMCC': 'Please Enter MCC',
+  'BS.enterMNC': 'Please Enter MNC',
+  'BS.enterNRARFCN': 'Please Enter NRARFCN',
+  'BS.gnbIDIsRequired': 'gNB ID is required.',
+  'BS.pciIsRequired': 'PCI is required.',
+  'BS.mccIsRequired': 'MCC is required.',
+  'BS.mncIsRequired': 'MNC is required.',
+  'BS.nrarfcnIsRequired': 'NRARFCN is required.',  
+
+
   'BS.alarms':'BS Alarms',
   'BS.neList':'NE List',
   'BS.performance':'BS Performance',

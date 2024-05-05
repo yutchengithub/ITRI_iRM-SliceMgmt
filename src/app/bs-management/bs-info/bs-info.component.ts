@@ -1341,7 +1341,7 @@ export class BSInfoComponent implements OnInit {
    * - 根據選擇的 NCI，更新鄰居基站列表
    */
   onNeighborSelectedNciChange() {
-    this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+    this.neighborList = this.getNeighborList( this.selectedNeighborNci );
   }
 
   /**
@@ -1352,7 +1352,7 @@ export class BSInfoComponent implements OnInit {
    * - 根據選擇的 NCI，更新鄰居基站列表
    */
   onNeighborSearchClick() {
-    this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+    this.neighborList = this.getNeighborList( this.selectedNeighborNci );
   }
 
   /**
@@ -1364,12 +1364,12 @@ export class BSInfoComponent implements OnInit {
    * - 根據重置後的 NCI，更新鄰居基站列表
    */
   onNeighborClearClick() {
-    if (this.bsType === '1' && this.selectBsInfo) {
+    if ( this.bsType === '1' && this.selectBsInfo ) {
       this.selectedNeighborNci = this.nciList[0];
-    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+    } else if ( this.bsType === '2' && this.selectBsInfo_dist ) {
       this.selectedNeighborNci = this.nciList[0];
     }
-    this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+    this.neighborList = this.getNeighborList( this.selectedNeighborNci );
   }
 
   /**
@@ -1379,10 +1379,10 @@ export class BSInfoComponent implements OnInit {
    * @param {string} nci - 選擇的 NCI
    * @returns {Neighbor[]} 鄰居基站列表
    */
-  getNeighborList(nci: string): Neighbor[] {
-    if (this.bsType === '1' && this.selectBsInfo) {
+  getNeighborList( nci: string ): Neighbor[] {
+    if ( this.bsType === '1' && this.selectBsInfo ) {
       return this.selectBsInfo.anr['anr-son-output'].neighbor;
-    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+    } else if ( this.bsType === '2' && this.selectBsInfo_dist ) {
       return this.selectBsInfo_dist.anr[nci]['anr-son-output'].neighbor;
     }
     return [];
@@ -1390,85 +1390,360 @@ export class BSInfoComponent implements OnInit {
 
   /**
    * @2024/04/16 Add
-   * 根據選擇的 NCI 計算 gNB ID
-   * @method calculateGnbId
-   * @param {string} nci - 選擇的 NCI
-   * @returns {number} gNB ID
+   * 將 16 進制字串轉換為 10 進制數字
+   * @method hexToDecimal
+   * @param { string } hex - 16 進制字串
+   * @returns { number } 10 進制數字
    */
-  calculateGnbId(nci: string): number {
-    if (!nci) {
-      return 0;
-    }
-    const gnbIdLength = this.selectedExtensionInfo?.gNBIdLength;
-    if (!gnbIdLength || isNaN(gnbIdLength)) {
-      return 0;
-    }
-    const nciNumber = parseInt(nci, 16);
-    return Math.floor(nciNumber / Math.pow(2, 36 - gnbIdLength));
+  hexToDecimal( hex: string ): number {
+    return parseInt( hex, 16 );
+  }
+
+
+  // @2024/05/05 Add
+  // ViewChild 裝飾器用來獲取模板中的 #addNeighborBsWindow、#editNeighborBsWindow 模板引用變量，
+  // 允許我們在 TypeScript 代碼中訪問這個 Angular 模板。
+  @ViewChild('addNeighborBsWindow') addNeighborBsWindow!: TemplateRef<any>;
+  @ViewChild('editNeighborBsWindow') editNeighborBsWindow!: TemplateRef<any>;
+
+  // @2024/05/05 Add
+  // 用於存儲對話框的參考，以便可以進行開啟、操作和關閉對話框的動作。
+  // MatDialogRef 類型提供了一系列控制對話框的方法，如 close() 用於關閉對話框。
+  neighborBsEditDialogRef!: MatDialogRef<any>;
+
+  // @2024/05/05 Add
+  // FormGroup 類型的 neighborForm 變量用來存儲和管理表單控制項的集合。
+  // 這個表單群組包含了用於編輯鄰居基站資訊的各個表單控制項，如 gNB ID、Cell ID 等。
+  neighborForm!: FormGroup;
+
+  /**
+   * @2024/05/05 Add
+   * 初始化或重置鄰居基站資訊表單
+   * 創建鄰居基站編輯表單並設置驗證規則
+   * @method createNeighborForm
+   * @returns {void}
+   * @description
+   * - 建立用於編輯或新增鄰居基站資訊的表單，包括驗證規則。
+   */
+  createNeighborForm(): void {
+    // 使用 Angular 的 FormBuilder 創建表單群組，並為各表單控件設定初始值和驗證規則
+    this.neighborForm = this.fb.group({
+      gnbId: ['', [Validators.required]],  // gNB ID 表單控制項，用於儲存計算出的gNB ID，無初始值和特定驗證
+      //cellId: ['', [Validators.pattern('^[01]{0,14}$')]], // 設定 Cell ID 的驗證規則，只允許 0 或 1，最多 14 位
+      nci: ['', [
+        Validators.required,      // 確保 NCI 欄位必填
+        Validators.minLength(9),  // 確保 NCI 欄位至少有 9 個字符
+        Validators.maxLength(9),  // 確保 NCI 欄位最多 9 個字符
+        Validators.pattern(/^[0-9A-Fa-f]{1,9}$/)  // 限制只能輸入16進制字符
+      ]],  // NCI 表單控制項，加入長度和字符的驗證規則
+      nrpci: ['', [Validators.required]],  // nRPCI 表單控制項，無初始值，用於儲存 nRPCI (NR Physical Cell ID)
+      mcc: ['', [Validators.required]],    // MCC 表單控制項，無初始值，用於儲存 Mobile Country Code
+      mnc: ['', [Validators.required]],    // MNC 表單控制項，無初始值，用於儲存 Mobile Network Code
+      nrarfcn: ['', [Validators.required]] // NRARFCN 表單控制項，無初始值，用於儲存 NR ARFCN (Absolute Radio Frequency Channel Number)
+    });
+
+    // 呼叫設定 Cell ID 自動填充邏輯的函數，確保輸入格式正確
+    //this.setupCellIdAutoFill(); // 初始化 Cell ID 的自動填充邏輯
+  }
+  
+
+
+  /**
+   * @2024/05/05 Add
+   * 設定 Cell ID 的自動填充邏輯，確保格式正確
+   * 自動調整輸入的 Cell ID，保持固定長度
+   * @method setupCellIdAutoFill
+   * @returns {void}
+   */
+  setupCellIdAutoFill(): void {
+    // 監聽 cellId 控件的值變化
+    this.neighborForm.get('cellId')!.valueChanges.subscribe(value => {
+        // 移除輸入值中的所有非 0 和 1 字元
+        const cleaned = value.replace(/[^01]/g, '');
+        // 檢查清理後的值長度是否超過最大限制
+        if (cleaned.length > 14) {
+            // 如果超過14位，則截取最後14位
+            this.neighborForm.get('cellId')!.setValue(cleaned.substr(1, 14));
+        } else {
+            // 如果未超過，填充前導0以保持長度為14，並阻止觸發額外的 valueChanges 事件
+            this.neighborForm.get('cellId')!.setValue(cleaned.padStart(14, '0'), {emitEvent: false});
+        }
+    });
   }
 
   /**
-   * @2024/04/16 Add
-   * 將 16 進制字串轉換為 10 進制數字
-   * @method hexToDecimal
-   * @param {string} hex - 16 進制字串
-   * @returns {number} 10 進制數字
+   * 處理鍵盤輸入以實現自定義的 Cell ID 輸入行為
+   * @method handleCellIdInput
+   * @param {KeyboardEvent} event - 觸發的鍵盤事件
+   * @returns {void}
    */
-  hexToDecimal(hex: string): number {
-    return parseInt(hex, 16);
+  handleCellIdInput(event: KeyboardEvent): void {
+    // 定義允許的按鍵清單
+    const allowedKeys = ['0', '1', 'Numpad0', 'Numpad1', 'Backspace', 'ArrowLeft', 'ArrowRight'];
+    // 獲取事件目標元素並確保其不為 null
+    const inputElement = event.target as HTMLInputElement | null;
+    if (!inputElement) return; // 如果目標元素不存在，則終止函數執行
+
+    // 獲取目前表單控件的值
+    let currentValue = this.neighborForm.get('cellId')!.value;
+    const maxCellLength = 14; // 設定最大長度限制
+    const cursorPos = inputElement.selectionStart; // 獲取光標位置
+    if (!cursorPos) return; // 如果光標位置未獲取到，則終止函數執行
+
+    // 處理僅允許的按鍵以及組合鍵（如 Ctrl 或 Meta）
+    if (!allowedKeys.includes(event.key) && !event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
+        return;
+    }
+
+    // 處理數字小鍵盤和主鍵盤的輸入
+    let inputChar = event.key.replace('Numpad', '');
+
+    if (inputChar === 'Backspace') {
+        // 處理退格鍵：刪除光標前的字符
+        if (cursorPos > 0 && cursorPos <= currentValue.length) {
+            currentValue = currentValue.substring(0, cursorPos - 1) + currentValue.substring(cursorPos);
+            event.preventDefault(); // 阻止預設的退格行為
+        }
+    } else if (['0', '1'].includes(inputChar) && currentValue.length < maxCellLength) {
+        // 處理數字輸入：在光標位置插入字符
+        currentValue = currentValue.substring(0, cursorPos) + inputChar + currentValue.substring(cursorPos);
+        event.preventDefault(); // 阻止預設的輸入行為
+    }
+
+    // 確保輸入不超過最大長度
+    currentValue = currentValue.padStart(maxCellLength, '0').substring(0, maxCellLength);
+    
+    // 更新表單控件的值
+    this.neighborForm.get('cellId')!.setValue(currentValue);
   }
+  
 
-// ↑ 鄰居基站列表區 @2024/04/16 Add ↑
+  /**
+   * @2024/05/05 Add
+   * 打開鄰居基站資訊編輯對話框
+   * 根據模式（新增或編輯）打開對話框，並準備表單
+   * @method openNeighborBsEditDialog
+   * @param { string } mode - 對話框模式（'add' 或 'edit'）
+   * @param { any } neighbor - 編輯時使用的鄰居基站資料
+   * @returns { void }
+   */
+  openNeighborBsEditDialog( mode: string, neighbor?: any ): void {
 
+    // 輸出當前模式以供調試
+    console.log( "Mode is:", mode );
 
+    // 輸出當前選擇的鄰居基站 NCI（ Neighbor Cell Identifier ）
+    console.log( "Selected NCI:", this.selectedNeighborNci );
 
+    // 輸出當前選擇的鄰居基站所有資訊
+    console.log( "Selected neighbor:", neighbor );
 
-// ↓ 網元列表區 @2024/04/17 Update ↓
+    // 呼叫函數初始化表單
+    this.createNeighborForm(); // 初始化表單
 
-  // @2024/03/29 Add
-  // 用於儲存所有於此 BS 內的網元
-  NEList_InThisBS: NEList = {} as NEList;
+    // 根據模式選擇對話框模板
+    let dialogTemplate = mode === 'add' ? this.addNeighborBsWindow : this.editNeighborBsWindow;
 
-  // @2024/03/29 Add
-  // 篩選出在 this.bsName 中的網元，並存儲到 NEList_InThisBS 中
-  filterNEListByBSName() {
-    console.log('filterNEListByBSName() - Start');
+    // 如果是編輯模式，使用提供的鄰居基站資料來填充表單
+    if ( neighbor ) {
+        this.fillForm( neighbor );
+    }
 
-    // 建立一個空的 components 陣列，用於存儲篩選後的網元
-    const filteredComponents: NE[] = [];
-
-    // 遍歷 NEList 中的每個網元
-    this.NEList.components.forEach( ( ne: NE ) => {
-
-      // 判斷網元的 bsName 是否與 this.bsName 相同
-      if ( ne.bsName === this.bsName ) {
-
-        // 如果相同,則將該網元加入到 filteredComponents 中
-        filteredComponents.push( ne );
-      }
+    // 開啟對話框，傳入對應模板和數據
+    this.neighborBsEditDialogRef = this.dialog.open( dialogTemplate, {
+        data: {
+            neighbor: neighbor
+        },
+        id: 'neighborBsEditDialogRef' // 設定對話框的唯一標識
     });
 
-    // 將篩選後的網元存儲到 NEList_InThisBS 中
-    this.NEList_InThisBS = {
-      components: filteredComponents
-    };
-
-    console.log( "於此 BS -", this.bsName, "內的網元有:", this.NEList_InThisBS );
-
-    console.log( 'filterNEListByBSName() - End' );
+    // 訂閱對話框關閉事件，用於清理或記錄
+    this.neighborBsEditDialogRef.afterClosed().subscribe( result => {
+        console.log('Dialog was closed'); // 輸出對話框關閉的日誌
+    });
   }
 
-  /** @2024/04/17 Update
-   * 導航到選定基站的詳細資訊頁面。
-   * @param NE 從 NE 列表中選擇的 NE 物件。
-   */
-   viewNEDetailInfo( NE: NE ) {
-    // this.router.navigate( ['/main/component-mgr/info', NE.id, NE.bsId] );
-    this.router.navigate( ['/main/component-mgr/info', NE.id] );
+  /**
+    * @2024/05/05 Add
+    * 使用提供的鄰居基站數據填充表單，以便於編輯鄰居基站資訊
+    * @method fillForm
+    * @param { any } neighbor - 需要填充的鄰居基站數據
+    */
+  fillForm( neighbor: any ): void {
+
+    // 計算十進制的 Cell ID
+    const cellIdDecimal = this.calculateCellLocalId( neighbor.nci );
+
+    // 轉換 Cell ID 為二進制表示，並填充至固定長度
+    const cellIdBinary = this.convertCellIdToBinary( parseInt( cellIdDecimal, 10 ) );
+
+    // 更新表單的各個字段
+    this.neighborForm.patchValue({
+      gnbId: this.calculateGnbId( neighbor.nci ), // 設定計算後的 gNB ID
+      //cellId: cellIdBinary,                     // 使用二進制格式的 Cell ID
+      nci:  neighbor.nci,                         // 設定 NCI
+      nrpci: neighbor.pci,                        // 設定 nRPCI
+      mcc: neighbor['plmn-id'].mcc,               // 設定 MCC
+      mnc: neighbor['plmn-id'].mnc,               // 設定 MNC
+      nrarfcn: neighbor.nrarfcn                   // 設定 NRARFCN
+    });
   }
 
-// ↑ 網元列表區 @2024/04/17 Update ↑
+  /**
+    * @2024/05/05 Add
+    * 根據選擇的 NCI 計算 gNB ID
+    * 利用 NCI 和 gNB ID 長度計算 gNB ID
+    * @method calculateGnbId
+    * @param { string } nci - 選擇的 NCI
+    * @returns { number } - 計算得到的 gNB ID
+    */
+  calculateGnbId( nci: string ): number {
 
+    if ( !nci ) { // 檢查輸入的 NCI 是否存在
+        return 0;
+    }
+    
+    const gnbIdLength = this.gNBIdLength || 22; // 從成員變數獲取 gNB ID 長度，如果未設置則使用預設值 22
+    if ( isNaN( gnbIdLength ) ) { // 檢查 gNB ID 長度是否為有效數值
+        return 0;
+    }
+
+    const nciNumber = parseInt( nci, 16 ); // 將 NCI 從十六進制轉換成整數
+    return Math.floor( nciNumber / Math.pow( 2, 36 - gnbIdLength ) ); // 根據 gNB ID 長度計算 gNB ID
+  }
+
+  /**
+    * @2024/05/05 Add
+    * 根據提供的 NCI 和 gNB ID 長度計算局部 Cell ID
+    * 這個方法計算出的 Cell ID 是十進制值，用於後續處理或顯示
+    * @method calculateCellLocalId
+    * @param { string } nci - 要從中計算的 NCI
+    * @returns { string } - 計算得到的 Cell ID，為十進制值
+    */
+  calculateCellLocalId( nci: string ): string {
+    //const gnbIdLength = this.gNBIdLength; // 使用成員變數 gNBIdLength 或默認值 22
+
+    const gnbIdLength = this.gNBIdLength;  // 使用成員變數 gNBIdLength
+    const nciNumber = parseInt( nci, 16 ); // 將 NCI 從十六進制轉換成整數
+
+    // 根據 gNB ID 長度計算 Cell ID，並返回十進制字符串
+    return ( nciNumber % Math.pow( 2, 36 - gnbIdLength ) ).toString();
+  }
+
+  /**
+    * @2024/05/05 Add
+    * 將 Cell ID 轉換為二進制表示形式
+    * @method convertToBinary
+    * @param { number } cellId - 十進制的 Cell ID
+    * @returns { string } - 二進制表示的 Cell ID，固定 14 位
+    */
+  convertCellIdToBinary( cellId: number ): string {
+    return cellId.toString( 2 ).padStart( 14, '0' ); // 轉換為二進制並填充至14位
+  }
+
+
+  // @2024/05/06 Add
+  // 提交新增或編輯鄰居基站的表單
+  neighborBsEditSubmit() {
+    // 若 neighborForm 表單有效
+    if (this.neighborForm.valid) {
+      // 取得 neighborForm 表單的值
+      const formValue = this.neighborForm.value;
+
+      // 建立要提交的數據物件
+      const submitData: ForAddOrEditOrDeleteNeighborBs = {
+        type: "anr",
+        session: this.sessionId,
+        isSave: "true",
+        bsInfo: [
+          {
+            bsId: this.bsID,
+            nci: this.selectedNeighborNci,
+            neighbor: [
+              ...this.neighborList,
+              {
+                pci: formValue.nrpci,
+                nci: formValue.nci,
+                nrarfcn: formValue.nrarfcn,
+                tac: "",
+                id: "0",
+                enable: "0",
+                alias: "",
+                cio: "",
+                blacklisted: "",
+                "plmn-id": {
+                  mcc: formValue.mcc,
+                  mnc: formValue.mnc
+                },
+                "must-include": "",
+                "q-offset": "",
+                "rs-tx-power": "",
+                "__itri_default___": 0
+              }
+            ]
+          }
+        ]
+      };
+
+      // 若是編輯模式
+      if (this.neighborBsEditDialogRef.componentInstance.data.neighbor) {
+        // 取得要編輯的鄰居基站的 NCI
+        const editNci = this.neighborBsEditDialogRef.componentInstance.data.neighbor.nci;
+        
+        // 從 neighborList 中找到要編輯的鄰居基站
+        const editNeighbor = this.neighborList.find(neighbor => neighbor.nci === editNci);
+        
+        // 若找到要編輯的鄰居基站
+        if (editNeighbor) {
+          // 更新要編輯的鄰居基站的屬性
+          editNeighbor.pci = formValue.nrpci;
+          editNeighbor.nci = formValue.nci;
+          editNeighbor.nrarfcn = formValue.nrarfcn;
+          editNeighbor["plmn-id"].mcc = formValue.mcc;
+          editNeighbor["plmn-id"].mnc = formValue.mnc;
+          editNeighbor.__itri_default___ = 0;
+          
+          // 從 neighbor 中移除原有的要編輯的鄰居基站
+          submitData.bsInfo[0].neighbor = submitData.bsInfo[0].neighbor.filter(neighbor => neighbor.nci !== editNci);
+          
+          // 將更新後的鄰居基站加入 neighbor
+          submitData.bsInfo[0].neighbor.push(editNeighbor);
+        }
+      }
+
+      this.showProcessingSpinner(); // 顯示處理中的 Spinner
+      
+      if (this.commonService.isLocal) {
+        // 本地模式
+        console.log('本地測試環境，不進行實際提交操作。');
+        console.log("要提交的數據:", submitData);
+        
+        this.hideSpinner(); // 隱藏 Spinner
+      } else {
+        // 非本地模式，實際呼叫 API
+        console.log("要提交的數據:", submitData);
+        
+        this.API_BS.optimalBs(submitData).subscribe({
+          next: (res) => {
+            console.log('提交鄰居基站成功', res);
+            
+            this.neighborBsEditDialogRef.close(); // 關閉編輯對話框
+            
+            this.hideSpinner(); // 隱藏 Spinner
+          },
+          error: (error) => {
+            console.error('提交鄰居基站失敗', error);
+            
+            this.hideSpinner(); // 隱藏 Spinner
+          }
+        });
+      }
+    }
+  }
+  
+
+// ↑ 鄰居基站列表區 @2024/04/16 Add ↑
 
 
 
@@ -1800,6 +2075,52 @@ export class BSInfoComponent implements OnInit {
 // ↑ 基站告警區 @2024/03/31 Add ↑
 
 
+
+// ↓ 網元列表區 @2024/04/17 Update ↓
+
+  // @2024/03/29 Add
+  // 用於儲存所有於此 BS 內的網元
+  NEList_InThisBS: NEList = {} as NEList;
+
+  // @2024/03/29 Add
+  // 篩選出在 this.bsName 中的網元，並存儲到 NEList_InThisBS 中
+  filterNEListByBSName() {
+    console.log('filterNEListByBSName() - Start');
+
+    // 建立一個空的 components 陣列，用於存儲篩選後的網元
+    const filteredComponents: NE[] = [];
+
+    // 遍歷 NEList 中的每個網元
+    this.NEList.components.forEach( ( ne: NE ) => {
+
+      // 判斷網元的 bsName 是否與 this.bsName 相同
+      if ( ne.bsName === this.bsName ) {
+
+        // 如果相同,則將該網元加入到 filteredComponents 中
+        filteredComponents.push( ne );
+      }
+    });
+
+    // 將篩選後的網元存儲到 NEList_InThisBS 中
+    this.NEList_InThisBS = {
+      components: filteredComponents
+    };
+
+    console.log( "於此 BS -", this.bsName, "內的網元有:", this.NEList_InThisBS );
+
+    console.log( 'filterNEListByBSName() - End' );
+  }
+
+  /** @2024/04/17 Update
+   * 導航到選定基站的詳細資訊頁面。
+   * @param NE 從 NE 列表中選擇的 NE 物件。
+   */
+   viewNEDetailInfo( NE: NE ) {
+    // this.router.navigate( ['/main/component-mgr/info', NE.id, NE.bsId] );
+    this.router.navigate( ['/main/component-mgr/info', NE.id] );
+  }
+
+// ↑ 網元列表區 @2024/04/17 Update ↑
 
 
 

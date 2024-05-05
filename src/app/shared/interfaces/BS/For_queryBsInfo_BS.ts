@@ -645,6 +645,7 @@ export interface BSInfo {
     'rs-tx-power': string;
     blacklisted: string;
     tac: string;
+    __itri_default___?: number;
   }
   
   /* ↑ @12/15 Add For "anr": {} ↑ */
