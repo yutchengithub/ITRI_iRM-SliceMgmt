@@ -20,7 +20,7 @@
     channelbandwidth: string;
     txpower: string;
     tac: string;
-    edit_type: number;
+    edit_type?: number;
     extension_info: ExtensionInfo[];
   }
 

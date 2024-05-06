@@ -26,6 +26,9 @@ import { BSInfo, Components, ExtensionInfo, Neighbor }  from '../../shared/inter
 import { ForUpdateBs }                                  from '../../shared/interfaces/BS/For_updateBs';             // @2024/04/14 Add
 import { BSInfo_dist, Info_dist, Components_dist }      from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
 import { ForUpdateDistributedBs, Cellinfo_dist }        from '../../shared/interfaces/BS/For_updateDistributedBs';  // @2024/04/14 Add
+import { ForAddOrEditOrDeleteNeighborBs_allInOneBs }    from '../../shared/interfaces/BS/For_optimalBs';            // @2024/05/06 Add
+import { ForUpdateDistributedBs_editNeighborBs, Neighborinfo } from '../../shared/interfaces/BS/For_updateDistributedBs_editNeighborBs'; // @2024/05/06 Add
+    
 
 import { CurrentBsFmList, FaultMessage } from '../../shared/interfaces/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
 import { NEList, NE, Sm  }               from '../../shared/interfaces/NE/For_queryBsComponentList';       // @2024/03/27 Add
@@ -116,7 +119,6 @@ export class BSInfoComponent implements OnInit {
     // 建立搜尋表單 
     this.createAlarmSearchForm();
     //this.createBsBasicInfoEditForm(); // 用於編輯 BS 基本資訊用 @2024/04/14 Add
-
   }
 
   // @2024/03/25 Add
@@ -153,11 +155,6 @@ export class BSInfoComponent implements OnInit {
       // 取得此基站告警資訊 @2024/04/01 Add
       this.getCurrentBsFmList();
     });
-
-    //this.drawConnectingLines();
-
-   // this.spinner.hide();
-
     
   }
 
@@ -170,13 +167,7 @@ export class BSInfoComponent implements OnInit {
     this.canvas.nativeElement.width  = 1000; // 增加 Canvas 的寬度
     this.canvas.nativeElement.height = 250;  // 增加 Canvas 的寬度
 
-    // 在獲取基站和網元資訊完成後，手動觸發變更檢測
-    // Promise.all([this.getQueryBsInfo(), this.getNEList()]).then(() => {
-      //this.changeDetectorRef.detectChanges();
-      this.drawConnectingLines();
-    //});
-    //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
-
+    //this.drawConnectingLines();
   }
 
   // @2024/05/03 Update
@@ -214,9 +205,10 @@ export class BSInfoComponent implements OnInit {
   selectBsCellCount: number = 0;                      // 用於存儲當前選中的 BS Cell 數量
    selectBsPosition: string = "";                     // 用於存儲當前選中的一體式 BS 位置
   selectDistBsPosition: string = "";                  // 用於存儲當前選中的分佈式 BS 位置
+  gNBIdLength: number = 0;  // 用於存儲 gNBIdLength，以便後續可能會計算 NCI 或 cellLocalId @2024/05/04 Add
   
   /**
-   * @2024/04/17 Update
+   * @2024/05/04 Update
    * 取得基站資訊
    * @method getQueryBsInfo
    * @description
@@ -226,6 +218,7 @@ export class BSInfoComponent implements OnInit {
    * - 這個函數同時處理兩種類型的基站資訊，根據基站類型計算相應的 Cell 數量
    * - @2024/04/12 Update - 更新計算分佈式 Cell 數方式，改跟基站主頁方法相同
    * - @2024/04/15 Add - 新增"基站參數"欄位所需的設值處理
+   * - @2024/05/04 Add - 新增取得 gNBIdLength
    */
   getQueryBsInfo() {
     console.log( 'getQueryBsInfo() - Start' );
@@ -245,8 +238,14 @@ export class BSInfoComponent implements OnInit {
         this.selectBsInfo        = this.bsInfo_LocalFiles.bsInfo_local.find( info => info.id === this.bsID ) || {} as BSInfo;
         this.selectBsInfo.laston = this.commonService.formatTimeWithoutSecondsFraction( this.selectBsInfo.laston ); // 處理時間格式
         this.selectBsPosition    = this.commonService.formatPosition( this.selectBsInfo.position );                 // 處理位置訊息格式
+        
         console.log( 'In local - Get the BSInfo:', this.selectBsInfo );
         console.log( 'In local - Get the BSInfo position:', this.selectBsPosition );
+
+        // @2024/05/04 Add
+        // 取得 gNBIdLength - 避免 info 為空的狀況都從 extension_info 中取得
+        this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;
+        console.log( 'In local - Get the BSInfo gNBIdLength:', this.gNBIdLength );
 
         // 一體式基站，直接將 Cell 數量設為 1
         this.selectBsCellCount = 1;
@@ -259,6 +258,11 @@ export class BSInfoComponent implements OnInit {
         //this.selectDistBsPosition     = this.commonService.formatPosition( this.selectBsInfo_dist.position );               // 處理位置訊息格式
         console.log( 'In local - Get the BSInfo_dist:', this.selectBsInfo_dist );
         //console.log( 'In local - Get the BSInfo_dist position:', this.selectBsInfo_dist.position );
+
+        // @2024/05/04 Add
+        // 取得 gNBIdLength - 避免 info 為空的狀況都從 extension_info 中取得
+        this.gNBIdLength = this.selectBsInfo_dist.extension_info[0].gNBIdLength;
+        console.log( 'In local - Get the BSInfo_dist gNBIdLength:', this.gNBIdLength );
 
         // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
         //this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
@@ -319,6 +323,11 @@ export class BSInfoComponent implements OnInit {
             console.log( 'Get the BSInfo:', this.selectBsInfo );
             console.log( 'Get the BSInfo position:', this.selectBsPosition );
 
+            // @2024/05/04 Add
+            // 取得 gNBIdLength - 避免 info 為空的狀況都從 extension_info 中取得
+            this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;
+            console.log( 'Get the BSInfo gNBIdLength:', this.gNBIdLength );
+
             // 一體式基站，直接將 Cell 數量設為 1
             this.selectBsCellCount = 1;
 
@@ -333,6 +342,11 @@ export class BSInfoComponent implements OnInit {
 
             // 對於分佈式基站，計算 RU 的數量 ( 透過 info 內資料筆數直接計算，因基本上每筆都會有一個 RU )
             //this.selectBsCellCount = this.selectBsInfo_dist.info.length; // 每個 RU 代表一個 Cell
+
+            // @2024/05/04 Add
+            // 取得 gNBIdLength - 避免 info 為空的狀況都從 extension_info 中取得
+            this.gNBIdLength = this.selectBsInfo_dist.extension_info[0].gNBIdLength;  
+            console.log( 'Get the BSInfo_dist gNBIdLength:', this.gNBIdLength );
 
             // 改用遍歷 components 計算 Cell 數量 @2024/04/12 Add
             // 如果 bstype 為 2，需要遍歷 components 物件算 Cell 數量，每個 RU 代表一個 Cell
@@ -438,7 +452,7 @@ export class BSInfoComponent implements OnInit {
           
          // this.hideSpinner();  // 完成後隱藏 spinner
 
-          this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
+          // this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
           
         },
         error: ( error ) => {
@@ -758,7 +772,7 @@ export class BSInfoComponent implements OnInit {
     const bsInfo = this.bsType === "1" ? this.selectBsInfo : this.selectBsInfo_dist;
 
     // 若 bsInfo 存在
-    if (bsInfo) {
+    if  (bsInfo ) {
       // 使用 parsePositionPipe 解析位置字串，若無則設為空物件
       const position = bsInfo.position ? this.parsePositionPipe.transform(bsInfo.position) : { lat: '', lng: '' };
       
@@ -1162,6 +1176,11 @@ export class BSInfoComponent implements OnInit {
     const canvas = this.canvas.nativeElement; // 獲取 canvas 元素
     const ctx = canvas.getContext('2d'); // 獲取繪圖上下文
 
+    if (!ctx) return; // 如果無法獲取上下文，直接返回
+
+    // 清空畫布
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     // 檢查渲染上下文是否存在
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height); // 清除畫布
@@ -1304,7 +1323,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 鄰居基站列表區 @2024/04/16 Add ↓
+// ↓ 鄰居基站列表區 @2024/05/06 Update ↓
 
   neighborList: Neighbor[] = [];
   selectedNeighborNci: string = ''; // 當前選擇的NCI（用於鄰居基站列表）
@@ -1317,7 +1336,7 @@ export class BSInfoComponent implements OnInit {
    * - 根據選擇的 NCI，更新鄰居基站列表
    */
   onNeighborSelectedNciChange() {
-    this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+    this.neighborList = this.getNeighborList( this.selectedNeighborNci );
   }
 
   /**
@@ -1328,7 +1347,7 @@ export class BSInfoComponent implements OnInit {
    * - 根據選擇的 NCI，更新鄰居基站列表
    */
   onNeighborSearchClick() {
-    this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+    this.neighborList = this.getNeighborList( this.selectedNeighborNci );
   }
 
   /**
@@ -1340,12 +1359,12 @@ export class BSInfoComponent implements OnInit {
    * - 根據重置後的 NCI，更新鄰居基站列表
    */
   onNeighborClearClick() {
-    if (this.bsType === '1' && this.selectBsInfo) {
+    if ( this.bsType === '1' && this.selectBsInfo ) {
       this.selectedNeighborNci = this.nciList[0];
-    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+    } else if ( this.bsType === '2' && this.selectBsInfo_dist ) {
       this.selectedNeighborNci = this.nciList[0];
     }
-    this.neighborList = this.getNeighborList(this.selectedNeighborNci);
+    this.neighborList = this.getNeighborList( this.selectedNeighborNci );
   }
 
   /**
@@ -1355,10 +1374,10 @@ export class BSInfoComponent implements OnInit {
    * @param {string} nci - 選擇的 NCI
    * @returns {Neighbor[]} 鄰居基站列表
    */
-  getNeighborList(nci: string): Neighbor[] {
-    if (this.bsType === '1' && this.selectBsInfo) {
+  getNeighborList( nci: string ): Neighbor[] {
+    if ( this.bsType === '1' && this.selectBsInfo ) {
       return this.selectBsInfo.anr['anr-son-output'].neighbor;
-    } else if (this.bsType === '2' && this.selectBsInfo_dist) {
+    } else if ( this.bsType === '2' && this.selectBsInfo_dist ) {
       return this.selectBsInfo_dist.anr[nci]['anr-son-output'].neighbor;
     }
     return [];
@@ -1366,85 +1385,648 @@ export class BSInfoComponent implements OnInit {
 
   /**
    * @2024/04/16 Add
-   * 根據選擇的 NCI 計算 gNB ID
-   * @method calculateGnbId
-   * @param {string} nci - 選擇的 NCI
-   * @returns {number} gNB ID
+   * 將 16 進制字串轉換為 10 進制數字
+   * @method hexToDecimal
+   * @param { string } hex - 16 進制字串
+   * @returns { number } 10 進制數字
    */
-  calculateGnbId(nci: string): number {
-    if (!nci) {
-      return 0;
-    }
-    const gnbIdLength = this.selectedExtensionInfo?.gNBIdLength;
-    if (!gnbIdLength || isNaN(gnbIdLength)) {
-      return 0;
-    }
-    const nciNumber = parseInt(nci, 16);
-    return Math.floor(nciNumber / Math.pow(2, 36 - gnbIdLength));
+  hexToDecimal( hex: string ): number {
+    return parseInt( hex, 16 );
+  }
+
+
+  // @2024/05/05 Add
+  // ViewChild 裝飾器用來獲取模板中的 #addNeighborBsWindow、#editNeighborBsWindow 模板引用變量，
+  // 允許我們在 TypeScript 代碼中訪問這個 Angular 模板。
+  @ViewChild('addNeighborBsWindow') addNeighborBsWindow!: TemplateRef<any>;
+  @ViewChild('editNeighborBsWindow') editNeighborBsWindow!: TemplateRef<any>;
+
+  // @2024/05/05 Add
+  // 用於存儲對話框的參考，以便可以進行開啟、操作和關閉對話框的動作。
+  // MatDialogRef 類型提供了一系列控制對話框的方法，如 close() 用於關閉對話框。
+  addOrEditNeighborBsWindowRef!: MatDialogRef<any>;
+
+  // @2024/05/05 Add
+  // FormGroup 類型的 neighborForm 變量用來存儲和管理表單控制項的集合。
+  // 這個表單群組包含了用於編輯鄰居基站資訊的各個表單控制項，如 gNB ID、Cell ID 等。
+  neighborForm!: FormGroup;
+
+  /**
+   * @2024/05/05 Add
+   * 初始化或重置鄰居基站資訊表單
+   * 創建鄰居基站編輯表單並設置驗證規則
+   * @method createNeighborForm
+   * @returns {void}
+   * @description
+   * - 建立用於編輯或新增鄰居基站資訊的表單，包括驗證規則。
+   */
+  createNeighborForm(): void {
+    // 使用 Angular 的 FormBuilder 創建表單群組，並為各表單控件設定初始值和驗證規則
+    this.neighborForm = this.fb.group({
+      gnbId: ['', [Validators.required]],  // gNB ID 表單控制項，用於儲存計算出的gNB ID，無初始值和特定驗證
+      //cellId: ['', [Validators.pattern('^[01]{0,14}$')]], // 設定 Cell ID 的驗證規則，只允許 0 或 1，最多 14 位
+      nci: ['', [
+        Validators.required,      // 確保 NCI 欄位必填
+        Validators.minLength(9),  // 確保 NCI 欄位至少有 9 個字符
+        Validators.maxLength(9),  // 確保 NCI 欄位最多 9 個字符
+        Validators.pattern(/^[0-9A-Fa-f]{1,9}$/)  // 限制只能輸入16進制字符
+      ]],  // NCI 表單控制項，加入長度和字符的驗證規則
+      nrpci: ['', [Validators.required]],  // nRPCI 表單控制項，無初始值，用於儲存 nRPCI (NR Physical Cell ID)
+      mcc: ['', [Validators.required]],    // MCC 表單控制項，無初始值，用於儲存 Mobile Country Code
+      mnc: ['', [Validators.required]],    // MNC 表單控制項，無初始值，用於儲存 Mobile Network Code
+      nrarfcn: ['', [Validators.required]] // NRARFCN 表單控制項，無初始值，用於儲存 NR ARFCN (Absolute Radio Frequency Channel Number)
+    });
+
+    // 呼叫設定 Cell ID 自動填充邏輯的函數，確保輸入格式正確
+    //this.setupCellIdAutoFill(); // 初始化 Cell ID 的自動填充邏輯
+  }
+  
+
+
+  /**
+   * @2024/05/05 Add
+   * 設定 Cell ID 的自動填充邏輯，確保格式正確
+   * 自動調整輸入的 Cell ID，保持固定長度
+   * @method setupCellIdAutoFill
+   * @returns {void}
+   */
+  setupCellIdAutoFill(): void {
+    // 監聽 cellId 控件的值變化
+    this.neighborForm.get('cellId')!.valueChanges.subscribe(value => {
+        // 移除輸入值中的所有非 0 和 1 字元
+        const cleaned = value.replace(/[^01]/g, '');
+        // 檢查清理後的值長度是否超過最大限制
+        if (cleaned.length > 14) {
+            // 如果超過14位，則截取最後14位
+            this.neighborForm.get('cellId')!.setValue(cleaned.substr(1, 14));
+        } else {
+            // 如果未超過，填充前導0以保持長度為14，並阻止觸發額外的 valueChanges 事件
+            this.neighborForm.get('cellId')!.setValue(cleaned.padStart(14, '0'), {emitEvent: false});
+        }
+    });
   }
 
   /**
-   * @2024/04/16 Add
-   * 將 16 進制字串轉換為 10 進制數字
-   * @method hexToDecimal
-   * @param {string} hex - 16 進制字串
-   * @returns {number} 10 進制數字
+   * 處理鍵盤輸入以實現自定義的 Cell ID 輸入行為
+   * @method handleCellIdInput
+   * @param {KeyboardEvent} event - 觸發的鍵盤事件
+   * @returns {void}
    */
-  hexToDecimal(hex: string): number {
-    return parseInt(hex, 16);
+  handleCellIdInput(event: KeyboardEvent): void {
+    // 定義允許的按鍵清單
+    const allowedKeys = ['0', '1', 'Numpad0', 'Numpad1', 'Backspace', 'ArrowLeft', 'ArrowRight'];
+    // 獲取事件目標元素並確保其不為 null
+    const inputElement = event.target as HTMLInputElement | null;
+    if (!inputElement) return; // 如果目標元素不存在，則終止函數執行
+
+    // 獲取目前表單控件的值
+    let currentValue = this.neighborForm.get('cellId')!.value;
+    const maxCellLength = 14; // 設定最大長度限制
+    const cursorPos = inputElement.selectionStart; // 獲取光標位置
+    if (!cursorPos) return; // 如果光標位置未獲取到，則終止函數執行
+
+    // 處理僅允許的按鍵以及組合鍵（如 Ctrl 或 Meta）
+    if (!allowedKeys.includes(event.key) && !event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
+        return;
+    }
+
+    // 處理數字小鍵盤和主鍵盤的輸入
+    let inputChar = event.key.replace('Numpad', '');
+
+    if (inputChar === 'Backspace') {
+        // 處理退格鍵：刪除光標前的字符
+        if (cursorPos > 0 && cursorPos <= currentValue.length) {
+            currentValue = currentValue.substring(0, cursorPos - 1) + currentValue.substring(cursorPos);
+            event.preventDefault(); // 阻止預設的退格行為
+        }
+    } else if (['0', '1'].includes(inputChar) && currentValue.length < maxCellLength) {
+        // 處理數字輸入：在光標位置插入字符
+        currentValue = currentValue.substring(0, cursorPos) + inputChar + currentValue.substring(cursorPos);
+        event.preventDefault(); // 阻止預設的輸入行為
+    }
+
+    // 確保輸入不超過最大長度
+    currentValue = currentValue.padStart(maxCellLength, '0').substring(0, maxCellLength);
+    
+    // 更新表單控件的值
+    this.neighborForm.get('cellId')!.setValue(currentValue);
   }
+  
+  // @2024/05/06 Add
+  // 儲存選擇要編輯的 Neighbor BS 之 NCI、PCI
+  theSelectedEditNeighborNCI: string = "";
+  theSelectedEditNeighborPCI: number = 0;
 
-// ↑ 鄰居基站列表區 @2024/04/16 Add ↑
+  /**
+   * @2024/05/06 Update
+   * 打開鄰居基站資訊編輯對話框
+   * 根據模式（新增或編輯）打開彈出視窗，並準備表單
+   * @method openNeighborBsEditDialog
+   * @param { string }  mode - 彈出視窗模式（'add' 或 'edit'）
+   * @param { any } neighbor - 編輯時使用的鄰居基站資料
+   * @returns { void }
+   */
+  openNeighborBsEditDialog( mode: string, neighbor?: any ): void {
 
+    // 輸出當前模式以供調試
+    console.log( "Mode is:", mode );
 
+    // 呼叫函數初始化表單
+    this.createNeighborForm(); // 初始化表單
 
+    if ( mode == "add" ) {
 
-// ↓ 網元列表區 @2024/04/17 Update ↓
+      // 輸出當前是要新增哪個 Cell ( NCI ) 的鄰居基站
+      console.log( "要新增鄰居基站的 Cell ( NCI ) 為", this.selectedNeighborNci );
+    }
+    
+    if ( mode == "edit" ) {
 
-  // @2024/03/29 Add
-  // 用於儲存所有於此 BS 內的網元
-  NEList_InThisBS: NEList = {} as NEList;
+      // 輸出當前是要新增哪個 Cell ( NCI ) 的鄰居基站
+      console.log( "要編輯的鄰居基站是位於此 Cell -", this.selectedNeighborNci, "底下" );
 
-  // @2024/03/29 Add
-  // 篩選出在 this.bsName 中的網元，並存儲到 NEList_InThisBS 中
-  filterNEListByBSName() {
-    console.log('filterNEListByBSName() - Start');
+      // 輸出當前選擇的鄰居基站所有資訊
+      console.log( "Selected neighbor:", neighbor );
 
-    // 建立一個空的 components 陣列，用於存儲篩選後的網元
-    const filteredComponents: NE[] = [];
+      // 將選中的鄰居基站 nci 賦值給 theSelectedDeleteNeighborNCI
+      this.theSelectedEditNeighborNCI = neighbor.nci;
 
-    // 遍歷 NEList 中的每個網元
-    this.NEList.components.forEach( ( ne: NE ) => {
+      // 將選中的鄰居基站 nci 賦值給 theSelectedDeleteNeighborPCI
+      this.theSelectedEditNeighborPCI = neighbor.pci;
 
-      // 判斷網元的 bsName 是否與 this.bsName 相同
-      if ( ne.bsName === this.bsName ) {
+      // 輸出當前選擇要編輯的 Neighbor BS 的 nci @2024/05/06 Add
+      console.log( "the Selected Edit Neighbor NCI:", this.theSelectedEditNeighborNCI );
 
-        // 如果相同,則將該網元加入到 filteredComponents 中
-        filteredComponents.push( ne );
-      }
+      // 如果是編輯模式，使用提供的鄰居基站資料來填充表單
+      this.fillForm( neighbor );
+    }
+
+    // 根據傳入的模式開啟對應的彈出視窗模板
+    let dialogTemplate = mode === 'add' ? this.addNeighborBsWindow : this.editNeighborBsWindow;
+
+    // 開啟彈出視窗，傳入對應模板和數據
+    this.addOrEditNeighborBsWindowRef = this.dialog.open( dialogTemplate, {
+        data: {
+            neighbor: neighbor
+        },
+        id: 'addOrEditNeighborBsWindowRef' // 設定彈出視窗的唯一標識
     });
 
-    // 將篩選後的網元存儲到 NEList_InThisBS 中
-    this.NEList_InThisBS = {
-      components: filteredComponents
-    };
-
-    console.log( "於此 BS -", this.bsName, "內的網元有:", this.NEList_InThisBS );
-
-    console.log( 'filterNEListByBSName() - End' );
+    // 訂閱彈出視窗關閉事件，用於清理或記錄
+    this.addOrEditNeighborBsWindowRef.afterClosed().subscribe( result => {
+        console.log('Dialog was closed'); // 輸出彈出視窗關閉的日誌
+    });
   }
 
-  /** @2024/04/17 Update
-   * 導航到選定基站的詳細資訊頁面。
-   * @param NE 從 NE 列表中選擇的 NE 物件。
+  /**
+    * @2024/05/05 Add
+    * 使用提供的鄰居基站數據填充表單，以便於編輯鄰居基站資訊
+    * @method fillForm
+    * @param { any } neighbor - 需要填充的鄰居基站數據
+    */
+  fillForm( neighbor: any ): void {
+
+    // 計算十進制的 Cell ID
+    const cellIdDecimal = this.calculateCellLocalId( neighbor.nci );
+
+    // 轉換 Cell ID 為二進制表示，並填充至固定長度
+    const cellIdBinary = this.convertCellIdToBinary( parseInt( cellIdDecimal, 10 ) );
+
+    // 更新表單的各個字段
+    this.neighborForm.patchValue({
+      gnbId: this.calculateGnbId( neighbor.nci ), // 設定計算後的 gNB ID
+      //cellId: cellIdBinary,                     // 使用二進制格式的 Cell ID
+      nci:  neighbor.nci,                         // 設定 NCI
+      nrpci: neighbor.pci,                        // 設定 nRPCI
+      mcc: neighbor['plmn-id'].mcc,               // 設定 MCC
+      mnc: neighbor['plmn-id'].mnc,               // 設定 MNC
+      nrarfcn: neighbor.nrarfcn                   // 設定 NRARFCN
+    });
+  }
+
+  /**
+    * @2024/05/05 Add
+    * 根據選擇的 NCI 計算 gNB ID
+    * 利用 NCI 和 gNB ID 長度計算 gNB ID
+    * @method calculateGnbId
+    * @param { string } nci - 選擇的 NCI
+    * @returns { number } - 計算得到的 gNB ID
+    */
+  calculateGnbId( nci: string ): number {
+
+    if ( !nci ) { // 檢查輸入的 NCI 是否存在
+        return 0;
+    }
+    
+    const gnbIdLength = this.gNBIdLength || 22; // 從成員變數獲取 gNB ID 長度，如果未設置則使用預設值 22
+    if ( isNaN( gnbIdLength ) ) { // 檢查 gNB ID 長度是否為有效數值
+        return 0;
+    }
+
+    const nciNumber = parseInt( nci, 16 ); // 將 NCI 從十六進制轉換成整數
+    return Math.floor( nciNumber / Math.pow( 2, 36 - gnbIdLength ) ); // 根據 gNB ID 長度計算 gNB ID
+  }
+
+  /**
+    * @2024/05/05 Add
+    * 根據提供的 NCI 和 gNB ID 長度計算局部 Cell ID
+    * 這個方法計算出的 Cell ID 是十進制值，用於後續處理或顯示
+    * @method calculateCellLocalId
+    * @param { string } nci - 要從中計算的 NCI
+    * @returns { string } - 計算得到的 Cell ID，為十進制值
+    */
+  calculateCellLocalId( nci: string ): string {
+    //const gnbIdLength = this.gNBIdLength; // 使用成員變數 gNBIdLength 或默認值 22
+
+    const gnbIdLength = this.gNBIdLength;  // 使用成員變數 gNBIdLength
+    const nciNumber = parseInt( nci, 16 ); // 將 NCI 從十六進制轉換成整數
+
+    // 根據 gNB ID 長度計算 Cell ID，並返回十進制字符串
+    return ( nciNumber % Math.pow( 2, 36 - gnbIdLength ) ).toString();
+  }
+
+  /**
+    * @2024/05/05 Add
+    * 將 Cell ID 轉換為二進制表示形式
+    * @method convertToBinary
+    * @param { number } cellId - 十進制的 Cell ID
+    * @returns { string } - 二進制表示的 Cell ID，固定 14 位
+    */
+  convertCellIdToBinary( cellId: number ): string {
+    return cellId.toString( 2 ).padStart( 14, '0' ); // 轉換為二進制並填充至14位
+  }
+
+  // @2024/05/06 Add
+  // ViewChild 裝飾器用於獲取模板中 #deleteNeighborBSConfirmWindow 的元素
+  @ViewChild('deleteNeighborBSConfirmWindow') deleteNeighborBSConfirmWindow: any;
+
+  // @2024/05/06 Add
+  // MatDialogRef 用於控制打開的對話框
+  deleteNeighborBSConfirmWindowRef!: MatDialogRef< any >;
+
+  // @2024/05/06 Add
+  // 儲存選擇要刪除的 Neighbor BS 之 NCI、PCI
+  theSelectedDeleteNeighborNCI: string = "";
+  theSelectedDeleteNeighborPCI: number = 0; 
+
+  /**
+   * @2024/05/06 Add
+   * 打開選擇的鄰居基站刪除確認對話框
+   * @method openDeleteNeighborBSConfirmWindow
+   * @param { Neighbor } neighbor - 需要刪除的鄰居基站資料
+   * @returns { void }
    */
-   viewNEDetailInfo( NE: NE ) {
-    // this.router.navigate( ['/main/component-mgr/info', NE.id, NE.bsId] );
-    this.router.navigate( ['/main/component-mgr/info', NE.id] );
+  openDeleteNeighborBSConfirmWindow( neighbor: Neighbor ) {
+
+    // 將選中的鄰居基站 NCI 賦值給類變量
+    this.theSelectedDeleteNeighborNCI = neighbor.nci;
+
+    // 將選中的鄰居基站 PCI 賦值給類變量
+    this.theSelectedDeleteNeighborPCI = neighbor.pci;
+
+    // 輸出選中的鄰居基站 NCI 和 PCI
+    console.log("選中要刪除的鄰居基站的 NCI 為:", this.theSelectedDeleteNeighborNCI);
+    console.log("選中要刪除的鄰居基站的 PCI 為:", this.theSelectedDeleteNeighborPCI);
+
+    // 呼叫函數初始化表單
+    this.createNeighborForm(); // 初始化表單
+
+    // 使用 MatDialog 服務開啟確認刪除的對話框
+    this.deleteNeighborBSConfirmWindowRef = this.dialog.open(
+        this.deleteNeighborBSConfirmWindow, {
+            id: 'deleteNeighborBSConfirmWindow' // 對話框的唯一標識
+        }
+    );
+
+    // 訂閱對話框關閉後的事件
+    this.deleteNeighborBSConfirmWindowRef.afterClosed().subscribe(confirm => {
+        console.log('Dialog was closed'); // 對話框關閉時輸出日誌
+    });
   }
 
-// ↑ 網元列表區 @2024/04/17 Update ↑
+  // @2024/05/06 Add
+  // 組裝一體式基站新增、編輯或刪除鄰居基站 POST 要提交的數據 
+  submitData_allInOneBs_editNeighborBs: ForAddOrEditOrDeleteNeighborBs_allInOneBs = {} as ForAddOrEditOrDeleteNeighborBs_allInOneBs;
 
+  // @2024/05/06 Add
+  // 組裝分佈式基站新增、編輯或刪除鄰居基站 POST 要提交的數據 
+  submitData_dist_editNeighborBs: ForUpdateDistributedBs_editNeighborBs = {} as ForUpdateDistributedBs_editNeighborBs;
+
+  /**
+   * @2024/05/06 Add
+   * 提交新增、編輯或刪除鄰居基站的方法
+   * @method addOrEditOrDeleteNeighborBs_Submit
+   * @param   { string } action - 執行的動作類型（'add', 'edit', 'delete'）
+   * @returns { void }
+   * @description
+   * - 根據提供的動作類型，處理鄰居基站的新增、編輯或刪除操作。
+   * - 依據基站類型處理對應的數據並提交。
+   */
+  addOrEditOrDeleteNeighborBs_Submit( action: string ) {
+
+    this.showProcessingSpinner();   // 顯示 Processing Spinner
+
+    // 檢查表單有效性或是否為刪除操作
+    if ( ( action !== 'delete' && this.neighborForm?.valid ) || ( action === 'delete' ) ) {
+
+      // 獲取表單值
+      const formValue = this.neighborForm.value;
+
+      if ( this.bsType === '1' ) {
+        // 如果基站類型為 '1'，即一體式基站，則進行以下處理
+
+        // 初始化 submitData_allInOneBs_editNeighborBs 變數
+        this.submitData_allInOneBs_editNeighborBs = {} as ForAddOrEditOrDeleteNeighborBs_allInOneBs;
+
+        // 輸出初始化後的 submitData_allInOneBs_editNeighborBs 變數
+        console.log( "addOrEditOrDeleteNeighborBs_Submit() - Start - submitData_allInOneBs_editNeighborBs:", this.submitData_allInOneBs_editNeighborBs );
+   
+        // 根據操作類型組裝 neighbor 數據
+        let neighbors: any[] = [];
+
+        // 根據操作類型進行處理
+        switch ( action ) {
+          case 'add':
+
+            // 從現有的鄰居列表加上新鄰居
+            neighbors = [...this.neighborList];
+
+            // 添加新鄰居
+            neighbors.push({
+                // 下面是根據表單填寫的數據創建新鄰居對象
+                id: "0",
+                enable: "0",
+                alias: "",
+                'must-include': "",
+                'plmn-id': {
+                    mcc: formValue.mcc,
+                    mnc: formValue.mnc
+                },
+                nci: formValue.nci,
+                nrarfcn: formValue.nrarfcn,
+                pci: formValue.nrpci,
+                'q-offset': "",
+                cio: "",
+                'rs-tx-power': "",
+                blacklisted: "",
+                tac: "",
+                '__itri_default___': 0
+            });
+
+            break;
+
+          case 'edit':
+
+            // 從列表中過濾出不需要編輯的鄰居，即那些 NCI 和 PCI 都不匹配的鄰居
+            neighbors = this.neighborList.filter( neighbor => {
+                return !( neighbor.nci === this.theSelectedEditNeighborNCI && neighbor.pci === this.theSelectedEditNeighborPCI );
+            });
+        
+            // 將編輯過的鄰居數據添加到列表中
+            neighbors.push({
+                // 與新增相似，更新鄰居數據
+                id: "0",
+                enable: "0",
+                alias: "",
+                'must-include': "",
+                'plmn-id': {
+                    mcc: formValue.mcc,
+                    mnc: formValue.mnc
+                },
+                nci: formValue.nci,
+                nrarfcn: formValue.nrarfcn,
+                pci: formValue.nrpci,
+                'q-offset': "",
+                cio: "",
+                'rs-tx-power': "",
+                blacklisted: "",
+                tac: "",
+                '__itri_default___': 0
+            });
+
+            break;
+            
+          case 'delete':
+
+            // 過濾出要刪除的鄰居，確保兩個條件都匹配的 neighbor 才可被移除
+            neighbors = this.neighborList.filter( neighbor => {
+                return !( neighbor.nci === this.theSelectedDeleteNeighborNCI && neighbor.pci === this.theSelectedDeleteNeighborPCI );
+            });
+
+            break;
+        }
+
+        // 組裝一體式基站 POST 要提交數據
+        this.submitData_allInOneBs_editNeighborBs = {
+          type: "anr",
+          session: this.sessionId,
+          isSave: "true",
+          bsInfo: [{
+              bsId: this.bsID,
+              nci: this.selectedNeighborNci,
+              neighbor: neighbors
+          }]
+        };
+
+        // 根據動作類型輸出日誌
+        switch ( action ) {
+          case 'add':
+            console.log( "Add - The POST data for optimalBs():", this.submitData_allInOneBs_editNeighborBs );
+            break;
+          case 'edit':
+            console.log( "Edit - The POST data for optimalBs():", this.submitData_allInOneBs_editNeighborBs );
+            break;
+          case 'delete':
+            console.log( "Delete - The POST data for optimalBs():", this.submitData_allInOneBs_editNeighborBs );
+            break;
+        }
+
+      } else if ( this.bsType === '2' ) {
+        // 如果基站類型為 '2'，即分佈式基站，則進行以下處理
+      
+        // 初始化存儲提交數據的變數變數 - submitData_dist_editNeighborBs 
+        this.submitData_dist_editNeighborBs = {} as ForUpdateDistributedBs_editNeighborBs;
+      
+        // 輸出初始化後的 submitData_dist_editNeighborBs 變數
+        console.log("addOrEditOrDeleteNeighborBs_Submit() - Start - submitData_dist_editNeighborBs:", this.submitData_dist_editNeighborBs);
+      
+        // 組裝分佈式基站 POST 要提交數據
+        this.submitData_dist_editNeighborBs = {
+          session: this.sessionId, // 設置 session 值
+          id: this.bsID, // 設置基站 ID
+          name: this.bsName, // 設置基站名稱
+          bstype: this.bsType, // 設置基站類型
+          components: this.selectBsInfo_dist.components, // 設置基站組件
+          description: this.selectBsInfo_dist.description, // 設置基站描述
+          neighborinfo: [], // 初始化 neighborinfo 數組
+        };
+      
+        // 遍歷每個 NCI
+        for ( const nci of this.nciList ) {
+
+          // 找到對應的 extension_info
+          const extensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === nci);
+      
+          // 如果找到了對應的 extension_info
+          if ( extensionInfo ) {
+
+            // 創建一個新的 Neighborinfo 對象
+            const neighborInfo: Neighborinfo = {
+              gNBId: extensionInfo.gNBId,             // 設置 gNBId
+              gNBIdLength: extensionInfo.gNBIdLength, // 設置 gNBIdLength
+              cellLocalId: extensionInfo.cellLocalId, // 設置 cellLocalId
+              neighbor: [], // 初始化 neighbor 數組
+            };
+      
+            // 如果當前 NCI 與選中的 NCI 相同，則處理 neighbor 列表
+            if ( nci === this.selectedNeighborNci ) {
+
+              // 根據操作類型進行處理
+              switch ( action ) {
+
+                case 'add':
+                  // 添加新的 neighbor 到 neighborInfo.neighbor 數組
+                  neighborInfo.neighbor = [
+                    ...this.neighborList, // 展開原有的 neighborList
+                    {
+                      id: "0",            // 設置新 neighbor 的 id
+                      enable: "0",        // 設置新 neighbor 的 enable 值
+                      alias: "",          // 設置新 neighbor 的 alias 值
+                      'must-include': "", // 設置新 neighbor 的 must-include 值
+                      'plmn-id': {
+                        mcc: formValue.mcc, // 設置新 neighbor 的 plmn-id.mcc 值
+                        mnc: formValue.mnc  // 設置新 neighbor 的 plmn-id.mnc 值
+                      },
+                      nci: formValue.nci,         // 設置新 neighbor 的 nci 值
+                      nrarfcn: formValue.nrarfcn, // 設置新 neighbor 的 nrarfcn 值
+                      pci: formValue.nrpci,       // 設置新 neighbor 的 pci 值
+                      'q-offset': "",             // 設置新 neighbor 的 q-offset 值
+                      cio: "",                    // 設置新 neighbor 的 cio 值
+                      'rs-tx-power': "",          // 設置新 neighbor 的 rs-tx-power 值
+                      blacklisted: "",            // 設置新 neighbor 的 blacklisted 值
+                      tac: "",                    // 設置新 neighbor 的 tac 值
+                      '__itri_default___': 0      // 設置新 neighbor 的 __itri_default___ 值
+                    }
+                  ];
+                  break;
+      
+                case 'edit':
+                  // 過濾掉要編輯的 neighbor,並添加編輯後的 neighbor 到 neighborInfo.neighbor 數組
+                  neighborInfo.neighbor = this.neighborList.filter( neighbor => {
+                    return !( neighbor.nci === this.theSelectedEditNeighborNCI && neighbor.pci === this.theSelectedEditNeighborPCI );
+                  });
+                  
+                  neighborInfo.neighbor.push({
+                    id: "0",              // 設置編輯後的 neighbor 的 id
+                    enable: "0",          // 設置編輯後的 neighbor 的 enable 值
+                    alias: "",            // 設置編輯後的 neighbor 的 alias 值
+                    'must-include': "",   // 設置編輯後的 neighbor 的 must-include 值
+                    'plmn-id': {
+                      mcc: formValue.mcc, // 設置編輯後的 neighbor 的 plmn-id.mcc 值
+                      mnc: formValue.mnc  // 設置編輯後的 neighbor 的 plmn-id.mnc 值
+                    },
+                    nci: formValue.nci,         // 設置編輯後的 neighbor 的 nci 值
+                    nrarfcn: formValue.nrarfcn, // 設置編輯後的 neighbor 的 nrarfcn 值
+                    pci: formValue.nrpci,       // 設置編輯後的 neighbor 的 pci 值
+                    'q-offset': "",             // 設置編輯後的 neighbor 的 q-offset 值
+                    cio: "",                    // 設置編輯後的 neighbor 的 cio 值
+                    'rs-tx-power': "",          // 設置編輯後的 neighbor 的 rs-tx-power 值
+                    blacklisted: "",            // 設置編輯後的 neighbor 的 blacklisted 值
+                    tac: "",                    // 設置編輯後的 neighbor 的 tac 值
+                    '__itri_default___': 0      // 設置編輯後的 neighbor 的 __itri_default___ 值
+                  });
+                  break;
+      
+                case 'delete':
+                  // 過濾掉要刪除的 neighbor,更新 neighborInfo.neighbor 數組
+                  neighborInfo.neighbor = this.neighborList.filter( neighbor => {
+                    return !( neighbor.nci === this.theSelectedDeleteNeighborNCI && neighbor.pci === this.theSelectedDeleteNeighborPCI );
+                  });
+                  break;
+              }
+            } else {
+              // 如果當前 NCI 與選中的 NCI 不同，則直接使用原有的 neighbor 列表
+              neighborInfo.neighbor = this.getNeighborList( nci );
+            }
+      
+            // 將 neighborInfo 添加到 neighborinfo 數組中
+            this.submitData_dist_editNeighborBs.neighborinfo.push( neighborInfo );
+          }
+        }
+
+        // 根據動作類型輸出日誌
+        switch ( action ) {
+          case 'add':
+            console.log( "Add - The POST data for updateDistributedBs():", this.submitData_dist_editNeighborBs );
+            break;
+          case 'edit':
+            console.log( "Edit - The POST data for updateDistributedBs():", this.submitData_dist_editNeighborBs );
+            break;
+          case 'delete':
+            console.log( "Delete - The POST data for updateDistributedBs():", this.submitData_dist_editNeighborBs );
+            break;
+        }
+      }
+
+      // 判斷是否為本地模式進行模擬或實際 API 呼叫
+      if ( this.commonService.isLocal ) {
+
+          console.log('Local testing environment, no update operation will be performed.');
+
+          // 隱藏加載指示器
+          this.hideSpinner();
+
+      } else {
+
+        // 非 Local 模式下執行對應的 API 調用
+        const apiObservable = this.bsType === "1"
+                ? this.API_BS.optimalBs( this.submitData_allInOneBs_editNeighborBs )
+                : this.API_BS.updateDistributedBs( this.submitData_dist_editNeighborBs );
+
+        // 呼叫 API 進行鄰居基站新增、編輯或刪除操作
+        apiObservable.subscribe({
+          next: ( res ) => {
+
+            // 輸出操作成功的日誌
+            console.log( 'Neighbor BS operation success', res );
+
+            // 刷新相關基站資訊
+            this.getQueryBsInfo();       // 刷新基站資訊
+            //this.getNEList();          // 刷新網元資訊
+            //this.getCurrentBsFmList(); // 刷新告警資訊
+
+            // 操作完成後，關閉新增或編輯鄰居基站視窗
+            if ( this.addOrEditNeighborBsWindowRef ) {
+              this.addOrEditNeighborBsWindowRef.close();
+            }
+
+            // 隱藏加載指示器
+            this.hideSpinner();
+          },
+          error: ( error ) => {
+
+            // 操作失敗後的處理
+            console.error( 'Neighbor BS operation failed', error );
+            
+            // 出錯時隱藏加載指示器
+            this.hideSpinner();
+          }
+        });
+      }
+
+    } else {
+      
+        // 如果表單驗證未通過
+        console.error('Form is not valid, please check the input fields.');
+
+        // 表單驗證未通過也隱藏加載指示器
+        this.hideSpinner();
+    }
+  }
+
+
+// ↑ 鄰居基站列表區 @2024/05/06 Update ↑
 
 
 
@@ -1777,268 +2359,51 @@ export class BSInfoComponent implements OnInit {
 
 
 
+// ↓ 網元列表區 @2024/04/17 Update ↓
 
+  // @2024/03/29 Add
+  // 用於儲存所有於此 BS 內的網元
+  NEList_InThisBS: NEList = {} as NEList;
 
+  // @2024/03/29 Add
+  // 篩選出在 this.bsName 中的網元，並存儲到 NEList_InThisBS 中
+  filterNEListByBSName() {
+    console.log('filterNEListByBSName() - Start');
 
+    // 建立一個空的 components 陣列，用於存儲篩選後的網元
+    const filteredComponents: NE[] = [];
 
+    // 遍歷 NEList 中的每個網元
+    this.NEList.components.forEach( ( ne: NE ) => {
 
+      // 判斷網元的 bsName 是否與 this.bsName 相同
+      if ( ne.bsName === this.bsName ) {
 
-
-
-
-
-
-
-
-
-
-  getBSInfo() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.bsComponentInfo = this.commonService.bsComponentInfo;
-      this.ocloudInfoDeal();
-    } else {
-      this.commonService.queryOcloudInfo(this.cloudId).subscribe(
-        res => {
-          console.log('getOcloudInfo:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.ocloudInfo = JSON.parse(str);
-          this.ocloudInfo = res as OcloudInfo;
-          this.ocloudInfoDeal();
-        }
-      );
-    }
-  }
-  nfRunRefresh() {
-    clearTimeout(this.refreshTimeout);
-    this.RunRefreshTimeout = window.setTimeout(() => this.getOcloudPerformance(), this.RunRefreshTime * 1000);
-    this.RunRefreshTimeout = window.setTimeout(() => this.getBSInfo(), this.RunRefreshTime * 1000);
-  }
-  getOcloudPerformance() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.ocloudPerformance = this.commonService.ocloudPerformance;
-      this.ocloudPerformanceDeal();
-    } else {
-      clearTimeout(this.refreshTimeout);
-      this.commonService.queryOcloudPerformance(this.cloudId).subscribe(
-        res => {
-          console.log('getOcloudPerformance:');
-          console.log(res);
-          this.ocloudPerformance = res as OcloudPerformance;
-          this.ocloudPerformanceDeal();
-        }
-      );
-    }
-  }
-
-  getSoftwareList() {
-    let type = '0'
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.softwareList = this.commonService.softwareList;
-      this.softwareDeal();
-    } else {
-      if (this.cloudName === 'Wind River' || this.cloudName === 'windriver'){
-        type = '-3';
+        // 如果相同,則將該網元加入到 filteredComponents 中
+        filteredComponents.push( ne );
       }
-      this.commonService.querySoftwareList('', type, '').subscribe(
-        res => {
-          console.log('getSoftwareList:');
-          console.log(res);
-          this.softwareList = res as SoftwareList[];
-          this.softwareDeal();
-        }
-      );
-    }
-  }
-
-  softwareDeal() {
-    this.fileNameMapSoftware = new Map();
-    this.softwareList.forEach((row) => {
-      this.fileNameMapSoftware.set(row.fileName, row);
     });
+
+    // 將篩選後的網元存儲到 NEList_InThisBS 中
+    this.NEList_InThisBS = {
+      components: filteredComponents
+    };
+
+    console.log( "於此 BS -", this.bsName, "內的網元有:", this.NEList_InThisBS );
+
+    console.log( 'filterNEListByBSName() - End' );
   }
 
-  softwareVersion(): string {
-    const fileName = this.updateForm.controls['fileName'].value;
-    if (fileName === '') {
-      return '';
-    } else {
-      const software = this.fileNameMapSoftware.get(fileName) as any;
-      return software.version;
-    }
+  /** @2024/04/17 Update
+   * 導航到選定基站的詳細資訊頁面。
+   * @param NE 從 NE 列表中選擇的 NE 物件。
+   */
+   viewNEDetailInfo( NE: NE ) {
+    // this.router.navigate( ['/main/component-mgr/info', NE.id, NE.bsId] );
+    this.router.navigate( ['/main/component-mgr/info', NE.id] );
   }
 
-  ocloudInfoDeal() {
-    if (this.ocloudInfo.resourcepool && this.ocloudInfo.resourcepool.length > 0) {
-      this.ocloudInfo.resourcepool[0].active = true;
-    }
-  }
-
-  ocloudPerformanceDeal() {
-    // this.utilizationPercent = Math.floor((Number(this.ocloudPerformance.usedCpu) / Number(this.ocloudPerformance.totalCpu)) * 100);
-    if (this.ocloudPerformance.cpu != 'N/A' || this.ocloudPerformance.storage != 'N/A' ||
-      this.ocloudPerformance.memory != 'N/A' || this.ocloudPerformance.network != 'N/A') {
-      this.ocloudPerformance.cpu += ' %';
-      this.ocloudPerformance.memory += ' GB';
-      this.ocloudPerformance.storage += ' MB';
-      this.ocloudPerformance.network += ' Kbps';
-    }
-  }
-
-  severityText(severity: string): string {
-    return this.commonService.severityText(severity);
-  }
-
-  severityCount(severity: string): number {
-    if (severity.toUpperCase() === this.severitys[0]) {
-      return this.ocloudInfo.fault.critical;
-    } else if (severity.toUpperCase() === this.severitys[1]) {
-      return this.ocloudInfo.fault.major;
-    } else if (severity.toUpperCase() === this.severitys[2]) {
-      return this.ocloudInfo.fault.minor;
-    } else if (severity.toUpperCase() === this.severitys[3]) {
-      return this.ocloudInfo.fault.warning;
-    } else {
-      return 0;
-    }
-  }
-
-  goFaultMgr() {
-    this.router.navigate(['/main/fault-mgr', this.cloudName, 'All']);
-  }
-
-  openUpdateModel() {
-    this.formValidated = false;
-    this.updateForm = this.fb.group({
-      'type': new FormControl('imageUrl'),
-      'imageUrl': new FormControl('', [Validators.required]),
-      'fileName': new FormControl('')
-    });
-    this.updateModalRef = this.dialog.open(this.updateModal, { id: 'updateModal' });
-    this.updateModalRef.afterClosed().subscribe(() => {
-      this.formValidated = false;
-    });
-  }
-
-  updateBasicError: boolean = false;
-  openUpdateIPModel() {
-    this.formValidated = false;
-    this.updateForm = this.fb.group({
-      newip: ['',],
-    });
-    this.updateIPModalRef = this.dialog.open(this.updateIPModal, { id: 'updateIPModal' });
-    this.updateIPModalRef.afterClosed().subscribe(() => {
-      this.formValidated = false;
-    });
-  }
-
-  changeType(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    if (e.value === 'imageUrl') {
-      this.updateForm.controls['imageUrl'].setValidators([Validators.required]);
-      this.updateForm.controls['fileName'].setValidators(null);
-      this.updateForm.controls['fileName'].setValue('');
-    } else {
-      this.updateForm.controls['imageUrl'].setValidators(null);
-      this.updateForm.controls['imageUrl'].setValue('');
-      this.updateForm.controls['fileName'].setValidators([Validators.required]);
-    }
-    this.updateForm.controls['imageUrl'].updateValueAndValidity();
-    this.updateForm.controls['fileName'].updateValueAndValidity();
-  }
-
-  update() {
-    this.formValidated = true;
-    if (!this.updateForm.valid) {
-      return;
-    }
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.updateModalRef.close();
-    } else {
-      const body: any = {
-        ocloud: this.ocloudInfo.id,
-        currentVersion: this.ocloudInfo.softwareVersion,
-        sessionid: this.sessionId
-      };
-      if (this.updateForm.controls['type'].value === 'imageUrl') {
-        const imageUrlSplit = this.updateForm.controls['imageUrl'].value.split('/');
-        body['fileName'] = imageUrlSplit[imageUrlSplit.length - 1];
-      } else {
-        body['fileName'] = this.updateForm.controls['fileName'].value;
-        body['version'] = this.softwareVersion();
-      }
-      this.commonService.applyOcloudSoftware(body).subscribe(
-        () => console.log('Update Successful.')
-      );
-      this.updateModalRef.close();
-      this.getBSInfo();
-    }
-    this.getBSInfo();
-  }
-
-  updateNFSuccessful: boolean | null = null; 
-  hideUpdateIcon() {
-    setTimeout(() => {
-      this.updateNFSuccessful = null;
-    }, 3000);
-  }
-  updateIPAddress() {
-    this.updateBasicError = false; // Reset the error state
-    const newIPControl = this.updateForm.get('newip');
-    if (newIPControl) {
-      this.newip = newIPControl.value;
-    }
-    const ipPattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)$/;
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.updateIPModalRef.close();
-    } else {
-      const isIPValid = ipPattern.test(this.newip);
-      if (isIPValid) {
-        // Valid IP and non-empty port, proceed with the update
-        const body: any = {
-          ocloud: this.ocloudInfo.id,
-          ip: this.newip,
-        };
-        // this.commonService.queryOCInfoUpdate(body).subscribe(
-        //   () => console.log('Update Successful.')  
-        // );
-        this.updateNFSuccessful = true;
-        this.hideUpdateIcon();
-        this.updateIPModalRef.close();
-        this.getBSInfo();
-      } else {
-        // Form validation failed, set the error flag
-        this.updateNFSuccessful = false;
-        this.hideUpdateIcon();
-        this.updateBasicError = true;
-      }
-    }
-    this.getBSInfo();
-  }
-
-
-
-  veiw(opt: Nf) {
-    const url = '/main/nf-mgr';
-    this.router.navigate([url]);
-  }
-
-  goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr', 'ocloud', this.ocloudInfo.id, 'All']);
-  }
-
-  goNFMgr(opt: Nf) {
-    const nfId = opt.id;
-    this.router.navigate(['/main/nf-mgr', nfId]);
-  }
-
-
-
+// ↑ 網元列表區 @2024/04/17 Update ↑
 
 
   cloudId: string = '';

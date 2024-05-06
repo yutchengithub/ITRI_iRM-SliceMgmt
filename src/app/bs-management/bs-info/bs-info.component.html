@@ -4603,9 +4603,11 @@
       </div>
     </div>
 
-    <div class="neighborBsList"><!-- 鄰居基站列表 @2024/04/16 - 取值顯示、filter 皆以完成，缺點"編輯"、"刪除"、"新增"鄰居功能 -->
+    <!-- 鄰居基站列表 @2024/05/05 Update - 取值顯示、filter 皆以完成，缺點"編輯"、"刪除"、"新增"鄰居功能 -->
+    <div class="neighborBsList">
       <span>{{ languageService.i18n['BS.neighborBsList'] }}
-        <mat-icon tooltip="{{languageService.i18n['sm.create']}}">add</mat-icon>
+        <!-- 新增鄰居基站的按鈕，點擊時打開對話框進入新增模式 -->
+        <mat-icon tooltip="{{languageService.i18n['sm.create']}}" (click)="openNeighborBsEditDialog('add')">add</mat-icon>
       </span>
       <input id="neighborBsList" class="toggle" type="checkbox">
       <label for="neighborBsList" class="lbl-toggle"></label>
@@ -4635,10 +4637,11 @@
               <thead>
                 <tr>
                   <th>{{ languageService.i18n['BS.No'] }}</th>
-                  <th>PLMN ID</th>
+                  
                   <th>gNB ID</th>
                   <th>NCI</th>
                   <th>PCI</th>
+                  <th>PLMN ID</th>
                   <th>{{ languageService.i18n['BS.edit'] }}</th>
                   <th>{{ languageService.i18n['BS.delete'] }}</th>
                 </tr>
@@ -4646,12 +4649,13 @@
               <tbody>
                 <tr *ngFor="let neighbor of neighborList; let i = index">
                   <td>{{ i + 1 }}</td>
-                  <td>{{ neighbor['plmn-id'].mcc + neighbor['plmn-id'].mnc }}</td>
                   <td>{{ calculateGnbId( neighbor.nci ) }}</td>
                   <td>0x{{ neighbor.nci }}</td>
                   <td>{{ neighbor.pci }}</td>
-                  <td><mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
-                  <td><mat-icon tooltip="{{languageService.i18n['BS.delete']}}">delete_forever</mat-icon></td>
+                  <td>{{ neighbor['plmn-id'].mcc + neighbor['plmn-id'].mnc }}</td>
+                  <!-- 編輯鄰居基站的按鈕，點擊時根據當前行的鄰居基站數據打開對話框進入編輯模式 -->
+                  <td><mat-icon tooltip="{{ languageService.i18n['BS.edit'] }}" (click)="openNeighborBsEditDialog( 'edit', neighbor )">edit</mat-icon></td>
+                  <td><mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}" (click)="openDeleteNeighborBSConfirmWindow( neighbor )">delete_forever</mat-icon></td>
                 </tr>
               </tbody>
             </table>
@@ -4659,6 +4663,204 @@
         </div>
       </div>
     </div>
+
+
+    <!-- 新增鄰居基站視窗 @2024/05/05 Add -->
+    <ng-template #addNeighborBsWindow>
+      <h5>{{ languageService.i18n['BS.addNeighborBS'] }} - {{ selectedNeighborNci }}</h5>
+      <form [formGroup]="neighborForm">
+          <ul>
+              <li>
+                  <label>gNB ID:</label>
+                  <input type="text" formControlName="gnbId" placeholder="{{ languageService.i18n['BS.enterGNBID'] }}" matInput>
+                  <mat-error *ngIf="neighborForm.get('gnbId')?.touched && neighborForm.get('gnbId')?.invalid">
+                    <ng-container *ngIf="neighborForm.get('gnbId')?.errors?.['required']">
+                      {{ languageService.i18n['BS.gnbIDIsRequired'] }}
+                    </ng-container>
+                  </mat-error>
+              </li>
+              <!-- <li>
+                <label>Cell ID:</label>
+                <input type="text" formControlName="cellId" placeholder="Enter 0 or 1" maxlength="14"
+                          (keydown)="handleCellIdInput($event)" matInput>
+
+              </li> -->
+              <li>
+                <label>NCI:</label>
+                <input type="text" formControlName="nci" placeholder="{{ languageService.i18n['BS.enterHexNCI'] }}" maxlength="9" matInput>
+                <mat-error *ngIf="neighborForm.get('nci')?.touched && neighborForm.get('nci')?.invalid">
+                  <ng-container *ngIf="neighborForm.get('nci')?.errors?.['required']">
+                    {{ languageService.i18n['BS.nciIsRequired'] }}
+                  </ng-container>
+                  <ng-container *ngIf="neighborForm.get('nci')?.errors?.['minlength']">
+                    {{ languageService.i18n['BS.enterExactHexChars'] }}
+                  </ng-container>
+                  <ng-container *ngIf="neighborForm.get('nci')?.errors?.['pattern']">
+                    {{ languageService.i18n['BS.onlyHexCharsAllowed'] }}
+                  </ng-container>
+                </mat-error>
+              </li>              
+              <li>
+                  <!-- <label>nRPCI:</label> -->
+                  <label>PCI:</label>
+                  <input type="text" formControlName="nrpci" maxlength="3" placeholder="{{ languageService.i18n['BS.enterPCI'] }}" matInput>
+                  <mat-error *ngIf="neighborForm.get('nrpci')?.touched && neighborForm.get('nrpci')?.invalid">
+                    <ng-container *ngIf="neighborForm.get('nrpci')?.errors?.['required']">
+                      {{ languageService.i18n['BS.pciIsRequired'] }}
+                    </ng-container>
+                  </mat-error>
+              </li>
+              <li>
+                  <label>PLMN ID - MCC:</label>
+                  <input type="text" formControlName="mcc" maxlength="3" placeholder="{{ languageService.i18n['BS.enterMCC'] }}" matInput>
+                  <mat-error *ngIf="neighborForm.get('mcc')?.touched && neighborForm.get('mcc')?.invalid">
+                    <ng-container *ngIf="neighborForm.get('mcc')?.errors?.['required']">
+                      {{ languageService.i18n['BS.mccIsRequired'] }}
+                    </ng-container>
+                  </mat-error>
+              </li>
+              <li>
+                  <label>PLMN ID - MNC:</label>
+                  <input type="text" formControlName="mnc" maxlength="3" placeholder="{{ languageService.i18n['BS.enterMNC'] }}" matInput>
+                  <mat-error *ngIf="neighborForm.get('mnc')?.touched && neighborForm.get('mnc')?.invalid">
+                    <ng-container *ngIf="neighborForm.get('mnc')?.errors?.['required']">
+                      {{ languageService.i18n['BS.mncIsRequired'] }}
+                    </ng-container>
+                  </mat-error>
+              </li>
+              <li>
+                  <label>NRARFCN:</label>
+                  <input type="text" formControlName="nrarfcn" placeholder="{{ languageService.i18n['BS.enterNRARFCN'] }}" matInput>
+                  <mat-error *ngIf="neighborForm.get('nrarfcn')?.touched && neighborForm.get('nrarfcn')?.invalid">
+                    <ng-container *ngIf="neighborForm.get('nrarfcn')?.errors?.['required']">
+                      {{ languageService.i18n['BS.nrarfcnIsRequired'] }}
+                    </ng-container>
+                  </mat-error>
+              </li>
+          </ul>
+          <div class="buttons">
+            <button type="button" (click)="addOrEditOrDeleteNeighborBs_Submit('add')">
+              {{ languageService.i18n['BS.apply'] }}
+            </button>
+            <button type="button" mat-dialog-close>
+              {{ languageService.i18n['cancel'] }}
+            </button>
+          </div>
+      </form>
+    </ng-template>
+
+    <!-- 編輯鄰居基站視窗 @2024/05/05 Add -->
+    <ng-template #editNeighborBsWindow let-neighbor="neighbor">
+      <h5>{{ languageService.i18n['BS.editNeighborBS'] }}</h5>
+      <form [formGroup]="neighborForm">
+          <ul>
+              <li>
+                  <label>gNB ID:</label>
+                  <input type="text" formControlName="gnbId" placeholder="{{ languageService.i18n['BS.enterGNBID'] }}" matInput>
+                  <mat-error *ngIf="neighborForm.get('gnbId')?.touched && neighborForm.get('gnbId')?.invalid">
+                    <ng-container *ngIf="neighborForm.get('gnbId')?.errors?.['required']">
+                      {{ languageService.i18n['BS.gnbIDIsRequired'] }}
+                    </ng-container>
+                  </mat-error>
+              </li>
+              <!-- <li>
+                <label>Cell ID:</label>
+                <input type="text" formControlName="cellId" placeholder="Enter 0 or 1" maxlength="14"
+                          (keydown)="handleCellIdInput($event)" matInput>
+
+              </li> -->
+              <li>
+                <label>NCI:</label>
+                <input type="text" formControlName="nci" placeholder="{{ languageService.i18n['BS.enterHexNCI'] }}" maxlength="9" matInput>
+                <mat-error *ngIf="neighborForm.get('nci')?.touched && neighborForm.get('nci')?.invalid">
+                  <ng-container *ngIf="neighborForm.get('nci')?.errors?.['required']">
+                    {{ languageService.i18n['BS.nciIsRequired'] }}
+                  </ng-container>
+                  <ng-container *ngIf="neighborForm.get('nci')?.errors?.['minlength']">
+                    {{ languageService.i18n['BS.enterExactHexChars'] }}
+                  </ng-container>
+                  <ng-container *ngIf="neighborForm.get('nci')?.errors?.['pattern']">
+                    {{ languageService.i18n['BS.onlyHexCharsAllowed'] }}
+                  </ng-container>
+                </mat-error>
+              </li>                          
+              <li>
+                  <!-- <label>nRPCI:</label> -->
+                  <label>PCI:</label>
+                  <input type="text" formControlName="nrpci" maxlength="3" placeholder="{{ languageService.i18n['BS.enterPCI'] }}" matInput>
+                  <mat-error *ngIf="neighborForm.get('nrpci')?.touched && neighborForm.get('nrpci')?.invalid">
+                    <ng-container *ngIf="neighborForm.get('nrpci')?.errors?.['required']">
+                      {{ languageService.i18n['BS.pciIsRequired'] }}
+                    </ng-container>
+                  </mat-error>
+              </li>
+              <li>
+                  <label>PLMN ID - MCC:</label>
+                  <input type="text" formControlName="mcc" maxlength="3" placeholder="{{ languageService.i18n['BS.enterMCC'] }}" matInput>
+                  <mat-error *ngIf="neighborForm.get('mcc')?.touched && neighborForm.get('mcc')?.invalid">
+                    <ng-container *ngIf="neighborForm.get('mcc')?.errors?.['required']">
+                      {{ languageService.i18n['BS.mccIsRequired'] }}
+                    </ng-container>
+                  </mat-error>
+              </li>
+              <li>
+                  <label>PLMN ID - MNC:</label>
+                  <input type="text" formControlName="mnc" maxlength="3" placeholder="{{ languageService.i18n['BS.enterMNC'] }}" matInput>
+                  <mat-error *ngIf="neighborForm.get('mnc')?.touched && neighborForm.get('mnc')?.invalid">
+                    <ng-container *ngIf="neighborForm.get('mnc')?.errors?.['required']">
+                      {{ languageService.i18n['BS.mncIsRequired'] }}
+                    </ng-container>
+                  </mat-error>
+              </li>
+              <li>
+                  <label>NRARFCN:</label>
+                  <input type="text" formControlName="nrarfcn" placeholder="{{ languageService.i18n['BS.enterNRARFCN'] }}" matInput>
+                  <mat-error *ngIf="neighborForm.get('nrarfcn')?.touched && neighborForm.get('nrarfcn')?.invalid">
+                    <ng-container *ngIf="neighborForm.get('nrarfcn')?.errors?.['required']">
+                      {{ languageService.i18n['BS.nrarfcnIsRequired'] }}
+                    </ng-container>
+                  </mat-error>
+              </li>
+          </ul>
+          <div class="buttons">
+            <button type="button" (click)="addOrEditOrDeleteNeighborBs_Submit('edit')">
+              {{ languageService.i18n['BS.apply'] }}
+            </button>
+            <button type="button" mat-dialog-close>
+              {{ languageService.i18n['cancel'] }}
+            </button>
+          </div>
+      </form>
+    </ng-template>
+
+    <!-- 確認刪除鄰居基站彈出視窗 @2024/05/06 Add -->
+    <ng-template #deleteNeighborBSConfirmWindow>
+
+      <!-- 確認視窗標題 -->
+      <h5>{{ languageService.i18n['field.warningFault'] }}</h5>
+
+      <!-- 確認刪除的提示信息，顯示 選擇要刪除的鄰居基站 相關資訊 -->
+      <p>{{ languageService.i18n['BS.confirmDeleteNeighborBS'] }} ?</p>
+      <div class="del_confirmName">
+        <label>NCI : 0x{{ theSelectedDeleteNeighborNCI }}, </label>
+        <label>PCI : {{ theSelectedDeleteNeighborPCI }}</label>
+      </div>
+
+      <!-- 按鈕容器 -->
+      <div class="buttons">
+
+        <!-- 確認按鈕，點擊時呼叫 addOrEditOrDeleteNeighborBs_Submit() 函數處理確認邏輯，並且關閉視窗 -->
+        <button type="button" (click)="addOrEditOrDeleteNeighborBs_Submit('delete')" mat-dialog-close>
+          {{ languageService.i18n['confirm'] }}
+        </button>
+
+        <!-- 取消按鈕，點擊時不進行任何操作，直接關閉視窗 -->
+        <button type="button" mat-dialog-close>
+          {{ languageService.i18n['cancel'] }}
+        </button>
+
+      </div>
+    </ng-template>
 
 
     <div class="alarms"><!-- 基站告警 -->
