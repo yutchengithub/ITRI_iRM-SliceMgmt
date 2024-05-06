@@ -26,7 +26,9 @@ import { BSInfo, Components, ExtensionInfo, Neighbor }  from '../../shared/inter
 import { ForUpdateBs }                                  from '../../shared/interfaces/BS/For_updateBs';             // @2024/04/14 Add
 import { BSInfo_dist, Info_dist, Components_dist }      from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
 import { ForUpdateDistributedBs, Cellinfo_dist }        from '../../shared/interfaces/BS/For_updateDistributedBs';  // @2024/04/14 Add
-import { ForAddOrEditOrDeleteNeighborBs_allInOneBs }    from '../../shared/interfaces/BS/For_optimalBs';            // @2024/05/04 Add
+import { ForAddOrEditOrDeleteNeighborBs_allInOneBs }    from '../../shared/interfaces/BS/For_optimalBs';            // @2024/05/06 Add
+import { ForUpdateDistributedBs_editNeighborBs, Neighborinfo } from '../../shared/interfaces/BS/For_updateDistributedBs_editNeighborBs'; // @2024/05/06 Add
+    
 
 import { CurrentBsFmList, FaultMessage } from '../../shared/interfaces/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
 import { NEList, NE, Sm  }               from '../../shared/interfaces/NE/For_queryBsComponentList';       // @2024/03/27 Add
@@ -117,7 +119,6 @@ export class BSInfoComponent implements OnInit {
     // 建立搜尋表單 
     this.createAlarmSearchForm();
     //this.createBsBasicInfoEditForm(); // 用於編輯 BS 基本資訊用 @2024/04/14 Add
-
   }
 
   // @2024/03/25 Add
@@ -154,11 +155,6 @@ export class BSInfoComponent implements OnInit {
       // 取得此基站告警資訊 @2024/04/01 Add
       this.getCurrentBsFmList();
     });
-
-    //this.drawConnectingLines();
-
-   // this.spinner.hide();
-
     
   }
 
@@ -171,13 +167,7 @@ export class BSInfoComponent implements OnInit {
     this.canvas.nativeElement.width  = 1000; // 增加 Canvas 的寬度
     this.canvas.nativeElement.height = 250;  // 增加 Canvas 的寬度
 
-    // 在獲取基站和網元資訊完成後，手動觸發變更檢測
-    // Promise.all([this.getQueryBsInfo(), this.getNEList()]).then(() => {
-      //this.changeDetectorRef.detectChanges();
-      this.drawConnectingLines();
-    //});
-    //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
-
+    //this.drawConnectingLines();
   }
 
   // @2024/05/03 Update
@@ -462,7 +452,7 @@ export class BSInfoComponent implements OnInit {
           
          // this.hideSpinner();  // 完成後隱藏 spinner
 
-          this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
+          // this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
           
         },
         error: ( error ) => {
@@ -782,7 +772,7 @@ export class BSInfoComponent implements OnInit {
     const bsInfo = this.bsType === "1" ? this.selectBsInfo : this.selectBsInfo_dist;
 
     // 若 bsInfo 存在
-    if (bsInfo) {
+    if  (bsInfo ) {
       // 使用 parsePositionPipe 解析位置字串，若無則設為空物件
       const position = bsInfo.position ? this.parsePositionPipe.transform(bsInfo.position) : { lat: '', lng: '' };
       
@@ -1186,6 +1176,11 @@ export class BSInfoComponent implements OnInit {
     const canvas = this.canvas.nativeElement; // 獲取 canvas 元素
     const ctx = canvas.getContext('2d'); // 獲取繪圖上下文
 
+    if (!ctx) return; // 如果無法獲取上下文，直接返回
+
+    // 清空畫布
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     // 檢查渲染上下文是否存在
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height); // 清除畫布
@@ -1328,7 +1323,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 鄰居基站列表區 @2024/04/16 Add ↓
+// ↓ 鄰居基站列表區 @2024/05/06 Update ↓
 
   neighborList: Neighbor[] = [];
   selectedNeighborNci: string = ''; // 當前選擇的NCI（用於鄰居基站列表）
@@ -1694,6 +1689,9 @@ export class BSInfoComponent implements OnInit {
     console.log("選中要刪除的鄰居基站的 NCI 為:", this.theSelectedDeleteNeighborNCI);
     console.log("選中要刪除的鄰居基站的 PCI 為:", this.theSelectedDeleteNeighborPCI);
 
+    // 呼叫函數初始化表單
+    this.createNeighborForm(); // 初始化表單
+
     // 使用 MatDialog 服務開啟確認刪除的對話框
     this.deleteNeighborBSConfirmWindowRef = this.dialog.open(
         this.deleteNeighborBSConfirmWindow, {
@@ -1707,26 +1705,47 @@ export class BSInfoComponent implements OnInit {
     });
   }
 
+  // @2024/05/06 Add
+  // 組裝一體式基站新增、編輯或刪除鄰居基站 POST 要提交的數據 
+  submitData_allInOneBs_editNeighborBs: ForAddOrEditOrDeleteNeighborBs_allInOneBs = {} as ForAddOrEditOrDeleteNeighborBs_allInOneBs;
+
+  // @2024/05/06 Add
+  // 組裝分佈式基站新增、編輯或刪除鄰居基站 POST 要提交的數據 
+  submitData_dist_editNeighborBs: ForUpdateDistributedBs_editNeighborBs = {} as ForUpdateDistributedBs_editNeighborBs;
 
   /**
    * @2024/05/06 Add
    * 提交新增、編輯或刪除鄰居基站的方法
    * @method addOrEditOrDeleteNeighborBs_Submit
-   * @param { string } action - 執行的動作類型（'add', 'edit', 'delete'）
+   * @param   { string } action - 執行的動作類型（'add', 'edit', 'delete'）
    * @returns { void }
    * @description
-   *   05/06 - 已完成一體式用的處理。
+   * - 根據提供的動作類型，處理鄰居基站的新增、編輯或刪除操作。
+   * - 依據基站類型處理對應的數據並提交。
    */
   addOrEditOrDeleteNeighborBs_Submit( action: string ) {
 
+    this.showProcessingSpinner();   // 顯示 Processing Spinner
+
     // 檢查表單有效性或是否為刪除操作
-    if ( this.neighborForm.valid || action === 'delete' ) {
+    if ( ( action !== 'delete' && this.neighborForm?.valid ) || ( action === 'delete' ) ) {
 
-        // 獲取表單值
-        const formValue = this.neighborForm.value;
+      // 獲取表單值
+      const formValue = this.neighborForm.value;
 
+      if ( this.bsType === '1' ) {
+        // 如果基站類型為 '1'，即一體式基站，則進行以下處理
+
+        // 初始化 submitData_allInOneBs_editNeighborBs 變數
+        this.submitData_allInOneBs_editNeighborBs = {} as ForAddOrEditOrDeleteNeighborBs_allInOneBs;
+
+        // 輸出初始化後的 submitData_allInOneBs_editNeighborBs 變數
+        console.log( "addOrEditOrDeleteNeighborBs_Submit() - Start - submitData_allInOneBs_editNeighborBs:", this.submitData_allInOneBs_editNeighborBs );
+   
         // 根據操作類型組裝 neighbor 數據
         let neighbors: any[] = [];
+
+        // 根據操作類型進行處理
         switch ( action ) {
           case 'add':
 
@@ -1798,84 +1817,216 @@ export class BSInfoComponent implements OnInit {
             break;
         }
 
-        // 組裝 Post 要提交數據
-        const submitData: ForAddOrEditOrDeleteNeighborBs_allInOneBs = {
-            type: "anr",
-            session: this.sessionId,
-            isSave: "true",
-            bsInfo: [{
-                bsId: this.bsID,
-                nci: this.selectedNeighborNci,
-                neighbor: neighbors
-            }]
+        // 組裝一體式基站 POST 要提交數據
+        this.submitData_allInOneBs_editNeighborBs = {
+          type: "anr",
+          session: this.sessionId,
+          isSave: "true",
+          bsInfo: [{
+              bsId: this.bsID,
+              nci: this.selectedNeighborNci,
+              neighbor: neighbors
+          }]
         };
 
         // 根據動作類型輸出日誌
         switch ( action ) {
           case 'add':
-            console.log( "Add - The POST data for optimalBs():", submitData );
+            console.log( "Add - The POST data for optimalBs():", this.submitData_allInOneBs_editNeighborBs );
             break;
           case 'edit':
-            console.log( "Edit - The POST data for optimalBs():", submitData );
+            console.log( "Edit - The POST data for optimalBs():", this.submitData_allInOneBs_editNeighborBs );
             break;
           case 'delete':
-            console.log( "Delete - The POST data for optimalBs():", submitData );
+            console.log( "Delete - The POST data for optimalBs():", this.submitData_allInOneBs_editNeighborBs );
             break;
         }
 
-        // 判斷是否為本地模式進行模擬或實際 API 呼叫
-        if ( this.commonService.isLocal ) {
+      } else if ( this.bsType === '2' ) {
+        // 如果基站類型為 '2'，即分佈式基站，則進行以下處理
+      
+        // 初始化存儲提交數據的變數變數 - submitData_dist_editNeighborBs 
+        this.submitData_dist_editNeighborBs = {} as ForUpdateDistributedBs_editNeighborBs;
+      
+        // 輸出初始化後的 submitData_dist_editNeighborBs 變數
+        console.log("addOrEditOrDeleteNeighborBs_Submit() - Start - submitData_dist_editNeighborBs:", this.submitData_dist_editNeighborBs);
+      
+        // 組裝分佈式基站 POST 要提交數據
+        this.submitData_dist_editNeighborBs = {
+          session: this.sessionId, // 設置 session 值
+          id: this.bsID, // 設置基站 ID
+          name: this.bsName, // 設置基站名稱
+          bstype: this.bsType, // 設置基站類型
+          components: this.selectBsInfo_dist.components, // 設置基站組件
+          description: this.selectBsInfo_dist.description, // 設置基站描述
+          neighborinfo: [], // 初始化 neighborinfo 數組
+        };
+      
+        // 遍歷每個 NCI
+        for ( const nci of this.nciList ) {
 
-            console.log('Local testing environment, no update operation will be performed.');
+          // 找到對應的 extension_info
+          const extensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === nci);
+      
+          // 如果找到了對應的 extension_info
+          if ( extensionInfo ) {
 
-        } else {
+            // 創建一個新的 Neighborinfo 對象
+            const neighborInfo: Neighborinfo = {
+              gNBId: extensionInfo.gNBId,             // 設置 gNBId
+              gNBIdLength: extensionInfo.gNBIdLength, // 設置 gNBIdLength
+              cellLocalId: extensionInfo.cellLocalId, // 設置 cellLocalId
+              neighbor: [], // 初始化 neighbor 數組
+            };
+      
+            // 如果當前 NCI 與選中的 NCI 相同，則處理 neighbor 列表
+            if ( nci === this.selectedNeighborNci ) {
 
-            // 非 Local 模式下執行對應的 API 調用
-            const apiObservable = this.bsType === "1"
-                    ? this.API_BS.optimalBs( submitData )
-                    : this.API_BS.updateDistributedBs( submitData );
+              // 根據操作類型進行處理
+              switch ( action ) {
 
-            // 呼叫 API 進行鄰居基站新增、編輯或刪除操作
-            apiObservable.subscribe({
-              next: ( res ) => {
-
-                // 輸出操作成功的日誌
-                console.log( 'Neighbor BS operation success', res );
-
-                // 刷新相關基站資訊
-                this.getQueryBsInfo();     // 刷新基站資訊
-                this.getNEList();          // 刷新網元資訊
-                this.getCurrentBsFmList(); // 刷新告警資訊
-
-                // 操作完成後，關閉新增或編輯鄰居基站視窗
-                if ( this.addOrEditNeighborBsWindowRef ) {
-                  this.addOrEditNeighborBsWindowRef.close();
-                }
-
-                // 隱藏加載指示器
-                // this.hideSpinner();
-              },
-              error: ( error ) => {
-
-                // 操作失敗後的處理
-                console.error( 'Neighbor BS operation failed', error );
-                
-                // 出錯時隱藏加載指示器
-                // this.hideSpinner();
+                case 'add':
+                  // 添加新的 neighbor 到 neighborInfo.neighbor 數組
+                  neighborInfo.neighbor = [
+                    ...this.neighborList, // 展開原有的 neighborList
+                    {
+                      id: "0",            // 設置新 neighbor 的 id
+                      enable: "0",        // 設置新 neighbor 的 enable 值
+                      alias: "",          // 設置新 neighbor 的 alias 值
+                      'must-include': "", // 設置新 neighbor 的 must-include 值
+                      'plmn-id': {
+                        mcc: formValue.mcc, // 設置新 neighbor 的 plmn-id.mcc 值
+                        mnc: formValue.mnc  // 設置新 neighbor 的 plmn-id.mnc 值
+                      },
+                      nci: formValue.nci,         // 設置新 neighbor 的 nci 值
+                      nrarfcn: formValue.nrarfcn, // 設置新 neighbor 的 nrarfcn 值
+                      pci: formValue.nrpci,       // 設置新 neighbor 的 pci 值
+                      'q-offset': "",             // 設置新 neighbor 的 q-offset 值
+                      cio: "",                    // 設置新 neighbor 的 cio 值
+                      'rs-tx-power': "",          // 設置新 neighbor 的 rs-tx-power 值
+                      blacklisted: "",            // 設置新 neighbor 的 blacklisted 值
+                      tac: "",                    // 設置新 neighbor 的 tac 值
+                      '__itri_default___': 0      // 設置新 neighbor 的 __itri_default___ 值
+                    }
+                  ];
+                  break;
+      
+                case 'edit':
+                  // 過濾掉要編輯的 neighbor,並添加編輯後的 neighbor 到 neighborInfo.neighbor 數組
+                  neighborInfo.neighbor = this.neighborList.filter( neighbor => {
+                    return !( neighbor.nci === this.theSelectedEditNeighborNCI && neighbor.pci === this.theSelectedEditNeighborPCI );
+                  });
+                  
+                  neighborInfo.neighbor.push({
+                    id: "0",              // 設置編輯後的 neighbor 的 id
+                    enable: "0",          // 設置編輯後的 neighbor 的 enable 值
+                    alias: "",            // 設置編輯後的 neighbor 的 alias 值
+                    'must-include': "",   // 設置編輯後的 neighbor 的 must-include 值
+                    'plmn-id': {
+                      mcc: formValue.mcc, // 設置編輯後的 neighbor 的 plmn-id.mcc 值
+                      mnc: formValue.mnc  // 設置編輯後的 neighbor 的 plmn-id.mnc 值
+                    },
+                    nci: formValue.nci,         // 設置編輯後的 neighbor 的 nci 值
+                    nrarfcn: formValue.nrarfcn, // 設置編輯後的 neighbor 的 nrarfcn 值
+                    pci: formValue.nrpci,       // 設置編輯後的 neighbor 的 pci 值
+                    'q-offset': "",             // 設置編輯後的 neighbor 的 q-offset 值
+                    cio: "",                    // 設置編輯後的 neighbor 的 cio 值
+                    'rs-tx-power': "",          // 設置編輯後的 neighbor 的 rs-tx-power 值
+                    blacklisted: "",            // 設置編輯後的 neighbor 的 blacklisted 值
+                    tac: "",                    // 設置編輯後的 neighbor 的 tac 值
+                    '__itri_default___': 0      // 設置編輯後的 neighbor 的 __itri_default___ 值
+                  });
+                  break;
+      
+                case 'delete':
+                  // 過濾掉要刪除的 neighbor,更新 neighborInfo.neighbor 數組
+                  neighborInfo.neighbor = this.neighborList.filter( neighbor => {
+                    return !( neighbor.nci === this.theSelectedDeleteNeighborNCI && neighbor.pci === this.theSelectedDeleteNeighborPCI );
+                  });
+                  break;
               }
-            });
+            } else {
+              // 如果當前 NCI 與選中的 NCI 不同，則直接使用原有的 neighbor 列表
+              neighborInfo.neighbor = this.getNeighborList( nci );
+            }
+      
+            // 將 neighborInfo 添加到 neighborinfo 數組中
+            this.submitData_dist_editNeighborBs.neighborinfo.push( neighborInfo );
+          }
         }
+
+        // 根據動作類型輸出日誌
+        switch ( action ) {
+          case 'add':
+            console.log( "Add - The POST data for updateDistributedBs():", this.submitData_dist_editNeighborBs );
+            break;
+          case 'edit':
+            console.log( "Edit - The POST data for updateDistributedBs():", this.submitData_dist_editNeighborBs );
+            break;
+          case 'delete':
+            console.log( "Delete - The POST data for updateDistributedBs():", this.submitData_dist_editNeighborBs );
+            break;
+        }
+      }
+
+      // 判斷是否為本地模式進行模擬或實際 API 呼叫
+      if ( this.commonService.isLocal ) {
+
+          console.log('Local testing environment, no update operation will be performed.');
+
+          // 隱藏加載指示器
+          this.hideSpinner();
+
+      } else {
+
+        // 非 Local 模式下執行對應的 API 調用
+        const apiObservable = this.bsType === "1"
+                ? this.API_BS.optimalBs( this.submitData_allInOneBs_editNeighborBs )
+                : this.API_BS.updateDistributedBs( this.submitData_dist_editNeighborBs );
+
+        // 呼叫 API 進行鄰居基站新增、編輯或刪除操作
+        apiObservable.subscribe({
+          next: ( res ) => {
+
+            // 輸出操作成功的日誌
+            console.log( 'Neighbor BS operation success', res );
+
+            // 刷新相關基站資訊
+            this.getQueryBsInfo();       // 刷新基站資訊
+            //this.getNEList();          // 刷新網元資訊
+            //this.getCurrentBsFmList(); // 刷新告警資訊
+
+            // 操作完成後，關閉新增或編輯鄰居基站視窗
+            if ( this.addOrEditNeighborBsWindowRef ) {
+              this.addOrEditNeighborBsWindowRef.close();
+            }
+
+            // 隱藏加載指示器
+            this.hideSpinner();
+          },
+          error: ( error ) => {
+
+            // 操作失敗後的處理
+            console.error( 'Neighbor BS operation failed', error );
+            
+            // 出錯時隱藏加載指示器
+            this.hideSpinner();
+          }
+        });
+      }
 
     } else {
       
         // 如果表單驗證未通過
         console.error('Form is not valid, please check the input fields.');
+
+        // 表單驗證未通過也隱藏加載指示器
+        this.hideSpinner();
     }
   }
 
 
-
-// ↑ 鄰居基站列表區 @2024/04/16 Add ↑
+// ↑ 鄰居基站列表區 @2024/05/06 Update ↑
 
 
 
@@ -2253,269 +2404,6 @@ export class BSInfoComponent implements OnInit {
   }
 
 // ↑ 網元列表區 @2024/04/17 Update ↑
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  getBSInfo() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.bsComponentInfo = this.commonService.bsComponentInfo;
-      this.ocloudInfoDeal();
-    } else {
-      this.commonService.queryOcloudInfo(this.cloudId).subscribe(
-        res => {
-          console.log('getOcloudInfo:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.ocloudInfo = JSON.parse(str);
-          this.ocloudInfo = res as OcloudInfo;
-          this.ocloudInfoDeal();
-        }
-      );
-    }
-  }
-  nfRunRefresh() {
-    clearTimeout(this.refreshTimeout);
-    this.RunRefreshTimeout = window.setTimeout(() => this.getOcloudPerformance(), this.RunRefreshTime * 1000);
-    this.RunRefreshTimeout = window.setTimeout(() => this.getBSInfo(), this.RunRefreshTime * 1000);
-  }
-  getOcloudPerformance() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.ocloudPerformance = this.commonService.ocloudPerformance;
-      this.ocloudPerformanceDeal();
-    } else {
-      clearTimeout(this.refreshTimeout);
-      this.commonService.queryOcloudPerformance(this.cloudId).subscribe(
-        res => {
-          console.log('getOcloudPerformance:');
-          console.log(res);
-          this.ocloudPerformance = res as OcloudPerformance;
-          this.ocloudPerformanceDeal();
-        }
-      );
-    }
-  }
-
-  getSoftwareList() {
-    let type = '0'
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.softwareList = this.commonService.softwareList;
-      this.softwareDeal();
-    } else {
-      if (this.cloudName === 'Wind River' || this.cloudName === 'windriver'){
-        type = '-3';
-      }
-      this.commonService.querySoftwareList('', type, '').subscribe(
-        res => {
-          console.log('getSoftwareList:');
-          console.log(res);
-          this.softwareList = res as SoftwareList[];
-          this.softwareDeal();
-        }
-      );
-    }
-  }
-
-  softwareDeal() {
-    this.fileNameMapSoftware = new Map();
-    this.softwareList.forEach((row) => {
-      this.fileNameMapSoftware.set(row.fileName, row);
-    });
-  }
-
-  softwareVersion(): string {
-    const fileName = this.updateForm.controls['fileName'].value;
-    if (fileName === '') {
-      return '';
-    } else {
-      const software = this.fileNameMapSoftware.get(fileName) as any;
-      return software.version;
-    }
-  }
-
-  ocloudInfoDeal() {
-    if (this.ocloudInfo.resourcepool && this.ocloudInfo.resourcepool.length > 0) {
-      this.ocloudInfo.resourcepool[0].active = true;
-    }
-  }
-
-  ocloudPerformanceDeal() {
-    // this.utilizationPercent = Math.floor((Number(this.ocloudPerformance.usedCpu) / Number(this.ocloudPerformance.totalCpu)) * 100);
-    if (this.ocloudPerformance.cpu != 'N/A' || this.ocloudPerformance.storage != 'N/A' ||
-      this.ocloudPerformance.memory != 'N/A' || this.ocloudPerformance.network != 'N/A') {
-      this.ocloudPerformance.cpu += ' %';
-      this.ocloudPerformance.memory += ' GB';
-      this.ocloudPerformance.storage += ' MB';
-      this.ocloudPerformance.network += ' Kbps';
-    }
-  }
-
-  severityText(severity: string): string {
-    return this.commonService.severityText(severity);
-  }
-
-  severityCount(severity: string): number {
-    if (severity.toUpperCase() === this.severitys[0]) {
-      return this.ocloudInfo.fault.critical;
-    } else if (severity.toUpperCase() === this.severitys[1]) {
-      return this.ocloudInfo.fault.major;
-    } else if (severity.toUpperCase() === this.severitys[2]) {
-      return this.ocloudInfo.fault.minor;
-    } else if (severity.toUpperCase() === this.severitys[3]) {
-      return this.ocloudInfo.fault.warning;
-    } else {
-      return 0;
-    }
-  }
-
-  goFaultMgr() {
-    this.router.navigate(['/main/fault-mgr', this.cloudName, 'All']);
-  }
-
-  openUpdateModel() {
-    this.formValidated = false;
-    this.updateForm = this.fb.group({
-      'type': new FormControl('imageUrl'),
-      'imageUrl': new FormControl('', [Validators.required]),
-      'fileName': new FormControl('')
-    });
-    this.updateModalRef = this.dialog.open(this.updateModal, { id: 'updateModal' });
-    this.updateModalRef.afterClosed().subscribe(() => {
-      this.formValidated = false;
-    });
-  }
-
-  updateBasicError: boolean = false;
-  openUpdateIPModel() {
-    this.formValidated = false;
-    this.updateForm = this.fb.group({
-      newip: ['',],
-    });
-    this.updateIPModalRef = this.dialog.open(this.updateIPModal, { id: 'updateIPModal' });
-    this.updateIPModalRef.afterClosed().subscribe(() => {
-      this.formValidated = false;
-    });
-  }
-
-  changeType(e: MatButtonToggleChange) {
-    this.formValidated = false;
-    if (e.value === 'imageUrl') {
-      this.updateForm.controls['imageUrl'].setValidators([Validators.required]);
-      this.updateForm.controls['fileName'].setValidators(null);
-      this.updateForm.controls['fileName'].setValue('');
-    } else {
-      this.updateForm.controls['imageUrl'].setValidators(null);
-      this.updateForm.controls['imageUrl'].setValue('');
-      this.updateForm.controls['fileName'].setValidators([Validators.required]);
-    }
-    this.updateForm.controls['imageUrl'].updateValueAndValidity();
-    this.updateForm.controls['fileName'].updateValueAndValidity();
-  }
-
-  update() {
-    this.formValidated = true;
-    if (!this.updateForm.valid) {
-      return;
-    }
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.updateModalRef.close();
-    } else {
-      const body: any = {
-        ocloud: this.ocloudInfo.id,
-        currentVersion: this.ocloudInfo.softwareVersion,
-        sessionid: this.sessionId
-      };
-      if (this.updateForm.controls['type'].value === 'imageUrl') {
-        const imageUrlSplit = this.updateForm.controls['imageUrl'].value.split('/');
-        body['fileName'] = imageUrlSplit[imageUrlSplit.length - 1];
-      } else {
-        body['fileName'] = this.updateForm.controls['fileName'].value;
-        body['version'] = this.softwareVersion();
-      }
-      this.commonService.applyOcloudSoftware(body).subscribe(
-        () => console.log('Update Successful.')
-      );
-      this.updateModalRef.close();
-      this.getBSInfo();
-    }
-    this.getBSInfo();
-  }
-
-  updateNFSuccessful: boolean | null = null; 
-  hideUpdateIcon() {
-    setTimeout(() => {
-      this.updateNFSuccessful = null;
-    }, 3000);
-  }
-  updateIPAddress() {
-    this.updateBasicError = false; // Reset the error state
-    const newIPControl = this.updateForm.get('newip');
-    if (newIPControl) {
-      this.newip = newIPControl.value;
-    }
-    const ipPattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|0|255)$/;
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.updateIPModalRef.close();
-    } else {
-      const isIPValid = ipPattern.test(this.newip);
-      if (isIPValid) {
-        // Valid IP and non-empty port, proceed with the update
-        const body: any = {
-          ocloud: this.ocloudInfo.id,
-          ip: this.newip,
-        };
-        // this.commonService.queryOCInfoUpdate(body).subscribe(
-        //   () => console.log('Update Successful.')  
-        // );
-        this.updateNFSuccessful = true;
-        this.hideUpdateIcon();
-        this.updateIPModalRef.close();
-        this.getBSInfo();
-      } else {
-        // Form validation failed, set the error flag
-        this.updateNFSuccessful = false;
-        this.hideUpdateIcon();
-        this.updateBasicError = true;
-      }
-    }
-    this.getBSInfo();
-  }
-
-
-
-  veiw(opt: Nf) {
-    const url = '/main/nf-mgr';
-    this.router.navigate([url]);
-  }
-
-  goPerformanceMgr() {
-    this.router.navigate(['/main/performance-mgr', 'ocloud', this.ocloudInfo.id, 'All']);
-  }
-
-  goNFMgr(opt: Nf) {
-    const nfId = opt.id;
-    this.router.navigate(['/main/nf-mgr', nfId]);
-  }
-
-
-
 
 
   cloudId: string = '';
