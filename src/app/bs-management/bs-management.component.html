@@ -99,6 +99,21 @@
   </div>
 </ng-template>
 
+<!-- 基站有場域使用中的提示視窗 @2024/05/07 Add -->
+<ng-template #fieldInUsePromptWindow>
+  <div>
+      <h5><mat-icon>error_outline</mat-icon>{{ languageService.i18n['field.noFieldImageAvailableTitle'] }}</h5>
+  </div>
+  
+  <label class="label-centered">
+    {{ languageService.i18n['BS.field'] }} - {{ selectBS.fieldName }} {{ languageService.i18n['BS.inUseCannotDelete'] }}
+  </label>
+  <div class="buttons">
+      <button type="button" mat-dialog-close>
+          {{ languageService.i18n['close'] }}
+      </button>
+  </div>
+</ng-template>
 
 <!-- Window of Create BS @2024/04/26 Add -->
 <ng-template #bsCreationWindow>
