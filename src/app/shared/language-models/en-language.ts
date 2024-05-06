@@ -322,6 +322,10 @@ export const Enlanguage = {
   'BS.view':'View',
   'BS.delete':'Delete',
   'BS.confirm_del':'Confirm to Delete Basestation',
+  'BS.inUseCannotDelete': ' is in use, cannot be deleted.',
+  'BS.field': 'Field',
+
+
 
   'BS.info':'BS Detailed Information',
   'BS.alarmLatestUpdateTime': 'Latest Update Time',

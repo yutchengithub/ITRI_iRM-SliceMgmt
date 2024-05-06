@@ -237,39 +237,68 @@ export class BSManagementComponent implements OnInit {
   }
 
 
-// ↓ For Delete BS @2024/03/22 Add ↓
+// ↓ For Delete BS @2024/05/07 Update ↓
 
   // @2024/03/22 Add
   // ViewChild 裝飾器用於獲取模板中 #deleteBS_ConfirmWindow 的元素
   @ViewChild('deleteBS_ConfirmWindow') deleteBS_ConfirmWindow: any;
 
-  // @2024/03/22 Add
-  // MatDialogRef 用於控制打開的對話框
-  deleteBS_ConfirmWindowRef!: MatDialogRef<any>;
+  // @2024/05/07 Add
+  // ViewChild 裝飾器用於獲取模板中 #fieldInUsePromptWindow 的元素
+  @ViewChild('fieldInUsePromptWindow') fieldInUsePromptWindow: any;
 
-  // 開啟選擇的 BS 刪除確認對話框 @2024/03/22 Add
+  // @2024/03/22 Add
+  // MatDialogRef 用於控制打開的彈出視窗
+  deleteBS_ConfirmWindowRef!: MatDialogRef<any>;
+  fieldInUsePromptWindowRef!: MatDialogRef<any>;
+
+  // @2024/05/07 Update
+  // 開啟選擇的 BS 刪除確認彈出視窗
   openDeleteBS_ConfirmWindow( BS: Basestation ) {
 
     // 將選中的 BS 賦值給 selectBS
     this.selectBS = BS;
 
-    // 輸出將要刪除的 BS 名稱，用於記錄或調整
-    console.log( "Deleted BS name: ", this.selectBS.name );
+    // 輸出嘗試要刪除的 BS 名稱
+    console.log( "Attempting to delete BS:", this.selectBS.name );
 
-    // 使用 MatDialog 服務開啟確認刪除的對話框
-    this.deleteBS_ConfirmWindowRef = this.dialog.open( 
+    if ( this.selectBS.fieldName ) {
+
+      // 如有場域名稱，則顯示提示有場域使用中的彈出視窗
+
+      // 使用 MatDialog 服務開啟提示有場域使用中的彈出視窗
+      this.fieldInUsePromptWindowRef = this.dialog.open( 
+        this.fieldInUsePromptWindow, { id: 'fieldInUsePromptWindow' }
+      );
+
+      // 訂閱彈出視窗關閉後的事件
+      this.fieldInUsePromptWindowRef.afterClosed().subscribe( result => {
+        console.log('The field in use dialog was closed');
+      });
+
+    } else {
+
+      // 如無場域名稱，顯示正常的刪除確認彈出視窗
+
+      // 使用 MatDialog 服務開啟確認刪除的彈出視窗
+      this.deleteBS_ConfirmWindowRef = this.dialog.open( 
         this.deleteBS_ConfirmWindow, { id: 'deleteBS_ConfirmWindow' }
-    );
+      );
 
-    // 訂閱對話框關閉後的事件
-    this.deleteBS_ConfirmWindowRef.afterClosed().subscribe( confirm => {
-      // 這裡可以根據用戶在對話框中的操作進行相應的處理
-    });
+      // 訂閱彈出視窗關閉後的事件
+      this.deleteBS_ConfirmWindowRef.afterClosed().subscribe( confirm => {
+        // 這裡可以根據用戶在彈出視窗中的操作進行相應的處理
+      });
+        
+    }
   }
 
-  // @2024/03/22 Add
+  // @2024/05/07 Update
   // 確認刪除 BS 的操作
   confirmDeleteBS() {
+
+    // 輸出將要刪除的 BS 名稱
+    console.log( "Deleted BS name: ", this.selectBS.name );
 
     // 顯示加載指示器
     this.isGetQueryBsListLoading = true;
@@ -348,7 +377,7 @@ export class BSManagementComponent implements OnInit {
   }
 
 
-// ↑ For Delete BS @2024/03/22 Add ↑
+// ↑ For Delete BS @2024/05/07 Update ↑
 
 
 // ↓ For Create BS @2024/05/02 Update ↓
@@ -475,10 +504,10 @@ export class BSManagementComponent implements OnInit {
     // 確保 bsList 可用後再創建表單
     this.createBsCreationForm( this.bsList.basestation );
 
-    // 打開 "基站建立" 對話框
+    // 打開 "基站建立" 彈出視窗
     this.bsCreationWindowRef = this.dialog.open( this.bsCreationWindow, {
       id: 'bsCreationWindow',
-      // 這裡可以設置對話框的寬高，也可以使用 CSS 來設置
+      // 這裡可以設置彈出視窗的寬高，也可以使用 CSS 來設置
     });
 
     // 訂閱視窗關閉事件，並在關閉時重置表單驗證狀態

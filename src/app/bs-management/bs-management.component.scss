@@ -35,6 +35,13 @@ tbody tr td:nth-child(4) {
   stroke: #7cbaec !important;
 }
 
+// 設置標籤的字體大小
+.label-centered {
+  display: block;
+  text-align: center;
+  font-size: 19px; 
+}
+
 input[type="file"] {
   outline: 0;
 }

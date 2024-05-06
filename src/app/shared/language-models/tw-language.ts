@@ -319,6 +319,10 @@ export const TwLanguage = {
   'BS.view':'檢視',
   'BS.delete':'刪除',
   'BS.confirm_del':'確定要刪除基站',
+  'BS.inUseCannotDelete': '使用中，無法刪除。',
+  'BS.field': '場域',
+
+
 
   'BS.info':'基站詳細資訊',
 
