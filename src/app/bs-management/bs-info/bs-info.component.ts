@@ -1730,31 +1730,32 @@ export class BSInfoComponent implements OnInit {
         switch ( action ) {
           case 'add':
 
-              // 從現有的鄰居列表加上新鄰居
-              neighbors = [...this.neighborList];
+            // 從現有的鄰居列表加上新鄰居
+            neighbors = [...this.neighborList];
 
-              // 添加新鄰居
-              neighbors.push({
-                  // 下面是根據表單填寫的數據創建新鄰居對象
-                  id: "0",
-                  enable: "0",
-                  alias: "",
-                  'must-include': "",
-                  'plmn-id': {
-                      mcc: formValue.mcc,
-                      mnc: formValue.mnc
-                  },
-                  nci: formValue.nci,
-                  nrarfcn: formValue.nrarfcn,
-                  pci: formValue.nrpci,
-                  'q-offset': "",
-                  cio: "",
-                  'rs-tx-power': "",
-                  blacklisted: "",
-                  tac: "",
-                  '__itri_default___': 0
-              });
-              break;
+            // 添加新鄰居
+            neighbors.push({
+                // 下面是根據表單填寫的數據創建新鄰居對象
+                id: "0",
+                enable: "0",
+                alias: "",
+                'must-include': "",
+                'plmn-id': {
+                    mcc: formValue.mcc,
+                    mnc: formValue.mnc
+                },
+                nci: formValue.nci,
+                nrarfcn: formValue.nrarfcn,
+                pci: formValue.nrpci,
+                'q-offset': "",
+                cio: "",
+                'rs-tx-power': "",
+                blacklisted: "",
+                tac: "",
+                '__itri_default___': 0
+            });
+
+            break;
 
           case 'edit':
 
@@ -1784,13 +1785,16 @@ export class BSInfoComponent implements OnInit {
                 tac: "",
                 '__itri_default___': 0
             });
+
             break;
             
           case 'delete':
+
             // 過濾出要刪除的鄰居，確保兩個條件都匹配的 neighbor 才可被移除
             neighbors = this.neighborList.filter( neighbor => {
                 return !( neighbor.nci === this.theSelectedDeleteNeighborNCI && neighbor.pci === this.theSelectedDeleteNeighborPCI );
             });
+
             break;
         }
 
@@ -1809,13 +1813,13 @@ export class BSInfoComponent implements OnInit {
         // 根據動作類型輸出日誌
         switch ( action ) {
           case 'add':
-            console.log("Add - The POST data for optimalBs():", submitData);
+            console.log( "Add - The POST data for optimalBs():", submitData );
             break;
           case 'edit':
-            console.log("Edit - The POST data for optimalBs():", submitData);
+            console.log( "Edit - The POST data for optimalBs():", submitData );
             break;
           case 'delete':
-            console.log("Delete - The POST data for optimalBs():", submitData);
+            console.log( "Delete - The POST data for optimalBs():", submitData );
             break;
         }
 
