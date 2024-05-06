@@ -33,12 +33,12 @@
 .topology .collapsible-content .content-inner .collabsible {
   margin: -10px 0 0 0;
 }
+
 .nes-topology {
   position: relative;
   bottom: 250px;
   left: 95px;
 }
- 
 .ne-info {
   position: absolute;
   display: flex;
@@ -101,6 +101,12 @@
   height: 1em;
   border-radius: 50em;
   background-color: #7e7e7e;
+}
+
+div.del_confirmName {
+  font-size: 17px;
+  margin: 0.35em 2em;
+  text-align: center;
 }
 
 .logTab {

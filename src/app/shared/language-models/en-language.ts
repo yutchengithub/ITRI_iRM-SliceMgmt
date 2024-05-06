@@ -381,6 +381,9 @@ export const Enlanguage = {
   'BS.mncIsRequired': 'MNC is required.',
   'BS.nrarfcnIsRequired': 'NRARFCN is required.',  
 
+  'BS.confirmDeleteNeighborBS': 'Confirm to Delete this Neighbor BS',
+
+
 
   'BS.alarms':'BS Alarms',
   'BS.neList':'NE List',

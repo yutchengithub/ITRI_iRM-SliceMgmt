@@ -4655,7 +4655,7 @@
                   <td>{{ neighbor['plmn-id'].mcc + neighbor['plmn-id'].mnc }}</td>
                   <!-- 編輯鄰居基站的按鈕，點擊時根據當前行的鄰居基站數據打開對話框進入編輯模式 -->
                   <td><mat-icon tooltip="{{ languageService.i18n['BS.edit'] }}" (click)="openNeighborBsEditDialog( 'edit', neighbor )">edit</mat-icon></td>
-                  <td><mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}">delete_forever</mat-icon></td>
+                  <td><mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}" (click)="openDeleteNeighborBSConfirmWindow( neighbor )">delete_forever</mat-icon></td>
                 </tr>
               </tbody>
             </table>
@@ -4739,7 +4739,7 @@
               </li>
           </ul>
           <div class="buttons">
-            <button type="button" (click)="neighborBsEditSubmit()">
+            <button type="button" (click)="addOrEditOrDeleteNeighborBs_Submit('add')">
               {{ languageService.i18n['BS.apply'] }}
             </button>
             <button type="button" mat-dialog-close>
@@ -4823,7 +4823,7 @@
               </li>
           </ul>
           <div class="buttons">
-            <button type="button" (click)="neighborBsEditSubmit()">
+            <button type="button" (click)="addOrEditOrDeleteNeighborBs_Submit('edit')">
               {{ languageService.i18n['BS.apply'] }}
             </button>
             <button type="button" mat-dialog-close>
@@ -4831,6 +4831,35 @@
             </button>
           </div>
       </form>
+    </ng-template>
+
+    <!-- 確認刪除鄰居基站彈出視窗 @2024/05/06 Add -->
+    <ng-template #deleteNeighborBSConfirmWindow>
+
+      <!-- 確認視窗標題 -->
+      <h5>{{ languageService.i18n['field.warningFault'] }}</h5>
+
+      <!-- 確認刪除的提示信息，顯示 選擇要刪除的鄰居基站 相關資訊 -->
+      <p>{{ languageService.i18n['BS.confirmDeleteNeighborBS'] }} ?</p>
+      <div class="del_confirmName">
+        <label>NCI : 0x{{ theSelectedDeleteNeighborNCI }}, </label>
+        <label>PCI : {{ theSelectedDeleteNeighborPCI }}</label>
+      </div>
+
+      <!-- 按鈕容器 -->
+      <div class="buttons">
+
+        <!-- 確認按鈕，點擊時呼叫 addOrEditOrDeleteNeighborBs_Submit() 函數處理確認邏輯，並且關閉視窗 -->
+        <button type="button" (click)="addOrEditOrDeleteNeighborBs_Submit('delete')" mat-dialog-close>
+          {{ languageService.i18n['confirm'] }}
+        </button>
+
+        <!-- 取消按鈕，點擊時不進行任何操作，直接關閉視窗 -->
+        <button type="button" mat-dialog-close>
+          {{ languageService.i18n['cancel'] }}
+        </button>
+
+      </div>
     </ng-template>
 
 

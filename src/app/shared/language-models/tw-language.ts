@@ -376,6 +376,9 @@ export const TwLanguage = {
   'BS.mncIsRequired': 'MNC 為必填。',
   'BS.nrarfcnIsRequired': 'NRARFCN 為必填。',
 
+  'BS.confirmDeleteNeighborBS': '確定要刪除此鄰居基站',
+
+
 
   'BS.alarms':'基站告警',
   'BS.neList':'網元列表',

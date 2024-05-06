@@ -1,7 +1,7 @@
 
     // @2024/05/04 Add
     // 用於新增、編輯或刪除一個基站的鄰居基站 POST 時用的 interfaces
-    export interface ForAddOrEditOrDeleteNeighborBs {
+    export interface ForAddOrEditOrDeleteNeighborBs_allInOneBs {
         type: string;
         session: string;
         isSave: string;

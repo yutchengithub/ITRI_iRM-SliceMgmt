@@ -10,7 +10,7 @@
     components: Components_dist;  
     description: string;
     cellinfo: Cellinfo_dist[];
-    edit_type: number;
+    edit_type?: number;
     extension_info: ExtensionInfo_dist[];
   }
 

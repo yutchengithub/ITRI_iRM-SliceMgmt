@@ -166,6 +166,8 @@
 
 <!-- Confirm Window of Delete Schedule @2024/03/22 Add -->
 <ng-template #deleteSchedule_ConfirmWindow>
+  
+  <!-- 確認視窗標題 -->
   <h5>{{ languageService.i18n['field.warningFault'] }}</h5>
 
   <!-- 確認刪除的提示信息，展示 Schedule 相關資訊 -->
@@ -181,6 +183,7 @@
 
   <!-- 按鈕容器 -->
   <div class="buttons">
+    
     <!-- 確認按鈕，點擊時呼叫 confirmDeleteSchedule() 函數處理確認邏輯，並且關閉視窗 -->
     <button type="button" (click)="confirmDeleteSchedule()" mat-dialog-close>
       {{ languageService.i18n['confirm'] }}
@@ -190,6 +193,7 @@
     <button type="button" mat-dialog-close>
       {{ languageService.i18n['cancel'] }}
     </button>
+
   </div>
 </ng-template>
 

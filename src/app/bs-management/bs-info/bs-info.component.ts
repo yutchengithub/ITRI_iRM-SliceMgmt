@@ -26,7 +26,7 @@ import { BSInfo, Components, ExtensionInfo, Neighbor }  from '../../shared/inter
 import { ForUpdateBs }                                  from '../../shared/interfaces/BS/For_updateBs';             // @2024/04/14 Add
 import { BSInfo_dist, Info_dist, Components_dist }      from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
 import { ForUpdateDistributedBs, Cellinfo_dist }        from '../../shared/interfaces/BS/For_updateDistributedBs';  // @2024/04/14 Add
-import { ForAddOrEditOrDeleteNeighborBs }               from '../../shared/interfaces/BS/For_optimalBs';            // @2024/05/04 Add
+import { ForAddOrEditOrDeleteNeighborBs_allInOneBs }    from '../../shared/interfaces/BS/For_optimalBs';            // @2024/05/04 Add
 
 import { CurrentBsFmList, FaultMessage } from '../../shared/interfaces/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
 import { NEList, NE, Sm  }               from '../../shared/interfaces/NE/For_queryBsComponentList';       // @2024/03/27 Add
@@ -1409,7 +1409,7 @@ export class BSInfoComponent implements OnInit {
   // @2024/05/05 Add
   // 用於存儲對話框的參考，以便可以進行開啟、操作和關閉對話框的動作。
   // MatDialogRef 類型提供了一系列控制對話框的方法，如 close() 用於關閉對話框。
-  neighborBsEditDialogRef!: MatDialogRef<any>;
+  addOrEditNeighborBsWindowRef!: MatDialogRef<any>;
 
   // @2024/05/05 Add
   // FormGroup 類型的 neighborForm 變量用來存儲和管理表單控制項的集合。
@@ -1518,13 +1518,17 @@ export class BSInfoComponent implements OnInit {
     this.neighborForm.get('cellId')!.setValue(currentValue);
   }
   
+  // @2024/05/06 Add
+  // 儲存選擇要編輯的 Neighbor BS 之 NCI、PCI
+  theSelectedEditNeighborNCI: string = "";
+  theSelectedEditNeighborPCI: number = 0;
 
   /**
-   * @2024/05/05 Add
+   * @2024/05/06 Update
    * 打開鄰居基站資訊編輯對話框
-   * 根據模式（新增或編輯）打開對話框，並準備表單
+   * 根據模式（新增或編輯）打開彈出視窗，並準備表單
    * @method openNeighborBsEditDialog
-   * @param { string } mode - 對話框模式（'add' 或 'edit'）
+   * @param { string }  mode - 彈出視窗模式（'add' 或 'edit'）
    * @param { any } neighbor - 編輯時使用的鄰居基站資料
    * @returns { void }
    */
@@ -1533,34 +1537,50 @@ export class BSInfoComponent implements OnInit {
     // 輸出當前模式以供調試
     console.log( "Mode is:", mode );
 
-    // 輸出當前選擇的鄰居基站 NCI（ Neighbor Cell Identifier ）
-    console.log( "Selected NCI:", this.selectedNeighborNci );
-
-    // 輸出當前選擇的鄰居基站所有資訊
-    console.log( "Selected neighbor:", neighbor );
-
     // 呼叫函數初始化表單
     this.createNeighborForm(); // 初始化表單
 
-    // 根據模式選擇對話框模板
-    let dialogTemplate = mode === 'add' ? this.addNeighborBsWindow : this.editNeighborBsWindow;
+    if ( mode == "add" ) {
 
-    // 如果是編輯模式，使用提供的鄰居基站資料來填充表單
-    if ( neighbor ) {
-        this.fillForm( neighbor );
+      // 輸出當前是要新增哪個 Cell ( NCI ) 的鄰居基站
+      console.log( "要新增鄰居基站的 Cell ( NCI ) 為", this.selectedNeighborNci );
+    }
+    
+    if ( mode == "edit" ) {
+
+      // 輸出當前是要新增哪個 Cell ( NCI ) 的鄰居基站
+      console.log( "要編輯的鄰居基站是位於此 Cell -", this.selectedNeighborNci, "底下" );
+
+      // 輸出當前選擇的鄰居基站所有資訊
+      console.log( "Selected neighbor:", neighbor );
+
+      // 將選中的鄰居基站 nci 賦值給 theSelectedDeleteNeighborNCI
+      this.theSelectedEditNeighborNCI = neighbor.nci;
+
+      // 將選中的鄰居基站 nci 賦值給 theSelectedDeleteNeighborPCI
+      this.theSelectedEditNeighborPCI = neighbor.pci;
+
+      // 輸出當前選擇要編輯的 Neighbor BS 的 nci @2024/05/06 Add
+      console.log( "the Selected Edit Neighbor NCI:", this.theSelectedEditNeighborNCI );
+
+      // 如果是編輯模式，使用提供的鄰居基站資料來填充表單
+      this.fillForm( neighbor );
     }
 
-    // 開啟對話框，傳入對應模板和數據
-    this.neighborBsEditDialogRef = this.dialog.open( dialogTemplate, {
+    // 根據傳入的模式開啟對應的彈出視窗模板
+    let dialogTemplate = mode === 'add' ? this.addNeighborBsWindow : this.editNeighborBsWindow;
+
+    // 開啟彈出視窗，傳入對應模板和數據
+    this.addOrEditNeighborBsWindowRef = this.dialog.open( dialogTemplate, {
         data: {
             neighbor: neighbor
         },
-        id: 'neighborBsEditDialogRef' // 設定對話框的唯一標識
+        id: 'addOrEditNeighborBsWindowRef' // 設定彈出視窗的唯一標識
     });
 
-    // 訂閱對話框關閉事件，用於清理或記錄
-    this.neighborBsEditDialogRef.afterClosed().subscribe( result => {
-        console.log('Dialog was closed'); // 輸出對話框關閉的日誌
+    // 訂閱彈出視窗關閉事件，用於清理或記錄
+    this.addOrEditNeighborBsWindowRef.afterClosed().subscribe( result => {
+        console.log('Dialog was closed'); // 輸出彈出視窗關閉的日誌
     });
   }
 
@@ -1642,106 +1662,214 @@ export class BSInfoComponent implements OnInit {
     return cellId.toString( 2 ).padStart( 14, '0' ); // 轉換為二進制並填充至14位
   }
 
+  // @2024/05/06 Add
+  // ViewChild 裝飾器用於獲取模板中 #deleteNeighborBSConfirmWindow 的元素
+  @ViewChild('deleteNeighborBSConfirmWindow') deleteNeighborBSConfirmWindow: any;
 
   // @2024/05/06 Add
-  // 提交新增或編輯鄰居基站的表單
-  neighborBsEditSubmit() {
-    // 若 neighborForm 表單有效
-    if (this.neighborForm.valid) {
-      // 取得 neighborForm 表單的值
-      const formValue = this.neighborForm.value;
+  // MatDialogRef 用於控制打開的對話框
+  deleteNeighborBSConfirmWindowRef!: MatDialogRef< any >;
 
-      // 建立要提交的數據物件
-      const submitData: ForAddOrEditOrDeleteNeighborBs = {
-        type: "anr",
-        session: this.sessionId,
-        isSave: "true",
-        bsInfo: [
-          {
-            bsId: this.bsID,
-            nci: this.selectedNeighborNci,
-            neighbor: [
-              ...this.neighborList,
-              {
-                pci: formValue.nrpci,
-                nci: formValue.nci,
-                nrarfcn: formValue.nrarfcn,
-                tac: "",
+  // @2024/05/06 Add
+  // 儲存選擇要刪除的 Neighbor BS 之 NCI、PCI
+  theSelectedDeleteNeighborNCI: string = "";
+  theSelectedDeleteNeighborPCI: number = 0; 
+
+  /**
+   * @2024/05/06 Add
+   * 打開選擇的鄰居基站刪除確認對話框
+   * @method openDeleteNeighborBSConfirmWindow
+   * @param { Neighbor } neighbor - 需要刪除的鄰居基站資料
+   * @returns { void }
+   */
+  openDeleteNeighborBSConfirmWindow( neighbor: Neighbor ) {
+
+    // 將選中的鄰居基站 NCI 賦值給類變量
+    this.theSelectedDeleteNeighborNCI = neighbor.nci;
+
+    // 將選中的鄰居基站 PCI 賦值給類變量
+    this.theSelectedDeleteNeighborPCI = neighbor.pci;
+
+    // 輸出選中的鄰居基站 NCI 和 PCI
+    console.log("選中要刪除的鄰居基站的 NCI 為:", this.theSelectedDeleteNeighborNCI);
+    console.log("選中要刪除的鄰居基站的 PCI 為:", this.theSelectedDeleteNeighborPCI);
+
+    // 使用 MatDialog 服務開啟確認刪除的對話框
+    this.deleteNeighborBSConfirmWindowRef = this.dialog.open(
+        this.deleteNeighborBSConfirmWindow, {
+            id: 'deleteNeighborBSConfirmWindow' // 對話框的唯一標識
+        }
+    );
+
+    // 訂閱對話框關閉後的事件
+    this.deleteNeighborBSConfirmWindowRef.afterClosed().subscribe(confirm => {
+        console.log('Dialog was closed'); // 對話框關閉時輸出日誌
+    });
+  }
+
+
+  /**
+   * @2024/05/06 Add
+   * 提交新增、編輯或刪除鄰居基站的方法
+   * @method addOrEditOrDeleteNeighborBs_Submit
+   * @param { string } action - 執行的動作類型（'add', 'edit', 'delete'）
+   * @returns { void }
+   * @description
+   *   05/06 - 已完成一體式用的處理。
+   */
+  addOrEditOrDeleteNeighborBs_Submit( action: string ) {
+
+    // 檢查表單有效性或是否為刪除操作
+    if ( this.neighborForm.valid || action === 'delete' ) {
+
+        // 獲取表單值
+        const formValue = this.neighborForm.value;
+
+        // 根據操作類型組裝 neighbor 數據
+        let neighbors: any[] = [];
+        switch ( action ) {
+          case 'add':
+
+              // 從現有的鄰居列表加上新鄰居
+              neighbors = [...this.neighborList];
+
+              // 添加新鄰居
+              neighbors.push({
+                  // 下面是根據表單填寫的數據創建新鄰居對象
+                  id: "0",
+                  enable: "0",
+                  alias: "",
+                  'must-include': "",
+                  'plmn-id': {
+                      mcc: formValue.mcc,
+                      mnc: formValue.mnc
+                  },
+                  nci: formValue.nci,
+                  nrarfcn: formValue.nrarfcn,
+                  pci: formValue.nrpci,
+                  'q-offset': "",
+                  cio: "",
+                  'rs-tx-power': "",
+                  blacklisted: "",
+                  tac: "",
+                  '__itri_default___': 0
+              });
+              break;
+
+          case 'edit':
+
+            // 從列表中過濾出不需要編輯的鄰居，即那些 NCI 和 PCI 都不匹配的鄰居
+            neighbors = this.neighborList.filter( neighbor => {
+                return !( neighbor.nci === this.theSelectedEditNeighborNCI && neighbor.pci === this.theSelectedEditNeighborPCI );
+            });
+        
+            // 將編輯過的鄰居數據添加到列表中
+            neighbors.push({
+                // 與新增相似，更新鄰居數據
                 id: "0",
                 enable: "0",
                 alias: "",
-                cio: "",
-                blacklisted: "",
-                "plmn-id": {
-                  mcc: formValue.mcc,
-                  mnc: formValue.mnc
+                'must-include': "",
+                'plmn-id': {
+                    mcc: formValue.mcc,
+                    mnc: formValue.mnc
                 },
-                "must-include": "",
-                "q-offset": "",
-                "rs-tx-power": "",
-                "__itri_default___": 0
-              }
-            ]
-          }
-        ]
-      };
-
-      // 若是編輯模式
-      if (this.neighborBsEditDialogRef.componentInstance.data.neighbor) {
-        // 取得要編輯的鄰居基站的 NCI
-        const editNci = this.neighborBsEditDialogRef.componentInstance.data.neighbor.nci;
-        
-        // 從 neighborList 中找到要編輯的鄰居基站
-        const editNeighbor = this.neighborList.find(neighbor => neighbor.nci === editNci);
-        
-        // 若找到要編輯的鄰居基站
-        if (editNeighbor) {
-          // 更新要編輯的鄰居基站的屬性
-          editNeighbor.pci = formValue.nrpci;
-          editNeighbor.nci = formValue.nci;
-          editNeighbor.nrarfcn = formValue.nrarfcn;
-          editNeighbor["plmn-id"].mcc = formValue.mcc;
-          editNeighbor["plmn-id"].mnc = formValue.mnc;
-          editNeighbor.__itri_default___ = 0;
-          
-          // 從 neighbor 中移除原有的要編輯的鄰居基站
-          submitData.bsInfo[0].neighbor = submitData.bsInfo[0].neighbor.filter(neighbor => neighbor.nci !== editNci);
-          
-          // 將更新後的鄰居基站加入 neighbor
-          submitData.bsInfo[0].neighbor.push(editNeighbor);
+                nci: formValue.nci,
+                nrarfcn: formValue.nrarfcn,
+                pci: formValue.nrpci,
+                'q-offset': "",
+                cio: "",
+                'rs-tx-power': "",
+                blacklisted: "",
+                tac: "",
+                '__itri_default___': 0
+            });
+            break;
+            
+          case 'delete':
+            // 過濾出要刪除的鄰居，確保兩個條件都匹配的 neighbor 才可被移除
+            neighbors = this.neighborList.filter( neighbor => {
+                return !( neighbor.nci === this.theSelectedDeleteNeighborNCI && neighbor.pci === this.theSelectedDeleteNeighborPCI );
+            });
+            break;
         }
-      }
 
-      this.showProcessingSpinner(); // 顯示處理中的 Spinner
+        // 組裝 Post 要提交數據
+        const submitData: ForAddOrEditOrDeleteNeighborBs_allInOneBs = {
+            type: "anr",
+            session: this.sessionId,
+            isSave: "true",
+            bsInfo: [{
+                bsId: this.bsID,
+                nci: this.selectedNeighborNci,
+                neighbor: neighbors
+            }]
+        };
+
+        // 根據動作類型輸出日誌
+        switch ( action ) {
+          case 'add':
+            console.log("Add - The POST data for optimalBs():", submitData);
+            break;
+          case 'edit':
+            console.log("Edit - The POST data for optimalBs():", submitData);
+            break;
+          case 'delete':
+            console.log("Delete - The POST data for optimalBs():", submitData);
+            break;
+        }
+
+        // 判斷是否為本地模式進行模擬或實際 API 呼叫
+        if ( this.commonService.isLocal ) {
+
+            console.log('Local testing environment, no update operation will be performed.');
+
+        } else {
+
+            // 非 Local 模式下執行對應的 API 調用
+            const apiObservable = this.bsType === "1"
+                    ? this.API_BS.optimalBs( submitData )
+                    : this.API_BS.updateDistributedBs( submitData );
+
+            // 呼叫 API 進行鄰居基站新增、編輯或刪除操作
+            apiObservable.subscribe({
+              next: ( res ) => {
+
+                // 輸出操作成功的日誌
+                console.log( 'Neighbor BS operation success', res );
+
+                // 刷新相關基站資訊
+                this.getQueryBsInfo();     // 刷新基站資訊
+                this.getNEList();          // 刷新網元資訊
+                this.getCurrentBsFmList(); // 刷新告警資訊
+
+                // 操作完成後，關閉新增或編輯鄰居基站視窗
+                if ( this.addOrEditNeighborBsWindowRef ) {
+                  this.addOrEditNeighborBsWindowRef.close();
+                }
+
+                // 隱藏加載指示器
+                // this.hideSpinner();
+              },
+              error: ( error ) => {
+
+                // 操作失敗後的處理
+                console.error( 'Neighbor BS operation failed', error );
+                
+                // 出錯時隱藏加載指示器
+                // this.hideSpinner();
+              }
+            });
+        }
+
+    } else {
       
-      if (this.commonService.isLocal) {
-        // 本地模式
-        console.log('本地測試環境，不進行實際提交操作。');
-        console.log("要提交的數據:", submitData);
-        
-        this.hideSpinner(); // 隱藏 Spinner
-      } else {
-        // 非本地模式，實際呼叫 API
-        console.log("要提交的數據:", submitData);
-        
-        this.API_BS.optimalBs(submitData).subscribe({
-          next: (res) => {
-            console.log('提交鄰居基站成功', res);
-            
-            this.neighborBsEditDialogRef.close(); // 關閉編輯對話框
-            
-            this.hideSpinner(); // 隱藏 Spinner
-          },
-          error: (error) => {
-            console.error('提交鄰居基站失敗', error);
-            
-            this.hideSpinner(); // 隱藏 Spinner
-          }
-        });
-      }
+        // 如果表單驗證未通過
+        console.error('Form is not valid, please check the input fields.');
     }
   }
-  
+
+
 
 // ↑ 鄰居基站列表區 @2024/04/16 Add ↑
 
