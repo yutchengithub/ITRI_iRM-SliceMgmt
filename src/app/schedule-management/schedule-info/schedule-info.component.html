@@ -61,11 +61,11 @@
           <h3>{{ languageService.i18n['sm.contentInfo'] }}</h3>
           <li *ngIf="!isSfUpdateInfoArray( selectScheduleInfo.ticketinfo )">
             <!-- 顯示是否為"週期性執行"的區域 -->
-            <label>{{ languageService.i18n['sm.periodicExecution'] }}</label>
+            <label>{{ languageService.i18n['sm.executionCycle'] }}</label>
             <span *ngIf=" selectScheduleInfo.executedtype === '0' ">{{ languageService.i18n['sm.notPeriodicExecution'] }}</span>
-            <span *ngIf=" selectScheduleInfo.executedtype === '1' ">{{ languageService.i18n['sm.jobDailyString'] }}</span>
-            <span *ngIf=" selectScheduleInfo.executedtype === '2' ">{{ languageService.i18n['sm.jobWeeklyString'] }}</span>
-            <span *ngIf=" selectScheduleInfo.executedtype === '3' ">{{ languageService.i18n['sm.jobMonthlyString'] }}</span>
+            <span *ngIf=" selectScheduleInfo.executedtype === '1' ">{{ languageService.i18n['sm.jobDailyString'] }} - {{ detailedTime }}</span>
+            <span *ngIf=" selectScheduleInfo.executedtype === '2' ">{{ languageService.i18n['sm.jobWeeklyString'] }} - {{ detailedTime }}</span>
+            <span *ngIf=" selectScheduleInfo.executedtype === '3' ">{{ languageService.i18n['sm.jobMonthlyString'] }} - {{ detailedTime }}</span>
           </li>
 
           <!-- 依據排程類型，顯示對應的內容訊息 -->
