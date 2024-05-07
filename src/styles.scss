@@ -1643,7 +1643,7 @@ ngx-spinner .ngx-spinner-overlay {
   width: 17.5em;
 }
 #addOrEditNeighborBsWindowRef {
-  width: 34em;
+  width: 44em;
 }
 #addOrEditNeighborBsWindowRef ul li {
   min-height: 6em;
@@ -1651,12 +1651,13 @@ ngx-spinner .ngx-spinner-overlay {
 
 #addOrEditNeighborBsWindowRef ul li input[type="text"] {  
   margin: 0.3em 0 .3em;
-  width: 26em;
+  width: 35em;
+  display: block;
 }
 #addOrEditNeighborBsWindowRef .mat-error {
-  padding: 0.3em 0.8em 0.4em;
+  padding: 0.3em 0.5em 0.4em;
   font-size: 0.9em;
   display: block;
-  width: 29.7em;
+  width: 40em;
   border-radius: 3px;
 }
