@@ -404,6 +404,7 @@ export class BSInfoComponent implements OnInit {
         complete: () => {
           console.log( 'BS info fetch completed' );
           //this.hideSpinner();  // 完成後隱藏 spinner
+          this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
         }
       });
     }
@@ -461,7 +462,7 @@ export class BSInfoComponent implements OnInit {
           
          // this.hideSpinner();  // 完成後隱藏 spinner
 
-          //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
+          this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
           
         },
         error: ( error ) => {
@@ -2220,8 +2221,9 @@ export class BSInfoComponent implements OnInit {
               this.addOrEditNeighborBsWindowRef.close();
             }
 
+            this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
             // 隱藏加載指示器
-            this.hideSpinner();
+            //this.hideSpinner();
           },
           error: ( error ) => {
 
@@ -2230,6 +2232,11 @@ export class BSInfoComponent implements OnInit {
             
             // 出錯時隱藏加載指示器
             this.hideSpinner();
+          },
+          complete: () => {
+            console.log( 'Neighbor BS operation Success' );
+            this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
+            this.hideSpinner();  // 完成後隱藏 spinner
           }
         });
       }
