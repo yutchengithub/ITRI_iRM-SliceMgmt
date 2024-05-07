@@ -21,7 +21,7 @@
     txpower: string;
     tac: string;
     edit_type?: number;
-    extension_info: ExtensionInfo[];
+    extension_info?: ExtensionInfo[];
   }
 
 

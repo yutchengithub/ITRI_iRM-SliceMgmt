@@ -358,8 +358,8 @@
                   </select>
                   <span class="forALL_btn">
                     {{ languageService.i18n['BS.allSyncOptions'] }}:
-                    <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                    <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                    <button (click)="BsParamEdit_ForAllSyncAction_Submit('NMS')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                    <button (click)="BsParamEdit_ForAllSyncAction_Submit('BS')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                   </span>
                 </span>
                 <!-- <span tooltip="{{ languageService.i18n['clear_select'] }}" class="material-symbols-outlined" (click)="onBsParamClearClick()">
