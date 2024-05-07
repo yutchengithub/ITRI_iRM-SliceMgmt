@@ -9,6 +9,7 @@ import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { FmsgList } from './../../fault-management/fault-management.component';
 import { FaultMessages } from './../../fault-management/fault-management.component';
 import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 // Services
 import { CommonService } from '../../shared/common.service';
@@ -53,10 +54,16 @@ interface bsCurrentFmParams {
   offset: number;
   limit: number;
 }
+
+export interface ChartData {
+  name: string; // category name
+  series: { name: string; value: number }[];
+}
 @Component({
   selector: 'app-bs-info',
   templateUrl: './bs-info.component.html',
-  styleUrls: ['./bs-info.component.scss']
+  styleUrls: ['./bs-info.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BSInfoComponent implements OnInit {
 
@@ -118,6 +125,11 @@ export class BSInfoComponent implements OnInit {
     // 建立搜尋表單 
     this.createAlarmSearchForm();
     //this.createBsBasicInfoEditForm(); // 用於編輯 BS 基本資訊用 @2024/04/14 Add
+
+    Object.assign(this.multi); // data goes here
+
+    this.updateChart(); // 初始載入時執行一次更新
+  
   }
 
   // @2024/03/25 Add
@@ -2612,6 +2624,66 @@ export class BSInfoComponent implements OnInit {
   }
 
 // ↑ 網元列表區 @2024/04/17 Update ↑
+
+
+
+// ↓ 基站效能區 @2024/05/08 Add ↓
+
+  //multi: any[];
+  view: any[] = [700, 300];
+  gradient: boolean = true;
+  showLegend: boolean = true;
+  showLabels: boolean = true;
+  xAxis: boolean = true;
+  yAxis: boolean = true;
+  xAxisLabel: string = 'Years';
+  yAxisLabel: string = 'Population';
+
+  colorScheme = {
+    domain: ['#5AA454', '#E44D25', '#7aa3e5', '#a8385d', '#aae3f5']
+  };
+  
+  filteredData: ChartData[] = []; // 宣告 filteredData 屬性，類型為 ChartData[]，初始值為空數組
+
+  selectedCategory: string = 'Accessibility'; // 預設選項
+  
+  // 數據範例
+  multi: ChartData[] = [
+    {
+      "name": "Accessibility",
+      "series": [
+        { "name": "2022-04-01", "value": 50 },
+        { "name": "2022-04-02", "value": 80 }
+      ]
+    },
+    {
+      "name": "Integrity",
+      "series": [
+        { "name": "2022-04-01", "value": 45 },
+        { "name": "2022-04-02", "value": 70 }
+      ]
+    }
+    // more categories...
+  ];
+
+  updateChart() {
+    this.filteredData = this.filterData();
+    this.changeDetectorRef.markForCheck(); // 標記為需要檢查，因為我們使用了 OnPush
+  }
+  
+  filterData(): ChartData[] {
+    return this.multi.filter(item => item.name === this.selectedCategory);
+  }
+
+
+// ↑ 基站效能區 @2024/05/08 Add ↑
+
+
+
+
+
+
+
 
 
   cloudId: string = '';

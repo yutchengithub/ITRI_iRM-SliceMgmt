@@ -5039,6 +5039,21 @@
         <div class="content-inner">
           <div class="collabsible">
 
+            <div>
+              <span>
+                <select [(ngModel)]="selectedCategory" (ngModelChange)="updateChart()">
+                  <option *ngFor="let category of multi" [value]="category.name">{{ category.name }}</option>
+                </select>                
+              </span>
+              
+              <ngx-charts-line-chart
+                [results]="filteredData"
+                [view]="[700, 300]"
+                [xAxis]="true"
+                [yAxis]="true">
+              </ngx-charts-line-chart>
+            </div>
+
           </div>
         </div>
       </div>
