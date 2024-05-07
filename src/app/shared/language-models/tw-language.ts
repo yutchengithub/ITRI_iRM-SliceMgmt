@@ -583,6 +583,8 @@ export const TwLanguage = {
   'sm.jobDailyString':'每天',              // executedtype = 1
   'sm.jobWeeklyString':'每週',             // executedtype = 2
   'sm.jobMonthlyString':'每月',            // executedtype = 3
+  'sm.daysOfWeek': ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+  'sm.dateSuffix': '日', // 中文中特定的日期後綴
 
   'sm.confirm_del':'確定要刪除此排程',
 
@@ -592,6 +594,7 @@ export const TwLanguage = {
 
   'sm.contentInfo':'內容訊息',
   'sm.periodicExecution': '週期性執行',
+  'sm.executionCycle': '執行週期',
   'sm.notPeriodicExecution': '無',
   'sm.reportDataRange': '報表資料區間',
 

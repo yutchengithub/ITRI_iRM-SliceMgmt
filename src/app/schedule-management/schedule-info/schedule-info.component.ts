@@ -11,6 +11,7 @@ import { FmsgList }      from './../../fault-management/fault-management.compone
 import { FaultMessages } from './../../fault-management/fault-management.component';
 import { Subscription }  from 'rxjs';
 import { XMLParser }     from "fast-xml-parser";
+import { formatDate } from '@angular/common';
 
 // @2024/05/03 Add
 import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
@@ -103,7 +104,10 @@ export class ScheduleInfoComponent implements OnInit {
     });
 
     this.languageService.languageChanged.subscribe(
-      ( language ) => this.updateTicketStatusInfo()
+      ( language ) => {
+        this.updateTicketStatusInfo();
+        this.parseScheduleTime(); // 重新解析時間，以更新顯示
+      }
     );
   }
 
@@ -111,10 +115,12 @@ export class ScheduleInfoComponent implements OnInit {
     clearTimeout( this.refreshTimeout );
   }
 
+  // 新增儲存週期性執行細節的變數
+  detailedTime: string = ''; // New variable to store detailed time
 
   isLoadingScheduleInfo = true;  // 加載狀態的標誌，初始設置為 true
   selectScheduleInfo:     ScheduleInfo = {} as ScheduleInfo;     // 用於存儲從伺服器或 Local 文件獲取的排程資訊
-  /** @2024/03/17 Add
+  /** @2024/05/07 Update
    *  用於獲取排程詳細資訊。
    *  根據是否處於 Local 模式，它會從 Local 文件或通過 API 從伺服器獲取排程資訊。
    */
@@ -132,6 +138,8 @@ export class ScheduleInfoComponent implements OnInit {
       this.selectScheduleInfo = this.scheduleInfo_LocalFiles.scheduleInfo_local.find( info => info.id === this.scheduleId ) || {} as ScheduleInfo;
       console.log( 'In local - Get the ScheduleInfo:', this.selectScheduleInfo );
 
+      this.parseScheduleTime(); // 解析排程執行時間
+
       this.isLoadingScheduleInfo = false; // Local 模式下，數據加載快速完成,直接設置為 false
       this.hideSpinner();  // 完成後隱藏 spinner
 
@@ -145,6 +153,8 @@ export class ScheduleInfoComponent implements OnInit {
           console.log( 'Get the ScheduleInfo:', res );
 
           this.selectScheduleInfo = res; // 更新排程資訊
+
+          this.parseScheduleTime(); // 解析排程執行時間
 
           this.isLoadingScheduleInfo = false; // 數據加載完成
           this.hideSpinner();  // 完成後隱藏 spinner
@@ -163,7 +173,62 @@ export class ScheduleInfoComponent implements OnInit {
       });
     }
   }
+  
+  /**
+   * @2024/05/07 Add
+   * 解析排程執行時間的詳細資訊
+   * @method parseScheduleTime
+   * @returns { void }
+   * @description
+   * - 根據排程的執行類型，解析排程執行時間的詳細資訊
+   * - 對於每日執行，顯示執行時間
+   * - 對於每週執行，顯示執行時間和對應的星期幾
+   * - 對於每月執行，顯示執行日期和時間
+   * - 若非週期性執行，顯示對應的語言訊息
+   */
+  parseScheduleTime() {
 
+    // 將排程執行時間轉換為 Date 對象
+    const scheduleDate = new Date( this.selectScheduleInfo.executedtime ); 
+    
+    // 獲取排程執行日期是星期幾 (0-6)
+    const dayOfWeek = scheduleDate.getDay();
+    
+    // 格式化排程執行時間為 "HH:mm:ss" 的字符串
+    const timeString = formatDate( scheduleDate, 'HH:mm:ss', 'en-US' );
+    
+    // 獲取對應語言的星期名稱數組
+    const days = this.languageService.i18n['sm.daysOfWeek'];
+    
+    // 獲取對應語言的日期後綴
+    const dateSuffix = this.languageService.i18n['sm.dateSuffix'];
+
+    // 根據排程的執行類型進行處理
+    switch ( this.selectScheduleInfo.executedtype ) {
+      case '1': // 每天執行
+        this.detailedTime = `${timeString}`;
+        break;
+      case '2': // 每週執行 
+        if ( this.languageService.language === 'EN' ) {
+          this.detailedTime = `${timeString} ${days[dayOfWeek]}`;
+        } else {
+          this.detailedTime = `${days[dayOfWeek]} ${timeString}`;  
+        }
+        break;
+      case '3': // 每月執行
+        if ( this.languageService.language === 'EN' ) { 
+          this.detailedTime = `${dateSuffix} ${scheduleDate.getDate()} at ${timeString}`;
+        } else {
+          this.detailedTime = `${scheduleDate.getDate()} ${dateSuffix} ${timeString}`;
+        }
+        break;
+      default: // 非週期性執行
+        this.detailedTime = this.languageService.i18n['sm.notPeriodicExecution'];
+        break;
+    }
+  }
+  
+  
 
 
   

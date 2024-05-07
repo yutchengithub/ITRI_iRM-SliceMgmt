@@ -584,6 +584,8 @@ export const Enlanguage = {
   'sm.jobDailyString':'Daily',                      // executedtype = 1
   'sm.jobWeeklyString':'Weekly',                    // executedtype = 2
   'sm.jobMonthlyString':'Monthly',                  // executedtype = 3
+  'sm.daysOfWeek': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  'sm.dateSuffix': 'Date', // 用一個通用詞語作為例子
 
   'sm.confirm_del':'Confirm to Delete this Schedule',
 
@@ -593,6 +595,7 @@ export const Enlanguage = {
 
   'sm.contentInfo': 'Content Information',
   'sm.periodicExecution': 'Periodic Execution',
+  'sm.executionCycle': 'Execution Cycle',
   'sm.notPeriodicExecution': 'None',
   'sm.reportDataRange': 'Report Data Range',
 
