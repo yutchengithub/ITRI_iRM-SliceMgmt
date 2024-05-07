@@ -127,9 +127,6 @@ export class BSInfoComponent implements OnInit {
     //this.createBsBasicInfoEditForm(); // 用於編輯 BS 基本資訊用 @2024/04/14 Add
 
     Object.assign(this.multi); // data goes here
-
-    this.updateChart(); // 初始載入時執行一次更新
-  
   }
 
   // @2024/03/25 Add
@@ -167,6 +164,7 @@ export class BSInfoComponent implements OnInit {
       this.getCurrentBsFmList();
     });
     
+    this.updateChart(); // 初始載入時執行一次更新
   }
 
   ngOnDestroy() {
@@ -178,7 +176,7 @@ export class BSInfoComponent implements OnInit {
     this.canvas.nativeElement.width  = 1000; // 增加 Canvas 的寬度
     this.canvas.nativeElement.height = 250;  // 增加 Canvas 的寬度
 
-    //this.drawConnectingLines();
+    this.drawConnectingLines();
   }
 
   // @2024/05/03 Update
@@ -463,7 +461,7 @@ export class BSInfoComponent implements OnInit {
           
          // this.hideSpinner();  // 完成後隱藏 spinner
 
-          // this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
+          //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
           
         },
         error: ( error ) => {
@@ -479,6 +477,7 @@ export class BSInfoComponent implements OnInit {
           console.log( 'NE list fetch completed' ); // 輸出完成日誌
 
           this.drawConnectingLines();
+          this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
           this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
@@ -1195,10 +1194,10 @@ export class BSInfoComponent implements OnInit {
     const canvas = this.canvas.nativeElement; // 獲取 canvas 元素
     const ctx = canvas.getContext('2d'); // 獲取繪圖上下文
 
-    if (!ctx) return; // 如果無法獲取上下文，直接返回
+    //if (!ctx) return; // 如果無法獲取上下文，直接返回
 
     // 清空畫布
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 檢查渲染上下文是否存在
     if (ctx) {
@@ -2642,7 +2641,7 @@ export class BSInfoComponent implements OnInit {
   colorScheme = {
     domain: ['#5AA454', '#E44D25', '#7aa3e5', '#a8385d', '#aae3f5']
   };
-  
+
   filteredData: ChartData[] = []; // 宣告 filteredData 屬性，類型為 ChartData[]，初始值為空數組
 
   selectedCategory: string = 'Accessibility'; // 預設選項
