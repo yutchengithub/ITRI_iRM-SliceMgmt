@@ -356,6 +356,11 @@
                       Cell#{{ nciList.indexOf(nci) + 1 }} (NCI=0x{{ nci }})
                     </option>
                   </select>
+                  <span class="forALL_btn">
+                    {{ languageService.i18n['BS.allSyncOptions'] }}:
+                    <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                    <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                  </span>
                 </span>
                 <!-- <span tooltip="{{ languageService.i18n['clear_select'] }}" class="material-symbols-outlined" (click)="onBsParamClearClick()">
                   restart_alt
@@ -367,11 +372,6 @@
 
             <!-- Basic @2024/04/15 ok -->
             <div class="collabsible" *ngIf="bsParametersType === 'Basic'">
-              <span class="forALL_btn">
-                {{ languageService.i18n['BS.allSyncOptions'] }}:
-                <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
-              </span>
               <div class="table basicParmType">
                 <table>
                   <thead>
