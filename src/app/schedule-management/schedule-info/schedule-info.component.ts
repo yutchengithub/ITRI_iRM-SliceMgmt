@@ -228,10 +228,6 @@ export class ScheduleInfoComponent implements OnInit {
     }
   }
   
-  
-
-
-  
   // @2024/03/24 Add
   // isSfUpdateInfoArray 是一個自定義的類型守衛函數，用於檢查 `ticketinfo` 是否為 `sfUpdateInfo[]` 類型的陣列。
   isSfUpdateInfoArray( ticketinfo: ScheduleInfo['ticketinfo'] ): ticketinfo is sfUpdateInfo[] {

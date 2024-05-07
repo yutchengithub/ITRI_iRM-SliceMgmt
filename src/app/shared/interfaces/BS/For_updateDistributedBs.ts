@@ -11,7 +11,7 @@
     description: string;
     cellinfo: Cellinfo_dist[];
     edit_type?: number;
-    extension_info: ExtensionInfo_dist[];
+    extension_info?: ExtensionInfo_dist[];
   }
 
 

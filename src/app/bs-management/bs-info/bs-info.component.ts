@@ -53,7 +53,6 @@ interface bsCurrentFmParams {
   offset: number;
   limit: number;
 }
-
 @Component({
   selector: 'app-bs-info',
   templateUrl: './bs-info.component.html',
@@ -808,7 +807,7 @@ export class BSInfoComponent implements OnInit {
           latitudeControl.setValue(position.lat);
         }
         // 輸出位置資訊的日誌
-        console.log("updateBsBasicInfoEditForm - RU位置資訊，索引" + index + ": ", position);
+        console.log("updateBsBasicInfoEditForm - RU 位置資訊，索引" + index + ": ", position);
       });
     }
   }
@@ -983,7 +982,7 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
-  // @2024/04/17 Update
+  // @2024/05/07 Update
   // 用於呼叫 API 更新一體式基站
   updateBs( submitData: ForUpdateBs ) {
 
@@ -1028,10 +1027,10 @@ export class BSInfoComponent implements OnInit {
           this.getQueryBsInfo();
 
           // 刷新網元資訊
-          this.getNEList(); 
+          //this.getNEList(); 
 
           // 刷新基站告警資訊
-          this.getCurrentBsFmList()
+          //this.getCurrentBsFmList()
 
           this.BsBasicInfoEditWindowRef.close(); // 更新讀取完後，關閉編輯設定視窗
 
@@ -1042,13 +1041,17 @@ export class BSInfoComponent implements OnInit {
           // 輸出更新失敗的日誌
           console.error( 'Update BS fail', error );
           this.hideSpinner();  // 出錯時隱藏 spinner
+        },
+        complete: () => {
+          console.log( 'Update BS Success' );
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
 
   }
 
-  // @2024/04/17 Update
+  // @2024/05/07 Update
   // 用於呼叫 API 更新分布式基站
   updateDistributedBs( submitData: ForUpdateDistributedBs ) {
 
@@ -1093,10 +1096,10 @@ export class BSInfoComponent implements OnInit {
           this.getQueryBsInfo();
 
           // 刷新網元資訊
-          this.getNEList(); 
+          //this.getNEList(); 
 
           // 刷新基站告警資訊
-          this.getCurrentBsFmList()
+          //this.getCurrentBsFmList()
 
           this.BsBasicInfoEditWindowRef.close(); // 更新讀取完後，關閉編輯設定視窗
 
@@ -1107,6 +1110,10 @@ export class BSInfoComponent implements OnInit {
           // 輸出更新失敗的日誌
           console.error( 'Update Distributed BS fail', error );
           this.hideSpinner();  // 出錯時隱藏 spinner
+        },
+        complete: () => {
+          console.log( 'Update Distributed BS Success' );
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       });
     }
@@ -1224,7 +1231,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ For Bs Parameters Page Control @2024/04/15 Update ↓
+// ↓ For Bs Parameters Page Control @2024/05/07 Update ↓
 
   bsParametersType: string = 'Basic';       // 預設選擇 "Basic"    @2024/03/29 Add 
   //bsParametersType: string = 'Advanced';  // 預設選擇 "Advanced" @2024/03/29 Add
@@ -1285,7 +1292,6 @@ export class BSInfoComponent implements OnInit {
     }
   }
   
-
   /**
    * @2024/04/15 Add
    * 當點擊搜索按鈕時觸發的函數（用於基站參數）
@@ -1319,7 +1325,209 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
-// ↑ For Bs Parameters Page Control @2024/04/15 Update ↑
+  // @2024/05/07 Add
+  // 用於儲存更新要設定的編輯類型
+  editType: number = 0;
+
+  /**
+   * @2024/05/07 Add
+   * 提交 Base Station Parameter Edit 表單的方法
+   * @method BsParamEdit_ForAllSyncAction_Submit
+   * @param {string} option - 同步選項，用於決定同步設定是基於網管系統(NMS)還是基於基站的本地設定
+   * @returns {void}
+   * @description
+   * - 這個方法根據用戶選擇的同步選項來設定和提交基站參數的更新
+   * - 根據選擇，重置並設定編輯類型
+   * - 解析和轉換位置資訊為經緯度
+   * - 建立和提交更新資料物件到相應的更新方法
+   * - 對於一體式基站( bsType 為 "1" )，處理並更新單一基站資訊
+   * - 對於分佈式基站( bsType 為 "2" )，處理並更新每個 cell 的資訊
+   */
+  BsParamEdit_ForAllSyncAction_Submit( option: string ) {
+
+    // 重置編輯類型設定
+    this.editType = 0;
+
+    // 設定同步編輯類型
+    if( option === "NMS" ) {
+
+      // 如為依據網管設定同步
+      this.editType = 2;
+
+    } else {
+
+      // 如為依據基站設定同步
+      this.editType = 3;
+    }
+
+    // 若 bsType 為 "1"
+    if ( this.bsType === "1" ) {    
+
+      // 將位置字串解析為經緯度數組
+      const positionArray = JSON.parse( this.selectBsInfo.position );
+
+      // 計算經緯度並乘以 1000000
+      const gpslatitude = positionArray[1] * 1000000;
+      const gpslongitude = positionArray[0] * 1000000;
+      
+      // 建立更新一體式基站的資料物件
+      const updateData: ForUpdateBs = {
+        // 設定編輯類型
+        edit_type: this.editType,
+        // 設定 session 的值
+        session: this.sessionId,
+        // 設定 id 的值
+        id: this.selectBsInfo.id,
+        // 設定 name 的值
+        name: this.selectBsInfo.name,
+        // 設定 description 的值
+        description: this.selectBsInfo.description,
+        // 設定 bstype 的值
+        bstype: String( this.selectBsInfo.bstype ),
+        // 設定 position 的值
+        position: this.selectBsInfo.position,
+        // 設定 components 的值
+        components: this.selectBsInfo.components,
+        // 設定 pci 的值
+        pci: String( this.selectBsInfo.info['bs-conf'].pci ),
+        // 設定 plmnid 的值
+        plmnid: {
+          // 設定 mnc 的值
+          mnc: String( this.selectBsInfo.info.pLMNId_MNC ),
+          // 設定 mcc 的值
+          mcc: String( this.selectBsInfo.info.pLMNId_MCC )
+        },
+        // 設定 nci 的值
+        nci: String( this.selectBsInfo.info['bs-conf'].nci ),
+        // 設定 gpslatitude 的值
+        gpslatitude: String( gpslatitude ),
+        // 設定 gpslongitude 的值
+        gpslongitude: String( gpslongitude ),
+        // 設定 nrarfcndl 的值
+        nrarfcndl: String( this.selectBsInfo.info['bs-conf']['nrarfcn-dl'] ),
+        // 設定 nrarfcnul 的值
+        nrarfcnul: String( this.selectBsInfo.info['bs-conf']['nrarfcn-ul'] ),
+        // 設定 channelbandwidth 的值
+        channelbandwidth: String( this.selectBsInfo.info['bs-conf']['channel-bandwidth'] ),
+        // 設定 txpower 的值
+        txpower: String( this.selectBsInfo.info['bs-conf']['tx-power'] ),
+        // 設定 tac 的值
+        tac: String( this.selectBsInfo.info['bs-conf'].tac ),
+        // 設定 extension_info 的值
+        //extension_info: this.selectBsInfo.extension_info
+      };
+
+      // 依據選擇的同步選項設定 extension_info
+      const syncedExtensionInfo = this.syncExtensionInfo( this.selectBsInfo.extension_info, option );
+
+      // 設定 extension_info 的值
+      updateData.extension_info = syncedExtensionInfo;
+
+      // 呼叫 updateBs() 方法更新一體式基站
+      this.updateBs( updateData );
+
+    // 若 bsType 為 "2"
+    } else if ( this.bsType === "2" ) {
+
+      // 從 extension_info 中獲取 cellinfo 資訊
+      const cellinfo: Cellinfo_dist[] = this.selectBsInfo_dist.extension_info.map( info => ({
+        // 設定 nRPCI 的值
+        nRPCI: info.NRCellDU.db.nRPCI,
+        // 設定 nRTAC 的值
+        nRTAC: info.NRCellDU.db.nRTAC,
+        // 設定 arfcnDL 的值
+        arfcnDL: info.NRCellDU.db.arfcnDL,
+        // 設定 arfcnUL 的值
+        arfcnUL: info.NRCellDU.db.arfcnUL,
+        // 設定 bSChannelBwDL 的值
+        bSChannelBwDL: info.NRCellDU.db.bSChannelBwDL,
+        // 設定 configuredMaxTxPower 的值
+        configuredMaxTxPower: info.NRSectorCarrier.db.configuredMaxTxPower,
+        // 設定 pLMNId_MCC 的值
+        pLMNId_MCC: info.NRCellDU.db.pLMNId_MCC,
+        // 設定 pLMNId_MNC 的值
+        pLMNId_MNC: info.NRCellDU.db.pLMNId_MNC,
+        // 設定 nci 的值
+        nci: info.nci
+      }));
+
+      // 建立更新分佈式基站的資料物件
+      const updateData: ForUpdateDistributedBs = {
+        // 設定編輯類型
+        edit_type: this.editType,
+        // 設定 session 的值
+        session: this.sessionId,
+        // 設定 id 的值
+        id: this.selectBsInfo_dist.id,
+        // 設定 name 的值
+        name: this.selectBsInfo_dist.name,
+        // 設定 bstype 的值
+        bstype: String( this.selectBsInfo_dist.bstype ),
+        // 設定 description 的值
+        description: this.selectBsInfo_dist.description,
+        // 設定 components 的值
+        components: this.selectBsInfo_dist.components,
+        // 設定 cellinfo 的值
+        cellinfo: cellinfo,
+
+        // 設定 extension_info 的值
+        //extension_info: this.selectBsInfo_dist.extension_info
+      };
+
+      // 依據選擇的同步選項設定 extension_info
+      const syncedExtensionInfos = this.selectBsInfo_dist.extension_info.map( extInfo => {
+        return this.syncExtensionInfo( extInfo, option );
+      });
+      updateData.extension_info = syncedExtensionInfos;
+
+      // 呼叫 updateDistributedBs() 方法更新分佈式基站
+      this.updateDistributedBs( updateData );
+    }
+  }
+
+  /**
+   * @2024/05/07 Add
+   * 根據指定選項同步 DS 和 DB 結構之間的擴展信息
+   * @method syncExtensionInfo
+   * @param { any } extension - 包含 DS 和 DB 結構的擴展對象
+   * @param { string } option - 同步選項，'NMS' 或其他，用於確定同步方向
+   * @returns { any } 修改後的擴展對象，其中 DS 和 DB 結構已同步
+   * @description
+   * - 根據提供的選項在 db 和 ds 之間同步屬性
+   * - 遞迴處理嵌套對象以確保完整的同步深度
+   * - 幫助維持網路管理系統中配置狀態的一致性
+   */
+  syncExtensionInfo( extension: any, option: string ) {
+    // 從擴展對象中檢索所有鍵以進行迭代
+    const keys = Object.keys( extension );
+
+    // 在擴展對象中迭代每個鍵
+    keys.forEach(key => {
+      // 檢查當前鍵的屬性是否存在且是一個對象
+      if ( extension[key] && typeof extension[key] === 'object' ) {
+        // 檢查同步選項是否為 'NMS'
+        if ( option === 'NMS' ) {
+          // NMS 選項：將 db 同步到 ds
+          if ( extension[key].ds && extension[key].db ) {
+            extension[key].ds = { ...extension[key].db };
+          }
+        } else {
+          // 其他選項：將 ds 同步到 db
+          if ( extension[key].ds && extension[key].db ) {
+            extension[key].db = { ...extension[key].ds };
+          }
+        }
+        // 遞迴同步嵌套對象以確保處理所有層次
+        this.syncExtensionInfo( extension[key], option );
+      }
+    });
+
+    // 返回經過同步處理後的修改擴展對象
+    return extension;
+  }
+
+
+// ↑ For Bs Parameters Page Control @2024/05/07 Update ↑
 
 
 
