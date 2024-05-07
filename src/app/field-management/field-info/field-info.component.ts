@@ -266,12 +266,17 @@ export class FieldInfoComponent implements OnInit {
     //this.createFieldOptimizationForm();
   }
 
-  /** @2024/05/03 Add
-   * 更新顯示模式
+  /**
+   * @2024/05/03 Add
+   * 更新場域資訊頁面的顯示模式
    * @method updateViewMode
    * @returns {void}
    * @description
-   *    - 根據用戶從哪個頁面返回，調整場域資訊頁面的顯示模式（地圖模式或列表模式）
+   * - 根據用戶從哪個頁面返回，調整場域資訊頁面的顯示模式（地圖模式或列表模式）
+   * - 利用 navigationService 檢查上一個訪問的 URL 以確定用戶從何處返回
+   * - 如果從基站資訊頁面返回，則保持當前的顯示模式不變
+   * - 如果從其他頁面返回，則自動切換到地圖模式
+   * - 更新顯示模式後，透過 fieldStateService 同步更新組件的顯示狀態
    */
   private updateViewMode() {
 
