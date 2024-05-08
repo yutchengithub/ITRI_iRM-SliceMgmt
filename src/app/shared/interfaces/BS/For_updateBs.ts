@@ -10,68 +10,68 @@
     position: string;
     components: Component[];
     description: string;
-    pci: string;
-    plmnid: Plmnid;
-    nci: string;
-    gpslatitude: string;
-    gpslongitude: string;
-    nrarfcndl: string;
-    nrarfcnul: string;
-    channelbandwidth: string;
-    txpower: string;
-    tac: string;
+    pci?: string;
+    plmnid?: Plmnid;
+    nci?: string;
+    gpslatitude?: string;
+    gpslongitude?: string;
+    nrarfcndl?: string;
+    nrarfcnul?: string;
+    channelbandwidth?: string;
+    txpower?: string;
+    tac?: string;
     edit_type?: number;
-    extension_info?: ExtensionInfo[];
+    extension_info?: ExtensionInfo_ForUpdateBs[];
   }
 
 
 // ↓ For extension_info:[] ↓
 
-  export interface ExtensionInfo {
-    gNBId: number;
-    gNBIdLength: number;
-    cellLocalId: string;
-    nci: string;
+  export interface ExtensionInfo_ForUpdateBs {
+    gNBId?: number;
+    gNBIdLength?: number;
+    cellLocalId?: string;
+    nci?: string;
   
-    NRCellCU: NRCELLCU | null;
-    gNBCUFunction: GNBCUFunction;
-    peeParametersList_CU: PeeParametersListCU | null;
-    vnfParametersList_CU: VnfParametersListCU | null;
+    NRCellCU?: NRCELLCU | null;
+    gNBCUFunction?: GNBCUFunction;
+    peeParametersList_CU?: PeeParametersListCU | null;
+    vnfParametersList_CU?: VnfParametersListCU | null;
   
-    EP_F1C_CU: EPF1C_CU | null;
-    EP_F1U_CU: EPF1U_CU | null;
-    EP_NgC: EPNgC | null;
-    EP_NgU: EPNgU | null;
+    EP_F1C_CU?: EPF1C_CU | null;
+    EP_F1U_CU?: EPF1U_CU | null;
+    EP_NgC?: EPNgC | null;
+    EP_NgU?: EPNgU | null;
   
-    peeParametersList_NRCellCU: PeeParametersListNRCellCU | null;
-    vnfParametersList_NRCellCU: VnfParametersListNRCellCU | null;
-    s_NSSAI_leafList_NRCellCU: SNSSAILeafListNRCellCU | null;
+    peeParametersList_NRCellCU?: PeeParametersListNRCellCU | null;
+    vnfParametersList_NRCellCU?: VnfParametersListNRCellCU | null;
+    s_NSSAI_leafList_NRCellCU?: SNSSAILeafListNRCellCU | null;
   
-    gNBDUFunction: GNBDUFunction | null;
-    NRCellDU: NRCELLDU | null;
-    peeParametersList_DU: PeeParametersListDU | null;
-    vnfParametersList_DU: VnfParametersListDU | null;
+    gNBDUFunction?: GNBDUFunction | null;
+    NRCellDU?: NRCELLDU | null;
+    peeParametersList_DU?: PeeParametersListDU | null;
+    vnfParametersList_DU?: VnfParametersListDU | null;
   
-    EP_F1C_DU: EPF1C_DU | null;
-    EP_F1U_DU: EPF1U_DU | null;
-    peeParametersList_NRCellDU: PeeParametersListNRCellDU | null;
-    vnfParametersList_NRCellDU: VnfParametersListNRCellDU | null;
-    s_NSSAI_leafList_NRCellDU: SNSSAILeafListNRCellDU | null;
-    NRSectorCarrierRef_NRCellDU: NRSectorCarrierRefNRCellDU | null;
-    bWPRef_leafList_NRCellDU: BWPRefLeafListNRCellDU | null;
+    EP_F1C_DU?: EPF1C_DU | null;
+    EP_F1U_DU?: EPF1U_DU | null;
+    peeParametersList_NRCellDU?: PeeParametersListNRCellDU | null;
+    vnfParametersList_NRCellDU?: VnfParametersListNRCellDU | null;
+    s_NSSAI_leafList_NRCellDU?: SNSSAILeafListNRCellDU | null;
+    NRSectorCarrierRef_NRCellDU?: NRSectorCarrierRefNRCellDU | null;
+    bWPRef_leafList_NRCellDU?: BWPRefLeafListNRCellDU | null;
 
-    NRSectorCarrier: NRSectorCarrier | null;
-    BWP: Bwp | null;
+    NRSectorCarrier?: NRSectorCarrier | null;
+    BWP?: Bwp | null;
 
-    peeParametersList_NRSector: PeeParametersListNRSector | null;
-    vnfParametersList_NRSector: VnfParametersListNRSector | null;
-    peeParametersList_BWP: PeeParametersListBWP | null;
-    vnfParametersList_BWP: VnfParametersListBWP | null;
+    peeParametersList_NRSector?: PeeParametersListNRSector | null;
+    vnfParametersList_NRSector?: VnfParametersListNRSector | null;
+    peeParametersList_BWP?: PeeParametersListBWP | null;
+    vnfParametersList_BWP?: VnfParametersListBWP | null;
   }
   
   export interface GNBCUFunction {
-    db: GNBCUFunctionDetail;
-    ds: GNBCUFunctionDetail;
+    db?: GNBCUFunctionDetail;
+    ds?: GNBCUFunctionDetail;
   }
   
   export interface GNBCUFunctionDetail {
@@ -86,8 +86,8 @@
   }
   
   export interface NRCELLCU {
-    db: NRCELLCUDetail;
-    ds: NRCELLCUDetail;
+    db?: NRCELLCUDetail;
+    ds?: NRCELLCUDetail;
   }
   
   export interface NRCELLCUDetail {
@@ -103,8 +103,8 @@
   }
   
   export interface PeeParametersListCU {
-    db: PeeParametersDetail;
-    ds: PeeParametersDetail;
+    db?: PeeParametersDetail;
+    ds?: PeeParametersDetail;
   }
   
   export interface PeeParametersDetail {
@@ -123,8 +123,8 @@
   }
   
   export interface VnfParametersListCU {
-    db: VnfParametersDetail;
-    ds: VnfParametersDetail;
+    db?: VnfParametersDetail;
+    ds?: VnfParametersDetail;
   }
   
   export interface VnfParametersDetail {
@@ -140,8 +140,8 @@
   }
   
   export interface EPF1C_CU {
-    db: EPF1C_CUDetail;
-    ds: EPF1C_CUDetail;
+    db?: EPF1C_CUDetail;
+    ds?: EPF1C_CUDetail;
   }
   
   export interface EPF1C_CUDetail {
@@ -156,8 +156,8 @@
   }
   
   export interface EPF1U_CU {
-    db: EPF1U_CUDetail;
-    ds: EPF1U_CUDetail;
+    db?: EPF1U_CUDetail;
+    ds?: EPF1U_CUDetail;
   }
   
   export interface EPF1U_CUDetail {
@@ -172,8 +172,8 @@
   }
   
   export interface EPNgC {
-    db: EPNgCDetail;
-    ds: EPNgCDetail;
+    db?: EPNgCDetail;
+    ds?: EPNgCDetail;
   }
   
   export interface EPNgCDetail {
@@ -188,8 +188,8 @@
   }
   
   export interface EPNgU {
-    db: EPNgUDetail;
-    ds: EPNgUDetail;
+    db?: EPNgUDetail;
+    ds?: EPNgUDetail;
   }
   
   export interface EPNgUDetail {
@@ -204,8 +204,8 @@
   }
   
   export interface PeeParametersListNRCellCU {
-    db: PeeParametersNRCellCUDetail;
-    ds: PeeParametersNRCellCUDetail;
+    db?: PeeParametersNRCellCUDetail;
+    ds?: PeeParametersNRCellCUDetail;
   }
   
   export interface PeeParametersNRCellCUDetail {
@@ -225,8 +225,8 @@
   }
   
   export interface VnfParametersListNRCellCU {
-    db: VnfParametersNRCellCUDetail;
-    ds: VnfParametersNRCellCUDetail;
+    db?: VnfParametersNRCellCUDetail;
+    ds?: VnfParametersNRCellCUDetail;
   }
   
   export interface VnfParametersNRCellCUDetail {
@@ -243,8 +243,8 @@
   }
   
   export interface SNSSAILeafListNRCellCU {
-    db: SNSSAIDetail;
-    ds: SNSSAIDetail;
+    db?: SNSSAIDetail;
+    ds?: SNSSAIDetail;
   }
   
   export interface SNSSAIDetail {
@@ -258,8 +258,8 @@
   }
   
   export interface GNBDUFunction {
-    db: GNBDUFunctionDetail;
-    ds: GNBDUFunctionDetail;
+    db?: GNBDUFunctionDetail;
+    ds?: GNBDUFunctionDetail;
   }
   
   export interface GNBDUFunctionDetail {
@@ -274,8 +274,8 @@
   }
   
   export interface NRCELLDU {
-    db: NRCELLDUDetail;
-    ds: NRCELLDUDetail;
+    db?: NRCELLDUDetail;
+    ds?: NRCELLDUDetail;
   }
   
   export interface NRCELLDUDetail {
@@ -304,8 +304,8 @@
   }
   
   export interface PeeParametersListDU {
-    db: PeeParametersDUDetail;
-    ds: PeeParametersDUDetail;
+    db?: PeeParametersDUDetail;
+    ds?: PeeParametersDUDetail;
   }
   
   export interface PeeParametersDUDetail {
@@ -325,8 +325,8 @@
   }
   
   export interface VnfParametersListDU {
-    db: VnfParametersDUDetail;
-    ds: VnfParametersDUDetail;
+    db?: VnfParametersDUDetail;
+    ds?: VnfParametersDUDetail;
   }
   
   export interface VnfParametersDUDetail {
@@ -343,8 +343,8 @@
   }
   
   export interface EPF1C_DU {
-    db: EPF1C_DUDetail;
-    ds: EPF1C_DUDetail;
+    db?: EPF1C_DUDetail;
+    ds?: EPF1C_DUDetail;
   }
   
   export interface EPF1C_DUDetail {
@@ -360,8 +360,8 @@
   }
   
   export interface EPF1U_DU {
-    db: EPF1U_DUDetail;
-    ds: EPF1U_DUDetail;
+    db?: EPF1U_DUDetail;
+    ds?: EPF1U_DUDetail;
   }
   
   export interface EPF1U_DUDetail {
@@ -377,8 +377,8 @@
   }
   
   export interface NRSectorCarrier {
-    db: NRSectorCarrierDetail;
-    ds: NRSectorCarrierDetail;
+    db?: NRSectorCarrierDetail;
+    ds?: NRSectorCarrierDetail;
   }
   
   export interface NRSectorCarrierDetail {
@@ -398,8 +398,8 @@
   }
   
   export interface Bwp {
-    db: BwpDetail;
-    ds: BwpDetail;
+    db?: BwpDetail;
+    ds?: BwpDetail;
   }
   
   export interface BwpDetail {
@@ -418,8 +418,8 @@
   }
   
   export interface PeeParametersListNRSector {
-    db: PeeParametersNRSectorDetail;
-    ds: PeeParametersNRSectorDetail;
+    db?: PeeParametersNRSectorDetail;
+    ds?: PeeParametersNRSectorDetail;
   }
   
   export interface PeeParametersNRSectorDetail {
@@ -440,8 +440,8 @@
   }
   
   export interface VnfParametersListNRSector {
-    db: VnfParametersNRSectorDetail;
-    ds: VnfParametersNRSectorDetail;
+    db?: VnfParametersNRSectorDetail;
+    ds?: VnfParametersNRSectorDetail;
   }
   
   export interface VnfParametersNRSectorDetail {
@@ -459,8 +459,8 @@
   }
   
   export interface PeeParametersListNRCellDU {
-    db: PeeParametersNRCellDUDetail;
-    ds: PeeParametersNRCellDUDetail;
+    db?: PeeParametersNRCellDUDetail;
+    ds?: PeeParametersNRCellDUDetail;
   }
   
   export interface PeeParametersNRCellDUDetail {
@@ -481,8 +481,8 @@
   }
   
   export interface VnfParametersListNRCellDU {
-    db: VnfParametersNRCellDUDetail;
-    ds: VnfParametersNRCellDUDetail;
+    db?: VnfParametersNRCellDUDetail;
+    ds?: VnfParametersNRCellDUDetail;
   }
   
   export interface VnfParametersNRCellDUDetail {
@@ -500,8 +500,8 @@
   }
   
   export interface SNSSAILeafListNRCellDU {
-    db: SNSSAIDetail;
-    ds: SNSSAIDetail;
+    db?: SNSSAIDetail;
+    ds?: SNSSAIDetail;
   }
   
   export interface SNSSAIDetail {
@@ -516,8 +516,8 @@
   }
   
   export interface NRSectorCarrierRefNRCellDU {
-    db: NRSectorCarrierRefDetail;
-    ds: NRSectorCarrierRefDetail;
+    db?: NRSectorCarrierRefDetail;
+    ds?: NRSectorCarrierRefDetail;
   }
   
   export interface NRSectorCarrierRefDetail {
@@ -532,8 +532,8 @@
   }
   
   export interface BWPRefLeafListNRCellDU {
-    db: BWPRefDetail;
-    ds: BWPRefDetail;
+    db?: BWPRefDetail;
+    ds?: BWPRefDetail;
   }
   
   export interface BWPRefDetail {
@@ -548,8 +548,8 @@
   }
   
   export interface PeeParametersListBWP {
-    db: PeeParametersBWPPDetail;
-    ds: PeeParametersBWPPDetail;
+    db?: PeeParametersBWPPDetail;
+    ds?: PeeParametersBWPPDetail;
   }
   
   export interface PeeParametersBWPPDetail {
@@ -570,8 +570,8 @@
   }
   
   export interface VnfParametersListBWP {
-    db: VnfParametersBWPPDetail;
-    ds: VnfParametersBWPPDetail;
+    db?: VnfParametersBWPPDetail;
+    ds?: VnfParametersBWPPDetail;
   }
   
   export interface VnfParametersBWPPDetail {

@@ -24,9 +24,10 @@ import { apiForBSMgmt } from '../../shared/api/For_BS_Mgmt'; // @2024/03/25 Add
 
 // 引入儲存各個資訊所需的 interfaces
 import { BSInfo, Components, ExtensionInfo, Neighbor }  from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2024/03/25 Add
-import { ForUpdateBs }                                  from '../../shared/interfaces/BS/For_updateBs';             // @2024/04/14 Add
+import { ForUpdateBs, ExtensionInfo_ForUpdateBs }       from '../../shared/interfaces/BS/For_updateBs';             // @2024/04/14 Add
 import { BSInfo_dist, Info_dist, Components_dist }      from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2024/03/25 Add
-import { ForUpdateDistributedBs, Cellinfo_dist }        from '../../shared/interfaces/BS/For_updateDistributedBs';  // @2024/04/14 Add
+import { ForUpdateDistributedBs, Cellinfo_dist,
+           ExtensionInfo_dist_ForUpdateDistributedBs }  from '../../shared/interfaces/BS/For_updateDistributedBs';  // @2024/05/08 Update
 import { ForAddOrEditOrDeleteNeighborBs_allInOneBs }    from '../../shared/interfaces/BS/For_optimalBs';            // @2024/05/06 Add
 import { ForUpdateDistributedBs_editNeighborBs, Neighborinfo } from '../../shared/interfaces/BS/For_updateDistributedBs_editNeighborBs'; // @2024/05/06 Add
     
@@ -55,10 +56,80 @@ interface bsCurrentFmParams {
   limit: number;
 }
 
+/**
+ * @2024/05/08 Add
+ * 枚舉：定義不同的 extension_info 參數欄位名稱
+ * @enum ExtensionInfoParamFieldNames
+ * @description
+ *    - 此枚舉用於標識和訪問 extension_info 中的特定參數字段。
+ *    - 提供一個清晰的參考點，以確保在代碼中使用的字段名與數據結構保持一致性。
+ * 
+ * @member {string} gNBCUFunction               - 指向 gNBCUFunction 相關的參數。
+ * @member {string} NRCellCU                    - 指向 NRCellCU 相關的參數。
+ * @member {string} peeParametersList_CU        - 指向 CU 層的 pee 參數列表。
+ * @member {string} vnfParametersList_CU        - 指向 CU 層的 VNF 參數列表。
+ * @member {string} EP_F1C_CU                   - 指向 CU 層的 F1C 端點。
+ * @member {string} EP_F1U_CU                   - 指向 CU 層的 F1U 端點。
+ * @member {string} EP_NgC                      - 指向 NgC 端點。
+ * @member {string} EP_NgU                      - 指向 NgU 端點。
+ * @member {string} peeParametersList_NRCellCU  - 指向 NRCellCU 層的 pee 參數列表。
+ * @member {string} vnfParametersList_NRCellCU  - 指向 NRCellCU 層的 VNF 參數列表。
+ * @member {string} s_NSSAI_leafList_NRCellCU   - 指向 NRCellCU 層的 S-NSSAI 葉列表。
+ * @member {string} gNBDUFunction               - 指向 gNBDUFunction 相關的參數。
+ * @member {string} NRCellDU                    - 指向 NRCellDU 相關的參數。
+ * @member {string} peeParametersList_DU        - 指向 DU 層的 pee 參數列表。
+ * @member {string} vnfParametersList_DU        - 指向 DU 層的 VNF 參數列表。
+ * @member {string} EP_F1C_DU                   - 指向 DU 層的 F1C 端點。
+ * @member {string} EP_F1U_DU                   - 指向 DU 層的 F1U 端點。
+ * @member {string} NRSectorCarrier             - 指向 NR Sector Carrier 相關的參數。
+ * @member {string} BWP                         - 指向 BWP (頻寬部分) 相關的參數。
+ * @member {string} peeParametersList_NRSector  - 指向 NR Sector 層的 pee 參數列表。
+ * @member {string} vnfParametersList_NRSector  - 指向 NR Sector 層的 VNF 參數列表。
+ * @member {string} peeParametersList_NRCellDU  - 指向 NRCellDU 層的 pee 參數列表。
+ * @member {string} vnfParametersList_NRCellDU  - 指向 NRCellDU 層的 VNF 參數列表。
+ * @member {string} s_NSSAI_leafList_NRCellDU   - 指向 NRCellDU 層的 S-NSSAI 葉列表。
+ * @member {string} NRSectorCarrierRef_NRCellDU - 指向 NRCellDU 層的 NR Sector Carrier 引用。
+ * @member {string} bWPRef_leafList_NRCellDU    - 指向 NRCellDU 層的 BWP 引用葉列表。
+ * @member {string} peeParametersList_BWP       - 指向 BWP 層的 pee 參數列表。
+ * @member {string} vnfParametersList_BWP       - 指向 BWP 層的 VNF 參數列表。
+ */
+enum ExtensionInfoParamFieldNames {
+  gNBCUFunction = "gNBCUFunction",
+  NRCellCU = "NRCellCU",
+  peeParametersList_CU = "peeParametersList_CU",
+  vnfParametersList_CU = "vnfParametersList_CU",
+  EP_F1C_CU = "EP_F1C_CU",
+  EP_F1U_CU = "EP_F1U_CU",
+  EP_NgC = "EP_NgC",
+  EP_NgU = "EP_NgU",
+  peeParametersList_NRCellCU = "peeParametersList_NRCellCU",
+  vnfParametersList_NRCellCU = "vnfParametersList_NRCellCU",
+  s_NSSAI_leafList_NRCellCU = "s_NSSAI_leafList_NRCellCU",
+  gNBDUFunction = "gNBDUFunction",
+  NRCellDU = "NRCellDU",
+  peeParametersList_DU = "peeParametersList_DU",
+  vnfParametersList_DU = "vnfParametersList_DU",
+  EP_F1C_DU = "EP_F1C_DU",
+  EP_F1U_DU = "EP_F1U_DU",
+  NRSectorCarrier = "NRSectorCarrier",
+  BWP = "BWP",
+  peeParametersList_NRSector = "peeParametersList_NRSector",
+  vnfParametersList_NRSector = "vnfParametersList_NRSector",
+  peeParametersList_NRCellDU = "peeParametersList_NRCellDU",
+  vnfParametersList_NRCellDU = "vnfParametersList_NRCellDU",
+  s_NSSAI_leafList_NRCellDU = "s_NSSAI_leafList_NRCellDU",
+  NRSectorCarrierRef_NRCellDU = "NRSectorCarrierRef_NRCellDU",
+  bWPRef_leafList_NRCellDU = "bWPRef_leafList_NRCellDU",
+  peeParametersList_BWP = "peeParametersList_BWP",
+  vnfParametersList_BWP = "vnfParametersList_BWP"
+}
+
+// @2024/05/08 Add
 export interface ChartData {
   name: string; // category name
   series: { name: string; value: number }[];
 }
+
 @Component({
   selector: 'app-bs-info',
   templateUrl: './bs-info.component.html',
@@ -82,7 +153,6 @@ export class BSInfoComponent implements OnInit {
     public    languageService: LanguageService,
     public     spinnerService: SpinnerService,
     private changeDetectorRef: ChangeDetectorRef,
-    
 
     public  API_BS: apiForBSMgmt,           // @2024/03/25 Add for import API of BS Management
     public  bsInfo_LocalFiles: localBSInfo, // @2024/03/25 Add for import BS Info Local Files 
@@ -94,10 +164,9 @@ export class BSInfoComponent implements OnInit {
     //this.severitys = this.commonService.severitys;
     this.cmpsource = this.commonService.cmpsource;
 
-
     // 取得現在時間 @2024/04/01 Add
     const nowTime = this.commonService.getNowTime();
-    console.log("getNowTime: ", nowTime);
+    console.log( "getNowTime: ", nowTime );
     
     // @2024/04/01 Add
     // 創建一個新的 Date 物件，代表當前時間
@@ -126,7 +195,7 @@ export class BSInfoComponent implements OnInit {
     this.createAlarmSearchForm();
     //this.createBsBasicInfoEditForm(); // 用於編輯 BS 基本資訊用 @2024/04/14 Add
 
-    Object.assign(this.multi); // data goes here
+    Object.assign( this.multi ); // data goes here
   }
 
   // @2024/03/25 Add
@@ -135,7 +204,16 @@ export class BSInfoComponent implements OnInit {
   bsType: string = '';      // 用於存儲當前選中的 BS 類型
   bsCellCount: string = ''; // 用於存儲當前選中的 BS Cell 數量
 
-  // 頁面初始化 @2024/03/25 Update
+  /**
+   * @2024/03/25 Update
+   * 初始化組件時執行的操作
+   * @method ngOnInit
+   * @description
+   * - 此方法在組件初始化時調用。
+   * - 訂閱路由參數，取得基站相關資訊。
+   * - 調用方法取得基站的告警資訊、網元列表和基站資訊。
+   * - 執行圖表的更新。
+   */
   ngOnInit(): void {
 
     //this.showLoadingSpinner();   // 顯示 Loading Spinner
@@ -167,10 +245,23 @@ export class BSInfoComponent implements OnInit {
     this.updateChart(); // 初始載入時執行一次更新
   }
 
+  /**
+   * 在組件被銷毀前執行的清理操作
+   * @method ngOnDestroy
+   * @description
+   * - 此方法在組件銷毀前調用，用於清理訂時器等資源，防止內存洩漏。
+   */
   ngOnDestroy() {
     clearTimeout( this.refreshTimeout );
   }
 
+  /**
+   * 在視圖初始化之後執行的操作
+   * @method ngAfterViewInit
+   * @description
+   * - 此方法在組件視圖及其子視圖初始化完成後調用。
+   * - 設置 canvas 尺寸並繪製連接線。
+   */
   ngAfterViewInit() {
 
     this.canvas.nativeElement.width  = 1000; // 增加 Canvas 的寬度
@@ -179,31 +270,220 @@ export class BSInfoComponent implements OnInit {
     this.drawConnectingLines();
   }
 
-  // @2024/05/03 Update
-  // 返回使用的前個頁面
+  /** @2024/05/03 Update
+   *  返回使用者到前一頁
+   *  @method back
+   *  @description
+   *    - 此方法用於導航返回上一個頁面。
+   *    - 實際使用取決於 `location.back()` 或特定路由導航。
+   */
   back() {
     this.location.back();
     //this.router.navigate( ['/main/bs-mgr'] ); // 返回 BS 主頁
   }
 
   // @2024/04/17 Add
-  // Show spinner of Loading Title 
+  /** @2024/04/17 Add
+   *  顯示加載中的 Spinner
+   *  @method showLoadingSpinner
+   *  @description
+   *    - 此方法觸發加載中的 Spinner 顯示，通常在數據加載或處理前調用。
+   */
   showLoadingSpinner() {
     this.spinnerService.isLoading = true;
     this.spinnerService.show();
   }
 
-  // @2024/04/17 Add
-  // Show spinner of Processing Title
+  /** @2024/04/17 Add
+   *  顯示處理中的 Spinner
+   *  @method showProcessingSpinner
+   *  @description
+   *    - 此方法用於在進行數據處理時顯示 Spinner，以提供視覺反饋給使用者。
+   */
   showProcessingSpinner() {
     this.spinnerService.isLoading = false;
     this.spinnerService.show();
   }
 
-  // Hide spinner @2024/04/17 Add
+  /** @2024/04/17 Add
+   *  隱藏 Spinner
+   *  @method hideSpinner
+   *  @description
+   *    - 此方法用於隱藏 Spinner，通常在數據處理或加載完成後調用。
+   */
   hideSpinner() {
     this.spinnerService.hide();
   }
+
+
+// ↓ 編輯、調整與更新 BS 任何資訊時都會呼叫的 API，除了編輯一體式基站的鄰居 ↓
+
+  /**
+   * @2024/05/08 Update
+   * 更新一體式基站的信息
+   * @method updateBs
+   * @param {ForUpdateBs} submitData - 包含基站更新信息的數據對象
+   * @description
+   *    - 此方法用於更新一體式基站的各項配置。
+   *    - 如果是本地環境，只打印數據並模擬操作，不進行真實的 API 請求。
+   *    - 如果是非本地環境，則實際發送 API 請求來更新基站。
+   *    - 無論成功或失敗，均會隱藏處理中的 Spinner。
+   *    - 更新成功後，關閉所有對話框，刷新基站及相關資訊。
+   */
+  updateBs( submitData: ForUpdateBs ) {
+
+    this.showProcessingSpinner(); // 顯示 Processing Spinner
+
+    if ( this.commonService.isLocal ) {
+      // 本地模式
+
+      // 輸出本地測試環境的日誌
+      console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+      // 輸出要 POST 的資料
+      console.log( "The POST for updateBs():", submitData ); 
+      
+      // // 模擬成功響應
+      // setTimeout(() => {
+      //   this.isModifySuccess = true;
+      //   console.log('All-in-one BS Update successful...');
+      //   this.dialog.closeAll();
+      //   this.getQueryBsInfo();
+      //   setTimeout(() => this.isModifySuccess = false, 4500);
+      // }, 500); // 模擬非同步操作
+
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
+
+    } else {
+      // 非本地模式，實際呼叫 API
+
+      // 輸出要 POST 的資料
+      console.log( "The POST for updateBs():", submitData );
+      // 呼叫 API 更新一體式基站
+      this.API_BS.updateBs( submitData ).subscribe({
+        // 成功回調函數
+        next: ( res ) => {
+
+          // 輸出更新成功的日誌
+          console.log( 'Update BS success', res );
+
+          // 關閉所有對話框
+          //this.dialog.closeAll();
+
+          // 刷新基站資訊
+          this.getQueryBsInfo();
+
+          // 刷新網元資訊
+          //this.getNEList(); 
+
+          // 刷新基站告警資訊
+          //this.getCurrentBsFmList()
+
+          // 如果編輯設定視窗有開啟，則等更新讀取完後，關閉新增或編輯設定視窗
+          if ( this.BsBasicInfoEditWindowRef ) {
+            this.BsBasicInfoEditWindowRef.close();
+          }
+
+          this.hideSpinner();  // 完成後隱藏 spinner
+        },
+        // 錯誤回調函數
+        error: ( error ) => {
+          // 輸出更新失敗的日誌
+          console.error( 'Update BS fail', error );
+          this.hideSpinner();  // 出錯時隱藏 spinner
+        },
+        complete: () => {
+          console.log( 'Update BS Success' );
+          this.hideSpinner();  // 完成後隱藏 spinner
+        }
+      });
+    }
+  }
+
+  /**
+   * @2024/05/08 Update
+   * 更新分佈式基站的信息
+   * @method updateDistributedBs
+   * @param {ForUpdateDistributedBs} submitData - 包含分佈式基站更新信息的數據對象
+   * @description
+   * - 此方法用於更新分佈式基站的各項配置。
+   * - 如果是本地環境，只打印數據並模擬操作，不進行真實的 API 請求。
+   * - 如果是非本地環境，則實際發送 API 請求來更新基站。
+   * - 無論成功或失敗，均會隱藏處理中的 Spinner。
+   * - 更新成功後，關閉所有對話框，刷新基站及相關資訊。
+   */
+  updateDistributedBs( submitData: ForUpdateDistributedBs ) {
+
+    this.showProcessingSpinner(); // 顯示 Processing Spinner
+
+    if ( this.commonService.isLocal ) {
+      // 本地模式
+
+      // 輸出本地測試環境的日誌
+      console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
+      // 輸出要 POST 的資料
+      console.log("The POST for updateDistributedBs():", submitData); 
+
+      // 模擬成功響應
+      // setTimeout(() => {
+      //   this.isModifyError = true; 
+      //   console.log('Disaggregated BS: [CU] + [DU] + [RU] Update error...');
+      //   this.dialog.closeAll();
+      //   this.getQueryBsInfo();
+      //   setTimeout(() => this.isModifyError = false, 4500);
+      // }, 500); // 模擬非同步操作
+
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
+
+    } else {
+      // 非本地模式，實際呼叫 API
+
+      // 輸出要 POST 的資料
+      console.log( "The POST for updateDistributedBs():", submitData );
+      // 呼叫 API 更新分布式基站
+      this.API_BS.updateDistributedBs( submitData ).subscribe({
+        // 成功回調函數
+        next: ( res ) => {
+
+          // 輸出更新成功的日誌
+          console.log( 'Update Distributed BS success', res );
+          
+          // 關閉所有對話框
+          //this.dialog.closeAll();
+
+          // 刷新基站資訊
+          this.getQueryBsInfo();
+
+          // 刷新網元資訊
+          //this.getNEList(); 
+
+          // 刷新基站告警資訊
+          //this.getCurrentBsFmList()
+
+          // 如果編輯設定視窗有開啟，則等更新讀取完後，關閉新增或編輯設定視窗
+          if ( this.BsBasicInfoEditWindowRef ) {
+            this.BsBasicInfoEditWindowRef.close();
+          }
+
+          this.hideSpinner();  // 完成後隱藏 spinner
+        },
+        // 錯誤回調函數
+        error: ( error ) => {
+          // 輸出更新失敗的日誌
+          console.error( 'Update Distributed BS fail', error );
+          this.hideSpinner();  // 出錯時隱藏 spinner
+        },
+        complete: () => {
+          console.log( 'Update Distributed BS Success' );
+          this.hideSpinner();  // 完成後隱藏 spinner
+        }
+      });
+    }
+
+  }
+
+
+// ↑ 編輯、調整與更新 BS 任何資訊時都會呼叫的 API，除了編輯一體式基站的鄰居 ↑
+
 
 
 // ↓ 基本資訊區 ↓
@@ -217,7 +497,7 @@ export class BSInfoComponent implements OnInit {
   gNBIdLength: number = 0;  // 用於存儲 gNBIdLength，以便後續可能會計算 NCI 或 cellLocalId @2024/05/04 Add
   
   /**
-   * @2024/05/04 Update
+   * @2024/05/08 Update
    * 取得基站資訊
    * @method getQueryBsInfo
    * @description
@@ -253,8 +533,10 @@ export class BSInfoComponent implements OnInit {
 
         // @2024/05/04 Add
         // 取得 gNBIdLength - 避免 info 為空的狀況都從 extension_info 中取得
-        this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;
-        console.log( 'In local - Get the BSInfo gNBIdLength:', this.gNBIdLength );
+        if ( this.selectBsInfo.extension_info[0].gNBIdLength  ) {
+          this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;
+          console.log( 'In local - Get the BSInfo gNBIdLength:', this.gNBIdLength );
+        }
 
         // 一體式基站，直接將 Cell 數量設為 1
         this.selectBsCellCount = 1;
@@ -334,8 +616,10 @@ export class BSInfoComponent implements OnInit {
 
             // @2024/05/04 Add
             // 取得 gNBIdLength - 避免 info 為空的狀況都從 extension_info 中取得
-            this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;
-            console.log( 'Get the BSInfo gNBIdLength:', this.gNBIdLength );
+            if ( this.selectBsInfo.extension_info[0].gNBIdLength  ) {
+              this.gNBIdLength = this.selectBsInfo.extension_info[0].gNBIdLength;
+              console.log( 'In local - Get the BSInfo gNBIdLength:', this.gNBIdLength );
+            }
 
             // 一體式基站，直接將 Cell 數量設為 1
             this.selectBsCellCount = 1;
@@ -512,14 +796,14 @@ export class BSInfoComponent implements OnInit {
     // 如果是一體式基站
     if ( this.bsType === "1" ) {
 
-      // 處理一體式基站的組件資訊，放入 componentArray 用於繪拓樸圖
+      // 處理一體式基站的網元資訊，放入 componentArray 用於繪拓樸圖
       this.componentArray = this.selectBsInfo.components;
       console.log( "一體式基站的 componentArray:", this.componentArray );
 
       // 處理一體式基站的軟體版本資訊
       for ( const component of this.selectBsInfo.components ) {
 
-        // 在 NEList 中找到與組件 id 相對應的 NE
+        // 在 NEList 中找到與網元 id 相對應的 NE
         const correspondingNE = neList.components.find( ne => ne.id === component.id );
 
         // 如果找到對應的 NE
@@ -528,7 +812,7 @@ export class BSInfoComponent implements OnInit {
           // 儲存此 NE ID 用於繪製拓樸圖
           this.allInOneNEID = correspondingNE.id;
 
-          // 將組件類型轉換為大寫
+          // 將網元類型轉換為大寫
           const neType = component.type.toUpperCase();
 
           // 構建 neModel 字串
@@ -537,14 +821,14 @@ export class BSInfoComponent implements OnInit {
           // 獲取活動軟體版本，如果沒有則設置為 'None'
           const neSFversion = this.getActiveSoftwareVersion( correspondingNE.sm ) || 'None';
 
-          // 將軟體版本資訊存儲在 swVersionMap 中，以組件 id 作為鍵
+          // 將軟體版本資訊存儲在 swVersionMap 中，以網元 id 作為鍵
           this.swVersionMap[component.id] = { neName: correspondingNE.name, neType, neModel, neSFversion };
         }
       }
 
     } else if ( this.bsType === "2" ) { // 如是分佈式基站
 
-      // 處理分佈式基站的組件資訊，放入 componentArray 用於繪拓樸圖
+      // 處理分佈式基站的網元資訊，放入 componentArray 用於繪拓樸圖
       this.getComponentArray_distBS( this.selectBsInfo_dist.components );
       console.log( "分佈式基站的 componentArray:", this.componentArray );
 
@@ -574,7 +858,7 @@ export class BSInfoComponent implements OnInit {
   // 用於從 BsInfo_dist.components 取得網元組成資訊 ( 分佈式用 )
   getComponentArray_distBS( NE_Topology: Components_dist ) {
 
-    // 處理分佈式基站的組件資訊，放入 componentArray 用於繪拓樸圖
+    // 處理分佈式基站的網元資訊，放入 componentArray 用於繪拓樸圖
     const components = NE_Topology;
 
     for ( const cuid in components ) {
@@ -717,10 +1001,6 @@ export class BSInfoComponent implements OnInit {
     // 如果沒有找到活動軟體版本，返回 undefined
     return undefined;
   }
-
-  // @2024/03/29 Add
-  //selectNEid: string = ""; // 用於存儲當前選中的網元ID
-
 
   // ↓ 編輯設定 @2024/04/14 Add ↓
   
@@ -993,144 +1273,6 @@ export class BSInfoComponent implements OnInit {
       }
     }
   }
-
-  // @2024/05/07 Update
-  // 用於呼叫 API 更新一體式基站
-  updateBs( submitData: ForUpdateBs ) {
-
-    this.showProcessingSpinner(); // 顯示 Processing Spinner
-
-    if ( this.commonService.isLocal ) {
-      // 本地模式
-
-      // 輸出本地測試環境的日誌
-      console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
-      // 輸出要 POST 的資料
-      console.log( "The POST for updateBs():", submitData ); 
-      
-      // // 模擬成功響應
-      // setTimeout(() => {
-      //   this.isModifySuccess = true;
-      //   console.log('All-in-one BS Update successful...');
-      //   this.dialog.closeAll();
-      //   this.getQueryBsInfo();
-      //   setTimeout(() => this.isModifySuccess = false, 4500);
-      // }, 500); // 模擬非同步操作
-
-      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
-
-    } else {
-      // 非本地模式，實際呼叫 API
-
-      // 輸出要 POST 的資料
-      console.log( "The POST for updateBs():", submitData );
-      // 呼叫 API 更新一體式基站
-      this.API_BS.updateBs( submitData ).subscribe({
-        // 成功回調函數
-        next: ( res ) => {
-
-          // 輸出更新成功的日誌
-          console.log( 'Update BS success', res );
-
-          // 關閉所有對話框
-          //this.dialog.closeAll();
-
-          // 刷新基站資訊
-          this.getQueryBsInfo();
-
-          // 刷新網元資訊
-          //this.getNEList(); 
-
-          // 刷新基站告警資訊
-          //this.getCurrentBsFmList()
-
-          this.BsBasicInfoEditWindowRef.close(); // 更新讀取完後，關閉編輯設定視窗
-
-          this.hideSpinner();  // 完成後隱藏 spinner
-        },
-        // 錯誤回調函數
-        error: ( error ) => {
-          // 輸出更新失敗的日誌
-          console.error( 'Update BS fail', error );
-          this.hideSpinner();  // 出錯時隱藏 spinner
-        },
-        complete: () => {
-          console.log( 'Update BS Success' );
-          this.hideSpinner();  // 完成後隱藏 spinner
-        }
-      });
-    }
-
-  }
-
-  // @2024/05/07 Update
-  // 用於呼叫 API 更新分布式基站
-  updateDistributedBs( submitData: ForUpdateDistributedBs ) {
-
-    this.showProcessingSpinner(); // 顯示 Processing Spinner
-
-    if ( this.commonService.isLocal ) {
-      // 本地模式
-
-      // 輸出本地測試環境的日誌
-      console.log('本地測試環境，不進行更新操作。\nLocal testing environment, no update operation will be performed.');
-      // 輸出要 POST 的資料
-      console.log("The POST for updateDistributedBs():", submitData); 
-
-      // 模擬成功響應
-      // setTimeout(() => {
-      //   this.isModifyError = true; 
-      //   console.log('Disaggregated BS: [CU] + [DU] + [RU] Update error...');
-      //   this.dialog.closeAll();
-      //   this.getQueryBsInfo();
-      //   setTimeout(() => this.isModifyError = false, 4500);
-      // }, 500); // 模擬非同步操作
-
-      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
-
-    } else {
-      // 非本地模式，實際呼叫 API
-
-      // 輸出要 POST 的資料
-      console.log( "The POST for updateDistributedBs():", submitData );
-      // 呼叫 API 更新分布式基站
-      this.API_BS.updateDistributedBs( submitData ).subscribe({
-        // 成功回調函數
-        next: ( res ) => {
-
-          // 輸出更新成功的日誌
-          console.log( 'Update Distributed BS success', res );
-          
-          // 關閉所有對話框
-          //this.dialog.closeAll();
-
-          // 刷新基站資訊
-          this.getQueryBsInfo();
-
-          // 刷新網元資訊
-          //this.getNEList(); 
-
-          // 刷新基站告警資訊
-          //this.getCurrentBsFmList()
-
-          this.BsBasicInfoEditWindowRef.close(); // 更新讀取完後，關閉編輯設定視窗
-
-          this.hideSpinner();  // 完成後隱藏 spinner
-        },
-        // 錯誤回調函數
-        error: ( error ) => {
-          // 輸出更新失敗的日誌
-          console.error( 'Update Distributed BS fail', error );
-          this.hideSpinner();  // 出錯時隱藏 spinner
-        },
-        complete: () => {
-          console.log( 'Update Distributed BS Success' );
-          this.hideSpinner();  // 完成後隱藏 spinner
-        }
-      });
-    }
-
-  }
   
   // ↑ 編輯設定 @2024/04/17 Update ↑
 
@@ -1139,12 +1281,19 @@ export class BSInfoComponent implements OnInit {
   
 
 
-// ↓ 繪製拓樸圖區 @2024/03/28 Add ↓
+// ↓ 繪製拓樸圖區 @2024/05/08 Update ↓
 
   // 使用 @ViewChild 裝飾器獲取 canvas 元素的引用
   @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
 
-  // 獲取一體式基站的位置
+  /**
+   * 獲取一體式基站的中心位置
+   * @method getAllInOnePosition
+   * @returns {x: number, y: number} - 基站的中心坐標
+   * @description
+   * - 此方法計算並返回一體式基站在畫布上的中心位置。
+   * - 利用畫布的寬度和高度來計算中心點。
+   */
   getAllInOnePosition(): { x: number, y: number } {
     const  canvasWidth = this.canvas.nativeElement.width; // 獲取畫布寬度
     const canvasHeight = this.canvas.nativeElement.height; // 獲取畫布高度
@@ -1153,97 +1302,150 @@ export class BSInfoComponent implements OnInit {
     return { x, y }; // 返回位置
   }
 
-  // 獲取 CU 的位置
-  getCuPosition(cu: any): { x: number, y: number } {
-    const index = this.componentArray.filter(c => c.type === 'cu').indexOf(cu); // 獲取 CU 在 componentArray 中的索引
+  /**
+   * 獲取 CU 的位置
+   * @method getCuPosition
+   * @param {any} cu - CU 元件的參考
+   * @returns {x: number, y: number} - CU 的坐標位置
+   * @description
+   * - 此方法計算並返回指定 CU 元件在畫布上的位置。
+   * - 位置取決於 CU 在 componentArray 中的索引和畫布的總數量。
+   */
+  getCuPosition( cu: any ): { x: number, y: number } {
+    const index = this.componentArray.filter( c => c.type === 'cu' ).indexOf( cu ); // 獲取 CU 在 componentArray 中的索引
     const x = this.canvas.nativeElement.width / 4; // CU 的 x 座標
-    const y = this.canvas.nativeElement.height / (this.componentArray.filter(c => c.type === 'cu').length + 1) * (index + 1); // CU 的 y 座標
+    const y = this.canvas.nativeElement.height / ( this.componentArray.filter( c => c.type === 'cu' ).length + 1 ) * ( index + 1 ); // CU 的 y 座標
     return { x, y }; // 返回位置
   }
 
-  // 獲取 DU 的位置
-  getDuPosition(du: any): { x: number, y: number } {
-    const index = this.componentArray.filter(c => c.type === 'du').indexOf(du); // 獲取 DU 在 componentArray 中的索引
+  /**
+   * 獲取 DU 的位置
+   * @method getDuPosition
+   * @param {any} du - DU 元件的參考
+   * @returns {x: number, y: number} - DU 的坐標位置
+   * @description
+   * - 此方法計算並返回指定 DU 元件在畫布上的位置。
+   * - 位置取決於 DU 在 componentArray 中的索引和畫布的總數量。
+   */
+  getDuPosition( du: any ): { x: number, y: number } {
+    const index = this.componentArray.filter( c => c.type === 'du' ).indexOf( du ); // 獲取 DU 在 componentArray 中的索引
     const x = this.canvas.nativeElement.width * 0.535; // DU 的 x 座標
-    const y = this.canvas.nativeElement.height / (this.componentArray.filter(c => c.type === 'du').length + 1) * (index + 1); // DU 的 y 座標
+    const y = this.canvas.nativeElement.height / ( this.componentArray.filter( c => c.type === 'du' ).length + 1 ) * ( index + 1 ); // DU 的 y 座標
     return { x, y }; // 返回位置
   }
 
-  // 獲取 RU 的位置
-  getRuPosition(ru: any): { x: number, y: number } {
-    const index = this.componentArray.filter(c => c.type === 'ru').indexOf(ru); // 獲取 RU 在 componentArray 中的索引
-    const ruCount = this.componentArray.filter(c => c.type === 'ru').length; // 獲取 RU 的數量
+  /**
+   * 獲取 RU 的位置
+   * @method getRuPosition
+   * @param {any} ru - RU 元件的參考
+   * @returns {x: number, y: number} - RU 的坐標位置
+   * @description
+   * - 此方法計算並返回指定 RU 元件在畫布上的位置。
+   * - 位置取決於 RU 在 componentArray 中的索引和畫布的總數量，以及 RU 的總數。
+   */
+  getRuPosition( ru: any ): { x: number, y: number } {
+    const index = this.componentArray.filter( c => c.type === 'ru' ).indexOf( ru ); // 獲取 RU 在 componentArray 中的索引
+    const ruCount = this.componentArray.filter( c => c.type === 'ru' ).length; // 獲取 RU 的數量
     const x = this.canvas.nativeElement.width * 0.75; // 調整 RU 的 x 座標
-    const y = this.canvas.nativeElement.height / (ruCount + 1) * (index + 1) * 1.1; // 均勻分佈 RU 的 y 座標
+    const y = this.canvas.nativeElement.height / ( ruCount + 1 ) * ( index + 1 ) * 1.1; // 均勻分佈 RU 的 y 座標
     return { x, y }; // 返回位置
   }
 
-  // 獲取組件名稱
-  getComponentName(id: string): string {
-    const component = this.NEList.components.find(c => c.id === id); // 根據組件 ID 查找組件
-    return component ? component.name : ''; // 返回組件名稱，如果找不到則返回空字串
+  /**
+   * 獲取網元名稱
+   * @method getComponentName
+   * @param {string} id - 網元的唯一標識符
+   * @returns {string} - 返回網元的名稱
+   * @description
+   * - 此方法根據網元的 ID 從 NEList 中查找並返回網元的名稱。
+   * - 如果無法找到對應的網元，則返回空字符串。
+   */
+  getComponentName( id: string ): string {
+    const component = this.NEList.components.find( c => c.id === id ); // 根據網元 ID 查找網元
+    return component ? component.name : ''; // 返回網元名稱，如果找不到則返回空字串
   }
 
-  // 獲取組件狀態
+  /**
+   * 獲取網元狀態
+   * @method getComponentStatus
+   * @param {string} id - 網元的唯一標識符
+   * @returns {number} - 返回網元的狀態代碼
+   * @description
+   * - 此方法根據網元的 ID 從 NEList 中查找並返回網元的狀態。
+   * - 如果無法找到對應的網元，則返回 0。
+   */
   getComponentStatus(id: string): number {
-    const component = this.NEList.components.find(c => c.id === id); // 根據組件 ID 查找組件
-    return component ? component.status : 0; // 返回組件狀態，如果找不到則返回 0
+    const component = this.NEList.components.find( c => c.id === id ); // 根據網元 ID 查找網元
+    return component ? component.status : 0; // 返回網元狀態，如果找不到則返回 0
   }
 
-  // 繪製連接線
+  /**
+   * 繪製連接線
+   * @method drawConnectingLines
+   * @description
+   * - 此方法在畫布上繪製連接線，連接不同的網元。
+   * - 利用 canvas 的 2D 上下文來繪製線條。
+   * - 線條連接的是 CU 至 DU，以及 DU 至 RU 的位置。
+   * - 每條線都根據計算得到的起點和終點坐標來進行繪製。
+   */
   drawConnectingLines() {
     const canvas = this.canvas.nativeElement; // 獲取 canvas 元素
-    const ctx = canvas.getContext('2d'); // 獲取繪圖上下文
-
-    //if (!ctx) return; // 如果無法獲取上下文，直接返回
-
-    // 清空畫布
-    //ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const ctx = canvas.getContext('2d');      // 獲取繪圖上下文
 
     // 檢查渲染上下文是否存在
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height); // 清除畫布
+    if ( ctx ) {
+      ctx.clearRect( 0, 0, canvas.width, canvas.height ); // 清除畫布
 
       ctx.lineWidth = 3;         // 設置線條寬度為 3
       ctx.strokeStyle = 'white'; // 設置線條顏色為白色
 
       // 繪製 CU 和 DU 之間的連接線
-      this.componentArray.filter(c => c.type === 'cu').forEach(cu => {
-        const cuPosition = this.getCuPosition(cu); // 獲取 CU 位置
-        this.componentArray.filter(c => c.type === 'du').forEach(du => {
-          const duPosition = this.getDuPosition(du); // 獲取 DU 位置
+      this.componentArray.filter( c => c.type === 'cu' ).forEach( cu => {
+        const cuPosition = this.getCuPosition( cu ); // 獲取 CU 位置
+        this.componentArray.filter( c => c.type === 'du' ).forEach( du => {
+          const duPosition = this.getDuPosition( du ); // 獲取 DU 位置
           console.log("繪製 CU 和 DU 之間的連接線 - cuPosition", cuPosition); // 輸出 CU 位置
           console.log("繪製 CU 和 DU 之間的連接線 - duPosition", duPosition); // 輸出 DU 位置
-          this.drawLine(ctx, cuPosition, duPosition); // 繪製 CU 和 DU 之間的連接線
+          this.drawLine( ctx, cuPosition, duPosition ); // 繪製 CU 和 DU 之間的連接線
         });
       });
 
       // 繪製 DU 和 RU 之間的連接線
-      this.componentArray.filter(du => du.type === 'du').forEach(du => {
-        const duPosition = this.getDuPosition(du); // 獲取 DU 位置
-        this.componentArray.filter(ru => ru.type === 'ru' && ru.duid === du.id).forEach(ru => {
-          const ruPosition = this.getRuPosition(ru); // 獲取 RU 位置
+      this.componentArray.filter( du => du.type === 'du' ).forEach( du => {
+        const duPosition = this.getDuPosition( du ); // 獲取 DU 位置
+        this.componentArray.filter( ru => ru.type === 'ru' && ru.duid === du.id ).forEach( ru => {
+          const ruPosition = this.getRuPosition( ru ); // 獲取 RU 位置
           console.log("繪製 DU 和 RU 之間的連接線 - duPosition", duPosition); // 輸出 DU 位置
           console.log("繪製 DU 和 RU 之間的連接線 - ruPosition", ruPosition); // 輸出 RU 位置
-          this.drawLine(ctx, duPosition, ruPosition); // 繪製 DU 和 RU 之間的連接線
+          this.drawLine( ctx, duPosition, ruPosition ); // 繪製 DU 和 RU 之間的連接線
         });
       });
     }
   }
 
-  // 繪製單條線
-  drawLine(ctx: CanvasRenderingContext2D, start: { x: number, y: number }, end: { x: number, y: number }) {
+  /**
+   * 繪製單條線
+   * @method drawLine
+   * @param {CanvasRenderingContext2D} ctx - canvas 的 2D 繪圖上下文
+   * @param {object} start - 線的起點坐標 {x, y}
+   * @param {object} end - 線的終點坐標 {x, y}
+   * @description
+   * - 此方法在 canvas 上繪製一條從 start 到 end 的直線。
+   * - 使用 moveTo 和 lineTo 方法設定線條的起點和終點。
+   * - 調用 stroke 方法完成線條的繪製。
+   */
+  drawLine( ctx: CanvasRenderingContext2D, start: { x: number, y: number }, end: { x: number, y: number } ) {
     ctx.beginPath(); // 開始繪製新路徑
-    ctx.moveTo(start.x, start.y); // 移動到起點
-    ctx.lineTo(end.x, end.y); // 繪製到終點
+    ctx.moveTo( start.x, start.y ); // 移動到起點
+    ctx.lineTo( end.x, end.y ); // 繪製到終點
     ctx.stroke(); // 描邊
   }
 
-// ↑ 繪製拓樸圖區 @2024/03/28 Add ↑
+// ↑ 繪製拓樸圖區 @2024/05/08 Update ↑
 
 
 
-// ↓ For Bs Parameters Page Control @2024/05/07 Update ↓
+// ↓ 基站參數區 @2024/05/08 Update ↓
 
   bsParametersType: string = 'Basic';       // 預設選擇 "Basic"    @2024/03/29 Add 
   //bsParametersType: string = 'Advanced';  // 預設選擇 "Advanced" @2024/03/29 Add
@@ -1275,9 +1477,9 @@ export class BSInfoComponent implements OnInit {
                   '\nLog type displayed after tab switch:', this.bsParametersType );
   }
 
-  nciList: string[] = [];   // 存儲NCI列表
-  selectedNci: string = ''; // 當前選擇的NCI（用於基站參數）
-  selectedExtensionInfo: ExtensionInfo | undefined; // 當前選擇的ExtensionInfo
+  nciList: string[] = [];   // 存儲 NCI 列表
+  selectedNci: string = ''; // 當前選擇的 NCI（用於基站參數）
+  selectedExtensionInfo: ExtensionInfo | undefined; // 當前選擇的 ExtensionInfo
 
   /**
    * @2024/04/25 Update
@@ -1286,13 +1488,6 @@ export class BSInfoComponent implements OnInit {
    * @description
    * - 根據基站類型和選擇的 NCI，更新當前選擇的 ExtensionInfo
    */
-  // onBsParamSelectedNciChange() {
-  //   if (this.bsType === '1' && this.selectBsInfo) {
-  //     this.selectedExtensionInfo = this.selectBsInfo.extension_info.find(info => info.nci === this.selectedNci);
-  //   } else if (this.bsType === '2' && this.selectBsInfo_dist) {
-  //     this.selectedExtensionInfo = this.selectBsInfo_dist.extension_info.find(info => info.nci === this.selectedNci);
-  //   }
-  // }
   onBsParamSelectedNciChange() {
     if ( this.selectedNci ) {
       if ( this.bsType === '1' && this.selectBsInfo ) {
@@ -1337,6 +1532,48 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
+
+  /**
+   * @2024/05/07 Add
+   * 根據指定選項同步 DS 和 DB 結構之間的extension_info 
+   * @method syncExtensionInfo
+   * @param { any } extension - 包含 DS 和 DB 結構的擴展對象
+   * @param { string } option - 同步選項，'NMS' 或其他，用於確定同步方向
+   * @returns { any } 修改後的擴展對象，其中 DS 和 DB 結構已同步
+   * @description
+   * - 根據提供的選項在 db 和 ds 之間同步屬性
+   * - 遞迴處理嵌套對象以確保完整的同步深度
+   * - 幫助維持網路管理系統中配置狀態的一致性
+   */
+  syncExtensionInfo( extension: any, option: string ) {
+    // 從擴展對象中檢索所有鍵以進行迭代
+    const keys = Object.keys( extension );
+
+    // 在擴展對象中迭代每個鍵
+    keys.forEach( key => {
+      // 檢查當前鍵的屬性是否存在且是一個對象
+      if ( extension[key] && typeof extension[key] === 'object' ) {
+        // 檢查同步選項是否為 'NMS'
+        if ( option === 'NMS' ) {
+          // NMS 選項：將 db 同步到 ds
+          if ( extension[key].ds && extension[key].db ) {
+            extension[key].ds = { ...extension[key].db };
+          }
+        } else {
+          // 其他選項：將 ds 同步到 db
+          if ( extension[key].ds && extension[key].db ) {
+            extension[key].db = { ...extension[key].ds };
+          }
+        }
+        // 遞迴同步嵌套對象以確保處理所有層次
+        this.syncExtensionInfo( extension[key], option );
+      }
+    });
+
+      // 返回經過同步處理後的修改擴展對象
+      return extension;
+  }
+
   // @2024/05/07 Add
   // 用於儲存更新要設定的編輯類型
   editType: number = 0;
@@ -1345,15 +1582,15 @@ export class BSInfoComponent implements OnInit {
    * @2024/05/07 Add
    * 提交 Base Station Parameter Edit 表單的方法
    * @method BsParamEdit_ForAllSyncAction_Submit
-   * @param {string} option - 同步選項，用於決定同步設定是基於網管系統(NMS)還是基於基站的本地設定
-   * @returns {void}
+   * @param   { string } option - 同步選項，用於決定同步所有設定是要基於網管系統( NMS - db )的參數設定，還是要基於基站( BS - ds )的參數設定
+   * @returns { void }
    * @description
    * - 這個方法根據用戶選擇的同步選項來設定和提交基站參數的更新
    * - 根據選擇，重置並設定編輯類型
    * - 解析和轉換位置資訊為經緯度
    * - 建立和提交更新資料物件到相應的更新方法
-   * - 對於一體式基站( bsType 為 "1" )，處理並更新單一基站資訊
-   * - 對於分佈式基站( bsType 為 "2" )，處理並更新每個 cell 的資訊
+   * - 對於一體式基站( bsType 為 "1" )，處理並更新一體式基站的所有參數資訊
+   * - 對於分佈式基站( bsType 為 "2" )，處理並更新分佈式基站每個 cell 的所有參數資訊
    */
   BsParamEdit_ForAllSyncAction_Submit( option: string ) {
 
@@ -1425,8 +1662,6 @@ export class BSInfoComponent implements OnInit {
         txpower: String( this.selectBsInfo.info['bs-conf']['tx-power'] ),
         // 設定 tac 的值
         tac: String( this.selectBsInfo.info['bs-conf'].tac ),
-        // 設定 extension_info 的值
-        //extension_info: this.selectBsInfo.extension_info
       };
 
       // 依據選擇的同步選項設定 extension_info
@@ -1481,9 +1716,6 @@ export class BSInfoComponent implements OnInit {
         components: this.selectBsInfo_dist.components,
         // 設定 cellinfo 的值
         cellinfo: cellinfo,
-
-        // 設定 extension_info 的值
-        //extension_info: this.selectBsInfo_dist.extension_info
       };
 
       // 依據選擇的同步選項設定 extension_info
@@ -1498,48 +1730,354 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/07 Add
-   * 根據指定選項同步 DS 和 DB 結構之間的擴展信息
-   * @method syncExtensionInfo
-   * @param { any } extension - 包含 DS 和 DB 結構的擴展對象
-   * @param { string } option - 同步選項，'NMS' 或其他，用於確定同步方向
-   * @returns { any } 修改後的擴展對象，其中 DS 和 DB 結構已同步
+   * @2024/05/08 Add
+   * 轉換字符串為對應的枚舉值
+   * @method convertToFieldEnum
+   * @param {string} paramFieldName - extension_info 參數欄位名稱字符串
+   * @returns {ExtensionInfoParamFieldNames} - 返回枚舉對應的值
    * @description
-   * - 根據提供的選項在 db 和 ds 之間同步屬性
-   * - 遞迴處理嵌套對象以確保完整的同步深度
-   * - 幫助維持網路管理系統中配置狀態的一致性
+   *    - 此方法將傳入的字符串參數名稱轉換為枚舉類型，用於後續索引操作
    */
-  syncExtensionInfo( extension: any, option: string ) {
-    // 從擴展對象中檢索所有鍵以進行迭代
-    const keys = Object.keys( extension );
+  convertToFieldEnum( paramFieldName: string ): ExtensionInfoParamFieldNames {
+    // 將字符串轉換為枚舉值
+    return ExtensionInfoParamFieldNames[paramFieldName as keyof typeof ExtensionInfoParamFieldNames];
+  }
 
-    // 在擴展對象中迭代每個鍵
-    keys.forEach(key => {
-      // 檢查當前鍵的屬性是否存在且是一個對象
-      if ( extension[key] && typeof extension[key] === 'object' ) {
-        // 檢查同步選項是否為 'NMS'
-        if ( option === 'NMS' ) {
-          // NMS 選項：將 db 同步到 ds
-          if ( extension[key].ds && extension[key].db ) {
-            extension[key].ds = { ...extension[key].db };
-          }
-        } else {
-          // 其他選項：將 ds 同步到 db
-          if ( extension[key].ds && extension[key].db ) {
-            extension[key].db = { ...extension[key].ds };
-          }
+  /**
+   * @2024/05/08 Add
+   * 單一參數欄位數據同步 - 一體式用
+   * @method syncSingleField
+   * @param {ExtensionInfo_ForUpdateBs[]} extension - extension_info 數據數組
+   * @param {string} option - 同步選項 ('NMS' 或 'BS')
+   * @param {string} ParamFieldName - 欄位名
+   * @param {string} internalParamName - 內部參數名
+   * @returns {ExtensionInfo_ForUpdateBs[]} - 返回更新後的數據數組
+   * @description
+   *    - 根據指定的同步選項更新指定的欄位數據
+   *    - 'NMS' 選項將 db 數據同步到 ds
+   *    - 'BS' 選項將 ds 數據同步到 db
+   */
+  syncSingleField( 
+    extension: ExtensionInfo_ForUpdateBs[], 
+      option: string, 
+        ParamFieldName: string, 
+          internalParamName: string ): ExtensionInfo_ForUpdateBs[] {
+
+    // 獲取枚舉類型的 extension_info 參數欄位名稱
+    const paramFieldName = this.convertToFieldEnum( ParamFieldName );
+
+    // 對數據數組進行映射和更新
+    return extension.map( ext => {
+
+        // 獲取當前extension_info 中的字段數據
+        const fieldData = ext[paramFieldName];
+
+        // 確保必要數據存在並進行更新
+        if ( fieldData && 'db' in fieldData && 'ds' in fieldData && internalParamName && fieldData.db && fieldData.ds ) {
+
+            // 決定新值來源
+            const newValue = ( fieldData.ds as any )[internalParamName as keyof typeof fieldData.ds] || ( fieldData.db as any )[internalParamName as keyof typeof fieldData.db];
+
+            // 根據選項同步數據
+            if ( option === 'NMS' ) {
+                return {
+                    [paramFieldName]: {
+                        ds: {
+                            ...fieldData.ds,
+                            [internalParamName]: (fieldData.db as any)[internalParamName as keyof typeof fieldData.db] // 同步 DB 值到 DS
+                        }
+                    }
+                };
+            } else {
+                return {
+                    [paramFieldName]: {
+                        db: {
+                            ...fieldData.db,
+                            [internalParamName]: (fieldData.ds as any)[internalParamName as keyof typeof fieldData.ds] // 同步 DS 值到 DB
+                        }
+                    }
+                };
+            }
         }
-        // 遞迴同步嵌套對象以確保處理所有層次
-        this.syncExtensionInfo( extension[key], option );
-      }
-    });
+        // 沒有更新時返回 null
+        return null;
+    }).filter( x => x != null ) as ExtensionInfo_ForUpdateBs[]; // 過濾出已更新的元素
+  }
 
-    // 返回經過同步處理後的修改擴展對象
-    return extension;
+  /**
+   * @2024/05/08 Add
+   * 單一參數欄位數據同步 - 分佈式用
+   * @method syncSingleField
+   * @param {ExtensionInfo_dist_ForUpdateDistributedBs[]} extension - extension_info 數據數組
+   * @param {string} option - 同步選項 ('NMS' 或 'BS')
+   * @param {string} ParamFieldName - 欄位名
+   * @param {string} internalParamName - 內部參數名
+   * @returns {ExtensionInfo_dist_ForUpdateDistributedBs[]} - 返回更新後的數據數組
+   * @description
+   *    - 根據指定的同步選項更新指定的欄位數據
+   *    - 'NMS' 選項將 db 數據同步到 ds
+   *    - 'BS' 選項將 ds 數據同步到 db
+   */
+  syncSingleField_dist(
+    extension: ExtensionInfo_dist_ForUpdateDistributedBs[], 
+      option: string, 
+        ParamFieldName: string, 
+          internalParamName?: string ): ExtensionInfo_dist_ForUpdateDistributedBs[] {
+    
+    // 獲取枚舉類型的 extension_info 參數欄位名稱
+    const paramFieldName = this.convertToFieldEnum( ParamFieldName );
+
+    // 對數據數組進行映射和更新
+    return extension.map( ext => {
+
+        // 獲取當前extension_info 中的字段數據
+        const fieldData = ext[paramFieldName];
+
+        // 確保必要數據存在並進行更新
+        if ( fieldData && 'db' in fieldData && 'ds' in fieldData && internalParamName && fieldData.db && fieldData.ds ) {
+
+            // 決定新值來源
+            const newValue = ( fieldData.ds as any )[internalParamName as keyof typeof fieldData.ds] || ( fieldData.db as any )[internalParamName as keyof typeof fieldData.db];
+
+            // 根據選項同步數據
+            if ( option === 'NMS' ) {
+                return {
+                    [paramFieldName]: {
+                        ds: {
+                            ...fieldData.ds,
+                            [internalParamName]: ( fieldData.db as any )[internalParamName as keyof typeof fieldData.db] // 同步 DB 值到 DS
+                        }
+                    }
+                };
+            } else {
+                return {
+                    [paramFieldName]: {
+                        db: {
+                            ...fieldData.db,
+                            [internalParamName]: ( fieldData.ds as any )[internalParamName as keyof typeof fieldData.ds] // 同步 DS 值到 DB
+                        }
+                    }
+                };
+            }
+        }
+        // 沒有更新時返回 null
+        return null;
+    }).filter( x => x != null ) as ExtensionInfo_dist_ForUpdateDistributedBs[]; // 過濾出已更新的元素
+  }
+
+  /**
+   * @2024/05/08 Add
+   * 提交基站單一欄位同步編輯操作的方法
+   * @method BsParamEdit_ForSingleFieldSyncAction_Submit
+   * @param {string} option - 同步選項，用於決定同步設定是基於網管系統(NMS)還是基站的本地設定(BS)
+   * @param {string} paramFieldName - 要同步的欄位名稱
+   * @param {string} [internalParamName] - 欲同步的具體內部參數名稱（可選）
+   * @description
+   *    - 此方法根據用戶選擇的同步選項來設定並提交基站的單一欄位參數更新。
+   *    - 根據 bsType 的值判斷基站類型（一體式或分佈式），進行相應的數據更新流程。
+   *    - 對於一體式基站 ( bsType 為 "1" )：
+   *        - 建立更新數據物件，包括基站的基本信息及透過 `syncSingleField` 方法同步更新的 extension_info。
+   *        - 之後呼叫 `updateBs()` 方法以提交更新。
+   *    - 對於分佈式基站 ( bsType 為 "2" )：
+   *        - 先篩選出與選擇的 NCI 相關的 extension_info。
+   *        - 使用 `syncSingleField_dist` 方法處理同步操作，生成新的 extension_info 數組。
+   *        - 建立更新數據物件，包括基站的基本信息及更新後的 extension_info 。
+   *        - 之後呼叫 `updateDistributedBs()` 方法以提交更新。
+   *    - 該方法的行為取決於同步選項，以及被操作的基站類型。
+   */
+  BsParamEdit_ForSingleFieldSyncAction_Submit( option: string, paramFieldName: string, internalParamName?: string) {
+
+    // 若 bsType 為 "1"
+    if ( this.bsType === "1" ) {    
+
+      if( internalParamName ) {
+
+        // 建立更新一體式基站的資料物件
+        const updateData: ForUpdateBs = {
+          // 設定編輯類型
+          edit_type: 4,
+          // 設定 session 的值
+          session: this.sessionId,
+          // 設定 id 的值
+          id: this.selectBsInfo.id,
+          // 設定 name 的值
+          name: this.selectBsInfo.name,
+          // 設定 description 的值
+          description: this.selectBsInfo.description,
+          // 設定 bstype 的值
+          bstype: String( this.selectBsInfo.bstype ),
+          // 設定 position 的值
+          position: this.selectBsInfo.position,
+          // 設定 components 的值
+          components: this.selectBsInfo.components,
+          // 設定 extension_info 的值
+          extension_info: this.syncSingleField( this.selectBsInfo.extension_info, option, paramFieldName, internalParamName )
+        };
+
+        console.log("使用", option, "進行同步，POST 的 JSON 為:", updateData );
+
+        // 呼叫 updateBs() 方法更新一體式基站
+        this.updateBs( updateData );
+
+      }
+
+    // 若 bsType 為 "2"
+    } else if ( this.bsType === "2" ) {
+
+      if ( this.selectedExtensionInfo && this.selectedNci === this.selectedExtensionInfo.nci ) {
+        const filteredInfo = this.selectBsInfo_dist.extension_info.filter(info => info.nci === this.selectedNci);
+        const syncInfo = filteredInfo.map(info => this.syncSingleField_dist( [info], option, paramFieldName, internalParamName)[0] );
+
+        // 建立更新分佈式基站的資料物件
+        const updateData: ForUpdateDistributedBs = {
+          // 設定編輯類型
+          edit_type: 4,
+          // 設定 session 的值
+          session: this.sessionId,
+          // 設定 id 的值
+          id: this.selectBsInfo_dist.id,
+          // 設定 name 的值
+          name: this.selectBsInfo_dist.name,
+          // 設定 bstype 的值
+          bstype: String( this.selectBsInfo_dist.bstype ),
+          // 設定 description 的值
+          description: this.selectBsInfo_dist.description,
+          // 設定 components 的值
+          components: this.selectBsInfo_dist.components,
+
+          // 設定 extension_info 的值
+          extension_info: syncInfo
+        };
+
+        console.log("使用", option, "進行同步，POST 的 JSON 為:", updateData );
+
+        // 呼叫 updateDistributedBs() 方法更新分佈式基站
+        this.updateDistributedBs( updateData );
+      }
+    }
   }
 
 
-// ↑ For Bs Parameters Page Control @2024/05/07 Update ↑
+
+
+  // 編輯單參數欄位設定值用 2024/05/08 Add
+  BsParamEdit_editSingleParam_Submit( ParamFieldName: string ) {
+
+    // 若 bsType 為 "1"
+    if ( this.bsType === "1" ) {    
+
+      // 將位置字串解析為經緯度數組
+      const positionArray = JSON.parse( this.selectBsInfo.position );
+
+      // 計算經緯度並乘以 1000000
+      const gpslatitude = positionArray[1] * 1000000;
+      const gpslongitude = positionArray[0] * 1000000;
+      
+      // 建立更新一體式基站的資料物件
+      const updateData: ForUpdateBs = {
+        // 設定編輯類型
+        edit_type: 4,
+        // 設定 session 的值
+        session: this.sessionId,
+        // 設定 id 的值
+        id: this.selectBsInfo.id,
+        // 設定 name 的值
+        name: this.selectBsInfo.name,
+        // 設定 description 的值
+        description: this.selectBsInfo.description,
+        // 設定 bstype 的值
+        bstype: String( this.selectBsInfo.bstype ),
+        // 設定 position 的值
+        position: this.selectBsInfo.position,
+        // 設定 components 的值
+        components: this.selectBsInfo.components,
+        // 設定 pci 的值
+        pci: String( this.selectBsInfo.info['bs-conf'].pci ),
+        // 設定 plmnid 的值
+        plmnid: {
+          // 設定 mnc 的值
+          mnc: String( this.selectBsInfo.info.pLMNId_MNC ),
+          // 設定 mcc 的值
+          mcc: String( this.selectBsInfo.info.pLMNId_MCC )
+        },
+        // 設定 nci 的值
+        nci: String( this.selectBsInfo.info['bs-conf'].nci ),
+        // 設定 gpslatitude 的值
+        gpslatitude: String( gpslatitude ),
+        // 設定 gpslongitude 的值
+        gpslongitude: String( gpslongitude ),
+        // 設定 nrarfcndl 的值
+        nrarfcndl: String( this.selectBsInfo.info['bs-conf']['nrarfcn-dl'] ),
+        // 設定 nrarfcnul 的值
+        nrarfcnul: String( this.selectBsInfo.info['bs-conf']['nrarfcn-ul'] ),
+        // 設定 channelbandwidth 的值
+        channelbandwidth: String( this.selectBsInfo.info['bs-conf']['channel-bandwidth'] ),
+        // 設定 txpower 的值
+        txpower: String( this.selectBsInfo.info['bs-conf']['tx-power'] ),
+        // 設定 tac 的值
+        tac: String( this.selectBsInfo.info['bs-conf'].tac ),
+        // 設定 extension_info 的值
+        //extension_info: this.selectBsInfo.extension_info
+      };
+
+      // 呼叫 updateBs() 方法更新一體式基站
+      this.updateBs( updateData );
+
+    // 若 bsType 為 "2"
+    } else if ( this.bsType === "2" ) {
+
+      // 從 extension_info 中獲取 cellinfo 資訊
+      const cellinfo: Cellinfo_dist[] = this.selectBsInfo_dist.extension_info.map( info => ({
+        // 設定 nRPCI 的值
+        nRPCI: info.NRCellDU.db.nRPCI,
+        // 設定 nRTAC 的值
+        nRTAC: info.NRCellDU.db.nRTAC,
+        // 設定 arfcnDL 的值
+        arfcnDL: info.NRCellDU.db.arfcnDL,
+        // 設定 arfcnUL 的值
+        arfcnUL: info.NRCellDU.db.arfcnUL,
+        // 設定 bSChannelBwDL 的值
+        bSChannelBwDL: info.NRCellDU.db.bSChannelBwDL,
+        // 設定 configuredMaxTxPower 的值
+        configuredMaxTxPower: info.NRSectorCarrier.db.configuredMaxTxPower,
+        // 設定 pLMNId_MCC 的值
+        pLMNId_MCC: info.NRCellDU.db.pLMNId_MCC,
+        // 設定 pLMNId_MNC 的值
+        pLMNId_MNC: info.NRCellDU.db.pLMNId_MNC,
+        // 設定 nci 的值
+        nci: info.nci
+      }));
+
+      // 建立更新分佈式基站的資料物件
+      const updateData: ForUpdateDistributedBs = {
+        // 設定編輯類型
+        edit_type: 4,
+        // 設定 session 的值
+        session: this.sessionId,
+        // 設定 id 的值
+        id: this.selectBsInfo_dist.id,
+        // 設定 name 的值
+        name: this.selectBsInfo_dist.name,
+        // 設定 bstype 的值
+        bstype: String( this.selectBsInfo_dist.bstype ),
+        // 設定 description 的值
+        description: this.selectBsInfo_dist.description,
+        // 設定 components 的值
+        components: this.selectBsInfo_dist.components,
+        // 設定 cellinfo 的值
+        cellinfo: cellinfo,
+
+        // 設定 extension_info 的值
+        //extension_info: this.selectBsInfo_dist.extension_info
+      };
+
+      // 呼叫 updateDistributedBs() 方法更新分佈式基站
+      this.updateDistributedBs( updateData );
+    }
+  }
+
+
+// ↑ 基站參數區 @2024/05/08 Update ↑
 
 
 
@@ -2077,7 +2615,7 @@ export class BSInfoComponent implements OnInit {
           id: this.bsID, // 設置基站 ID
           name: this.bsName, // 設置基站名稱
           bstype: this.bsType, // 設置基站類型
-          components: this.selectBsInfo_dist.components, // 設置基站組件
+          components: this.selectBsInfo_dist.components, // 設置基站網元
           description: this.selectBsInfo_dist.description, // 設置基站描述
           neighborinfo: [], // 初始化 neighborinfo 數組
         };
