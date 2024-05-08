@@ -3423,8 +3423,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.gNBId === selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.gNBId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.gNBId !== selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.gNBId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrierRef_NRCellDU', 'gNBId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrierRef_NRCellDU', 'gNBId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3435,8 +3435,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.gNBIdLength === selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.gNBIdLength) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.gNBIdLength !== selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.gNBIdLength">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrierRef_NRCellDU', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrierRef_NRCellDU', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3447,8 +3447,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.pLMNId_MCC === selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.pLMNId_MCC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.pLMNId_MCC !== selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.pLMNId_MCC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrierRef_NRCellDU', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrierRef_NRCellDU', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3459,8 +3459,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.pLMNId_MNC === selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.pLMNId_MNC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.pLMNId_MNC !== selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.pLMNId_MNC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrierRef_NRCellDU', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrierRef_NRCellDU', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3471,8 +3471,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.gNBDUId === selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.gNBDUId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.gNBDUId !== selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.gNBDUId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrierRef_NRCellDU', 'gNBDUId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrierRef_NRCellDU', 'gNBDUId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3483,8 +3483,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.cellLocalId === selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.cellLocalId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.cellLocalId !== selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.cellLocalId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrierRef_NRCellDU', 'cellLocalId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrierRef_NRCellDU', 'cellLocalId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3497,8 +3497,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.NRSectorCarrierRef === selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.NRSectorCarrierRef) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.NRSectorCarrierRef !== selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.NRSectorCarrierRef">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrierRef_NRCellDU', 'NRSectorCarrierRef')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrierRef_NRCellDU', 'NRSectorCarrierRef')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3535,8 +3535,8 @@
                                   <td>{{ (selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.gNBId === selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.gNBId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.gNBId !== selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.gNBId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'bWPRef_leafList_NRCellDU', 'gNBId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'bWPRef_leafList_NRCellDU', 'gNBId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3547,8 +3547,8 @@
                                   <td>{{ (selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.gNBIdLength === selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.gNBIdLength) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.gNBIdLength !== selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.gNBIdLength">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'bWPRef_leafList_NRCellDU', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'bWPRef_leafList_NRCellDU', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3559,8 +3559,8 @@
                                   <td>{{ (selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.pLMNId_MCC === selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.pLMNId_MCC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.pLMNId_MCC !== selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.pLMNId_MCC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'bWPRef_leafList_NRCellDU', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'bWPRef_leafList_NRCellDU', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3571,8 +3571,8 @@
                                   <td>{{ (selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.pLMNId_MNC === selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.pLMNId_MNC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.pLMNId_MNC !== selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.pLMNId_MNC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'bWPRef_leafList_NRCellDU', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'bWPRef_leafList_NRCellDU', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3583,8 +3583,8 @@
                                   <td>{{ (selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.gNBDUId === selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.gNBDUId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.gNBDUId !== selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.gNBDUId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'bWPRef_leafList_NRCellDU', 'gNBDUId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'bWPRef_leafList_NRCellDU', 'gNBDUId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3595,8 +3595,8 @@
                                   <td>{{ (selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.cellLocalId === selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.cellLocalId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.cellLocalId !== selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.cellLocalId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'bWPRef_leafList_NRCellDU', 'cellLocalId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'bWPRef_leafList_NRCellDU', 'cellLocalId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3609,8 +3609,8 @@
                                   <td>{{ (selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.bWPRef === selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.bWPRef) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.bWPRef !== selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.bWPRef">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'bWPRef_leafList_NRCellDU', 'bWPRef')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'bWPRef_leafList_NRCellDU', 'bWPRef')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3647,8 +3647,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.gNBId === selectedExtensionInfo?.NRSectorCarrier?.ds?.gNBId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.gNBId !== selectedExtensionInfo?.NRSectorCarrier?.ds?.gNBId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'gNBId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'gNBId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3659,8 +3659,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.gNBIdLength === selectedExtensionInfo?.NRSectorCarrier?.ds?.gNBIdLength) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.gNBIdLength !== selectedExtensionInfo?.NRSectorCarrier?.ds?.gNBIdLength">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3671,8 +3671,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.pLMNId_MCC === selectedExtensionInfo?.NRSectorCarrier?.ds?.pLMNId_MCC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.pLMNId_MCC !== selectedExtensionInfo?.NRSectorCarrier?.ds?.pLMNId_MCC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3683,8 +3683,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.pLMNId_MNC === selectedExtensionInfo?.NRSectorCarrier?.ds?.pLMNId_MNC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.pLMNId_MNC !== selectedExtensionInfo?.NRSectorCarrier?.ds?.pLMNId_MNC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3695,8 +3695,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.gNBDUId === selectedExtensionInfo?.NRSectorCarrier?.ds?.gNBDUId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.gNBDUId !== selectedExtensionInfo?.NRSectorCarrier?.ds?.gNBDUId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'gNBDUId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'gNBDUId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3709,8 +3709,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.arfcnDL === selectedExtensionInfo?.NRSectorCarrier?.ds?.arfcnDL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.arfcnDL !== selectedExtensionInfo?.NRSectorCarrier?.ds?.arfcnDL">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'arfcnDL')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'arfcnDL')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3723,8 +3723,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.arfcnUL === selectedExtensionInfo?.NRSectorCarrier?.ds?.arfcnUL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.arfcnUL !== selectedExtensionInfo?.NRSectorCarrier?.ds?.arfcnUL">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'arfcnUL')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'arfcnUL')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3737,8 +3737,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.bSChannelBwDL === selectedExtensionInfo?.NRSectorCarrier?.ds?.bSChannelBwDL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.bSChannelBwDL !== selectedExtensionInfo?.NRSectorCarrier?.ds?.bSChannelBwDL">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'bSChannelBwDL')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'bSChannelBwDL')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3751,8 +3751,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.bSChannelBwUL === selectedExtensionInfo?.NRSectorCarrier?.ds?.bSChannelBwUL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.bSChannelBwUL !== selectedExtensionInfo?.NRSectorCarrier?.ds?.bSChannelBwUL">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'bSChannelBwUL')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'bSChannelBwUL')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3765,8 +3765,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.txDirection === selectedExtensionInfo?.NRSectorCarrier?.ds?.txDirection) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.txDirection !== selectedExtensionInfo?.NRSectorCarrier?.ds?.txDirection">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'txDirection')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'txDirection')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3779,8 +3779,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.configuredMaxTxPower === selectedExtensionInfo?.NRSectorCarrier?.ds?.configuredMaxTxPower) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.configuredMaxTxPower !== selectedExtensionInfo?.NRSectorCarrier?.ds?.configuredMaxTxPower">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'configuredMaxTxPower')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'configuredMaxTxPower')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3793,8 +3793,8 @@
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.configuredMaxTxEIRP === selectedExtensionInfo?.NRSectorCarrier?.ds?.configuredMaxTxEIRP) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.NRSectorCarrier?.db?.configuredMaxTxEIRP !== selectedExtensionInfo?.NRSectorCarrier?.ds?.configuredMaxTxEIRP">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'NRSectorCarrier', 'configuredMaxTxEIRP')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'NRSectorCarrier', 'configuredMaxTxEIRP')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3831,8 +3831,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.gNBId === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.gNBId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.gNBId !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.gNBId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'gNBId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'gNBId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3843,8 +3843,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.gNBIdLength === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.gNBIdLength) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.gNBIdLength !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.gNBIdLength">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3855,8 +3855,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.pLMNId_MCC === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.pLMNId_MCC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.pLMNId_MCC !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.pLMNId_MCC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3867,8 +3867,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.pLMNId_MNC === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.pLMNId_MNC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.pLMNId_MNC !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.pLMNId_MNC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3879,8 +3879,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.gNBDUId === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.gNBDUId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.gNBDUId !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.gNBDUId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'gNBDUId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'gNBDUId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3893,8 +3893,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteIdentification === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteIdentification) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteIdentification !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteIdentification">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'siteIdentification')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'siteIdentification')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3907,8 +3907,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteLatitude === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteLatitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteLatitude !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteLatitude">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'siteLatitude')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'siteLatitude')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3921,8 +3921,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteLongitude === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteLongitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteLongitude !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteLongitude">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'siteLongitude')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'siteLongitude')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3935,8 +3935,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteDescription === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteDescription) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteDescription !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteDescription">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'siteDescription')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'siteDescription')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3949,8 +3949,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.equipmentType === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.equipmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.equipmentType !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.equipmentType">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'equipmentType')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'equipmentType')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3963,8 +3963,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.environmentType === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.environmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.environmentType !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.environmentType">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'environmentType')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'environmentType')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -3977,8 +3977,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.powerInterface === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.powerInterface) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_NRSector?.db?.powerInterface !== selectedExtensionInfo?.peeParametersList_NRSector?.ds?.powerInterface">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_NRSector', 'powerInterface')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_NRSector', 'powerInterface')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4015,8 +4015,8 @@
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.gNBId === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.gNBId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_NRSector?.db?.gNBId !== selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.gNBId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_NRSector', 'gNBId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_NRSector', 'gNBId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4027,8 +4027,8 @@
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.gNBIdLength === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.gNBIdLength) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_NRSector?.db?.gNBIdLength !== selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.gNBIdLength">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_NRSector', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_NRSector', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4039,8 +4039,8 @@
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.pLMNId_MCC === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.pLMNId_MCC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_NRSector?.db?.pLMNId_MCC !== selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.pLMNId_MCC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_NRSector', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_NRSector', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4051,8 +4051,8 @@
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.pLMNId_MNC === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.pLMNId_MNC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_NRSector?.db?.pLMNId_MNC !== selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.pLMNId_MNC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_NRSector', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_NRSector', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4065,8 +4065,8 @@
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.autoScalable === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.autoScalable) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_NRSector?.db?.autoScalable !== selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.autoScalable">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_NRSector', 'autoScalable')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_NRSector', 'autoScalable')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4079,8 +4079,8 @@
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.flavourId === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.flavourId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_NRSector?.db?.flavourId !== selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.flavourId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_NRSector', 'flavourId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_NRSector', 'flavourId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4093,8 +4093,8 @@
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.vnfInstanceId === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.vnfInstanceId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_NRSector?.db?.vnfInstanceId !== selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.vnfInstanceId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_NRSector', 'vnfInstanceId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_NRSector', 'vnfInstanceId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4107,8 +4107,8 @@
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.vnfdId === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.vnfdId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_NRSector?.db?.vnfdId !== selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.vnfdId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_NRSector', 'vnfdId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_NRSector', 'vnfdId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4145,8 +4145,8 @@
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.gNBId === selectedExtensionInfo?.BWP?.ds?.gNBId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.gNBId !== selectedExtensionInfo?.BWP?.ds?.gNBId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'BWP', 'gNBId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'BWP', 'gNBId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4157,8 +4157,8 @@
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.gNBIdLength === selectedExtensionInfo?.BWP?.ds?.gNBIdLength) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.gNBIdLength !== selectedExtensionInfo?.BWP?.ds?.gNBIdLength">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'BWP', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'BWP', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4169,8 +4169,8 @@
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.pLMNId_MCC === selectedExtensionInfo?.BWP?.ds?.pLMNId_MCC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.pLMNId_MCC !== selectedExtensionInfo?.BWP?.ds?.pLMNId_MCC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'BWP', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'BWP', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4181,8 +4181,8 @@
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.pLMNId_MNC === selectedExtensionInfo?.BWP?.ds?.pLMNId_MNC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.pLMNId_MNC !== selectedExtensionInfo?.BWP?.ds?.pLMNId_MNC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'BWP', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'BWP', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4193,8 +4193,8 @@
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.gNBDUId === selectedExtensionInfo?.BWP?.ds?.gNBDUId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.gNBDUId !== selectedExtensionInfo?.BWP?.ds?.gNBDUId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'BWP', 'gNBDUId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'BWP', 'gNBDUId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4207,8 +4207,8 @@
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.bwpContext === selectedExtensionInfo?.BWP?.ds?.bwpContext) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.bwpContext !== selectedExtensionInfo?.BWP?.ds?.bwpContext">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'BWP', 'bwpContext')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'BWP', 'bwpContext')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4221,8 +4221,8 @@
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.isInitialBwp === selectedExtensionInfo?.BWP?.ds?.isInitialBwp) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.isInitialBwp !== selectedExtensionInfo?.BWP?.ds?.isInitialBwp">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'BWP', 'isInitialBwp')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'BWP', 'isInitialBwp')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4235,8 +4235,8 @@
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.subCarrierSpacing === selectedExtensionInfo?.BWP?.ds?.subCarrierSpacing) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.subCarrierSpacing !== selectedExtensionInfo?.BWP?.ds?.subCarrierSpacing">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'BWP', 'subCarrierSpacing')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'BWP', 'subCarrierSpacing')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4249,8 +4249,8 @@
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.cyclicPrefix === selectedExtensionInfo?.BWP?.ds?.cyclicPrefix) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.cyclicPrefix !== selectedExtensionInfo?.BWP?.ds?.cyclicPrefix">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'BWP', 'cyclicPrefix')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'BWP', 'cyclicPrefix')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4263,8 +4263,8 @@
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.startRB === selectedExtensionInfo?.BWP?.ds?.startRB) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.startRB !== selectedExtensionInfo?.BWP?.ds?.startRB">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'BWP', 'startRB')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'BWP', 'startRB')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4277,8 +4277,8 @@
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.numberOfRBs === selectedExtensionInfo?.BWP?.ds?.numberOfRBs) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.numberOfRBs !== selectedExtensionInfo?.BWP?.ds?.numberOfRBs">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'BWP', 'numberOfRBs')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'BWP', 'numberOfRBs')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4312,11 +4312,11 @@
                                   <td>gNBId</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.gNBId }}</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.gNBId }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.peeParametersList_BWP?.db?.gNBId === selectedExtensionInfo?.peeParametersList_BWP?.ds?.gNBId ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.gNBId === selectedExtensionInfo?.peeParametersList_BWP?.ds?.gNBId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.gNBId !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.gNBId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'gNBId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'gNBId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4327,8 +4327,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.gNBIdLength === selectedExtensionInfo?.peeParametersList_BWP?.ds?.gNBIdLength) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.gNBIdLength !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.gNBIdLength">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4339,8 +4339,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.pLMNId_MCC === selectedExtensionInfo?.peeParametersList_BWP?.ds?.pLMNId_MCC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.pLMNId_MCC !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.pLMNId_MCC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4348,11 +4348,11 @@
                                   <td>pLMNId_MNC</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.pLMNId_MNC }}</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.pLMNId_MNC }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.peeParametersList_BWP?.db?.pLMNId_MNC === selectedExtensionInfo?.peeParametersList_BWP?.ds?.pLMNId_MNC ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.pLMNId_MNC === selectedExtensionInfo?.peeParametersList_BWP?.ds?.pLMNId_MNC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.pLMNId_MNC !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.pLMNId_MNC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4363,8 +4363,8 @@
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.gNBDUId === selectedExtensionInfo?.peeParametersList_BWP?.ds?.gNBDUId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.gNBDUId !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.gNBDUId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'gNBDUId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'gNBDUId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4372,11 +4372,11 @@
                                   <td>siteIdentification</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteIdentification }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteIdentification }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.peeParametersList_BWP?.db?.siteIdentification === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteIdentification ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.siteIdentification === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteIdentification) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.siteIdentification !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteIdentification">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'siteIdentification')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'siteIdentification')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4384,11 +4384,11 @@
                                   <td>siteLatitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLatitude }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLatitude }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLatitude === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLatitude ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLatitude === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLatitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLatitude !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLatitude">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'siteLatitude')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'siteLatitude')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4396,11 +4396,11 @@
                                   <td>siteLongitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLongitude }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLongitude }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLongitude === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLongitude ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLongitude === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLongitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLongitude !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLongitude">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'siteLongitude')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'siteLongitude')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4408,11 +4408,11 @@
                                   <td>siteDescription</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteDescription }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteDescription }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.peeParametersList_BWP?.db?.siteDescription === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteDescription ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.siteDescription === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteDescription) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.siteDescription !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteDescription">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'siteDescription')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'siteDescription')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4420,11 +4420,11 @@
                                   <td>equipmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.equipmentType }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.equipmentType }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.peeParametersList_BWP?.db?.equipmentType === selectedExtensionInfo?.peeParametersList_BWP?.ds?.equipmentType ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.equipmentType === selectedExtensionInfo?.peeParametersList_BWP?.ds?.equipmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.equipmentType !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.equipmentType">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'equipmentType')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'equipmentType')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4432,11 +4432,11 @@
                                   <td>environmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.environmentType }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.environmentType }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.peeParametersList_BWP?.db?.environmentType === selectedExtensionInfo?.peeParametersList_BWP?.ds?.environmentType ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.environmentType === selectedExtensionInfo?.peeParametersList_BWP?.ds?.environmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.environmentType !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.environmentType">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'environmentType')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'environmentType')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4444,11 +4444,11 @@
                                   <td>powerInterface</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.powerInterface }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.powerInterface }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.peeParametersList_BWP?.db?.powerInterface === selectedExtensionInfo?.peeParametersList_BWP?.ds?.powerInterface ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.powerInterface === selectedExtensionInfo?.peeParametersList_BWP?.ds?.powerInterface) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.peeParametersList_BWP?.db?.powerInterface !== selectedExtensionInfo?.peeParametersList_BWP?.ds?.powerInterface">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'peeParametersList_BWP', 'powerInterface')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'peeParametersList_BWP', 'powerInterface')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4482,11 +4482,11 @@
                                   <td>gNBId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.gNBId }}</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.gNBId }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.vnfParametersList_BWP?.db?.gNBId === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.gNBId ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.gNBId === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.gNBId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_BWP?.db?.gNBId !== selectedExtensionInfo?.vnfParametersList_BWP?.ds?.gNBId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_BWP', 'gNBId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_BWP', 'gNBId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4494,11 +4494,11 @@
                                   <td>gNBIdLength</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.gNBIdLength }}</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.gNBIdLength }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.vnfParametersList_BWP?.db?.gNBIdLength === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.gNBIdLength ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.gNBIdLength === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.gNBIdLength) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_BWP?.db?.gNBIdLength !== selectedExtensionInfo?.vnfParametersList_BWP?.ds?.gNBIdLength">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_BWP', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_BWP', 'gNBIdLength')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4506,11 +4506,11 @@
                                   <td>pLMNId_MCC</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.pLMNId_MCC }}</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.pLMNId_MCC }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.vnfParametersList_BWP?.db?.pLMNId_MCC === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.pLMNId_MCC ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.pLMNId_MCC === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.pLMNId_MCC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_BWP?.db?.pLMNId_MCC !== selectedExtensionInfo?.vnfParametersList_BWP?.ds?.pLMNId_MCC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_BWP', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_BWP', 'pLMNId_MCC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4518,11 +4518,11 @@
                                   <td>pLMNId_MNC</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.pLMNId_MNC }}</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.pLMNId_MNC }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.vnfParametersList_BWP?.db?.pLMNId_MNC === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.pLMNId_MNC ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.pLMNId_MNC === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.pLMNId_MNC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_BWP?.db?.pLMNId_MNC !== selectedExtensionInfo?.vnfParametersList_BWP?.ds?.pLMNId_MNC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_BWP', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_BWP', 'pLMNId_MNC')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4532,9 +4532,9 @@
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.autoScalable }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.autoScalable === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.autoScalable) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
-                                    <span *ngIf="selectedExtensionInfo?.vnfParametersList_BWP?.db?.pLMNId_MNC !== selectedExtensionInfo?.vnfParametersList_BWP?.ds?.pLMNId_MNC">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                    <span *ngIf="selectedExtensionInfo?.vnfParametersList_BWP?.db?.autoScalable !== selectedExtensionInfo?.vnfParametersList_BWP?.ds?.autoScalable">
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_BWP', 'autoScalable')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_BWP', 'autoScalable')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4542,11 +4542,11 @@
                                   <td>flavourId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.flavourId }} <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.flavourId }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.vnfParametersList_BWP?.db?.flavourId === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.flavourId ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.flavourId === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.flavourId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_BWP?.db?.flavourId !== selectedExtensionInfo?.vnfParametersList_BWP?.ds?.flavourId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_BWP', 'flavourId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_BWP', 'flavourId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4554,11 +4554,11 @@
                                   <td>vnfInstanceId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfInstanceId }} <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfInstanceId }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfInstanceId === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfInstanceId ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfInstanceId === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfInstanceId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfInstanceId !== selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfInstanceId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_BWP', 'vnfInstanceId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_BWP', 'vnfInstanceId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
@@ -4566,11 +4566,11 @@
                                   <td>vnfdId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfdId }} <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfdId }}</td>
-                                  <td>{{ ( selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfdId === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfdId ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfdId === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfdId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfdId !== selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfdId">
-                                      <button>{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
-                                      <button>{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'vnfParametersList_BWP', 'vnfdId')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
+                                      <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_BWP', 'vnfdId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
                                 </tr>
