@@ -2089,13 +2089,16 @@ export class BSInfoComponent implements OnInit {
     return this.paramOptions[paramName] || [];
   }
 
+  editOption: string = "";
+
   // @2024/05/09 Add
   openEditSingleParamValueWindow( option: string, ParamTableName: string, EditParamName: string, currentValue: any ): void {
 
-    // 一開啟視窗先初始化三變數
+    // 一開啟視窗先初始化四變數
     this.paramTableName = "";
     this.editParamName = "";
     this.editParamCurrentValue = "";
+    this.editOption = "";
 
     // 輸出當前要調整的欄位內參數名稱以供調試
     console.log( "paramTableName is:", ParamTableName );
@@ -2103,6 +2106,7 @@ export class BSInfoComponent implements OnInit {
     this.paramTableName = ParamTableName;
     this.editParamName = EditParamName;
     this.editParamCurrentValue = currentValue;
+    this.editOption = option;
 
     // 呼叫函數初始化表單
     this.createEditSingleParamForm(); // 初始化表單
@@ -2118,83 +2122,124 @@ export class BSInfoComponent implements OnInit {
     });
   }
 
-  applyChanges(): void {
-    // Logic to apply changes
-    console.log( 'Changes applied:', this.editSingleParamForm.value );
+
+  // 一體式基站用
+  updateSingleParamInExtensionInfoTable(
+    extension: ExtensionInfo_ForUpdateBs[],
+    option: string,
+    ParamTableName: string,
+    editParamName: string,
+    newValue: any
+  ): any {
+    const paramTableName = this.convertToParamTableEnum(ParamTableName);
+
+    return extension.map(ext => {
+      const fieldData = ext[paramTableName];
+      if (fieldData) {
+        const updateField = option === 'NMS' ? 'db' : 'ds';
+        const detail = fieldData[updateField] as any; // 斷言為任意類型，以允許索引訪問
+        if (updateField in fieldData && detail) {
+          if ( editParamName in detail ) {
+            // 更新指定的參數值，並保留其他所有參數
+            const updatedDetails = {
+              ...detail,
+              [editParamName]: newValue
+            };
+            return { [paramTableName]: { [updateField]: updatedDetails } };
+          }
+        }
+      }
+      return null; // 如果沒有更新，返回 null
+    }).filter(ext => ext !== null); // 過濾出已更新的元素
   }
+
+  // 分佈式基站用
+  updateSingleParamInExtensionInfoTable_dist(
+    extension: ExtensionInfo_dist_ForUpdateDistributedBs[],
+    option: string,
+    ParamTableName: string,
+    editParamName: string,
+    newValue: any
+  ): any {
+    const paramTableName = this.convertToParamTableEnum(ParamTableName);
+
+    return extension.map(ext => {
+      const fieldData = ext[paramTableName];
+      if (fieldData) {
+        const updateField = option === 'NMS' ? 'db' : 'ds';
+        const detail = fieldData[updateField] as any; // 斷言為任意類型，以允許索引訪問
+        if (updateField in fieldData && detail) {
+          if (editParamName in detail) {
+            // 更新指定的參數值，並保留其他所有參數
+            const updatedDetails = {
+              ...detail,
+              [editParamName]: newValue
+            };
+            return { [paramTableName]: { [updateField]: updatedDetails } };
+          }
+        }
+      }
+      return null; // 如果沒有更新，返回 null
+    }).filter(ext => ext !== null); // 過濾出已更新的元素
+  }
+
 
   // 編輯單參數欄位設定值用 @2024/05/09 Add
   BsParamEdit_editSingleParamValue_Submit( option: string, paramTableName: string, editParamName: string ) {
+    
+    // 從表單獲取新值
+    const newValue = this.editSingleParamForm.get('newParamValue')!.value;
 
-      // 若 bsType 為 "1"
-      if ( this.bsType === "1" ) {    
-  
-        if( editParamName ) {
-  
-          // 建立更新一體式基站的資料物件
-          const updateData: ForUpdateBs = {
-            // 設定編輯類型
-            edit_type: 4,
-            // 設定 session 的值
-            session: this.sessionId,
-            // 設定 id 的值
-            id: this.selectBsInfo.id,
-            // 設定 name 的值
-            name: this.selectBsInfo.name,
-            // 設定 description 的值
-            description: this.selectBsInfo.description,
-            // 設定 bstype 的值
-            bstype: String( this.selectBsInfo.bstype ),
-            // 設定 position 的值
-            position: this.selectBsInfo.position,
-            // 設定 components 的值
-            components: this.selectBsInfo.components,
-            // 設定 extension_info 的值
-            extension_info: this.syncSingleParamInExtensionInfoTable( this.selectBsInfo.extension_info, option, paramTableName, editParamName )
-          };
-  
-          console.log("使用", option, "進行同步，POST 的 JSON 為:", updateData );
-  
-          // 呼叫 updateBs() 方法更新一體式基站
-          this.updateBs( updateData );
-  
+    // 若 bsType 為 "1"
+    if ( this.bsType === "1" ) {
+        if ( editParamName ) {
+            const updatedExtensionInfo = this.updateSingleParamInExtensionInfoTable(
+                this.selectBsInfo.extension_info, 
+                option, 
+                paramTableName, 
+                editParamName, 
+                newValue
+            );
+
+            const updateData: ForUpdateBs = {
+                edit_type: 4,
+                session: this.sessionId,
+                id: this.selectBsInfo.id,
+                name: this.selectBsInfo.name,
+                description: this.selectBsInfo.description,
+                bstype: String( this.selectBsInfo.bstype ),
+                position: this.selectBsInfo.position,
+                components: this.selectBsInfo.components,
+                extension_info: updatedExtensionInfo
+            };
+
+            console.log( "提交更新的數據:", updateData );
+            this.updateBs( updateData );
         }
-  
-      // 若 bsType 為 "2"
-      } else if ( this.bsType === "2" ) {
-  
+    } else if ( this.bsType === "2" ) {
         if ( this.selectedExtensionInfo && this.selectedNci === this.selectedExtensionInfo.nci ) {
-          const filteredInfo = this.selectBsInfo_dist.extension_info.filter( info => info.nci === this.selectedNci );
-          const syncInfo = filteredInfo.map( info => this.syncSingleParamInExtensionInfoTable_dist( [info], option, paramTableName, editParamName)[0] );
-  
-          // 建立更新分佈式基站的資料物件
-          const updateData: ForUpdateDistributedBs = {
-            // 設定編輯類型
-            edit_type: 4,
-            // 設定 session 的值
-            session: this.sessionId,
-            // 設定 id 的值
-            id: this.selectBsInfo_dist.id,
-            // 設定 name 的值
-            name: this.selectBsInfo_dist.name,
-            // 設定 bstype 的值
-            bstype: String( this.selectBsInfo_dist.bstype ),
-            // 設定 description 的值
-            description: this.selectBsInfo_dist.description,
-            // 設定 components 的值
-            components: this.selectBsInfo_dist.components,
-  
-            // 設定 extension_info 的值
-            extension_info: syncInfo
-          };
-  
-          console.log("使用", option, "進行同步，POST 的 JSON 為:", updateData );
-  
-          // 呼叫 updateDistributedBs() 方法更新分佈式基站
-          this.updateDistributedBs( updateData );
+            const filteredInfo = this.selectBsInfo_dist.extension_info.filter( info => info.nci === this.selectedNci );
+            const updatedExtensionInfo = filteredInfo.map( info => 
+                this.updateSingleParamInExtensionInfoTable_dist( [info], option, paramTableName, editParamName, newValue )[0]
+            );
+
+            const updateData: ForUpdateDistributedBs = {
+                edit_type: 4,
+                session: this.sessionId,
+                id: this.selectBsInfo_dist.id,
+                name: this.selectBsInfo_dist.name,
+                bstype: String( this.selectBsInfo_dist.bstype ),
+                description: this.selectBsInfo_dist.description,
+                components: this.selectBsInfo_dist.components,
+                extension_info: updatedExtensionInfo
+            };
+
+            console.log( "提交更新的數據:", updateData );
+            this.updateDistributedBs( updateData );
         }
-      }
     }
+  }
+
 
 
 // ↑ 基站參數區 @2024/05/09 Update ↑

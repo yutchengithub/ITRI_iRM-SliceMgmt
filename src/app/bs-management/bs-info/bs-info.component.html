@@ -4625,10 +4625,10 @@
             <li>
               <label>{{ languageService.i18n['BS.setNewParamValue'] }}:</label>
               <!-- 條件渲染下拉選單或輸入框 -->
-              <ng-container *ngIf="isDropdown(editParamName); else textInput">
+              <ng-container *ngIf="isDropdown( editParamName ); else textInput">
                 <select formControlName="newParamValue" matNativeControl>
                   <option value="" disabled selected>{{ languageService.i18n['BS.selectParameterValue'] }}</option>
-                  <option *ngFor="let option of getOptions(editParamName)" [value]="option.value">{{ option.label }}</option>
+                  <option *ngFor="let option of getOptions( editParamName )" [value]="option.value">{{ option.label }}</option>
                 </select>
                 <mat-error *ngIf="editSingleParamForm.get('newParamValue')?.touched && editSingleParamForm.get('newParamValue')?.invalid">
                   <ng-container *ngIf="editSingleParamForm.get('newParamValue')?.errors?.['required']">
@@ -4649,7 +4649,7 @@
           </ul>
         </form>
       <div class="buttons">
-        <button type="button" (click)="applyChanges()">{{ languageService.i18n['BS.apply'] }}</button>
+        <button type="button" (click)="BsParamEdit_editSingleParamValue_Submit( editOption, paramTableName, editParamName )">{{ languageService.i18n['BS.apply'] }}</button>
         <button type="button" mat-dialog-close>{{ languageService.i18n['cancel'] }}</button>
       </div>
     </ng-template>
