@@ -134,7 +134,7 @@ export interface ChartData {
   selector: 'app-bs-info',
   templateUrl: './bs-info.component.html',
   styleUrls: ['./bs-info.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BSInfoComponent implements OnInit {
 
