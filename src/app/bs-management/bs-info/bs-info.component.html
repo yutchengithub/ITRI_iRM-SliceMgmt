@@ -370,7 +370,7 @@
               </div>
             </form>
 
-            <!-- Basic @2024/05/08 OK - 剩編輯特定欄位功能 -->
+            <!-- Basic @2024/05/09 OK -->
             <div class="" *ngIf="bsParametersType === 'Basic'">
               <div class="table basicParmType">
                 <table>
@@ -529,7 +529,8 @@
                     <tr>
                       <td>TAC</td>
                       <td>{{ selectedExtensionInfo?.NRCellDU?.db?.nRTAC }}
-                        <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'nRTAC', selectedExtensionInfo?.NRCellDU?.db?.nRTAC)">edit</mat-icon>
+                        <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" 
+                                    (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'nRTAC', selectedExtensionInfo?.NRCellDU?.db?.nRTAC)">edit</mat-icon>
                       </td>
                       <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.nRTAC }}</td>
                       <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.nRTAC === selectedExtensionInfo?.NRCellDU?.ds?.nRTAC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -545,13 +546,13 @@
               </div>
             </div>
 
-            <!-- Advanced @2024/05/08 OK - 剩編輯特定欄位功能 -->
+            <!-- Advanced @2024/05/09 OK -->
             <div class="collabsible Advanced" *ngIf=" bsParametersType === 'Advanced' ">
               <div class="">
                 <div class="">
                   <div class="collabsible">
 
-                    <!-- gNBCUFunction @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- gNBCUFunction @2024/05/09 OK -->
                     <div>
                       <span>gNBCUFunction</span>
                       <input id="gNBCUFunction" class="toggle" type="checkbox">
@@ -621,7 +622,7 @@
                                 <tr>
                                   <td>gNBCUName</td>
                                   <td>{{ selectedExtensionInfo?.gNBCUFunction?.db?.gNBCUName }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'gNBCUFunction', 'gNBCUName', selectedExtensionInfo?.gNBCUFunction?.db?.gNBCUName)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.gNBCUFunction?.ds?.gNBCUName }}</td>
                                   <td>{{ (selectedExtensionInfo?.gNBCUFunction?.db?.gNBCUName === selectedExtensionInfo?.gNBCUFunction?.ds?.gNBCUName) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -635,12 +636,12 @@
                                 <tr>
                                   <td>gNB_type</td>
                                   <td>{{ selectedExtensionInfo?.gNBCUFunction?.db?.['gNB-type'] }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'gNBCUFunction', 'gNB-type', selectedExtensionInfo?.gNBCUFunction?.db?.['gNB-type'])">edit</mat-icon>
                                   </td>
-                                  <td>{{ selectedExtensionInfo?.gNBCUFunction?.ds?.['gNB-type']  }}</td>
-                                  <td>{{ (selectedExtensionInfo?.gNBCUFunction?.db?.['gNB-type']  === selectedExtensionInfo?.gNBCUFunction?.ds?.['gNB-type'] ) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
+                                  <td>{{ selectedExtensionInfo?.gNBCUFunction?.ds?.['gNB-type'] }}</td>
+                                  <td>{{ (selectedExtensionInfo?.gNBCUFunction?.db?.['gNB-type'] === selectedExtensionInfo?.gNBCUFunction?.ds?.['gNB-type']) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
-                                    <span *ngIf="selectedExtensionInfo?.gNBCUFunction?.db?.['gNB-type']  !== selectedExtensionInfo?.gNBCUFunction?.ds?.['gNB-type'] ">
+                                    <span *ngIf="selectedExtensionInfo?.gNBCUFunction?.db?.['gNB-type'] !== selectedExtensionInfo?.gNBCUFunction?.ds?.['gNB-type']">
                                       <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('NMS', 'gNBCUFunction', 'gNB-type')">{{ languageService.i18n['BS.syncWithNMSSettings'] }}</button>
                                       <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'gNBCUFunction', 'gNB-type')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
@@ -653,7 +654,7 @@
                       </div>
                     </div>
                     
-                    <!-- peeParametersList_CU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- peeParametersList_CU @2024/05/09 OK -->
                     <div>
                       <span>peeParametersList_CU</span>
                       <input id="peeParametersList_CU" class="toggle" type="checkbox">
@@ -723,7 +724,7 @@
                                 <tr>
                                   <td>siteIdentification</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.db?.siteIdentification }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_CU', 'siteIdentification', selectedExtensionInfo?.peeParametersList_CU?.db?.siteIdentification)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.ds?.siteIdentification }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_CU?.db?.siteIdentification === selectedExtensionInfo?.peeParametersList_CU?.ds?.siteIdentification) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -737,7 +738,7 @@
                                 <tr>
                                   <td>siteLatitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.db?.siteLatitude }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_CU', 'siteLatitude', selectedExtensionInfo?.peeParametersList_CU?.db?.siteLatitude)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.ds?.siteLatitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_CU?.db?.siteLatitude === selectedExtensionInfo?.peeParametersList_CU?.ds?.siteLatitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -751,7 +752,7 @@
                                 <tr>
                                   <td>siteLongitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.db?.siteLongitude }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_CU', 'siteLongitude', selectedExtensionInfo?.peeParametersList_CU?.db?.siteLongitude)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.ds?.siteLongitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_CU?.db?.siteLongitude === selectedExtensionInfo?.peeParametersList_CU?.ds?.siteLongitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -765,7 +766,7 @@
                                 <tr>
                                   <td>siteDescription</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.db?.siteDescription }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_CU', 'siteDescription', selectedExtensionInfo?.peeParametersList_CU?.db?.siteDescription)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.ds?.siteDescription }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_CU?.db?.siteDescription === selectedExtensionInfo?.peeParametersList_CU?.ds?.siteDescription) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -779,7 +780,7 @@
                                 <tr>
                                   <td>equipmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.db?.equipmentType }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_CU', 'equipmentType', selectedExtensionInfo?.peeParametersList_CU?.db?.equipmentType)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.ds?.equipmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_CU?.db?.equipmentType === selectedExtensionInfo?.peeParametersList_CU?.ds?.equipmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -793,7 +794,7 @@
                                 <tr>
                                   <td>environmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.db?.environmentType }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_CU', 'environmentType', selectedExtensionInfo?.peeParametersList_CU?.db?.environmentType)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.ds?.environmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_CU?.db?.environmentType === selectedExtensionInfo?.peeParametersList_CU?.ds?.environmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -807,7 +808,7 @@
                                 <tr>
                                   <td>powerInterface</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.db?.powerInterface }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_CU', 'powerInterface', selectedExtensionInfo?.peeParametersList_CU?.db?.powerInterface)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_CU?.ds?.powerInterface }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_CU?.db?.powerInterface === selectedExtensionInfo?.peeParametersList_CU?.ds?.powerInterface) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -825,7 +826,7 @@
                       </div>
                     </div>
 
-                    <!-- vnfParametersList_CU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- vnfParametersList_CU @2024/05/09 OK-->
                     <div>
                       <span>vnfParametersList_CU</span>
                       <input id="vnfParametersList_CU" class="toggle" type="checkbox">
@@ -895,7 +896,7 @@
                                 <tr>
                                   <td>autoScalable</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_CU?.db?.autoScalable }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_CU', 'autoScalable', selectedExtensionInfo?.vnfParametersList_CU?.db?.autoScalable)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_CU?.ds?.autoScalable }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_CU?.db?.autoScalable === selectedExtensionInfo?.vnfParametersList_CU?.ds?.autoScalable) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -909,7 +910,7 @@
                                 <tr>
                                   <td>flavourId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_CU?.db?.flavourId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_CU', 'flavourId', selectedExtensionInfo?.vnfParametersList_CU?.db?.flavourId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_CU?.ds?.flavourId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_CU?.db?.flavourId === selectedExtensionInfo?.vnfParametersList_CU?.ds?.flavourId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -923,7 +924,7 @@
                                 <tr>
                                   <td>vnfInstanceId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_CU?.db?.vnfInstanceId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_CU', 'vnfInstanceId', selectedExtensionInfo?.vnfParametersList_CU?.db?.vnfInstanceId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_CU?.ds?.vnfInstanceId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_CU?.db?.vnfInstanceId === selectedExtensionInfo?.vnfParametersList_CU?.ds?.vnfInstanceId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -937,7 +938,7 @@
                                 <tr>
                                   <td>vnfdId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_CU?.db?.vnfdId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_CU', 'vnfdId', selectedExtensionInfo?.vnfParametersList_CU?.db?.vnfdId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_CU?.ds?.vnfdId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_CU?.db?.vnfdId === selectedExtensionInfo?.vnfParametersList_CU?.ds?.vnfdId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -955,7 +956,7 @@
                       </div>
                     </div>
 
-                    <!-- EP_F1C_CU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- EP_F1C_CU @2024/05/09 OK -->
                     <div>
                       <span>EP_F1C_CU</span>
                       <input id="EP_F1C_CU" class="toggle" type="checkbox">
@@ -1025,7 +1026,7 @@
                                 <tr>
                                   <td>localAddress_ip_addr</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_CU?.db?.localAddress_ip_addr }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1C_CU', 'localAddress_ip_addr', selectedExtensionInfo?.EP_F1C_CU?.db?.localAddress_ip_addr)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_CU?.ds?.localAddress_ip_addr }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1C_CU?.db?.localAddress_ip_addr === selectedExtensionInfo?.EP_F1C_CU?.ds?.localAddress_ip_addr) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1039,7 +1040,7 @@
                                 <tr>
                                   <td>localAddress_vlan_id</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_CU?.db?.localAddress_vlan_id }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1C_CU', 'localAddress_vlan_id', selectedExtensionInfo?.EP_F1C_CU?.db?.localAddress_vlan_id)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_CU?.ds?.localAddress_vlan_id }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1C_CU?.db?.localAddress_vlan_id === selectedExtensionInfo?.EP_F1C_CU?.ds?.localAddress_vlan_id) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1053,7 +1054,7 @@
                                 <tr>
                                   <td>remoteAddress</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_CU?.db?.remoteAddress }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1C_CU', 'remoteAddress', selectedExtensionInfo?.EP_F1C_CU?.db?.remoteAddress)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_CU?.ds?.remoteAddress }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1C_CU?.db?.remoteAddress === selectedExtensionInfo?.EP_F1C_CU?.ds?.remoteAddress) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1071,7 +1072,7 @@
                       </div>
                     </div>
 
-                    <!-- EP_F1U_CU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- EP_F1U_CU @2024/05/09 OK -->
                     <div>
                       <span>EP_F1U_CU</span>
                       <input id="EP_F1U_CU" class="toggle" type="checkbox">
@@ -1141,7 +1142,7 @@
                                 <tr>
                                   <td>localAddress_ip_addr</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_CU?.db?.localAddress_ip_addr }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1U_CU', 'localAddress_ip_addr', selectedExtensionInfo?.EP_F1U_CU?.db?.localAddress_ip_addr)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_CU?.ds?.localAddress_ip_addr }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1U_CU?.db?.localAddress_ip_addr === selectedExtensionInfo?.EP_F1U_CU?.ds?.localAddress_ip_addr) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1155,7 +1156,7 @@
                                 <tr>
                                   <td>localAddress_vlan_id</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_CU?.db?.localAddress_vlan_id }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1U_CU', 'localAddress_vlan_id', selectedExtensionInfo?.EP_F1U_CU?.db?.localAddress_vlan_id)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_CU?.ds?.localAddress_vlan_id }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1U_CU?.db?.localAddress_vlan_id === selectedExtensionInfo?.EP_F1U_CU?.ds?.localAddress_vlan_id) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1169,7 +1170,7 @@
                                 <tr>
                                   <td>remoteAddress</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_CU?.db?.remoteAddress }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1U_CU', 'remoteAddress', selectedExtensionInfo?.EP_F1U_CU?.db?.remoteAddress)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_CU?.ds?.remoteAddress }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1U_CU?.db?.remoteAddress === selectedExtensionInfo?.EP_F1U_CU?.ds?.remoteAddress) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1187,7 +1188,7 @@
                       </div>
                     </div>
 
-                    <!-- EP_NgC @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- EP_NgC @2024/05/09 OK -->
                     <div>
                       <span>EP_NgC</span>
                       <input id="EP_NgC" class="toggle" type="checkbox">
@@ -1257,7 +1258,7 @@
                                 <tr>
                                   <td>localAddress_ip_addr</td>
                                   <td>{{ selectedExtensionInfo?.EP_NgC?.db?.localAddress_ip_addr }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_NgC', 'localAddress_ip_addr', selectedExtensionInfo?.EP_NgC?.db?.localAddress_ip_addr)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_NgC?.ds?.localAddress_ip_addr }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_NgC?.db?.localAddress_ip_addr === selectedExtensionInfo?.EP_NgC?.ds?.localAddress_ip_addr) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1271,7 +1272,7 @@
                                 <tr>
                                   <td>localAddress_vlan_id</td>
                                   <td>{{ selectedExtensionInfo?.EP_NgC?.db?.localAddress_vlan_id }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_NgC', 'localAddress_vlan_id', selectedExtensionInfo?.EP_NgC?.db?.localAddress_vlan_id)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_NgC?.ds?.localAddress_vlan_id }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_NgC?.db?.localAddress_vlan_id === selectedExtensionInfo?.EP_NgC?.ds?.localAddress_vlan_id) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1285,7 +1286,7 @@
                                 <tr>
                                   <td>remoteAddress</td>
                                   <td>{{ selectedExtensionInfo?.EP_NgC?.db?.remoteAddress }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_NgC', 'remoteAddress', selectedExtensionInfo?.EP_NgC?.db?.remoteAddress)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_NgC?.ds?.remoteAddress }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_NgC?.db?.remoteAddress === selectedExtensionInfo?.EP_NgC?.ds?.remoteAddress) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1303,7 +1304,7 @@
                       </div>
                     </div>
 
-                    <!-- EP_NgU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- EP_NgU @2024/05/09 OK -->
                     <div>
                       <span>EP_NgU</span>
                       <input id="EP_NgU" class="toggle" type="checkbox">
@@ -1373,7 +1374,7 @@
                                 <tr>
                                   <td>localAddress_ip_addr</td>
                                   <td>{{ selectedExtensionInfo?.EP_NgU?.db?.localAddress_ip_addr }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_NgU', 'localAddress_ip_addr', selectedExtensionInfo?.EP_NgU?.db?.localAddress_ip_addr)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_NgU?.ds?.localAddress_ip_addr }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_NgU?.db?.localAddress_ip_addr === selectedExtensionInfo?.EP_NgU?.ds?.localAddress_ip_addr) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1387,7 +1388,7 @@
                                 <tr>
                                   <td>localAddress_vlan_id</td>
                                   <td>{{ selectedExtensionInfo?.EP_NgU?.db?.localAddress_vlan_id }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_NgU', 'localAddress_vlan_id', selectedExtensionInfo?.EP_NgU?.db?.localAddress_vlan_id)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_NgU?.ds?.localAddress_vlan_id }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_NgU?.db?.localAddress_vlan_id === selectedExtensionInfo?.EP_NgU?.ds?.localAddress_vlan_id) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1401,7 +1402,7 @@
                                 <tr>
                                   <td>remoteAddress</td>
                                   <td>{{ selectedExtensionInfo?.EP_NgU?.db?.remoteAddress }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_NgU', 'remoteAddress', selectedExtensionInfo?.EP_NgU?.db?.remoteAddress)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_NgU?.ds?.remoteAddress }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_NgU?.db?.remoteAddress === selectedExtensionInfo?.EP_NgU?.ds?.remoteAddress) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1419,7 +1420,7 @@
                       </div>
                     </div>
 
-                    <!-- NRCellCU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- NRCellCU @2024/05/09 OK -->
                     <div>
                       <span>NRCellCU</span>
                       <input id="NRCellCU" class="toggle" type="checkbox">
@@ -1501,7 +1502,7 @@
                                 <tr>
                                   <td>absoluteFrequencySSB</td>
                                   <td>{{ selectedExtensionInfo?.NRCellCU?.db?.absoluteFrequencySSB }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellCU', 'absoluteFrequencySSB', selectedExtensionInfo?.NRCellCU?.db?.absoluteFrequencySSB)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellCU?.ds?.absoluteFrequencySSB }}</td>
                                   <td>{{ (selectedExtensionInfo?.NRCellCU?.db?.absoluteFrequencySSB === selectedExtensionInfo?.NRCellCU?.ds?.absoluteFrequencySSB) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1515,7 +1516,7 @@
                                 <tr>
                                   <td>sSBSubCarrierSpacing</td>
                                   <td>{{ selectedExtensionInfo?.NRCellCU?.db?.sSBSubCarrierSpacing }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellCU', 'sSBSubCarrierSpacing', selectedExtensionInfo?.NRCellCU?.db?.sSBSubCarrierSpacing)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRCellCU?.ds?.sSBSubCarrierSpacing }}</td>
                                   <td>{{ (selectedExtensionInfo?.NRCellCU?.db?.sSBSubCarrierSpacing === selectedExtensionInfo?.NRCellCU?.ds?.sSBSubCarrierSpacing) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1533,7 +1534,7 @@
                       </div>
                     </div>
 
-                    <!-- peeParametersList_NRCellCU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- peeParametersList_NRCellCU @2024/05/09 OK -->
                     <div>
                       <span>peeParametersList_NRCellCU</span>
                       <input id="peeParametersList_NRCellCU" class="toggle" type="checkbox">
@@ -1615,7 +1616,7 @@
                                 <tr>
                                   <td>siteIdentification</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteIdentification }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellCU', 'siteIdentification', selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteIdentification)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.siteIdentification }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteIdentification === selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.siteIdentification) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1629,7 +1630,7 @@
                                 <tr>
                                   <td>siteLatitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteLatitude }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellCU', 'siteLatitude', selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteLatitude)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.siteLatitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteLatitude === selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.siteLatitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1643,7 +1644,7 @@
                                 <tr>
                                   <td>siteLongitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteLongitude }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellCU', 'siteLongitude', selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteLongitude)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.siteLongitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteLongitude === selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.siteLongitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1657,7 +1658,7 @@
                                 <tr>
                                   <td>siteDescription</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteDescription }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellCU', 'siteDescription', selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteDescription)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.siteDescription }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.siteDescription === selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.siteDescription) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1671,7 +1672,7 @@
                                 <tr>
                                   <td>equipmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.equipmentType }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellCU', 'equipmentType', selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.equipmentType)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.equipmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.equipmentType === selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.equipmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1685,7 +1686,7 @@
                                 <tr>
                                   <td>environmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.environmentType }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellCU', 'environmentType', selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.environmentType)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.environmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.environmentType === selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.environmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1699,7 +1700,7 @@
                                 <tr>
                                   <td>powerInterface</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.powerInterface }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellCU', 'powerInterface', selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.powerInterface)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.powerInterface }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellCU?.db?.powerInterface === selectedExtensionInfo?.peeParametersList_NRCellCU?.ds?.powerInterface) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1717,7 +1718,7 @@
                       </div>
                     </div>
 
-                    <!-- vnfParametersList_NRCellCU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- vnfParametersList_NRCellCU @2024/05/09 OK -->
                     <div>
                       <span>vnfParametersList_NRCellCU</span>
                       <input id="vnfParametersList_NRCellCU" class="toggle" type="checkbox">
@@ -1799,7 +1800,7 @@
                                 <tr>
                                   <td>autoScalable</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.autoScalable }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRCellCU', 'autoScalable', selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.autoScalable)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellCU?.ds?.autoScalable }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.autoScalable === selectedExtensionInfo?.vnfParametersList_NRCellCU?.ds?.autoScalable) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1813,7 +1814,7 @@
                                 <tr>
                                   <td>flavourId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.flavourId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRCellCU', 'flavourId', selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.flavourId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellCU?.ds?.flavourId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.flavourId === selectedExtensionInfo?.vnfParametersList_NRCellCU?.ds?.flavourId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1827,7 +1828,7 @@
                                 <tr>
                                   <td>vnfInstanceId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.vnfInstanceId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRCellCU', 'vnfInstanceId', selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.vnfInstanceId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellCU?.ds?.vnfInstanceId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.vnfInstanceId === selectedExtensionInfo?.vnfParametersList_NRCellCU?.ds?.vnfInstanceId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1841,7 +1842,7 @@
                                 <tr>
                                   <td>vnfdId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.vnfdId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRCellCU', 'vnfdId', selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.vnfdId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellCU?.ds?.vnfdId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRCellCU?.db?.vnfdId === selectedExtensionInfo?.vnfParametersList_NRCellCU?.ds?.vnfdId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1859,7 +1860,7 @@
                       </div>
                     </div>
 
-                    <!-- s_NSSAI_leafList_NRCellCU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- s_NSSAI_leafList_NRCellCU @2024/05/09 OK -->
                     <div>
                       <span>s_NSSAI_leafList_NRCellCU</span>
                       <input id="s_NSSAI_leafList_NRCellCU" class="toggle" type="checkbox">
@@ -1941,7 +1942,7 @@
                                 <tr>
                                   <td>s_NSSAI</td>
                                   <td>{{ selectedExtensionInfo?.s_NSSAI_leafList_NRCellCU?.db?.s_NSSAI }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 's_NSSAI_leafList_NRCellCU', 's_NSSAI', selectedExtensionInfo?.s_NSSAI_leafList_NRCellCU?.db?.s_NSSAI)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.s_NSSAI_leafList_NRCellCU?.ds?.s_NSSAI }}</td>
                                   <td>{{ (selectedExtensionInfo?.s_NSSAI_leafList_NRCellCU?.db?.s_NSSAI === selectedExtensionInfo?.s_NSSAI_leafList_NRCellCU?.ds?.s_NSSAI) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -1959,7 +1960,7 @@
                       </div>
                     </div>
 
-                    <!-- gNBDUFunction @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- gNBDUFunction @2024/05/09 OK -->
                     <div>
                       <span>gNBDUFunction</span>
                       <input id="gNBDUFunction" class="toggle" type="checkbox">
@@ -2041,7 +2042,7 @@
                                 <tr>
                                   <td>gNBDUName</td>
                                   <td>{{ selectedExtensionInfo?.gNBDUFunction?.db?.gNBDUName }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'gNBDUFunction', 'gNBDUName', selectedExtensionInfo?.gNBDUFunction?.db?.gNBDUName)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.gNBDUFunction?.ds?.gNBDUName }}</td>
                                   <td>{{ (selectedExtensionInfo?.gNBDUFunction?.db?.gNBDUName === selectedExtensionInfo?.gNBDUFunction?.ds?.gNBDUName) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2059,7 +2060,7 @@
                       </div>
                     </div>
 
-                    <!-- peeParametersList_DU @2024/05/08 - 目前無法編輯 -->
+                    <!-- peeParametersList_DU @2024/05/09 OK - 目前後端貌似無法正確編輯 -->
                     <div>
                       <span>peeParametersList_DU</span>
                       <input id="peeParametersList_DU" class="toggle" type="checkbox">
@@ -2141,7 +2142,7 @@
                                 <tr>
                                   <td>siteIdentification</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.db?.siteIdentification }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_DU', 'siteIdentification', selectedExtensionInfo?.peeParametersList_DU?.db?.siteIdentification)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.ds?.siteIdentification }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_DU?.db?.siteIdentification === selectedExtensionInfo?.peeParametersList_DU?.ds?.siteIdentification) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2155,7 +2156,7 @@
                                 <tr>
                                   <td>siteLatitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.db?.siteLatitude }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_DU', 'siteLatitude', selectedExtensionInfo?.peeParametersList_DU?.db?.siteLatitude)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.ds?.siteLatitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_DU?.db?.siteLatitude === selectedExtensionInfo?.peeParametersList_DU?.ds?.siteLatitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2169,7 +2170,7 @@
                                 <tr>
                                   <td>siteLongitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.db?.siteLongitude }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_DU', 'siteLongitude', selectedExtensionInfo?.peeParametersList_DU?.db?.siteLongitude)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.ds?.siteLongitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_DU?.db?.siteLongitude === selectedExtensionInfo?.peeParametersList_DU?.ds?.siteLongitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2183,7 +2184,7 @@
                                 <tr>
                                   <td>siteDescription</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.db?.siteDescription }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_DU', 'siteDescription', selectedExtensionInfo?.peeParametersList_DU?.db?.siteDescription)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.ds?.siteDescription }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_DU?.db?.siteDescription === selectedExtensionInfo?.peeParametersList_DU?.ds?.siteDescription) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2197,7 +2198,7 @@
                                 <tr>
                                   <td>equipmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.db?.equipmentType }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_DU', 'equipmentType', selectedExtensionInfo?.peeParametersList_DU?.db?.equipmentType)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.ds?.equipmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_DU?.db?.equipmentType === selectedExtensionInfo?.peeParametersList_DU?.ds?.equipmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2211,7 +2212,7 @@
                                 <tr>
                                   <td>environmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.db?.environmentType }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_DU', 'environmentType', selectedExtensionInfo?.peeParametersList_DU?.db?.environmentType)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.ds?.environmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_DU?.db?.environmentType === selectedExtensionInfo?.peeParametersList_DU?.ds?.environmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2225,7 +2226,7 @@
                                 <tr>
                                   <td>powerInterface</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.db?.powerInterface }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_DU', 'powerInterface', selectedExtensionInfo?.peeParametersList_DU?.db?.powerInterface)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_DU?.ds?.powerInterface }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_DU?.db?.powerInterface === selectedExtensionInfo?.peeParametersList_DU?.ds?.powerInterface) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2243,7 +2244,7 @@
                       </div>
                     </div>
 
-                    <!-- vnfParametersList_DU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- vnfParametersList_DU @2024/05/09 OK -->
                     <div>
                       <span>vnfParametersList_DU</span>
                       <input id="vnfParametersList_DU" class="toggle" type="checkbox">
@@ -2325,7 +2326,7 @@
                                 <tr>
                                   <td>autoScalable</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_DU?.db?.autoScalable }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_DU', 'autoScalable', selectedExtensionInfo?.vnfParametersList_DU?.db?.autoScalable)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_DU?.ds?.autoScalable }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_DU?.db?.autoScalable === selectedExtensionInfo?.vnfParametersList_DU?.ds?.autoScalable) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2339,7 +2340,7 @@
                                 <tr>
                                   <td>flavourId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_DU?.db?.flavourId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_DU', 'flavourId', selectedExtensionInfo?.vnfParametersList_DU?.db?.flavourId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_DU?.ds?.flavourId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_DU?.db?.flavourId === selectedExtensionInfo?.vnfParametersList_DU?.ds?.flavourId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2353,7 +2354,7 @@
                                 <tr>
                                   <td>vnfInstanceId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_DU?.db?.vnfInstanceId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_DU', 'vnfInstanceId', selectedExtensionInfo?.vnfParametersList_DU?.db?.vnfInstanceId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_DU?.ds?.vnfInstanceId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_DU?.db?.vnfInstanceId === selectedExtensionInfo?.vnfParametersList_DU?.ds?.vnfInstanceId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2367,7 +2368,7 @@
                                 <tr>
                                   <td>vnfdId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_DU?.db?.vnfdId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_DU', 'vnfdId', selectedExtensionInfo?.vnfParametersList_DU?.db?.vnfdId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_DU?.ds?.vnfdId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_DU?.db?.vnfdId === selectedExtensionInfo?.vnfParametersList_DU?.ds?.vnfdId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2385,7 +2386,7 @@
                       </div>
                     </div>
 
-                    <!-- EP_F1C_DU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- EP_F1C_DU @2024/05/09 OK -->
                     <div>
                       <span>EP_F1C_DU</span>
                       <input id="EP_F1C_DU" class="toggle" type="checkbox">
@@ -2467,7 +2468,7 @@
                                 <tr>
                                   <td>localAddress_ip_addr</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_DU?.db?.localAddress_ip_addr }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1C_DU', 'localAddress_ip_addr', selectedExtensionInfo?.EP_F1C_DU?.db?.localAddress_ip_addr)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_DU?.ds?.localAddress_ip_addr }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1C_DU?.db?.localAddress_ip_addr === selectedExtensionInfo?.EP_F1C_DU?.ds?.localAddress_ip_addr) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2481,7 +2482,7 @@
                                 <tr>
                                   <td>localAddress_vlan_id</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_DU?.db?.localAddress_vlan_id }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1C_DU', 'localAddress_vlan_id', selectedExtensionInfo?.EP_F1C_DU?.db?.localAddress_vlan_id)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_DU?.ds?.localAddress_vlan_id }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1C_DU?.db?.localAddress_vlan_id === selectedExtensionInfo?.EP_F1C_DU?.ds?.localAddress_vlan_id) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2495,7 +2496,7 @@
                                 <tr>
                                   <td>remoteAddress</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_DU?.db?.remoteAddress }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1C_DU', 'remoteAddress', selectedExtensionInfo?.EP_F1C_DU?.db?.remoteAddress)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1C_DU?.ds?.remoteAddress }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1C_DU?.db?.remoteAddress === selectedExtensionInfo?.EP_F1C_DU?.ds?.remoteAddress) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2513,7 +2514,7 @@
                       </div>
                     </div>
 
-                    <!-- EP_F1U_DU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- EP_F1U_DU @2024/05/09 OK -->
                     <div>
                       <span>EP_F1U_DU</span>
                       <input id="EP_F1U_DU" class="toggle" type="checkbox">
@@ -2595,7 +2596,7 @@
                                 <tr>
                                   <td>localAddress_ip_addr</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_DU?.db?.localAddress_ip_addr }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1U_DU', 'localAddress_ip_addr', selectedExtensionInfo?.EP_F1U_DU?.db?.localAddress_ip_addr)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_DU?.ds?.localAddress_ip_addr }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1U_DU?.db?.localAddress_ip_addr === selectedExtensionInfo?.EP_F1U_DU?.ds?.localAddress_ip_addr) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2609,7 +2610,7 @@
                                 <tr>
                                   <td>localAddress_vlan_id</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_DU?.db?.localAddress_vlan_id }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1U_DU', 'localAddress_vlan_id', selectedExtensionInfo?.EP_F1U_DU?.db?.localAddress_vlan_id)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_DU?.ds?.localAddress_vlan_id }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1U_DU?.db?.localAddress_vlan_id === selectedExtensionInfo?.EP_F1U_DU?.ds?.localAddress_vlan_id) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2623,7 +2624,7 @@
                                 <tr>
                                   <td>remoteAddress</td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_DU?.db?.remoteAddress }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'EP_F1U_DU', 'remoteAddress', selectedExtensionInfo?.EP_F1U_DU?.db?.remoteAddress)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.EP_F1U_DU?.ds?.remoteAddress }}</td>
                                   <td>{{ (selectedExtensionInfo?.EP_F1U_DU?.db?.remoteAddress === selectedExtensionInfo?.EP_F1U_DU?.ds?.remoteAddress) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2641,7 +2642,7 @@
                       </div>
                     </div>
 
-                    <!-- NRCellDU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- NRCellDU @2024/05/09 OK -->
                     <div>
                       <span>NRCellDU</span>
                       <input id="NRCellDU" class="toggle" type="checkbox">
@@ -2735,7 +2736,7 @@
                                   <tr>
                                     <td>nRPCI</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.nRPCI }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'nRPCI', selectedExtensionInfo?.NRCellDU?.db?.nRPCI)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.nRPCI }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.nRPCI === selectedExtensionInfo?.NRCellDU?.ds?.nRPCI) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2749,7 +2750,7 @@
                                   <tr>
                                     <td>nRTAC</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.nRTAC }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'nRTAC', selectedExtensionInfo?.NRCellDU?.db?.nRTAC)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.nRTAC }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.nRTAC === selectedExtensionInfo?.NRCellDU?.ds?.nRTAC) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2763,7 +2764,7 @@
                                   <tr>
                                     <td>administrativeState</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.administrativeState }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'administrativeState', selectedExtensionInfo?.NRCellDU?.db?.administrativeState)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.administrativeState }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.administrativeState === selectedExtensionInfo?.NRCellDU?.ds?.administrativeState) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2777,7 +2778,7 @@
                                   <tr>
                                     <td>arfcnDL</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.arfcnDL }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'arfcnDL', selectedExtensionInfo?.NRCellDU?.db?.arfcnDL)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.arfcnDL }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.arfcnDL === selectedExtensionInfo?.NRCellDU?.ds?.arfcnDL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2791,7 +2792,7 @@
                                   <tr>
                                     <td>arfcnUL</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.arfcnUL }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'arfcnUL', selectedExtensionInfo?.NRCellDU?.db?.arfcnUL)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.arfcnUL }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.arfcnUL === selectedExtensionInfo?.NRCellDU?.ds?.arfcnUL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2805,7 +2806,7 @@
                                   <tr>
                                     <td>arfcnSUL</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.arfcnSUL }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'arfcnSUL', selectedExtensionInfo?.NRCellDU?.db?.arfcnSUL)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.arfcnSUL }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.arfcnSUL === selectedExtensionInfo?.NRCellDU?.ds?.arfcnSUL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2819,7 +2820,7 @@
                                   <tr>
                                     <td>bSChannelBwDL</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwDL }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'bSChannelBwDL', selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwDL)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.bSChannelBwDL }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwDL === selectedExtensionInfo?.NRCellDU?.ds?.bSChannelBwDL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2833,7 +2834,7 @@
                                   <tr>
                                     <td>bSChannelBwUL</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwUL }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'bSChannelBwUL', selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwUL)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.bSChannelBwUL }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwUL === selectedExtensionInfo?.NRCellDU?.ds?.bSChannelBwUL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2847,7 +2848,7 @@
                                   <tr>
                                     <td>bSChannelBwSUL</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwSUL }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'bSChannelBwSUL', selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwSUL)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.bSChannelBwSUL }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.bSChannelBwSUL === selectedExtensionInfo?.NRCellDU?.ds?.bSChannelBwSUL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2861,7 +2862,7 @@
                                   <tr>
                                     <td>ssbFrequency</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.ssbFrequency }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'ssbFrequency', selectedExtensionInfo?.NRCellDU?.db?.ssbFrequency)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.ssbFrequency }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.ssbFrequency === selectedExtensionInfo?.NRCellDU?.ds?.ssbFrequency) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2875,7 +2876,7 @@
                                   <tr>
                                     <td>ssbPeriodicity</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.ssbPeriodicity }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'ssbPeriodicity', selectedExtensionInfo?.NRCellDU?.db?.ssbPeriodicity)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.ssbPeriodicity }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.ssbPeriodicity === selectedExtensionInfo?.NRCellDU?.ds?.ssbPeriodicity) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2889,7 +2890,7 @@
                                   <tr>
                                     <td>ssbSubCarrierSpacing</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.ssbSubCarrierSpacing }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'ssbSubCarrierSpacing', selectedExtensionInfo?.NRCellDU?.db?.ssbSubCarrierSpacing)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.ssbSubCarrierSpacing }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.ssbSubCarrierSpacing === selectedExtensionInfo?.NRCellDU?.ds?.ssbSubCarrierSpacing) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2903,7 +2904,7 @@
                                   <tr>
                                     <td>ssbOffset</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.ssbOffset }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'ssbOffset', selectedExtensionInfo?.NRCellDU?.db?.ssbOffset)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.ssbOffset }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.ssbOffset === selectedExtensionInfo?.NRCellDU?.ds?.ssbOffset) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2917,7 +2918,7 @@
                                   <tr>
                                     <td>ssbDuration</td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.db?.ssbDuration }}
-                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                      <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRCellDU', 'ssbDuration', selectedExtensionInfo?.NRCellDU?.db?.ssbDuration)">edit</mat-icon>
                                     </td>
                                     <td>{{ selectedExtensionInfo?.NRCellDU?.ds?.ssbDuration }}</td>
                                     <td>{{ (selectedExtensionInfo?.NRCellDU?.db?.ssbDuration === selectedExtensionInfo?.NRCellDU?.ds?.ssbDuration) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -2935,7 +2936,7 @@
                         </div>
                     </div>
 
-                    <!-- peeParametersList_NRCellDU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- peeParametersList_NRCellDU @2024/05/09 OK -->
                     <div>
                       <span>peeParametersList_NRCellDU</span>
                       <input id="peeParametersList_NRCellDU" class="toggle" type="checkbox">
@@ -3029,7 +3030,7 @@
                                 <tr>
                                   <td>siteIdentification</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteIdentification }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellDU', 'siteIdentification', selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteIdentification)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.siteIdentification }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteIdentification === selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.siteIdentification) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3043,7 +3044,7 @@
                                 <tr>
                                   <td>siteLatitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteLatitude }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellDU', 'siteLatitude', selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteLatitude)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.siteLatitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteLatitude === selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.siteLatitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3057,7 +3058,7 @@
                                 <tr>
                                   <td>siteLongitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteLongitude }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellDU', 'siteLongitude', selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteLongitude)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.siteLongitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteLongitude === selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.siteLongitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3071,7 +3072,7 @@
                                 <tr>
                                   <td>siteDescription</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteDescription }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellDU', 'siteDescription', selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteDescription)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.siteDescription }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.siteDescription === selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.siteDescription) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3085,7 +3086,7 @@
                                 <tr>
                                   <td>equipmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.equipmentType }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellDU', 'equipmentType', selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.equipmentType)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.equipmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.equipmentType === selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.equipmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3099,7 +3100,7 @@
                                 <tr>
                                   <td>environmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.environmentType }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellDU', 'environmentType', selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.environmentType)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.environmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.environmentType === selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.environmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3113,7 +3114,7 @@
                                 <tr>
                                   <td>powerInterface</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.powerInterface }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRCellDU', 'powerInterface', selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.powerInterface)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.powerInterface }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRCellDU?.db?.powerInterface === selectedExtensionInfo?.peeParametersList_NRCellDU?.ds?.powerInterface) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3131,7 +3132,7 @@
                       </div>
                     </div>
 
-                    <!-- vnfParametersList_NRCellDU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- vnfParametersList_NRCellDU @2024/05/09 OK -->
                     <div>
                       <span>vnfParametersList_NRCellDU</span>
                       <input id="vnfParametersList_NRCellDU" class="toggle" type="checkbox">
@@ -3225,7 +3226,7 @@
                                 <tr>
                                   <td>autoScalable</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.autoScalable }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRCellDU', 'autoScalable', selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.autoScalable)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellDU?.ds?.autoScalable }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.autoScalable === selectedExtensionInfo?.vnfParametersList_NRCellDU?.ds?.autoScalable) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3239,7 +3240,7 @@
                                 <tr>
                                   <td>flavourId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.flavourId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRCellDU', 'flavourId', selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.flavourId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellDU?.ds?.flavourId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.flavourId === selectedExtensionInfo?.vnfParametersList_NRCellDU?.ds?.flavourId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3253,7 +3254,7 @@
                                 <tr>
                                   <td>vnfInstanceId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.vnfInstanceId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRCellDU', 'vnfInstanceId', selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.vnfInstanceId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellDU?.ds?.vnfInstanceId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.vnfInstanceId === selectedExtensionInfo?.vnfParametersList_NRCellDU?.ds?.vnfInstanceId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3267,7 +3268,7 @@
                                 <tr>
                                   <td>vnfdId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.vnfdId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRCellDU', 'vnfdId', selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.vnfdId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRCellDU?.ds?.vnfdId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRCellDU?.db?.vnfdId === selectedExtensionInfo?.vnfParametersList_NRCellDU?.ds?.vnfdId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3277,7 +3278,7 @@
                                       <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_NRCellDU', 'vnfdId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
-                                 </tr>
+                                </tr>
                               </tbody>
                             </table>
                           </div>
@@ -3285,7 +3286,7 @@
                       </div>
                     </div>
 
-                    <!-- s_NSSAI_leafList_NRCellDU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- s_NSSAI_leafList_NRCellDU @2024/05/09 OK -->
                     <div>
                       <span>s_NSSAI_leafList_NRCellDU</span>
                       <input id="s_NSSAI_leafList_NRCellDU" class="toggle" type="checkbox">
@@ -3379,7 +3380,7 @@
                                 <tr>
                                   <td>s_NSSAI</td>
                                   <td>{{ selectedExtensionInfo?.s_NSSAI_leafList_NRCellDU?.db?.s_NSSAI }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 's_NSSAI_leafList_NRCellDU', 's_NSSAI', selectedExtensionInfo?.s_NSSAI_leafList_NRCellDU?.db?.s_NSSAI)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.s_NSSAI_leafList_NRCellDU?.ds?.s_NSSAI }}</td>
                                   <td>{{ (selectedExtensionInfo?.s_NSSAI_leafList_NRCellDU?.db?.s_NSSAI === selectedExtensionInfo?.s_NSSAI_leafList_NRCellDU?.ds?.s_NSSAI) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3397,7 +3398,7 @@
                       </div>
                     </div>
 
-                    <!-- NRSectorCarrierRef_NRCellDU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- NRSectorCarrierRef_NRCellDU @2024/05/09 OK -->
                     <div>
                       <span>NRSectorCarrierRef_NRCellDU</span>
                       <input id="NRSectorCarrierRef_NRCellDU" class="toggle" type="checkbox">
@@ -3491,7 +3492,7 @@
                                 <tr>
                                   <td>NRSectorCarrierRef</td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.NRSectorCarrierRef }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRSectorCarrierRef_NRCellDU', 'NRSectorCarrierRef', selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.NRSectorCarrierRef)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.NRSectorCarrierRef }}</td>
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.db?.NRSectorCarrierRef === selectedExtensionInfo?.NRSectorCarrierRef_NRCellDU?.ds?.NRSectorCarrierRef) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3509,7 +3510,7 @@
                       </div>
                     </div>
 
-                    <!-- bWPRef_leafList_NRCellDU @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- bWPRef_leafList_NRCellDU @2024/05/09 OK -->
                     <div>
                       <span>bWPRef_leafList_NRCellDU</span>
                       <input id="bWPRef_leafList_NRCellDU" class="toggle" type="checkbox">
@@ -3603,7 +3604,7 @@
                                 <tr>
                                   <td>bWPRef</td>
                                   <td>{{ selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.bWPRef }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'bWPRef_leafList_NRCellDU', 'bWPRef', selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.bWPRef)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.bWPRef }}</td>
                                   <td>{{ (selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.db?.bWPRef === selectedExtensionInfo?.bWPRef_leafList_NRCellDU?.ds?.bWPRef) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3621,7 +3622,7 @@
                       </div>
                     </div>
 
-                    <!-- NRSectorCarrier @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- NRSectorCarrier @2024/05/09 OK -->
                     <div>
                       <span>NRSectorCarrier</span>
                       <input id="NRSectorCarrier" class="toggle" type="checkbox">
@@ -3703,7 +3704,7 @@
                                 <tr>
                                   <td>arfcnDL</td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.db?.arfcnDL }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRSectorCarrier', 'arfcnDL', selectedExtensionInfo?.NRSectorCarrier?.db?.arfcnDL)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.ds?.arfcnDL }}</td>
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.arfcnDL === selectedExtensionInfo?.NRSectorCarrier?.ds?.arfcnDL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3717,7 +3718,7 @@
                                 <tr>
                                   <td>arfcnUL</td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.db?.arfcnUL }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRSectorCarrier', 'arfcnUL', selectedExtensionInfo?.NRSectorCarrier?.db?.arfcnUL)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.ds?.arfcnUL }}</td>
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.arfcnUL === selectedExtensionInfo?.NRSectorCarrier?.ds?.arfcnUL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3731,7 +3732,7 @@
                                 <tr>
                                   <td>bSChannelBwDL</td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.db?.bSChannelBwDL }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRSectorCarrier', 'bSChannelBwDL', selectedExtensionInfo?.NRSectorCarrier?.db?.bSChannelBwDL)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.ds?.bSChannelBwDL }}</td>
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.bSChannelBwDL === selectedExtensionInfo?.NRSectorCarrier?.ds?.bSChannelBwDL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3745,7 +3746,7 @@
                                 <tr>
                                   <td>bSChannelBwUL</td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.db?.bSChannelBwUL }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRSectorCarrier', 'bSChannelBwUL', selectedExtensionInfo?.NRSectorCarrier?.db?.bSChannelBwUL)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.ds?.bSChannelBwUL }}</td>
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.bSChannelBwUL === selectedExtensionInfo?.NRSectorCarrier?.ds?.bSChannelBwUL) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3759,7 +3760,7 @@
                                 <tr>
                                   <td>txDirection</td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.db?.txDirection }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRSectorCarrier', 'txDirection', selectedExtensionInfo?.NRSectorCarrier?.db?.txDirection)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.ds?.txDirection }}</td>
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.txDirection === selectedExtensionInfo?.NRSectorCarrier?.ds?.txDirection) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3773,7 +3774,7 @@
                                 <tr>
                                   <td>configuredMaxTxPower</td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.db?.configuredMaxTxPower }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRSectorCarrier', 'configuredMaxTxPower', selectedExtensionInfo?.NRSectorCarrier?.db?.configuredMaxTxPower)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.ds?.configuredMaxTxPower }}</td>
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.configuredMaxTxPower === selectedExtensionInfo?.NRSectorCarrier?.ds?.configuredMaxTxPower) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3787,7 +3788,7 @@
                                 <tr>
                                   <td>configuredMaxTxEIRP</td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.db?.configuredMaxTxEIRP }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'NRSectorCarrier', 'configuredMaxTxEIRP', selectedExtensionInfo?.NRSectorCarrier?.db?.configuredMaxTxEIRP)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.NRSectorCarrier?.ds?.configuredMaxTxEIRP }}</td>
                                   <td>{{ (selectedExtensionInfo?.NRSectorCarrier?.db?.configuredMaxTxEIRP === selectedExtensionInfo?.NRSectorCarrier?.ds?.configuredMaxTxEIRP) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3805,7 +3806,7 @@
                       </div>
                     </div>
 
-                    <!-- peeParametersList_NRSector @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- peeParametersList_NRSector @2024/05/09 OK -->
                     <div>
                       <span>peeParametersList_NRSector</span>
                       <input id="peeParametersList_NRSector" class="toggle" type="checkbox">
@@ -3887,7 +3888,7 @@
                                 <tr>
                                   <td>siteIdentification</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteIdentification }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRSector', 'siteIdentification', selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteIdentification)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteIdentification }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteIdentification === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteIdentification) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3901,7 +3902,7 @@
                                 <tr>
                                   <td>siteLatitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteLatitude }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRSector', 'siteLatitude', selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteLatitude)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteLatitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteLatitude === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteLatitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3915,7 +3916,7 @@
                                 <tr>
                                   <td>siteLongitude</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteLongitude }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRSector', 'siteLongitude', selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteLongitude)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteLongitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteLongitude === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteLongitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3929,7 +3930,7 @@
                                 <tr>
                                   <td>siteDescription</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteDescription }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRSector', 'siteDescription', selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteDescription)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteDescription }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.siteDescription === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.siteDescription) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3943,7 +3944,7 @@
                                 <tr>
                                   <td>equipmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.db?.equipmentType }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRSector', 'equipmentType', selectedExtensionInfo?.peeParametersList_NRSector?.db?.equipmentType)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.ds?.equipmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.equipmentType === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.equipmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3957,7 +3958,7 @@
                                 <tr>
                                   <td>environmentType</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.db?.environmentType }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRSector', 'environmentType', selectedExtensionInfo?.peeParametersList_NRSector?.db?.environmentType)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.ds?.environmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.environmentType === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.environmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3971,7 +3972,7 @@
                                 <tr>
                                   <td>powerInterface</td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.db?.powerInterface }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_NRSector', 'powerInterface', selectedExtensionInfo?.peeParametersList_NRSector?.db?.powerInterface)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_NRSector?.ds?.powerInterface }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_NRSector?.db?.powerInterface === selectedExtensionInfo?.peeParametersList_NRSector?.ds?.powerInterface) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -3989,7 +3990,7 @@
                       </div>
                     </div>
 
-                    <!-- vnfParametersList_NRSector @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- vnfParametersList_NRSector @2024/05/09 OK -->
                     <div>
                       <span>vnfParametersList_NRSector</span>
                       <input id="vnfParametersList_NRSector" class="toggle" type="checkbox">
@@ -4059,7 +4060,7 @@
                                 <tr>
                                   <td>autoScalable</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRSector?.db?.autoScalable }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRSector', 'autoScalable', selectedExtensionInfo?.vnfParametersList_NRSector?.db?.autoScalable)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.autoScalable }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.autoScalable === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.autoScalable) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -4073,7 +4074,7 @@
                                 <tr>
                                   <td>flavourId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRSector?.db?.flavourId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRSector', 'flavourId', selectedExtensionInfo?.vnfParametersList_NRSector?.db?.flavourId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.flavourId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.flavourId === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.flavourId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -4087,7 +4088,7 @@
                                 <tr>
                                   <td>vnfInstanceId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRSector?.db?.vnfInstanceId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRSector', 'vnfInstanceId', selectedExtensionInfo?.vnfParametersList_NRSector?.db?.vnfInstanceId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.vnfInstanceId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.vnfInstanceId === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.vnfInstanceId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -4101,7 +4102,7 @@
                                 <tr>
                                   <td>vnfdId</td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRSector?.db?.vnfdId }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_NRSector', 'vnfdId', selectedExtensionInfo?.vnfParametersList_NRSector?.db?.vnfdId)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.vnfdId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_NRSector?.db?.vnfdId === selectedExtensionInfo?.vnfParametersList_NRSector?.ds?.vnfdId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -4119,7 +4120,7 @@
                       </div>
                     </div>
 
-                    <!-- BWP @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- BWP @2024/05/09 OK -->
                     <div>
                       <span>BWP</span>
                       <input id="BWP" class="toggle" type="checkbox">
@@ -4201,7 +4202,7 @@
                                 <tr>
                                   <td>bwpContext</td>
                                   <td>{{ selectedExtensionInfo?.BWP?.db?.bwpContext }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'BWP', 'bwpContext', selectedExtensionInfo?.BWP?.db?.bwpContext)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.BWP?.ds?.bwpContext }}</td>
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.bwpContext === selectedExtensionInfo?.BWP?.ds?.bwpContext) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -4215,7 +4216,7 @@
                                 <tr>
                                   <td>isInitialBwp</td>
                                   <td>{{ selectedExtensionInfo?.BWP?.db?.isInitialBwp }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'BWP', 'isInitialBwp', selectedExtensionInfo?.BWP?.db?.isInitialBwp)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.BWP?.ds?.isInitialBwp }}</td>
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.isInitialBwp === selectedExtensionInfo?.BWP?.ds?.isInitialBwp) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -4229,7 +4230,7 @@
                                 <tr>
                                   <td>subCarrierSpacing</td>
                                   <td>{{ selectedExtensionInfo?.BWP?.db?.subCarrierSpacing }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'BWP', 'subCarrierSpacing', selectedExtensionInfo?.BWP?.db?.subCarrierSpacing)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.BWP?.ds?.subCarrierSpacing }}</td>
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.subCarrierSpacing === selectedExtensionInfo?.BWP?.ds?.subCarrierSpacing) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -4243,7 +4244,7 @@
                                 <tr>
                                   <td>cyclicPrefix</td>
                                   <td>{{ selectedExtensionInfo?.BWP?.db?.cyclicPrefix }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'BWP', 'cyclicPrefix', selectedExtensionInfo?.BWP?.db?.cyclicPrefix)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.BWP?.ds?.cyclicPrefix }}</td>
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.cyclicPrefix === selectedExtensionInfo?.BWP?.ds?.cyclicPrefix) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -4257,7 +4258,7 @@
                                 <tr>
                                   <td>startRB</td>
                                   <td>{{ selectedExtensionInfo?.BWP?.db?.startRB }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'BWP', 'startRB', selectedExtensionInfo?.BWP?.db?.startRB)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.BWP?.ds?.startRB }}</td>
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.startRB === selectedExtensionInfo?.BWP?.ds?.startRB) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -4271,7 +4272,7 @@
                                 <tr>
                                   <td>numberOfRBs</td>
                                   <td>{{ selectedExtensionInfo?.BWP?.db?.numberOfRBs }}
-                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon>
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'BWP', 'numberOfRBs', selectedExtensionInfo?.BWP?.db?.numberOfRBs)">edit</mat-icon>
                                   </td>
                                   <td>{{ selectedExtensionInfo?.BWP?.ds?.numberOfRBs }}</td>
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.numberOfRBs === selectedExtensionInfo?.BWP?.ds?.numberOfRBs) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
@@ -4289,7 +4290,7 @@
                       </div>
                     </div>
 
-                    <!-- peeParametersList_BWP @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- peeParametersList_BWP @2024/05/09 OK -->
                     <div>
                       <span>peeParametersList_BWP</span>
                       <input id="peeParametersList_BWP" class="toggle" type="checkbox">
@@ -4370,7 +4371,9 @@
                                 </tr>
                                 <tr>
                                   <td>siteIdentification</td>
-                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteIdentification }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteIdentification }}
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_BWP', 'siteIdentification', selectedExtensionInfo?.peeParametersList_BWP?.db?.siteIdentification)">edit</mat-icon>
+                                  </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteIdentification }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.siteIdentification === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteIdentification) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
@@ -4382,7 +4385,9 @@
                                 </tr>
                                 <tr>
                                   <td>siteLatitude</td>
-                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLatitude }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLatitude }}
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_BWP', 'siteLatitude', selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLatitude)">edit</mat-icon>
+                                  </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLatitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLatitude === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLatitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
@@ -4394,7 +4399,9 @@
                                 </tr>
                                 <tr>
                                   <td>siteLongitude</td>
-                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLongitude }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLongitude }}
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_BWP', 'siteLongitude', selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLongitude)">edit</mat-icon>
+                                  </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLongitude }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.siteLongitude === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteLongitude) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
@@ -4406,7 +4413,9 @@
                                 </tr>
                                 <tr>
                                   <td>siteDescription</td>
-                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteDescription }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.siteDescription }}
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_BWP', 'siteDescription', selectedExtensionInfo?.peeParametersList_BWP?.db?.siteDescription)">edit</mat-icon>
+                                  </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteDescription }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.siteDescription === selectedExtensionInfo?.peeParametersList_BWP?.ds?.siteDescription) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
@@ -4418,7 +4427,9 @@
                                 </tr>
                                 <tr>
                                   <td>equipmentType</td>
-                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.equipmentType }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.equipmentType }}
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_BWP', 'equipmentType', selectedExtensionInfo?.peeParametersList_BWP?.db?.equipmentType)">edit</mat-icon>
+                                  </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.equipmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.equipmentType === selectedExtensionInfo?.peeParametersList_BWP?.ds?.equipmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
@@ -4430,7 +4441,9 @@
                                 </tr>
                                 <tr>
                                   <td>environmentType</td>
-                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.environmentType }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.environmentType }}
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_BWP', 'environmentType', selectedExtensionInfo?.peeParametersList_BWP?.db?.environmentType)">edit</mat-icon>
+                                  </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.environmentType }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.environmentType === selectedExtensionInfo?.peeParametersList_BWP?.ds?.environmentType) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
@@ -4442,7 +4455,9 @@
                                 </tr>
                                 <tr>
                                   <td>powerInterface</td>
-                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.powerInterface }}<mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                  <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.db?.powerInterface }}
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'peeParametersList_BWP', 'powerInterface', selectedExtensionInfo?.peeParametersList_BWP?.db?.powerInterface)">edit</mat-icon>
+                                  </td>
                                   <td>{{ selectedExtensionInfo?.peeParametersList_BWP?.ds?.powerInterface }}</td>
                                   <td>{{ (selectedExtensionInfo?.peeParametersList_BWP?.db?.powerInterface === selectedExtensionInfo?.peeParametersList_BWP?.ds?.powerInterface) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
@@ -4459,7 +4474,7 @@
                       </div>
                     </div>
 
-                    <!-- vnfParametersList_BWP @2024/05/08 OK - 剩編輯特定欄位功能 -->
+                    <!-- vnfParametersList_BWP @2024/05/09 OK -->
                     <div>
                       <span>vnfParametersList_BWP</span>
                       <input id="vnfParametersList_BWP" class="toggle" type="checkbox">
@@ -4528,7 +4543,9 @@
                                 </tr>
                                 <tr>
                                   <td>autoScalable</td>
-                                  <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.autoScalable }} <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                  <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.autoScalable }} 
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_BWP', 'autoScalable', selectedExtensionInfo?.vnfParametersList_BWP?.db?.autoScalable)">edit</mat-icon>
+                                  </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.autoScalable }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.autoScalable === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.autoScalable) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
@@ -4540,7 +4557,9 @@
                                 </tr>
                                 <tr>
                                   <td>flavourId</td>
-                                  <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.flavourId }} <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                  <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.flavourId }}
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_BWP', 'flavourId', selectedExtensionInfo?.vnfParametersList_BWP?.db?.flavourId)">edit</mat-icon>
+                                  </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.flavourId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.flavourId === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.flavourId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
@@ -4549,10 +4568,12 @@
                                       <button (click)="BsParamEdit_ForSingleFieldSyncAction_Submit('BS', 'vnfParametersList_BWP', 'flavourId')">{{ languageService.i18n['BS.syncWithBSSettings'] }}</button>
                                     </span>
                                   </td>
-                                </tr>
+                                </tr>  
                                 <tr>
                                   <td>vnfInstanceId</td>
-                                  <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfInstanceId }} <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                  <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfInstanceId }}
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_BWP', 'vnfInstanceId', selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfInstanceId)">edit</mat-icon>
+                                  </td>
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfInstanceId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfInstanceId === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfInstanceId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
@@ -4564,7 +4585,9 @@
                                 </tr>
                                 <tr>
                                   <td>vnfdId</td>
-                                  <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfdId }} <mat-icon tooltip="{{languageService.i18n['BS.edit']}}">edit</mat-icon></td>
+                                  <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfdId }}
+                                    <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'vnfParametersList_BWP', 'vnfdId', selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfdId)">edit</mat-icon>
+                                  </td>  
                                   <td>{{ selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfdId }}</td>
                                   <td>{{ (selectedExtensionInfo?.vnfParametersList_BWP?.db?.vnfdId === selectedExtensionInfo?.vnfParametersList_BWP?.ds?.vnfdId) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
@@ -4589,36 +4612,42 @@
       </div>
     </div>
 
-    <!-- 編輯指定參數欄位值彈出視窗 @2024/05/09 Add -->
+    <!-- 編輯指定參數欄位值彈出視窗 @2024/05/09 Add - 剩 submit 函數需處理 -->
     <ng-template #editSingleParamValueWindow>
       <h5>{{ languageService.i18n['BS.editParameterSettings'] }}</h5>
       <label>{{ paramTableName }} - {{ editParamName }}</label>
-      <form [formGroup]="editSingleParamForm">
+        <form [formGroup]="editSingleParamForm">
           <ul>
-              <li>
-                  <label>{{ languageService.i18n['BS.currentSettingValue'] }}:</label>
-                  <span>{{ editParamCurrentValue }}</span>
-              </li>
-              <li>
-                  <label>{{ languageService.i18n['BS.setNewParamValue'] }}:</label>
-                  <input type="text" formControlName="newParamValue" matInput>
-                  <mat-error *ngIf="editSingleParamForm.get('newParamValue')?.touched && editSingleParamForm.get('newParamValue')?.invalid">
-                    <ng-container *ngIf="editSingleParamForm.get('newParamValue')?.errors?.['required']">
-                      {{ languageService.i18n['BS.enterNewParameterValue'] }}
-                    </ng-container>
-                  </mat-error>
-              </li>
+            <li>
+              <label>{{ languageService.i18n['BS.currentSettingValue'] }}:</label>
+              <span>{{ editParamCurrentValue }}</span>
+            </li>
+            <li>
+              <label>{{ languageService.i18n['BS.setNewParamValue'] }}:</label>
+              <!-- 條件渲染下拉選單或輸入框 -->
+              <ng-container *ngIf="isDropdown(editParamName); else textInput">
+                <select formControlName="newParamValue" matNativeControl>
+                  <option *ngFor="let option of getOptions(editParamName)" [value]="option.value">{{ option.label }}</option>
+                </select>
+              </ng-container>
+              <!-- 默認的文本輸入框 -->
+              <ng-template #textInput>
+                <input type="text" formControlName="newParamValue" matInput required>
+                <mat-error *ngIf="editSingleParamForm.get('newParamValue')?.touched && editSingleParamForm.get('newParamValue')?.invalid">
+                  <ng-container *ngIf="editSingleParamForm.get('newParamValue')?.errors?.['required']">
+                    {{ languageService.i18n['BS.enterNewParameterValue'] }}
+                  </ng-container>
+                </mat-error>
+              </ng-template>
+            </li>
           </ul>
-          <div class="buttons">
-            <button type="button">
-              {{ languageService.i18n['BS.apply'] }}
-            </button>
-            <button type="button" mat-dialog-close>
-              {{ languageService.i18n['cancel'] }}
-            </button>
-          </div>
-      </form>
+        </form>
+      <div class="buttons">
+        <button type="button" (click)="applyChanges()">{{ languageService.i18n['BS.apply'] }}</button>
+        <button type="button" mat-dialog-close>{{ languageService.i18n['cancel'] }}</button>
+      </div>
     </ng-template>
+
 
     <!-- 鄰居基站列表 @2024/05/05 Update - 取值顯示、filter 皆以完成，缺點"編輯"、"刪除"、"新增"鄰居功能 -->
     <div class="neighborBsList">

@@ -2062,6 +2062,34 @@ export class BSInfoComponent implements OnInit {
   editParamCurrentValue: string = "";
 
   // @2024/05/09 Add
+  paramOptions: { [key: string]: Array<{value: string | number | boolean, label: string}> } = {
+    'gNB-type': [{ value: 'SA', label: 'SA' }, { value: 'NSA', label: 'NSA' }, { value: 'SA_NSA', label: 'SA_NSA' }],
+    'equipmentType': [
+      { value: 'RRU', label: 'RRU' },
+      { value: 'BBU', label: 'BBU' },
+      { value: 'Wide-area-BS-cabinet', label: 'Wide-area-BS-cabinet' },
+      { value: 'Medium-range-BS', label: 'Medium-range-BS' }
+    ],
+    'environmentType': [{ value: 'Indoor', label: 'Indoor' }, { value: 'Outdoor', label: 'Outdoor' }],
+    'powerInterface': [{ value: 'AC', label: 'AC' }, { value: 'DC', label: 'DC' }],
+    'autoScalable': [{ value: true, label: 'true' }, { value: false, label: 'false' }],
+    'administrativeState': [{ value: 'Locked', label: 'Locked' }, { value: 'Shutdown', label: 'Shutdown' }, { value: 'Unlocked', label: 'Unlocked' }],
+    'ssbSubCarrierSpacing': [{ value: '15', label: '15' }, { value: '30', label: '30' }, { value: '60', label: '60' }, { value: '120', label: '120' }, { value: '240', label: '240' }],
+    'txDirection': [{ value: 'DL', label: 'DL' }, { value: 'UL', label: 'UL' }, { value: 'DL and UL', label: 'DL and UL' }],
+    'bwpContext': [{ value: 0, label: 'DL' }, { value: 1, label: 'UL' }, { value: 2, label: 'SUL' }],
+    'isInitialBwp': [{ value: 0, label: 'INITIAL' }, { value: 1, label: 'OTHER' }],
+    'cyclicPrefix': [{ value: 0, label: 'Normal' }, { value: 1, label: 'Extended' }]
+  };
+
+  isDropdown( paramName: string ): boolean {
+    return this.paramOptions.hasOwnProperty( paramName );
+  }
+
+  getOptions( paramName: string ): Array< { value: string | number | boolean, label: string } > {
+    return this.paramOptions[paramName] || [];
+  }
+
+  // @2024/05/09 Add
   openEditSingleParamValueWindow( option: string, ParamTableName: string, EditParamName: string, currentValue: any ): void {
 
     // 一開啟視窗先初始化三變數
@@ -2088,6 +2116,11 @@ export class BSInfoComponent implements OnInit {
     this.editSingleParamValueWindowRef.afterClosed().subscribe( result => {
         console.log('editSingleParamValueWindow was closed'); // 輸出彈出視窗關閉的日誌
     });
+  }
+
+  applyChanges(): void {
+    // Logic to apply changes
+    console.log( 'Changes applied:', this.editSingleParamForm.value );
   }
 
   // 編輯單參數欄位設定值用 @2024/05/09 Add
