@@ -282,7 +282,6 @@ export class BSInfoComponent implements OnInit {
     //this.router.navigate( ['/main/bs-mgr'] ); // 返回 BS 主頁
   }
 
-  // @2024/04/17 Add
   /** @2024/04/17 Add
    *  顯示加載中的 Spinner
    *  @method showLoadingSpinner
