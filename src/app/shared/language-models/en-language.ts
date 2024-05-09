@@ -371,7 +371,9 @@ export const Enlanguage = {
   'BS.currentSettingValue': 'Current Setting Value',
   'BS.setNewParamValue': 'Set New Value',
   'BS.enterNewParameterValue': 'Please enter the new parameter value to set.',
-
+  'BS.setParameterValue': 'Enter a parameter value',
+  'BS.selectNewParameterValue': 'Please select the new parameter value to set.',
+  'BS.selectParameterValue': 'Select a parameter value',
 
 
   'BS.neighborBsList':'Neighbor BS List',

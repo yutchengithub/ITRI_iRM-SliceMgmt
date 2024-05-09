@@ -366,6 +366,9 @@ export const TwLanguage = {
   'BS.currentSettingValue': '當前設定值',
   'BS.setNewParamValue': '設定新值',
   'BS.enterNewParameterValue': '請輸入欲設定的新參數值。',
+  'BS.setParameterValue': '設定一個參數值',
+  'BS.selectNewParameterValue': '請選擇欲設定的新參數值。',
+  'BS.selectParameterValue': '選擇一個參數值',
 
 
   'BS.neighborBsList':'鄰居基站列表',

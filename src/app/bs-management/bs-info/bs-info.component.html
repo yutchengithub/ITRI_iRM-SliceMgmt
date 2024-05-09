@@ -4627,12 +4627,18 @@
               <!-- 條件渲染下拉選單或輸入框 -->
               <ng-container *ngIf="isDropdown(editParamName); else textInput">
                 <select formControlName="newParamValue" matNativeControl>
+                  <option value="" disabled selected>{{ languageService.i18n['BS.selectParameterValue'] }}</option>
                   <option *ngFor="let option of getOptions(editParamName)" [value]="option.value">{{ option.label }}</option>
                 </select>
+                <mat-error *ngIf="editSingleParamForm.get('newParamValue')?.touched && editSingleParamForm.get('newParamValue')?.invalid">
+                  <ng-container *ngIf="editSingleParamForm.get('newParamValue')?.errors?.['required']">
+                    {{ languageService.i18n['BS.selectNewParameterValue'] }}
+                  </ng-container>
+                </mat-error>
               </ng-container>
               <!-- 默認的文本輸入框 -->
               <ng-template #textInput>
-                <input type="text" formControlName="newParamValue" matInput required>
+                <input type="text" formControlName="newParamValue" placeholder="{{ languageService.i18n['BS.setParameterValue'] }}" matInput required>
                 <mat-error *ngIf="editSingleParamForm.get('newParamValue')?.touched && editSingleParamForm.get('newParamValue')?.invalid">
                   <ng-container *ngIf="editSingleParamForm.get('newParamValue')?.errors?.['required']">
                     {{ languageService.i18n['BS.enterNewParameterValue'] }}
