@@ -235,11 +235,11 @@
     }
     
     export interface SNSSAILeafListNRCellCU {
-      db?: SNSSAIDetail;
-      ds?: SNSSAIDetail;
+      db?: SNSSAILeafListNRCellCU_SNSSAIDetail;
+      ds?: SNSSAILeafListNRCellCU_SNSSAIDetail;
     }
     
-    export interface SNSSAIDetail {
+    export interface SNSSAILeafListNRCellCU_SNSSAIDetail {
       gNBId: number;
       gNBIdLength: number;
       pLMNId_MCC: string;
@@ -492,11 +492,11 @@
     }
     
     export interface SNSSAILeafListNRCellDU {
-      db?: SNSSAIDetail;
-      ds?: SNSSAIDetail;
+      db?: SNSSAILeafListNRCellDU_SNSSAIDetail;
+      ds?: SNSSAILeafListNRCellDU_SNSSAIDetail;
     }
     
-    export interface SNSSAIDetail {
+    export interface SNSSAILeafListNRCellDU_SNSSAIDetail {
       gNBDUId?: number;
       gNBId: number;
       gNBIdLength: number;
