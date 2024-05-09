@@ -351,7 +351,7 @@ export const TwLanguage = {
   'BS.parameters':'基站參數',
   'BS.basic': '基本',
   'BS.advanced': '進階',
-  'BS.allSyncOptions': '同步所有設定選項',
+  'BS.allTableSyncOptions': '同步所有設定選項',
   'BS.syncAction': '同步操作',
   'BS.syncWithNMSSettings': '依照網管設定同步',
   'BS.syncWithBSSettings': '依照基站設定同步',
@@ -361,6 +361,12 @@ export const TwLanguage = {
   'BS.mismatch': '是否不符',
   'BS.mismatchYes': '是',
   'BS.mismatchNo': '否',
+  'BS.editParameterSettings': '編輯參數設定值',
+  'BS.currentParameterValue': '當前參數值',
+  'BS.currentSettingValue': '當前設定值',
+  'BS.setNewParamValue': '設定新值',
+  'BS.enterNewParameterValue': '請輸入欲設定的新參數值。',
+
 
   'BS.neighborBsList':'鄰居基站列表',
   'BS.editNeighborBS': '編輯鄰居基站',

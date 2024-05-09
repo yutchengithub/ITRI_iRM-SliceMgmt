@@ -356,7 +356,7 @@ export const Enlanguage = {
   'BS.parameters':'BS Parameters',
   'BS.basic': 'Basic',
   'BS.advanced': 'Advanced',
-  'BS.allSyncOptions': 'All Sync Options',
+  'BS.allTableSyncOptions': 'All Sync Options',
   'BS.syncAction': 'Sync Action',
   'BS.syncWithNMSSettings': 'Sync with NMS Settings',
   'BS.syncWithBSSettings': 'Sync with BS Settings',
@@ -366,6 +366,13 @@ export const Enlanguage = {
   'BS.mismatch': 'Mismatch',
   'BS.mismatchYes': 'Yes',
   'BS.mismatchNo': 'No',
+  'BS.editParameterSettings': 'Edit Parameter Settings',
+  'BS.currentParameterValue': 'Current Parameter Value',
+  'BS.currentSettingValue': 'Current Setting Value',
+  'BS.setNewParamValue': 'Set New Value',
+  'BS.enterNewParameterValue': 'Please enter the new parameter value to set.',
+
+
 
   'BS.neighborBsList':'Neighbor BS List',
   'BS.editNeighborBS': 'Edit Neighbor BS',

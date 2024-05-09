@@ -57,8 +57,8 @@ interface bsCurrentFmParams {
 
 /**
  * @2024/05/08 Add
- * 枚舉：定義不同的 extension_info 參數欄位名稱
- * @enum ExtensionInfoParamFieldNames
+ * 枚舉：定義不同的 extension_info 參數表格名稱
+ * @enum ExtensionInfoParamTableNames
  * @description
  *    - 此枚舉用於標識和訪問 extension_info 中的特定參數字段。
  *    - 提供一個清晰的參考點，以確保在代碼中使用的字段名與數據結構保持一致性。
@@ -92,7 +92,7 @@ interface bsCurrentFmParams {
  * @member {string} peeParametersList_BWP       - 指向 BWP 層的 pee 參數列表。
  * @member {string} vnfParametersList_BWP       - 指向 BWP 層的 VNF 參數列表。
  */
-enum ExtensionInfoParamFieldNames {
+enum ExtensionInfoParamTableNames {
   gNBCUFunction = "gNBCUFunction",
   NRCellCU = "NRCellCU",
   peeParametersList_CU = "peeParametersList_CU",
@@ -1653,7 +1653,7 @@ export class BSInfoComponent implements OnInit {
   /**
    * @2024/05/09 Update
    * 提交 Base Station Parameter Edit 表單的方法
-   * @method BsParamEdit_ForAllSyncAction_Submit
+   * @method BsParamEdit_ForAllTableSyncAction_Submit
    * @param   { string } option - 同步選項，用於決定同步所有設定是要基於網管系統( NMS - db )的參數設定，還是要基於基站( BS - ds )的參數設定
    * @returns { void }
    * @description
@@ -1664,7 +1664,7 @@ export class BSInfoComponent implements OnInit {
    * - 對於一體式基站( bsType 為 "1" )，處理並更新一體式基站的所有參數資訊
    * - 對於分佈式基站( bsType 為 "2" )，處理並更新分佈式基站每個 cell 的所有參數資訊
    */
-  BsParamEdit_ForAllSyncAction_Submit( option: string ) {
+  BsParamEdit_ForAllTableSyncAction_Submit( option: string ) {
 
     // 重置編輯類型設定
     this.editType = 0;
@@ -1804,68 +1804,68 @@ export class BSInfoComponent implements OnInit {
   /**
    * @2024/05/09 Update
    * 轉換字符串為對應的枚舉值
-   * @method convertToParamFieldEnum
-   * @param   { string } paramFieldName - extension_info 參數欄位名稱字符串
-   * @returns { ExtensionInfoParamFieldNames } - 返回枚舉對應的值
+   * @method convertToParamTableEnum
+   * @param   { string } paramTableName - extension_info 參數表格名稱字符串
+   * @returns { ExtensionInfoParamTableNames } - 返回枚舉對應的值
    * @description
    *    - 此方法將傳入的字符串參數名稱轉換為枚舉類型，用於後續索引操作
    */
-  convertToParamFieldEnum( paramFieldName: string ): ExtensionInfoParamFieldNames {
+  convertToParamTableEnum( paramTableName: string ): ExtensionInfoParamTableNames {
     // 將字符串轉換為枚舉值
-    return ExtensionInfoParamFieldNames[paramFieldName as keyof typeof ExtensionInfoParamFieldNames];
+    return ExtensionInfoParamTableNames[paramTableName as keyof typeof ExtensionInfoParamTableNames];
   }
 
   /**
    * @2024/05/09 Update
    * 單一參數欄位數據同步 - 一體式用
-   * @method syncSingleExtensionInfoField
+   * @method syncSingleParamInExtensionInfoTable
    * @param {ExtensionInfo_ForUpdateBs[]} extension - extension_info 數據數組
    * @param {string} option - 同步選項 ('NMS' 或 'BS')
-   * @param {string} ParamFieldName - 欄位名
-   * @param {string} internalParamName - 內部參數名
+   * @param {string} ParamTableName - 參數表格名
+   * @param {string} editParamName - 欲同步的具體參數名稱
    * @returns {ExtensionInfo_ForUpdateBs[]} - 返回更新後的數據數組
    * @description
    *    - 根據指定的同步選項更新指定的欄位數據
    *    - 'NMS' 選項將 db 數據同步到 ds
    *    - 'BS' 選項將 ds 數據同步到 db
    */
-  syncSingleExtensionInfoField( 
+  syncSingleParamInExtensionInfoTable( 
     extension: ExtensionInfo_ForUpdateBs[], 
       option: string, 
-        ParamFieldName: string, 
-          internalParamName: string ): ExtensionInfo_ForUpdateBs[] {
+        ParamTableName: string, 
+          editParamName: string ): ExtensionInfo_ForUpdateBs[] {
 
-    // 獲取枚舉類型的 extension_info 參數欄位名稱
-    const paramFieldName = this.convertToParamFieldEnum( ParamFieldName );
+    // 獲取枚舉類型的 extension_info 參數表格名稱
+    const paramTableName = this.convertToParamTableEnum( ParamTableName );
 
     // 對數據數組進行映射和更新
     return extension.map( ext => {
 
         // 獲取當前extension_info 中的字段數據
-        const fieldData = ext[paramFieldName];
+        const fieldData = ext[paramTableName];
 
         // 確保必要數據存在並進行更新
-        if ( fieldData && 'db' in fieldData && 'ds' in fieldData && internalParamName && fieldData.db && fieldData.ds ) {
+        if ( fieldData && 'db' in fieldData && 'ds' in fieldData && editParamName && fieldData.db && fieldData.ds ) {
 
             // 決定新值來源
-            const newValue = ( fieldData.ds as any )[internalParamName as keyof typeof fieldData.ds] || ( fieldData.db as any )[internalParamName as keyof typeof fieldData.db];
+            const newValue = ( fieldData.ds as any )[editParamName as keyof typeof fieldData.ds] || ( fieldData.db as any )[editParamName as keyof typeof fieldData.db];
 
             // 根據選項同步數據
             if ( option === 'NMS' ) {
                 return {
-                    [paramFieldName]: {
+                    [paramTableName]: {
                         ds: {
                             ...fieldData.ds,
-                            [internalParamName]: (fieldData.db as any)[internalParamName as keyof typeof fieldData.db] // 同步 DB 值到 DS
+                            [editParamName]: (fieldData.db as any)[editParamName as keyof typeof fieldData.db] // 同步 DB 值到 DS
                         }
                     }
                 };
             } else {
                 return {
-                    [paramFieldName]: {
+                    [paramTableName]: {
                         db: {
                             ...fieldData.db,
-                            [internalParamName]: (fieldData.ds as any)[internalParamName as keyof typeof fieldData.ds] // 同步 DS 值到 DB
+                            [editParamName]: (fieldData.ds as any)[editParamName as keyof typeof fieldData.ds] // 同步 DS 值到 DB
                         }
                     }
                 };
@@ -1879,54 +1879,54 @@ export class BSInfoComponent implements OnInit {
   /**
    * @2024/05/09 Update
    * 單一參數欄位數據同步 - 分佈式用
-   * @method syncSingleExtensionInfoField_dist
+   * @method syncSingleParamInExtensionInfoTable_dist
    * @param {ExtensionInfo_dist_ForUpdateDistributedBs[]} extension - extension_info 數據數組
    * @param {string} option - 同步選項 ('NMS' 或 'BS')
-   * @param {string} ParamFieldName - 欄位名
-   * @param {string} internalParamName - 內部參數名
+   * @param {string} ParamTableName - 參數表格名
+   * @param {string} editParamName - 欲同步的具體參數名稱
    * @returns {ExtensionInfo_dist_ForUpdateDistributedBs[]} - 返回更新後的數據數組
    * @description
    *    - 根據指定的同步選項更新指定的欄位數據
    *    - 'NMS' 選項將 db 數據同步到 ds
    *    - 'BS' 選項將 ds 數據同步到 db
    */
-  syncSingleExtensionInfoField_dist(
+  syncSingleParamInExtensionInfoTable_dist(
     extension: ExtensionInfo_dist_ForUpdateDistributedBs[], 
       option: string, 
-        ParamFieldName: string, 
-          internalParamName?: string ): ExtensionInfo_dist_ForUpdateDistributedBs[] {
+        ParamTableName: string, 
+          editParamName?: string ): ExtensionInfo_dist_ForUpdateDistributedBs[] {
     
-    // 獲取枚舉類型的 extension_info 參數欄位名稱
-    const paramFieldName = this.convertToParamFieldEnum( ParamFieldName );
+    // 獲取枚舉類型的 extension_info 參數表格名稱
+    const paramTableName = this.convertToParamTableEnum( ParamTableName );
 
     // 對數據數組進行映射和更新
     return extension.map( ext => {
 
         // 獲取當前extension_info 中的字段數據
-        const fieldData = ext[paramFieldName];
+        const fieldData = ext[paramTableName];
 
         // 確保必要數據存在並進行更新
-        if ( fieldData && 'db' in fieldData && 'ds' in fieldData && internalParamName && fieldData.db && fieldData.ds ) {
+        if ( fieldData && 'db' in fieldData && 'ds' in fieldData && editParamName && fieldData.db && fieldData.ds ) {
 
             // 決定新值來源
-            const newValue = ( fieldData.ds as any )[internalParamName as keyof typeof fieldData.ds] || ( fieldData.db as any )[internalParamName as keyof typeof fieldData.db];
+            const newValue = ( fieldData.ds as any )[editParamName as keyof typeof fieldData.ds] || ( fieldData.db as any )[editParamName as keyof typeof fieldData.db];
 
             // 根據選項同步數據
             if ( option === 'NMS' ) {
                 return {
-                    [paramFieldName]: {
+                    [paramTableName]: {
                         ds: {
                             ...fieldData.ds,
-                            [internalParamName]: ( fieldData.db as any )[internalParamName as keyof typeof fieldData.db] // 同步 DB 值到 DS
+                            [editParamName]: ( fieldData.db as any )[editParamName as keyof typeof fieldData.db] // 同步 DB 值到 DS
                         }
                     }
                 };
             } else {
                 return {
-                    [paramFieldName]: {
+                    [paramTableName]: {
                         db: {
                             ...fieldData.db,
-                            [internalParamName]: ( fieldData.ds as any )[internalParamName as keyof typeof fieldData.ds] // 同步 DS 值到 DB
+                            [editParamName]: ( fieldData.ds as any )[editParamName as keyof typeof fieldData.ds] // 同步 DS 值到 DB
                         }
                     }
                 };
@@ -1942,27 +1942,27 @@ export class BSInfoComponent implements OnInit {
    * 提交基站單一欄位同步編輯操作的方法
    * @method BsParamEdit_ForSingleFieldSyncAction_Submit
    * @param {string} option - 同步選項，用於決定同步設定是基於網管系統(NMS)還是基站的本地設定(BS)
-   * @param {string} paramFieldName - 要同步的欄位名稱
-   * @param {string} [internalParamName] - 欲同步的具體內部參數名稱（可選）
+   * @param {string} paramTableName - 要同步的參數表格名稱
+   * @param {string} [editParamName] - 欲同步的具體參數名稱（可選）
    * @description
    *    - 此方法根據用戶選擇的同步選項來設定並提交基站的單一欄位參數更新。
    *    - 根據 bsType 的值判斷基站類型（一體式或分佈式），進行相應的數據更新流程。
    *    - 對於一體式基站 ( bsType 為 "1" )：
-   *        - 建立更新數據物件，包括基站的基本訊息及透過 `syncSingleExtensionInfoField` 方法同步更新的 extension_info。
+   *        - 建立更新數據物件，包括基站的基本訊息及透過 `syncSingleParamInExtensionInfoTable` 方法同步更新的 extension_info。
    *        - 之後呼叫 `updateBs()` 方法以提交更新。
    *    - 對於分佈式基站 ( bsType 為 "2" )：
    *        - 先篩選出與選擇的 NCI 相關的 extension_info。
-   *        - 使用 `syncSingleExtensionInfoField_dist` 方法處理同步操作，生成新的 extension_info 數組。
+   *        - 使用 `syncSingleParamInExtensionInfoTable_dist` 方法處理同步操作，生成新的 extension_info 數組。
    *        - 建立更新數據物件，包括基站的基本訊息及更新後的 extension_info 。
    *        - 之後呼叫 `updateDistributedBs()` 方法以提交更新。
    *    - 該方法的行為取決於同步選項，以及被操作的基站類型。
    */
-  BsParamEdit_ForSingleFieldSyncAction_Submit( option: string, paramFieldName: string, internalParamName?: string) {
+  BsParamEdit_ForSingleFieldSyncAction_Submit( option: string, paramTableName: string, editParamName?: string ) {
 
     // 若 bsType 為 "1"
     if ( this.bsType === "1" ) {    
 
-      if( internalParamName ) {
+      if( editParamName ) {
 
         // 建立更新一體式基站的資料物件
         const updateData: ForUpdateBs = {
@@ -1983,7 +1983,7 @@ export class BSInfoComponent implements OnInit {
           // 設定 components 的值
           components: this.selectBsInfo.components,
           // 設定 extension_info 的值
-          extension_info: this.syncSingleExtensionInfoField( this.selectBsInfo.extension_info, option, paramFieldName, internalParamName )
+          extension_info: this.syncSingleParamInExtensionInfoTable( this.selectBsInfo.extension_info, option, paramTableName, editParamName )
         };
 
         console.log("使用", option, "進行同步，POST 的 JSON 為:", updateData );
@@ -1998,7 +1998,7 @@ export class BSInfoComponent implements OnInit {
 
       if ( this.selectedExtensionInfo && this.selectedNci === this.selectedExtensionInfo.nci ) {
         const filteredInfo = this.selectBsInfo_dist.extension_info.filter( info => info.nci === this.selectedNci );
-        const syncInfo = filteredInfo.map( info => this.syncSingleExtensionInfoField_dist( [info], option, paramFieldName, internalParamName)[0] );
+        const syncInfo = filteredInfo.map( info => this.syncSingleParamInExtensionInfoTable_dist( [info], option, paramTableName, editParamName)[0] );
 
         // 建立更新分佈式基站的資料物件
         const updateData: ForUpdateDistributedBs = {
@@ -2029,123 +2029,139 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
+  // @2024/05/09 Add
+  // ViewChild 裝飾器用來獲取模板中的 #editSingleParamValueWindow 模板引用變量，
+  // 允許我們在 TypeScript 代碼中訪問這個 Angular 模板。
+  @ViewChild('editSingleParamValueWindow') editSingleParamValueWindow!: TemplateRef<any>;
 
+  // @2024/05/09 Add
+  // 用於存儲彈出視窗的參考，以便可以進行開啟、操作和關閉彈出視窗的動作。
+  // MatDialogRef 類型提供了一系列控制彈出視窗的方法，如 close() 用於關閉彈出視窗。
+  editSingleParamValueWindowRef!: MatDialogRef<any>;
 
-  // 編輯單參數欄位設定值用 2024/05/09 Add
-  BsParamEdit_editSingleParamValue_Submit( ParamFieldName: string ) {
+  // @2024/05/09 Add
+  // FormGroup 類型的 editSingleParamForm 變量用來存儲和管理表單控制項的集合。
+  // 這個表單群組包含了用於基站參數值的各個表單控制項，如 gNB ID、Cell ID 等。
+  editSingleParamForm!: FormGroup;
 
-    // 若 bsType 為 "1"
-    if ( this.bsType === "1" ) {    
-
-      // 將位置字串解析為經緯度數組
-      const positionArray = JSON.parse( this.selectBsInfo.position );
-
-      // 計算經緯度並乘以 1000000
-      const gpslatitude = positionArray[1] * 1000000;
-      const gpslongitude = positionArray[0] * 1000000;
-      
-      // 建立更新一體式基站的資料物件
-      const updateData: ForUpdateBs = {
-        // 設定編輯類型
-        edit_type: 4,
-        // 設定 session 的值
-        session: this.sessionId,
-        // 設定 id 的值
-        id: this.selectBsInfo.id,
-        // 設定 name 的值
-        name: this.selectBsInfo.name,
-        // 設定 description 的值
-        description: this.selectBsInfo.description,
-        // 設定 bstype 的值
-        bstype: String( this.selectBsInfo.bstype ),
-        // 設定 position 的值
-        position: this.selectBsInfo.position,
-        // 設定 components 的值
-        components: this.selectBsInfo.components,
-        // 設定 pci 的值
-        pci: String( this.selectBsInfo.info['bs-conf'].pci ),
-        // 設定 plmnid 的值
-        plmnid: {
-          // 設定 mnc 的值
-          mnc: String( this.selectBsInfo.info.pLMNId_MNC ),
-          // 設定 mcc 的值
-          mcc: String( this.selectBsInfo.info.pLMNId_MCC )
-        },
-        // 設定 nci 的值
-        nci: String( this.selectBsInfo.info['bs-conf'].nci ),
-        // 設定 gpslatitude 的值
-        gpslatitude: String( gpslatitude ),
-        // 設定 gpslongitude 的值
-        gpslongitude: String( gpslongitude ),
-        // 設定 nrarfcndl 的值
-        nrarfcndl: String( this.selectBsInfo.info['bs-conf']['nrarfcn-dl'] ),
-        // 設定 nrarfcnul 的值
-        nrarfcnul: String( this.selectBsInfo.info['bs-conf']['nrarfcn-ul'] ),
-        // 設定 channelbandwidth 的值
-        channelbandwidth: String( this.selectBsInfo.info['bs-conf']['channel-bandwidth'] ),
-        // 設定 txpower 的值
-        txpower: String( this.selectBsInfo.info['bs-conf']['tx-power'] ),
-        // 設定 tac 的值
-        tac: String( this.selectBsInfo.info['bs-conf'].tac ),
-        // 設定 extension_info 的值
-        //extension_info: this.selectBsInfo.extension_info
-      };
-
-      // 呼叫 updateBs() 方法更新一體式基站
-      this.updateBs( updateData );
-
-    // 若 bsType 為 "2"
-    } else if ( this.bsType === "2" ) {
-
-      // 從 extension_info 中獲取 cellinfo 資訊
-      const cellinfo: Cellinfo_dist[] = this.selectBsInfo_dist.extension_info.map( info => ({
-        // 設定 nRPCI 的值
-        nRPCI: info.NRCellDU.db.nRPCI,
-        // 設定 nRTAC 的值
-        nRTAC: info.NRCellDU.db.nRTAC,
-        // 設定 arfcnDL 的值
-        arfcnDL: info.NRCellDU.db.arfcnDL,
-        // 設定 arfcnUL 的值
-        arfcnUL: info.NRCellDU.db.arfcnUL,
-        // 設定 bSChannelBwDL 的值
-        bSChannelBwDL: info.NRCellDU.db.bSChannelBwDL,
-        // 設定 configuredMaxTxPower 的值
-        configuredMaxTxPower: info.NRSectorCarrier.db.configuredMaxTxPower,
-        // 設定 pLMNId_MCC 的值
-        pLMNId_MCC: info.NRCellDU.db.pLMNId_MCC,
-        // 設定 pLMNId_MNC 的值
-        pLMNId_MNC: info.NRCellDU.db.pLMNId_MNC,
-        // 設定 nci 的值
-        nci: info.nci
-      }));
-
-      // 建立更新分佈式基站的資料物件
-      const updateData: ForUpdateDistributedBs = {
-        // 設定編輯類型
-        edit_type: 4,
-        // 設定 session 的值
-        session: this.sessionId,
-        // 設定 id 的值
-        id: this.selectBsInfo_dist.id,
-        // 設定 name 的值
-        name: this.selectBsInfo_dist.name,
-        // 設定 bstype 的值
-        bstype: String( this.selectBsInfo_dist.bstype ),
-        // 設定 description 的值
-        description: this.selectBsInfo_dist.description,
-        // 設定 components 的值
-        components: this.selectBsInfo_dist.components,
-        // 設定 cellinfo 的值
-        cellinfo: cellinfo,
-
-        // 設定 extension_info 的值
-        //extension_info: this.selectBsInfo_dist.extension_info
-      };
-
-      // 呼叫 updateDistributedBs() 方法更新分佈式基站
-      this.updateDistributedBs( updateData );
-    }
+  // @2024/05/09 Add
+  createEditSingleParamForm(): void {
+    // 使用 Angular 的 FormBuilder 創建表單群組，並為各表單控件設定初始值和驗證規則
+    this.editSingleParamForm = this.fb.group({
+      newParamValue: ['', [Validators.required]]
+    });
   }
+
+  // @2024/05/09 Add
+  // 用於儲存參數表格名稱
+  paramTableName: string = "";
+
+  // @2024/05/09 Add
+  // 用於儲存要編輯的參數表格內的參數名稱與當前值
+  editParamName: string = "";
+  editParamCurrentValue: string = "";
+
+  // @2024/05/09 Add
+  openEditSingleParamValueWindow( option: string, ParamTableName: string, EditParamName: string, currentValue: any ): void {
+
+    // 一開啟視窗先初始化三變數
+    this.paramTableName = "";
+    this.editParamName = "";
+    this.editParamCurrentValue = "";
+
+    // 輸出當前要調整的欄位內參數名稱以供調試
+    console.log( "paramTableName is:", ParamTableName );
+    console.log( ", and editParamName is:", EditParamName );
+    this.paramTableName = ParamTableName;
+    this.editParamName = EditParamName;
+    this.editParamCurrentValue = currentValue;
+
+    // 呼叫函數初始化表單
+    this.createEditSingleParamForm(); // 初始化表單
+
+    // 開啟彈出視窗，傳入對應模板和數據
+    this.editSingleParamValueWindowRef = this.dialog.open( this.editSingleParamValueWindow, {
+        id: 'editSingleParamValueWindowRef' // 設定彈出視窗的唯一標識
+    });
+
+    // 訂閱彈出視窗關閉事件，用於清理或記錄
+    this.editSingleParamValueWindowRef.afterClosed().subscribe( result => {
+        console.log('editSingleParamValueWindow was closed'); // 輸出彈出視窗關閉的日誌
+    });
+  }
+
+  // 編輯單參數欄位設定值用 @2024/05/09 Add
+  BsParamEdit_editSingleParamValue_Submit( option: string, paramTableName: string, editParamName: string ) {
+
+      // 若 bsType 為 "1"
+      if ( this.bsType === "1" ) {    
+  
+        if( editParamName ) {
+  
+          // 建立更新一體式基站的資料物件
+          const updateData: ForUpdateBs = {
+            // 設定編輯類型
+            edit_type: 4,
+            // 設定 session 的值
+            session: this.sessionId,
+            // 設定 id 的值
+            id: this.selectBsInfo.id,
+            // 設定 name 的值
+            name: this.selectBsInfo.name,
+            // 設定 description 的值
+            description: this.selectBsInfo.description,
+            // 設定 bstype 的值
+            bstype: String( this.selectBsInfo.bstype ),
+            // 設定 position 的值
+            position: this.selectBsInfo.position,
+            // 設定 components 的值
+            components: this.selectBsInfo.components,
+            // 設定 extension_info 的值
+            extension_info: this.syncSingleParamInExtensionInfoTable( this.selectBsInfo.extension_info, option, paramTableName, editParamName )
+          };
+  
+          console.log("使用", option, "進行同步，POST 的 JSON 為:", updateData );
+  
+          // 呼叫 updateBs() 方法更新一體式基站
+          this.updateBs( updateData );
+  
+        }
+  
+      // 若 bsType 為 "2"
+      } else if ( this.bsType === "2" ) {
+  
+        if ( this.selectedExtensionInfo && this.selectedNci === this.selectedExtensionInfo.nci ) {
+          const filteredInfo = this.selectBsInfo_dist.extension_info.filter( info => info.nci === this.selectedNci );
+          const syncInfo = filteredInfo.map( info => this.syncSingleParamInExtensionInfoTable_dist( [info], option, paramTableName, editParamName)[0] );
+  
+          // 建立更新分佈式基站的資料物件
+          const updateData: ForUpdateDistributedBs = {
+            // 設定編輯類型
+            edit_type: 4,
+            // 設定 session 的值
+            session: this.sessionId,
+            // 設定 id 的值
+            id: this.selectBsInfo_dist.id,
+            // 設定 name 的值
+            name: this.selectBsInfo_dist.name,
+            // 設定 bstype 的值
+            bstype: String( this.selectBsInfo_dist.bstype ),
+            // 設定 description 的值
+            description: this.selectBsInfo_dist.description,
+            // 設定 components 的值
+            components: this.selectBsInfo_dist.components,
+  
+            // 設定 extension_info 的值
+            extension_info: syncInfo
+          };
+  
+          console.log("使用", option, "進行同步，POST 的 JSON 為:", updateData );
+  
+          // 呼叫 updateDistributedBs() 方法更新分佈式基站
+          this.updateDistributedBs( updateData );
+        }
+      }
+    }
 
 
 // ↑ 基站參數區 @2024/05/09 Update ↑
@@ -2270,8 +2286,6 @@ export class BSInfoComponent implements OnInit {
     //this.setupCellIdAutoFill(); // 初始化 Cell ID 的自動填充邏輯
   }
   
-
-
   /**
    * @2024/05/05 Add
    * 設定 Cell ID 的自動填充邏輯，確保格式正確
@@ -2348,7 +2362,7 @@ export class BSInfoComponent implements OnInit {
   theSelectedEditNeighborPCI: number = 0;
 
   /**
-   * @2024/05/06 Update
+   * @2024/05/09 Update
    * 打開鄰居基站資訊編輯彈出視窗
    * 根據模式（新增或編輯）打開彈出視窗，並準備表單
    * @method openNeighborBsEditDialog
@@ -2404,7 +2418,7 @@ export class BSInfoComponent implements OnInit {
 
     // 訂閱彈出視窗關閉事件，用於清理或記錄
     this.addOrEditNeighborBsWindowRef.afterClosed().subscribe( result => {
-        console.log('Dialog was closed'); // 輸出彈出視窗關閉的日誌
+        console.log('addOrEditNeighborBsWindow was closed'); // 輸出彈出視窗關閉的日誌
     });
   }
 
