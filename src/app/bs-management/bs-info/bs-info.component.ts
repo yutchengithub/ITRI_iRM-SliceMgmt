@@ -1189,11 +1189,11 @@ export class BSInfoComponent implements OnInit {
             // 初始化 DU 的 components 資料物件
             componentsData[cuId][duId] = [];
             // 遍歷 RU
-            for (const ruInfo of this.selectBsInfo_dist.components[cuId][duId]) {
+            for ( const ruInfo of this.selectBsInfo_dist.components[cuId][duId] ) {
               // 取得 RU 的 ID
-              const ruId = Object.keys(ruInfo)[0];
+              const ruId = Object.keys( ruInfo )[0];
               // 取得 RU 的索引
-              const index = Object.keys(this.ruIdNamePositionMap).findIndex(id => id === ruId);
+              const index = Object.keys( this.ruIdNamePositionMap ).findIndex( id => id === ruId );
               
               // 取得 RU 的經度表單控制項
               const longitudeControl = this.BsBasicInfoEditForm.get(`longitude_${index}`);
@@ -1201,7 +1201,7 @@ export class BSInfoComponent implements OnInit {
               const latitudeControl = this.BsBasicInfoEditForm.get(`latitude_${index}`);
       
               // 若 longitudeControl 和 latitudeControl 存在
-              if (longitudeControl && latitudeControl) {
+              if ( longitudeControl && latitudeControl ) {
                 // 建立 RU 的位置物件
                 const position = {
                   // 設定經度的值
@@ -1217,7 +1217,7 @@ export class BSInfoComponent implements OnInit {
                 
               } else {
                 // 若表單控制項不存在，則使用原始位置
-                componentsData[cuId][duId].push({ [ruId]: ruInfo[ruId] });
+                componentsData[cuId][duId].push( { [ruId]: ruInfo[ruId] } );
               }
             }
           }
