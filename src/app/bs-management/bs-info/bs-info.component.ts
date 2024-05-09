@@ -1444,7 +1444,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 基站參數區 @2024/05/08 Update ↓
+// ↓ 基站參數區 @2024/05/09 Update ↓
 
   bsParametersType: string = 'Basic';       // 預設選擇 "Basic"    @2024/03/29 Add 
   //bsParametersType: string = 'Advanced';  // 預設選擇 "Advanced" @2024/03/29 Add
@@ -1533,9 +1533,9 @@ export class BSInfoComponent implements OnInit {
 
 
   /**
-   * @2024/05/07 Add
+   * @2024/05/09 Update
    * 根據指定選項同步 DS 和 DB 結構之間的extension_info 
-   * @method syncExtensionInfo
+   * @method syncAllExtensionInfo
    * @param { any } extension - 包含 DS 和 DB 結構的擴展對象
    * @param { string } option - 同步選項，'NMS' 或其他，用於確定同步方向
    * @returns { any } 修改後的擴展對象，其中 DS 和 DB 結構已同步
@@ -1544,7 +1544,7 @@ export class BSInfoComponent implements OnInit {
    * - 遞迴處理嵌套對象以確保完整的同步深度
    * - 幫助維持網路管理系統中配置狀態的一致性
    */
-  syncExtensionInfo( extension: any, option: string ) {
+  syncAllExtensionInfo( extension: any, option: string ) {
     // 從擴展對象中檢索所有鍵以進行迭代
     const keys = Object.keys( extension );
 
@@ -1565,7 +1565,7 @@ export class BSInfoComponent implements OnInit {
           }
         }
         // 遞迴同步嵌套對象以確保處理所有層次
-        this.syncExtensionInfo( extension[key], option );
+        this.syncAllExtensionInfo( extension[key], option );
       }
     });
 
@@ -1578,7 +1578,7 @@ export class BSInfoComponent implements OnInit {
   editType: number = 0;
 
   /**
-   * @2024/05/07 Add
+   * @2024/05/09 Update
    * 提交 Base Station Parameter Edit 表單的方法
    * @method BsParamEdit_ForAllSyncAction_Submit
    * @param   { string } option - 同步選項，用於決定同步所有設定是要基於網管系統( NMS - db )的參數設定，還是要基於基站( BS - ds )的參數設定
@@ -1664,7 +1664,7 @@ export class BSInfoComponent implements OnInit {
       };
 
       // 依據選擇的同步選項設定 extension_info
-      const syncedExtensionInfo = this.syncExtensionInfo( this.selectBsInfo.extension_info, option );
+      const syncedExtensionInfo = this.syncAllExtensionInfo( this.selectBsInfo.extension_info, option );
 
       // 設定 extension_info 的值
       updateData.extension_info = syncedExtensionInfo;
@@ -1719,7 +1719,7 @@ export class BSInfoComponent implements OnInit {
 
       // 依據選擇的同步選項設定 extension_info
       const syncedExtensionInfos = this.selectBsInfo_dist.extension_info.map( extInfo => {
-        return this.syncExtensionInfo( extInfo, option );
+        return this.syncAllExtensionInfo( extInfo, option );
       });
       updateData.extension_info = syncedExtensionInfos;
 
@@ -1729,23 +1729,23 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/08 Add
+   * @2024/05/09 Update
    * 轉換字符串為對應的枚舉值
-   * @method convertToFieldEnum
-   * @param {string} paramFieldName - extension_info 參數欄位名稱字符串
-   * @returns {ExtensionInfoParamFieldNames} - 返回枚舉對應的值
+   * @method convertToParamFieldEnum
+   * @param   { string } paramFieldName - extension_info 參數欄位名稱字符串
+   * @returns { ExtensionInfoParamFieldNames } - 返回枚舉對應的值
    * @description
    *    - 此方法將傳入的字符串參數名稱轉換為枚舉類型，用於後續索引操作
    */
-  convertToFieldEnum( paramFieldName: string ): ExtensionInfoParamFieldNames {
+  convertToParamFieldEnum( paramFieldName: string ): ExtensionInfoParamFieldNames {
     // 將字符串轉換為枚舉值
     return ExtensionInfoParamFieldNames[paramFieldName as keyof typeof ExtensionInfoParamFieldNames];
   }
 
   /**
-   * @2024/05/08 Add
+   * @2024/05/09 Update
    * 單一參數欄位數據同步 - 一體式用
-   * @method syncSingleField
+   * @method syncSingleExtensionInfoField
    * @param {ExtensionInfo_ForUpdateBs[]} extension - extension_info 數據數組
    * @param {string} option - 同步選項 ('NMS' 或 'BS')
    * @param {string} ParamFieldName - 欄位名
@@ -1756,14 +1756,14 @@ export class BSInfoComponent implements OnInit {
    *    - 'NMS' 選項將 db 數據同步到 ds
    *    - 'BS' 選項將 ds 數據同步到 db
    */
-  syncSingleField( 
+  syncSingleExtensionInfoField( 
     extension: ExtensionInfo_ForUpdateBs[], 
       option: string, 
         ParamFieldName: string, 
           internalParamName: string ): ExtensionInfo_ForUpdateBs[] {
 
     // 獲取枚舉類型的 extension_info 參數欄位名稱
-    const paramFieldName = this.convertToFieldEnum( ParamFieldName );
+    const paramFieldName = this.convertToParamFieldEnum( ParamFieldName );
 
     // 對數據數組進行映射和更新
     return extension.map( ext => {
@@ -1804,9 +1804,9 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/08 Add
+   * @2024/05/09 Update
    * 單一參數欄位數據同步 - 分佈式用
-   * @method syncSingleField
+   * @method syncSingleExtensionInfoField_dist
    * @param {ExtensionInfo_dist_ForUpdateDistributedBs[]} extension - extension_info 數據數組
    * @param {string} option - 同步選項 ('NMS' 或 'BS')
    * @param {string} ParamFieldName - 欄位名
@@ -1817,14 +1817,14 @@ export class BSInfoComponent implements OnInit {
    *    - 'NMS' 選項將 db 數據同步到 ds
    *    - 'BS' 選項將 ds 數據同步到 db
    */
-  syncSingleField_dist(
+  syncSingleExtensionInfoField_dist(
     extension: ExtensionInfo_dist_ForUpdateDistributedBs[], 
       option: string, 
         ParamFieldName: string, 
           internalParamName?: string ): ExtensionInfo_dist_ForUpdateDistributedBs[] {
     
     // 獲取枚舉類型的 extension_info 參數欄位名稱
-    const paramFieldName = this.convertToFieldEnum( ParamFieldName );
+    const paramFieldName = this.convertToParamFieldEnum( ParamFieldName );
 
     // 對數據數組進行映射和更新
     return extension.map( ext => {
@@ -1875,11 +1875,11 @@ export class BSInfoComponent implements OnInit {
    *    - 此方法根據用戶選擇的同步選項來設定並提交基站的單一欄位參數更新。
    *    - 根據 bsType 的值判斷基站類型（一體式或分佈式），進行相應的數據更新流程。
    *    - 對於一體式基站 ( bsType 為 "1" )：
-   *        - 建立更新數據物件，包括基站的基本信息及透過 `syncSingleField` 方法同步更新的 extension_info。
+   *        - 建立更新數據物件，包括基站的基本信息及透過 `syncSingleExtensionInfoField` 方法同步更新的 extension_info。
    *        - 之後呼叫 `updateBs()` 方法以提交更新。
    *    - 對於分佈式基站 ( bsType 為 "2" )：
    *        - 先篩選出與選擇的 NCI 相關的 extension_info。
-   *        - 使用 `syncSingleField_dist` 方法處理同步操作，生成新的 extension_info 數組。
+   *        - 使用 `syncSingleExtensionInfoField_dist` 方法處理同步操作，生成新的 extension_info 數組。
    *        - 建立更新數據物件，包括基站的基本信息及更新後的 extension_info 。
    *        - 之後呼叫 `updateDistributedBs()` 方法以提交更新。
    *    - 該方法的行為取決於同步選項，以及被操作的基站類型。
@@ -1910,7 +1910,7 @@ export class BSInfoComponent implements OnInit {
           // 設定 components 的值
           components: this.selectBsInfo.components,
           // 設定 extension_info 的值
-          extension_info: this.syncSingleField( this.selectBsInfo.extension_info, option, paramFieldName, internalParamName )
+          extension_info: this.syncSingleExtensionInfoField( this.selectBsInfo.extension_info, option, paramFieldName, internalParamName )
         };
 
         console.log("使用", option, "進行同步，POST 的 JSON 為:", updateData );
@@ -1924,8 +1924,8 @@ export class BSInfoComponent implements OnInit {
     } else if ( this.bsType === "2" ) {
 
       if ( this.selectedExtensionInfo && this.selectedNci === this.selectedExtensionInfo.nci ) {
-        const filteredInfo = this.selectBsInfo_dist.extension_info.filter(info => info.nci === this.selectedNci);
-        const syncInfo = filteredInfo.map(info => this.syncSingleField_dist( [info], option, paramFieldName, internalParamName)[0] );
+        const filteredInfo = this.selectBsInfo_dist.extension_info.filter( info => info.nci === this.selectedNci );
+        const syncInfo = filteredInfo.map( info => this.syncSingleExtensionInfoField_dist( [info], option, paramFieldName, internalParamName)[0] );
 
         // 建立更新分佈式基站的資料物件
         const updateData: ForUpdateDistributedBs = {
@@ -1958,9 +1958,8 @@ export class BSInfoComponent implements OnInit {
 
 
 
-
-  // 編輯單參數欄位設定值用 2024/05/08 Add
-  BsParamEdit_editSingleParam_Submit( ParamFieldName: string ) {
+  // 編輯單參數欄位設定值用 2024/05/09 Add
+  BsParamEdit_editSingleParamValue_Submit( ParamFieldName: string ) {
 
     // 若 bsType 為 "1"
     if ( this.bsType === "1" ) {    
@@ -2076,7 +2075,7 @@ export class BSInfoComponent implements OnInit {
   }
 
 
-// ↑ 基站參數區 @2024/05/08 Update ↑
+// ↑ 基站參數區 @2024/05/09 Update ↑
 
 
 
