@@ -19,7 +19,6 @@ import { Item } from './models/item';
 import { ComponentList }   from '../component-management/component-management.component';
 import { ComponentInfo } from '../component-management/component-info/component-info.component';
 import { ComponentInfosw } from '../component-management/component-info/component-info.component';
-import { BsComponentInfo } from '../bs-management/bs-info/bs-info.component';
 
 // Interfaces of Fault Management
 import { FmsgList, FaultMessages, FmStatus } from '../fault-management/fault-management.component';
@@ -48,6 +47,48 @@ export interface NowTime {
   hour: string;
   minute: string;
   second: string;
+}
+
+//component Info
+export interface BsComponentInfo {
+  id: string;
+  name: string;
+  ip: string;
+  port: string;
+  account: string;
+  key: string;
+  comtype: number;
+  firm: string;
+  modelname: string;
+  status: number;
+  info: Info;
+  sm: {
+    softwareInventory: {
+      softwareSlot: SoftwareSlot[];
+    };
+  };
+}
+
+export interface Info {
+  data: string;
+}
+
+interface SoftwareSlot {
+  name: string;
+  status: string;
+  active?: string;
+  running?: string;
+  access?: string;
+  vendorCode?: string;
+  buildId?: string;
+  buildName?: string;
+  buildVersion?: string;
+  files?: {
+    name: string;
+    version: string;
+    localPath: string;
+    integrity: string;
+  };
 }
 
 @Injectable({
