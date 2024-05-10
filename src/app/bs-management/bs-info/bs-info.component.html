@@ -4201,10 +4201,10 @@
                                 </tr>
                                 <tr>
                                   <td>bwpContext</td>
-                                  <td>{{ selectedExtensionInfo?.BWP?.db?.bwpContext }}
+                                  <td>{{ getLabelForValue(selectedExtensionInfo?.BWP?.db?.bwpContext, 'bwpContext') }}
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'BWP', 'bwpContext', selectedExtensionInfo?.BWP?.db?.bwpContext)">edit</mat-icon>
                                   </td>
-                                  <td>{{ selectedExtensionInfo?.BWP?.ds?.bwpContext }}</td>
+                                  <td>{{ getLabelForValue(selectedExtensionInfo?.BWP?.ds?.bwpContext, 'bwpContext') }}</td>
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.bwpContext === selectedExtensionInfo?.BWP?.ds?.bwpContext) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.bwpContext !== selectedExtensionInfo?.BWP?.ds?.bwpContext">
@@ -4215,10 +4215,10 @@
                                 </tr>
                                 <tr>
                                   <td>isInitialBwp</td>
-                                  <td>{{ selectedExtensionInfo?.BWP?.db?.isInitialBwp }}
+                                  <td>{{ getLabelForValue(selectedExtensionInfo?.BWP?.db?.isInitialBwp, 'isInitialBwp') }}
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'BWP', 'isInitialBwp', selectedExtensionInfo?.BWP?.db?.isInitialBwp)">edit</mat-icon>
                                   </td>
-                                  <td>{{ selectedExtensionInfo?.BWP?.ds?.isInitialBwp }}</td>
+                                  <td>{{ getLabelForValue(selectedExtensionInfo?.BWP?.ds?.isInitialBwp, 'isInitialBwp') }}</td>
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.isInitialBwp === selectedExtensionInfo?.BWP?.ds?.isInitialBwp) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.isInitialBwp !== selectedExtensionInfo?.BWP?.ds?.isInitialBwp">
@@ -4243,10 +4243,10 @@
                                 </tr>
                                 <tr>
                                   <td>cyclicPrefix</td>
-                                  <td>{{ selectedExtensionInfo?.BWP?.db?.cyclicPrefix }}
+                                  <td>{{ getLabelForValue(selectedExtensionInfo?.BWP?.db?.cyclicPrefix, 'cyclicPrefix') }}
                                     <mat-icon tooltip="{{languageService.i18n['BS.edit']}}" (click)="openEditSingleParamValueWindow('NMS', 'BWP', 'cyclicPrefix', selectedExtensionInfo?.BWP?.db?.cyclicPrefix)">edit</mat-icon>
                                   </td>
-                                  <td>{{ selectedExtensionInfo?.BWP?.ds?.cyclicPrefix }}</td>
+                                  <td>{{ getLabelForValue(selectedExtensionInfo?.BWP?.ds?.cyclicPrefix, 'cyclicPrefix') }}</td>
                                   <td>{{ (selectedExtensionInfo?.BWP?.db?.cyclicPrefix === selectedExtensionInfo?.BWP?.ds?.cyclicPrefix) ? languageService.i18n['BS.mismatchNo'] : languageService.i18n['BS.mismatchYes'] }}</td>
                                   <td>
                                     <span *ngIf="selectedExtensionInfo?.BWP?.db?.cyclicPrefix !== selectedExtensionInfo?.BWP?.ds?.cyclicPrefix">
@@ -4612,7 +4612,7 @@
       </div>
     </div>
 
-    <!-- 編輯指定參數欄位值彈出視窗 @2024/05/09 Add - 剩 submit 函數需處理 -->
+    <!-- 編輯指定參數欄位值彈出視窗 @2024/05/09 Add -->
     <ng-template #editSingleParamValueWindow>
       <h5>{{ languageService.i18n['BS.editParameterSettings'] }}</h5>
       <label>{{ paramTableName }} - {{ editParamName }}</label>
@@ -4655,7 +4655,7 @@
     </ng-template>
 
 
-    <!-- 鄰居基站列表 @2024/05/05 Update - 取值顯示、filter 皆以完成，缺點"編輯"、"刪除"、"新增"鄰居功能 -->
+    <!-- 鄰居基站列表 @2024/05/05 Update - All item is OK -->
     <div class="neighborBsList">
       <span>{{ languageService.i18n['BS.neighborBsList'] }}
         <!-- 新增鄰居基站的按鈕，點擊時打開對話框進入新增模式 -->

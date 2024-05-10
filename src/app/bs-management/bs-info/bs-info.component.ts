@@ -315,7 +315,7 @@ export class BSInfoComponent implements OnInit {
 // ↓ 編輯、調整與更新 BS 任何資訊時都會呼叫的 API，除了編輯一體式基站的鄰居基站資訊時不會呼叫 ↓
 
   /**
-   * @2024/05/08 Update
+   * @2024/05/10 Update
    * 更新一體式基站的訊息
    * @method updateBs
    * @param {ForUpdateBs} submitData - 包含基站更新訊息的數據對象
@@ -347,6 +347,16 @@ export class BSInfoComponent implements OnInit {
       //   setTimeout(() => this.isModifySuccess = false, 4500);
       // }, 500); // 模擬非同步操作
 
+      // 如 "編輯設定彈出視窗" 有開啟，則等更新讀取完後，關閉新增或編輯設定彈出視窗
+      if ( this.BsBasicInfoEditWindowRef ) {
+        this.BsBasicInfoEditWindowRef.close();
+      }
+
+      // 如 "編輯指定參數欄位值彈出視窗" 有開啟，則等更新讀取完後，關閉此編輯彈出視窗
+      if ( this.editSingleParamValueWindowRef ) {
+        this.editSingleParamValueWindowRef.close();
+      }
+
       this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else {
@@ -374,9 +384,14 @@ export class BSInfoComponent implements OnInit {
           // 刷新基站告警資訊
           //this.getCurrentBsFmList()
 
-          // 如果編輯設定視窗有開啟，則等更新讀取完後，關閉新增或編輯設定視窗
+          // 如 "編輯設定彈出視窗" 有開啟，則等更新讀取完後，關閉新增或編輯設定彈出視窗
           if ( this.BsBasicInfoEditWindowRef ) {
             this.BsBasicInfoEditWindowRef.close();
+          }
+
+          // 如 "編輯指定參數欄位值彈出視窗" 有開啟，則等更新讀取完後，關閉此編輯彈出視窗
+          if ( this.editSingleParamValueWindowRef ) {
+            this.editSingleParamValueWindowRef.close();
           }
 
           this.hideSpinner();  // 完成後隱藏 spinner
@@ -428,6 +443,16 @@ export class BSInfoComponent implements OnInit {
       //   setTimeout(() => this.isModifyError = false, 4500);
       // }, 500); // 模擬非同步操作
 
+      // 如 "編輯設定彈出視窗" 有開啟，則等更新讀取完後，關閉新增或編輯設定彈出視窗
+      if ( this.BsBasicInfoEditWindowRef ) {
+        this.BsBasicInfoEditWindowRef.close();
+      }
+
+      // 如 "編輯指定參數欄位值彈出視窗" 有開啟，則等更新讀取完後，關閉此編輯彈出視窗
+      if ( this.editSingleParamValueWindowRef ) {
+        this.editSingleParamValueWindowRef.close();
+      }
+
       this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else {
@@ -455,9 +480,14 @@ export class BSInfoComponent implements OnInit {
           // 刷新基站告警資訊
           //this.getCurrentBsFmList()
 
-          // 如果編輯設定視窗有開啟，則等更新讀取完後，關閉新增或編輯設定視窗
+          // 如 "編輯設定彈出視窗" 有開啟，則等更新讀取完後，關閉新增或編輯設定彈出視窗
           if ( this.BsBasicInfoEditWindowRef ) {
             this.BsBasicInfoEditWindowRef.close();
+          }
+
+          // 如 "編輯指定參數欄位值彈出視窗" 有開啟，則等更新讀取完後，關閉此編輯彈出視窗
+          if ( this.editSingleParamValueWindowRef ) {
+            this.editSingleParamValueWindowRef.close();
           }
 
           this.hideSpinner();  // 完成後隱藏 spinner
@@ -1517,7 +1547,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 基站參數區 @2024/05/09 Update ↓
+// ↓ 基站參數區 @2024/05/10 Update ↓
 
   bsParametersType: string = 'Basic';       // 預設選擇 "Basic"    @2024/03/29 Add 
   //bsParametersType: string = 'Advanced';  // 預設選擇 "Advanced" @2024/03/29 Add
@@ -2044,25 +2074,33 @@ export class BSInfoComponent implements OnInit {
   // 這個表單群組包含了用於基站參數值的各個表單控制項，如 gNB ID、Cell ID 等。
   editSingleParamForm!: FormGroup;
 
-  // @2024/05/09 Add
+  /**
+   * @2024/05/09 Add
+   * 初始化表單用於編輯單一參數欄位
+   * @method createEditSingleParamForm
+   * @description
+   *    - 使用 FormBuilder 創建表單群組，定義必需的表單控件與驗證規則。
+   */
   createEditSingleParamForm(): void {
-    // 使用 Angular 的 FormBuilder 創建表單群組，並為各表單控件設定初始值和驗證規則
+    // 使用 Angular 的 FormBuilder 創建表單群組
     this.editSingleParamForm = this.fb.group({
-      newParamValue: ['', [Validators.required]]
+      newParamValue: ['', [Validators.required]]  // 新參數值必須輸入
     });
   }
 
   // @2024/05/09 Add
-  // 用於儲存參數表格名稱
+  // 用於儲存參數表格名稱並預設為空
   paramTableName: string = "";
 
   // @2024/05/09 Add
-  // 用於儲存要編輯的參數表格內的參數名稱與當前值
+  // 用於儲存要編輯的參數表格內的參數名稱與當前值並都預設為空
   editParamName: string = "";
   editParamCurrentValue: string = "";
 
-  // @2024/05/09 Add
+  // @2024/05/10 Add
+  // 定義特定基站參數選項
   paramOptions: { [key: string]: Array<{value: string | number | boolean, label: string}> } = {
+    // 此處定義了多種基站參數選項和對應的值與標籤
     'gNB-type': [{ value: 'SA', label: 'SA' }, { value: 'NSA', label: 'NSA' }, { value: 'SA_NSA', label: 'SA_NSA' }],
     'equipmentType': [
       { value: 'RRU', label: 'RRU' },
@@ -2081,49 +2119,118 @@ export class BSInfoComponent implements OnInit {
     'cyclicPrefix': [{ value: 0, label: 'Normal' }, { value: 1, label: 'Extended' }]
   };
 
+  /**
+   * @2024/05/10 Add
+   * 根據給定的參數名稱和值，從預定義的選項中查找對應的標籤。
+   * @method getLabelForValue
+   * @param {number|string|undefined} value - 要尋找標籤的參數值
+   * @param {string} paramName - 參數名稱，用於在paramOptions中尋找對應的選項
+   * @returns {string} - 返回匹配的標籤，如果沒有匹配到，則返回值的字符串表示
+   * @description
+   *    - 此方法會查找與給定參數名稱相關聯的選項列表，並在該列表中尋找值對應的標籤。
+   *    - 如果在選項列表中找到匹配的值，則返回其對應的標籤。
+   *    - 如果沒有找到匹配的選項或該參數名稱不在選項列表中，則直接返回值的字符串形式。
+   */
+  getLabelForValue( value: number | string | undefined, paramName: string ): string {
+
+    const options = this.paramOptions[paramName];  // 從 paramOptions 中取得對應參數名稱的選項列表
+
+    if ( options ) {
+      // 如果找到了對應的選項列表，則進行查找
+      const found = options.find( option => option.value === value );  // 查找列表中值匹配的選項
+      return found ? found.label : String( value );  // 如果找到，返回該選項的標籤，否則返回值的字符串形式
+    }
+    return String( value );  // 如果參數名稱不在選項列表中，返回值的字符串形式
+  }
+  
+  /**
+   * @2024/05/09 Add
+   * 判斷指定的參數名稱是否存在於參數選項中，用於判斷是否應該使用下拉選單顯示。
+   * @method isDropdown
+   * @param {string} paramName - 參數名稱，用於查找 paramOptions 中是否存在相應的選項列表。
+   * @returns {boolean} - 如果參數名稱在 paramOptions 中有定義，則返回 true，否則返回 false。
+   * @description
+   *    - 此方法主要用於界定特定的參數名稱是否應該透過下拉選單來進行選擇。
+   *    - 方法檢查paramOptions對象是否包含一個特定的鍵（參數名），如果有，則認為該參數值應該通過下拉選單選擇。
+   */
   isDropdown( paramName: string ): boolean {
-    return this.paramOptions.hasOwnProperty( paramName );
+    return this.paramOptions.hasOwnProperty( paramName );  // 檢查 paramOptions 對象中是否存在給定的參數名作為鍵
   }
-
+  
+  /**
+   * @2024/05/09 Add
+   * 根據基站參數名稱獲取對應的選項列表，用於特定基站參數顯示下拉式選單進行設值用。
+   * @method getOptions
+   * @param {string} paramName - 要獲取選項列表的參數名稱。
+   * @returns {Array<{value: string | number | boolean, label: string}>} - 返回對應參數名稱的選項列表，如果不存在則返回空數組。
+   * @description
+   *    - 此方法從 paramOptions 對象中擷取與指定參數名稱相關聯的選項列表。
+   *    - 如果指定的參數名不存在於 paramOptions 中，則返回一個空數組，確保調用方總能獲得一個數組類型的結果。
+   */
   getOptions( paramName: string ): Array< { value: string | number | boolean, label: string } > {
-    return this.paramOptions[paramName] || [];
+    return this.paramOptions[paramName] || [];  // 從 paramOptions 中獲取指定參數名的選項，如果未定義則返回空數組
   }
-
+  
+  // @2024/05/09 Add
+  // 用於儲存選擇的編輯參數值選項
   editOption: string = "";
 
-  // @2024/05/09 Add
+  /**
+   * @2024/05/10 Update
+   * 打開用於編輯單一基站參數值的彈出視窗的方法。
+   * @method openEditSingleParamValueWindow
+   * @param {string} option - 指定編輯操作的類型（例如 NMS 或 BS）
+   * @param {string} ParamTableName - 要編輯的參數所在的表格名
+   * @param {string} EditParamName - 要編輯的參數名稱
+   * @param {any} currentValue - 當前參數的值
+   * @description
+   *    - 此方法用於初始化並打開一個彈出視窗，允許用戶修改指定的參數值。
+   *    - 視窗使用 Angular 的 MatDialog 服務來實現。
+   *    - 彈出視窗提供一個表單讓用戶可以輸入或選擇新的參數值。
+   *    - 此方法同時處理彈出視窗的數據初始化，包括設定當前參數值及其可能的新值。
+   */
   openEditSingleParamValueWindow( option: string, ParamTableName: string, EditParamName: string, currentValue: any ): void {
 
-    // 一開啟視窗先初始化四變數
-    this.paramTableName = "";
-    this.editParamName = "";
-    this.editParamCurrentValue = "";
-    this.editOption = "";
-
-    // 輸出當前要調整的欄位內參數名稱以供調試
-    console.log( "paramTableName is:", ParamTableName );
-    console.log( ", and editParamName is:", EditParamName );
+    // 初始化基本變量
     this.paramTableName = ParamTableName;
     this.editParamName = EditParamName;
-    this.editParamCurrentValue = currentValue;
+
+    // 使用 getLabelForValue 函數獲取當前值的顯示標籤
+    this.editParamCurrentValue = this.getLabelForValue( currentValue, EditParamName );
     this.editOption = option;
 
-    // 呼叫函數初始化表單
-    this.createEditSingleParamForm(); // 初始化表單
+    // 輸出調試訊息
+    console.log( "paramTableName is:", ParamTableName );
+    console.log( ", and editParamName is:", EditParamName );
 
-    // 開啟彈出視窗，傳入對應模板和數據
+    // 初始化表單
+    this.createEditSingleParamForm();
+
+    // 使用 MatDialog 服務打開彈出視窗，並設定其唯一標識
     this.editSingleParamValueWindowRef = this.dialog.open( this.editSingleParamValueWindow, {
-        id: 'editSingleParamValueWindowRef' // 設定彈出視窗的唯一標識
+      id: 'editSingleParamValueWindowRef'
     });
 
-    // 訂閱彈出視窗關閉事件，用於清理或記錄
+    // 訂閱彈出視窗關閉後的事件處理
     this.editSingleParamValueWindowRef.afterClosed().subscribe( result => {
-        console.log('editSingleParamValueWindow was closed'); // 輸出彈出視窗關閉的日誌
+      console.log('editSingleParamValueWindow was closed');
     });
   }
 
-
-  // 一體式基站用
+  /** @2024/05/10 Add
+   *  更新一體式基站的單一參數值
+   *  @method updateSingleParamInExtensionInfoTable
+   *  @param {ExtensionInfo_ForUpdateBs[]} extension - 基站擴展訊息數據數組
+   *  @param {string} option - 指定更新操作的類型（'NMS' 或 'BS'）
+   *  @param {string} ParamTableName - 參數所在的表格名
+   *  @param {string} editParamName - 要更新的參數名稱
+   *  @param {any} newValue - 新的參數值
+   *  @returns {any} - 返回更新後的擴展訊息數據數組，如果無更新則返回 null
+   *  @description
+   *     - 此函數用於更新一體式基站的指定參數。
+   *     - 根據指定的更新類型（'NMS' 或 'BS'），選擇更新 db 或 ds。
+   *     - 更新過程中保留其他未被修改的參數值。
+   */
   updateSingleParamInExtensionInfoTable(
     extension: ExtensionInfo_ForUpdateBs[],
     option: string,
@@ -2131,29 +2238,52 @@ export class BSInfoComponent implements OnInit {
     editParamName: string,
     newValue: any
   ): any {
-    const paramTableName = this.convertToParamTableEnum(ParamTableName);
 
-    return extension.map(ext => {
+    // 將傳入的表格名轉換為枚舉型態
+    const paramTableName = this.convertToParamTableEnum( ParamTableName );
+  
+    // 映射並更新每個擴展數據元素
+    return extension.map( ext => {
       const fieldData = ext[paramTableName];
-      if (fieldData) {
+      if ( fieldData ) {
+
+        // 根據 option 決定是更新 db 還是 ds
         const updateField = option === 'NMS' ? 'db' : 'ds';
-        const detail = fieldData[updateField] as any; // 斷言為任意類型，以允許索引訪問
-        if (updateField in fieldData && detail) {
+
+        // 斷言為任意類型以便索引訪問
+        const detail = fieldData[updateField] as any;
+
+        if ( updateField in fieldData && detail ) {
           if ( editParamName in detail ) {
-            // 更新指定的參數值，並保留其他所有參數
+
+            // 更新指定參數值並保留其餘參數
             const updatedDetails = {
               ...detail,
               [editParamName]: newValue
             };
+
             return { [paramTableName]: { [updateField]: updatedDetails } };
           }
         }
       }
-      return null; // 如果沒有更新，返回 null
-    }).filter(ext => ext !== null); // 過濾出已更新的元素
+      return null; // 如果沒有更新發生，返回 null
+    }).filter( ext => ext !== null ); // 過濾並只返回已更新的元素
   }
-
-  // 分佈式基站用
+  
+  /** @2024/05/10 Add
+   *  更新分佈式基站的單一參數值
+   *  @method updateSingleParamInExtensionInfoTable_dist
+   *  @param {ExtensionInfo_dist_ForUpdateDistributedBs[]} extension - 分佈式基站擴展訊息數據數組
+   *  @param {string} option - 指定更新操作的類型（'NMS' 或 'BS'）
+   *  @param {string} ParamTableName - 參數所在的表格名
+   *  @param {string} editParamName - 要更新的參數名稱
+   *  @param {any} newValue - 新的參數值
+   *  @returns {any} - 返回更新後的擴展訊息數據數組，如果無更新則返回 null
+   *  @description
+   *     - 此函數用於更新分佈式基站的指定參數。
+   *     - 根據指定的更新類型（'NMS' 或 'BS'），選擇更新 db 或 ds。
+   *     - 更新過程中保留其他未被修改的參數值。
+   */
   updateSingleParamInExtensionInfoTable_dist(
     extension: ExtensionInfo_dist_ForUpdateDistributedBs[],
     option: string,
@@ -2161,20 +2291,30 @@ export class BSInfoComponent implements OnInit {
     editParamName: string,
     newValue: any
   ): any {
+
+    // 將傳入的表格名轉換為枚舉型態
     const paramTableName = this.convertToParamTableEnum(ParamTableName);
 
-    return extension.map(ext => {
+    // 映射並更新每個擴展數據元素
+    return extension.map( ext => {
       const fieldData = ext[paramTableName];
-      if (fieldData) {
+      if ( fieldData ) {
+
+        // 根據 option 決定是更新 db 還是 ds
         const updateField = option === 'NMS' ? 'db' : 'ds';
-        const detail = fieldData[updateField] as any; // 斷言為任意類型，以允許索引訪問
-        if (updateField in fieldData && detail) {
-          if (editParamName in detail) {
+
+        // 斷言為任意類型以便索引訪問
+        const detail = fieldData[updateField] as any;
+
+        if ( updateField in fieldData && detail ) {
+          if ( editParamName in detail ) {
+
             // 更新指定的參數值，並保留其他所有參數
             const updatedDetails = {
               ...detail,
               [editParamName]: newValue
             };
+
             return { [paramTableName]: { [updateField]: updatedDetails } };
           }
         }
@@ -2183,66 +2323,103 @@ export class BSInfoComponent implements OnInit {
     }).filter(ext => ext !== null); // 過濾出已更新的元素
   }
 
-
-  // 編輯單參數欄位設定值用 @2024/05/09 Add
+  /**
+   * @2024/05/10 Update
+   * 提交基站單一欄位參數值編輯的操作
+   * @method BsParamEdit_editSingleParamValue_Submit
+   * @param {string} option - 同步選項，用於判斷更新來自網管系統(NMS)還是基站本地設定(BS)
+   * @param {string} paramTableName - 參數所在的表格名稱
+   * @param {string} editParamName - 欲編輯的具體參數名稱
+   * @description
+   *    - 此方法根據用戶的選擇對基站的單一參數進行編輯和更新。
+   *    - 依據 bsType 的值來判斷是一體式基站還是分佈式基站，並進行相應的數據更新。
+   *    - 使用適當的同步方法（對一體式或分佈式）來更新所選擴展訊息。
+   *    - 更新數據後，根據基站類型調用相應的更新方法（ updateBs 或 updateDistributedBs ）來提交更新。
+   */
   BsParamEdit_editSingleParamValue_Submit( option: string, paramTableName: string, editParamName: string ) {
-    
-    // 從表單獲取新值
-    const newValue = this.editSingleParamForm.get('newParamValue')!.value;
 
-    // 若 bsType 為 "1"
-    if ( this.bsType === "1" ) {
-        if ( editParamName ) {
-            const updatedExtensionInfo = this.updateSingleParamInExtensionInfoTable(
-                this.selectBsInfo.extension_info, 
-                option, 
-                paramTableName, 
-                editParamName, 
-                newValue
-            );
+    // 從表單中獲取新的參數值
+    let rawValue = this.editSingleParamForm.get('newParamValue')!.value;
+    let newValue: any;
 
-            const updateData: ForUpdateBs = {
-                edit_type: 4,
-                session: this.sessionId,
-                id: this.selectBsInfo.id,
-                name: this.selectBsInfo.name,
-                description: this.selectBsInfo.description,
-                bstype: String( this.selectBsInfo.bstype ),
-                position: this.selectBsInfo.position,
-                components: this.selectBsInfo.components,
-                extension_info: updatedExtensionInfo
-            };
+    // 根據參數名稱獲取對應的選項，以確定預期的數據類型
+    const paramOption = this.paramOptions[editParamName];
+    if ( paramOption ) {
+      const expectedType = typeof paramOption[0].value; // 獲取預期的類型
+      switch ( expectedType ) {
+        case 'boolean':
+          newValue = rawValue === 'true' ? true : false; // 轉換布爾值
+          break;
+        case 'number':
+          newValue = Number( rawValue ); // 轉換數字
+          break;
+        default:
+          newValue = rawValue; // 字串類型不需要轉換
+      }
+    } else {
+      newValue = rawValue; // 如果沒有在選項中定義，則直接使用原始值
+    }
 
-            console.log( "提交更新的數據:", updateData );
-            this.updateBs( updateData );
-        }
-    } else if ( this.bsType === "2" ) {
-        if ( this.selectedExtensionInfo && this.selectedNci === this.selectedExtensionInfo.nci ) {
-            const filteredInfo = this.selectBsInfo_dist.extension_info.filter( info => info.nci === this.selectedNci );
-            const updatedExtensionInfo = filteredInfo.map( info => 
-                this.updateSingleParamInExtensionInfoTable_dist( [info], option, paramTableName, editParamName, newValue )[0]
-            );
+    // 判斷基站類型
+    if ( this.bsType === "1" ) { // 一體式基站
+      if ( editParamName ) {
 
-            const updateData: ForUpdateDistributedBs = {
-                edit_type: 4,
-                session: this.sessionId,
-                id: this.selectBsInfo_dist.id,
-                name: this.selectBsInfo_dist.name,
-                bstype: String( this.selectBsInfo_dist.bstype ),
-                description: this.selectBsInfo_dist.description,
-                components: this.selectBsInfo_dist.components,
-                extension_info: updatedExtensionInfo
-            };
+        // 更新一體式基站的擴展訊息
+        const updatedExtensionInfo = this.updateSingleParamInExtensionInfoTable(
+          this.selectBsInfo.extension_info,
+          option,
+          paramTableName,
+          editParamName,
+          newValue
+        );
 
-            console.log( "提交更新的數據:", updateData );
-            this.updateDistributedBs( updateData );
-        }
+        // 創建更新數據物件
+        const updateData: ForUpdateBs = {
+          edit_type: 4,
+          session: this.sessionId,
+          id: this.selectBsInfo.id,
+          name: this.selectBsInfo.name,
+          description: this.selectBsInfo.description,
+          bstype: String( this.selectBsInfo.bstype ),
+          position: this.selectBsInfo.position,
+          components: this.selectBsInfo.components,
+          extension_info: updatedExtensionInfo
+        };
+
+        // 提交更新
+        this.updateBs( updateData );
+      }
+    } else if ( this.bsType === "2" ) { // 分佈式基站
+      if ( this.selectedExtensionInfo && this.selectedNci === this.selectedExtensionInfo.nci ) {
+
+        // 篩選與選定 NCI 相關的擴展訊息
+        const filteredInfo = this.selectBsInfo_dist.extension_info.filter( info => info.nci === this.selectedNci );
+
+        // 更新分佈式基站的擴展訊息
+        const updatedExtensionInfo = filteredInfo.map( info =>
+          this.updateSingleParamInExtensionInfoTable_dist( [info], option, paramTableName, editParamName, newValue )[0]
+        );
+
+        // 創建更新數據物件
+        const updateData: ForUpdateDistributedBs = {
+          edit_type: 4,
+          session: this.sessionId,
+          id: this.selectBsInfo_dist.id,
+          name: this.selectBsInfo_dist.name,
+          bstype: String( this.selectBsInfo_dist.bstype ),
+          description: this.selectBsInfo_dist.description,
+          components: this.selectBsInfo_dist.components,
+          extension_info: updatedExtensionInfo
+        };
+
+        // 提交更新
+        this.updateDistributedBs( updateData );
+      }
     }
   }
 
 
-
-// ↑ 基站參數區 @2024/05/09 Update ↑
+// ↑ 基站參數區 @2024/05/10 Update ↑
 
 
 
