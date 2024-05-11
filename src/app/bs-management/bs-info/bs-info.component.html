@@ -4615,7 +4615,7 @@
     <!-- 編輯指定參數欄位值彈出視窗 @2024/05/09 Add -->
     <ng-template #editSingleParamValueWindow>
       <h5>{{ languageService.i18n['BS.editParameterSettings'] }}</h5>
-      <label>{{ paramTableName }} - {{ editParamName }}</label>
+      <label class="parmName">{{ paramTableName }} - {{ editParamName }}</label>
         <form [formGroup]="editSingleParamForm">
           <ul>
             <li>
@@ -4626,24 +4626,28 @@
               <label>{{ languageService.i18n['BS.setNewParamValue'] }}:</label>
               <!-- 條件渲染下拉選單或輸入框 -->
               <ng-container *ngIf="isDropdown( editParamName ); else textInput">
-                <select formControlName="newParamValue" matNativeControl>
-                  <option value="" disabled selected>{{ languageService.i18n['BS.selectParameterValue'] }}</option>
-                  <option *ngFor="let option of getOptions( editParamName )" [value]="option.value">{{ option.label }}</option>
-                </select>
-                <mat-error *ngIf="editSingleParamForm.get('newParamValue')?.touched && editSingleParamForm.get('newParamValue')?.invalid">
-                  <ng-container *ngIf="editSingleParamForm.get('newParamValue')?.errors?.['required']">
-                    {{ languageService.i18n['BS.selectNewParameterValue'] }}
-                  </ng-container>
-                </mat-error>
+                <span>
+                  <select formControlName="newParamValue" matNativeControl>
+                    <option value="" disabled selected>{{ languageService.i18n['BS.selectParameterValue'] }}</option>
+                    <option *ngFor="let option of getOptions( editParamName )" [value]="option.value">{{ option.label }}</option>
+                  </select>
+                  <mat-error *ngIf="editSingleParamForm.get('newParamValue')?.touched && editSingleParamForm.get('newParamValue')?.invalid">
+                    <ng-container *ngIf="editSingleParamForm.get('newParamValue')?.errors?.['required']">
+                      {{ languageService.i18n['BS.selectNewParameterValue'] }}
+                    </ng-container>
+                  </mat-error>
+                </span>
               </ng-container>
               <!-- 默認的文本輸入框 -->
               <ng-template #textInput>
+                <span>
                 <input type="text" formControlName="newParamValue" placeholder="{{ languageService.i18n['BS.setParameterValue'] }}" matInput required>
                 <mat-error *ngIf="editSingleParamForm.get('newParamValue')?.touched && editSingleParamForm.get('newParamValue')?.invalid">
                   <ng-container *ngIf="editSingleParamForm.get('newParamValue')?.errors?.['required']">
                     {{ languageService.i18n['BS.enterNewParameterValue'] }}
                   </ng-container>
                 </mat-error>
+              </span>
               </ng-template>
             </li>
           </ul>
