@@ -239,9 +239,25 @@ export const TwLanguage = {
   'field.originalNeighborBS': '原鄰居基站',
   'field.newNeighborBS': '新鄰居基站',
   
+  'field.pciCollisions': '衝突的 PCI',
+  'field.pciConfusions': '混淆的 PCI',
   'field.originalPCI': '原 PCI',
   'field.newPCI': '新 PCI',
+  'field.uniDirectionalPairCountCollisions': '單向衝突對數',
+  'field.uniDirectionalPairCountConfusions': '單向混淆對數',
+  'field.ratio': '，比率',
+  'field.none': '無',
+  'field.originalCollisionPairs': '原衝突對',
+  'field.newCollisionPairs': '新衝突對',
+  'field.source': '原始基站',
+  'field.target': '目標基站',
+  'field.originalConfusionPairs': '原混淆對',
+  'field.newConfusionPairs': '新混淆對',
+  'field.confused': '混淆基站',
+
   
+
+
   'field.optimizationType': '優化種類',
   'field.optimizationResult': '優化結果',
   

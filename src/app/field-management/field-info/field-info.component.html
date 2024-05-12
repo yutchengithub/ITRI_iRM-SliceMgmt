@@ -1445,24 +1445,24 @@
 								</div>
 							</label>
 							<div>
-								<h6>PCI Collisions</h6>
+								<h6>{{ languageService.i18n['field.pciCollisions'] }}</h6>
 								<label>
-									<div>Uni-directional pair count = {{ originalPciCollisionTotalCount }}, ratio = {{ originalPciCollisionRatio }} %</div>
+									<div>{{ languageService.i18n['field.uniDirectionalPairCountCollisions'] }} = {{ originalPciCollisionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{ originalPciCollisionRatio }} %</div>
 									<div class="table pci">
 										<table>
 											<thead>
 												<tr>
 													<th rowspan="2">PCI</th>
-													<th colspan="2">Original Collision Pairs</th>
+													<th colspan="2">{{ languageService.i18n['field.originalCollisionPairs'] }}</th>
 												</tr>
 												<tr>
-													<th>Source</th>
-													<th>Target</th>
+													<th>{{ languageService.i18n['field.source'] }}</th>
+													<th>{{ languageService.i18n['field.target'] }}</th>
 												</tr>
 											</thead>
 											<tbody>
 												<tr *ngIf="originalPciCollisionTotalCount === 0 && originalPciCollisionRatio === 0; else originalCollisionData">
-													<td colspan="3">None</td>
+													<td colspan="3">{{ languageService.i18n['field.none'] }}</td>
 												</tr>
 												<ng-template #originalCollisionData>
 													<tr *ngFor="let collision of originalPciCollisions">
@@ -1476,22 +1476,22 @@
 									</div>
 								</label> <span class="material-symbols-outlined after">east</span>
 								<label>
-									<div>Uni-directional pair count = {{ newPciCollisionTotalCount }}, ratio = {{ newPciCollisionRatio }} %</div>
+									<div>{{ languageService.i18n['field.uniDirectionalPairCountCollisions'] }} = {{ newPciCollisionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{ newPciCollisionRatio }} %</div>
 									<div class="table pci">
 										<table>
 											<thead>
 												<tr>
 													<th rowspan="2">PCI</th>
-													<th colspan="2">New Collision Pairs</th>
+													<th colspan="2">{{ languageService.i18n['field.newCollisionPairs'] }}</th>
 												</tr>
 												<tr>
-													<th>Source</th>
-													<th>Target</th>
+													<th>{{ languageService.i18n['field.source'] }}</th>
+													<th>{{ languageService.i18n['field.target'] }}</th>
 												</tr>
 											</thead>
 											<tbody>
 												<tr *ngIf="newPciCollisionTotalCount === 0 && newPciCollisionRatio === 0; else newCollisionData">
-													<td colspan="3">None</td>
+													<td colspan="3">{{ languageService.i18n['field.none'] }}</td>
 												</tr>
 												<ng-template #newCollisionData>
 													<tr *ngFor="let collision of newPciCollisions">
@@ -1506,25 +1506,25 @@
 								</label>
 							</div>
 							<div>
-								<h6>PCI Confusions</h6>
+								<h6>{{ languageService.i18n['field.pciConfusions'] }}</h6>
 								<label>
-									<div>Uni-directional pair count = {{ originalPciConfusionTotalCount }}, ratio = {{ originalPciConfusionRatio }} %</div>
+									<div>{{ languageService.i18n['field.uniDirectionalPairCountConfusions'] }} = {{ originalPciConfusionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{ originalPciConfusionRatio }} %</div>
 									<div class="table pci">
 										<table>
 											<thead>
 												<tr>
 													<th rowspan="2">PCI</th>
-													<th colspan="3">Original Confusion Pairs</th>
+													<th colspan="3">{{ languageService.i18n['field.originalConfusionPairs'] }}</th>
 												</tr>
 												<tr>
-													<th>Source</th>
-													<th>Confused</th>
-													<th>Target</th>
+													<th>{{ languageService.i18n['field.source'] }}</th>
+													<th>{{ languageService.i18n['field.confused'] }}</th>
+													<th>{{ languageService.i18n['field.target'] }}</th>
 												</tr>
 											</thead>
 											<tbody>
 												<tr *ngIf="originalPciConfusionTotalCount === 0 && originalPciConfusionRatio === 0; else originalConfusionData">
-													<td colspan="4">None</td>
+													<td colspan="4">{{ languageService.i18n['field.none'] }}</td>
 												</tr>
 												<ng-template #originalConfusionData>
 													<tr *ngFor="let confusion of originalPciConfusions">
@@ -1540,23 +1540,23 @@
 								</label>
 								<span class="material-symbols-outlined after">east</span>
 								<label>
-									<div>Uni-directional pair count = {{ newPciConfusionTotalCount }}, ratio = {{ newPciConfusionRatio }} %</div>
+									<div>{{ languageService.i18n['field.uniDirectionalPairCountConfusions'] }} = {{ newPciConfusionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{ newPciConfusionRatio }} %</div>
 									<div class="table pci">
 										<table>
 											<thead>
 												<tr>
 													<th rowspan="2">PCI</th>
-													<th colspan="3">New Confusion Pairs</th>
+													<th colspan="3">{{ languageService.i18n['field.newConfusionPairs'] }}</th>
 												</tr>
 												<tr>
-													<th>Source</th>
-													<th>Confused</th>
-													<th>Target</th>
+													<th>{{ languageService.i18n['field.source'] }}</th>
+													<th>{{ languageService.i18n['field.confused'] }}</th>
+													<th>{{ languageService.i18n['field.target'] }}</th>
 												</tr>
 											</thead>
 											<tbody>
 												<tr *ngIf="newPciConfusionTotalCount === 0 && newPciConfusionRatio === 0; else newConfusionData">
-													<td colspan="4">None</td>
+													<td colspan="4">{{ languageService.i18n['field.none'] }}</td>
 												</tr>
 												<ng-template #newConfusionData>
 													<tr *ngFor="let confusion of newPciConfusions">

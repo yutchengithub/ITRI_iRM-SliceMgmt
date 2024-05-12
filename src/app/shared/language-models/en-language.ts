@@ -240,9 +240,27 @@ export const Enlanguage = {
   'field.originalNeighborBS': 'Original Neighbor BSs',
   'field.newNeighborBS': 'New Neighbor BSs',
   
+  'field.pciCollisions': 'PCI Collisions',
+  'field.pciConfusions': 'PCI Confusions',
   'field.originalPCI': 'Original PCI',
   'field.newPCI': 'New PCI',
-  
+  'field.uniDirectionalPairCount': 'Uni-directional Pair Count',
+  //'field.uniDirectionalPairCountCollisions': 'Uni-directional Collision Pair Count',
+  //'field.uniDirectionalPairCountConfusions': 'Uni-directional Confusion Pair Count',
+  'field.uniDirectionalPairCountCollisions': 'Uni-directional Pair Count',
+  'field.uniDirectionalPairCountConfusions': 'Uni-directional Pair Count',
+  'field.ratio': ', Ratio',
+  'field.none': 'None',
+  'field.originalCollisionPairs': 'Original Collision Pairs',
+  'field.newCollisionPairs': 'New Collision Pairs',
+  'field.source': 'Source BS',
+  'field.target': 'Target BS',
+  'field.originalConfusionPairs': 'Original Confusion Pairs',
+  'field.newConfusionPairs': 'New Confusion Pairs',
+  'field.confused': 'Confused BS',
+
+
+
   'field.optimizationType': 'Optimization Type',
   'field.optimizationResult': 'Optimization Result',
 
