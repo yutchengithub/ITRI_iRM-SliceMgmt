@@ -1686,6 +1686,9 @@ ngx-spinner .ngx-spinner-overlay {
   color: #fff;
   display: block;
 }
+#editSingleParamValueWindowRef ul li > label {
+  min-width: 9.5em;
+}
 body.tw #editSingleParamValueWindowRef ul li > label {
   min-width: 5em;
 }
