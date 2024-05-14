@@ -5,7 +5,7 @@ import { CurrentBsFmList } from '../../interfaces/BS/For_queryCurrentBsFaultMess
  // Local Files for general Current BS Fault Messages @2024/03/31 Add 
  export class localCurrentBsFmList {
 
-    currentBsFmList_local: CurrentBsFmList ={
+    currentBsFmList_local: CurrentBsFmList = {
 
         "totalMessageNumber": 4,
         "faultMessage": [

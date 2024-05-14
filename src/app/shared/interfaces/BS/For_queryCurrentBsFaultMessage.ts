@@ -1,6 +1,6 @@
 
 // @2024/03/31 Add
-// 描述記錄 BS 內所有告警資訊列表
+// 記錄 BS 內所有的告警資訊列表
 
 export interface CurrentBsFmList {
     totalMessageNumber: number;

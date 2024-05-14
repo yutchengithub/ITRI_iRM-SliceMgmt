@@ -142,6 +142,7 @@ import { localCalculateSonResponse } from './shared/local-files/Field/For_multiC
 import { localBSInfo }          from './shared/local-files/BS/For_queryBsInfo';                 // @2023/12/27 Add 
 import { localBSList }          from './shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
 import { localCurrentBsFmList } from './shared/local-files/BS/For_queryCurrentBsFaultMessage';  // @2024/03/31 Add
+import { localBsKpiInfo }       from './shared/local-files/BS/For_queryBsKpiInfo';              // @2024/05/14 Add
 
 import { localScheduleList }    from './shared/local-files/Schedule/For_queryJobTicketList';    // @2024/03/15 Add   
 import { localScheduleInfo }    from './shared/local-files/Schedule/For_queryJobTicketInfo';    // @2024/03/15 Add 
@@ -284,6 +285,7 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     localBSInfo,                // @2023/12/27 Add for import Local files of BS Info
     localBSList,                // @2024/01/16 Add for import Local files of BS List
     localCurrentBsFmList,       // @2024/03/31 Add for import Local files of Bs Fault Message List
+    localBsKpiInfo,             // @2024/05/14 Add for import Local files of Bs Kpi Info
 
     localScheduleList,        // @2024/03/15 Add for import Local files of Schedule List     
     localScheduleInfo,        // @2024/03/15 Add for import Local files of Schedule Info 

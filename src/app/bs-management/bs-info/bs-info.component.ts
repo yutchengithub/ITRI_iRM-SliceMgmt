@@ -30,15 +30,16 @@ import { ForUpdateDistributedBs, Cellinfo_dist,
 import { ForAddOrEditOrDeleteNeighborBs_allInOneBs }    from '../../shared/interfaces/BS/For_optimalBs';            // @2024/05/06 Add
 import { ForUpdateDistributedBs_editNeighborBs, Neighborinfo } from '../../shared/interfaces/BS/For_updateDistributedBs_editNeighborBs'; // @2024/05/06 Add
     
-
 import { CurrentBsFmList, FaultMessage } from '../../shared/interfaces/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
 import { NEList, NE, Sm  }               from '../../shared/interfaces/NE/For_queryBsComponentList';       // @2024/03/27 Add
 import { NEInfo }                        from '../../shared/interfaces/NE/For_queryBsComponentInfo';       // @2024/03/29 Add
+import { BsKpiInfo, TimeBlock }          from '../../shared/interfaces/BS/For_queryBsKpiInfo';             // @2024/05/14 Add
 
 // 引入所需 Local Files
 import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';          // @2024/03/25 Add
 import { localNEList } from '../../shared/local-files/NE/For_queryBsComponentList'; // @2024/03/27 Add
 import { localCurrentBsFmList } from '../../shared/local-files/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
+import { localBsKpiInfo } from '../../shared/local-files/BS/For_queryBsKpiInfo';                   // @2024/05/14 Add
 
 // @2024/05/03 Add
 import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
@@ -154,10 +155,11 @@ export class BSInfoComponent implements OnInit {
     public     spinnerService: SpinnerService,
     private changeDetectorRef: ChangeDetectorRef,
 
-    public  API_BS: apiForBSMgmt,           // @2024/03/25 Add for import API of BS Management
-    public  bsInfo_LocalFiles: localBSInfo, // @2024/03/25 Add for import BS Info Local Files 
-    public  currentBsFmList_LocalFiles: localCurrentBsFmList, // @2024/03/31 Add for import Current Current BS Fault Messages List
-    public  neList_LocalFiles: localNEList,                   // @2024/03/27 Add neList_LocalFiles 用於從 Local 文件獲取 NE 列表數據
+    public                      API_BS: apiForBSMgmt,         // @2024/03/25 Add for import API of BS Management
+    public           bsInfo_LocalFiles: localBSInfo,          // @2024/03/25 Add for import BS Info Local Files 
+    public  currentBsFmList_LocalFiles: localCurrentBsFmList, // @2024/03/31 Add currentBsFmList_local for import Current BS Fault Messages List
+    public           neList_LocalFiles: localNEList,          // @2024/03/27 Add neList_LocalFiles 用於從 Local 文件獲取 NE 列表數據
+    public        bsKpiInfo_LocalFiles: localBsKpiInfo,       // @2024/05/14 Add bsKpiInfo_local for import Current BS Kpi Info
   
   ) {
 
@@ -202,7 +204,7 @@ export class BSInfoComponent implements OnInit {
   bsCellCount: string = ''; // 用於存儲當前選中的 BS Cell 數量
 
   /**
-   * @2024/03/25 Update
+   * @2024/05/14 Update
    * 初始化組件時執行的操作
    * @method ngOnInit
    * @description
@@ -235,8 +237,13 @@ export class BSInfoComponent implements OnInit {
       // 取得基站資訊後，取得網元列表資訊並進行座標位置或軟體版本顯示資訊的相關處理 
       this.getNEList(); 
 
-      // 取得此基站告警資訊 @2024/04/01 Add
+      // @2024/04/01 Add
+      // 取得此基站告警資訊
       this.getCurrentBsFmList();
+
+      // @2024/05/14 Add
+      // 取得此基站的 KPI 資訊
+      this.getBsKpiInfo();
     });
     
     this.updateChart(); // 初始載入時執行一次更新
@@ -3595,7 +3602,114 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 基站效能區 @2024/05/08 Add ↓
+// ↓ 基站效能區 @2024/05/14 Update ↓
+
+  // @2024/05/14 Add
+  // 用於儲存從 API 或 Local 獲取的 KPI 數據
+  currentBsKpiInfo: BsKpiInfo = {} as BsKpiInfo;
+
+  // @2024/05/14 Add
+  // 控制加載 KPI 資訊的狀態標誌，初始化為 true 表示正在加載
+  isLoadingBsKpiInfo: boolean = true;
+
+  /**
+   * @2024/05/14 Add
+   * 取得指定基站的 KPI 資訊
+   * @method getBsKpiInfo
+   * @description
+   *    - 此函數用於獲取並處理指定基站的 KPI 資訊。
+   *    - 在 Local 模式和 API 模式下有不同的數據獲取方式。
+   *    - 在 Local 模式下，直接從 Local File 獲取數據。
+   *    - 在 API 模式下，根據設定的日期篩選條件發起 HTTP 請求。
+   *    - 加載過程中顯示加載指示，加載完成或發生錯誤後更新 UI 顯示。
+   */
+  getBsKpiInfo() {
+    console.log('getBsKpiInfo() - Start');
+
+    this.isLoadingBsKpiInfo = true; // 標記開始加載
+
+    if ( this.commonService.isLocal ) {
+
+        // Local 模式：從 Local File 獲取數據
+        this.handleBsKpiInfoResponse( this.bsKpiInfo_LocalFiles.bsKpiInfo_local ); // 處理取得的 Local 數據
+        console.log( 'In Local - currentBsKpiInfo:', this.currentBsKpiInfo );
+
+        this.isLoadingBsKpiInfo = false; // 標記加載完成
+
+    } else {
+
+        // API 模式：根據篩選條件從後端服務獲取數據
+        const params = this.prepareGetBsKpiInfoParams(); // 準備 API 請求參數
+
+        this.API_BS.queryBsKpiInfo( this.bsID, params ).subscribe({
+            next: ( res ) => {
+                console.log( 'From Server API - Handling KPI Info Response:', res );
+                this.handleBsKpiInfoResponse( res ); // 處理回應數據
+            },
+            error: ( error ) => {
+                console.error('Error fetching current BS KPI info:', error); // 輸出錯誤日誌
+                this.isLoadingBsKpiInfo = false; // 標記加載出錯
+            },
+            complete: () => {
+                console.log('Current BS KPI info fetch completed'); // 輸出完成日誌
+            }
+        });
+    }
+
+    console.log("getBsKpiInfo() - End");
+  }
+
+  /**
+   * @2024/05/14 Add
+   * 準備從 API 獲取指定基站的 KPI 資訊所需的參數
+   * @method prepareGetBsKpiInfoParams
+   * @description
+   *    - 此函數用於準備調用 KPI 數據接口所需的參數。
+   *    - 設定查詢的時間範圍，格式化為 "YYYY-MM-DD HH:mm"。
+   */
+  prepareGetBsKpiInfoParams() {
+    // 獲取當前日期和時間
+    const now = new Date(); // 創建一個新的 Date 對象，表示當前時間
+
+    // 設定結束時間為當前時間的前一分鐘（為了符合給定的時間範圍）
+    const end = new Date( now.getTime() - 60000 ); // 減少 1 分鐘
+
+    // 設定開始時間為當前時間往回推 23 小時 59 分鐘
+    const start = new Date( end.getTime() - ( 23 * 60 + 59 ) * 60000 ); // 減少 23 小時 59 分鐘
+
+    // 格式化日期和時間為 "YYYY-MM-DD HH:mm"
+    const formatDateTime = ( date: Date ): string => {
+        const pad = ( num: number ): string => ( num < 10 ? '0' + num : num.toString() ); // 將數字格式化為兩位字符串
+        return `${date.getFullYear()}-${pad( date.getMonth() + 1 )}-${pad( date.getDate() )} ${pad( date.getHours() )}:${pad( date.getMinutes() )}`;
+    };
+
+    // 返回格式化的開始和結束時間
+    return {
+        start: formatDateTime( start ),
+          end: formatDateTime( end )
+    };
+  }
+
+  /**
+   * @2024/05/14 Add
+   * 處理從 API 獲取的 KPI 數據響應
+   * @method handleBsKpiInfoResponse
+   * @description
+   *    - 此函數用於處理從 API 獲取的 KPI 數據。
+   *    - 更新當前的 KPI 數據狀態。
+   *    - 根據響應更新 UI 顯示或處理數據。
+   * @param response - API 返回的 KPI 數據響應
+   */
+  handleBsKpiInfoResponse( response: any ): void {
+    // 處理從 API 獲取的數據
+    // 這裡需要根據實際 API 響應的結構來解析數據
+    this.currentBsKpiInfo = response; // 假設響應直接是 BsKpiInfo 格式
+    this.isLoadingBsKpiInfo = false;  // 更新加載狀態
+  }
+
+
+  
+  // ↓ 繪製圖表區 ↓
 
   //multi: any[];
   view: any[] = [700, 300];
@@ -3643,8 +3757,10 @@ export class BSInfoComponent implements OnInit {
     return this.multi.filter(item => item.name === this.selectedCategory);
   }
 
+  // ↑ 繪製圖表區 ↑ 
 
-// ↑ 基站效能區 @2024/05/08 Add ↑
+
+// ↑ 基站效能區 @2024//05/14 Update ↑
 
 
 }
