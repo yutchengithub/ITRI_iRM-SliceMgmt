@@ -9,7 +9,7 @@ export interface BsKpiInfo {
 export interface TimeBlock {
     start: string;       // 時間塊開始時間
       end: string;       // 時間塊結束時間
-    field: Field;        // 包含特定場域相關訊息的 Field 對象
+    field?: Field;       // 包含特定場域相關訊息的 Field 對象
        bs: Bs_KpiInfo[]; // 基站數組，每個基站包括多個特定數據點
 }
 
