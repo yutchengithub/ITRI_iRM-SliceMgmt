@@ -201,4 +201,23 @@ export class apiForBSMgmt {
     return this.http.get( url, { params } );
   }
 
+  /**
+   * @2024/05/14 Add
+   * 取得指定基站的 KPI 資訊
+   * @param bsId 基站 ID
+   * @param params 其他查詢參數
+   * @returns 返回一個 Observable 物件，發出 API 返回的資料
+   */
+  queryBsKpiInfo( bsId: string, params: any ): Observable< any > {
+    
+    // 每次調用 API 時都動態獲取最新的 sessionId
+    const sessionId = this.commonService.getSessionId();
+
+    // 組合 API 的 URL，包含 session ID 和基站 ID
+    const url = `${this.restPath}/queryBsKpiInfo/${sessionId}/${bsId}`;
+
+    // 發送 HTTP GET 請求到指定的 URL，並將 params 物件作為查詢參數傳遞給請求
+    return this.http.get( url, { params } );
+  }
+
 }
