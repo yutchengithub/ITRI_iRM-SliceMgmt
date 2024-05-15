@@ -1692,3 +1692,8 @@ ngx-spinner .ngx-spinner-overlay {
 body.tw #editSingleParamValueWindowRef ul li > label {
   min-width: 5em;
 }
+
+// ngx-charts 圖表模組 - 修改所有 SVG 文本元素的顏色
+ngx-charts-line-chart text {
+  fill: #ffffff !important; /* 將所有文本設為白色 */
+}

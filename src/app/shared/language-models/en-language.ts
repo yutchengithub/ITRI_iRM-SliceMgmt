@@ -414,15 +414,16 @@ export const Enlanguage = {
 
   'BS.confirmDeleteNeighborBS': 'Confirm to Delete this Neighbor BS',
 
-
-
   'BS.alarms':'BS Alarms',
   'BS.neList':'NE List',
-  'BS.performance':'BS Performance',
   'BS.ip':'IP Address',
   'BS.neStatus':'Status',
   'BS.port':'Port',
   'BS.edit':'Edit',
+
+  'BS.performance':'BS Performance',
+  'BS.refreshBSPerformanceInfo': 'Refresh BS Performance Information',
+
 
   // Fault Management
   'fm.start':'StartTime',

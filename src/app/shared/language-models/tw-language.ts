@@ -407,17 +407,17 @@ export const TwLanguage = {
 
   'BS.confirmDeleteNeighborBS': '確定要刪除此鄰居基站',
 
-
-
   'BS.alarms':'基站告警',
-  'BS.neList':'網元列表',
-  'BS.performance':'基站效能',
 
+  'BS.neList':'網元列表',
   'BS.No':'編號',
   'BS.ip':'IP 位址',
   'BS.neStatus':'狀態',
   'BS.port':'埠號',
   'BS.edit':'編輯',
+
+  'BS.performance':'基站效能',
+  'BS.refreshBSPerformanceInfo': '刷新基站效能資訊',
 
 
   // Fault Management (故障管理)

@@ -4663,7 +4663,7 @@
     <div class="neighborBsList">
       <span>{{ languageService.i18n['BS.neighborBsList'] }}
         <!-- 新增鄰居基站的按鈕，點擊時打開對話框進入新增模式 -->
-        <mat-icon tooltip="{{languageService.i18n['sm.create']}}" (click)="openNeighborBsEditDialog('add')">add</mat-icon>
+        <mat-icon matTooltip="{{ languageService.i18n['BS.addNeighborBS'] }}" (click)="openNeighborBsEditDialog('add')">add</mat-icon>
       </span>
       <input id="neighborBsList" class="toggle" type="checkbox">
       <label for="neighborBsList" class="lbl-toggle"></label>
@@ -5087,32 +5087,46 @@
       </div>
     </div>
 
-    <!-- 基站效能區 @2024/05/14 Update -->
+    <!-- 基站效能區 @2024/05/15 Update -->
     <div>
-      <span>{{ languageService.i18n['BS.performance'] }}</span>
+      <span>{{ languageService.i18n['BS.performance'] }}
+          <!-- 刷新基站效能資訊按鈕 @2024/05/15 Add -->
+          <mat-icon matTooltip="{{ languageService.i18n['BS.refreshBSPerformanceInfo'] }}" (click)="refreshBsKpiInfo()">
+            autorenew
+          </mat-icon>
+      </span>
       <input id="performance" class="toggle" type="checkbox">
       <label for="performance" class="lbl-toggle"></label>
 
       <div class="collapsible-content">
         <div class="content-inner">
-          <div class="collabsible">
-
-            <div>
               <span>
-                <select [(ngModel)]="selectedCategory" (ngModelChange)="updateChart()">
-                  <option *ngFor="let category of multi" [value]="category.name">{{ category.name }}</option>
+                <select [(ngModel)]="selectedViewMode" (ngModelChange)="updateChart()">
+                  <option *ngFor="let mode of viewModes" [value]="mode">{{ mode }}</option>
+                </select>
+              </span>
+              <span>
+                <select [(ngModel)]="selectedKpiCategory" (ngModelChange)="onKpiCategoryChange()">
+                  <option *ngFor="let category of kpiCategories" [value]="category">{{ category }}</option>
                 </select>                
+              </span>
+              <span>
+                <select [(ngModel)]="selectedKpiSubcategory" (ngModelChange)="updateChart()" [hidden]="getKpiSubcategories().length === 0">
+                  <option *ngFor="let subcategory of getKpiSubcategories()" [value]="subcategory">{{ subcategory }}</option>
+                </select>
               </span>
               
               <ngx-charts-line-chart
                 [results]="filteredData"
-                [view]="[700, 300]"
+                [view]="view"
                 [xAxis]="true"
-                [yAxis]="true">
+                [yAxis]="true"
+                [xAxisLabel]="'Time'"
+                [yAxisLabel]="'Value'"
+                [scheme]="colorScheme"
+                [showGridLines]="true">
               </ngx-charts-line-chart>
-            </div>
 
-          </div>
         </div>
       </div>
     </div>
