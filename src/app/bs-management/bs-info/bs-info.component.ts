@@ -3758,21 +3758,24 @@ export class BSInfoComponent implements OnInit {
   }
   
   // ↓ 繪製圖表區 ↓
+
+  // 設定 
   view: [ number, number ] = [ 1235, 300 ]; // 定義圖表區長寬
-  gradient: boolean = true;
-  showLegend: boolean = true;
-  showLabels: boolean = true;
+  legend: boolean = true;
+  legendTitle: string = '效能數據種類';      // 定義圖例標題名稱
+  showYAxisLabel: boolean = true;
+  showXAxisLabel: boolean = true;
   xAxis: boolean = true;
   yAxis: boolean = true;
-  xAxisLabel: string = 'Time';
-  yAxisLabel: string = 'Value';
+  xAxisLabel: string = '時間區間';  // 定義圖表 X 軸標題名稱
+  yAxisLabel: string = 'Value';    // 定義圖表 Y 軸標題名稱
 
   // 設定圖表配色方案
   colorScheme: Color = {
-    name: 'forest',
+    name: 'ocean',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: ['#FF6371', '#D5E8D4', '#FFC75F', '#D4A5A5', '#9FDE9C', '#8FB0FF', '#B4A7D6']
+    domain: ['#29B6F6', '#81D4FA', '#1D68FB', '#4AFFFE', '#CFC0BB', '#AFFFFF', '#FFFC63', '#33C0FC']
   };
 
   filteredData: any[] = [];

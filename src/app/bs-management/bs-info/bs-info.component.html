@@ -5117,14 +5117,18 @@
               </span>
               
               <ngx-charts-line-chart
-                [results]="filteredData"
                 [view]="view"
-                [xAxis]="true"
-                [yAxis]="true"
-                [xAxisLabel]="'Time'"
-                [yAxisLabel]="'Value'"
                 [scheme]="colorScheme"
-                [showGridLines]="true">
+                [legend]="legend"
+                [legendTitle]="legendTitle"
+                [showXAxisLabel]="showXAxisLabel"
+                [showYAxisLabel]="showYAxisLabel"
+                [xAxis]="xAxis"
+                [yAxis]="yAxis"
+                [xAxisLabel]="xAxisLabel"
+                [yAxisLabel]="yAxisLabel"
+                [showGridLines]="true"
+                [results]="filteredData">
               </ngx-charts-line-chart>
 
         </div>
