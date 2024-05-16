@@ -245,7 +245,7 @@ export class BSInfoComponent implements OnInit {
 
       // @2024/05/14 Add
       // 取得此基站的 KPI 資訊
-      this.getBsKpiInfo();
+      //this.getBsKpiInfo();
     });
     
     //this.updateChart(); // 初始載入時執行一次更新
@@ -531,7 +531,7 @@ export class BSInfoComponent implements OnInit {
   gNBIdLength: number = 0;  // 用於存儲 gNBIdLength，以便後續可能會計算 NCI 或 cellLocalId @2024/05/04 Add
   
   /**
-   * @2024/05/08 Update
+   * @2024/05/16 Update
    * 取得基站資訊
    * @method getQueryBsInfo
    * @description
@@ -545,6 +545,7 @@ export class BSInfoComponent implements OnInit {
    * - @2024/04/12 Update - 更新計算分佈式 Cell 數方式，改跟基站主頁方法相同
    * - @2024/04/15 Add - 新增"基站參數"欄位所需的設值處理
    * - @2024/05/04 Add - 新增取得 gNBIdLength
+   * - @2024/05/16 Add - 新增於取得基站資訊完成後，取得效能資訊 getBsKpiInfo
    */
   getQueryBsInfo() {
     console.log( 'getQueryBsInfo() - Start' );
@@ -630,6 +631,10 @@ export class BSInfoComponent implements OnInit {
         this.selectedNeighborNci = this.nciList[0]; // 初始化鄰居基站列表的選擇
         this.neighborList = this.getNeighborList( this.selectedNeighborNci );
       }
+
+      // 為避免無法取得一體式基站之 NCI，
+      // 故改於此時取得基站的 KPI 資訊
+      this.getBsKpiInfo();
 
       this.isLoadingBsInfo = false; // Local 模式下，數據加載快速完成，直接設置為 false
       this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
@@ -726,6 +731,10 @@ export class BSInfoComponent implements OnInit {
           console.log( 'BS info fetch completed' );
           //this.hideSpinner();  // 完成後隱藏 spinner
           this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
+          
+          // 為避免無法取得一體式基站之 NCI，
+          // 故改於此時取得基站的 KPI 資訊
+          this.getBsKpiInfo();
         }
       });
     }
@@ -3715,18 +3724,33 @@ export class BSInfoComponent implements OnInit {
   viewModes: string[] = [];
   selectedViewMode = '完整的資訊'; // 預設選擇完整的資訊
 
-  // @2024/05/15 Add
+  // @2024/05/16 Update
   // 更新 viewModes 以包含所有 cell IDs
   updateViewModes() {
     const modes = ['完整的資訊', '僅基站層級'];
     const cellIds = new Set<string>(); // 使用 Set 確保唯一性
 
     Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
-        timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
-            bs.cellInfoList.forEach( ( cell: Cell_KpiInfo, index ) => {
-              cellIds.add( `Cell#${index + 1} (NCI=0x${cell.cellId})` );
-            });
-        });
+      timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
+
+        // 檢查是否為一體式基站或 cellInfoList 是否為空
+        if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) {
+
+          console.log( "In updateViewModes() - selectedNci =", this.selectedNci );
+
+          // 對於一體式基站，使用預設 nciList 的第一個值
+          const defaultNci = this.nciList[0]; // 確保 nciList 已經定義且至少有一個元素
+          cellIds.add(`Cell#1 ( NCI=0x${defaultNci} )`);
+
+        } else {
+          
+          // 對於分佈式基站，正常處理每個 cell
+          bs.cellInfoList.forEach( ( cell: Cell_KpiInfo, index ) => {
+            cellIds.add(`Cell#${index + 1} ( NCI=0x${cell.cellId} )`);
+          } );
+
+        }
+      });
     });
 
     this.viewModes = [...modes, ...cellIds];
@@ -3771,23 +3795,37 @@ export class BSInfoComponent implements OnInit {
     this.changeDetectorRef.markForCheck();
   }
   
-  // @2024/05/15 Update
+  // @2024/05/16 Update
   // 根據選擇的檢視模式、KPI 類別和子類別過濾數據
   filterData(): ChartData[] {
     let filteredData: ChartData[] = [];
   
     switch ( this.selectedViewMode ) {
       case '完整的資訊':
-        Object.values( this.currentBsKpiInfo ).forEach(( timeBlock: TimeBlock ) => {
+        Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
 
           const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
   
-          timeBlock.bs.forEach(( bs: Bs_KpiInfo ) => {
-            filteredData.push({ name: bs.name, series: this.getKpiData( bs, timeRange ) });
+          timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
+            filteredData.push( { name: `${bs.name} `, series: this.getKpiData( bs, timeRange ) } );
   
-            bs.cellInfoList.forEach(( cell: Cell_KpiInfo, index ) => {
-              filteredData.push({ name: `Cell#${index + 1} (NCI=0x${cell.cellId})`, series: this.getKpiData(cell, timeRange, index) });
-            });
+            // 檢查是否為一體式基站或 cellInfoList 是否為空
+            if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) {
+              // 一體式基站,直接取 bs 層級的效能數據
+              const series = this.getKpiData( bs, timeRange );
+              
+              // 從 nciList 取得第一個 nci 值
+              const defaultNci = this.selectedNci;
+              
+              // 使用 nci 值在 label 中標示 Cell#
+              filteredData.push( { name: `Cell#1 ( NCI=0x${defaultNci} ) `, series: series } );
+
+            } else {
+              // 分布式基站，保留原有的處理邏輯
+              bs.cellInfoList.forEach( ( cell: Cell_KpiInfo, index ) => {
+                filteredData.push( { name: `Cell#${index + 1} ( NCI=0x${cell.cellId} ) `, series: this.getKpiData( cell, timeRange, index ) } );
+              } );
+            }
           });
         });
         break;
@@ -3798,47 +3836,62 @@ export class BSInfoComponent implements OnInit {
   
           timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
             const series = this.getKpiData( bs, timeRange );
-            filteredData.push( { name: bs.name, series } );
+            filteredData.push( { name: `${bs.name} `, series } );
           });
         });
         break;
   
       default:
-
         // 先從 selectedViewMode 中解析出 NCI 字串
         if ( this.selectedViewMode.startsWith('Cell#') ) {
-          // 從格式 "Cell#1 (NCI=0x00000c108)" 中解析出 cellId
-          const match = this.selectedViewMode.match( /\(NCI=0x([0-9a-fA-F]+)\)/ );
+          // 從格式 "Cell#1 ( NCI=0x00000c108 )" 中解析出 cellId
+          const match = this.selectedViewMode.match(/\(\s*NCI=0x([0-9a-fA-F]+)\s*\)/);
           if ( match ) {
             const cellId = match[1];  // 獲取匹配到的 cellId
             console.log( "In filterData() - cellId:", cellId );
       
             Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
               timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
+                // 檢查是否為一體式基站或 cellInfoList 是否為空
+                if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) {
 
-                // 使用 findIndex 來獲得 cell 的索引
-                const index = bs.cellInfoList.findIndex( c => c.cellId === cellId );
-      
-                // 檢查 index 是否有效
-                if ( index !== -1 ) {
-                  const cell = bs.cellInfoList[index];
+                  // 一體式基站,直接取 bs 層級的效能數據
                   const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
-                  const series = this.getKpiData( cell, timeRange, index );
-      
-                  // 使用獲得的 index 在 label 中標示 Cell# 並增加 1 使其更符合一般習慣（從 1 開始計數）
-                  filteredData.push({ name: `Cell#${index + 1} (NCI=0x${cell.cellId})`, series: series });
+
+                  const series = this.getKpiData( bs, timeRange );
+                  
+                  // 從 nciList 取得第一個 nci 值
+                  const defaultNci = this.nciList[0];
+                  
+                  // 使用 nci 值在 label 中標示 Cell#
+                  filteredData.push( { name: `Cell#1 ( NCI=0x${defaultNci} ) `, series: series } );
+                } else {
+                  // 分布式基站，保留原有的處理邏輯
+
+                  // 使用 findIndex 來獲得 cell 的索引
+                  const index = bs.cellInfoList.findIndex( c => c.cellId === cellId );
+        
+                  // 檢查 index 是否有效
+                  if ( index !== -1 ) {
+                    const cell = bs.cellInfoList[index];
+                    const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
+                    const series = this.getKpiData( cell, timeRange, index );
+        
+                    // 使用獲得的 index 在 label 中標示 Cell# 並增加 1 使其更符合一般習慣（從 1 開始計數）
+                    filteredData.push( { name: `Cell#${index + 1} ( NCI=0x${cell.cellId} ) `, series: series } );
+                  }
                 }
               });
             });
           }
         }
         break;
-        
     }
   
     return filteredData;
   }
   
+  // @2024/05/16 Add
   // 添加 consolidateSeries 方法
   consolidateSeries( data: ChartData[] ) {
     const resultMap = new Map();
@@ -3905,14 +3958,14 @@ export class BSInfoComponent implements OnInit {
         //   kpiData.push( { name: time, value: parseFloat( data.accessibility ) } );
         // }
         // 檢查 data 是否為 Cell_KpiInfo 類型，並確保 accessibility 不為 null
-        if (data.accessibility !== null) {
-          if ('cellId' in data && index !== undefined) {
+        if ( data.accessibility !== null ) {
+          if ( 'cellId' in data && index !== undefined ) {
             // 如果 data 包含 cellId 屬性，則認為是 Cell_KpiInfo 類型
-            const label = `Cell#${index + 1} (NCI=0x${data.cellId})`;
-            kpiData.push({ name: time, value: parseFloat(data.accessibility), label });
-          } else if ('name' in data) {
+            const label = `Cell#${index + 1} ( NCI=0x${data.cellId} ) `;
+            kpiData.push( { name: time, value: parseFloat( data.accessibility ), label } );
+          } else if ( 'name' in data ) {
             // 否則為 Bs_KpiInfo 類型
-            kpiData.push({ name: time, value: parseFloat(data.accessibility), label: data.name });
+            kpiData.push( { name: time, value: parseFloat( data.accessibility ), label: data.name } );
           }
         }
         break;
