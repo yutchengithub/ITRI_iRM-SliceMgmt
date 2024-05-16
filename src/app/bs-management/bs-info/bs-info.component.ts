@@ -3613,7 +3613,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 基站效能區 @2024/05/14 Update ↓
+// ↓ 基站效能區 @2024/05/16 Update ↓
 
   // @2024/05/14 Add
   // 用於儲存從 API 或 Local 獲取的 KPI 數據
@@ -3929,9 +3929,9 @@ export class BSInfoComponent implements OnInit {
       case 'Accessibility':
         return ['DRB Accessibility'];
       case 'Integrity':
-        return ['Downlink Delay', 'Uplink Delay', 'Downlink Throughput', 'Uplink Throughput'];
+        return ['Integrated Downlink Delay', 'Integrated Uplink Delay', 'RAN UE Downlink Throughput', 'RAN UE Uplink Throughput'];
       case 'Utilization':
-        return ['Resource Process', 'Resource Memory', 'Resource Disk'];
+        return ['Process Utilization', 'Memory Utilization', 'Process Utilization'];
       case 'Retainability':
         return ['Retainability'];
       case 'Mobility':
@@ -3943,81 +3943,69 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
+  // @2024/05/15 Add
   selectedKpiSubcategory = 'DRB Accessibility'; // 預設選擇 DRB Accessibility
 
-  // @2024/05/15 Add
+  // @2024/05/16 Update
   // 根據選擇的 KPI 類別和子類別獲取對應的數據
-  getKpiData( data: Bs_KpiInfo | Cell_KpiInfo, time: string, index?: number ): { name: string; value: number }[] {
+  getKpiData( data: Bs_KpiInfo | Cell_KpiInfo, time: string, index?: number ): { name: string; value: number; label?: string }[] {
     const kpiData: { name: string; value: number; label?: string }[] = [];
 
     console.log( "In getKpiData() - selectedKpiCategory = ", this.selectedKpiCategory );
 
-    switch ( this.selectedKpiCategory ) {
-      case 'Accessibility':
-        // if ( data.accessibility !== null ) {
-        //   kpiData.push( { name: time, value: parseFloat( data.accessibility ) } );
-        // }
-        // 檢查 data 是否為 Cell_KpiInfo 類型，並確保 accessibility 不為 null
-        if ( data.accessibility !== null ) {
+    // 用於添加數據並生成標籤
+    const addDataLabel = ( value: any, prop: string ) => {
+      if ( value !== null ) {
           if ( 'cellId' in data && index !== undefined ) {
-            // 如果 data 包含 cellId 屬性，則認為是 Cell_KpiInfo 類型
-            const label = `Cell#${index + 1} ( NCI=0x${data.cellId} ) `;
-            kpiData.push( { name: time, value: parseFloat( data.accessibility ), label } );
+              // 如果 data 包含 cellId 屬性，則認為是 Cell_KpiInfo 類型
+              const label = `Cell#${index + 1} ( NCI=0x${data.cellId} ) `;
+              kpiData.push( { name: time, value: parseFloat( value ), label } );
           } else if ( 'name' in data ) {
-            // 否則為 Bs_KpiInfo 類型
-            kpiData.push( { name: time, value: parseFloat( data.accessibility ), label: data.name } );
+            // 如果 data 包含 name 屬性，則認為是 Bs_KpiInfo 類型
+            kpiData.push( { name: time, value: parseFloat( value ), label: data.name } );
           }
-        }
-        break;
-      case 'Integrity':
-        switch ( this.selectedKpiSubcategory ) {
-          case 'Downlink Delay':
-            kpiData.push( { name: time, value: parseFloat( data.integrity.downlinkDelay ) } );
+      }
+    };
+  
+    switch ( this.selectedKpiCategory ) {
+        case 'Accessibility':
+            addDataLabel( data.accessibility, 'accessibility' );
             break;
-          case 'Uplink Delay':
-            kpiData.push( { name: time, value: parseFloat( data.integrity.uplinkDelay ) } );
+        case 'Integrity':
+            if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' ) {
+                addDataLabel( data.integrity.downlinkDelay, 'downlinkDelay' );
+            } else if ( this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
+                addDataLabel( data.integrity.uplinkDelay, 'uplinkDelay' );
+            } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' ) {
+                addDataLabel( data.integrity.downlinkThrouthput, 'downlinkThrouthput' );
+            } else if ( this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
+                addDataLabel( data.integrity.uplinkThrouthput, 'uplinkThrouthput' );
+            }
             break;
-          case 'Downlink Throughput':
-            kpiData.push( { name: time, value: parseFloat( data.integrity.downlinkThrouthput ) } );
+        case 'Utilization':
+            if ( this.selectedKpiSubcategory === 'Process Utilization' ) {
+                addDataLabel( data.utilization.resourceProcess, 'resourceProcess' );
+            } else if ( this.selectedKpiSubcategory === 'Memory Utilization' ) {
+                addDataLabel( data.utilization.resourceMemory, 'resourceMemory' );
+            } else if ( this.selectedKpiSubcategory === 'Process Utilization' ) {
+                addDataLabel( data.utilization.resourceDisk, 'resourceDisk' );
+            }
             break;
-          case 'Uplink Throughput':
-            kpiData.push( { name: time, value: parseFloat( data.integrity.uplinkThrouthput ) } );
+        case 'Retainability':
+            addDataLabel( data.retainability, 'retainability' );
             break;
-        }
-        break;
-      case 'Utilization':
-        switch ( this.selectedKpiSubcategory ) {
-          case 'Resource Process':
-            kpiData.push( { name: time, value: parseFloat( data.utilization.resourceProcess ) } );
+        case 'Mobility':
+            addDataLabel( data.mobility, 'mobility' );
             break;
-          case 'Resource Memory':
-            kpiData.push( { name: time, value: parseFloat( data.utilization.resourceMemory ) } );
+        case 'Energy Efficiency':
+            addDataLabel( data.energy, 'energy' );
             break;
-          case 'Resource Disk':
-            kpiData.push( { name: time, value: parseFloat( data.utilization.resourceDisk ) } );
-            break;
-        }
-        break;
-      case 'Retainability':
-        if ( data.retainability !== null ) {
-          kpiData.push( { name: time, value: parseFloat( data.retainability ) } );
-        }
-        break;
-      case 'Mobility':
-        if ( data.mobility !== null ) {
-          kpiData.push( { name: time, value: parseFloat( data.mobility ) } );
-        }
-        break;
-      case 'Energy Efficiency':
-        if ( data.energy !== null ) {
-          kpiData.push( { name: time, value: parseFloat( data.energy ) } );
-        }
-        break;
     }
 
     return kpiData;
   }
 
+  // @2024/05/15 Add
   onKpiCategoryChange() {
     const subcategories = this.getKpiSubcategories();
     if ( subcategories.length > 0 ) {
@@ -4031,12 +4019,12 @@ export class BSInfoComponent implements OnInit {
   // @2024/05/15 Add
   // 刷新基站效能資訊用
   refreshBsKpiInfo() {
-
     this.getBsKpiInfo();
   }
 
 
-// ↑ 基站效能區 @2024//05/14 Update ↑
+// ↑ 基站效能區 @2024//05/16 Update ↑
+
 
 
 }
