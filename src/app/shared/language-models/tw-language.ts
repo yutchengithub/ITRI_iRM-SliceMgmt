@@ -407,17 +407,45 @@ export const TwLanguage = {
 
   'BS.confirmDeleteNeighborBS': '確定要刪除此鄰居基站',
 
-
-
   'BS.alarms':'基站告警',
-  'BS.neList':'網元列表',
-  'BS.performance':'基站效能',
 
+  'BS.neList':'網元列表',
   'BS.No':'編號',
   'BS.ip':'IP 位址',
   'BS.neStatus':'狀態',
   'BS.port':'埠號',
   'BS.edit':'編輯',
+
+  'BS.performance':'基站效能',
+  'BS.refreshBSPerformanceInfo': '刷新基站效能資訊',
+  'BS.dataTimePast24Hours': '資料時間：過去 24 小時',
+
+  'BS.viewMode': '檢視模式',
+  'BS.fullInformation': '完整資訊',
+  'BS.onlyBSLevel': '僅基站層級',
+  'BS.kpiCategory': 'KPI 類別',
+  'BS.kpiSubcategory': 'KPI 子類別',
+  'BS.viewKPICategory': '檢視 KPI 類別',
+  'BS.viewKPISubcategory': '檢視 KPI 子類別',
+
+
+  "BS.accessibility": "連線成功率",
+  "BS.drbAccessibility": "DRB 連線成功率",
+  "BS.integrity": "完整性",
+  "BS.integratedDownlinkDelay": "下行延遲彙總",
+  "BS.integratedUplinkDelay": "上行延遲彙總",
+  "BS.ranUEDownlinkThroughput": "RAN UE 下行吞吐量",
+  "BS.ranUEUplinkThroughput": "RAN UE 上行吞吐量",
+  "BS.utilization": "利用率",
+  "BS.processUtilization": "處理器利用率",
+  "BS.memoryUtilization": "記憶體利用率",
+  "BS.diskUtilization": "硬碟利用率",
+  "BS.retainability": "保持率",
+  "BS.mobility": "行動性",
+  "BS.ngRanHandoverSuccessRate": "NG-RAN 換手成功率",
+  "BS.energyConsumption": "能源消耗量",
+  "BS.timeInterval": "時間區間",
+  'BS.dataSource': '資料來源',
 
 
   // Fault Management (故障管理)

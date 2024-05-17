@@ -414,15 +414,45 @@ export const Enlanguage = {
 
   'BS.confirmDeleteNeighborBS': 'Confirm to Delete this Neighbor BS',
 
-
-
   'BS.alarms':'BS Alarms',
   'BS.neList':'NE List',
-  'BS.performance':'BS Performance',
   'BS.ip':'IP Address',
   'BS.neStatus':'Status',
   'BS.port':'Port',
   'BS.edit':'Edit',
+
+  'BS.performance':'BS Performance',
+  'BS.refreshBSPerformanceInfo': 'Refresh BS Performance Information',
+  'BS.dataTimePast24Hours': 'Data Time: Past 24 Hours',
+
+  "BS.timeInterval": "Time Interval",
+  'BS.dataSource': 'Data Source',
+
+  'BS.viewMode': 'View Mode',
+  'BS.fullInformation': 'Full Information',
+  'BS.onlyBSLevel': 'Only BS Level',
+  'BS.kpiCategory': 'KPI Category',
+  'BS.kpiSubcategory': 'KPI Subcategory',
+  'BS.viewKPICategory': 'View KPI Category',
+  'BS.viewKPISubcategory': 'View KPI Subcategory',
+
+
+  'BS.accessibility': 'Accessibility',
+  'BS.drbAccessibility': 'DRB Accessibility',
+  'BS.integrity': 'Integrity',
+  'BS.integratedDownlinkDelay': 'Integrated Downlink Delay',
+  'BS.integratedUplinkDelay': 'Integrated Uplink Delay',
+  'BS.ranUEDownlinkThroughput': 'RAN UE Downlink Throughput',
+  'BS.ranUEUplinkThroughput': 'RAN UE Uplink Throughput',
+  'BS.utilization': 'Utilization',
+  'BS.processUtilization': 'Process Utilization',
+  'BS.memoryUtilization': 'Memory Utilization',
+  'BS.diskUtilization': 'Disk Utilization',
+  'BS.retainability': 'Retainability',
+  'BS.mobility': 'Mobility',
+  'BS.ngRanHandoverSuccessRate': 'NG-RAN Handover Success Rate',
+  'BS.energyConsumption': 'Energy Consumption',
+
 
   // Fault Management
   'fm.start':'StartTime',

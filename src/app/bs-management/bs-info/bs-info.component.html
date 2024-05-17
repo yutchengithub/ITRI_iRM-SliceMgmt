@@ -4663,7 +4663,7 @@
     <div class="neighborBsList">
       <span>{{ languageService.i18n['BS.neighborBsList'] }}
         <!-- 新增鄰居基站的按鈕，點擊時打開對話框進入新增模式 -->
-        <mat-icon tooltip="{{languageService.i18n['sm.create']}}" (click)="openNeighborBsEditDialog('add')">add</mat-icon>
+        <mat-icon matTooltip="{{ languageService.i18n['BS.addNeighborBS'] }}" (click)="openNeighborBsEditDialog('add')">add</mat-icon>
       </span>
       <input id="neighborBsList" class="toggle" type="checkbox">
       <label for="neighborBsList" class="lbl-toggle"></label>
@@ -5021,7 +5021,8 @@
       </div>
     </div>
 
-    <div><!-- 網元列表 -->
+    <!-- 網元列表區 -->
+    <div>
       <span>{{ languageService.i18n['BS.neList'] }}</span>
       <input id="neList" class="toggle" type="checkbox">
       <label for="neList" class="lbl-toggle"></label>
@@ -5086,31 +5087,58 @@
       </div>
     </div>
 
+    <!-- 基站效能區 @2024/05/17 Update -->
     <div>
-      <span>{{ languageService.i18n['BS.performance'] }}</span>
+      <span>{{ languageService.i18n['BS.performance'] }}
+          <!-- 刷新基站效能資訊按鈕 @2024/05/15 Add -->
+          <mat-icon matTooltip="{{ languageService.i18n['BS.refreshBSPerformanceInfo'] }}" (click)="refreshBsKpiInfo()">
+            autorenew
+          </mat-icon>
+          - {{ languageService.i18n['BS.dataTimePast24Hours'] }}
+      </span>
       <input id="performance" class="toggle" type="checkbox">
       <label for="performance" class="lbl-toggle"></label>
 
       <div class="collapsible-content">
         <div class="content-inner">
-          <div class="collabsible">
-
-            <div>
+            <div class="filter">
               <span>
-                <select [(ngModel)]="selectedCategory" (ngModelChange)="updateChart()">
-                  <option *ngFor="let category of multi" [value]="category.name">{{ category.name }}</option>
+                <label>{{ languageService.i18n['BS.viewMode'] }}:</label>
+                <select [(ngModel)]="selectedViewMode" (ngModelChange)="updateChart()">
+                  <option *ngFor="let mode of viewModes" [value]="mode">{{ mode }}</option>
+                </select>
+              </span>
+              <span><!-- KPI 類別選項 -->
+                <label>{{ languageService.i18n['BS.viewKPICategory'] }}:</label>
+                <select [(ngModel)]="selectedKpiCategory" (ngModelChange)="onKpiCategoryChange()">
+                  <option *ngFor="let category of kpiCategories" [value]="category">{{ category }}</option>
                 </select>                
               </span>
-              
-              <ngx-charts-line-chart
-                [results]="filteredData"
-                [view]="[700, 300]"
-                [xAxis]="true"
-                [yAxis]="true">
-              </ngx-charts-line-chart>
+              <span><!-- KPI 子類別選項 -->
+                <label>{{ languageService.i18n['BS.viewKPISubcategory'] }}:</label>
+                <select [(ngModel)]="selectedKpiSubcategory" (ngModelChange)="updateChart()" [hidden]="getKpiSubcategories().length === 0">
+                  <option *ngFor="let subcategory of getKpiSubcategories()" [value]="subcategory">{{ subcategory }}</option>
+                </select>
+              </span>
             </div>
+              
+            <ngx-charts-line-chart
+              [view]="view"
+              [scheme]="colorScheme"
+              [legend]="legend"
+              [legendTitle]="this.languageService.i18n['BS.dataSource']"
+              [showXAxisLabel]="showXAxisLabel"
+              [showYAxisLabel]="showYAxisLabel"
+              [xAxis]="xAxis"
+              [yAxis]="yAxis"
+              [xAxisLabel]="this.languageService.i18n['BS.timeInterval']"
+              [yAxisLabel]="yAxisLabel"
+              [roundDomains]="roundDomains"
+              [autoScale]="autoScale"
+              [showGridLines]="showGridLines"
+              [results]="filteredData">
+            </ngx-charts-line-chart>
 
-          </div>
         </div>
       </div>
     </div>

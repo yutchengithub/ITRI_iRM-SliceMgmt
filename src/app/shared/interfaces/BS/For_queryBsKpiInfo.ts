@@ -9,7 +9,7 @@ export interface BsKpiInfo {
 export interface TimeBlock {
     start: string;       // 時間塊開始時間
       end: string;       // 時間塊結束時間
-    field: Field;        // 包含特定場域相關訊息的 Field 對象
+    field?: Field;       // 包含特定場域相關訊息的 Field 對象
        bs: Bs_KpiInfo[]; // 基站數組，每個基站包括多個特定數據點
 }
 
@@ -26,21 +26,21 @@ export interface Field {
 
 // 表示一個基站的詳細資訊
 export interface Bs_KpiInfo {
-               id: string;        // 基站的唯一識別 ID
-           compId: string;        // 網元 ID
-             name: string;        // 基站名稱
-    accessibility: null | string; // 基站訪問性評分
-     availability: null | string; // 基站可用性評分
-         mobility: null | string; // 基站行動性能評分
-           energy: null | string; // 基站耗能
-        integrity: Integrity;     // 基站完整性指標
-      utilization: Utilization;   // 基站利用率數據
-    retainability: null | string; // 基站保留性質量
-     cellInfoList: CellInfo[];    // 基站內的 Cell 訊息列表
+               id: string;         // 基站的唯一識別 ID
+           compId: string;         // 網元 ID
+             name: string;         // 基站名稱
+    accessibility: null | string;  // 基站訪問性評分
+     availability: null | string;  // 基站可用性評分
+         mobility: null | string;  // 基站行動性能評分
+           energy: null | string;  // 基站耗能
+        integrity: Integrity;      // 基站完整性指標
+      utilization: Utilization;    // 基站利用率數據
+    retainability: null | string;  // 基站保留性質量
+     cellInfoList: Cell_KpiInfo[]; // 基站內的 Cell 訊息列表
 }
 
 // 表示單個 Cell 的資訊
-export interface CellInfo {
+export interface Cell_KpiInfo {
            cellId: string;      // Cell 的唯一識別ID
     accessibility: string;      // Cell 訪問性評分
      availability: string;      // Cell 可用性評分

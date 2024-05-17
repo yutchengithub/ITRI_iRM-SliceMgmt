@@ -1692,3 +1692,15 @@ ngx-spinner .ngx-spinner-overlay {
 body.tw #editSingleParamValueWindowRef ul li > label {
   min-width: 5em;
 }
+
+// @2024/05/16 Add
+// 設定 ngx-charts-line-chart 圖表模組，所有 SVG 文本元素的顏色
+ngx-charts-line-chart text {
+  fill: #ffffff !important; // 將所有文本設為白色 
+}
+
+// @2024/05/17 Add
+// 設定 ngx-charts-line-chart 圖表模組，設定所有 header 的顏色
+ngx-charts-line-chart header {
+  color: #AFB7C8 !important; // 設為灰色
+}

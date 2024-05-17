@@ -33,7 +33,7 @@ import { ForUpdateDistributedBs_editNeighborBs, Neighborinfo } from '../../share
 import { CurrentBsFmList, FaultMessage } from '../../shared/interfaces/BS/For_queryCurrentBsFaultMessage'; // @2024/03/31 Add
 import { NEList, NE, Sm  }               from '../../shared/interfaces/NE/For_queryBsComponentList';       // @2024/03/27 Add
 import { NEInfo }                        from '../../shared/interfaces/NE/For_queryBsComponentInfo';       // @2024/03/29 Add
-import { BsKpiInfo, TimeBlock }          from '../../shared/interfaces/BS/For_queryBsKpiInfo';             // @2024/05/14 Add
+import { BsKpiInfo, TimeBlock, Bs_KpiInfo, Cell_KpiInfo, Utilization, Integrity } from '../../shared/interfaces/BS/For_queryBsKpiInfo';             // @2024/05/14 Add
 
 // 引入所需 Local Files
 import { localBSInfo } from '../../shared/local-files/BS/For_queryBsInfo';          // @2024/03/25 Add
@@ -43,6 +43,9 @@ import { localBsKpiInfo } from '../../shared/local-files/BS/For_queryBsKpiInfo';
 
 // @2024/05/03 Add
 import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
+import { Color, ScaleType } from '@swimlane/ngx-charts';
+import { Console } from 'console';
+//import { curveLinear } from '@swimlane/ngx-charts';
 
 // 2024/04/01 Add
 // 搜尋基站告警用
@@ -125,9 +128,10 @@ enum ExtensionInfoParamTableNames {
 }
 
 // @2024/05/08 Add
+// 定義 ngx-charts 圖表模組，數據讀取時所需之介面結構
 export interface ChartData {
-  name: string; // category name
-  series: { name: string; value: number }[];
+  name: string;
+  series: { name: string; value: number; label?: string }[];
 }
 
 @Component({
@@ -193,8 +197,6 @@ export class BSInfoComponent implements OnInit {
     // 建立搜尋表單 
     this.createAlarmSearchForm();
     //this.createBsBasicInfoEditForm(); // 用於編輯 BS 基本資訊用 @2024/04/14 Add
-
-    Object.assign( this.multi ); // data goes here
   }
 
   // @2024/03/25 Add
@@ -243,10 +245,10 @@ export class BSInfoComponent implements OnInit {
 
       // @2024/05/14 Add
       // 取得此基站的 KPI 資訊
-      this.getBsKpiInfo();
+      //this.getBsKpiInfo();
     });
     
-    this.updateChart(); // 初始載入時執行一次更新
+    //this.updateChart(); // 初始載入時執行一次更新
   }
 
   /**
@@ -529,7 +531,7 @@ export class BSInfoComponent implements OnInit {
   gNBIdLength: number = 0;  // 用於存儲 gNBIdLength，以便後續可能會計算 NCI 或 cellLocalId @2024/05/04 Add
   
   /**
-   * @2024/05/08 Update
+   * @2024/05/16 Update
    * 取得基站資訊
    * @method getQueryBsInfo
    * @description
@@ -543,6 +545,7 @@ export class BSInfoComponent implements OnInit {
    * - @2024/04/12 Update - 更新計算分佈式 Cell 數方式，改跟基站主頁方法相同
    * - @2024/04/15 Add - 新增"基站參數"欄位所需的設值處理
    * - @2024/05/04 Add - 新增取得 gNBIdLength
+   * - @2024/05/16 Add - 新增於取得基站資訊完成後，取得效能資訊 getBsKpiInfo
    */
   getQueryBsInfo() {
     console.log( 'getQueryBsInfo() - Start' );
@@ -628,6 +631,10 @@ export class BSInfoComponent implements OnInit {
         this.selectedNeighborNci = this.nciList[0]; // 初始化鄰居基站列表的選擇
         this.neighborList = this.getNeighborList( this.selectedNeighborNci );
       }
+
+      // 為避免無法取得一體式基站之 NCI，
+      // 故改於此時取得基站的 KPI 資訊
+      this.getBsKpiInfo();
 
       this.isLoadingBsInfo = false; // Local 模式下，數據加載快速完成，直接設置為 false
       this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
@@ -724,6 +731,10 @@ export class BSInfoComponent implements OnInit {
           console.log( 'BS info fetch completed' );
           //this.hideSpinner();  // 完成後隱藏 spinner
           this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
+          
+          // 為避免無法取得一體式基站之 NCI，
+          // 故改於此時取得基站的 KPI 資訊
+          this.getBsKpiInfo();
         }
       });
     }
@@ -3602,7 +3613,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 基站效能區 @2024/05/14 Update ↓
+// ↓ 基站效能區 @2024/05/16 Update ↓
 
   // @2024/05/14 Add
   // 用於儲存從 API 或 Local 獲取的 KPI 數據
@@ -3661,10 +3672,10 @@ export class BSInfoComponent implements OnInit {
 
   /**
    * @2024/05/14 Add
-   * 準備從 API 獲取指定基站的 KPI 資訊所需的參數
+   * 準備從 API 獲取指定基站的 Kpi 資訊所需的參數
    * @method prepareGetBsKpiInfoParams
    * @description
-   *    - 此函數用於準備調用 KPI 數據接口所需的參數。
+   *    - 此函數用於準備調用 Kpi 數據接口所需的參數。
    *    - 設定查詢的時間範圍，格式化為 "YYYY-MM-DD HH:mm"。
    */
   prepareGetBsKpiInfoParams() {
@@ -3691,77 +3702,335 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/14 Add
-   * 處理從 API 獲取的 KPI 數據響應
+   * @2024/05/15 Update
+   * 處理從 API 獲取的 Kpi 數據響應
    * @method handleBsKpiInfoResponse
    * @description
    *    - 此函數用於處理從 API 獲取的 KPI 數據。
    *    - 更新當前的 KPI 數據狀態。
    *    - 根據響應更新 UI 顯示或處理數據。
-   * @param response - API 返回的 KPI 數據響應
+   * @param response - 後端 API 返回的 Kpi 數據
    */
   handleBsKpiInfoResponse( response: any ): void {
     // 處理從 API 獲取的數據
     // 這裡需要根據實際 API 響應的結構來解析數據
     this.currentBsKpiInfo = response; // 假設響應直接是 BsKpiInfo 格式
     this.isLoadingBsKpiInfo = false;  // 更新加載狀態
+    this.updateViewModes();           // 更新 viewModes
+    this.updateChart();               // 用新數據刷新圖表
   }
 
+  // 定義檢視模式的選項
+  viewModes: string[] = [];
+  selectedViewMode = '完整資訊'; // 預設選擇完整資訊
 
+  // @2024/05/16 Update
+  // 更新 viewModes 以包含所有 cell IDs
+  updateViewModes() {
+    const modes = ['完整資訊', '僅基站層級'];
+    const cellIds = new Set<string>(); // 使用 Set 確保唯一性
+
+    Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
+      timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
+
+        // 檢查是否為一體式基站或 cellInfoList 是否為空
+        if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) {
+
+          console.log( "In updateViewModes() - selectedNci =", this.selectedNci );
+
+          // 對於一體式基站，使用預設 nciList 的第一個值
+          const defaultNci = this.nciList[0]; // 確保 nciList 已經定義且至少有一個元素
+          cellIds.add(`Cell#1 ( NCI=0x${defaultNci} )`);
+
+        } else {
+          
+          // 對於分佈式基站，正常處理每個 cell
+          bs.cellInfoList.forEach( ( cell: Cell_KpiInfo, index ) => {
+            cellIds.add(`Cell#${index + 1} ( NCI=0x${cell.cellId} )`);
+          } );
+
+        }
+      });
+    });
+
+    this.viewModes = [...modes, ...cellIds];
+    this.selectedViewMode = this.viewModes[0]; // 重設選擇的檢視模式以避免選擇不存在的選項
+  }
   
   // ↓ 繪製圖表區 ↓
 
-  //multi: any[];
-  view: any[] = [700, 300];
-  gradient: boolean = true;
-  showLegend: boolean = true;
-  showLabels: boolean = true;
+  // 設定 
+  view: [ number, number ] = [ 1235, 300 ]; // 定義圖表區長寬
+  legend: boolean = true;
+  legendTitle: string = this.languageService.i18n['BS.dataSource'];      // 定義圖例標題名稱
+  showYAxisLabel: boolean = true;
+  showXAxisLabel: boolean = true;
   xAxis: boolean = true;
   yAxis: boolean = true;
-  xAxisLabel: string = 'Years';
-  yAxisLabel: string = 'Population';
+  xAxisLabel: string = this.languageService.i18n['BS.timeInterval'];  // 定義圖表 X 軸標題名稱
+  yAxisLabel: string = 'Value';     // 定義圖表 Y 軸標題名稱
+  roundDomains: boolean = true;
+  autoScale: boolean = true;
+  showGridLines: boolean = true;
 
-  colorScheme = {
-    domain: ['#5AA454', '#E44D25', '#7aa3e5', '#a8385d', '#aae3f5']
+  // 設定圖表配色方案
+  colorScheme: Color = {
+    name: 'ocean',
+    selectable: true,
+    group: ScaleType.Ordinal,
+    domain: ['#29B6F6', '#81D4FA', '#1D68FB', '#4AFFFE', '#CFC0BB', '#AFFFFF', '#FFFC63', '#33C0FC']
   };
 
-  filteredData: ChartData[] = []; // 宣告 filteredData 屬性，類型為 ChartData[]，初始值為空數組
+  filteredData: any[] = [];
+  selectedCellId: string = ''; // 默認為空，只有選擇特定 Cell ID 時才有值
 
-  selectedCategory: string = 'Accessibility'; // 預設選項
-  
   // 數據範例
-  multi: ChartData[] = [
-    {
-      "name": "Accessibility",
-      "series": [
-        { "name": "2022-04-01", "value": 50 },
-        { "name": "2022-04-02", "value": 80 }
-      ]
-    },
-    {
-      "name": "Integrity",
-      "series": [
-        { "name": "2022-04-01", "value": 45 },
-        { "name": "2022-04-02", "value": 70 }
-      ]
-    }
-    // more categories...
-  ];
+  multi: any[] = [];
 
+  // @2024/05/15 Update
   updateChart() {
-    this.filteredData = this.filterData();
-    this.changeDetectorRef.markForCheck(); // 標記為需要檢查，因為我們使用了 OnPush
+    // 首先根據選擇的條件過濾數據
+    let rawData = this.filterData();
+    console.log( "In updateChart - rawData = ", rawData );
+  
+    // 使用 consolidateSeries 函數來整理數據，確保數據點可以連接成線
+    this.filteredData = this.consolidateSeries( rawData );
+    console.log( "In updateChart - consolidated filteredData = ", this.filteredData );
+  
+    // 標記為需要檢查，因為我們使用了 OnPush
+    this.changeDetectorRef.markForCheck();
   }
   
+  // @2024/05/16 Update
+  // 根據選擇的檢視模式、KPI 類別和子類別過濾數據
   filterData(): ChartData[] {
-    return this.multi.filter(item => item.name === this.selectedCategory);
+    let filteredData: ChartData[] = [];
+  
+    switch ( this.selectedViewMode ) {
+      case '完整資訊':
+        Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
+
+          const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
+  
+          timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
+            filteredData.push( { name: `${bs.name} `, series: this.getKpiData( bs, timeRange ) } );
+  
+            // 檢查是否為一體式基站或 cellInfoList 是否為空
+            if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) {
+              // 一體式基站,直接取 bs 層級的效能數據
+              const series = this.getKpiData( bs, timeRange );
+              
+              // 從 nciList 取得第一個 nci 值
+              const defaultNci = this.selectedNci;
+              
+              // 使用 nci 值在 label 中標示 Cell#
+              filteredData.push( { name: `Cell#1 ( NCI=0x${defaultNci} ) `, series: series } );
+
+            } else {
+              // 分布式基站，保留原有的處理邏輯
+              bs.cellInfoList.forEach( ( cell: Cell_KpiInfo, index ) => {
+                filteredData.push( { name: `Cell#${index + 1} ( NCI=0x${cell.cellId} ) `, series: this.getKpiData( cell, timeRange, index ) } );
+              } );
+            }
+          });
+        });
+        break;
+  
+      case '僅基站層級':
+        Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
+          const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );  // 使用新的時間格式
+  
+          timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
+            const series = this.getKpiData( bs, timeRange );
+            filteredData.push( { name: `${bs.name} `, series } );
+          });
+        });
+        break;
+  
+      default:
+        // 先從 selectedViewMode 中解析出 NCI 字串
+        if ( this.selectedViewMode.startsWith('Cell#') ) {
+          // 從格式 "Cell#1 ( NCI=0x00000c108 )" 中解析出 cellId
+          const match = this.selectedViewMode.match(/\(\s*NCI=0x([0-9a-fA-F]+)\s*\)/);
+          if ( match ) {
+            const cellId = match[1];  // 獲取匹配到的 cellId
+            console.log( "In filterData() - cellId:", cellId );
+      
+            Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
+              timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
+                // 檢查是否為一體式基站或 cellInfoList 是否為空
+                if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) {
+
+                  // 一體式基站,直接取 bs 層級的效能數據
+                  const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
+
+                  const series = this.getKpiData( bs, timeRange );
+                  
+                  // 從 nciList 取得第一個 nci 值
+                  const defaultNci = this.nciList[0];
+                  
+                  // 使用 nci 值在 label 中標示 Cell#
+                  filteredData.push( { name: `Cell#1 ( NCI=0x${defaultNci} ) `, series: series } );
+                } else {
+                  // 分布式基站，保留原有的處理邏輯
+
+                  // 使用 findIndex 來獲得 cell 的索引
+                  const index = bs.cellInfoList.findIndex( c => c.cellId === cellId );
+        
+                  // 檢查 index 是否有效
+                  if ( index !== -1 ) {
+                    const cell = bs.cellInfoList[index];
+                    const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
+                    const series = this.getKpiData( cell, timeRange, index );
+        
+                    // 使用獲得的 index 在 label 中標示 Cell# 並增加 1 使其更符合一般習慣（從 1 開始計數）
+                    filteredData.push( { name: `Cell#${index + 1} ( NCI=0x${cell.cellId} ) `, series: series } );
+                  }
+                }
+              });
+            });
+          }
+        }
+        break;
+    }
+  
+    return filteredData;
+  }
+  
+  // @2024/05/16 Add
+  // 添加 consolidateSeries 方法
+  consolidateSeries( data: ChartData[] ) {
+    const resultMap = new Map();
+
+    data.forEach( item => {
+      if ( !resultMap.has( item.name ) ) {
+        resultMap.set( item.name, { name: item.name, series: [] } );
+      }
+      let seriesArray = resultMap.get( item.name ).series;
+      seriesArray.push( ...item.series );
+      resultMap.set( item.name, { name: item.name, series: seriesArray } );
+    });
+
+    return Array.from( resultMap.values() );
   }
 
+  formatTimeRange( start: string, end: string ): string {
+    const startTime = new Date( start );
+    const endTime = new Date( end );
+  
+    // 轉換時間格式為 HH:mm
+    const format = ( date: Date ) => date.toTimeString().substring( 0, 5 );
+  
+    return `${format( startTime )} ~ ${format( endTime )}`;
+  }
+
+  // 定義 KPI 類別的選項
+  kpiCategories = ['Accessibility', 'Integrity', 'Utilization', 'Retainability', 'Mobility', 'Energy Efficiency'];
+  selectedKpiCategory = 'Accessibility'; // 預設選擇 Accessibility
+
+  // 定義 KPI 子類別的選項，根據選擇的 KPI 類別顯示對應的子類別
+  getKpiSubcategories() {
+
+    switch ( this.selectedKpiCategory ) {
+      case 'Accessibility':
+        return ['DRB Accessibility'];
+      case 'Integrity':
+        return ['Integrated Downlink Delay', 'Integrated Uplink Delay', 'RAN UE Downlink Throughput', 'RAN UE Uplink Throughput'];
+      case 'Utilization':
+        return ['Process Utilization', 'Memory Utilization', 'Disk Utilization'];
+      case 'Retainability':
+        return ['Retainability'];
+      case 'Mobility':
+        return ['NG-RAN Handover Success Rate'];
+      case 'Energy Efficiency':
+        return ['Energy Efficiency'];
+      default:
+        return [];
+    }
+  }
+
+  // @2024/05/15 Add
+  selectedKpiSubcategory = 'DRB Accessibility'; // 預設選擇 DRB Accessibility
+
+  // @2024/05/16 Update
+  // 根據選擇的 KPI 類別和子類別獲取對應的數據
+  getKpiData( data: Bs_KpiInfo | Cell_KpiInfo, time: string, index?: number ): { name: string; value: number; label?: string }[] {
+    const kpiData: { name: string; value: number; label?: string }[] = [];
+
+    console.log( "In getKpiData() - selectedKpiCategory = ", this.selectedKpiCategory );
+
+    // 用於添加數據並生成標籤
+    const addDataLabel = ( value: any, prop: string ) => {
+      if ( value !== null ) {
+          if ( 'cellId' in data && index !== undefined ) {
+              // 如果 data 包含 cellId 屬性，則認為是 Cell_KpiInfo 類型
+              const label = `Cell#${index + 1} ( NCI=0x${data.cellId} ) `;
+              kpiData.push( { name: time, value: parseFloat( value ), label } );
+          } else if ( 'name' in data ) {
+            // 如果 data 包含 name 屬性，則認為是 Bs_KpiInfo 類型
+            kpiData.push( { name: time, value: parseFloat( value ), label: data.name } );
+          }
+      }
+    };
+  
+    switch ( this.selectedKpiCategory ) {
+        case 'Accessibility':
+            addDataLabel( data.accessibility, 'accessibility' );
+            break;
+        case 'Integrity':
+            if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' ) {
+                addDataLabel( data.integrity.downlinkDelay, 'downlinkDelay' );
+            } else if ( this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
+                addDataLabel( data.integrity.uplinkDelay, 'uplinkDelay' );
+            } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' ) {
+                addDataLabel( data.integrity.downlinkThrouthput, 'downlinkThrouthput' );
+            } else if ( this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
+                addDataLabel( data.integrity.uplinkThrouthput, 'uplinkThrouthput' );
+            }
+            break;
+        case 'Utilization':
+            if ( this.selectedKpiSubcategory === 'Process Utilization' ) {
+                addDataLabel( data.utilization.resourceProcess, 'resourceProcess' );
+            } else if ( this.selectedKpiSubcategory === 'Memory Utilization' ) {
+                addDataLabel( data.utilization.resourceMemory, 'resourceMemory' );
+            } else if ( this.selectedKpiSubcategory === 'Disk Utilization' ) {
+                addDataLabel( data.utilization.resourceDisk, 'resourceDisk' );
+            }
+            break;
+        case 'Retainability':
+            addDataLabel( data.retainability, 'retainability' );
+            break;
+        case 'Mobility':
+            addDataLabel( data.mobility, 'mobility' );
+            break;
+        case 'Energy Efficiency':
+            addDataLabel( data.energy, 'energy' );
+            break;
+    }
+
+    return kpiData;
+  }
+
+  // @2024/05/15 Add
+  onKpiCategoryChange() {
+    const subcategories = this.getKpiSubcategories();
+    if ( subcategories.length > 0 ) {
+      this.selectedKpiSubcategory = subcategories[0]; // 自動選擇第一個子類別
+      this.updateChart(); // 更新圖表顯示新數據
+    }
+  }
+  
   // ↑ 繪製圖表區 ↑ 
 
+  // @2024/05/15 Add
+  // 刷新基站效能資訊用
+  refreshBsKpiInfo() {
+    this.getBsKpiInfo();
+  }
 
-// ↑ 基站效能區 @2024//05/14 Update ↑
+
+// ↑ 基站效能區 @2024//05/16 Update ↑
+
 
 
 }
-
