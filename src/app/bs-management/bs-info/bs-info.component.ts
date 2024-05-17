@@ -3785,7 +3785,7 @@ export class BSInfoComponent implements OnInit {
   selectedCellId: string = ''; // 默認為空，只有選擇特定 Cell ID 時才有值
 
   // 數據範例
-  multi: any[] = [];
+  //multi: any[] = [];
 
   // @2024/05/15 Update
   updateChart() {
