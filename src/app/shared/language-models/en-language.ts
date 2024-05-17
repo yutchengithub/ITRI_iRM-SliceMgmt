@@ -424,6 +424,27 @@ export const Enlanguage = {
   'BS.performance':'BS Performance',
   'BS.refreshBSPerformanceInfo': 'Refresh BS Performance Information',
 
+  "BS.timeInterval": "Time Interval",
+  'BS.dataSource': 'Data Source',
+
+  'BS.fullInformation': 'Full Information',
+  'BS.onlyBSLevel': 'Only BS Level',
+  'BS.accessibility': 'Accessibility',
+  'BS.drbAccessibility': 'DRB Accessibility',
+  'BS.integrity': 'Integrity',
+  'BS.integratedDownlinkDelay': 'Integrated Downlink Delay',
+  'BS.integratedUplinkDelay': 'Integrated Uplink Delay',
+  'BS.ranUEDownlinkThroughput': 'RAN UE Downlink Throughput',
+  'BS.ranUEUplinkThroughput': 'RAN UE Uplink Throughput',
+  'BS.utilization': 'Utilization',
+  'BS.processUtilization': 'Process Utilization',
+  'BS.memoryUtilization': 'Memory Utilization',
+  'BS.diskUtilization': 'Disk Utilization',
+  'BS.retainability': 'Retainability',
+  'BS.mobility': 'Mobility',
+  'BS.ngRanHandoverSuccessRate': 'NG-RAN Handover Success Rate',
+  'BS.energyConsumption': 'Energy Consumption',
+
 
   // Fault Management
   'fm.start':'StartTime',

@@ -5087,7 +5087,7 @@
       </div>
     </div>
 
-    <!-- 基站效能區 @2024/05/15 Update -->
+    <!-- 基站效能區 @2024/05/17 Update -->
     <div>
       <span>{{ languageService.i18n['BS.performance'] }}
           <!-- 刷新基站效能資訊按鈕 @2024/05/15 Add -->
@@ -5120,14 +5120,16 @@
                 [view]="view"
                 [scheme]="colorScheme"
                 [legend]="legend"
-                [legendTitle]="legendTitle"
+                [legendTitle]="this.languageService.i18n['BS.dataSource']"
                 [showXAxisLabel]="showXAxisLabel"
                 [showYAxisLabel]="showYAxisLabel"
                 [xAxis]="xAxis"
                 [yAxis]="yAxis"
-                [xAxisLabel]="xAxisLabel"
+                [xAxisLabel]="this.languageService.i18n['BS.timeInterval']"
                 [yAxisLabel]="yAxisLabel"
-                [showGridLines]="true"
+                [roundDomains]="roundDomains"
+                [autoScale]="autoScale"
+                [showGridLines]="showGridLines"
                 [results]="filteredData">
               </ngx-charts-line-chart>
 

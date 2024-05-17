@@ -3722,12 +3722,12 @@ export class BSInfoComponent implements OnInit {
 
   // 定義檢視模式的選項
   viewModes: string[] = [];
-  selectedViewMode = '完整的資訊'; // 預設選擇完整的資訊
+  selectedViewMode = '完整資訊'; // 預設選擇完整資訊
 
   // @2024/05/16 Update
   // 更新 viewModes 以包含所有 cell IDs
   updateViewModes() {
-    const modes = ['完整的資訊', '僅基站層級'];
+    const modes = ['完整資訊', '僅基站層級'];
     const cellIds = new Set<string>(); // 使用 Set 確保唯一性
 
     Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
@@ -3762,13 +3762,16 @@ export class BSInfoComponent implements OnInit {
   // 設定 
   view: [ number, number ] = [ 1235, 300 ]; // 定義圖表區長寬
   legend: boolean = true;
-  legendTitle: string = '效能數據種類';      // 定義圖例標題名稱
+  legendTitle: string = this.languageService.i18n['BS.dataSource'];      // 定義圖例標題名稱
   showYAxisLabel: boolean = true;
   showXAxisLabel: boolean = true;
   xAxis: boolean = true;
   yAxis: boolean = true;
-  xAxisLabel: string = '時間區間';  // 定義圖表 X 軸標題名稱
-  yAxisLabel: string = 'Value';    // 定義圖表 Y 軸標題名稱
+  xAxisLabel: string = this.languageService.i18n['BS.timeInterval'];  // 定義圖表 X 軸標題名稱
+  yAxisLabel: string = 'Value';     // 定義圖表 Y 軸標題名稱
+  roundDomains: boolean = true;
+  autoScale: boolean = true;
+  showGridLines: boolean = true;
 
   // 設定圖表配色方案
   colorScheme: Color = {
@@ -3804,7 +3807,7 @@ export class BSInfoComponent implements OnInit {
     let filteredData: ChartData[] = [];
   
     switch ( this.selectedViewMode ) {
-      case '完整的資訊':
+      case '完整資訊':
         Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
 
           const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
@@ -3934,7 +3937,7 @@ export class BSInfoComponent implements OnInit {
       case 'Integrity':
         return ['Integrated Downlink Delay', 'Integrated Uplink Delay', 'RAN UE Downlink Throughput', 'RAN UE Uplink Throughput'];
       case 'Utilization':
-        return ['Process Utilization', 'Memory Utilization', 'Process Utilization'];
+        return ['Process Utilization', 'Memory Utilization', 'Disk Utilization'];
       case 'Retainability':
         return ['Retainability'];
       case 'Mobility':
@@ -3990,7 +3993,7 @@ export class BSInfoComponent implements OnInit {
                 addDataLabel( data.utilization.resourceProcess, 'resourceProcess' );
             } else if ( this.selectedKpiSubcategory === 'Memory Utilization' ) {
                 addDataLabel( data.utilization.resourceMemory, 'resourceMemory' );
-            } else if ( this.selectedKpiSubcategory === 'Process Utilization' ) {
+            } else if ( this.selectedKpiSubcategory === 'Disk Utilization' ) {
                 addDataLabel( data.utilization.resourceDisk, 'resourceDisk' );
             }
             break;
