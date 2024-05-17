@@ -29,10 +29,12 @@ export class LanguageService {
 
   // @2024/01/26 Update
   setLanguage() {
+
     // 將當前語言保存到 sessionStorage 中
-    window.sessionStorage.setItem('language', this.language);
+    window.sessionStorage.setItem( 'language', this.language );
+
     // 根據當前語言設置 i18n 對象
-    if (this.language === 'EN') {
+    if ( this.language === 'EN' ) {
       this.i18n = Enlanguage;
     } else {
       this.i18n = TwLanguage;
@@ -40,25 +42,28 @@ export class LanguageService {
 
     // 更新頁面樣式和語言類
     //this.changeLanguageStylesheet(this.language);
-    this.updateBodyLanguageClass(this.language); // @2024/01/26 Add
+    this.updateBodyLanguageClass( this.language ); // @2024/01/26 Add
   }
 
   // @2024/03/21 Add
   changeI18n( language: string ) {
+
     // 更新當前語言
     this.language = language;
+
     // 設置新的語言
     this.setLanguage();
+    
     // 發射語言變化事件
     this.languageChanged.emit( language );
   }
 
   toggleChange() {
     // 切換語言
-    if (this.language === 'EN') {
-      this.changeI18n('EN');
+    if ( this.language === 'EN' ) {
+      this.changeI18n( 'EN' );
     } else {
-      this.changeI18n('TW');
+      this.changeI18n( 'TW' );
     }
   }
 
