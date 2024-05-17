@@ -418,9 +418,17 @@ export const TwLanguage = {
 
   'BS.performance':'基站效能',
   'BS.refreshBSPerformanceInfo': '刷新基站效能資訊',
+  'BS.dataTimePast24Hours': '資料時間：過去 24 小時',
 
+  'BS.viewMode': '檢視模式',
   'BS.fullInformation': '完整資訊',
   'BS.onlyBSLevel': '僅基站層級',
+  'BS.kpiCategory': 'KPI 類別',
+  'BS.kpiSubcategory': 'KPI 子類別',
+  'BS.viewKPICategory': '檢視 KPI 類別',
+  'BS.viewKPISubcategory': '檢視 KPI 子類別',
+
+
   "BS.accessibility": "連線成功率",
   "BS.drbAccessibility": "DRB 連線成功率",
   "BS.integrity": "完整性",
@@ -437,7 +445,7 @@ export const TwLanguage = {
   "BS.ngRanHandoverSuccessRate": "NG-RAN 換手成功率",
   "BS.energyConsumption": "能源消耗量",
   "BS.timeInterval": "時間區間",
-  'BS.dataSource': '數據來源',
+  'BS.dataSource': '資料來源',
 
 
   // Fault Management (故障管理)

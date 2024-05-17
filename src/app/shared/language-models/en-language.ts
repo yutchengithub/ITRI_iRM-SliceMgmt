@@ -423,12 +423,20 @@ export const Enlanguage = {
 
   'BS.performance':'BS Performance',
   'BS.refreshBSPerformanceInfo': 'Refresh BS Performance Information',
+  'BS.dataTimePast24Hours': 'Data Time: Past 24 Hours',
 
   "BS.timeInterval": "Time Interval",
   'BS.dataSource': 'Data Source',
 
+  'BS.viewMode': 'View Mode',
   'BS.fullInformation': 'Full Information',
   'BS.onlyBSLevel': 'Only BS Level',
+  'BS.kpiCategory': 'KPI Category',
+  'BS.kpiSubcategory': 'KPI Subcategory',
+  'BS.viewKPICategory': 'View KPI Category',
+  'BS.viewKPISubcategory': 'View KPI Subcategory',
+
+
   'BS.accessibility': 'Accessibility',
   'BS.drbAccessibility': 'DRB Accessibility',
   'BS.integrity': 'Integrity',

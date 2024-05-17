@@ -5094,44 +5094,50 @@
           <mat-icon matTooltip="{{ languageService.i18n['BS.refreshBSPerformanceInfo'] }}" (click)="refreshBsKpiInfo()">
             autorenew
           </mat-icon>
+          - {{ languageService.i18n['BS.dataTimePast24Hours'] }}
       </span>
       <input id="performance" class="toggle" type="checkbox">
       <label for="performance" class="lbl-toggle"></label>
 
       <div class="collapsible-content">
         <div class="content-inner">
+            <div class="filter">
               <span>
+                <label>{{ languageService.i18n['BS.viewMode'] }}:</label>
                 <select [(ngModel)]="selectedViewMode" (ngModelChange)="updateChart()">
                   <option *ngFor="let mode of viewModes" [value]="mode">{{ mode }}</option>
                 </select>
               </span>
-              <span>
+              <span><!-- KPI 類別選項 -->
+                <label>{{ languageService.i18n['BS.viewKPICategory'] }}:</label>
                 <select [(ngModel)]="selectedKpiCategory" (ngModelChange)="onKpiCategoryChange()">
                   <option *ngFor="let category of kpiCategories" [value]="category">{{ category }}</option>
                 </select>                
               </span>
-              <span>
+              <span><!-- KPI 子類別選項 -->
+                <label>{{ languageService.i18n['BS.viewKPISubcategory'] }}:</label>
                 <select [(ngModel)]="selectedKpiSubcategory" (ngModelChange)="updateChart()" [hidden]="getKpiSubcategories().length === 0">
                   <option *ngFor="let subcategory of getKpiSubcategories()" [value]="subcategory">{{ subcategory }}</option>
                 </select>
               </span>
+            </div>
               
-              <ngx-charts-line-chart
-                [view]="view"
-                [scheme]="colorScheme"
-                [legend]="legend"
-                [legendTitle]="this.languageService.i18n['BS.dataSource']"
-                [showXAxisLabel]="showXAxisLabel"
-                [showYAxisLabel]="showYAxisLabel"
-                [xAxis]="xAxis"
-                [yAxis]="yAxis"
-                [xAxisLabel]="this.languageService.i18n['BS.timeInterval']"
-                [yAxisLabel]="yAxisLabel"
-                [roundDomains]="roundDomains"
-                [autoScale]="autoScale"
-                [showGridLines]="showGridLines"
-                [results]="filteredData">
-              </ngx-charts-line-chart>
+            <ngx-charts-line-chart
+              [view]="view"
+              [scheme]="colorScheme"
+              [legend]="legend"
+              [legendTitle]="this.languageService.i18n['BS.dataSource']"
+              [showXAxisLabel]="showXAxisLabel"
+              [showYAxisLabel]="showYAxisLabel"
+              [xAxis]="xAxis"
+              [yAxis]="yAxis"
+              [xAxisLabel]="this.languageService.i18n['BS.timeInterval']"
+              [yAxisLabel]="yAxisLabel"
+              [roundDomains]="roundDomains"
+              [autoScale]="autoScale"
+              [showGridLines]="showGridLines"
+              [results]="filteredData">
+            </ngx-charts-line-chart>
 
         </div>
       </div>
