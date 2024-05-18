@@ -426,6 +426,7 @@ export const Enlanguage = {
   'BS.dataTimePast24Hours': 'Data Time: Past 24 Hours',
 
   "BS.timeInterval": "Time Interval",
+  'BS.timeIntervalHourly': 'Time Interval ( Hourly )',
   'BS.dataSource': 'Data Source',
 
   'BS.viewMode': 'View Mode',
@@ -452,6 +453,11 @@ export const Enlanguage = {
   'BS.mobility': 'Mobility',
   'BS.ngRanHandoverSuccessRate': 'NG-RAN Handover Success Rate',
   'BS.energyConsumption': 'Energy Consumption',
+  'BS.Power': 'Power ( kW )',
+  'BS.percentage': 'Percentage ( % )',
+  'BS.milliseconds': 'Milliseconds ( ms )',
+  'BS.megabitsPerSecond': 'Megabits per Second ( Mbps )',
+
 
 
   // Fault Management
