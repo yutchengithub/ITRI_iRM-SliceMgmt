@@ -544,3 +544,6 @@ mat-dialog-container h5 .mat-icon {
   color: #066abf!important;
   font-size: 1em!important;
 }
+.performance ngx-charts-line-chart text {
+  fill: #000000 !important;
+}
