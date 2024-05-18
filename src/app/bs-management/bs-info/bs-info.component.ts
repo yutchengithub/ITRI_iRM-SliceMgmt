@@ -4057,7 +4057,7 @@ export class BSInfoComponent implements OnInit {
                             const defaultNci = this.nciList[0];
     
                             // 使用 nci 值在 label 中標示 Cell#
-                            if ( `0x${defaultNci}` === cellId ) { // <-- @2024/05/19 修改的部分 - 確保只有在 nci 匹配時才添加數據
+                            if ( defaultNci === cellId ) { // <-- @2024/05/19 修改的部分 - 確保只有在 nci 匹配時才添加數據
                                 filteredData.push( { name: `Cell#1 ( NCI=0x${defaultNci} ) `, series: series } );
                             }
                         } else {
