@@ -3850,9 +3850,11 @@ export class BSInfoComponent implements OnInit {
   }
   
   // @2024/05/18 Update
+  // 用於切換圖表顯示的數據
   onKpiCategoryChange() {
     this.updateKpiSubcategories();
-    this.updateChart(); // 確保圖表隨之更新
+    this.setYAxisLabel(); // 更新 y 軸標籤
+    this.updateChart();   // 確保圖表隨之更新
   }
 
   // @2024/05/18 Add
@@ -3896,6 +3898,7 @@ export class BSInfoComponent implements OnInit {
     });
   
     this.updateLanguageSubcategories();
+    this.setYAxisLabel(); // 更新 y 軸標籤
   }  
 
   // @2024/05/18 Add
@@ -3966,7 +3969,7 @@ export class BSInfoComponent implements OnInit {
     }
   }
   
-  // @2024/05/15 Update
+  // @2024/05/18 Update
   // 更新圖表上顯示的數據用
   updateChart() {
     // 首先根據選擇的條件過濾數據
@@ -3976,6 +3979,8 @@ export class BSInfoComponent implements OnInit {
     // 使用 consolidateSeries 函數來整理數據，確保數據點可以連接成線
     this.filteredData = this.consolidateSeries(rawData);
     console.log("In updateChart - consolidated filteredData = ", this.filteredData);
+
+    this.setYAxisLabel(); // 更新 y 軸標籤
 
     // 標記為需要檢查，因為我們使用了 OnPush
     this.changeDetectorRef.markForCheck();
@@ -4169,16 +4174,16 @@ export class BSInfoComponent implements OnInit {
   
   // ↓ 繪製圖表區 ↓
 
-  // 設定 
-  view: [ number, number ] = [ 1235, 300 ]; // 定義圖表區長寬
+  // 圖表設定 
+  view: [ number, number ] = [ 1235, 390 ]; // 定義圖表區長寬
   legend: boolean = true;
   legendTitle: string = this.languageService.i18n['BS.dataSource'];      // 定義圖例標題名稱
   showYAxisLabel: boolean = true;
   showXAxisLabel: boolean = true;
   xAxis: boolean = true;
   yAxis: boolean = true;
-  xAxisLabel: string = this.languageService.i18n['BS.timeInterval'];  // 定義圖表 X 軸標題名稱
-  yAxisLabel: string = 'Value';     // 定義圖表 Y 軸標題名稱
+  xAxisLabel: string = this.languageService.i18n['BS.timeIntervalHourly'];  // 定義圖表 X 軸標題名稱
+  yAxisLabel: string = this.languageService.i18n['BS.percentage'];          // 定義圖表 Y 軸標題名稱
   roundDomains: boolean = true;
   autoScale: boolean = true;
   showGridLines: boolean = true;
@@ -4190,6 +4195,39 @@ export class BSInfoComponent implements OnInit {
     group: ScaleType.Ordinal,
     domain: ['#29B6F6', '#81D4FA', '#1D68FB', '#4AFFFE', '#CFC0BB', '#AFFFFF', '#FFFC63', '#33C0FC']
   };
+
+  // @2024/05/18 Add
+  // 根據選擇的 KPI 類別設置 Y 軸標籤
+  setYAxisLabel() {
+    switch ( this.selectedKpiCategory ) {
+      case 'Accessibility':
+        this.yAxisLabel = this.languageService.i18n['BS.percentage'];
+        break;
+      case 'Integrity':
+        if (this.selectedKpiSubcategory === 'Integrated Downlink Delay' || this.selectedKpiSubcategory === 'Integrated Uplink Delay') {
+          this.yAxisLabel = this.languageService.i18n['BS.milliseconds'];
+        } else if (this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' || this.selectedKpiSubcategory === 'RAN UE Uplink Throughput') {
+          this.yAxisLabel = this.languageService.i18n['BS.megabitsPerSecond'];
+        }
+        break;
+      case 'Utilization':
+        this.yAxisLabel = this.languageService.i18n['BS.percentage'];
+        break;
+      case 'Retainability':
+        this.yAxisLabel = this.languageService.i18n['BS.percentage'];
+        break;
+      case 'Mobility':
+        this.yAxisLabel = this.languageService.i18n['BS.percentage'];
+        break;
+      case 'Energy Efficiency':
+        this.yAxisLabel = this.languageService.i18n['BS.Power'];
+        break;
+      default:
+        this.yAxisLabel = 'Value';
+        break;
+    }
+  }
+  
   
   // ↑ 繪製圖表區 ↑ 
 
