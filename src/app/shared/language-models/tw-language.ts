@@ -445,7 +445,13 @@ export const TwLanguage = {
   "BS.ngRanHandoverSuccessRate": "NG-RAN 換手成功率",
   "BS.energyConsumption": "能源消耗量",
   "BS.timeInterval": "時間區間",
+  'BS.timeIntervalHourly': '時間區間 ( 每小時 )',
   'BS.dataSource': '資料來源',
+  'BS.Power': '功耗 ( kW )',
+  'BS.percentage': '百分比 ( % )',
+  'BS.milliseconds': '毫秒 ( ms )',
+  'BS.megabitsPerSecond': '兆位元每秒 ( Mbps )',
+
 
 
   // Fault Management (故障管理)
