@@ -5123,21 +5123,44 @@
             </div>
               
             <ngx-charts-line-chart
-              [view]="view"
-              [scheme]="colorScheme"
-              [legend]="legend"
-              [legendTitle]="this.languageService.i18n['BS.dataSource']"
-              [showXAxisLabel]="showXAxisLabel"
-              [showYAxisLabel]="showYAxisLabel"
-              [xAxis]="xAxis"
-              [yAxis]="yAxis"
-              [xAxisLabel]="this.languageService.i18n['BS.timeIntervalHourly']"
-              [yAxisLabel]="yAxisLabel"
-              [roundDomains]="roundDomains"
-              [autoScale]="autoScale"
-              [showGridLines]="showGridLines"
-              [results]="filteredData">
-            </ngx-charts-line-chart>
+            [view]="view"
+            [scheme]="colorScheme"
+            [legend]="legend"
+            [legendTitle]="this.languageService.i18n['BS.dataSource']"
+            [showXAxisLabel]="showXAxisLabel"
+            [showYAxisLabel]="showYAxisLabel"
+            [xAxis]="xAxis"
+            [yAxis]="yAxis"
+            [xAxisLabel]="this.languageService.i18n['BS.timeIntervalHourly']"
+            [yAxisLabel]="yAxisLabel"
+            [roundDomains]="true"
+            [autoScale]="true"
+            [showGridLines]="showGridLines"
+            [results]="filteredData">
+              <!-- 自定義工具提示(顯示單數據條的提示)模板 @2024/05/19 Add  -->
+              <ng-template #tooltipTemplate let-model="model">
+                <div>
+                   <!-- 顏色塊 -->
+                  <span [style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
+                
+                    <strong>{{ model.label }}</strong>
+                    <br/>
+                    <span>{{ model.name }} : {{ model.value }} {{ model.unit }}</span>
+                </div>
+              </ng-template>
+               <!-- 自定義工具提示(顯示所有數據條的提示)模板 @2024/05/20 Add -->
+              <ng-template #seriesTooltipTemplate let-model="model">
+                <div *ngFor="let mod of model; let i = index" style="display: flex; align-items: center;">
+                  <!-- 顏色塊 -->
+                  <span [style.background-color]="mod.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
+                  <!-- 數據內容 -->
+                  <span>{{mod.name}} - {{ mod.series }} : {{ mod.value }} {{ mod.unit }}</span>
+                </div>
+              </ng-template>              
+        </ngx-charts-line-chart>
+        
+
+        
 
         </div>
       </div>

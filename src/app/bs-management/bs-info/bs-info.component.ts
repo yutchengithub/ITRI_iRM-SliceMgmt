@@ -127,11 +127,17 @@ enum ExtensionInfoParamTableNames {
   vnfParametersList_BWP = "vnfParametersList_BWP"
 }
 
-// @2024/05/08 Add
+// @2024/05/20 Update - 加入儲存顏色
 // 定義 ngx-charts 圖表模組，數據讀取時所需之介面結構
 export interface ChartData {
   name: string;
-  series: { name: string; value: number; label?: string }[];
+  series: { 
+    name: string; 
+    value: number; 
+    label?: string; 
+    unit?: string;
+    color?: string;
+  }[];
 }
 
 // @2024/05/18 Add
@@ -3986,104 +3992,192 @@ export class BSInfoComponent implements OnInit {
     this.changeDetectorRef.markForCheck();
   }
 
-  // @2024/05/19 Update
+  // @2024/05/20 Update
   // 根據選擇的檢視模式、KPI 類別和子類別過濾數據
-  filterData(): ChartData[] {
-    let filteredData: ChartData[] = [];
+  // filterData(): ChartData[] {
+  //   let filteredData: ChartData[] = [];
 
-    console.log("In filterData() -  selectedViewMode =", this.selectedViewMode);
+  //   console.log("In filterData() -  selectedViewMode =", this.selectedViewMode);
 
-    switch ( this.selectedViewMode ) {
-      case 'fullInformation':
-        Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
+  //   switch ( this.selectedViewMode ) {
+  //     case 'fullInformation':
+  //       Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
 
-          const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
+  //         const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
 
-          timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
-            filteredData.push( { name: `${bs.name} `, series: this.getKpiData( bs, timeRange ) } );
+  //         timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
+  //           filteredData.push( { name: `${bs.name} `, series: this.getKpiData( bs, timeRange ) } );
 
-            // 檢查是否為一體式基站或 cellInfoList 是否為空
-            if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) {
+  //           // 檢查是否為一體式基站或 cellInfoList 是否為空
+  //           if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) {
 
-              // 一體式基站,直接取 bs 層級的效能數據
-              const series = this.getKpiData( bs, timeRange );
+  //             // 一體式基站,直接取 bs 層級的效能數據
+  //             const series = this.getKpiData( bs, timeRange );
 
-              // 從 nciList 取得第一個 nci 值
-              const defaultNci = this.selectedNci;
+  //             // 從 nciList 取得第一個 nci 值
+  //             const defaultNci = this.selectedNci;
 
-              // 使用 nci 值在 label 中標示 Cell#
-              filteredData.push( { name: `Cell#1 ( NCI=0x${defaultNci} ) `, series: series } );
+  //             // 使用 nci 值在 label 中標示 Cell#
+  //             filteredData.push( { name: `Cell#1 ( NCI=0x${defaultNci} ) `, series: series } );
 
-            } else {
-              // 分佈式基站，保留原有的處理邏輯
-              bs.cellInfoList.forEach( ( cell: Cell_KpiInfo, index ) => {
-                filteredData.push( { name: `Cell#${index + 1} ( NCI=0x${cell.cellId} ) `, series: this.getKpiData( cell, timeRange, index ) } );
-              });
-            }
-          });
+  //           } else {
+  //             // 分佈式基站，保留原有的處理邏輯
+  //             bs.cellInfoList.forEach( ( cell: Cell_KpiInfo, index ) => {
+  //               filteredData.push( { name: `Cell#${index + 1} ( NCI=0x${cell.cellId} ) `, series: this.getKpiData( cell, timeRange, index ) } );
+  //             });
+  //           }
+  //         });
+  //       });
+  //       break;
+
+  //     case 'onlyBSLevel':
+  //       Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => 
+  //       {
+  //         const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );  // 格式化要顯示的時間格式
+
+  //         timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
+  //           const series = this.getKpiData( bs, timeRange );
+  //           filteredData.push( { name: `${bs.name} `, series } );
+  //         });
+  //       });
+  //       break;
+
+  //     default:
+  //       // 先從 selectedViewMode 中解析出 NCI 字串
+  //       if ( this.selectedViewMode.startsWith('Cell#') ) {
+  //           // 從格式 "Cell#1 ( NCI=0x00000c108 )" 中解析出 cellId
+  //           const match = this.selectedViewMode.match(/\(\s*NCI=0x([0-9a-fA-F]+)\s*\)/);
+  //           if ( match ) {
+  //               const cellId = match[1];  // 獲取匹配到的 cellId
+  //               console.log("In filterData() - cellId:", cellId);
+    
+  //               Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
+  //                   timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
+  //                       // 檢查是否為一體式基站或 cellInfoList 是否為空
+  //                       if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) {
+  //                           // 一體式基站或 cellInfoList 為空，直接取 bs 層級的效能數據
+  //                           const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
+  //                           const series = this.getKpiData( bs, timeRange );
+    
+  //                           // 從 nciList 取得第一個 nci 值
+  //                           const defaultNci = this.nciList[0];
+    
+  //                           // 使用 nci 值在 label 中標示 Cell#
+  //                           if ( defaultNci === cellId ) { // <-- @2024/05/19 修改的部分 - 確保只有在 nci 匹配時才添加數據
+  //                               filteredData.push( { name: `Cell#1 ( NCI=0x${defaultNci} ) `, series: series } );
+  //                           }
+  //                       } else {
+  //                           // 分佈式基站，保留原有的處理邏輯
+    
+  //                           // 使用 findIndex 來獲得 cell 的索引
+  //                           const index = bs.cellInfoList.findIndex( c => c.cellId === cellId );
+    
+  //                           // 檢查 index 是否有效
+  //                           if ( index !== -1 ) {
+  //                               const cell = bs.cellInfoList[index];
+  //                               const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
+  //                               const series = this.getKpiData( cell, timeRange, index );
+    
+  //                               // 使用獲得的 index 在 label 中標示 Cell# 並增加 1 使其更符合一般習慣（從 1 開始計數）
+  //                               filteredData.push( { name: `Cell#${index + 1} ( NCI=0x${cell.cellId} ) `, series: series } );
+  //                           }
+  //                       }
+  //                   });
+  //               });
+  //           }
+  //       }
+  //       break;    
+  //   }
+
+  //   // @2024/05/20 Add
+  //   // 為每個數據集分配顏色
+  //   filteredData.forEach((dataset, index) => {
+  //     const color = this.colorScheme.domain[index % this.colorScheme.domain.length];
+  //     dataset.series = dataset.series.map(point => ({
+  //       ...point,
+  //       color: color
+  //     }));
+  //   });
+
+  //   return filteredData;
+  // }
+
+  // 過濾數據並分配顏色
+filterData(): ChartData[] {
+  let filteredData: ChartData[] = [];
+  const colorScheme = this.colorScheme;
+
+  console.log("In filterData() -  selectedViewMode =", this.selectedViewMode);
+
+  switch (this.selectedViewMode) {
+    case 'fullInformation':
+      Object.values(this.currentBsKpiInfo).forEach((timeBlock: TimeBlock) => {
+        const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end);
+
+        timeBlock.bs.forEach((bs: Bs_KpiInfo, bsIndex) => {
+          const color = colorScheme.domain[bsIndex % colorScheme.domain.length];
+          filteredData.push({ name: `${bs.name} `, series: this.getKpiData(bs, timeRange, color) });
+
+          if (this.bsType === "1" || (bs.cellInfoList && Object.keys(bs.cellInfoList).length === 0)) {
+            const series = this.getKpiData(bs, timeRange, color);
+            const defaultNci = this.selectedNci;
+            filteredData.push({ name: `Cell#1 ( NCI=0x${defaultNci} ) `, series: series });
+          } else {
+            bs.cellInfoList.forEach((cell: Cell_KpiInfo, cellIndex) => {
+              const cellColor = colorScheme.domain[(bsIndex + cellIndex) % colorScheme.domain.length];
+              filteredData.push({ name: `Cell#${cellIndex + 1} ( NCI=0x${cell.cellId} ) `, series: this.getKpiData(cell, timeRange, cellColor, cellIndex) });
+            });
+          }
         });
-        break;
+      });
+      break;
+    case 'onlyBSLevel':
+      Object.values(this.currentBsKpiInfo).forEach((timeBlock: TimeBlock) => {
+        const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end);
 
-      case 'onlyBSLevel':
-        Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => 
-        {
-          const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );  // 格式化要顯示的時間格式
-
-          timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
-            const series = this.getKpiData( bs, timeRange );
-            filteredData.push( { name: `${bs.name} `, series } );
-          });
+        timeBlock.bs.forEach((bs: Bs_KpiInfo, bsIndex) => {
+          const color = colorScheme.domain[bsIndex % colorScheme.domain.length];
+          const series = this.getKpiData(bs, timeRange, color);
+          filteredData.push({ name: `${bs.name} `, series });
         });
-        break;
+      });
+      break;
+    default:
+      if (this.selectedViewMode.startsWith('Cell#')) {
+        const match = this.selectedViewMode.match(/\(\s*NCI=0x([0-9a-fA-F]+)\s*\)/);
+        if (match) {
+          const cellId = match[1];
+          console.log("In filterData() - cellId:", cellId);
 
-      default:
-        // 先從 selectedViewMode 中解析出 NCI 字串
-        if ( this.selectedViewMode.startsWith('Cell#') ) {
-            // 從格式 "Cell#1 ( NCI=0x00000c108 )" 中解析出 cellId
-            const match = this.selectedViewMode.match(/\(\s*NCI=0x([0-9a-fA-F]+)\s*\)/);
-            if ( match ) {
-                const cellId = match[1];  // 獲取匹配到的 cellId
-                console.log("In filterData() - cellId:", cellId);
-    
-                Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
-                    timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
-                        // 檢查是否為一體式基站或 cellInfoList 是否為空
-                        if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) {
-                            // 一體式基站或 cellInfoList 為空，直接取 bs 層級的效能數據
-                            const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
-                            const series = this.getKpiData( bs, timeRange );
-    
-                            // 從 nciList 取得第一個 nci 值
-                            const defaultNci = this.nciList[0];
-    
-                            // 使用 nci 值在 label 中標示 Cell#
-                            if ( defaultNci === cellId ) { // <-- @2024/05/19 修改的部分 - 確保只有在 nci 匹配時才添加數據
-                                filteredData.push( { name: `Cell#1 ( NCI=0x${defaultNci} ) `, series: series } );
-                            }
-                        } else {
-                            // 分佈式基站，保留原有的處理邏輯
-    
-                            // 使用 findIndex 來獲得 cell 的索引
-                            const index = bs.cellInfoList.findIndex( c => c.cellId === cellId );
-    
-                            // 檢查 index 是否有效
-                            if ( index !== -1 ) {
-                                const cell = bs.cellInfoList[index];
-                                const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );
-                                const series = this.getKpiData( cell, timeRange, index );
-    
-                                // 使用獲得的 index 在 label 中標示 Cell# 並增加 1 使其更符合一般習慣（從 1 開始計數）
-                                filteredData.push( { name: `Cell#${index + 1} ( NCI=0x${cell.cellId} ) `, series: series } );
-                            }
-                        }
-                    });
-                });
-            }
+          Object.values(this.currentBsKpiInfo).forEach((timeBlock: TimeBlock) => {
+            timeBlock.bs.forEach((bs: Bs_KpiInfo, bsIndex) => {
+              const color = colorScheme.domain[bsIndex % colorScheme.domain.length];
+              if (this.bsType === "1" || (bs.cellInfoList && Object.keys(bs.cellInfoList).length === 0)) {
+                const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end);
+                const series = this.getKpiData(bs, timeRange, color);
+                const defaultNci = this.nciList[0];
+                if (defaultNci === cellId) {
+                  filteredData.push({ name: `Cell#1 ( NCI=0x${defaultNci} ) `, series: series });
+                }
+              } else {
+                const index = bs.cellInfoList.findIndex(c => c.cellId === cellId);
+                if (index !== -1) {
+                  const cell = bs.cellInfoList[index];
+                  const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end);
+                  const cellColor = colorScheme.domain[(bsIndex + index) % colorScheme.domain.length];
+                  const series = this.getKpiData(cell, timeRange, cellColor, index);
+                  filteredData.push({ name: `Cell#${index + 1} ( NCI=0x${cell.cellId} ) `, series: series });
+                }
+              }
+            });
+          });
         }
-        break;    
-    }
-    return filteredData;
+      }
+      break;
   }
+
+  return filteredData;
+}
   
   // @2024/05/16 Add
   // 將數據同名的轉換成同系列(series)，以便數據點能連起來
@@ -4116,64 +4210,147 @@ export class BSInfoComponent implements OnInit {
   
   // @2024/05/19 Update
   // 根據選擇的 KPI 類別和子類別獲取對應的數據
-  getKpiData( data: Bs_KpiInfo | Cell_KpiInfo, time: string, index?: number ): { name: string; value: number; label?: string }[] {
-    const kpiData: { name: string; value: number; label?: string }[] = [];
+  // getKpiData( data: Bs_KpiInfo | Cell_KpiInfo, time: string, index?: number ): { name: string; value: number; label?: string ,unit?: string, color?: string }[] {
+  //   const kpiData: { name: string; value: number; label?: string, unit?: string, color?: string  }[] = [];
+  //   let unit = '';
   
-    console.log("In getKpiData() - selectedKpiCategory = ", this.selectedKpiCategory);
+  //   console.log("In getKpiData() - selectedKpiCategory = ", this.selectedKpiCategory);
   
-    // 用於添加數據並生成標籤
-    const addDataLabel = ( value: any, prop: string ) => {
-      console.log("This of display data label")
-      if ( value !== null ) {
-        if ( 'cellId' in data && index !== undefined ) {
-          // 如果 data 包含 cellId 屬性，則認為是 Cell_KpiInfo 類型
-          const label = `Cell#${index + 1} ( NCI=0x${data.cellId} ) `;
-          kpiData.push( { name: time, value: parseFloat( value ), label: label } ); // <-- @2024/05/19 修改的部分 - 確保標籤被包含
-        } else if ('name' in data) {
-          // 如果 data 包含 name 屬性，則認為是 Bs_KpiInfo 類型
-          kpiData.push( { name: time, value: parseFloat( value ), label: data.name } );
-        }
+  //   // 用於添加數據並生成標籤
+  //   const addDataLabel = ( value: any, prop: string, color: string ) => {
+  //     console.log("This of display data label")
+  //     if ( value !== null ) {
+  //       if ( 'cellId' in data && index !== undefined ) {
+  //         // 如果 data 包含 cellId 屬性，則認為是 Cell_KpiInfo 類型
+  //         const label = `Cell#${index + 1} ( NCI=0x${data.cellId} ) `;
+  //         //kpiData.push( { name: time, value: parseFloat( value ), label: label, unit: unit } ); // <-- @2024/05/19 修改的部分 - 確保標籤被包含
+  //         kpiData.push({ name: time, value: parseFloat(value), label: label, unit: unit, color: color });
+  //       } else if ('name' in data) {
+  //         // 如果 data 包含 name 屬性，則認為是 Bs_KpiInfo 類型
+  //         //kpiData.push( { name: time, value: parseFloat( value ), label: data.name, unit: unit } );
+  //         kpiData.push({ name: time, value: parseFloat(value), label: data.name, unit: unit, color: color });
+  //       }
+  //     }
+  //   };
+  
+  //   switch ( this.selectedKpiCategory ) {
+  //       case 'Accessibility':
+  //           unit = '%';
+  //           addDataLabel( data.accessibility, 'accessibility' );
+  //           break;
+  //       case 'Integrity':
+  //           if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' ) {
+  //               unit = 'ms';
+  //               addDataLabel( data.integrity.downlinkDelay, 'downlinkDelay' );
+  //           } else if ( this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
+  //               unit = 'ms';
+  //               addDataLabel( data.integrity.uplinkDelay, 'uplinkDelay' );
+  //           } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' ) {
+  //               unit = 'Mbps';
+  //               addDataLabel( data.integrity.downlinkThrouthput, 'downlinkThrouthput' );
+  //           } else if ( this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
+  //               unit = 'Mbps';
+  //               addDataLabel( data.integrity.uplinkThrouthput, 'uplinkThrouthput' );
+  //           }
+  //           break;
+  //       case 'Utilization':
+  //           unit = '%';
+  //           if ( this.selectedKpiSubcategory === 'Process Utilization' ) {
+  //               addDataLabel( data.utilization.resourceProcess, 'resourceProcess' );
+  //           } else if ( this.selectedKpiSubcategory === 'Memory Utilization' ) {
+  //               addDataLabel( data.utilization.resourceMemory, 'resourceMemory' );
+  //           } else if ( this.selectedKpiSubcategory === 'Disk Utilization' ) {
+  //               addDataLabel( data.utilization.resourceDisk, 'resourceDisk' );
+  //           }
+  //           break;
+  //       case 'Retainability':
+  //           unit = '%';
+  //           addDataLabel( data.retainability, 'retainability' );
+  //           break;
+  //       case 'Mobility':
+  //           unit = '%';
+  //           addDataLabel( data.mobility, 'mobility' );
+  //           break;
+  //       case 'Energy Efficiency':
+  //           unit = 'kW';
+  //           addDataLabel( data.energy, 'energy' );
+  //           break;
+  //   }
+  
+  //   return kpiData;
+  // }
+
+  // 根據選擇的 KPI 類別和子類別獲取對應的數據
+getKpiData(data: Bs_KpiInfo | Cell_KpiInfo, time: string, color: string, index?: number): { name: string; value: number; label?: string ,unit?: string, color?: string }[] {
+  const kpiData: { name: string; value: number; label?: string, unit?: string, color?: string }[] = [];
+  let unit = '';
+
+  console.log("In getKpiData() - selectedKpiCategory = ", this.selectedKpiCategory);
+
+  // 用於添加數據並生成標籤
+  const addDataLabel = (value: any, prop: string) => {
+    console.log("This of display data label")
+    if (value !== null) {
+      if ('cellId' in data && index !== undefined) {
+        // 如果 data 包含 cellId 屬性，則認為是 Cell_KpiInfo 類型
+        const label = `Cell#${index + 1} ( NCI=0x${data.cellId} ) `;
+        kpiData.push({ name: time, value: parseFloat(value), label: label, unit: unit, color: color });
+      } else if ('name' in data) {
+        // 如果 data 包含 name 屬性，則認為是 Bs_KpiInfo 類型
+        kpiData.push({ name: time, value: parseFloat(value), label: data.name, unit: unit, color: color });
       }
-    };
-  
-    switch ( this.selectedKpiCategory ) {
-      case 'Accessibility':
-        addDataLabel( data.accessibility, 'accessibility' );
-        break;
-      case 'Integrity':
-        if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' ) {
-          addDataLabel( data.integrity.downlinkDelay, 'downlinkDelay' );
-        } else if ( this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
-          addDataLabel(    data.integrity.uplinkDelay, 'uplinkDelay' );
-        } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' ) {
-          addDataLabel( data.integrity.downlinkThrouthput, 'downlinkThrouthput' );
-        } else if ( this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
-          addDataLabel( data.integrity.uplinkThrouthput, 'uplinkThrouthput' );
-        }
-        break;
-      case 'Utilization':
-        if ( this.selectedKpiSubcategory === 'Process Utilization' ) {
-          addDataLabel( data.utilization.resourceProcess, 'resourceProcess' );
-        } else if ( this.selectedKpiSubcategory === 'Memory Utilization' ) {
-          addDataLabel( data.utilization.resourceMemory, 'resourceMemory' );
-        } else if ( this.selectedKpiSubcategory === 'Disk Utilization' ) {
-          addDataLabel( data.utilization.resourceDisk, 'resourceDisk' );
-        }
-        break;
-      case 'Retainability':
-        addDataLabel( data.retainability, 'retainability' );
-        break;
-      case 'Mobility':
-        addDataLabel( data.mobility, 'mobility' );
-        break;
-      case 'Energy Efficiency':
-        addDataLabel( data.energy, 'energy' );
-        break;
     }
-  
-    return kpiData;
+  };
+
+  switch (this.selectedKpiCategory) {
+    case 'Accessibility':
+      unit = '%';
+      addDataLabel(data.accessibility, 'accessibility');
+      break;
+    case 'Integrity':
+      if (this.selectedKpiSubcategory === 'Integrated Downlink Delay') {
+        unit = 'ms';
+        addDataLabel(data.integrity.downlinkDelay, 'downlinkDelay');
+      } else if (this.selectedKpiSubcategory === 'Integrated Uplink Delay') {
+        unit = 'ms';
+        addDataLabel(data.integrity.uplinkDelay, 'uplinkDelay');
+      } else if (this.selectedKpiSubcategory === 'RAN UE Downlink Throughput') {
+        unit = 'Mbps';
+        addDataLabel(data.integrity.downlinkThrouthput, 'downlinkThrouthput');
+      } else if (this.selectedKpiSubcategory === 'RAN UE Uplink Throughput') {
+        unit = 'Mbps';
+        addDataLabel(data.integrity.uplinkThrouthput, 'uplinkThrouthput');
+      }
+      break;
+    case 'Utilization':
+      unit = '%';
+      if (this.selectedKpiSubcategory === 'Process Utilization') {
+        addDataLabel(data.utilization.resourceProcess, 'resourceProcess');
+      } else if (this.selectedKpiSubcategory === 'Memory Utilization') {
+        addDataLabel(data.utilization.resourceMemory, 'resourceMemory');
+      } else if (this.selectedKpiSubcategory === 'Disk Utilization') {
+        addDataLabel(data.utilization.resourceDisk, 'resourceDisk');
+      }
+      break;
+    case 'Retainability':
+      unit = '%';
+      addDataLabel(data.retainability, 'retainability');
+      break;
+    case 'Mobility':
+      unit = '%';
+      addDataLabel(data.mobility, 'mobility');
+      break;
+    case 'Energy Efficiency':
+      unit = 'kW';
+      addDataLabel(data.energy, 'energy');
+      break;
   }
+
+  return kpiData;
+}
   
+   // ViewChild 裝飾器用於獲取模板中 #tooltipTemplate 的元素
+  //  @ViewChild('tooltipTemplate') tooltipTemplate: any;
   
   // ↓ 繪製圖表區 ↓
 
