@@ -5143,18 +5143,22 @@
                    <!-- 顏色塊 -->
                   <span [style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
                 
-                    <strong>{{ model.label }}</strong>
-                    <br/>
-                    <span>{{ model.name }} : {{ model.value }} {{ model.unit }}</span>
+                  <strong>{{ model.label }}</strong>
+                  <br/>
+                  <span>{{ model.name }} : {{ model.value }} {{ model.unit }}</span>
                 </div>
               </ng-template>
                <!-- 自定義工具提示(顯示所有數據條的提示)模板 @2024/05/20 Add -->
               <ng-template #seriesTooltipTemplate let-model="model">
+                <div>
+                  <strong>{{ model[0].name }}</strong> <!-- 獨立顯示 mod.name -->
+                </div>
                 <div *ngFor="let mod of model; let i = index" style="display: flex; align-items: center;">
                   <!-- 顏色塊 -->
                   <span [style.background-color]="mod.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
                   <!-- 數據內容 -->
-                  <span>{{mod.name}} - {{ mod.series }} : {{ mod.value }} {{ mod.unit }}</span>
+                  <!-- <span>{{mod.name}} - {{ mod.series }} : {{ mod.value }} {{ mod.unit }}</span> -->
+                  <span>{{ mod.series }} : {{ mod.value }} {{ mod.unit }}</span>
                 </div>
               </ng-template>              
         </ngx-charts-line-chart>
