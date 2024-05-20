@@ -3993,12 +3993,14 @@ export class BSInfoComponent implements OnInit {
     this.changeDetectorRef.markForCheck();
   }
 
-    // @2024/05/20 Update
-    // 根據選擇的檢視模式、KPI 類別和子類別過濾數據
-    // 過濾數據並分配顏色
-    // 0520_1915 - 目前完整資訊、單一個數據檢視的 tooltipTemplate 的顏色塊、圖例與數據條顏色都可一致，
-    //             但單一個數據檢視的還不會依據檢視完整資訊給的配色去顯示，只會預設顯示第一種配色#FF5733
-    filterData(): ChartData[] {
+  customColors: { name: string, value: string }[] = [];
+
+  // @2024/05/20 Update
+  // 根據選擇的檢視模式、KPI 類別和子類別過濾數據
+  // 過濾數據並分配顏色
+  // 0520_1915 - 目前完整資訊、單一個數據檢視的 tooltipTemplate 的顏色塊、圖例與數據條顏色都可一致，
+  //             但單一個數據檢視的還不會依據檢視完整資訊給的配色去顯示，只會預設顯示第一種配色#FF5733
+  filterData(): ChartData[] {
     let filteredData: ChartData[] = [];
     const colorScheme = this.colorScheme;
     const cellColorMap = new Map<string, string>();
