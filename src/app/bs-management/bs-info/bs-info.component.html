@@ -5123,35 +5123,39 @@
             </div>
               
             <ngx-charts-line-chart
-            [view]="view"
-            [scheme]="colorScheme"
-            [legend]="legend"
-            [legendTitle]="this.languageService.i18n['BS.dataSource']"
-            [showXAxisLabel]="showXAxisLabel"
-            [showYAxisLabel]="showYAxisLabel"
-            [xAxis]="xAxis"
-            [yAxis]="yAxis"
-            [xAxisLabel]="this.languageService.i18n['BS.timeIntervalHourly']"
-            [yAxisLabel]="yAxisLabel"
-            [roundDomains]="true"
-            [autoScale]="true"
-            [showGridLines]="showGridLines"
-            [results]="filteredData">
-              <!-- 自定義工具提示(顯示單數據條的提示)模板 @2024/05/19 Add  -->
+              [view]="view"
+              [scheme]="colorScheme"
+              [legend]="legend"
+              [legendTitle]="this.languageService.i18n['BS.dataSource']"
+              [showXAxisLabel]="showXAxisLabel"
+              [showYAxisLabel]="showYAxisLabel"
+              [xAxis]="xAxis"
+              [yAxis]="yAxis"
+              [xAxisLabel]="this.languageService.i18n['BS.timeIntervalHourly']"
+              [yAxisLabel]="yAxisLabel"
+              [roundDomains]="true"
+              [autoScale]="true"
+              [showGridLines]="showGridLines"
+              [results]="filteredData">
+              <!-- 自定義工具提示(顯示單數據條的提示) 模板 @2024/05/20 Update  -->
               <ng-template #tooltipTemplate let-model="model">
                 <div>
-                   <!-- 顏色塊 -->
+                  <!-- 用於查看生成的 JSON 數據 -->
+                  <!-- <pre>{{ model|json }}</pre> -->
+                  <!-- 顏色塊 -->
                   <span [style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
-                
                   <strong>{{ model.label }}</strong>
                   <br/>
-                  <span>{{ model.name }} : {{ model.value }} {{ model.unit }}</span>
+                  <span>{{ model.time }} : {{ model.value }} {{ model.unit }}</span>
                 </div>
               </ng-template>
-               <!-- 自定義工具提示(顯示所有數據條的提示)模板 @2024/05/20 Add -->
+              
+               <!-- 自定義工具提示 ( 顯示所有數據條的提示 ) 模板 @2024/05/20 Add -->
               <ng-template #seriesTooltipTemplate let-model="model">
                 <div>
-                  <strong>{{ model[0].name }}</strong> <!-- 獨立顯示 mod.name -->
+                  <!-- 用於查看生成的 JSON 數據 -->
+                  <!-- <pre>{{ model|json }}</pre> -->
+                  <strong>{{ model[0].time }}</strong> <!-- 獨立顯示 mod.time ( 數據點時間 ) -->
                 </div>
                 <div *ngFor="let mod of model; let i = index" style="display: flex; align-items: center;">
                   <!-- 顏色塊 -->
@@ -5161,10 +5165,7 @@
                   <span>{{ mod.series }} : {{ mod.value }} {{ mod.unit }}</span>
                 </div>
               </ng-template>              
-        </ngx-charts-line-chart>
-        
-
-        
+            </ngx-charts-line-chart>
 
         </div>
       </div>
