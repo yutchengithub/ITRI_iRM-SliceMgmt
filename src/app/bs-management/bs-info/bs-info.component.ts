@@ -3993,20 +3993,25 @@ export class BSInfoComponent implements OnInit {
     this.changeDetectorRef.markForCheck();
   }
 
+ 
+  // 定義 customColors
   customColors: { name: string, value: string }[] = [];
+  cellColorMap = new Map<string, string>();
 
   // @2024/05/20 Update
   // 根據選擇的檢視模式、KPI 類別和子類別過濾數據
   // 過濾數據並分配顏色
   // 0520_1915 - 目前完整資訊、單一個數據檢視的 tooltipTemplate 的顏色塊、圖例與數據條顏色都可一致，
-  //             但單一個數據檢視的還不會依據檢視完整資訊給的配色去顯示，只會預設顯示第一種配色#FF5733
+  //             但單一個數據檢視的還不會依據檢視完整資訊給的配色去顯示，只會預設顯示第一種配色#FF5733。
+  // 0520_2015 - 已解決 "單一個數據檢視的還不會依據檢視完整資訊給的配色去顯示，只會預設顯示第一種配色#FF5733" 的狀況。
+  //             引入 ngx-charts 的 [customColors] 參數設定解決
+
   filterData(): ChartData[] {
     let filteredData: ChartData[] = [];
     const colorScheme = this.colorScheme;
-    const cellColorMap = new Map<string, string>();
 
     console.log("In filterData() - selectedViewMode =", this.selectedViewMode);
-    console.log("In filterData() - cellColorMap =", cellColorMap);
+    console.log("In filterData() - cellColorMap =", this.cellColorMap);
 
     switch (this.selectedViewMode) {
       case 'fullInformation':
@@ -4015,23 +4020,22 @@ export class BSInfoComponent implements OnInit {
 
           timeBlock.bs.forEach((bs: Bs_KpiInfo, bsIndex) => {
             const color = colorScheme.domain[bsIndex % colorScheme.domain.length];
-            
-            filteredData.push({ name: `${bs.name} `, series: this.getKpiData(bs, timeRange, color) });
+            filteredData.push({ name: `${bs.name}`, series: this.getKpiData(bs, timeRange, color) });
             console.log(`In filterData() fullInformation - BS name: ${bs.name} Adding data with color: ${color}`);
-
+            console.log(`In filterData() fullInformation - bsIndex: ${bsIndex}`);
             if (this.bsType === "1" || (bs.cellInfoList && Object.keys(bs.cellInfoList).length === 0)) {
-              const series = this.getKpiData(bs, timeRange, color);
+              const cellColor = colorScheme.domain[(bsIndex + 1) % colorScheme.domain.length];
+              console.log(`In filterData() fullInformation - bsType = "1" - cellColor: ${cellColor}`);
+              const series = this.getKpiData(bs, timeRange, cellColor);
               const defaultNci = this.selectedNci;
-              filteredData.push({ name: `Cell#1 ( NCI=0x${defaultNci} )`, series: series }); // 確保一體式基站的 cell 數據
+              this.cellColorMap.set(`Cell#${bsIndex + 1} (NCI=0x${defaultNci})`, cellColor);
+              filteredData.push({ name: `Cell#1 (NCI=0x${defaultNci})`, series: series }); // 確保一體式基站的 cell 數據
             } else {
-            
               bs.cellInfoList.forEach((cell: Cell_KpiInfo, cellIndex) => {
-                //const cellColor = colorScheme.domain[(bsIndex + cellIndex + 1) % colorScheme.domain.length];
                 const cellColor = colorScheme.domain[(bsIndex + cellIndex + 1) % colorScheme.domain.length];
-                cellColorMap.set(cell.cellId, cellColor);
-                
+                this.cellColorMap.set(`Cell#${cellIndex + 1} (NCI=0x${cell.cellId})`, cellColor);
                 console.log(`In filterData() fullInformation - Cell#${cellIndex + 1} Adding data with color: ${cellColor}`);
-                filteredData.push({ name: `Cell#${cellIndex + 1} ( NCI=0x${cell.cellId} )`, series: this.getKpiData(cell, timeRange, cellColor, cellIndex) });
+                filteredData.push({ name: `Cell#${cellIndex + 1} (NCI=0x${cell.cellId})`, series: this.getKpiData(cell, timeRange, cellColor, cellIndex) });
               });
             }
           });
@@ -4045,7 +4049,7 @@ export class BSInfoComponent implements OnInit {
             const color = colorScheme.domain[bsIndex % colorScheme.domain.length];
             console.log(`${bsIndex} Adding data with color: ${color}`);
             const series = this.getKpiData(bs, timeRange, color);
-            filteredData.push({ name: `${bs.name} `, series });
+            filteredData.push({ name: `${bs.name}`, series });
           });
         });
         break;
@@ -4062,21 +4066,21 @@ export class BSInfoComponent implements OnInit {
                 console.log(`${bsIndex} Adding data with color: ${color}`);
                 if (this.bsType === "1" || (bs.cellInfoList && Object.keys(bs.cellInfoList).length === 0)) {
                   const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end);
-                  const series = this.getKpiData(bs, timeRange, color);
                   const defaultNci = this.nciList[0];
+                  const cellColor = this.cellColorMap.get(`Cell#1 (NCI=0x${defaultNci})`) || color;
+                  const series = this.getKpiData(bs, timeRange, cellColor);
+                  
                   if (defaultNci === cellId) {
-                    filteredData.push({ name: `Cell#1 ( NCI=0x${defaultNci} )`, series: series }); // 確保一體式基站的 cell 數據
+                    filteredData.push({ name: `Cell#1 (NCI=0x${defaultNci})`, series: series }); // 確保一體式基站的 cell 數據
                   }
                 } else {
                   const index = bs.cellInfoList.findIndex(c => c.cellId === cellId);
                   if (index !== -1) {
                     const cell = bs.cellInfoList[index];
                     const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end);
-                    //const cellColor = colorScheme.domain[(bsIndex + index + 1) % colorScheme.domain.length];
-                    
-                    const cellColor = cellColorMap.get(cellId) || color;
+                    const cellColor = this.cellColorMap.get(`Cell#${index + 1} (NCI=0x${cell.cellId})`) || color;
                     const series = this.getKpiData(cell, timeRange, cellColor, index);
-                    filteredData.push({ name: `Cell#${index + 1} ( NCI=0x${cell.cellId} )`, series: series });
+                    filteredData.push({ name: `Cell#${index + 1} (NCI=0x${cell.cellId})`, series: series });
                   }
                 }
               });
@@ -4086,9 +4090,13 @@ export class BSInfoComponent implements OnInit {
         break;
     }
 
+    // 更新 customColors
+    this.customColors = Array.from(this.cellColorMap.entries()).map(([name, value]) => ({ name, value }));
+    console.log("In filterData() - this.customColors =", this.customColors);
+
     return filteredData;
   }
-  
+
   // @2024/05/16 Add
   // 將數據同名的轉換成同系列(series)，以便數據點能連起來
   consolidateSeries( data: ChartData[] ) {
@@ -4285,7 +4293,6 @@ export class BSInfoComponent implements OnInit {
   }
 
 // ↑ 基站效能區 @2024//05/20 Update ↑
-
 
 
 }
