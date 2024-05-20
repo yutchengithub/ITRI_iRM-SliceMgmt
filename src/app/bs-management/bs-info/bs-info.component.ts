@@ -4102,7 +4102,7 @@ export class BSInfoComponent implements OnInit {
   //   return filteredData;
   // }
 
-  // 過濾數據並分配顏色
+// 過濾數據並分配顏色
 filterData(): ChartData[] {
   let filteredData: ChartData[] = [];
   const colorScheme = this.colorScheme;

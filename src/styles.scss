@@ -1704,3 +1704,10 @@ ngx-charts-line-chart text {
 ngx-charts-line-chart header {
   color: #AFB7C8 !important; // 設為灰色
 }
+
+// @2024/05/20 Add
+// 調整圖表圖例中活動數據標籤的顏色和字體粗細
+.chart-legend .legend-label .active .legend-label-text {
+  color: #d2e0f6 !important;   /* 改成亮色 */
+  font-weight: bold !important;  /* 增加字體粗細 */
+}
