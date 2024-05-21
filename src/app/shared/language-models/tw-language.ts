@@ -440,7 +440,7 @@ export const TwLanguage = {
   "BS.processUtilization": "處理器利用率",
   "BS.memoryUtilization": "記憶體利用率",
   "BS.diskUtilization": "硬碟利用率",
-  "BS.retainability": "保持率",
+  "BS.retainability": "維持率",
   "BS.mobility": "行動性",
   "BS.ngRanHandoverSuccessRate": "NG-RAN 換手成功率",
   "BS.energyConsumption": "能源消耗量",
