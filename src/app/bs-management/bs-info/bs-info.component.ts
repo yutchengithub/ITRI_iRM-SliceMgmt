@@ -4018,7 +4018,7 @@ export class BSInfoComponent implements OnInit {
 
   // ngx-charts-line-chart 圖表模組設定 ↓
 
-    view: [number, number] = [1235, 390]; // 定義圖表區長寬
+    view: [number, number] = [1400, 390];   // 定義圖表區長寬
     legend: boolean = true;                 // 是否顯示圖例
     legendTitle: string = this.languageService.i18n['BS.dataSource']; // 定義圖例標題名稱
     showYAxisLabel: boolean = true; // 是否顯示 Y 軸標籤
@@ -4341,13 +4341,66 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/18 Add
+   * @2024/05/21 Add
    * 根據選擇的 KPI 類別設置 Y 軸標籤
    * @method setYAxisLabel
    * @description
    *    - 根據選擇的 KPI 類別設置 Y 軸標籤。
+   *    - 標籤格式為「KPI 名稱 ( 單位 )」
    */
   setYAxisLabel() {
+    let kpiName = '';
+    let unit = '';
+
+    // 根據選擇的 KPI 類別設置對應的 KPI 名稱和單位
+    switch (this.selectedKpiCategory) {
+      case 'Accessibility':
+        kpiName = this.languageService.i18n['BS.accessibility'];
+        unit = '%'; // 設置單位為百分比
+        break;
+      case 'Integrity':
+        kpiName = this.languageService.i18n['BS.integrity'];
+        if (this.selectedKpiSubcategory === 'Integrated Downlink Delay' || this.selectedKpiSubcategory === 'Integrated Uplink Delay') {
+          unit = 'ms'; // 設置單位為毫秒
+        } else if (this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' || this.selectedKpiSubcategory === 'RAN UE Uplink Throughput') {
+          unit = 'Mbps'; // 設置單位為 Mbps
+        }
+        break;
+      case 'Utilization':
+        kpiName = this.languageService.i18n['BS.utilization'];
+        unit = '%'; // 設置單位為百分比
+        break;
+      case 'Retainability':
+        kpiName = this.languageService.i18n['BS.retainability'];
+        unit = '%'; // 設置單位為百分比
+        break;
+      case 'Mobility':
+        kpiName = this.languageService.i18n['BS.mobility'];
+        unit = '%'; // 設置單位為百分比
+        break;
+      case 'Energy Efficiency':
+        kpiName = this.languageService.i18n['BS.energyConsumption'];
+        unit = 'kW'; // 設置單位為千瓦
+        break;
+      default:
+        kpiName = 'KPI Name';
+        unit = ''; // 默認單位為空
+        break;
+    }
+
+    // 設置 Y 軸標籤為 "KPI 名稱 ( 單位 )"
+    this.yAxisLabel = `${kpiName} (${unit})`;
+  }
+
+  /**
+   * @2024/05/18 Add
+   * 根據選擇的 KPI 類別設置 Y 軸標籤
+   * @method setYAxisLabel_onlyUnit
+   * @description
+   *    - 根據選擇的 KPI 類別設置 Y 軸標籤。
+   *    - 標籤格式為「單位名稱 ( 單位符號或簡寫 )」
+   */
+  setYAxisLabel_onlyUnit() {
     // 判斷選擇的 KPI 類別
     switch (this.selectedKpiCategory) {
       case 'Accessibility':
@@ -4381,8 +4434,8 @@ export class BSInfoComponent implements OnInit {
         this.yAxisLabel = this.languageService.i18n['BS.Power'];
         break;
       default:
-        // 如果沒有匹配的 KPI 類別，設置 Y 軸標籤為默認值 'Value'
-        this.yAxisLabel = 'Value';
+        // 如果沒有匹配的 KPI 類別，設置 Y 軸標籤為默認值 'KPI Name'
+        this.yAxisLabel = 'KPI Name';
         break;
     }
   }
