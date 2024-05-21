@@ -4018,7 +4018,7 @@ export class BSInfoComponent implements OnInit {
 
   // ngx-charts-line-chart 圖表模組設定 ↓
 
-    view: [number, number] = [1400, 390];   // 定義圖表區長寬
+    view: [number, number] = [1450, 470];   // 定義圖表區長寬
     legend: boolean = true;                 // 是否顯示圖例
     legendTitle: string = this.languageService.i18n['BS.dataSource']; // 定義圖例標題名稱
     showYAxisLabel: boolean = true; // 是否顯示 Y 軸標籤
@@ -4341,56 +4341,81 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/21 Add
+   * @2024/05/22 Update
    * 根據選擇的 KPI 類別設置 Y 軸標籤
    * @method setYAxisLabel
    * @description
-   *    - 根據選擇的 KPI 類別設置 Y 軸標籤。
-   *    - 標籤格式為「KPI 名稱 ( 單位 )」
+   *    - 此方法根據當前選擇的 KPI 類別和子類別設置圖表的 Y 軸標籤。
+   *    - Y 軸標籤的格式為 "子KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"。
+   *    - 先根據選擇的 KPI 類別設置 KPI 名稱和單位。
+   *    - 然後根據選擇的子類別設置子類別名稱和相應的單位。
+   *    - 如果存在子類別名稱，Y 軸標籤將顯示為 "子KPI 名稱 ( 單位 )"。
+   *    - 如果不存在子類別名稱，Y 軸標籤將顯示為 "KPI 名稱 ( 單位 )"。
+   *    - 此方法確保圖表的 Y 軸標籤能夠準確反映當前選擇的 KPI 和子類別，以便用戶能夠更好地理解圖表中展示的數據。
    */
   setYAxisLabel() {
-    let kpiName = '';
-    let unit = '';
+    let kpiName = '';      // 初始化 KPI 名稱
+    let subKpiName = '';   // 初始化子KPI 名稱
+    let unit = '';         // 初始化單位
 
     // 根據選擇的 KPI 類別設置對應的 KPI 名稱和單位
-    switch (this.selectedKpiCategory) {
+    switch ( this.selectedKpiCategory ) {
       case 'Accessibility':
-        kpiName = this.languageService.i18n['BS.accessibility'];
-        unit = '%'; // 設置單位為百分比
+        kpiName = this.languageService.i18n['BS.accessibility'];         // 設置 KPI 名稱為 "Accessibility"
+        subKpiName = this.languageService.i18n['BS.drbAccessibility'];   // 設置子 KPI 名稱為 "DRB Accessibility"
+        unit = '%'; // 設置單位為 %
         break;
       case 'Integrity':
-        kpiName = this.languageService.i18n['BS.integrity'];
-        if (this.selectedKpiSubcategory === 'Integrated Downlink Delay' || this.selectedKpiSubcategory === 'Integrated Uplink Delay') {
-          unit = 'ms'; // 設置單位為毫秒
-        } else if (this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' || this.selectedKpiSubcategory === 'RAN UE Uplink Throughput') {
+        kpiName = this.languageService.i18n['BS.integrity'];                     // 設置 KPI 名稱為 "Integrity"
+        if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' ) {
+          subKpiName = this.languageService.i18n['BS.integratedDownlinkDelay'];  // 設置子 KPI 名稱為 "Integrated Downlink Delay"
+          unit = 'ms';   // 設置單位為 ms
+        } else if ( this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
+          subKpiName = this.languageService.i18n['BS.integratedUplinkDelay'];    // 設置子 KPI 名稱為 "Integrated Uplink Delay"
+          unit = 'ms';   // 設置單位為 ms
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' ) {
+          subKpiName = this.languageService.i18n['BS.ranUEDownlinkThroughput'];  // 設置子 KPI 名稱為 "RAN UE Downlink Throughput"
+          unit = 'Mbps'; // 設置單位為 Mbps
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
+          subKpiName = this.languageService.i18n['BS.ranUEUplinkThroughput'];    // 設置子 KPI 名稱為 "RAN UE Uplink Throughput"
           unit = 'Mbps'; // 設置單位為 Mbps
         }
         break;
       case 'Utilization':
-        kpiName = this.languageService.i18n['BS.utilization'];
-        unit = '%'; // 設置單位為百分比
+        kpiName = this.languageService.i18n['BS.utilization'];             // 設置 KPI 名稱為 "Utilization"
+        if ( this.selectedKpiSubcategory === 'Process Utilization' ) {
+          subKpiName = this.languageService.i18n['BS.processUtilization']; // 設置子 KPI 名稱為 "Process Utilization"
+        } else if ( this.selectedKpiSubcategory === 'Memory Utilization' ) {
+          subKpiName = this.languageService.i18n['BS.memoryUtilization'];  // 設置子 KPI 名稱為 "Memory Utilization"
+        } else if ( this.selectedKpiSubcategory === 'Disk Utilization' ) {
+          subKpiName = this.languageService.i18n['BS.diskUtilization'];    // 設置子 KPI 名稱為 "Disk Utilization"
+        }
+        unit = '%'; // 設置單位為 %
         break;
       case 'Retainability':
-        kpiName = this.languageService.i18n['BS.retainability'];
-        unit = '%'; // 設置單位為百分比
+        kpiName = this.languageService.i18n['BS.retainability']; // 設置 KPI 名稱為 "Retainability"
+        unit = '%';                                              // 設置單位為 %
         break;
       case 'Mobility':
-        kpiName = this.languageService.i18n['BS.mobility'];
-        unit = '%'; // 設置單位為百分比
+        kpiName = this.languageService.i18n['BS.mobility'];                    // 設置 KPI 名稱為 "Mobility"
+        subKpiName = this.languageService.i18n['BS.ngRanHandoverSuccessRate']; // 設置子KPI 名稱為 "NG-RAN Handover Success Rate"
+        unit = '%';                                                            // 設置單位為 %
         break;
       case 'Energy Efficiency':
-        kpiName = this.languageService.i18n['BS.energyConsumption'];
-        unit = 'kW'; // 設置單位為千瓦
+        kpiName = this.languageService.i18n['BS.energyConsumption']; // 設置 KPI 名稱為 "Energy Consumption"
+        unit = 'kW';                                                 // 設置單位為 kW
         break;
       default:
-        kpiName = 'KPI Name';
-        unit = ''; // 默認單位為空
+        kpiName = 'KPI Name';  // 設置默認 KPI 名稱
+        subKpiName = '';       // 默認子 KPI 名稱為空
+        unit = '';             // 默認單位為空
         break;
     }
 
-    // 設置 Y 軸標籤為 "KPI 名稱 ( 單位 )"
-    this.yAxisLabel = `${kpiName} (${unit})`;
+    // 設置 Y 軸標籤為 "子KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"
+    this.yAxisLabel = subKpiName ? `${subKpiName} ( ${unit} )` : `${kpiName} ( ${unit} )`;
   }
+
 
   /**
    * @2024/05/18 Add
@@ -4402,17 +4427,17 @@ export class BSInfoComponent implements OnInit {
    */
   setYAxisLabel_onlyUnit() {
     // 判斷選擇的 KPI 類別
-    switch (this.selectedKpiCategory) {
+    switch ( this.selectedKpiCategory ) {
       case 'Accessibility':
         // 如果是 Accessibility，設置 Y 軸標籤為百分比
         this.yAxisLabel = this.languageService.i18n['BS.percentage'];
         break;
       case 'Integrity':
         // 如果是 Integrity，根據子類別設置不同的 Y 軸標籤
-        if (this.selectedKpiSubcategory === 'Integrated Downlink Delay' || this.selectedKpiSubcategory === 'Integrated Uplink Delay') {
+        if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' || this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
           // 設置 Y 軸標籤為毫秒
           this.yAxisLabel = this.languageService.i18n['BS.milliseconds'];
-        } else if (this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' || this.selectedKpiSubcategory === 'RAN UE Uplink Throughput') {
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' || this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
           // 設置 Y 軸標籤為 Mbps
           this.yAxisLabel = this.languageService.i18n['BS.megabitsPerSecond'];
         }

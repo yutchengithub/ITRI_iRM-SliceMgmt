@@ -427,6 +427,8 @@ export const Enlanguage = {
 
   "BS.timeInterval": "Time Interval",
   'BS.timeIntervalHourly': 'Time Interval ( Hourly )',
+  'BS.hourlyInterval': 'Hourly Interval',
+  
   'BS.dataSource': 'Data Source',
 
   'BS.viewMode': 'View Mode',
