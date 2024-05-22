@@ -1693,21 +1693,50 @@ body.tw #editSingleParamValueWindowRef ul li > label {
   min-width: 5em;
 }
 
+// @2024/05/22 Add
+// 設定 ngx-charts-line-chart 圖表模組區域整體樣式
+ngx-charts-line-chart {
+  position: relative;
+  top: 12px;
+}
+
 // @2024/05/16 Add
 // 設定 ngx-charts-line-chart 圖表模組，所有 SVG 文本元素的顏色
 ngx-charts-line-chart text {
   fill: #ffffff !important; // 將所有文本設為白色 
 }
 
-// @2024/05/17 Add
-// 設定 ngx-charts-line-chart 圖表模組，設定所有 header 的顏色
-ngx-charts-line-chart header {
-  color: #AFB7C8 !important; // 設為灰色
+// @2024/05/22 Add
+// 設定 ngx-charts-line-chart 圖表模組，圖例區域整體樣式
+ngx-charts-line-chart .chart-legend {
+  position: relative;
+  top: -9px;
 }
 
-// @2024/05/20 Add
-// 調整圖表圖例中活動數據標籤的顏色和字體粗細
-.chart-legend .legend-label .active .legend-label-text {
-  color: #d2e0f6 !important;   /* 改成亮色 */
-  font-weight: bold !important;  /* 增加字體粗細 */
+// @2024/05/22 Add
+// 設定 ngx-charts-line-chart 圖表模組，圖例標題樣式
+ngx-charts-line-chart .chart-legend .legend-title {
+  color: #AFB7C8 !important; // 設為灰色
+  font-size: 16.5px !important;
+}
+
+// @2024/05/22 Add
+// 設定 ngx-charts-line-chart 圖表模組，X 軸標題樣式
+ngx-charts-line-chart .x.axis text.ng-star-inserted {
+  transform: rotate( -55deg ); // 傾斜角度
+  transform-origin: end;       // 傾斜起始方向
+}
+
+// @2024/05/22 Add
+// 調整圖表圖例中 "未活動" 數據標籤的顏色
+ngx-charts-line-chart .chart-legend .legend-label .legend-label-text {
+  font-size: 14px !important;
+}
+
+// @2024/05/22 Update
+// 調整圖表圖例中 "活動" 數據標籤的顏色和字體粗細
+ngx-charts-line-chart .chart-legend .legend-label .active .legend-label-text {
+  color: #d2e0f6 !important;  // 改成亮色
+  font-weight: bold !important; // 增加字體粗細
+  font-size: 14px !important;
 }

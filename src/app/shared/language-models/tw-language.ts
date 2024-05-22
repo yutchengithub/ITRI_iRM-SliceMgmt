@@ -470,6 +470,7 @@ export const TwLanguage = {
   'BS.percentage': '百分比 ( % )',
   'BS.milliseconds': '毫秒 ( ms )',
   'BS.megabitsPerSecond': '兆位元每秒 ( Mbps )',
+  'BS.kpiValueNone': '無',
 
 
 

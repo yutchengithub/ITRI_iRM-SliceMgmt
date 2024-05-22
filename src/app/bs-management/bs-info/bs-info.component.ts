@@ -135,7 +135,7 @@ export interface ChartData {
     color?: string;
     time?: string;
     name?: string; 
-    value: number; 
+    value?: any; 
     label?: string; 
     unit?: string;
   }[];
@@ -3769,7 +3769,6 @@ export class BSInfoComponent implements OnInit {
         selectedViewMode: string = ""; // 當前選擇的檢視模式
      selectedKpiCategory: string = ""; // 當前選擇的 KPI 類別
   selectedKpiSubcategory: string = ""; // 當前選擇的 KPI 子類別
-            filteredData: any[] = [];  // 過濾後的數據，用於圖表顯示
 
   /**
    * @2024/05/20 Update
@@ -4018,18 +4017,21 @@ export class BSInfoComponent implements OnInit {
 
   // ngx-charts-line-chart 圖表模組設定 ↓
 
-    view: [number, number] = [1450, 470];   // 定義圖表區長寬
+    view: [number, number] = [1355, 525];   // 定義圖表區長寬
     legend: boolean = true;                 // 是否顯示圖例
     legendTitle: string = this.languageService.i18n['BS.dataSource']; // 定義圖例標題名稱
     showYAxisLabel: boolean = true; // 是否顯示 Y 軸標籤
     showXAxisLabel: boolean = true; // 是否顯示 X 軸標籤
-        xAxis: boolean = true; // 是否顯示 X 軸
-        yAxis: boolean = true; // 是否顯示 Y 軸
+         xAxis: boolean = true;     // 是否顯示 X 軸
+         yAxis: boolean = true;     // 是否顯示 Y 軸
     xAxisLabel: string = this.languageService.i18n['BS.timeIntervalHourly']; // 定義圖表 X 軸標題名稱
     yAxisLabel: string = this.languageService.i18n['BS.percentage'];         // 定義圖表 Y 軸標題名稱
-    roundDomains: boolean = true; // 是否自動調整 Y 軸刻度
-    autoScale: boolean = true; // 是否自動縮放
-    showGridLines: boolean = true; // 是否顯示網格線
+    roundDomains: boolean = true;   // 是否自動調整 Y 軸刻度
+    autoScale: boolean = false;     // 是否自動縮放
+    showGridLines: boolean = true;  // 是否顯示網格線
+
+    //xScaleMin: number = 0;
+    //xScaleMax: number = 0;
 
     // @2024/05/21 Update
     // 設定圖表配色方案
@@ -4064,15 +4066,18 @@ export class BSInfoComponent implements OnInit {
     // 定義 customColors @2024/05/21 Add
     customColors: { name: string, value: string }[] = []; // 自定義顏色，用於圖表 @2024/05/21 Add
 
+    filteredData: any[] = [];  // 過濾後的數據，用於圖表顯示
+
   // ngx-charts-line-chart 圖表模組設定 ↑
-  
+
   /**
-   * @2024/05/18 Update
+   * @2024/05/22 Update
    * 更新圖表上顯示的數據用
    * @method updateChart
    * @description
    *    - 根據選擇的條件過濾數據。
    *    - 整理數據，確保數據點可以連接成線。
+   *    - 填充 24 小時的時間區間。
    *    - 更新圖表顯示的數據。
    */
   updateChart() {
@@ -4084,13 +4089,56 @@ export class BSInfoComponent implements OnInit {
     this.filteredData = this.consolidateSeries(rawData); // 整理數據以便數據點可以連接成線
     console.log("In updateChart - consolidated filteredData = ", this.filteredData); // 輸出整理後的數據到控制台
 
+    this.fillMissingTimeBlocks(); // 填充缺少的時間區間
+    console.log("In updateChart - after fillMissingTimeBlock, the filteredData = ", this.filteredData); // 輸出整理後的數據到控制台
+
+    //const firstTimeBlock = new Date(this.currentBsKpiInfo[0].start).getTime();
+    //const lastTimeBlock = new Date(this.currentBsKpiInfo[23].end).getTime();
+    //console.log("In updateChart - after fillMissingTimeBlock, the firstTimeBlock = ", firstTimeBlock); 
+    //console.log("In updateChart - after fillMissingTimeBlock, the lastTimeBlock = ", lastTimeBlock); 
+
+    //this.xScaleMin = firstTimeBlock;
+    //this.xScaleMax = lastTimeBlock;
+
     this.setYAxisLabel(); // 更新 y 軸標籤
 
     // 標記為需要檢查，因為有使用了 OnPush ( @05/21 - 現在先註解掉了 )
     this.changeDetectorRef.markForCheck(); // 標記為需要檢查，確保變更檢測機制正確觸發
   }
+
+  /**
+   * @2024/05/22 Add
+   * 填充 24 小時的時間區間
+   * @method fillMissingTimeBlocks
+   * @description
+   *    - 確保 `x` 軸顯示 24 個時間區間，不管該區間是否有數據。
+   */
+  fillMissingTimeBlocks() {
+    const allTimeBlocks: string[] = Object.values(this.currentBsKpiInfo).map((timeBlock: TimeBlock) => 
+      this.formatTimeRange(timeBlock.start, timeBlock.end)
+    );
+
+    this.filteredData.forEach((series) => {
+      console.log( "In fillMissingTimeBlocks - filteredData.series: ", series );
+      const seriesTimeSet: Set<string> = new Set(series.series.map((data: { time: string }) => data.time));
+      allTimeBlocks.forEach((time: string) => {
+        if (!seriesTimeSet.has(time)) {
+          series.series.push({
+            time: time,
+            name: time,
+            value: "", // 設置為 ""
+            label: series.name,
+            unit: series.series[0].unit,
+            color: 'rgba(0, 0, 0, 0)' // 設置顏色為透明
+          });
+        }
+      });
+      series.series.sort((a: { time: string }, b: { time: string }) => new Date(a.time).getTime() - new Date(b.time).getTime());
+    });
+  }
+
   
-  cellColorMap = new Map<string, string>(); // cell 顏色映射表 @2024/05/21 Add
+  cellColorMap = new Map< string, string >(); // cell 顏色映射表 @2024/05/21 Add
 
   /**
    * @2024/05/20 Update
@@ -4112,7 +4160,7 @@ export class BSInfoComponent implements OnInit {
     console.log("In filterData() - selectedViewMode =", this.selectedViewMode); // 輸出當前選擇的檢視模式
     console.log("In filterData() - cellColorMap =", this.cellColorMap); // 輸出 cellColorMap
 
-    switch (this.selectedViewMode) { // 根據選擇的檢視模式進行處理
+    switch( this.selectedViewMode) { // 根據選擇的檢視模式進行處理
       case 'fullInformation':
         Object.values(this.currentBsKpiInfo).forEach((timeBlock: TimeBlock) => { // 遍歷所有的時間區塊
           const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end); // 格式化時間範圍
@@ -4243,7 +4291,7 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/20 Update
+   * @2024/05/22 Update
    * 根據選擇的 KPI 類別和子類別獲取對應的數據
    * @method getKpiData
    * @param data - Bs_KpiInfo 或 Cell_KpiInfo 類型的數據
@@ -4259,7 +4307,7 @@ export class BSInfoComponent implements OnInit {
   getKpiData(data: Bs_KpiInfo | Cell_KpiInfo, time: string, color: string, index?: number): 
             { color?: string, time?: string, name?: string; value: number; label?: string , unit?: string }[] {
     
-    const kpiData: { color?: string, time?: string, name?: string; value: number; label?: string , unit?: string }[] = [];
+    const kpiData: { color?: string, time?: string, name?: string; value: any;  label?: string , unit?: string }[] = [];
     let unit = ''; // 初始化單位
 
     // 輸出當前選擇的 KPI 類別到控制台
@@ -4268,7 +4316,7 @@ export class BSInfoComponent implements OnInit {
     // 用於添加數據並生成標籤 ( 此生成的標籤用於鼠標懸浮於對應時間點的數據時顯示 )
     const addDataLabel = (value: any, prop: string) => {
       console.log("This of display data label"); // 輸出調試信息到控制台
-      if (value !== null) { // 檢查值是否不為空
+      if ( value !== 'None' ) { // 檢查值是否不為 'None'
         if ('cellId' in data && index !== undefined) {
           // 如果 data 包含 cellId 屬性，則認為是 Cell_KpiInfo 類型
           const cellLabel = `Cell#${index + 1} ( NCI=0x${data.cellId} )`;
@@ -4289,6 +4337,7 @@ export class BSInfoComponent implements OnInit {
         }
       }
     };
+
 
     // 根據選擇的 KPI 類別設置對應的單位並添加數據標籤
     switch (this.selectedKpiCategory) {
@@ -4339,6 +4388,7 @@ export class BSInfoComponent implements OnInit {
 
     return kpiData; // 返回包含顏色、時間、名稱、數值、標籤和單位的數據數組
   }
+
 
   /**
    * @2024/05/22 Update
