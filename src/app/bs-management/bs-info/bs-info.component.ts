@@ -4071,7 +4071,7 @@ export class BSInfoComponent implements OnInit {
   // ngx-charts-line-chart 圖表模組設定 ↑
 
   /**
-   * @2024/05/22 Update
+   * @2024/05/23 Update
    * 更新圖表上顯示的數據用
    * @method updateChart
    * @description
@@ -4100,6 +4100,11 @@ export class BSInfoComponent implements OnInit {
     //this.xScaleMin = firstTimeBlock;
     //this.xScaleMax = lastTimeBlock;
 
+    // 確保正確處理 null 值，過濾掉 null 值 ( 此法當數據有沒值得出現時，X 軸就不會滿 24 個區間 )
+    // this.filteredData.forEach(series => {
+    //   series.series = series.series.filter((data: { time: string, name: string, value: number | null, label: string, unit: string, color: string }) => data.value !== null);
+    // });
+
     this.setYAxisLabel(); // 更新 y 軸標籤
 
     // 標記為需要檢查，因為有使用了 OnPush ( @05/21 - 現在先註解掉了 )
@@ -4107,36 +4112,37 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/22 Add
+   * @2024/05/23 Update
    * 填充 24 小時的時間區間
    * @method fillMissingTimeBlocks
    * @description
    *    - 確保 `x` 軸顯示 24 個時間區間，不管該區間是否有數據。
    */
   fillMissingTimeBlocks() {
-    const allTimeBlocks: string[] = Object.values(this.currentBsKpiInfo).map((timeBlock: TimeBlock) => 
+    const allTimeBlocks: string[] = Object.values(this.currentBsKpiInfo).map((timeBlock: TimeBlock) =>
       this.formatTimeRange(timeBlock.start, timeBlock.end)
     );
-
+  
     this.filteredData.forEach((series) => {
-      console.log( "In fillMissingTimeBlocks - filteredData.series: ", series );
       const seriesTimeSet: Set<string> = new Set(series.series.map((data: { time: string }) => data.time));
       allTimeBlocks.forEach((time: string) => {
         if (!seriesTimeSet.has(time)) {
           series.series.push({
             time: time,
             name: time,
-            value: "", // 設置為 ""
+            value: null, // 設置為 null 以表明沒有數據
+            //value: 0,  // 提供一個預設值而不是 null，預設為 0 沒數據的會有數據線出來
             label: series.name,
             unit: series.series[0].unit,
-            color: 'rgba(0, 0, 0, 0)' // 設置顏色為透明
+            color: series.series[0].color,
+            //color: '#fff0' // 設置顏色為透明
           });
         }
       });
       series.series.sort((a: { time: string }, b: { time: string }) => new Date(a.time).getTime() - new Date(b.time).getTime());
     });
   }
-
+  
   
   cellColorMap = new Map< string, string >(); // cell 顏色映射表 @2024/05/21 Add
 
@@ -4243,6 +4249,7 @@ export class BSInfoComponent implements OnInit {
 
     return filteredData; // 返回過濾後的數據
   }
+  
 
   /**
    * @2024/05/16 Add
@@ -4304,10 +4311,10 @@ export class BSInfoComponent implements OnInit {
    *    - 生成的數據將用於圖表的顯示，包含顏色、時間、名稱、數值、標籤和單位。
    *    - 為數據添加標籤，以便在鼠標懸停時顯示。
    */
-  getKpiData(data: Bs_KpiInfo | Cell_KpiInfo, time: string, color: string, index?: number): 
-            { color?: string, time?: string, name?: string; value: number; label?: string , unit?: string }[] {
+  getKpiData( data: Bs_KpiInfo | Cell_KpiInfo, time: string, color: string, index?: number ): 
+               { color?: string, time?: string, name?: string; value: any, label?: string, unit?: string }[] {
     
-    const kpiData: { color?: string, time?: string, name?: string; value: any;  label?: string , unit?: string }[] = [];
+    const kpiData: { color?: string, time?: string, name?: string; value: any, label?: string, unit?: string }[] = [];
     let unit = ''; // 初始化單位
 
     // 輸出當前選擇的 KPI 類別到控制台
@@ -4315,24 +4322,27 @@ export class BSInfoComponent implements OnInit {
 
     // 用於添加數據並生成標籤 ( 此生成的標籤用於鼠標懸浮於對應時間點的數據時顯示 )
     const addDataLabel = (value: any, prop: string) => {
-      console.log("This of display data label"); // 輸出調試信息到控制台
-      if ( value !== 'None' ) { // 檢查值是否不為 'None'
-        if ('cellId' in data && index !== undefined) {
-          // 如果 data 包含 cellId 屬性，則認為是 Cell_KpiInfo 類型
-          const cellLabel = `Cell#${index + 1} ( NCI=0x${data.cellId} )`;
-          // 這裡 push 的 name 指的是圖表上 X 軸的名稱，調整此 push 的 name 的值會影響模組繪出的圖
+      if ('cellId' in data && index !== undefined) {
+        const cellLabel = `Cell#${index + 1} ( NCI=0x${data.cellId} )`;
+        if ( value !== null ) { // 只在 value 有效時添加數據
           kpiData.push({ time: time, name: time, value: parseFloat(value), label: cellLabel, unit: unit, color: color });
-        } else if ('name' in data) {
-          // 如果 data 包含 name 屬性，則認為是 Bs_KpiInfo 類型
-          if (this.selectedViewMode.startsWith('Cell#')) {
-            // 判斷檢視模式，如果是 Cell 模式，使用 filteredData() 的處理方式生成標籤
-            const defaultNci = this.selectedNci;
-            const cellLabel = `Cell#1 ( NCI=0x${defaultNci} )`;
-            // 這裡 push 的 name 指的是圖表上 X 軸的名稱，調整此 push 的 name 的值會影響模組繪出的圖
+        } else {
+          kpiData.push({ time: time, name: time, value: null, label: cellLabel, unit: unit, color: '#fff0' }); // 設置透明色
+        }
+      } else if ('name' in data) {
+        if (this.selectedViewMode.startsWith('Cell#')) {
+          const defaultNci = this.selectedNci;
+          const cellLabel = `Cell#1 ( NCI=0x${defaultNci} )`;
+          if ( value !== null ) { // 只在 value 有效時添加數據
             kpiData.push({ time: time, name: time, value: parseFloat(value), label: cellLabel, unit: unit, color: color });
           } else {
-            // 這裡 push 的 name 指的是圖表上 X 軸的名稱，調整此 push 的 name 的值會影響模組繪出的圖
+            kpiData.push({ time: time, name: time, value: null, label: cellLabel, unit: unit, color: '#fff0' }); // 設置透明色
+          }
+        } else {
+          if ( value !== null ) { // 只在 value 有效時添加數據
             kpiData.push({ time: time, name: time, value: parseFloat(value), label: data.name, unit: unit, color: color });
+          } else {
+            kpiData.push({ time: time, name: time, value: null, label: data.name, unit: unit, color: '#fff0' }); // 設置透明色
           }
         }
       }
@@ -4388,8 +4398,7 @@ export class BSInfoComponent implements OnInit {
 
     return kpiData; // 返回包含顏色、時間、名稱、數值、標籤和單位的數據數組
   }
-
-
+  
   /**
    * @2024/05/22 Update
    * 根據選擇的 KPI 類別設置 Y 軸標籤

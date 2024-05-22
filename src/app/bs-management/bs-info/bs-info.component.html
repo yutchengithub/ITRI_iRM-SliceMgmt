@@ -5150,10 +5150,10 @@
                     <br/>
                     <!-- 顏色塊 -->
                     <!-- <span [style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span> -->
-                    <span *ngIf="model.color !== 'rgba(0, 0, 0, 0)'" [style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
+                    <span [style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
                     <!-- 數據內容 -->
-                    <span *ngIf=" model.value === '' ">{{ model.series }} : {{ languageService.i18n['BS.kpiValueNone'] }}</span>
-                    <span *ngIf=" model.value !== '' ">{{ model.series }} : {{ model.value }} {{ model.unit }}</span>
+                    <span *ngIf=" model.value === null ">{{ model.series }} : {{ languageService.i18n['BS.kpiValueNone'] }}</span>
+                    <span *ngIf=" model.value !== null ">{{ model.series }} : {{ model.value }} {{ model.unit }}</span>
                   </div>
                 </ng-template>
               
@@ -5167,10 +5167,10 @@
                   <div *ngFor="let mod of model; let i = index" style="display: flex; align-items: center;">
                     <!-- 顏色塊 -->
                     <!-- <span [style.background-color]="mod.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span> -->
-                    <span *ngIf="mod.color !== 'rgba(0, 0, 0, 0)'" [style.background-color]="mod.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
+                    <span [style.background-color]="mod.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
                     <!-- 數據內容 -->
-                    <span *ngIf=" mod.value === '' ">{{ mod.series }} : {{ languageService.i18n['BS.kpiValueNone'] }}</span>
-                    <span *ngIf=" mod.value !== '' ">{{ mod.series }} : {{ mod.value }} {{ mod.unit }}</span>
+                    <span *ngIf=" mod.value === null ">{{ mod.series }} : {{ languageService.i18n['BS.kpiValueNone'] }}</span>
+                    <span *ngIf=" mod.value !== null ">{{ mod.series }} : {{ mod.value }} {{ mod.unit }}</span>
                   </div>
                 </ng-template>
               
