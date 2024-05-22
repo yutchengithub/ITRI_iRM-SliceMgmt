@@ -4462,7 +4462,7 @@ export class BSInfoComponent implements OnInit {
         break;
     }
 
-    // 設置 Y 軸標籤為 "子KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"
+    // 設置 Y 軸標籤為 "子 KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"
     this.yAxisLabel = subKpiName ? `${subKpiName} ( ${unit} )` : `${kpiName} ( ${unit} )`;
   }
 
