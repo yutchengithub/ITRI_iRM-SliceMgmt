@@ -5087,7 +5087,7 @@
       </div>
     </div>
 
-    <!-- 基站效能區 @2024/05/22 Update -->
+    <!-- 基站效能區 @2024/05/23 Update -->
     <div class="performance">
       <span>{{ languageService.i18n['BS.performance'] }}
           <!-- 刷新基站效能資訊按鈕 @2024/05/15 Add -->
@@ -5123,7 +5123,7 @@
             </div>
 
             <div>
-              <!-- ngx-charts-line-chart 圖表模組區 -->
+              <!-- ngx-charts-line-chart 圖表模組區 @2024/05/23 Update -->
               <ngx-charts-line-chart
                 [view]="view"
                 [scheme]="colorScheme"
@@ -5141,23 +5141,22 @@
                 [showGridLines]="showGridLines"
                 [results]="filteredData">
 
-                <!-- 自定義工具提示(顯示單數據條的提示) 模板 @2024/05/22 Update -->
+                <!-- 自定義工具提示(顯示單數據條的提示) 模板 @2024/05/23 Update -->
                 <ng-template #tooltipTemplate let-model="model">
                   <div>
                     <!-- 用於查看生成的 JSON 數據 -->
                     <!-- <pre>{{ model|json }}</pre> -->
                     <strong>{{ model.time }}</strong> <!-- 數據點時間 -->
                     <br/>
-                    <!-- 顏色塊 -->
-                    <!-- <span [style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span> -->
-                    <span [style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
-                    <!-- 數據內容 -->
-                    <span *ngIf=" model.value === null ">{{ model.series }} : {{ languageService.i18n['BS.kpiValueNone'] }}</span>
-                    <span *ngIf=" model.value !== null ">{{ model.series }} : {{ model.value }} {{ model.unit }}</span>
+                    <!-- 顏色塊 - 設定為數據值不為 null 或 "" 時才顯示 -->
+                    <span *ngIf=" model.value !== null && model.value !== '' "[style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
+                    <!-- 數據內容 - 設定為數據值不為 null 或 "" 時才顯示 -->
+                    <span *ngIf=" model.value === null && model.value === '' ">{{ model.series }} : {{ languageService.i18n['BS.kpiValueNone'] }}</span>
+                    <span *ngIf=" model.value !== null && model.value !== '' ">{{ model.series }} : {{ model.value }} {{ model.unit }}</span>
                   </div>
                 </ng-template>
               
-                <!-- 自定義工具提示 ( 顯示所有數據條的提示 ) 模板 @2024/05/22 Update -->
+                <!-- 自定義工具提示 ( 顯示所有數據條的提示 ) 模板 @2024/05/23 Update -->
                 <ng-template #seriesTooltipTemplate let-model="model">
                   <div>
                     <!-- 用於查看生成的 JSON 數據 -->
@@ -5165,12 +5164,11 @@
                     <strong>{{ model[0].time }}</strong> <!-- 獨立顯示 model.time ( 數據點時間 ) -->
                   </div>
                   <div *ngFor="let mod of model; let i = index" style="display: flex; align-items: center;">
-                    <!-- 顏色塊 -->
-                    <!-- <span [style.background-color]="mod.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span> -->
-                    <span [style.background-color]="mod.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
-                    <!-- 數據內容 -->
-                    <span *ngIf=" mod.value === null ">{{ mod.series }} : {{ languageService.i18n['BS.kpiValueNone'] }}</span>
-                    <span *ngIf=" mod.value !== null ">{{ mod.series }} : {{ mod.value }} {{ mod.unit }}</span>
+                    <!-- 顏色塊 - 設定為數據值不為 null 或 "" 時才顯示 -->
+                    <span *ngIf=" mod.value !== null && mod.value !== '' " [style.background-color]="mod.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
+                    <!-- 數據內容 - 設定為數據值不為 null 或 "" 時才顯示 -->
+                    <span *ngIf=" mod.value === null && mod.value === '' ">{{ mod.series }} : {{ languageService.i18n['BS.kpiValueNone'] }}</span>
+                    <span *ngIf=" mod.value !== null && mod.value !== '' ">{{ mod.series }} : {{ mod.value }} {{ mod.unit }}</span>
                   </div>
                 </ng-template>
               

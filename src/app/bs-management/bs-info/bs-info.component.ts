@@ -3654,7 +3654,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 基站效能區 @2024/05/21 Update ↓
+// ↓ 基站效能區 @2024/05/23 Update ↓
 
   // @2024/05/14 Add
   // 用於儲存從 API 或 Local 獲取的 KPI 數據
@@ -3783,28 +3783,28 @@ export class BSInfoComponent implements OnInit {
       { displayName: this.languageService.i18n['BS.fullInformation'], value: 'fullInformation' }, // 全資訊模式選項
       { displayName: this.languageService.i18n['BS.onlyBSLevel'], value: 'onlyBSLevel' } // 僅基站層級選項
     ];
-    const cellIds = new Set<ViewMode>();      // 使用 Set 確保唯一性
+    const cellIds = new Set< ViewMode >();      // 使用 Set 確保唯一性
     const processedCells = new Set<string>(); // 用於追踪已處理過的 Cell
 
-    Object.values(this.currentBsKpiInfo).forEach((timeBlock: TimeBlock) => {
-      timeBlock.bs.forEach((bs: Bs_KpiInfo) => {
+    Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {
+      timeBlock.bs.forEach( ( bs: Bs_KpiInfo ) => {
         // 檢查是否為一體式基站或 cellInfoList 是否為空
-        if (this.bsType === "1") {
+        if ( this.bsType === "1" ) {
           console.log("In updateDropdownOptions() - selectedNci =", this.selectedNci); // 紀錄選中的 NCI
           // 對於一體式基站，使用預設 nciList 的第一個值
           const defaultNci = this.nciList[0];                      // 確保 nciList 已經定義且至少有一個元素
           const cellIdentifier = `Cell#1 ( NCI=0x${defaultNci} )`; // 生成一體式基站的 Cell 識別符
-          if (!processedCells.has(cellIdentifier)) { // 如果該 Cell 尚未處理過
-            cellIds.add({ displayName: cellIdentifier, value: cellIdentifier }); // 添加到 Cell 列表中
-            processedCells.add(cellIdentifier);       // 標記為已處理
+          if ( !processedCells.has( cellIdentifier ) ) { // 如果該 Cell 尚未處理過
+            cellIds.add( { displayName: cellIdentifier, value: cellIdentifier } ); // 添加到 Cell 列表中
+            processedCells.add( cellIdentifier );       // 標記為已處理
           }
         } else {
           // 對於分佈式基站，正常處理每個 cell
-          bs.cellInfoList.forEach((cell: Cell_KpiInfo, index) => {
+          bs.cellInfoList.forEach( ( cell: Cell_KpiInfo, index ) => {
             const cellIdentifier = `Cell#${index + 1} ( NCI=0x${cell.cellId} )`; // 生成分佈式基站的 Cell 識別符
-            if (!processedCells.has(cellIdentifier)) { // 如果該 Cell 尚未處理過
-              cellIds.add({ displayName: cellIdentifier, value: cellIdentifier }); // 添加到 Cell 列表中
-              processedCells.add(cellIdentifier);      // 標記為已處理
+            if ( !processedCells.has( cellIdentifier ) ) { // 如果該 Cell 尚未處理過
+              cellIds.add( { displayName: cellIdentifier, value: cellIdentifier } ); // 添加到 Cell 列表中
+              processedCells.add( cellIdentifier );        // 標記為已處理
             }
           });
         }
@@ -3836,7 +3836,7 @@ export class BSInfoComponent implements OnInit {
    *    - 根據當前選擇的 KPI 類別更新子類別的下拉選項。
    */
   updateKpiSubcategories() {
-    switch (this.selectedKpiCategory) {
+    switch ( this.selectedKpiCategory ) {
       case 'Accessibility':
         this.kpiSubcategories = [
           { displayName: this.languageService.i18n['BS.drbAccessibility'], value: 'DRB Accessibility' } // DRB Accessibility 子類別
@@ -3900,23 +3900,23 @@ export class BSInfoComponent implements OnInit {
    */
   updateLanguageOptions() {
     // 更新檢視模式的顯示名稱
-    this.viewModes.forEach(mode => {
-      if (mode.value === 'fullInformation') {
+    this.viewModes.forEach( mode => {
+      if ( mode.value === 'fullInformation' ) {
         mode.displayName = this.languageService.i18n['BS.fullInformation']; // 更新顯示名稱為全資訊模式
-      } else if (mode.value === 'onlyBSLevel') {
+      } else if ( mode.value === 'onlyBSLevel' ) {
         mode.displayName = this.languageService.i18n['BS.onlyBSLevel'];     // 更新顯示名稱為僅基站層級
       } else {
         // Cell 選項顯示文字應該保持不變，只需更新語系相關的部分
         const cellMatch = mode.value.match(/Cell#\d+ \( NCI=0x[0-9a-fA-F]+ \)/); // 匹配 Cell 選項
-        if (cellMatch) {
+        if ( cellMatch ) {
           mode.displayName = cellMatch[0]; // 保持 Cell 顯示名稱不變
         }
       }
     });
 
     // 更新 KPI 類別的顯示名稱
-    this.kpiCategories.forEach(category => {
-      switch (category.value) {
+    this.kpiCategories.forEach( category => {
+      switch ( category.value ) {
         case 'Accessibility':
           category.displayName = this.languageService.i18n['BS.accessibility'];     // 更新顯示名稱為 Accessibility
           break;
@@ -3950,17 +3950,17 @@ export class BSInfoComponent implements OnInit {
    *    - 根據當前語系更新 KPI 子類別的顯示名稱。
    */
   updateLanguageSubcategories() {
-    switch (this.selectedKpiCategory) {
+    switch ( this.selectedKpiCategory ) {
       case 'Accessibility':
-        this.kpiSubcategories.forEach(subcategory => {
-          if (subcategory.value === 'DRB Accessibility') {
+        this.kpiSubcategories.forEach( subcategory => {
+          if ( subcategory.value === 'DRB Accessibility' ) {
             subcategory.displayName = this.languageService.i18n['BS.drbAccessibility']; // 更新顯示名稱為 DRB Accessibility
           }
         });
         break;
       case 'Integrity':
-        this.kpiSubcategories.forEach(subcategory => {
-          switch (subcategory.value) {
+        this.kpiSubcategories.forEach( subcategory => {
+          switch ( subcategory.value ) {
             case 'Integrated Downlink Delay':
               subcategory.displayName = this.languageService.i18n['BS.integratedDownlinkDelay']; // 更新顯示名稱為 Integrated Downlink Delay
               break;
@@ -3977,8 +3977,8 @@ export class BSInfoComponent implements OnInit {
         });
         break;
       case 'Utilization':
-        this.kpiSubcategories.forEach(subcategory => {
-          switch (subcategory.value) {
+        this.kpiSubcategories.forEach( subcategory => {
+          switch ( subcategory.value ) {
             case 'Process Utilization':
               subcategory.displayName = this.languageService.i18n['BS.processUtilization']; // 更新顯示名稱為 Process Utilization
               break;
@@ -3992,22 +3992,22 @@ export class BSInfoComponent implements OnInit {
         });
         break;
       case 'Retainability':
-        this.kpiSubcategories.forEach(subcategory => {
-          if (subcategory.value === 'Retainability') {
+        this.kpiSubcategories.forEach( subcategory => {
+          if ( subcategory.value === 'Retainability' ) {
             subcategory.displayName = this.languageService.i18n['BS.retainability']; // 更新顯示名稱為 Retainability
           }
         });
         break;
       case 'Mobility':
-        this.kpiSubcategories.forEach(subcategory => {
-          if (subcategory.value === 'NG-RAN Handover Success Rate') {
+        this.kpiSubcategories.forEach( subcategory => {
+          if ( subcategory.value === 'NG-RAN Handover Success Rate' ) {
             subcategory.displayName = this.languageService.i18n['BS.ngRanHandoverSuccessRate']; // 更新顯示名稱為 NG-RAN Handover Success Rate
           }
         });
         break;
       case 'Energy Efficiency':
-        this.kpiSubcategories.forEach(subcategory => {
-          if (subcategory.value === 'Energy Efficiency') {
+        this.kpiSubcategories.forEach( subcategory => {
+          if ( subcategory.value === 'Energy Efficiency' ) {
             subcategory.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Efficiency
           }
         });
@@ -4015,19 +4015,19 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
-  // ngx-charts-line-chart 圖表模組設定 ↓
+  // ngx-charts-line-chart 圖表模組外觀設定區 ↓
 
     view: [number, number] = [1355, 525];   // 定義圖表區長寬
     legend: boolean = true;                 // 是否顯示圖例
     legendTitle: string = this.languageService.i18n['BS.dataSource']; // 定義圖例標題名稱
     showYAxisLabel: boolean = true; // 是否顯示 Y 軸標籤
     showXAxisLabel: boolean = true; // 是否顯示 X 軸標籤
-         xAxis: boolean = true;     // 是否顯示 X 軸
-         yAxis: boolean = true;     // 是否顯示 Y 軸
-    xAxisLabel: string = this.languageService.i18n['BS.timeIntervalHourly']; // 定義圖表 X 軸標題名稱
-    yAxisLabel: string = this.languageService.i18n['BS.percentage'];         // 定義圖表 Y 軸標題名稱
-    roundDomains: boolean = true;   // 是否自動調整 Y 軸刻度
-    autoScale: boolean = false;     // 是否自動縮放
+            xAxis: boolean = true;  // 是否顯示 X 軸
+            yAxis: boolean = true;  // 是否顯示 Y 軸
+       xAxisLabel: string = this.languageService.i18n['BS.timeIntervalHourly']; // 定義圖表 X 軸標題名稱
+       yAxisLabel: string = this.languageService.i18n['BS.percentage'];         // 定義圖表 Y 軸標題名稱
+     roundDomains: boolean = true;  // 是否自動調整 Y 軸刻度
+        autoScale: boolean = false; // 是否自動縮放
     showGridLines: boolean = true;  // 是否顯示網格線
 
     //xScaleMin: number = 0;
@@ -4037,7 +4037,7 @@ export class BSInfoComponent implements OnInit {
     // 設定圖表配色方案
     colorScheme: Color = {
     name: 'ocean',            // 配色方案名稱
-    selectable: true,         // 是否可選擇
+    selectable: false,         // 是否可選擇
     group: ScaleType.Ordinal, // 配色組別，這裡使用 Ordinal 類型
     domain: [    // 配色範圍
       '#FF4500', // Orange Red
@@ -4063,12 +4063,41 @@ export class BSInfoComponent implements OnInit {
       ]
     };
 
-    // 定義 customColors @2024/05/21 Add
-    customColors: { name: string, value: string }[] = []; // 自定義顏色，用於圖表 @2024/05/21 Add
 
-    filteredData: any[] = [];  // 過濾後的數據，用於圖表顯示
+  // 定義 customColors @2024/05/21 Add
+  // customColors: { name: string, value: string }[] = []; // 自定義顏色，用於圖表 @2024/05/21 Add
 
-  // ngx-charts-line-chart 圖表模組設定 ↑
+  /**
+   * @2024/05/23 Add
+   * 自定義顏色函數
+   * @method customColors
+   * @param value - 數據值
+   * @description
+   *    - 根據數據值動態設置顏色，對於 null 值設置為透明色。
+   *    - 取得圖表繪製數據線用的顏色
+   * @returns 對應的顏色
+   */
+  customColors = ( value: any ) => {
+
+    //console.log( "In customColors() - the get value:", value );
+
+    // 如果值為 null 或 ""，返回透明色
+    if ( value === null || value === "" || value === "none" ) {
+      return '#ffffff00'; // 透明色
+    }
+
+    // 根據名稱設置顏色
+    const colorEntry = this.dataColorMap.get( value );
+    return colorEntry || '#ffff'; // 沒取得對應值就默認設為白色
+  };
+  
+  // 圖表數據線用的顏色映射表 @2024/05/21 Add
+  dataColorMap = new Map< string, string >();
+
+  // ngx-charts-line-chart 圖表模組外觀設定區 ↑
+
+  // 圖表繪圖用的讀取數據
+  filteredData: any[] = [];  // 過濾後的數據，用於圖表顯示
 
   /**
    * @2024/05/23 Update
@@ -4083,14 +4112,14 @@ export class BSInfoComponent implements OnInit {
   updateChart() {
     // 首先根據選擇的條件過濾數據
     let rawData = this.filterData(); // 獲取過濾後的原始數據
-    console.log("In updateChart - rawData = ", rawData); // 輸出原始數據到控制台
+    console.log( "In updateChart - rawData = ", rawData ); // 輸出原始數據到控制台
 
     // 使用 consolidateSeries 函數來整理數據，確保數據點可以連接成線
-    this.filteredData = this.consolidateSeries(rawData); // 整理數據以便數據點可以連接成線
-    console.log("In updateChart - consolidated filteredData = ", this.filteredData); // 輸出整理後的數據到控制台
+    this.filteredData = this.consolidateSeries( rawData ); // 整理數據以便數據點可以連接成線
+    console.log( "In updateChart - consolidated filteredData = ", this.filteredData ); // 輸出整理後的數據到控制台
 
     this.fillMissingTimeBlocks(); // 填充缺少的時間區間
-    console.log("In updateChart - after fillMissingTimeBlock, the filteredData = ", this.filteredData); // 輸出整理後的數據到控制台
+    console.log( "In updateChart - after fillMissingTimeBlock, the filteredData = ", this.filteredData ); // 輸出整理後的數據到控制台
 
     //const firstTimeBlock = new Date(this.currentBsKpiInfo[0].start).getTime();
     //const lastTimeBlock = new Date(this.currentBsKpiInfo[23].end).getTime();
@@ -4108,7 +4137,7 @@ export class BSInfoComponent implements OnInit {
     this.setYAxisLabel(); // 更新 y 軸標籤
 
     // 標記為需要檢查，因為有使用了 OnPush ( @05/21 - 現在先註解掉了 )
-    this.changeDetectorRef.markForCheck(); // 標記為需要檢查，確保變更檢測機制正確觸發
+    // this.changeDetectorRef.markForCheck(); // 標記為需要檢查，確保變更檢測機制正確觸發
   }
 
   /**
@@ -4119,35 +4148,54 @@ export class BSInfoComponent implements OnInit {
    *    - 確保 `x` 軸顯示 24 個時間區間，不管該區間是否有數據。
    */
   fillMissingTimeBlocks() {
-    const allTimeBlocks: string[] = Object.values(this.currentBsKpiInfo).map((timeBlock: TimeBlock) =>
-      this.formatTimeRange(timeBlock.start, timeBlock.end)
+
+    // 獲取所有的時間區間
+    const allTimeBlocks: string[] = Object.values( this.currentBsKpiInfo ).map( ( timeBlock: TimeBlock ) =>
+      this.formatTimeRange( timeBlock.start, timeBlock.end )
     );
-  
-    this.filteredData.forEach((series) => {
-      const seriesTimeSet: Set<string> = new Set(series.series.map((data: { time: string }) => data.time));
-      allTimeBlocks.forEach((time: string) => {
-        if (!seriesTimeSet.has(time)) {
+
+    // 新增一個透明的 series 用於顯示所有時間區間
+    const noneSeries = {
+      name: 'none',
+      series: allTimeBlocks.map( time => ({
+        time: time,
+        name: time,
+        value: "",  // 設置為 ""
+        label: '',
+        unit: '',
+        color: '#ffffff00'  // 設置為透明色
+      }))
+    };
+
+    // 遍歷過濾後的數據，填充缺少的時間區間
+    this.filteredData.forEach( series => {
+      const seriesTimeSet: Set<string> = new Set( series.series.map( ( data: { time: string } ) => data.time ) );
+      allTimeBlocks.forEach( time => {
+        if ( !seriesTimeSet.has( time ) ) {
           series.series.push({
-            time: time,
-            name: time,
-            value: null, // 設置為 null 以表明沒有數據
-            //value: 0,  // 提供一個預設值而不是 null，預設為 0 沒數據的會有數據線出來
+             time: time,
+             name: time,
+            value: null,  // 設置為 null 以表明沒有數據
             label: series.name,
-            unit: series.series[0].unit,
-            color: series.series[0].color,
-            //color: '#fff0' // 設置顏色為透明
+             unit: series.series[0]?.unit || '',
+            color: series.series[0]?.color || '#fff0'  // 設置透明色
           });
         }
       });
-      series.series.sort((a: { time: string }, b: { time: string }) => new Date(a.time).getTime() - new Date(b.time).getTime());
+
+      // 過濾掉 null 值
+      series.series = series.series.filter( ( data: { time: string, value: number | null } ) => data.value !== null );
+
+      // 按時間排序數據點
+      series.series.sort( ( a: { time: string }, b: { time: string } ) => new Date( a.time ).getTime() - new Date( b.time ).getTime() );
     });
+
+    // 將 noneSeries 添加到 filteredData 中
+    this.filteredData.push( noneSeries );
   }
-  
-  
-  cellColorMap = new Map< string, string >(); // cell 顏色映射表 @2024/05/21 Add
 
   /**
-   * @2024/05/20 Update
+   * @2024/05/23 Update
    * 根據選擇的檢視模式、KPI 類別和子類別過濾數據
    * @method filterData
    * @description
@@ -4158,82 +4206,87 @@ export class BSInfoComponent implements OnInit {
    *             但單一個數據檢視的還不會依據檢視完整資訊給的配色去顯示，只會預設顯示第一種配色#FF5733。
    * 0520_2015 - 已解決 "單一個數據檢視的還不會依據檢視完整資訊給的配色去顯示，只會預設顯示第一種配色#FF5733" 的狀況。
    *             引入 ngx-charts 的 [customColors] 參數設定解決。
+   * 0523_1746 - BS 層級數據、填充用的數據都加入進顏色映射中
    */
   filterData(): ChartData[] {
-    let filteredData: ChartData[] = []; // 定義過濾後的數據陣列
+    let filteredData: ChartData[] = [];   // 定義過濾後的數據陣列
     const colorScheme = this.colorScheme; // 獲取當前的顏色方案
 
-    console.log("In filterData() - selectedViewMode =", this.selectedViewMode); // 輸出當前選擇的檢視模式
-    console.log("In filterData() - cellColorMap =", this.cellColorMap); // 輸出 cellColorMap
+    console.log( "In filterData() - selectedViewMode =", this.selectedViewMode ); // 輸出當前選擇的檢視模式
+    console.log( "In filterData() - dataColorMap =", this.dataColorMap );         // 輸出 dataColorMap
 
-    switch( this.selectedViewMode) { // 根據選擇的檢視模式進行處理
+    switch( this.selectedViewMode ) { // 根據選擇的檢視模式進行處理
       case 'fullInformation':
-        Object.values(this.currentBsKpiInfo).forEach((timeBlock: TimeBlock) => { // 遍歷所有的時間區塊
-          const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end); // 格式化時間範圍
+        Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {  // 遍歷所有的時間區塊
+          const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );    // 格式化時間範圍
 
-          timeBlock.bs.forEach((bs: Bs_KpiInfo, bsIndex) => { // 遍歷每個基站信息
+          timeBlock.bs.forEach( ( bs: Bs_KpiInfo, bsIndex ) => { // 遍歷每個基站訊息
             const color = colorScheme.domain[bsIndex % colorScheme.domain.length]; // 根據基站索引分配顏色
-            filteredData.push({ name: `${bs.name}`, series: this.getKpiData(bs, timeRange, color) }); // 添加基站數據到過濾後的數據陣列
-            console.log(`In filterData() fullInformation - BS name: ${bs.name} Adding data with color: ${color}`); // 輸出基站信息和顏色
+            this.dataColorMap.set( `${bs.name}`, color ); // 設置 bs 數據的顏色映射 @2024/05/23 Add
+            filteredData.push( { name: `${bs.name}`, series: this.getKpiData( bs, timeRange, color ) } ); // 添加基站數據到過濾後的數據陣列
+            console.log( `In filterData() fullInformation - BS name: ${bs.name} Adding data with color: ${color}` ); // 輸出基站訊息和顏色
 
-            if (this.bsType === "1" || (bs.cellInfoList && Object.keys(bs.cellInfoList).length === 0)) { // 檢查是否為一體式基站或 cellInfoList 為空
-              const cellColor = colorScheme.domain[(bsIndex + 1) % colorScheme.domain.length]; // 分配 cell 顏色
+            if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) { // 檢查是否為一體式基站或 cellInfoList 為空
+              const cellColor = colorScheme.domain[( bsIndex + 1 ) % colorScheme.domain.length];       // 分配 cell 顏色
               console.log(`In filterData() fullInformation - bsType = "1" - cellColor: ${cellColor}`); // 輸出 cell 顏色
               const series = this.getKpiData(bs, timeRange, cellColor); // 獲取 cell 的 KPI 數據
               const defaultNci = this.selectedNci; // 獲取預設的 NCI
-              this.cellColorMap.set(`Cell#${bsIndex + 1} (NCI=0x${defaultNci})`, cellColor); // 設置 cell 顏色映射
-              filteredData.push({ name: `Cell#1 (NCI=0x${defaultNci})`, series: series }); // 添加 cell 數據到過濾後的數據陣列
+              this.dataColorMap.set(`Cell#${bsIndex + 1} (NCI=0x${defaultNci})`, cellColor); // 設置 cell 數據的顏色映射
+              filteredData.push({ name: `Cell#1 (NCI=0x${defaultNci})`, series: series });   // 添加 cell 數據到過濾後的數據陣列
             } else { // 如果不是一體式基站
-              bs.cellInfoList.forEach((cell: Cell_KpiInfo, cellIndex) => { // 遍歷每個 cell 信息
+              bs.cellInfoList.forEach((cell: Cell_KpiInfo, cellIndex) => { // 遍歷每個 cell 訊息
                 const cellColor = colorScheme.domain[(bsIndex + cellIndex + 1) % colorScheme.domain.length]; // 分配 cell 顏色
-                this.cellColorMap.set(`Cell#${cellIndex + 1} (NCI=0x${cell.cellId})`, cellColor); // 設置 cell 顏色映射
-                console.log(`In filterData() fullInformation - Cell#${cellIndex + 1} Adding data with color: ${cellColor}`); // 輸出 cell 信息和顏色
+                this.dataColorMap.set(`Cell#${cellIndex + 1} (NCI=0x${cell.cellId})`, cellColor); // 設置 cell 數據的顏色映射
+                console.log(`In filterData() fullInformation - Cell#${cellIndex + 1} Adding data with color: ${cellColor}`); // 輸出 cell 訊息和顏色
                 filteredData.push({ name: `Cell#${cellIndex + 1} (NCI=0x${cell.cellId})`, series: this.getKpiData(cell, timeRange, cellColor, cellIndex) }); // 添加 cell 數據到過濾後的數據陣列
               });
             }
           });
         });
         break;
-      case 'onlyBSLevel':
-        Object.values(this.currentBsKpiInfo).forEach((timeBlock: TimeBlock) => { // 遍歷所有的時間區塊
-          const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end); // 格式化時間範圍
 
-          timeBlock.bs.forEach((bs: Bs_KpiInfo, bsIndex) => { // 遍歷每個基站信息
+      case 'onlyBSLevel':
+        Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => { // 遍歷所有的時間區塊
+          const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );   // 格式化時間範圍
+
+          timeBlock.bs.forEach( ( bs: Bs_KpiInfo, bsIndex ) => { // 遍歷每個基站訊息
             const color = colorScheme.domain[bsIndex % colorScheme.domain.length]; // 根據基站索引分配顏色
-            console.log(`${bsIndex} Adding data with color: ${color}`); // 輸出基站索引和顏色
-            const series = this.getKpiData(bs, timeRange, color); // 獲取基站的 KPI 數據
-            filteredData.push({ name: `${bs.name}`, series }); // 添加基站數據到過濾後的數據陣列
+            console.log( `${bsIndex} Adding data with color: ${color}` ); // 輸出基站索引和顏色
+            const series = this.getKpiData( bs, timeRange, color );       // 獲取基站的 KPI 數據
+            this.dataColorMap.set( `${bs.name}`, color );                 // 設置 bs 數據的顏色映射  @2024/05/23 Add
+            filteredData.push( { name: `${bs.name}`, series } );          // 添加基站數據到過濾後的數據陣列
           });
         });
         break;
-      default:
-        if (this.selectedViewMode.startsWith('Cell#')) { // 檢查是否為 Cell 模式
-          const match = this.selectedViewMode.match(/\(\s*NCI=0x([0-9a-fA-F]+)\s*\)/); // 匹配 NCI
-          if (match) {
-            const cellId = match[1]; // 獲取 cellId
-            console.log("In filterData() - cellId:", cellId); // 輸出 cellId
 
-            Object.values(this.currentBsKpiInfo).forEach((timeBlock: TimeBlock) => { // 遍歷所有的時間區塊
-              timeBlock.bs.forEach((bs: Bs_KpiInfo, bsIndex) => { // 遍歷每個基站信息
+      default:
+        if ( this.selectedViewMode.startsWith('Cell#') ) { // 檢查是否為 Cell 模式
+          const match = this.selectedViewMode.match(/\(\s*NCI=0x([0-9a-fA-F]+)\s*\)/); // 匹配 NCI
+          if ( match ) {
+            const cellId = match[1]; // 獲取 cellId
+            console.log( "In filterData() - cellId:", cellId ); // 輸出 cellId
+
+            Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => { // 遍歷所有的時間區塊
+              timeBlock.bs.forEach( ( bs: Bs_KpiInfo, bsIndex ) => { // 遍歷每個基站訊息
                 const color = colorScheme.domain[bsIndex % colorScheme.domain.length]; // 根據基站索引分配顏色
                 console.log(`${bsIndex} Adding data with color: ${color}`); // 輸出基站索引和顏色
-                if (this.bsType === "1" || (bs.cellInfoList && Object.keys(bs.cellInfoList).length === 0)) { // 檢查是否為一體式基站或 cellInfoList 為空
-                  const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end); // 格式化時間範圍
+                if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) { // 檢查是否為一體式基站或 cellInfoList 為空
+                  const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end ); // 格式化時間範圍
                   const defaultNci = this.nciList[0]; // 獲取預設的 NCI
-                  const cellColor = this.cellColorMap.get(`Cell#1 (NCI=0x${defaultNci})`) || color; // 獲取 cell 顏色或使用預設顏色
-                  const series = this.getKpiData(bs, timeRange, cellColor); // 獲取 cell 的 KPI 數據
+                  const cellColor = this.dataColorMap.get( `Cell#1 (NCI=0x${defaultNci})` ) || color; // 獲取 cell 數據的顏色或使用預設顏色
+                  const series = this.getKpiData( bs, timeRange, cellColor ); // 獲取 cell 的 KPI 數據
                   
-                  if (defaultNci === cellId) { // 如果默認 NCI 等於當前 cellId
-                    filteredData.push({ name: `Cell#1 (NCI=0x${defaultNci})`, series: series }); // 添加 cell 數據到過濾後的數據陣列
+                  if ( defaultNci === cellId ) { // 如果默認 NCI 等於當前 cellId
+                    filteredData.push( { name: `Cell#1 (NCI=0x${defaultNci})`, series: series } ); // 添加 cell 數據到過濾後的數據陣列
                   }
                 } else {
-                  const index = bs.cellInfoList.findIndex(c => c.cellId === cellId); // 查找對應 cellId 的索引
+                  const index = bs.cellInfoList.findIndex( c => c.cellId === cellId ); // 查找對應 cellId 的索引
                   if ( index !== -1 ) { // 如果找到對應的 cell
-                    const cell = bs.cellInfoList[index]; // 獲取 cell 信息
+                    const cell = bs.cellInfoList[index]; // 獲取 cell 訊息
                     const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end ); // 格式化時間範圍
-                    const cellColor = this.cellColorMap.get(`Cell#${index + 1} (NCI=0x${cell.cellId})`) || color; // 獲取 cell 顏色或使用預設顏色
+                    const cellColor = this.dataColorMap.get(`Cell#${index + 1} (NCI=0x${cell.cellId})`) || color; // 獲取 cell 數據的顏色或使用預設顏色
                     const series = this.getKpiData( cell, timeRange, cellColor, index ); // 獲取 cell 的 KPI 數據
-                    filteredData.push( { name: `Cell#${index + 1} (NCI=0x${cell.cellId})`, series: series } ); // 添加 cell 數據到過濾後的數據陣列
+                    filteredData.push( { name: `Cell#${index + 1} (NCI=0x${cell.cellId})`, series: series } );    // 添加 cell 數據到過濾後的數據陣列
                   }
                 }
               });
@@ -4244,8 +4297,13 @@ export class BSInfoComponent implements OnInit {
     }
 
     // 更新 customColors
-    this.customColors = Array.from(this.cellColorMap.entries()).map(([name, value]) => ({ name, value }));
+    // this.customColors = Array.from(this.dataColorMap.entries()).map(([name, value]) => ({ name, value }));
+    // console.log("In filterData() - this.customColors =", this.customColors); // 輸出 customColors
+
+    this.dataColorMap.set( `none`, '#ffffff00' ); // 設置填充數據用的顏色映射，設為透明色
+
     console.log("In filterData() - this.customColors =", this.customColors); // 輸出 customColors
+
 
     return filteredData; // 返回過濾後的數據
   }
@@ -4260,21 +4318,21 @@ export class BSInfoComponent implements OnInit {
    *    - 將數據同名的轉換成同系列，以便數據點能連起來。
    * @returns 處理後的數據陣列
    */
-  consolidateSeries(data: ChartData[]): ChartData[] {
+  consolidateSeries( data: ChartData[] ): ChartData[] {
     const resultMap = new Map(); // 創建一個 Map 來存儲同名的數據系列
 
-    data.forEach(item => {
-      if (!resultMap.has(item.name)) { // 如果 Map 中沒有此名字的數據系列
-        console.log("In consolidateSeries() - item.name = ", item.name); // 輸出日誌
-        resultMap.set(item.name, { name: item.name, series: [] }); // 在 Map 中添加新的數據系列
+    data.forEach( item => {
+      if ( !resultMap.has( item.name ) ) { // 如果 Map 中沒有此名字的數據系列
+        console.log( "In consolidateSeries() - item.name = ", item.name ); // 輸出日誌
+        resultMap.set( item.name, { name: item.name, series: [] } ); // 在 Map 中添加新的數據系列
       }
-      let seriesArray = resultMap.get(item.name).series; // 獲取 Map 中該名字的數據系列
-      console.log("In consolidateSeries() - seriesArray = ", seriesArray); // 輸出日誌
-      seriesArray.push(...item.series); // 將數據添加到該系列中
-      resultMap.set(item.name, { name: item.name, series: seriesArray }); // 更新 Map 中的數據系列
+      let seriesArray = resultMap.get( item.name ).series; // 獲取 Map 中該名字的數據系列
+      console.log( "In consolidateSeries() - seriesArray = ", seriesArray ); // 輸出日誌
+      seriesArray.push( ...item.series ); // 將數據添加到該系列中
+      resultMap.set( item.name, { name: item.name, series: seriesArray } );  // 更新 Map 中的數據系列
     });
 
-    return Array.from(resultMap.values()); // 將 Map 中的值轉換為數組並返回
+    return Array.from( resultMap.values() ); // 將 Map 中的值轉換為數組並返回
   }
 
   /**
@@ -4282,19 +4340,19 @@ export class BSInfoComponent implements OnInit {
    * 格式化要顯示於圖表上的時間範圍
    * @method formatTimeRange
    * @param start - 開始時間
-   * @param end - 結束時間
+   * @param   end - 結束時間
    * @description
    *    - 將開始和結束時間格式化為 HH:mm 格式。
    * @returns 格式化後的時間範圍字符串
    */
-  formatTimeRange(start: string, end: string): string {
-    const startTime = new Date(start); // 將開始時間字符串轉換為 Date 對象
-    const endTime = new Date(end);     // 將結束時間字符串轉換為 Date 對象
+  formatTimeRange( start: string, end: string ): string {
+    const startTime = new Date( start ); // 將開始時間字符串轉換為 Date 對象
+    const endTime = new Date( end );     // 將結束時間字符串轉換為 Date 對象
 
     // 轉換時間格式為 HH:mm
-    const format = (date: Date) => date.toTimeString().substring(0, 5);
+    const format = ( date: Date ) => date.toTimeString().substring( 0, 5 );
 
-    return `${format(startTime)} ~ ${format(endTime)}`; // 返回格式化後的時間範圍字符串
+    return `${format( startTime )} ~ ${format( endTime )}`; // 返回格式化後的時間範圍字符串
   }
 
   /**
@@ -4318,31 +4376,32 @@ export class BSInfoComponent implements OnInit {
     let unit = ''; // 初始化單位
 
     // 輸出當前選擇的 KPI 類別到控制台
-    console.log("In getKpiData() - selectedKpiCategory = ", this.selectedKpiCategory);
+    console.log( "In getKpiData() - selectedKpiCategory = ", this.selectedKpiCategory );
 
     // 用於添加數據並生成標籤 ( 此生成的標籤用於鼠標懸浮於對應時間點的數據時顯示 )
-    const addDataLabel = (value: any, prop: string) => {
-      if ('cellId' in data && index !== undefined) {
+    const addDataLabel = ( value: any, prop: string ) => {
+      if ( 'cellId' in data && index !== undefined ) {
         const cellLabel = `Cell#${index + 1} ( NCI=0x${data.cellId} )`;
         if ( value !== null ) { // 只在 value 有效時添加數據
-          kpiData.push({ time: time, name: time, value: parseFloat(value), label: cellLabel, unit: unit, color: color });
+          kpiData.push( { time: time, name: time, value: parseFloat( value ), label: cellLabel, unit: unit, color: color } );
+
         } else {
           kpiData.push({ time: time, name: time, value: null, label: cellLabel, unit: unit, color: '#fff0' }); // 設置透明色
         }
-      } else if ('name' in data) {
-        if (this.selectedViewMode.startsWith('Cell#')) {
+      } else if ( 'name' in data ) {
+        if ( this.selectedViewMode.startsWith('Cell#') ) {
           const defaultNci = this.selectedNci;
           const cellLabel = `Cell#1 ( NCI=0x${defaultNci} )`;
           if ( value !== null ) { // 只在 value 有效時添加數據
-            kpiData.push({ time: time, name: time, value: parseFloat(value), label: cellLabel, unit: unit, color: color });
+            kpiData.push( { time: time, name: time, value: parseFloat(value), label: cellLabel, unit: unit, color: color } );
           } else {
-            kpiData.push({ time: time, name: time, value: null, label: cellLabel, unit: unit, color: '#fff0' }); // 設置透明色
+            kpiData.push( { time: time, name: time, value: null, label: cellLabel, unit: unit, color: '#fff0' } ); // 設置透明色
           }
         } else {
           if ( value !== null ) { // 只在 value 有效時添加數據
-            kpiData.push({ time: time, name: time, value: parseFloat(value), label: data.name, unit: unit, color: color });
+            kpiData.push( { time: time, name: time, value: parseFloat(value), label: data.name, unit: unit, color: color } );
           } else {
-            kpiData.push({ time: time, name: time, value: null, label: data.name, unit: unit, color: '#fff0' }); // 設置透明色
+            kpiData.push( { time: time, name: time, value: null, label: data.name, unit: unit, color: '#fff0' } ); // 設置透明色
           }
         }
       }
@@ -4350,49 +4409,49 @@ export class BSInfoComponent implements OnInit {
 
 
     // 根據選擇的 KPI 類別設置對應的單位並添加數據標籤
-    switch (this.selectedKpiCategory) {
+    switch ( this.selectedKpiCategory ) {
       case 'Accessibility':
         unit = '%'; // 設置單位為百分比
-        addDataLabel(data.accessibility, 'accessibility'); // 添加 Accessibility 數據標籤
+        addDataLabel( data.accessibility, 'accessibility' ); // 添加 Accessibility 數據標籤
         break;
       case 'Integrity':
         // 根據子類別設置不同的單位並添加對應的數據標籤
-        if (this.selectedKpiSubcategory === 'Integrated Downlink Delay') {
+        if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' ) {
           unit = 'ms'; // 設置單位為毫秒
-          addDataLabel(data.integrity.downlinkDelay, 'downlinkDelay'); // 添加 Downlink Delay 數據標籤
-        } else if (this.selectedKpiSubcategory === 'Integrated Uplink Delay') {
+          addDataLabel( data.integrity.downlinkDelay, 'downlinkDelay' ); // 添加 Downlink Delay 數據標籤
+        } else if ( this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
           unit = 'ms'; // 設置單位為毫秒
           addDataLabel(data.integrity.uplinkDelay, 'uplinkDelay'); // 添加 Uplink Delay 數據標籤
-        } else if (this.selectedKpiSubcategory === 'RAN UE Downlink Throughput') {
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' ) {
           unit = 'Mbps'; // 設置單位為 Mbps
-          addDataLabel(data.integrity.downlinkThrouthput, 'downlinkThrouthput'); // 添加 Downlink Throughput 數據標籤
-        } else if (this.selectedKpiSubcategory === 'RAN UE Uplink Throughput') {
+          addDataLabel( data.integrity.downlinkThrouthput, 'downlinkThrouthput' ); // 添加 Downlink Throughput 數據標籤
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
           unit = 'Mbps'; // 設置單位為 Mbps
-          addDataLabel(data.integrity.uplinkThrouthput, 'uplinkThrouthput'); // 添加 Uplink Throughput 數據標籤
+          addDataLabel( data.integrity.uplinkThrouthput, 'uplinkThrouthput' ); // 添加 Uplink Throughput 數據標籤
         }
         break;
       case 'Utilization':
         unit = '%'; // 設置單位為百分比
         // 根據子類別添加對應的數據標籤
-        if (this.selectedKpiSubcategory === 'Process Utilization') {
-          addDataLabel(data.utilization.resourceProcess, 'resourceProcess'); // 添加 Process Utilization 數據標籤
-        } else if (this.selectedKpiSubcategory === 'Memory Utilization') {
-          addDataLabel(data.utilization.resourceMemory, 'resourceMemory'); // 添加 Memory Utilization 數據標籤
-        } else if (this.selectedKpiSubcategory === 'Disk Utilization') {
-          addDataLabel(data.utilization.resourceDisk, 'resourceDisk'); // 添加 Disk Utilization 數據標籤
+        if ( this.selectedKpiSubcategory === 'Process Utilization' ) {
+          addDataLabel( data.utilization.resourceProcess, 'resourceProcess' ); // 添加 Process Utilization 數據標籤
+        } else if ( this.selectedKpiSubcategory === 'Memory Utilization' ) {
+          addDataLabel( data.utilization.resourceMemory, 'resourceMemory' ); // 添加 Memory Utilization 數據標籤
+        } else if ( this.selectedKpiSubcategory === 'Disk Utilization' ) {
+          addDataLabel( data.utilization.resourceDisk, 'resourceDisk' ); // 添加 Disk Utilization 數據標籤
         }
         break;
       case 'Retainability':
         unit = '%'; // 設置單位為百分比
-        addDataLabel(data.retainability, 'retainability'); // 添加 Retainability 數據標籤
+        addDataLabel( data.retainability, 'retainability' ); // 添加 Retainability 數據標籤
         break;
       case 'Mobility':
         unit = '%'; // 設置單位為百分比
-        addDataLabel(data.mobility, 'mobility'); // 添加 Mobility 數據標籤
+        addDataLabel( data.mobility, 'mobility' ); // 添加 Mobility 數據標籤
         break;
       case 'Energy Efficiency':
         unit = 'kW'; // 設置單位為千瓦
-        addDataLabel(data.energy, 'energy'); // 添加 Energy Efficiency 數據標籤
+        addDataLabel( data.energy, 'energy' ); // 添加 Energy Efficiency 數據標籤
         break;
     }
 
@@ -4544,7 +4603,7 @@ export class BSInfoComponent implements OnInit {
     //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
   }
 
-// ↑ 基站效能區 @2024/05/21 Update ↑
+// ↑ 基站效能區 @2024/05/23 Update ↑
 
 
 }
