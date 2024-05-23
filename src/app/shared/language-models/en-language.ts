@@ -459,6 +459,7 @@ export const Enlanguage = {
   'BS.percentage': 'Percentage ( % )',
   'BS.milliseconds': 'Milliseconds ( ms )',
   'BS.megabitsPerSecond': 'Megabits per Second ( Mbps )',
+  'BS.kpiValueNone': 'None',
 
 
 

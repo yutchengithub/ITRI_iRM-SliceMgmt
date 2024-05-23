@@ -653,6 +653,7 @@ svg circle {
   font-size: .9em;
   padding: 0;
 }
+
 .performance > span > .mat-icon,
 .neighborBsList > span > .mat-icon {
   background-color: #ba5a2a;
@@ -662,16 +663,14 @@ svg circle {
   vertical-align: middle;
   margin: 0 0 0 .3em;
 }
-.performance > span > .mat-icon {
-  cursor: auto;
-}
+
 .performance > span > label {
   display: inline-block;
   font-weight: normal;
   font-size: .9em;
   position: relative;
   left: 6px;
-  top: 5px;
+  //top: 5px;
   color: #98dfff;
 }
 .neighborBsList .table {
