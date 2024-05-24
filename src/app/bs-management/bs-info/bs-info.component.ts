@@ -4097,17 +4097,20 @@ export class BSInfoComponent implements OnInit {
 
   // ngx-charts-line-chart 圖表模組外觀設定區 ↑
 
+  // @2024/05/24 Add
   // 圖表繪圖用的讀取數據
   filteredData: any[] = [];  // 過濾後的數據，用於圖表顯示
 
-   // Data to be shown in the chart
-   filteredDataToShow: any[] = [];
+  // @2024/05/24 Add
+  // Data to be shown in the chart
+  filteredDataToShow: any[] = [];
  
-   // Mapping to store visibility status of each line
-   lineVisibility: { [key: string]: boolean } = {};
+  // @2024/05/24 Add
+  // Mapping to store visibility status of each line
+  lineVisibility: { [key: string]: boolean } = {};
 
   /**
-   * @2024/05/23 Update
+   * @2024/05/24 Update
    * 更新圖表上顯示的數據用
    * @method updateChart
    * @description
@@ -4157,19 +4160,40 @@ export class BSInfoComponent implements OnInit {
     // this.changeDetectorRef.markForCheck(); // 標記為需要檢查，確保變更檢測機制正確觸發
   }
 
+  // @2024/05/24 Add
   onLegendClick(event: any) {
     const legendName = event;
     console.log("In onLegendClick() - legendName =", legendName);
-
+  
     // Toggle the visibility status of the corresponding line
     this.lineVisibility[legendName] = !this.lineVisibility[legendName];
     console.log("In onLegendClick() - lineVisibility =", this.lineVisibility);
-
+  
     // Update the data to be shown in the chart
     this.updateFilteredDataToShow();
     console.log("In onLegendClick() end - filteredDataToShow =", this.filteredDataToShow);
+  
+    // Toggle the line-through style on the legend item
+    const legendItems = document.querySelectorAll('.legend-label');
+    legendItems.forEach(item => {
+      const legendText = item.querySelector('.legend-label-text');
+      if (legendText) {
+        const textContent = legendText.textContent?.trim() ?? null;
+        console.log("In onLegendClick() - legendText content =", textContent);
+        if (textContent && textContent === legendName.trim()) {
+          if (this.lineVisibility[legendName]) {
+            legendText.classList.remove('hidden-line');
+          } else {
+            legendText.classList.add('hidden-line');
+          }
+        }
+      } else {
+        console.log("In onLegendClick() - legendText is null for item", item);
+      }
+    });
   }
-
+  
+  // @2024/05/24 Add
   updateFilteredDataToShow() {
     this.filteredDataToShow = this.filteredData.map(series => {
       return {
