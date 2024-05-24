@@ -5087,7 +5087,7 @@
       </div>
     </div>
 
-    <!-- 基站效能區 @2024/05/23 Update -->
+    <!-- 基站效能區 @2024/05/25 Update -->
     <div class="performance">
       <span>{{ languageService.i18n['BS.performance'] }}
           <!-- 刷新基站效能資訊按鈕 @2024/05/15 Add -->
@@ -5104,7 +5104,7 @@
             <div class="filter">
               <span><!-- 檢視模式-->
                 <label>{{ languageService.i18n['BS.viewMode'] }}:</label>
-                <select [(ngModel)]="selectedViewMode" (ngModelChange)="updateChart()">
+                <select [(ngModel)]="selectedViewMode" (ngModelChange)="prepareAndUpdateChartData()">
                   <option *ngFor="let mode of viewModes" [value]="mode.value">{{ mode.displayName }}</option>
                 </select>
               </span>
@@ -5116,14 +5116,14 @@
               </span>
               <span><!-- KPI 子類別選項 -->
                 <label>{{ languageService.i18n['BS.viewKPISubcategory'] }}:</label>
-                <select [(ngModel)]="selectedKpiSubcategory" (ngModelChange)="updateChart()" [hidden]="kpiSubcategories.length === 0">
+                <select [(ngModel)]="selectedKpiSubcategory" (ngModelChange)="prepareAndUpdateChartData()" [hidden]="kpiSubcategories.length === 0">
                   <option *ngFor="let subcategory of kpiSubcategories" [value]="subcategory.value">{{ subcategory.displayName }}</option>
                 </select>
               </span>
             </div>
 
             <div>
-              <!-- ngx-charts-line-chart 圖表模組區 @2024/05/23 Update -->
+              <!-- ngx-charts-line-chart 圖表模組區 @2024/05/24 Update -->
               <ngx-charts-line-chart
                 [view]="view"
                 [scheme]="colorScheme"
@@ -5139,7 +5139,8 @@
                 [roundDomains]="roundDomains"
                 [autoScale]="autoScale"
                 [showGridLines]="showGridLines"
-                [results]="filteredData">
+                [results]="displayChartData"
+                (select)="onChartInteraction($event)">
 
                 <!-- 自定義工具提示(顯示單數據條的提示) 模板 @2024/05/23 Update -->
                 <ng-template #tooltipTemplate let-model="model">

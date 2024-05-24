@@ -1747,3 +1747,10 @@ ngx-charts-legend-entry[ng-reflect-label="none"] {
   display: none !important;        // 設置為不顯示
   pointer-events: none !important; // 設置為不可點擊 
 }
+
+// @2024/05/24 Add
+// 用於顯示當點 ngx-charts 圖表的對應圖例項目要隱藏選擇的數據線時，將其加上橫槓
+.hidden-line {
+  text-decoration: line-through;
+}
+

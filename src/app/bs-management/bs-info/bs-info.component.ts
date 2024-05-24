@@ -177,10 +177,10 @@ export class BSInfoComponent implements OnInit {
 
   constructor(
 
-    private         router: Router,
-    private          route: ActivatedRoute,
-    private             fb: FormBuilder,
-    private         dialog: MatDialog,
+    private            router: Router,
+    private             route: ActivatedRoute,
+    private                fb: FormBuilder,
+    private            dialog: MatDialog,
     private          location: Location,      // @2024/05/03 Add
     public      commonService: CommonService,
     public    languageService: LanguageService,
@@ -3654,7 +3654,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 基站效能區 @2024/05/23 Update ↓
+// ↓ 基站效能區 @2024/05/25 Update ↓
 
   // @2024/05/14 Add
   // 用於儲存從 API 或 Local 獲取的 KPI 數據
@@ -3663,6 +3663,39 @@ export class BSInfoComponent implements OnInit {
   // @2024/05/14 Add
   // 控制加載 KPI 資訊的狀態標誌，初始化為 true 表示正在加載
   isLoadingBsKpiInfo: boolean = true;
+
+  /**
+   * @2024/05/14 Add
+   * 準備從 API 獲取指定基站的 Kpi 資訊所需的參數
+   * @method prepareGetBsKpiInfoParams
+   * @description
+   *    - 此函數用於準備調用 Kpi 數據接口所需的參數。
+   *    - 設定查詢的時間範圍，格式化為 "YYYY-MM-DD HH:mm"。
+   */
+  prepareGetBsKpiInfoParams() {
+
+    // 獲取當前日期和時間
+    const now = new Date(); // 創建一個新的 Date 對象，表示當前時間
+
+    // 設定結束時間為當前時間的前一分鐘（為了符合給定的時間範圍）
+    const end = new Date( now.getTime() - 60000 ); // 減少 1 分鐘
+
+    // 設定開始時間為當前時間往回推 23 小時 59 分鐘
+    const start = new Date( end.getTime() - ( 23 * 60 + 59 ) * 60000 ); // 減少 23 小時 59 分鐘
+
+    // 格式化日期和時間為 "YYYY-MM-DD HH:mm"
+    const formatDateTime = ( date: Date ): string => {
+        const pad = ( num: number ): string => ( num < 10 ? '0' + num : num.toString() ); // 將數字格式化為兩位字符串
+        return `${date.getFullYear()}-${pad( date.getMonth() + 1 )}-${pad( date.getDate() )} ${pad( date.getHours() )}:${pad( date.getMinutes() )}`;
+    };
+
+    // 返回格式化的開始和結束時間
+    return {
+        start: formatDateTime( start ),
+          end: formatDateTime( end )
+    };
+
+  }
 
   /**
    * @2024/05/14 Add
@@ -3707,43 +3740,11 @@ export class BSInfoComponent implements OnInit {
             }
         });
     }
-
     console.log("getBsKpiInfo() - End");
   }
 
   /**
-   * @2024/05/14 Add
-   * 準備從 API 獲取指定基站的 Kpi 資訊所需的參數
-   * @method prepareGetBsKpiInfoParams
-   * @description
-   *    - 此函數用於準備調用 Kpi 數據接口所需的參數。
-   *    - 設定查詢的時間範圍，格式化為 "YYYY-MM-DD HH:mm"。
-   */
-  prepareGetBsKpiInfoParams() {
-    // 獲取當前日期和時間
-    const now = new Date(); // 創建一個新的 Date 對象，表示當前時間
-
-    // 設定結束時間為當前時間的前一分鐘（為了符合給定的時間範圍）
-    const end = new Date( now.getTime() - 60000 ); // 減少 1 分鐘
-
-    // 設定開始時間為當前時間往回推 23 小時 59 分鐘
-    const start = new Date( end.getTime() - ( 23 * 60 + 59 ) * 60000 ); // 減少 23 小時 59 分鐘
-
-    // 格式化日期和時間為 "YYYY-MM-DD HH:mm"
-    const formatDateTime = ( date: Date ): string => {
-        const pad = ( num: number ): string => ( num < 10 ? '0' + num : num.toString() ); // 將數字格式化為兩位字符串
-        return `${date.getFullYear()}-${pad( date.getMonth() + 1 )}-${pad( date.getDate() )} ${pad( date.getHours() )}:${pad( date.getMinutes() )}`;
-    };
-
-    // 返回格式化的開始和結束時間
-    return {
-        start: formatDateTime( start ),
-          end: formatDateTime( end )
-    };
-  }
-
-  /**
-   * @2024/05/18 Update
+   * @2024/05/25 Update
    * 處理從 API 獲取的 Kpi 數據響應
    * @method handleBsKpiInfoResponse
    * @param response - 後端 API 返回的 KPI 數據
@@ -3759,16 +3760,17 @@ export class BSInfoComponent implements OnInit {
     this.updateDropdownOptions();     // 刷新下拉選單選項
     this.selectedKpiCategory = "Accessibility";       // 預設 "KPI 類別" 選擇 Accessibility
     this.selectedKpiSubcategory= "DRB Accessibility"; // 預設 "KPI 子類別" 選擇 DRB Accessibility
-    this.updateChart();               // 用新數據刷新圖表
+    this.prepareAndUpdateChartData();     // 用新數據刷新圖表
+    //this.setYAxisLabel(); // 設定 Y 軸標籤
   }
 
-  // 定義檢視模式的選項
+  // 定義圖表檢視模式的選項
                viewModes: ViewMode[] = [];       // 定義檢視模式的選項
            kpiCategories: KpiCategory[] = [];    // 定義 KPI 類別的選項
         kpiSubcategories: KpiSubcategory[] = []; // 定義 KPI 子類別的選項
-        selectedViewMode: string = ""; // 當前選擇的檢視模式
-     selectedKpiCategory: string = ""; // 當前選擇的 KPI 類別
-  selectedKpiSubcategory: string = ""; // 當前選擇的 KPI 子類別
+        selectedViewMode: string = "";           // 當前選擇的檢視模式
+     selectedKpiCategory: string = "";           // 當前選擇的 KPI 類別
+  selectedKpiSubcategory: string = "";           // 當前選擇的 KPI 子類別
 
   /**
    * @2024/05/20 Update
@@ -3811,17 +3813,17 @@ export class BSInfoComponent implements OnInit {
       });
     });
 
-    console.log("In updateDropdownOptions() end - cellIds = ", cellIds); // 輸出 Cell 列表
+    console.log( "In updateDropdownOptions() end - cellIds = ", cellIds ); // 輸出 Cell 列表
 
-    this.viewModes = [...modes, ...Array.from(cellIds)]; // 更新檢視模式選項
-    this.selectedViewMode = this.viewModes[0].value; // 重設選擇的檢視模式以避免選擇不存在的選項
+    this.viewModes = [...modes, ...Array.from( cellIds )]; // 更新檢視模式選項
+    this.selectedViewMode = this.viewModes[0].value;     // 重設選擇的檢視模式以避免選擇不存在的選項
 
     this.kpiCategories = [
-      { displayName: this.languageService.i18n['BS.accessibility'], value: 'Accessibility' }, // Accessibility 選項
-      { displayName: this.languageService.i18n['BS.integrity'], value: 'Integrity' }, // Integrity 選項
-      { displayName: this.languageService.i18n['BS.utilization'], value: 'Utilization' }, // Utilization 選項
-      { displayName: this.languageService.i18n['BS.retainability'], value: 'Retainability' }, // Retainability 選項
-      { displayName: this.languageService.i18n['BS.mobility'], value: 'Mobility' }, // Mobility 選項
+      { displayName: this.languageService.i18n['BS.accessibility'], value: 'Accessibility' },        // Accessibility 選項
+      { displayName: this.languageService.i18n['BS.integrity'], value: 'Integrity' },                // Integrity 選項
+      { displayName: this.languageService.i18n['BS.utilization'], value: 'Utilization' },            // Utilization 選項
+      { displayName: this.languageService.i18n['BS.retainability'], value: 'Retainability' },        // Retainability 選項
+      { displayName: this.languageService.i18n['BS.mobility'], value: 'Mobility' },                  // Mobility 選項
       { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Efficiency' } // Energy Efficiency 選項
     ];
     this.selectedKpiCategory = this.kpiCategories[0].value; // 設置預設選擇的 KPI 類別
@@ -3842,6 +3844,7 @@ export class BSInfoComponent implements OnInit {
           { displayName: this.languageService.i18n['BS.drbAccessibility'], value: 'DRB Accessibility' } // DRB Accessibility 子類別
         ];
         break;
+        
       case 'Integrity':
         this.kpiSubcategories = [
           { displayName: this.languageService.i18n['BS.integratedDownlinkDelay'], value: 'Integrated Downlink Delay' },  // Integrated Downlink Delay 子類別
@@ -3850,6 +3853,7 @@ export class BSInfoComponent implements OnInit {
           { displayName: this.languageService.i18n['BS.ranUEUplinkThroughput'], value: 'RAN UE Uplink Throughput' }      // RAN UE Uplink Throughput 子類別
         ];
         break;
+
       case 'Utilization':
         this.kpiSubcategories = [
           { displayName: this.languageService.i18n['BS.processUtilization'], value: 'Process Utilization' }, // Process Utilization 子類別
@@ -3857,16 +3861,19 @@ export class BSInfoComponent implements OnInit {
           { displayName: this.languageService.i18n['BS.diskUtilization'], value: 'Disk Utilization' }        // Disk Utilization 子類別
         ];
         break;
+
       case 'Retainability':
         this.kpiSubcategories = [
           { displayName: this.languageService.i18n['BS.retainability'], value: 'Retainability' } // Retainability 子類別
         ];
         break;
+
       case 'Mobility':
         this.kpiSubcategories = [
           { displayName: this.languageService.i18n['BS.ngRanHandoverSuccessRate'], value: 'NG-RAN Handover Success Rate' } // NG-RAN Handover Success Rate 子類別
         ];
         break;
+
       case 'Energy Efficiency':
         this.kpiSubcategories = [
           { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Efficiency' } // Energy Efficiency 子類別
@@ -3877,7 +3884,7 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/18 Update
+   * @2024/05/25 Update
    * 切換 KPI 類別時的處理
    * @method onKpiCategoryChange
    * @description
@@ -3886,9 +3893,9 @@ export class BSInfoComponent implements OnInit {
    *    - 刷新圖表數據。
    */
   onKpiCategoryChange() {
-    this.updateKpiSubcategories(); // 更新 KPI 子類別選項
-    this.setYAxisLabel();          // 更新 Y 軸標籤
-    this.updateChart();            // 刷新圖表數據
+    this.updateKpiSubcategories();    // 更新 KPI 子類別選項
+    this.setYAxisLabel();             // 更新 Y 軸標籤
+    this.prepareAndUpdateChartData(); // 刷新圖表數據
   }
 
   /**
@@ -3920,18 +3927,23 @@ export class BSInfoComponent implements OnInit {
         case 'Accessibility':
           category.displayName = this.languageService.i18n['BS.accessibility'];     // 更新顯示名稱為 Accessibility
           break;
+          
         case 'Integrity':
           category.displayName = this.languageService.i18n['BS.integrity'];         // 更新顯示名稱為 Integrity
           break;
+
         case 'Utilization':
           category.displayName = this.languageService.i18n['BS.utilization'];       // 更新顯示名稱為 Utilization
           break;
+
         case 'Retainability':
           category.displayName = this.languageService.i18n['BS.retainability'];     // 更新顯示名稱為 Retainability
           break;
+
         case 'Mobility':
           category.displayName = this.languageService.i18n['BS.mobility'];          // 更新顯示名稱為 Mobility
           break;
+
         case 'Energy Efficiency':
           category.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Efficiency
           break;
@@ -3958,6 +3970,7 @@ export class BSInfoComponent implements OnInit {
           }
         });
         break;
+
       case 'Integrity':
         this.kpiSubcategories.forEach( subcategory => {
           switch ( subcategory.value ) {
@@ -3976,6 +3989,7 @@ export class BSInfoComponent implements OnInit {
           }
         });
         break;
+
       case 'Utilization':
         this.kpiSubcategories.forEach( subcategory => {
           switch ( subcategory.value ) {
@@ -3991,13 +4005,15 @@ export class BSInfoComponent implements OnInit {
           }
         });
         break;
+
       case 'Retainability':
         this.kpiSubcategories.forEach( subcategory => {
           if ( subcategory.value === 'Retainability' ) {
-            subcategory.displayName = this.languageService.i18n['BS.retainability']; // 更新顯示名稱為 Retainability
+            subcategory.displayName = this.languageService.i18n['BS.retainability'];  // 更新顯示名稱為 Retainability
           }
         });
         break;
+        
       case 'Mobility':
         this.kpiSubcategories.forEach( subcategory => {
           if ( subcategory.value === 'NG-RAN Handover Success Rate' ) {
@@ -4005,6 +4021,7 @@ export class BSInfoComponent implements OnInit {
           }
         });
         break;
+
       case 'Energy Efficiency':
         this.kpiSubcategories.forEach( subcategory => {
           if ( subcategory.value === 'Energy Efficiency' ) {
@@ -4017,126 +4034,230 @@ export class BSInfoComponent implements OnInit {
 
   // ngx-charts-line-chart 圖表模組外觀設定區 ↓
 
-    view: [number, number] = [1355, 525];   // 定義圖表區長寬
-    legend: boolean = true;                 // 是否顯示圖例
-    legendTitle: string = this.languageService.i18n['BS.dataSource']; // 定義圖例標題名稱
-    showYAxisLabel: boolean = true; // 是否顯示 Y 軸標籤
-    showXAxisLabel: boolean = true; // 是否顯示 X 軸標籤
-            xAxis: boolean = true;  // 是否顯示 X 軸
-            yAxis: boolean = true;  // 是否顯示 Y 軸
-       xAxisLabel: string = this.languageService.i18n['BS.timeIntervalHourly']; // 定義圖表 X 軸標題名稱
-       yAxisLabel: string = this.languageService.i18n['BS.percentage'];         // 定義圖表 Y 軸標題名稱
-     roundDomains: boolean = true;  // 是否自動調整 Y 軸刻度
-        autoScale: boolean = false; // 是否自動縮放
-    showGridLines: boolean = true;  // 是否顯示網格線
+              view: [number, number] = [1355, 525]; // 定義圖表區長寬
+            legend: boolean = true;                 // 是否顯示圖例
+       legendTitle: string = this.languageService.i18n['BS.dataSource']; // 定義圖例標題名稱
+    showYAxisLabel: boolean = true;   // 是否顯示 Y 軸標籤
+    showXAxisLabel: boolean = true;   // 是否顯示 X 軸標籤
+             xAxis: boolean = true;   // 是否顯示 X 軸
+             yAxis: boolean = true;   // 是否顯示 Y 軸
+        xAxisLabel: string = this.languageService.i18n['BS.timeIntervalHourly']; // 定義圖表 X 軸標題名稱
+        yAxisLabel: string = this.languageService.i18n['BS.percentage'];         // 定義圖表 Y 軸標題名稱
+      roundDomains: boolean = true;   // 是否自動調整 Y 軸刻度
+         autoScale: boolean = false;  // 是否自動縮放
+     showGridLines: boolean = true;   // 是否顯示網格線
 
-    //xScaleMin: number = 0;
-    //xScaleMax: number = 0;
+    // xScaleMin: number = 0;
+    // xScaleMax: number = 0;
 
     // @2024/05/21 Update
     // 設定圖表配色方案
     colorScheme: Color = {
-    name: 'ocean',            // 配色方案名稱
-    selectable: false,         // 是否可選擇
-    group: ScaleType.Ordinal, // 配色組別，這裡使用 Ordinal 類型
-    domain: [    // 配色範圍
-      '#FF4500', // Orange Red
-      '#32CD32', // Lime Green
-      '#1E90FF', // Dodger Blue
-      '#FFD700', // Gold
-      '#FF69B4', // Hot Pink
-      '#8A2BE2', // Blue Violet
-      '#00CED1', // Dark Turquoise
-      '#FF6347', // Tomato
-      '#4682B4', // Steel Blue
-      '#7FFF00', // Chartreuse
-      '#DC143C', // Crimson
-      '#00FA9A', // Medium Spring Green
-      '#FF1493', // Deep Pink
-      '#00BFFF', // Deep Sky Blue
-      '#FF8C00', // Dark Orange
-      '#8B0000', // Dark Red
-      '#ADFF2F', // Green Yellow
-      '#20B2AA', // Light Sea Green
-      '#9370DB', // Medium Purple
-      '#FFB6C1'  // Light Pink
+      name: 'ocean',            // 配色方案名稱
+      selectable: true,         // （ 此屬性在 ngx-charts 中沒有官方文檔說明，可能無實際作用 ）
+      group: ScaleType.Ordinal, // 配色組別，可以是 Ordinal 或 Linear
+      domain: [                 // 配色範圍，定義多個顏色用於數據系列
+        '#FF4500', // Orange Red
+        '#32CD32', // Lime Green
+        '#1E90FF', // Dodger Blue
+        '#FFD700', // Gold
+        '#FF69B4', // Hot Pink
+        '#8A2BE2', // Blue Violet
+        '#00CED1', // Dark Turquoise
+        '#FF6347', // Tomato
+        '#4682B4', // Steel Blue
+        '#7FFF00', // Chartreuse
+        '#DC143C', // Crimson
+        '#00FA9A', // Medium Spring Green
+        '#FF1493', // Deep Pink
+        '#00BFFF', // Deep Sky Blue
+        '#FF8C00', // Dark Orange
+        '#8B0000', // Dark Red
+        '#ADFF2F', // Green Yellow
+        '#20B2AA', // Light Sea Green
+        '#9370DB', // Medium Purple
+        '#FFB6C1'  // Light Pink
       ]
     };
 
+    // 定義 customColors @2024/05/21 Add
+    // customColors: { name: string, value: string }[] = []; // 自定義顏色，用於圖表 @2024/05/21 Add
 
-  // 定義 customColors @2024/05/21 Add
-  // customColors: { name: string, value: string }[] = []; // 自定義顏色，用於圖表 @2024/05/21 Add
+    /**
+     * @2024/05/21 Add
+     * 用於顯示圖表數據線的顏色映射表
+     * @property dataColorMap
+     * @description
+     *    - 這個變數是一個 Map 對象，用於存儲數據系列名稱與其對應顏色之間的映射關係。
+     *    - 用於在圖表中顯示數據線的顏色。
+     *    - Key 為數據系列的名稱，Value 為對應的顏色字符串。
+     */
+    dataColorMap = new Map<string, string>();
 
-  /**
-   * @2024/05/23 Add
-   * 自定義顏色函數
-   * @method customColors
-   * @param value - 數據值
-   * @description
-   *    - 根據數據值動態設置顏色，對於 null 值設置為透明色。
-   *    - 取得圖表繪製數據線用的顏色
-   * @returns 對應的顏色
-   */
-  customColors = ( value: any ) => {
+    /**
+     * @2024/05/23 Add
+     * 自定義顏色函數
+     * @method customColors
+     * @param value - 數據值
+     * @description
+     *    - 根據數據值動態設置顏色，對於 null 值設置為透明色。
+     *    - 取得圖表繪製數據線用的顏色
+     * @returns 對應的顏色
+     */
+    customColors = ( value: any ) => {
 
-    //console.log( "In customColors() - the get value:", value );
+      //console.log( "In customColors() - the get value:", value );
 
-    // 如果值為 null 或 ""，返回透明色
-    if ( value === null || value === "" || value === "none" ) {
-      return '#ffffff00'; // 透明色
-    }
+      // 如果值為 null 或 ""，返回透明色
+      if ( value === null || value === "" || value === "none" ) {
+        return '#ffffff00'; // 透明色
+      }
 
-    // 根據名稱設置顏色
-    const colorEntry = this.dataColorMap.get( value );
-    return colorEntry || '#ffff'; // 沒取得對應值就默認設為白色
-  };
-  
-  // 圖表數據線用的顏色映射表 @2024/05/21 Add
-  dataColorMap = new Map< string, string >();
+      // 根據名稱設置顏色
+      const colorEntry = this.dataColorMap.get( value );
+      return colorEntry || '#ffff'; // 沒取得對應值就默認設為白色
+    };
 
   // ngx-charts-line-chart 圖表模組外觀設定區 ↑
 
-  // 圖表繪圖用的讀取數據
-  filteredData: any[] = [];  // 過濾後的數據，用於圖表顯示
+  /**
+    * @2024/05/24 Add
+    * 用於存儲每條數據線的可見狀態的映射
+    * @property lineVisibility
+    * @description
+    *    - 這個變數是一個映射，用於記錄每條數據線是否顯示。
+    *    - 每條數據線的名稱作為鍵 (key)，其顯示狀態 (true 或 false) 作為值 (value)。
+    */
+  lineVisibility: { [key: string]: boolean } = {};
 
   /**
-   * @2024/05/23 Update
-   * 更新圖表上顯示的數據用
-   * @method updateChart
+   * @2024/05/24 Add
+   * 經過整理和過濾的原始數據，用於進一步處理
+   * @property preparedChartData
+   * @description
+   *    - 這個變數包含了原始數據經過過濾和整理後的結果，準備進一步處理。
+   *    - 數據已經過整理，確保可以正確顯示在圖表上。
+   */
+  preparedChartData: any[] = [];  // 經過整理後的數據，用於進一步處理
+
+  /**
+    * @2024/05/24 Add
+    * 用於顯示在圖表上的最終數據
+    * @property displayChartData
+    * @description
+    *    - 這個變數包含了處理過後的數據，根據顯示狀態更新後準備顯示在圖表上。
+    *    - 它會根據每個數據系列的顯示狀態進行更新，以反映哪些數據系列應該顯示或隱藏。
+    */
+  displayChartData: any[] = [];  // 最終顯示在圖表上的數據
+
+  /**
+   * @2024/05/25 Update
+   * 圖表交互處理函數
+   * @method onChartInteraction
+   * @param event - 點擊 (select) 事件參數
+   * @description
+   *    - 處理圖例項目點擊事件和數據點 ( Data point ) 點擊事件。
+   *    - 根據事件類型切換數據線的顯示狀態或處理數據點相關操作。
+   *    - 更新圖表顯示的數據並調整圖例樣式。
+   */
+  onChartInteraction( event: any ) {
+
+    // 判斷事件類型是否為字串 (圖例點擊)
+    if ( typeof event === 'string' ) {
+
+      const legendName = event; // 獲取圖例名稱
+      console.log( "In onChartInteraction() - legendName =", legendName );
+
+      // 切換對應數據線的顯示狀態
+      this.lineVisibility[legendName] = !this.lineVisibility[legendName];
+      console.log( "In onChartInteraction() - lineVisibility =", this.lineVisibility );
+
+      // 更新圖表顯示的數據
+      this.updateDisplayChartData();
+      console.log( "In onChartInteraction() end - displayChartData =", this.displayChartData );
+
+      // 獲取所有圖例項目
+      const legendItems = document.querySelectorAll('.legend-label');
+      legendItems.forEach( item => {
+        // 獲取圖例文本
+        const legendText = item.querySelector('.legend-label-text');
+        if ( legendText ) {
+
+          // 獲取圖例文本內容並去除多餘空白
+          const textContent = legendText.textContent?.trim() ?? null;
+          console.log( "In onChartInteraction() - legendText content =", textContent );
+          
+          // 檢查圖例文本內容是否與點擊的圖例名稱相符
+          if ( textContent && textContent === legendName.trim() ) {
+            
+            // 切換圖例文本的劃線樣式
+            if ( this.lineVisibility[legendName] ) {
+              legendText.classList.remove('hidden-line'); // 移除劃線樣式
+            } else {
+              legendText.classList.add('hidden-line'); // 添加劃線樣式
+            }
+          }
+        } else {
+          // 若未找到圖例文本，輸出提示訊息
+          console.log( "In onChartInteraction() - legendText is null for item", item );
+        }
+      });
+    } else if ( typeof event === 'object' ) {
+      // 處理數據點點擊事件
+      console.log( "Data point clicked:", event );
+      // 執行數據點點擊相關操作
+      // 例如：顯示數據點的詳細訊息
+    } else {
+      // 處理未知事件類型
+      console.warn( "Unknown event type in onChartInteraction:", event );
+    }
+  }
+
+  /**
+   * @2024/05/25 Update
+   * 更新並準備圖表數據
+   * @method prepareAndUpdateChartData
    * @description
    *    - 根據選擇的條件過濾數據。
    *    - 整理數據，確保數據點可以連接成線。
    *    - 填充 24 小時的時間區間。
    *    - 更新圖表顯示的數據。
    */
-  updateChart() {
+  prepareAndUpdateChartData() {
     // 首先根據選擇的條件過濾數據
     let rawData = this.filterData(); // 獲取過濾後的原始數據
-    console.log( "In updateChart - rawData = ", rawData ); // 輸出原始數據到控制台
+    console.log("In prepareAndUpdateChartData - rawData =", rawData); // 輸出原始數據到控制台
 
     // 使用 consolidateSeries 函數來整理數據，確保數據點可以連接成線
-    this.filteredData = this.consolidateSeries( rawData ); // 整理數據以便數據點可以連接成線
-    console.log( "In updateChart - consolidated filteredData = ", this.filteredData ); // 輸出整理後的數據到控制台
+    this.preparedChartData = this.consolidateSeries( rawData ); // 整理數據以便數據點可以連接成線
+    console.log("In prepareAndUpdateChartData - consolidated preparedChartData =", this.preparedChartData); // 輸出整理後的數據到控制台
 
     this.fillMissingTimeBlocks(); // 填充缺少的時間區間
-    console.log( "In updateChart - after fillMissingTimeBlock, the filteredData = ", this.filteredData ); // 輸出整理後的數據到控制台
+    console.log("In prepareAndUpdateChartData - after fillMissingTimeBlock, the preparedChartData =", this.preparedChartData); // 輸出整理後的數據到控制台
 
-    //const firstTimeBlock = new Date(this.currentBsKpiInfo[0].start).getTime();
-    //const lastTimeBlock = new Date(this.currentBsKpiInfo[23].end).getTime();
-    //console.log("In updateChart - after fillMissingTimeBlock, the firstTimeBlock = ", firstTimeBlock); 
-    //console.log("In updateChart - after fillMissingTimeBlock, the lastTimeBlock = ", lastTimeBlock); 
+    // 初始化或更新每個數據系列的顯示狀態
+    this.preparedChartData.forEach(series => {
+      // 判斷 lineVisibility 是否已存在該 series.name 的狀態
+      if ( !( series.name in this.lineVisibility ) ) {
+        this.lineVisibility[series.name] = true; // 初始化顯示狀態為 true
+      }
+    });
 
-    //this.xScaleMin = firstTimeBlock;
-    //this.xScaleMax = lastTimeBlock;
+    // 根據 lineVisibility 更新 displayChartData
+    this.updateDisplayChartData();
 
-    // 確保正確處理 null 值，過濾掉 null 值 ( 此法當數據有沒值得出現時，X 軸就不會滿 24 個區間 )
-    // this.filteredData.forEach(series => {
-    //   series.series = series.series.filter((data: { time: string, name: string, value: number | null, label: string, unit: string, color: string }) => data.value !== null);
-    // });
+    // 設置 x 軸的時間範圍（已註解）
+    // const firstTimeBlock = new Date(this.currentBsKpiInfo[0].start).getTime();
+    // const lastTimeBlock = new Date(this.currentBsKpiInfo[23].end).getTime();
+    // console.log("In prepareAndUpdateChartData - after fillMissingTimeBlock, the firstTimeBlock =", firstTimeBlock);
+    // console.log("In prepareAndUpdateChartData - after fillMissingTimeBlock, the lastTimeBlock =", lastTimeBlock);
+
+    // this.xScaleMin = firstTimeBlock;
+    // this.xScaleMax = lastTimeBlock;
 
     this.setYAxisLabel(); // 更新 y 軸標籤
 
-    // 標記為需要檢查，因為有使用了 OnPush ( @05/21 - 現在先註解掉了 )
+    // 標記為需要檢查，因為有使用了 OnPush ( @2024/05/21 Update - 貌似沒看到甚麼效果出現，故先註解掉 )
     // this.changeDetectorRef.markForCheck(); // 標記為需要檢查，確保變更檢測機制正確觸發
   }
 
@@ -4146,52 +4267,74 @@ export class BSInfoComponent implements OnInit {
    * @method fillMissingTimeBlocks
    * @description
    *    - 確保 `x` 軸顯示 24 個時間區間，不管該區間是否有數據。
+   *    - 為了保證圖表上顯示的數據涵蓋完整的24小時時間段，填充缺失的時間區間。
+   *    - 若某個時間區間沒有數據點，會插入一個空數據點以表示該時間區間無數據。
    */
   fillMissingTimeBlocks() {
 
     // 獲取所有的時間區間
-    const allTimeBlocks: string[] = Object.values( this.currentBsKpiInfo ).map( ( timeBlock: TimeBlock ) =>
-      this.formatTimeRange( timeBlock.start, timeBlock.end )
+    const allTimeBlocks: string[] = Object.values(this.currentBsKpiInfo).map((timeBlock: TimeBlock) =>
+      this.formatTimeRange(timeBlock.start, timeBlock.end)
     );
 
     // 新增一個透明的 series 用於顯示所有時間區間
     const noneSeries = {
       name: 'none',
-      series: allTimeBlocks.map( time => ({
-        time: time,
-        name: time,
-        value: "",  // 設置為 ""
-        label: '',
-        unit: '',
-        color: '#ffffff00'  // 設置為透明色
+      series: allTimeBlocks.map(time => ({
+        time: time,        // 設置時間區間
+        name: time,        // 設置名稱為時間區間
+        value: "",         // 設置值為空字符串
+        label: '',         // 設置標籤為空字符串
+        unit: '',          // 設置單位為空字符串
+        color: '#ffffff00' // 設置顏色為透明色
       }))
     };
 
     // 遍歷過濾後的數據，填充缺少的時間區間
-    this.filteredData.forEach( series => {
+    this.preparedChartData.forEach( series => {
       const seriesTimeSet: Set<string> = new Set( series.series.map( ( data: { time: string } ) => data.time ) );
       allTimeBlocks.forEach( time => {
         if ( !seriesTimeSet.has( time ) ) {
+          // 如果該時間區間不存在於數據系列中，則插入一個空數據點
           series.series.push({
-             time: time,
-             name: time,
-            value: null,  // 設置為 null 以表明沒有數據
-            label: series.name,
-             unit: series.series[0]?.unit || '',
-            color: series.series[0]?.color || '#fff0'  // 設置透明色
+            time: time,                // 設置時間區間
+            name: time,                // 設置名稱為時間區間
+            value: null,               // 設置值為 null 表示無數據
+            label: series.name,        // 設置標籤為系列名稱
+            unit: series.series[0]?.unit || '',       // 設置單位為該系列的單位，若無則設置為空字符串
+            color: series.series[0]?.color || '#fff0' // 設置顏色為該系列的顏色，若無則設置為透明色
           });
         }
       });
 
-      // 過濾掉 null 值
+      // 過濾掉值為 null 的數據點
       series.series = series.series.filter( ( data: { time: string, value: number | null } ) => data.value !== null );
 
       // 按時間排序數據點
       series.series.sort( ( a: { time: string }, b: { time: string } ) => new Date( a.time ).getTime() - new Date( b.time ).getTime() );
     });
 
-    // 將 noneSeries 添加到 filteredData 中
-    this.filteredData.push( noneSeries );
+    // 將 noneSeries 添加到 preparedChartData 中，用於顯示所有時間區間
+    this.preparedChartData.push( noneSeries );
+  }
+
+  /**
+   * @2024/05/24 Add
+   * 根據 lineVisibility 更新圖表顯示的數據
+   * @method updateDisplayChartData
+   * @description
+   *    - 根據每個數據系列的顯示狀態更新圖表顯示的數據。
+   *    - 這個函數會根據 lineVisibility 的狀態決定每個數據系列是否顯示。
+   */
+  updateDisplayChartData() {
+    // 更新 displayChartData，使其根據 lineVisibility 的狀態顯示或隱藏數據系列
+    this.displayChartData = this.preparedChartData.map(series => {
+      return {
+        name: series.name,
+        // 根據 lineVisibility 的狀態決定是否顯示該數據系列
+        series: this.lineVisibility[series.name] ? series.series : []
+      };
+    });
   }
 
   /**
@@ -4324,7 +4467,7 @@ export class BSInfoComponent implements OnInit {
     data.forEach( item => {
       if ( !resultMap.has( item.name ) ) { // 如果 Map 中沒有此名字的數據系列
         console.log( "In consolidateSeries() - item.name = ", item.name ); // 輸出日誌
-        resultMap.set( item.name, { name: item.name, series: [] } ); // 在 Map 中添加新的數據系列
+        resultMap.set( item.name, { name: item.name, series: [] } );       // 在 Map 中添加新的數據系列
       }
       let seriesArray = resultMap.get( item.name ).series; // 獲取 Map 中該名字的數據系列
       console.log( "In consolidateSeries() - seriesArray = ", seriesArray ); // 輸出日誌
@@ -4406,7 +4549,6 @@ export class BSInfoComponent implements OnInit {
         }
       }
     };
-
 
     // 根據選擇的 KPI 類別設置對應的單位並添加數據標籤
     switch ( this.selectedKpiCategory ) {
@@ -4603,7 +4745,7 @@ export class BSInfoComponent implements OnInit {
     //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
   }
 
-// ↑ 基站效能區 @2024/05/23 Update ↑
+// ↑ 基站效能區 @2024/05/25 Update ↑
 
 
 }
