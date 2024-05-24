@@ -5139,7 +5139,8 @@
                 [roundDomains]="roundDomains"
                 [autoScale]="autoScale"
                 [showGridLines]="showGridLines"
-                [results]="filteredData">
+                [results]="filteredDataToShow"
+                (select)="onLegendClick($event)">
 
                 <!-- 自定義工具提示(顯示單數據條的提示) 模板 @2024/05/23 Update -->
                 <ng-template #tooltipTemplate let-model="model">

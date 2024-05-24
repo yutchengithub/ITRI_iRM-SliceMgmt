@@ -3759,7 +3759,8 @@ export class BSInfoComponent implements OnInit {
     this.updateDropdownOptions();     // 刷新下拉選單選項
     this.selectedKpiCategory = "Accessibility";       // 預設 "KPI 類別" 選擇 Accessibility
     this.selectedKpiSubcategory= "DRB Accessibility"; // 預設 "KPI 子類別" 選擇 DRB Accessibility
-    this.updateChart();               // 用新數據刷新圖表
+    this.updateChart();     // 用新數據刷新圖表
+    //this.setYAxisLabel(); // 設定 Y 軸標籤
   }
 
   // 定義檢視模式的選項
@@ -4099,6 +4100,12 @@ export class BSInfoComponent implements OnInit {
   // 圖表繪圖用的讀取數據
   filteredData: any[] = [];  // 過濾後的數據，用於圖表顯示
 
+   // Data to be shown in the chart
+   filteredDataToShow: any[] = [];
+ 
+   // Mapping to store visibility status of each line
+   lineVisibility: { [key: string]: boolean } = {};
+
   /**
    * @2024/05/23 Update
    * 更新圖表上顯示的數據用
@@ -4121,6 +4128,16 @@ export class BSInfoComponent implements OnInit {
     this.fillMissingTimeBlocks(); // 填充缺少的時間區間
     console.log( "In updateChart - after fillMissingTimeBlock, the filteredData = ", this.filteredData ); // 輸出整理後的數據到控制台
 
+    // 初始化或更新每個數據系列的顯示狀態
+    this.filteredData.forEach(series => {
+      if (!(series.name in this.lineVisibility)) {
+        this.lineVisibility[series.name] = true; // 初始化顯示狀態為 true
+      }
+    });
+
+    // 根據 lineVisibility 更新 filteredDataToShow
+    this.updateFilteredDataToShow();
+
     //const firstTimeBlock = new Date(this.currentBsKpiInfo[0].start).getTime();
     //const lastTimeBlock = new Date(this.currentBsKpiInfo[23].end).getTime();
     //console.log("In updateChart - after fillMissingTimeBlock, the firstTimeBlock = ", firstTimeBlock); 
@@ -4138,6 +4155,28 @@ export class BSInfoComponent implements OnInit {
 
     // 標記為需要檢查，因為有使用了 OnPush ( @05/21 - 現在先註解掉了 )
     // this.changeDetectorRef.markForCheck(); // 標記為需要檢查，確保變更檢測機制正確觸發
+  }
+
+  onLegendClick(event: any) {
+    const legendName = event;
+    console.log("In onLegendClick() - legendName =", legendName);
+
+    // Toggle the visibility status of the corresponding line
+    this.lineVisibility[legendName] = !this.lineVisibility[legendName];
+    console.log("In onLegendClick() - lineVisibility =", this.lineVisibility);
+
+    // Update the data to be shown in the chart
+    this.updateFilteredDataToShow();
+    console.log("In onLegendClick() end - filteredDataToShow =", this.filteredDataToShow);
+  }
+
+  updateFilteredDataToShow() {
+    this.filteredDataToShow = this.filteredData.map(series => {
+      return {
+        name: series.name,
+        series: this.lineVisibility[series.name] ? series.series : []
+      };
+    });
   }
 
   /**
