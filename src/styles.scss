@@ -1720,10 +1720,10 @@ ngx-charts-line-chart .chart-legend .legend-title {
   font-size: 16.5px !important;
 }
 
-// @2024/05/22 Add
+// @2024/05/25 Update
 // 設定 ngx-charts-line-chart 圖表模組，X 軸標題樣式
 ngx-charts-line-chart .x.axis text.ng-star-inserted {
-  transform: rotate( -55deg ); // 傾斜角度
+  transform: rotate( -32deg ); // 傾斜角度
   transform-origin: end;       // 傾斜起始方向
 }
 
