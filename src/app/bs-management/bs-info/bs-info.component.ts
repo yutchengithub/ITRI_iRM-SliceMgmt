@@ -4152,13 +4152,12 @@ export class BSInfoComponent implements OnInit {
 
   /**
    * @2024/05/25 Update
-   * 圖表交互處理函數
+   * 處理圖表互動事件（ 包括圖例點擊和數據點點擊 ）
    * @method onChartInteraction
-   * @param event - 點擊 (select) 事件參數
+   * @param event - 點擊 (select) 事件參數，可能是圖例名稱（字串）或數據點資訊（物件）
    * @description
-   *    - 處理圖例項目點擊事件和數據點 ( Data point ) 點擊事件。
-   *    - 根據事件類型切換數據線的顯示狀態或處理數據點相關操作。
-   *    - 更新圖表顯示的數據並調整圖例樣式。
+   *    - 處理圖例項目點擊以隱藏或顯示對應的數據線，並更新圖表顯示的數據。
+   *    - 如果點擊的是數據點，則執行相關的數據點點擊處理。
    */
   onChartInteraction( event: any ) {
 
@@ -4166,30 +4165,30 @@ export class BSInfoComponent implements OnInit {
     if ( typeof event === 'string' ) {
 
       const legendName = event; // 獲取圖例名稱
-      console.log( "In onChartInteraction() - legendName =", legendName );
+      console.log("In onChartInteraction() - legendName =", legendName);
 
       // 切換對應數據線的顯示狀態
       this.lineVisibility[legendName] = !this.lineVisibility[legendName];
-      console.log( "In onChartInteraction() - lineVisibility =", this.lineVisibility );
+      console.log("In onChartInteraction() - lineVisibility =", this.lineVisibility);
 
       // 更新圖表顯示的數據
       this.updateDisplayChartData();
-      console.log( "In onChartInteraction() end - displayChartData =", this.displayChartData );
+      console.log("In onChartInteraction() end - displayChartData =", this.displayChartData);
 
       // 獲取所有圖例項目
       const legendItems = document.querySelectorAll('.legend-label');
       legendItems.forEach( item => {
         // 獲取圖例文本
         const legendText = item.querySelector('.legend-label-text');
-        if ( legendText ) {
+        if (legendText) {
 
           // 獲取圖例文本內容並去除多餘空白
-          const textContent = legendText.textContent?.trim() ?? null;
-          console.log( "In onChartInteraction() - legendText content =", textContent );
-          
+          const textContent = legendText.textContent?.trim() ?? null; // 使用 trim() 去除字串前後的空白字元
+          console.log("In onChartInteraction() - legendText content =", textContent);
+
           // 檢查圖例文本內容是否與點擊的圖例名稱相符
-          if ( textContent && textContent === legendName.trim() ) {
-            
+          if ( textContent && textContent === legendName.trim() ) {   // 使用 trim() 去除 legendName 前後的空白字元
+
             // 切換圖例文本的劃線樣式
             if ( this.lineVisibility[legendName] ) {
               legendText.classList.remove('hidden-line'); // 移除劃線樣式
@@ -4199,7 +4198,7 @@ export class BSInfoComponent implements OnInit {
           }
         } else {
           // 若未找到圖例文本，輸出提示訊息
-          console.log( "In onChartInteraction() - legendText is null for item", item );
+          console.log("In onChartInteraction() - legendText is null for item", item);
         }
       });
     } else if ( typeof event === 'object' ) {
