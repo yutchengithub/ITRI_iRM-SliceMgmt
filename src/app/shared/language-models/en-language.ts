@@ -126,6 +126,8 @@ export const Enlanguage = {
   'field.performanceInfo':'Performance',
   'field.handoverRate':'Handover Success Rate',
   'field.accessRate':'Access Success Rate',
+  'field.coverageRate': 'Coverage Rate',
+	'field.retainabilityRate': 'Retainability Rate',
   'field.CPU_Utilization':'CPU Utilization',
   'field.Memory_Utilization':'Memory Utilization',
 
@@ -191,8 +193,16 @@ export const Enlanguage = {
   'field.close':'Close',            // @2024/02/22 Add
   'field.applyReminder':'Reminder', // @2024/02/22 Add
 
-  'field.report':'Field Reports',                   // @12/12 Add
-  'field.reportPM':'Performance (PM)',              // @12/12 Add
+  'field.report':'Field Reports',           // @12/12 Add
+  'field.reportPM':'Performance (PM)',      // @12/12 Add
+  'field.performance': 'Field Performance', // @2024/05/27 Add
+  //'field.performanceOverview':'Performance Overview', // @2024/05/27 Add
+  //'field.performanceHistory':'Performance History',   // @2024/05/27 Add
+  'field.performanceOverview':'Overview', // @2024/05/27 Add
+  'field.performanceHistory':'History',   // @2024/05/27 Add
+  'field.historyPerformanceSearch': 'Historical Performance Search', // @2024/05/27 Add
+  'field.performanceHistorySearch': 'Performance History Search',    // @2024/05/27 Add
+
   'field.reportFM':'Alarms (FM)',                   // @12/12 Add
   'field.optim':'Field Optimization',               // @12/12 Add
   'field.optimSON':'SON Calculation',               // @12/12 Add
@@ -258,8 +268,6 @@ export const Enlanguage = {
   'field.originalConfusionPairs': 'Original Confusion Pairs',
   'field.newConfusionPairs': 'New Confusion Pairs',
   'field.confused': 'Confused BS',
-
-
 
   'field.optimizationType': 'Optimization Type',
   'field.optimizationResult': 'Optimization Result',

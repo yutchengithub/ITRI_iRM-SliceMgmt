@@ -122,7 +122,10 @@ export const TwLanguage = {
   'field.warningFault':'警告',
   'field.performanceInfo':'場域效能',
   'field.handoverRate':'換手成功率',
-  'field.accessRate':'接入成功率',
+  //'field.accessRate':'接入成功率',
+  'field.accessRate':'存取成功率',
+  'field.coverageRate': '覆蓋率',
+	'field.retainabilityRate': '維持率',
   'field.CPU_Utilization':'CPU 使用率',
   'field.Memory_Utilization':'Memory 使用率',
 
@@ -188,10 +191,16 @@ export const TwLanguage = {
   'field.close':'關閉', // @2024/02/22 Add
   'field.applyReminder': '提醒', // @2024/02/22 Add
   
-  'field.report':'場域報表',                 // @12/12 Add
-  'field.reportPM':'場域效能(PM)',          // @12/12 Add
+  'field.report':'場域報表',               // @12/12 Add
+  'field.reportPM':'場域效能(PM)',         // @12/12 Add
   'field.fieldPerformanceAnalysis': '場域效能分析',
-
+  'field.performance': '場域效能',           // @2024/05/27 Add
+  //'field.performanceOverview':'效能總攬',  // @2024/05/27 Add
+ // 'field.performanceHistory':'效能歷史',   // @2024/05/27 Add
+  'field.performanceOverview':'總覽',        // @2024/05/27 Add
+  'field.performanceHistory':'歷史',         // @2024/05/27 Add
+  'field.historyPerformanceSearch': '歷史效能查詢', // @2024/05/27 Add
+  'field.performanceHistorySearch': '效能歷史查詢', // @2024/05/27 Add
 
   'field.reportFM':'告警資訊(FM)',          // @12/12 Add
   'field.optim':'場域優化',                  // @12/12 Add

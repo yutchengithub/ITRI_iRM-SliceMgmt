@@ -478,50 +478,66 @@
 				<input id="baseInfo" class="toggle" type="checkbox">
 				<label for="baseInfo" class="lbl-toggle"></label>
 				<div class="collapsible-content">
-				<div class="content-inner">
-					
-					<div class="performance_percent">
-						<div class="item">
-							<!-- @12/10 update to get fieldInfo.handoverRate -->
-							<img src="assets/img/access.svg">
-							<span class="label-container">
-								{{ languageService.i18n['field.handoverRate'] }}
-								<span>{{ mobilityAsNumber }}%</span>
-							</span>
-							<!-- @12/18 Update coverage -> mobility -->
-							<!-- <circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress> -->
+					<div class="content-inner">
+						
+						<div class="performance_percent">
+							<div class="item">
+								<!-- @12/10 update to get fieldInfo.handoverRate -->
+								<img src="assets/img/access.svg">
+								<span class="label-container">
+									{{ languageService.i18n['field.handoverRate'] }}
+									<span>{{ mobilityAsNumber }}%</span>
+								</span>
+								<!-- @12/18 Update coverage -> mobility -->
+								<!-- <circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress> -->
+							</div>
+							<div class="item">
+								<!-- @12/10 update to get fieldInfo.accessibility -->
+								<img src="assets/img/handover.svg">
+								<span class="label-container">
+									{{ languageService.i18n['field.accessRate'] }}
+									<span>{{ accessibilityAsNumber }}%</span>
+								</span>
+								<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
+							</div>
+							<hr>
+							<div class="item">
+								<!-- 覆蓋率 @2024/05/27 Add -->
+								<img src="assets/img/coverage.svg">
+								<span class="label-container">
+									{{ languageService.i18n['field.coverageRate'] }}
+									<span>{{ coverageAsNumber }}%</span>
+								</span>
+							</div>
+							<div class="item">
+								<!-- 維持率 @2024/05/27 Add -->
+								<img src="assets/img/retainability.svg">
+								<span class="label-container">
+									{{ languageService.i18n['field.retainabilityRate'] }}
+									<span>{{ retainabilityAsNumber }}%</span>
+								</span>
+							</div>
+							<!-- <div class="item"> -->
+								<!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
+								<!-- <img src="assets/img/cpu.png">
+								<span class="label-container">
+									{{ languageService.i18n['field.CPU_Utilization'] }}
+									<span>{{ resourceProcess }}%</span>
+								</span> -->
+								<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
+							<!-- </div> -->
+							<!-- <div class="item"> -->
+								<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
+								<!-- <img src="assets/img/memory.png">
+								<span class="label-container">
+									{{ languageService.i18n['field.Memory_Utilization'] }}
+									<span>{{ resourceMemory }}%</span>
+								</span> -->
+								<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
+							<!-- </div> -->
 						</div>
-						<div class="item">
-							<!-- @12/10 update to get fieldInfo.accessibility -->
-							<img src="assets/img/handover.svg">
-							<span class="label-container">
-								{{ languageService.i18n['field.accessRate'] }}
-								<span>{{ accessibilityAsNumber }}%</span>
-							</span>
-							<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
-						</div>
-						<hr>
-						<div class="item">
-							<!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
-							<img src="assets/img/cpu.png">
-							<span class="label-container">
-								{{ languageService.i18n['field.CPU_Utilization'] }}
-								<span>{{ resourceProcess }}%</span>
-							</span>
-							<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
-						</div>
-						<div class="item">
-							<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
-							<img src="assets/img/memory.png">
-							<span class="label-container">
-								{{ languageService.i18n['field.Memory_Utilization'] }}
-								<span>{{ resourceMemory }}%</span>
-							</span>
-							<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
-						</div>
+						
 					</div>
-					
-				</div>
 				</div>
 			</div>
 		</div>
@@ -744,7 +760,7 @@
 	</ng-template>
 	
 	<!-- Window of Field Editing -->
-	<ng-template class="my-dialog-container" #fieldEditWindow>
+	<ng-template #fieldEditWindow>
 		<div><h5>{{ languageService.i18n['field.edit'] }}</h5></div>			
 		<div class="fieldEditTab">
 			<mat-button-toggle-group name="fieldEditType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldEditType" (change)="changefieldEditType($event)">
@@ -758,55 +774,56 @@
 			<div class="Field_Infos" *ngIf="fieldEditType === 'Field_Infos'">
 				<span>
 					<form [formGroup]="fieldEditForm">
-						<UL>
-						<li>
-							<label>{{ languageService.i18n['field.name'] }}:</label>
-							<span>
-								<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li>
-						<li>
-							<label>{{ languageService.i18n['field.northBound'] }}:</label>
-							<span>
-								<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li>
-						<li>
-							<label>{{ languageService.i18n['field.southBound'] }}:</label>
-							<span>
-								<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li>
-						<li>
-							<label>{{ languageService.i18n['field.westBound'] }}:</label>
-							<span>
-								<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li>
-						<li>
-							<label>{{ languageService.i18n['field.eastBound'] }}:</label>
-							<span>
-								<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
-										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li>
-						<li>
-							<label>{{ languageService.i18n['field.notificationNum'] }}:</label>
-							<span>
-								<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
-									class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
-								<!-- <mat-error *ngIf="fieldEditForm.controls['phoneNumber'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-							</span>
-						</li></UL>
+						<ul>
+							<li>
+								<label>{{ languageService.i18n['field.name'] }}:</label>
+								<span>
+									<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
+											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
+									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								</span>
+							</li>
+							<li>
+								<label>{{ languageService.i18n['field.northBound'] }}:</label>
+								<span>
+									<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
+											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
+									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								</span>
+							</li>
+							<li>
+								<label>{{ languageService.i18n['field.southBound'] }}:</label>
+								<span>
+									<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
+											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
+									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								</span>
+							</li>
+							<li>
+								<label>{{ languageService.i18n['field.westBound'] }}:</label>
+								<span>
+									<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
+											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
+									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								</span>
+							</li>
+							<li>
+								<label>{{ languageService.i18n['field.eastBound'] }}:</label>
+								<span>
+									<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
+											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
+									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								</span>
+							</li>
+							<li>
+								<label>{{ languageService.i18n['field.notificationNum'] }}:</label>
+								<span>
+									<input type="text" formControlName="phoneNumber" placeholder="{{ fieldInfo.phone }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['phoneNumber'].invalid?'required':''}}">
+									<!-- <mat-error *ngIf="fieldEditForm.controls['phoneNumber'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+								</span>
+							</li>
+						</ul>
 					</form>
 				</span>
 				<span>
@@ -1155,17 +1172,39 @@
 		</div>
 	</ng-template>
 
-
-	<!-- Window of PM Report @2024/04/16 Add -->
+	<!-- Window of Field Performance Analysis @2024/05/27 Update -->
 	<ng-template #fieldPMReportWindow>
-		<div><h5>{{ languageService.i18n['field.fieldPerformanceAnalysis'] }}</h5></div>
+		<div>
+			<h5>{{ languageService.i18n['field.performance'] }}</h5>
+		</div>
+		<div>
+			<mat-button-toggle-group name="fieldPMReportType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldPMReportType" (change)="changeFieldPMReportType($event)">
+				<mat-button-toggle value="Performance_Overview">{{ languageService.i18n['field.performanceOverview'] }}</mat-button-toggle>
+				<mat-button-toggle value="Performance_History">{{ languageService.i18n['field.performanceHistory'] }}</mat-button-toggle>
+			</mat-button-toggle-group>
+		</div>
 
+		<div *ngIf="fieldPMReportType === 'Performance_Overview'">
+			<div *ngIf="fieldInfo">
+				<!-- 效能總覽頁面內容 -->
+				<!-- 在這裡加入效能總攬的圖表和資訊 -->
+			</div>
+		</div>
+		<div  *ngIf="fieldPMReportType === 'Performance_History'">
+			<div>
+				<!-- 效能歷史查詢頁面內容 -->
+				<!-- 在這裡加入效能歷史的查詢和圖表 -->
+			</div>
+		</div>
+		
 		<div class="buttons buttons-centered">
 			<button type="button" mat-dialog-close>
 				{{ languageService.i18n['close'] }}
 			</button>
 		</div>
 	</ng-template>
+
+
 
 
 	<!-- Window of Field Optimization @2024/04/08 Update-->
