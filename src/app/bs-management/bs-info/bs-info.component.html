@@ -5123,13 +5123,13 @@
             </div>
 
             <div>
-              <!-- ngx-charts-line-chart 圖表模組區 @2024/05/24 Update -->
+              <!-- ngx-charts-line-chart 圖表模組區 @2024/05/27 Update -->
               <ngx-charts-line-chart
                 [view]="view"
                 [scheme]="colorScheme"
                 [customColors]="customColors"
                 [legend]="legend"
-                [legendTitle]="this.languageService.i18n['BS.dataSource']"
+                [legendTitle]="this.languageService.i18n['BS.dataItems']"
                 [showXAxisLabel]="showXAxisLabel"
                 [showYAxisLabel]="showYAxisLabel"
                 [xAxis]="xAxis"
@@ -5174,8 +5174,30 @@
                 </ng-template>
               
               </ngx-charts-line-chart>
+              <!-- 表格區 @2024/05/27 Add -->
+              <div class="table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>
+                        <span>{{ languageService.i18n['BS.dataItems'] }}</span>\
+                        <span>{{ languageService.i18n['BS.hourlyInterval'] }}</span>
+                      </th>
+                      <th *ngFor="let timeBlock of displayOnTableChartData[0]?.series">{{ timeBlock.time }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let series of displayOnTableChartData">
+                      <td>{{ series.name }}</td>
+                      <td *ngFor="let dataPoint of series.series">
+                        <span *ngIf="dataPoint.value !== null">{{ dataPoint.value }}&thinsp;{{ dataPoint.unit }}</span>
+                        <span *ngIf="dataPoint.value === null">{{ languageService.i18n['BS.kpiValueNone'] }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>              
             </div>
-
         </div>
       </div>
     </div>

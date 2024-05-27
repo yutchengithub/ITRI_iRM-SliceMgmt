@@ -203,6 +203,7 @@ export const Enlanguage = {
   'field.performanceHistory':'History',   // @2024/05/27 Add
   'field.historyPerformanceSearch': 'Historical Performance Search', // @2024/05/27 Add
   'field.performanceHistorySearch': 'Performance History Search',    // @2024/05/27 Add
+  'field.items':'Items',  // @2024/05/27 Add
 
   'field.reportFM':'Alarms (FM)',                   // @12/12 Add
   'field.optim':'Field Optimization',               // @12/12 Add
@@ -464,6 +465,8 @@ export const Enlanguage = {
   'BS.mobility': 'Mobility',
   'BS.ngRanHandoverSuccessRate': 'NG-RAN Handover Success Rate',
   'BS.energyConsumption': 'Energy Consumption',
+
+  'BS.dataItems':'Data Items',  // @2024/05/27 Add
   'BS.Power': 'Power ( kW )',
   'BS.percentage': 'Percentage ( % )',
   'BS.milliseconds': 'Milliseconds ( ms )',
