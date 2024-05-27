@@ -1709,8 +1709,8 @@ ngx-charts-line-chart text {
 // @2024/05/22 Add
 // 設定 ngx-charts-line-chart 圖表模組，圖例區域整體樣式
 ngx-charts-line-chart .chart-legend {
-  position: relative;
-  top: -9px;
+  /* position: relative;
+  top: -1px; */
 }
 
 // @2024/05/22 Add
@@ -1754,3 +1754,21 @@ ngx-charts-legend-entry[ng-reflect-label="none"] {
   text-decoration: line-through;
 }
 
+#fieldPMReportWindow {
+  position: relative;
+}
+#fieldPMReportWindow mat-button-toggle-group {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+#fieldPMReportWindow mat-button-toggle-group .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+  background-color: #ba5a2a !important;
+}
+#fieldPMReportWindow mat-button-toggle-group .mat-button-toggle-appearance-standard {
+  background-color: #485c77 !important;
+  color: #ddd;
+}
+#fieldPMReportWindow .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
+  border-left: solid 1px #427ebd;
+}

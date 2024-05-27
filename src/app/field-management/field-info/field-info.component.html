@@ -1185,13 +1185,12 @@
 	<ng-template #fieldPMReportWindow>
 		<div>
 			<h5>{{ languageService.i18n['field.performance'] }}</h5>
-		</div>
-		<div>
 			<mat-button-toggle-group name="fieldPMReportType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldPMReportType" (change)="changeFieldPMReportType($event)">
 				<mat-button-toggle value="Performance_Overview">{{ languageService.i18n['field.performanceOverview'] }}</mat-button-toggle>
 				<mat-button-toggle value="Performance_History">{{ languageService.i18n['field.performanceHistory'] }}</mat-button-toggle>
 			</mat-button-toggle-group>
 		</div>
+		
 
 		<div *ngIf="fieldPMReportType === 'Performance_Overview'">
 			<div *ngIf="fieldInfo">

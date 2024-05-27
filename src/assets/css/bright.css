@@ -547,3 +547,6 @@ mat-dialog-container h5 .mat-icon {
 .performance ngx-charts-line-chart text {
   fill: #000000 !important;
 }
+.performance table th .slash {
+  border-bottom:1px solid #5997cb;
+}

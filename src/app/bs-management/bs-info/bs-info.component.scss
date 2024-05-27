@@ -563,7 +563,7 @@ svg circle {
 
 
 .main.collabsible {
-  width: 90%;
+  width: 98%;
 }
 .main.collabsible > div .lbl-toggle {
   position: absolute;
@@ -637,6 +637,7 @@ svg circle {
   overflow-x: hidden;
   transition: max-height .25s ease-in-out; 
 } 
+
 .collabsible .toggle:checked + .lbl-toggle + .collapsible-content { 
   max-height: 0;
   overflow: hidden;
@@ -1043,6 +1044,53 @@ ul.treeList li a.btn {
 .filter .forALL_btn {
   float: right;
   margin: .6em 0 0 0!important;
+}
+.performance .collapsible-content { 
+  max-height: 94vh; 
+  overflow-x: auto;
+} 
+.performance .table {
+  margin-top: 1.5em;
+}
+.performance .table table {
+  display: block!important;
+}
+.performance table th.relative {
+  position: relative;
+  top: 0px;
+  min-width: 254px !important;
+  width: 254px !important;
+  border-right: 1px solid #2562959e;
+}
+.performance table th:not(.relative) {  
+  white-space: initial;
+  line-height: 1;
+}
+.performance table td {
+  text-align: center;
+  white-space: nowrap;
+}
+.performance table th.relative span:first-child {
+  position: absolute;
+  left: 9px;
+  bottom: 10px;
+}
+.performance table th.relative span:last-child {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+}
+.performance table th .slash {
+  position: absolute;
+  top: 32px;
+  left: -2px;
+  transform: rotate(14deg);
+  width: 259px;
+  height: 1px;
+  border-bottom: 1px solid #256295;
+}
+.ngx-charts {
+  float: initial;
 }
 @media screen and (max-width:1680px) {
   .h30 {
