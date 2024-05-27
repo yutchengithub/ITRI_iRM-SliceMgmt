@@ -1964,6 +1964,12 @@ export class FieldInfoComponent implements OnInit {
     return parseFloat( this.fieldInfo.retainability );
   }
 
+  // @2024/05/27 Add
+  // energy consumption - 能源消耗量
+  get energyConsumptionAsNumber(): number {
+    return parseFloat( this.fieldInfo.energy );
+  }
+
   resourceProcess: number = 0;
   resourceMemory: number = 0;
   updateResourceUtilization() {

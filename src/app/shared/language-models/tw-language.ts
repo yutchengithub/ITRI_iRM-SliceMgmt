@@ -126,6 +126,7 @@ export const TwLanguage = {
   'field.accessRate':'存取成功率',
   'field.coverageRate': '覆蓋率',
 	'field.retainabilityRate': '維持率',
+  'field.energyConsumption': '能源消耗量',
   'field.CPU_Utilization':'CPU 使用率',
   'field.Memory_Utilization':'Memory 使用率',
 

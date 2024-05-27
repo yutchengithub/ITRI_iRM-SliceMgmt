@@ -482,23 +482,23 @@
 						
 						<div class="performance_percent">
 							<div class="item">
-								<!-- @12/10 update to get fieldInfo.handoverRate -->
+								<!-- 存取成功率 -->
 								<img src="assets/img/access.svg">
 								<span class="label-container">
+									{{ languageService.i18n['field.accessRate'] }}
+									<span>{{ accessibilityAsNumber }}&thinsp;%</span>
+								</span>
+								<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
+							</div>
+							<div class="item">
+								<!-- 換手成功率 -->
+								<img src="assets/img/handover.svg">
+								<span class="label-container">
 									{{ languageService.i18n['field.handoverRate'] }}
-									<span>{{ mobilityAsNumber }}%</span>
+									<span>{{ mobilityAsNumber }}&thinsp;%</span>
 								</span>
 								<!-- @12/18 Update coverage -> mobility -->
 								<!-- <circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress> -->
-							</div>
-							<div class="item">
-								<!-- @12/10 update to get fieldInfo.accessibility -->
-								<img src="assets/img/handover.svg">
-								<span class="label-container">
-									{{ languageService.i18n['field.accessRate'] }}
-									<span>{{ accessibilityAsNumber }}%</span>
-								</span>
-								<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
 							</div>
 							<hr>
 							<div class="item">
@@ -506,7 +506,7 @@
 								<img src="assets/img/coverage.svg">
 								<span class="label-container">
 									{{ languageService.i18n['field.coverageRate'] }}
-									<span>{{ coverageAsNumber }}%</span>
+									<span>{{ coverageAsNumber }}&thinsp;%</span>
 								</span>
 							</div>
 							<div class="item">
@@ -514,11 +514,20 @@
 								<img src="assets/img/retainability.svg">
 								<span class="label-container">
 									{{ languageService.i18n['field.retainabilityRate'] }}
-									<span>{{ retainabilityAsNumber }}%</span>
+									<span>{{ retainabilityAsNumber }}&thinsp;%</span>
+								</span>
+							</div>
+							<hr>
+							<div class="item">
+								<!-- 能源消耗量 @2024/05/27 Add -->
+								<img src="assets/img/energy.png">
+								<span class="label-container">
+									{{ languageService.i18n['field.energyConsumption'] }}
+									<span>{{ energyConsumptionAsNumber }}&thinsp;kWh</span>
 								</span>
 							</div>
 							<!-- <div class="item"> -->
-								<!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
+								<!-- CPU 使用率 -->
 								<!-- <img src="assets/img/cpu.png">
 								<span class="label-container">
 									{{ languageService.i18n['field.CPU_Utilization'] }}
@@ -527,7 +536,7 @@
 								<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
 							<!-- </div> -->
 							<!-- <div class="item"> -->
-								<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
+								<!-- Memory 使用率 -->
 								<!-- <img src="assets/img/memory.png">
 								<span class="label-container">
 									{{ languageService.i18n['field.Memory_Utilization'] }}

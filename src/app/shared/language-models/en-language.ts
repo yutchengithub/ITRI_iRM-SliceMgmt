@@ -128,6 +128,7 @@ export const Enlanguage = {
   'field.accessRate':'Access Success Rate',
   'field.coverageRate': 'Coverage Rate',
 	'field.retainabilityRate': 'Retainability Rate',
+  'field.energyConsumption': 'Energy Consumption',
   'field.CPU_Utilization':'CPU Utilization',
   'field.Memory_Utilization':'Memory Utilization',
 
