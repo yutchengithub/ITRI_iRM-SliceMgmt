@@ -1940,15 +1940,34 @@ export class FieldInfoComponent implements OnInit {
     this.isAdditionalInfoVisible = !this.isAdditionalInfoVisible;
   }
 
-  //  string -> number (mobility - 換手成功率)
-  // @12/18 Update coverage -> mobility by yuchen
+  // @12/18 Add
+  // mobility - 取得換手成功率
   get mobilityAsNumber(): number {
     return parseFloat( this.fieldInfo.mobility );
   }
 
-  // accessibility - 接入成功率
+  // @12/18 Add
+  // accessibility - 取得存取成功率
   get accessibilityAsNumber(): number {
     return parseFloat( this.fieldInfo.accessibility );
+  }
+
+  // @2024/05/27 Add 
+  // coverage - 取得覆蓋率
+  get coverageAsNumber(): number {
+    return parseFloat( this.fieldInfo.coverage );
+  }
+
+  // @2024/05/27 Add 
+  // retainability - 取得維持率
+  get retainabilityAsNumber(): number {
+    return parseFloat( this.fieldInfo.retainability );
+  }
+
+  // @2024/05/27 Add
+  // energy consumption - 能源消耗量
+  get energyConsumptionAsNumber(): number {
+    return parseFloat( this.fieldInfo.energy );
   }
 
   resourceProcess: number = 0;
@@ -1963,7 +1982,6 @@ export class FieldInfoComponent implements OnInit {
     this.resourceMemory = parseFloat(this.fieldInfo.utilization.resourceMemory);
     console.log('resourceMemory:', this.resourceMemory);
   }
-
 
   // 設定告警種類文字 @12/07 Update by yuchen
   severityText(severity: string): string {
@@ -3349,31 +3367,62 @@ export class FieldInfoComponent implements OnInit {
 
 
 
-// For 場域效能報表 @2024/03/30 Add ↓
+// For 場域效能報表 @2024/05/27 Update ↓
 
   // 用於控制 場域效能報表 視窗 @2024/03/30 Add
   @ViewChild('fieldPMReportWindow') fieldPMReportWindow: any;
   fieldPMReportWindow_Ref!: MatDialogRef<any>;
   fieldPMReportWindow_Validated = false;
 
-  // 開啟視窗 - 場域效能報表 @2024/03/30 Add
+  // 定義頁籤類型 @2024/05/27 Add
+  fieldPMReportType: string = 'Performance_Overview'; // 預設顯示 "效能總攬" 頁面
+
+  // @2024/05/27 Update
+  // 打開場域效能分析視窗
   openfieldPMReportWindow() {
-    this.fieldPMReportWindow_Validated = false;
-    this.fieldPMReportWindow_Ref = this.dialog.open( this.fieldPMReportWindow, {
-      id: 'fieldPMReportWindow',
-      // width 和 height 可以根據需要設置或去掉
-      // width: '300px', 
-      // height: '200px'
+
+    this.fieldPMReportType = 'Performance_Overview'; // 每次打開視窗都預設顯示 "場域效能總覽" 頁面
+   
+    // 表單驗證狀態重置
+    this.fieldPMReportWindow_Validated = false; 
+
+    // 打開場域效能分析視窗
+    this.fieldPMReportWindow_Ref = this.dialog.open( this.fieldPMReportWindow, { 
+        id: 'fieldPMReportWindow',
+        // 自定義視窗寬高設置
+        // width: '800px', 
+        // height: '650px'
     });
 
-    // 訂閱對話框關閉後的事件
+    // 訂閱視窗關閉事件
     this.fieldPMReportWindow_Ref.afterClosed().subscribe(() => {
-      // 這裡可以添加當對話框關閉後的邏輯
-      this.fieldPMReportWindow_Validated = false;
+        this.fieldPMReportType = 'Performance_Overview'; // 重置頁籤
+        this.fieldPMReportWindow_Validated = false;      // 重置表單驗證狀態
     });
+
+    console.log( "Open the window of field PM Report's page is:", this.fieldPMReportType );
+  
+
   }
 
-// For 場域效能報表 @2024/03/30 Add ↑
+  // @2024/05/27 Add
+  // 處理場域效能分析彈出視窗的頁籤切換函數
+  changeFieldPMReportType( e: MatButtonToggleChange ) {
+      console.log("changefieldPMReportType() - Start");
+
+      // 根據用戶當前的選擇來設定頁籤顯示的類型
+      if ( e.value === 'Performance_Overview' ) {
+          this.fieldPMReportType = 'Performance_Overview';
+      } else if ( e.value === 'Performance_History' ) {
+          this.fieldPMReportType = 'Performance_History';
+      }
+
+      // 輸出頁籤切換結果
+      console.log( "頁籤切換後顯示的類型:", this.fieldPMReportType );
+      console.log("changefieldPMReportType() - End");
+  }
+
+// For 場域效能報表 @2024/05/27 Update ↑
 
 
 

@@ -3824,7 +3824,7 @@ export class BSInfoComponent implements OnInit {
       { displayName: this.languageService.i18n['BS.utilization'], value: 'Utilization' },            // Utilization 選項
       { displayName: this.languageService.i18n['BS.retainability'], value: 'Retainability' },        // Retainability 選項
       { displayName: this.languageService.i18n['BS.mobility'], value: 'Mobility' },                  // Mobility 選項
-      { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Efficiency' } // Energy Efficiency 選項
+      { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' } // Energy Consumption 選項
     ];
     this.selectedKpiCategory = this.kpiCategories[0].value; // 設置預設選擇的 KPI 類別
     this.updateKpiSubcategories(); // 更新 KPI 子類別選項
@@ -3874,9 +3874,9 @@ export class BSInfoComponent implements OnInit {
         ];
         break;
 
-      case 'Energy Efficiency':
+      case 'Energy Consumption':
         this.kpiSubcategories = [
-          { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Efficiency' } // Energy Efficiency 子類別
+          { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' } // Energy Consumption 子類別
         ];
         break;
     }
@@ -3944,8 +3944,8 @@ export class BSInfoComponent implements OnInit {
           category.displayName = this.languageService.i18n['BS.mobility'];          // 更新顯示名稱為 Mobility
           break;
 
-        case 'Energy Efficiency':
-          category.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Efficiency
+        case 'Energy Consumption':
+          category.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Consumption
           break;
       }
     });
@@ -4022,10 +4022,10 @@ export class BSInfoComponent implements OnInit {
         });
         break;
 
-      case 'Energy Efficiency':
+      case 'Energy Consumption':
         this.kpiSubcategories.forEach( subcategory => {
-          if ( subcategory.value === 'Energy Efficiency' ) {
-            subcategory.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Efficiency
+          if ( subcategory.value === 'Energy Consumption' ) {
+            subcategory.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Consumption
           }
         });
         break;
@@ -4590,9 +4590,9 @@ export class BSInfoComponent implements OnInit {
         unit = '%'; // 設置單位為百分比
         addDataLabel( data.mobility, 'mobility' ); // 添加 Mobility 數據標籤
         break;
-      case 'Energy Efficiency':
-        unit = 'kW'; // 設置單位為千瓦
-        addDataLabel( data.energy, 'energy' ); // 添加 Energy Efficiency 數據標籤
+      case 'Energy Consumption':
+        unit = 'kWh'; // 設置單位為千瓦小時
+        addDataLabel( data.energy, 'energy' ); // 添加 Energy Consumption 數據標籤
         break;
     }
 
@@ -4660,9 +4660,9 @@ export class BSInfoComponent implements OnInit {
         subKpiName = this.languageService.i18n['BS.ngRanHandoverSuccessRate']; // 設置子KPI 名稱為 "NG-RAN Handover Success Rate"
         unit = '%';                                                            // 設置單位為 %
         break;
-      case 'Energy Efficiency':
+      case 'Energy Consumption':
         kpiName = this.languageService.i18n['BS.energyConsumption']; // 設置 KPI 名稱為 "Energy Consumption"
-        unit = 'kW';                                                 // 設置單位為 kW
+        unit = 'kWh';                                                // 設置單位為 kWh
         break;
       default:
         kpiName = 'KPI Name';  // 設置默認 KPI 名稱
@@ -4713,8 +4713,8 @@ export class BSInfoComponent implements OnInit {
         // 如果是 Mobility，設置 Y 軸標籤為百分比
         this.yAxisLabel = this.languageService.i18n['BS.percentage'];
         break;
-      case 'Energy Efficiency':
-        // 如果是 Energy Efficiency，設置 Y 軸標籤為功率（千瓦）
+      case 'Energy Consumption':
+        // 如果是 Energy Consumption，設置 Y 軸標籤為功率（千瓦小時）
         this.yAxisLabel = this.languageService.i18n['BS.Power'];
         break;
       default:
