@@ -202,6 +202,7 @@ export const TwLanguage = {
   'field.performanceHistory':'歷史',         // @2024/05/27 Add
   'field.historyPerformanceSearch': '歷史效能查詢', // @2024/05/27 Add
   'field.performanceHistorySearch': '效能歷史查詢', // @2024/05/27 Add
+  'field.items':'項目',  // @2024/05/27 Add
 
   'field.reportFM':'告警資訊(FM)',          // @12/12 Add
   'field.optim':'場域優化',                  // @12/12 Add
@@ -476,7 +477,8 @@ export const TwLanguage = {
   'BS.hourlyInterval': '每小時區間',
 
   'BS.dataSource': '資料來源',
-  'BS.Power': '功耗 ( kW )',
+  'BS.dataItems':'資料項目',  // @2024/05/27 Add
+  'BS.Power': '功耗 ( kWh )',
   'BS.percentage': '百分比 ( % )',
   'BS.milliseconds': '毫秒 ( ms )',
   'BS.megabitsPerSecond': '兆位元每秒 ( Mbps )',

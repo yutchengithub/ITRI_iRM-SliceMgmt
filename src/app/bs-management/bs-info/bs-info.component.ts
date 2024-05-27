@@ -3654,7 +3654,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 基站效能區 @2024/05/25 Update ↓
+// ↓ 基站效能區 @2024/05/27 Update ↓
 
   // @2024/05/14 Add
   // 用於儲存從 API 或 Local 獲取的 KPI 數據
@@ -4148,7 +4148,17 @@ export class BSInfoComponent implements OnInit {
     *    - 這個變數包含了處理過後的數據，根據顯示狀態更新後準備顯示在圖表上。
     *    - 它會根據每個數據系列的顯示狀態進行更新，以反映哪些數據系列應該顯示或隱藏。
     */
-  displayChartData: any[] = [];  // 最終顯示在圖表上的數據
+  displayChartData: ChartData[] = [];  // 最終顯示在圖表上的數據
+
+  /**
+   * @2024/05/27 Add
+   * 用於儲存要顯示在表格上的數據
+   * @property displayOnTableChartData
+   * @description
+   *    - 這個變數包含了要顯示在表格上的數據。
+   *    - 數據包括了填充缺失時間區間後的完整數據系列，包含值為 null 的數據點。
+   */
+  displayOnTableChartData: ChartData[] = [];  // 用於儲存要顯示在表格上的數據
 
   /**
    * @2024/05/25 Update
@@ -4180,7 +4190,7 @@ export class BSInfoComponent implements OnInit {
       legendItems.forEach( item => {
         // 獲取圖例文本
         const legendText = item.querySelector('.legend-label-text');
-        if (legendText) {
+        if ( legendText ) {
 
           // 獲取圖例文本內容並去除多餘空白
           const textContent = legendText.textContent?.trim() ?? null; // 使用 trim() 去除字串前後的空白字元
@@ -4225,17 +4235,17 @@ export class BSInfoComponent implements OnInit {
   prepareAndUpdateChartData() {
     // 首先根據選擇的條件過濾數據
     let rawData = this.filterData(); // 獲取過濾後的原始數據
-    console.log("In prepareAndUpdateChartData - rawData =", rawData); // 輸出原始數據到控制台
+    console.log( "In prepareAndUpdateChartData - rawData =", rawData ); // 輸出原始數據到控制台
 
     // 使用 consolidateSeries 函數來整理數據，確保數據點可以連接成線
     this.preparedChartData = this.consolidateSeries( rawData ); // 整理數據以便數據點可以連接成線
-    console.log("In prepareAndUpdateChartData - consolidated preparedChartData =", this.preparedChartData); // 輸出整理後的數據到控制台
+    console.log( "In prepareAndUpdateChartData - consolidated preparedChartData =", this.preparedChartData ); // 輸出整理後的數據到控制台
 
     this.fillMissingTimeBlocks(); // 填充缺少的時間區間
-    console.log("In prepareAndUpdateChartData - after fillMissingTimeBlock, the preparedChartData =", this.preparedChartData); // 輸出整理後的數據到控制台
+    console.log( "In prepareAndUpdateChartData - after fillMissingTimeBlock, the preparedChartData =", this.preparedChartData ); // 輸出整理後的數據到控制台
 
     // 初始化或更新每個數據系列的顯示狀態
-    this.preparedChartData.forEach(series => {
+    this.preparedChartData.forEach( series => {
       // 判斷 lineVisibility 是否已存在該 series.name 的狀態
       if ( !( series.name in this.lineVisibility ) ) {
         this.lineVisibility[series.name] = true; // 初始化顯示狀態為 true
@@ -4261,19 +4271,20 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/23 Update
+   * @2024/05/27 Update
    * 填充 24 小時的時間區間
    * @method fillMissingTimeBlocks
    * @description
    *    - 確保 `x` 軸顯示 24 個時間區間，不管該區間是否有數據。
    *    - 為了保證圖表上顯示的數據涵蓋完整的24小時時間段，填充缺失的時間區間。
    *    - 若某個時間區間沒有數據點，會插入一個空數據點以表示該時間區間無數據。
+   *    - 同時將包含有 null 值的數據存儲在 displayOnTableChartData 變數中，用於後續顯示數據於表格上。
    */
   fillMissingTimeBlocks() {
 
     // 獲取所有的時間區間
-    const allTimeBlocks: string[] = Object.values(this.currentBsKpiInfo).map((timeBlock: TimeBlock) =>
-      this.formatTimeRange(timeBlock.start, timeBlock.end)
+    const allTimeBlocks: string[] = Object.values( this.currentBsKpiInfo ).map( ( timeBlock: TimeBlock ) =>
+      this.formatTimeRange( timeBlock.start, timeBlock.end )
     );
 
     // 新增一個透明的 series 用於顯示所有時間區間
@@ -4289,9 +4300,13 @@ export class BSInfoComponent implements OnInit {
       }))
     };
 
+    // @2024/05/27 Add
+    // 初始化用於儲存要顯示在表格上的數據變數
+    this.displayOnTableChartData = [];
+
     // 遍歷過濾後的數據，填充缺少的時間區間
     this.preparedChartData.forEach( series => {
-      const seriesTimeSet: Set<string> = new Set( series.series.map( ( data: { time: string } ) => data.time ) );
+      const seriesTimeSet: Set< string > = new Set(series.series.map( ( data: { time: string }) => data.time ) );
       allTimeBlocks.forEach( time => {
         if ( !seriesTimeSet.has( time ) ) {
           // 如果該時間區間不存在於數據系列中，則插入一個空數據點
@@ -4306,15 +4321,52 @@ export class BSInfoComponent implements OnInit {
         }
       });
 
+      // @2024/05/27 Add
+      // 將系列數據加入到顯示在表格上的數據中
+      this.displayOnTableChartData.push({
+        name: series.name,
+        series: [...series.series] // 使用展開運算符複製數據
+      });
+
       // 過濾掉值為 null 的數據點
       series.series = series.series.filter( ( data: { time: string, value: number | null } ) => data.value !== null );
 
       // 按時間排序數據點
-      series.series.sort( ( a: { time: string }, b: { time: string } ) => new Date( a.time ).getTime() - new Date( b.time ).getTime() );
+      series.series.sort( (a: { time: string }, b: { time: string }) => new Date( a.time ).getTime() - new Date( b.time ).getTime() );
     });
 
     // 將 noneSeries 添加到 preparedChartData 中，用於顯示所有時間區間
     this.preparedChartData.push( noneSeries );
+
+    console.log("In fillMissingTimeBlocks() end - displayOnTableChartData = ", this.displayOnTableChartData );
+  }
+
+  /**
+   * @2024/05/27 Add
+   * 獲取所有時間區間
+   * @method getAllTimes
+   * @description
+   *    - 此函數用於獲取所有時間區間，用於表格顯示。
+   * @returns 包含所有時間區間的數組
+   */
+  getAllTimes(): string[] {
+    if ( this.displayOnTableChartData.length === 0 ) return [];
+    return this.displayOnTableChartData[0].series.map( item => item.time as string );
+  }
+
+  /**
+   * @2024/05/27 Add
+   * 獲取指定時間區間的數據
+   * @method getDataForTime
+   * @param item - 數據項目
+   * @param time - 時間區間
+   * @description
+   *    - 根據提供的數據項目和時間區間，返回對應的數據值。
+   * @returns 對應時間區間的數據值
+   */
+  getDataForTime( item: ChartData, time: string ): any {
+    const dataPoint = item.series.find( point => point.time === time );
+    return dataPoint ? ( dataPoint.value !== null ? dataPoint.value : this.languageService.i18n['BS.kpiValueNone'] ) : this.languageService.i18n['BS.kpiValueNone'];
   }
 
   /**
@@ -4327,7 +4379,7 @@ export class BSInfoComponent implements OnInit {
    */
   updateDisplayChartData() {
     // 更新 displayChartData，使其根據 lineVisibility 的狀態顯示或隱藏數據系列
-    this.displayChartData = this.preparedChartData.map(series => {
+    this.displayChartData = this.preparedChartData.map( series => {
       return {
         name: series.name,
         // 根據 lineVisibility 的狀態決定是否顯示該數據系列
@@ -4744,7 +4796,7 @@ export class BSInfoComponent implements OnInit {
     //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
   }
 
-// ↑ 基站效能區 @2024/05/25 Update ↑
+// ↑ 基站效能區 @2024/05/27 Update ↑
 
 
 }
