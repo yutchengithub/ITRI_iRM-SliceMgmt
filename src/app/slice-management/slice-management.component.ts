@@ -24,15 +24,15 @@ import { ScheduleList, Schedule } from '../shared/interfaces/Schedule/For_queryJ
 import { localScheduleList }      from '../shared/local-files/Schedule/For_queryJobTicketList'; // @2024/03/15 Add
 
 
-// @2024/04/25 Add 
-// 定義 Schedule Type 介面
-interface ScheduleType {
+// @2024/05/29 Add 
+// 定義 Slice Type 介面
+interface SliceType {
   displayName: string;
   value: string;
 }
 
 // 定義 Schedule State 介面
-interface State {
+interface SliceState {
   displayName: string;
   value: string;
 }
@@ -47,6 +47,12 @@ export class SliceManagementComponent implements OnInit {
   sessionId: string = '';   // sessionId 用於存儲當前會話 ID
   refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
   refreshTime: number = 5;  // refreshTime 定義自動刷新的時間間隔（秒）
+
+  slicetype: Item[] = [
+    { displayName: 'eMBB', value: '0' },
+    { displayName: `URLLC`, value: '1' },
+    { displayName: `mMTC`, value: '2' }
+  ];
 
   // @2024/04/17 Add
   // Show spinner of Loading Title 
@@ -135,9 +141,9 @@ export class SliceManagementComponent implements OnInit {
     // 取得排程列表數據
     this.getQueryJobTicketList();
 
-    // 訂閱語系切換事件，以便在語言變更時更新排程類型和狀態的顯示訊息
+    // 訂閱語系切換事件，以便在語言變更時更新切片類型和狀態的顯示訊息
     this.languageService.languageChanged.subscribe(
-      ( language ) => this.updateScheduleTypeStatusInfo(),
+      ( language ) => this.updateSliceTypeStatusInfo(),
     );
   }
 
@@ -247,14 +253,14 @@ export class SliceManagementComponent implements OnInit {
 
 // ↓ 控制顯示排程狀態的 icon 與訊息，以及排程類型的訊息 @2024/04/25 Update ↓
 
-  // @2024/03/21 Add
+  // @2024/05/29 Update
   // 用於存儲排程狀態對應的 icon 和訊息
   ticketStatusInfo = [
-    { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] },
-    { icon: 'grayLight',   message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobDailyString'] + ' )' },
+    { icon: 'grayLight',   message: this.languageService.i18n['slice.notActivated'] },
+    { icon: 'grayLight',   message: this.languageService.i18n['slice.notActivated'] },
     { icon: 'blueLight',   message: this.languageService.i18n['sm.jobOnGoingString'] },
-    { icon: 'greenLight',  message: this.languageService.i18n['sm.jobSuccessString'] },
-    { icon: 'redLight',    message: this.languageService.i18n['sm.jobFailString'] },
+    { icon: 'greenLight',  message: this.languageService.i18n['slice.running'] },
+    { icon: 'redLight',    message: this.languageService.i18n['slice.fault'] },
     { icon: 'yellowLight', message: this.languageService.i18n['sm.jobPartialSuccessString'] }
   ];
 
@@ -274,10 +280,10 @@ export class SliceManagementComponent implements OnInit {
         return this.ticketStatusInfo[1];
       } else if ( executedType === 2 ) {
         // 返回一個自定義的對象，包含圖示和消息
-        return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobWeeklyString'] + ' )' };
+        return { icon: 'grayLight', message: this.languageService.i18n['slice.notActivated'] };
       } else if ( executedType === 3 ) {
         // 返回一個自定義的對象，包含圖示和消息
-        return { icon: 'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobMonthlyString'] + ' )' };
+        return { icon: 'grayLight', message: this.languageService.i18n['slice.notActivated'] };
       }
     }
 
@@ -285,38 +291,38 @@ export class SliceManagementComponent implements OnInit {
     return this.ticketStatusInfo[ticketStatus];
   }
 
-  // @2024/04/25 Update
+  // @2024/05/29 Update
   // 更新排程狀態和類型的顯示訊息，以對應當前用戶選擇的語言設定。這確保了用戶介面中相關訊息的多語言一致性。
-  updateScheduleTypeStatusInfo() {
+  updateSliceTypeStatusInfo() {
 
     // 更新 ticketStatusInfo 以顯示表格中的狀態欄位的多語言訊息
     this.ticketStatusInfo = [
-      { icon:  ' grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] },
-      { icon:   'grayLight', message: this.languageService.i18n['sm.jobSchedulingString'] + ' ( ' + this.languageService.i18n['sm.jobDailyString'] + ' )' },
-      { icon:   'blueLight', message: this.languageService.i18n['sm.jobOnGoingString'] },
-      { icon:  'greenLight', message: this.languageService.i18n['sm.jobSuccessString'] },
-      { icon:    'redLight', message: this.languageService.i18n['sm.jobFailString'] },
+      { icon: 'grayLight',   message: this.languageService.i18n['slice.notActivated'] },
+      { icon: 'grayLight',   message: this.languageService.i18n['slice.notActivated'] },
+      { icon: 'blueLight',   message: this.languageService.i18n['sm.jobOnGoingString'] },
+      { icon: 'greenLight',  message: this.languageService.i18n['slice.running'] },
+      { icon: 'redLight',    message: this.languageService.i18n['slice.fault'] },
       { icon: 'yellowLight', message: this.languageService.i18n['sm.jobPartialSuccessString'] }
     ];
 
     // 更新 States 以反映執行狀態下拉式選單的多語言選項
     this.States = [
       { displayName: 'All', value: 'All' },
-      { displayName: this.languageService.i18n['sm.jobSchedulingString'],     value: '0' }, // 假設 '0' 和 '1' 都代表 'Scheduling'
+      { displayName: this.languageService.i18n['slice.notActivated'],     value: '0' }, // 假設 '0' 和 '1' 都代表 'Scheduling'
       { displayName: this.languageService.i18n['sm.jobOnGoingString'],        value: '2' },
-      { displayName: this.languageService.i18n['sm.jobSuccessString'],        value: '3' },
-      { displayName: this.languageService.i18n['sm.jobFailString'],           value: '4' },
+      { displayName: this.languageService.i18n['slice.running'],        value: '3' },
+      { displayName: this.languageService.i18n['slice.fault'],           value: '4' },
       { displayName: this.languageService.i18n['sm.jobPartialSuccessString'], value: '5' }
     ];
 
-    // 更新 Types 以反映排程類型下拉式選單的多語言選項
-    this.Types = [
+    // 更新 sliceTypes 以反映切片類型下拉式選單的多語言選項
+    this.sliceTypes = [
       { displayName: 'All', value: 'All' },
-      { displayName: this.languageService.i18n['sm.sfUpdate'], value: '0' },
-      { displayName: this.languageService.i18n['sm.caReport'], value: '1' },
-      { displayName: this.languageService.i18n['sm.pmReport'], value: '2' },
-      { displayName: this.languageService.i18n['sm.fmReport'], value: '3' },
-      { displayName: this.languageService.i18n['sm.sfReport'], value: '4' }
+      { displayName: "eMBB", value: '0' },
+      { displayName: "URLLC", value: '1' },
+      { displayName: "mMTC", value: '2' },
+      { displayName: "V2X", value: '3' },
+      { displayName: "HMTC", value: '4' }
     ];
   }
 
@@ -329,25 +335,25 @@ export class SliceManagementComponent implements OnInit {
   searchForm!: FormGroup;      // 用於儲存篩選條件
   afterSearchForm!: FormGroup; // 用於儲存並顯示出篩選條件
 
-  // @2024/04/25 Add
+  // @2024/05/29 Add
   // 定義所有的類型及其對應的 tickettype
-  Types: ScheduleType[] = [
+  sliceTypes: SliceType[] = [
     { displayName: 'All', value: 'All' },
-    { displayName: this.languageService.i18n['sm.sfUpdate'], value: '0' },
-    { displayName: this.languageService.i18n['sm.caReport'], value: '1' },
-    { displayName: this.languageService.i18n['sm.pmReport'], value: '2' },
-    { displayName: this.languageService.i18n['sm.fmReport'], value: '3' },
-    { displayName: this.languageService.i18n['sm.sfReport'], value: '4' }
+    { displayName: "eMBB", value: '0' },
+    { displayName: "URLLC", value: '1' },
+    { displayName: "mMTC", value: '2' },
+    { displayName: "V2X", value: '3' },
+    { displayName: "HMTC", value: '4' }
   ];
 
-  // @2024/03/21 Add
+  // @2024/05/29 Update
   // 定義所有可能的狀態及其對應的 ticketstatus
-  States: State[] = [
+  States: SliceState[] = [
     { displayName: 'All', value: 'All' },
-    { displayName: this.languageService.i18n['sm.jobSchedulingString'],     value: '0' }, // 假設 '0' 和 '1' 都代表 'Scheduling'
+    { displayName: this.languageService.i18n['slice.notActivated'],     value: '0' }, // 假設 '0' 和 '1' 都代表 'Scheduling'
     { displayName: this.languageService.i18n['sm.jobOnGoingString'],        value: '2' },
-    { displayName: this.languageService.i18n['sm.jobSuccessString'],        value: '3' },
-    { displayName: this.languageService.i18n['sm.jobFailString'],           value: '4' },
+    { displayName: this.languageService.i18n['slice.running'],        value: '3' },
+    { displayName: this.languageService.i18n['slice.fault'],           value: '4' },
     { displayName: this.languageService.i18n['sm.jobPartialSuccessString'], value: '5' }
   ];
 
@@ -901,12 +907,6 @@ export class SliceManagementComponent implements OnInit {
   isSearch: boolean = false;
   querySoftwareScpt!: Subscription;
   querySWAdvanceSearchScpt!: Subscription;
-
-  comtype: Item[] = [
-    { displayName: 'CU', value: '1' },
-    { displayName: `DU`, value: '2' },
-    { displayName: `CU+DU+RU`, value: '3' }
-  ];
 
 }
 
