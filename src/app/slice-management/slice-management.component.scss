@@ -8,17 +8,17 @@ table {
 }
 thead tr th,
 tbody tr td {
-  width: 20%;    // 將每個列的寬度設置為相等的百分比
+  width: 2%;    // 將每個列的寬度設置為相等的百分比
   text-align: center; // 所有內容都居中對齊
   white-space: nowrap;
 }
-tbody tr td:nth-child(2) {
-  text-align: left;
-}
-thead tr th:first-child,
-tbody tr td:first-child {
-  width: 9%;
-}
+// tbody tr td:nth-child(2) {
+//   text-align: left;
+// }
+// thead tr th:first-child,
+// tbody tr td:first-child {
+//   width: 9%;
+// }
 .icon {
   width: 3%!important;
   text-align: center;

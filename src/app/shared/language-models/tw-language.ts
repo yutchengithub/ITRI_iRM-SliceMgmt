@@ -760,4 +760,30 @@ export const TwLanguage = {
 
   // Slice Management ( 切片管理 )
   'slice.info':'切片詳細資訊',
+  //'slice.creationTime': '建立時間',
+  'slice.creationTime': '切片建立時間',
+  'slice.type': '切片類型',
+  'slice.status': '切片狀態',
+  'slice.running': '運行中',
+  'slice.notActivated': '未啟動',
+  'slice.fault': '故障',
+  'slice.topology': '切片拓樸',
+  'slice.count': '切片數量',
+  'slice.load': '切片負載',
+  'slice.registeredUENumber': '註冊的 UE 數量',
+  'slice.totalUENumber': '使用的 UE 總數',
+  'slice.activeUENumber': '活躍的 UE 數量',
+  'slice.pduSessionNumber': 'PDU 會話數量',
+  //'slice.operations': '操作',
+  'slice.operations': '切片操作',
+
+  'slice.creation': '切片建立',
+  'slice.create': '建立切片',
+  'slice.selectType': '選擇切片類型',
+
+  'slice.activate': '啟動切片',
+  'slice.activateThisSlice': '啟動此切片',
+  'slice.deleteThisSlice': '刪除此切片',
+  'slice.viewDetails': '詳細查看此切片',
+  
 }

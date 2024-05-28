@@ -1416,6 +1416,15 @@ body.tw .sfReport .file_url_info li label,
 body.tw .pmReport .file_url_info li label {
   width: 7em!important;
 }
+
+body.tw .slice .fmReport ul.ftp_info li label,
+body.tw .slice .ftp_info li > label {
+  width: 5em!important;
+}
+body.tw .slice .Software_info li label{
+  width: 8em!important;
+}
+
 #bsCreationWindow {
   min-width: 50em;
   min-height: 45em;
@@ -1771,4 +1780,10 @@ ngx-charts-legend-entry[ng-reflect-label="none"] {
 }
 #fieldPMReportWindow .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
   border-left: solid 1px #427ebd;
+}
+
+// 調整未選中狀態下滑桿的背景色 @2024/05/29 Add
+.mat-slide-toggle.mat-slide-toggle-disabled .mat-slide-toggle-bar,
+.mat-slide-toggle .mat-slide-toggle-bar {
+  background-color: #87aeea;
 }

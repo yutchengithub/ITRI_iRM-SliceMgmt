@@ -748,4 +748,30 @@ export const Enlanguage = {
 
   // Slice Management ( 切片管理 )
   'slice.info':'Slice Detailed Information',
+  //'slice.creationTime': 'Creation Time',
+  'slice.creationTime': 'Slice Creation Time',
+  'slice.type': 'Slice Type',
+  'slice.status': 'Slice Status',
+  'slice.running': 'Running',
+  'slice.notActivated': 'Not Activated',
+  'slice.fault': 'Fault',
+  'slice.topology': 'Slice Topology',
+  'slice.count': 'Slice Count',
+  'slice.load': 'Slice Load',
+  'slice.registeredUENumber': 'Registered UE Number',
+  'slice.totalUENumber': 'Total Used UE',
+  'slice.activeUENumber': 'Active UE Number',
+  'slice.pduSessionNumber': 'PDU Session Number',
+  //'slice.operations': 'Operations',
+  'slice.operations': 'Slice Operations',
+
+  'slice.creation': 'Slice Creation',
+  'slice.create': 'Create Slice',
+  'slice.selectType': 'Select Slice Type',
+
+  'slice.activate': 'Activate Slice',
+  'slice.activateThisSlice': 'Activate this Slice',
+  'slice.deleteThisSlice': 'Delete this Slice',
+  'slice.viewDetails': 'View Details of this Slice',
+
 }

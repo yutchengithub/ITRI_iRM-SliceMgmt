@@ -1,12 +1,12 @@
 <h5>{{ languageService.i18n['index.menu_sliceMgr'] }}
-  <mat-icon tooltip="{{ languageService.i18n['sm.th_create'] }}" (click)="openCreateModal()">add</mat-icon>
+  <mat-icon tooltip="{{ languageService.i18n['slice.create'] }}" (click)="openCreateModal()">add</mat-icon>
 </h5>
 <form [formGroup]="searchForm">
   <div class="filter">
 
-    <!-- 日期選擇器 - 排程執行時間 @2024/04/25 Add  -->
+    <!-- 日期選擇器 - 切片建立時間 @2024/05/29 Update  -->
     <span>
-      <label>{{ languageService.i18n['sm.scheduledExecutionTime'] }}&nbsp;</label>
+      <label>{{ languageService.i18n['slice.creationTime'] }}&nbsp;</label>
       <span>
         <p-calendar formControlName="from" [showTime]="true" inputId="scheduledExecutionStartTime" dateFormat="yy-mm-dd"></p-calendar>
       </span>
@@ -18,20 +18,20 @@
       </span>
     </span>
 
-    <!-- 下拉式選單 - 類型 @2024/04/25 Add -->
+    <!-- 下拉式選單 - 切片類型 @2024/04/25 Add -->
     <span>
-      <label>{{ languageService.i18n['sm.scheduleType'] }}</label>
+      <label>{{ languageService.i18n['slice.type'] }}</label>
       <select formControlName="Type">
-        <option *ngFor="let type of Types" [ngValue]="type.value">
+        <option *ngFor="let type of sliceTypes" [ngValue]="type.value">
           {{ type.displayName }}
         </option>
       </select>
       <mat-error *ngIf="searchForm.controls['Type'].invalid">Required</mat-error>
     </span>
 
-    <!-- 下拉式選單 - 執行狀態 @2024/04/25 Add -->
+    <!-- 下拉式選單 - 切片狀態 @2024/05/29 Add -->
     <span>
-      <label>{{ languageService.i18n['sm.th_state'] }}</label>
+      <label>{{ languageService.i18n['slice.status'] }}</label>
       <select formControlName="State">
         <option *ngFor="let state of States" [ngValue]="state.value">
           {{ state.displayName }}
@@ -50,40 +50,34 @@
   <div class="filterBY">
     <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
 
-      <!-- 日期選擇器 - 排程執行時間 @2024/04/25 Add  -->
+      <!-- 日期選擇器 - 切片建立時間 @2024/04/25 Add  -->
       <span *ngIf="afterSearchForm.controls['from'].value || afterSearchForm.controls['to'].value">
-        <label>{{ languageService.i18n['sm.scheduledExecutionTime'] }}:&nbsp;</label>
+        <label>{{ languageService.i18n['slice.creationTime'] }}:&nbsp;</label>
         {{ afterSearchForm.controls['from'].value ? ( commonService.dealPostDate(afterSearchForm.controls['from'].value ) + ' ~ ') : '' }}
         {{ afterSearchForm.controls['to'].value ? commonService.dealPostDate( afterSearchForm.controls['to'].value ) : '' }}
       </span>
 
-      <!-- 下拉式選單 - 類型 @2024/04/25 Add -->
+      <!-- 顯示下拉選單選擇的切片類型 @2024/05/29 Add -->
       <span *ngIf="afterSearchForm && afterSearchForm.controls['Type'] && afterSearchForm.controls['Type'].value">
-        <label>{{ languageService.i18n['sm.scheduleType'] }}:&nbsp;</label>
+        <label>{{ languageService.i18n['slice.type'] }}:&nbsp;</label>
         <label *ngIf="afterSearchForm.controls['Type'].value === 'All'">All</label>
-        <label *ngIf="afterSearchForm.controls['Type'].value === '0' ">
-          {{ languageService.i18n['sm.sfUpdate'] }}
-        </label>
-        <label *ngIf=" afterSearchForm.controls['Type'].value === '1' ">
-          {{ languageService.i18n['sm.caReport'] }}</label>
-        <label *ngIf=" afterSearchForm.controls['Type'].value === '2' ">
-          {{ languageService.i18n['sm.pmReport'] }}</label>
-        <label *ngIf=" afterSearchForm.controls['Type'].value === '3' ">
-          {{ languageService.i18n['sm.fmReport'] }}</label>
-        <label *ngIf=" afterSearchForm.controls['Type'].value === '4' ">
-          {{ languageService.i18n['sm.sfReport'] }}</label>
+        <label *ngIf="afterSearchForm.controls['Type'].value === '0' ">eMBB</label>
+        <label *ngIf=" afterSearchForm.controls['Type'].value === '1' ">URLLC</label>
+        <label *ngIf=" afterSearchForm.controls['Type'].value === '2' ">mMTC</label>
+        <label *ngIf=" afterSearchForm.controls['Type'].value === '3' ">V2X</label>
+        <label *ngIf=" afterSearchForm.controls['Type'].value === '4' ">HMTC</label>
       </span>
 
-      <!-- 下拉式選單 - 執行狀態 @2024/04/25 Add -->
+      <!-- 下拉式選單 - 切片狀態 @2024/05/29 Add -->
       <span *ngIf="afterSearchForm && afterSearchForm.controls['State'] && afterSearchForm.controls['State'].value">
-        <label>{{ languageService.i18n['sm.th_state'] }}:&nbsp;</label>
+        <label>{{ languageService.i18n['slice.status'] }}:&nbsp;</label>
         <label *ngIf="afterSearchForm.controls['State'].value === 'All'">All</label>
         <span *ngIf="afterSearchForm.controls['State'].value === '0' || afterSearchForm.controls['State'].value === '1'">
-          {{ languageService.i18n['sm.jobSchedulingString'] }}
+          {{ languageService.i18n['slice.notActivated'] }}
         </span>
         <label *ngIf=" afterSearchForm.controls['State'].value === '2' ">{{ languageService.i18n['sm.jobOnGoingString'] }}</label>
-        <label *ngIf=" afterSearchForm.controls['State'].value === '3' ">{{ languageService.i18n['sm.jobSuccessString'] }}</label>
-        <label *ngIf=" afterSearchForm.controls['State'].value === '4' ">{{ languageService.i18n['sm.jobFailString'] }}</label>
+        <label *ngIf=" afterSearchForm.controls['State'].value === '3' ">{{ languageService.i18n['slice.running'] }}</label>
+        <label *ngIf=" afterSearchForm.controls['State'].value === '4' ">{{ languageService.i18n['sslice.fault'] }}</label>
         <label *ngIf=" afterSearchForm.controls['State'].value === '5' ">{{ languageService.i18n['sm.jobPartialSuccessString'] }}</label>
       </span>
   </div>
@@ -93,11 +87,16 @@
   <table>
     <thead>
       <tr>
-        <th>{{ languageService.i18n['sm.scheduledExecutionTime'] }}</th>
-        <th>{{ languageService.i18n['sm.scheduleType'] }}</th>
-        <th class="icon state">{{ languageService.i18n['sm.th_state'] }}</th>
+        <th>{{ languageService.i18n['slice.creationTime'] }}</th>
+        <th>{{ languageService.i18n['slice.type'] }}</th>
+        <th>{{ languageService.i18n['slice.totalUENumber'] }}</th>
+        <th>{{ languageService.i18n['slice.registeredUENumber'] }}</th>
+        <th>{{ languageService.i18n['slice.activeUENumber'] }}</th>
+        <th>{{ languageService.i18n['slice.pduSessionNumber'] }}</th>
+        <th>{{ languageService.i18n['slice.load'] }}</th>
+        <th class="icon state">{{ languageService.i18n['slice.status'] }}</th>
+        <th class="icon">{{ languageService.i18n['slice.operations'] }}</th>
         <th class="icon">{{ languageService.i18n['sm.th_view'] }}</th>
-        <th class="icon">{{ languageService.i18n['sm.th_download'] }}</th>
         <th class="icon">{{ languageService.i18n['sm.th_delete'] }}</th>
       </tr>
     </thead>
@@ -116,43 +115,47 @@
       </ng-container> -->
 
       <!-- 加載完成後顯示 排程列表 數據 -->
-      <ng-container *ngIf="!isLoadingScheduleList">
+      <!-- <ng-container *ngIf="!isLoadingScheduleList"> -->
         <tr *ngFor="let schedule of scheduleListToDisplay | paginate: { 
                       itemsPerPage: pageSize,
                       currentPage: p, 
                         totalItems: totalItems, 
-                                id: 'PageDisplay_of_scheduleList'
+                                id: 'PageDisplay_of_sliceList'
           };">
+        
           <td>{{ schedule.executedtime }}</td>
           <td>
-            <label *ngIf=" schedule.tickettype === '0' ">{{ languageService.i18n['sm.sfUpdate'] }}</label>
-            <label *ngIf=" schedule.tickettype === '1' ">{{ languageService.i18n['sm.caReport'] }}</label>
-            <label *ngIf=" schedule.tickettype === '2' ">{{ languageService.i18n['sm.pmReport'] }}</label>
-            <label *ngIf=" schedule.tickettype === '3' ">{{ languageService.i18n['sm.fmReport'] }}</label>
-            <label *ngIf=" schedule.tickettype === '4' ">{{ languageService.i18n['sm.sfReport'] }}</label>
+            <label *ngIf=" schedule.tickettype === '0' ">eMBB</label>
+            <label *ngIf=" schedule.tickettype === '1' ">URLLC</label>
+            <label *ngIf=" schedule.tickettype === '2' ">mMTC</label>
+            <label *ngIf=" schedule.tickettype === '3' ">V2X</label>
+            <label *ngIf=" schedule.tickettype === '4' ">HMTC</label>
           </td>
+          <td>100</td>
+          <td>55</td>
+          <td>30</td>
+          <td>30</td>
+          <td>70 %</td>
           <td class="icon state">
             <label [class]="getScheduleStatusInfo( schedule ).icon"></label>
             &zwnj;<label>{{ getScheduleStatusInfo( schedule ).message }}</label>
           </td>
           <td class="icon">
-            <mat-icon tooltip="{{ languageService.i18n['sm.view_detail'] }}" (click)="viewScheduleDetailInfo( schedule )"> remove_red_eye </mat-icon>
+            <mat-slide-toggle tooltip="{{ languageService.i18n['slice.activateThisSlice'] }}"></mat-slide-toggle>
           </td>
           <td class="icon">
-            <mat-icon *ngIf="schedule.ticketresult" tooltip="{{ languageService.i18n['sm.smDownload'] }}" (click)="downloadSpecificScheduleReportInList( schedule )">
-              sim_card_download
-            </mat-icon>
+            <mat-icon tooltip="{{ languageService.i18n['slice.viewDetails'] }}" (click)="viewScheduleDetailInfo( schedule )"> remove_red_eye </mat-icon>
           </td>
           <td class="icon"><!-- 刪除按鈕 -->
-            <mat-icon tooltip="{{ languageService.i18n['sm.delItem'] }}" (click)="openDeleteSchedule_ConfirmWindow( schedule )">
+            <mat-icon tooltip="{{ languageService.i18n['slice.deleteThisSlice'] }}" (click)="openDeleteSchedule_ConfirmWindow( schedule )">
               delete_forever
             </mat-icon>
           </td>
-        </tr>
+        </tr> 
         <tr class="notFind" *ngIf="scheduleListToDisplay.length === 0">
           <td colspan="7">{{ languageService.i18n['no_results'] }}</td>
         </tr> 
-      </ng-container>
+      <!-- </ng-container> -->
     </tbody>
   </table>
 </div>
@@ -161,7 +164,7 @@
     screenReaderPaginationLabel="Pagination"
     previousLabel=""
     nextLabel=""
-    id="PageDisplay_of_scheduleList"
+    id="PageDisplay_of_sliceList"
   ></pagination-controls>
 
 <!-- Confirm Window of Delete Schedule @2024/03/22 Add -->
@@ -196,27 +199,27 @@
 
 
 <ng-template #createScheduleModal>
-  <h5>{{ languageService.i18n['sm.createWindowTitle'] }}</h5>
+  <h5>{{ languageService.i18n['slice.creation'] }}</h5>
   <form [formGroup]="createForm" >
     <ul class="addschedule-ul-li-label">
       <li>
-        <label>{{languageService.i18n['sm.select_type']}}</label>
+        <label>{{languageService.i18n['slice.type']}}</label>
         <span>
-          <select formControlName="comtype" class="{{formValidated&&createForm.controls['comtype'].invalid?'required':''}}">
+          <select formControlName="slicetype" class="{{formValidated&&createForm.controls['slicetype'].invalid?'required':''}}">
             <option value="" ></option>
-            <option *ngFor="let opt of comtype" [value]="opt.value">{{opt.displayName}}</option>
+            <option *ngFor="let opt of slicetype" [value]="opt.value">{{opt.displayName}}</option>
           </select>
-          <mat-error *ngIf="formValidated&&createForm.controls['comtype'].invalid">Required</mat-error>
+          <mat-error *ngIf="formValidated&&createForm.controls['slicetype'].invalid">Required</mat-error>
         </span>
       </li>
       <li>
         <label>{{languageService.i18n['sm.select_field']}}</label>
         <span>
-          <select formControlName="comtype" class="{{formValidated&&createForm.controls['comtype'].invalid?'required':''}}">
+          <select formControlName="slicetype" class="{{formValidated&&createForm.controls['slicetype'].invalid?'required':''}}">
             <option value="" ></option>
-            <option *ngFor="let opt of comtype" [value]="opt.value">{{opt.displayName}}</option>
+            <option *ngFor="let opt of slicetype" [value]="opt.value">{{opt.displayName}}</option>
           </select>
-          <mat-error *ngIf="formValidated&&createForm.controls['comtype'].invalid">Required</mat-error>
+          <mat-error *ngIf="formValidated&&createForm.controls['slicetype'].invalid">Required</mat-error>
         </span>
       </li>
     </ul>
@@ -278,7 +281,7 @@
         <span>{{languageService.i18n['type']}}</span>
         <select formControlName="uploadtype">
           <option value="All">All</option>
-          <option *ngFor="let opt of comtype" [value]="opt.value">{{opt.displayName}}</option>
+          <option *ngFor="let opt of slicetype" [value]="opt.value">{{opt.displayName}}</option>
         </select>
       </li>
       <li>
