@@ -1787,3 +1787,20 @@ ngx-charts-legend-entry[ng-reflect-label="none"] {
 .mat-slide-toggle .mat-slide-toggle-bar {
   background-color: #607089;
 }
+
+// bs-info mouseover 
+.gm-style-iw-chr button[title="Close"] {
+  width: 12px!important;
+  height: 12px!important;
+}
+.gm-style-iw-chr button[title="Close"] span {
+  width: 18px !important;
+  height: 18px !important;
+  margin: 0 !important;
+  position: absolute;
+  right: 1px;
+  top: 2px;
+}
+.gm-style-iw-t .gm-style-iw {
+  padding-left: 15px!important;
+}
