@@ -760,6 +760,9 @@ export const TwLanguage = {
   'NElog.Export':'匯出網元日誌',             // @2024/03/13 Add by yuchen
 
   // Slice Management ( 切片管理 )
+  'slice.name': '切片名稱',
+  'slice.id': '切片 ID',
+
   'slice.info':'切片詳細資訊',
   //'slice.creationTime': '建立時間',
   'slice.creationTime': '切片建立時間',

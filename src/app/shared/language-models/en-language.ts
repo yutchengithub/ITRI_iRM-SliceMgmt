@@ -748,6 +748,9 @@ export const Enlanguage = {
 
 
   // Slice Management ( 切片管理 )
+  'slice.name': 'Slice Name',
+  'slice.id': 'Slice ID',
+
   'slice.info':'Slice Detailed Information',
   //'slice.creationTime': 'Creation Time',
   'slice.creationTime': 'Slice Creation Time',
