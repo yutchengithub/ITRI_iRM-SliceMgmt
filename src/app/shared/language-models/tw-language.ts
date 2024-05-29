@@ -200,6 +200,7 @@ export const TwLanguage = {
  // 'field.performanceHistory':'效能歷史',   // @2024/05/27 Add
   'field.performanceOverview':'總覽',        // @2024/05/27 Add
   'field.performanceHistory':'歷史',         // @2024/05/27 Add
+  'field.HistorySearch': '歷史查詢',         // @2024/05/29 Add
   'field.historyPerformanceSearch': '歷史效能查詢', // @2024/05/27 Add
   'field.performanceHistorySearch': '效能歷史查詢', // @2024/05/27 Add
   'field.items':'項目',  // @2024/05/27 Add

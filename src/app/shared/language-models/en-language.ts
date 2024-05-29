@@ -199,8 +199,9 @@ export const Enlanguage = {
   'field.performance': 'Field Performance', // @2024/05/27 Add
   //'field.performanceOverview':'Performance Overview', // @2024/05/27 Add
   //'field.performanceHistory':'Performance History',   // @2024/05/27 Add
-  'field.performanceOverview':'Overview', // @2024/05/27 Add
-  'field.performanceHistory':'History',   // @2024/05/27 Add
+  'field.performanceOverview':'Overview',   // @2024/05/27 Add
+  'field.performanceHistory':'History',     // @2024/05/27 Add
+  'field.HistorySearch': 'History Search',  // @2024/05/29 Add
   'field.historyPerformanceSearch': 'Historical Performance Search', // @2024/05/27 Add
   'field.performanceHistorySearch': 'Performance History Search',    // @2024/05/27 Add
   'field.items':'Items',  // @2024/05/27 Add
