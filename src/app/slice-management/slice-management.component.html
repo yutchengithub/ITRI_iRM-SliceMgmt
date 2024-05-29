@@ -88,6 +88,7 @@
     <thead>
       <tr>
         <th>{{ languageService.i18n['slice.creationTime'] }}</th>
+        <th>{{ languageService.i18n['slice.name'] }}</th>
         <th>{{ languageService.i18n['slice.type'] }}</th>
         <th>{{ languageService.i18n['slice.totalUENumber'] }}</th>
         <th>{{ languageService.i18n['slice.registeredUENumber'] }}</th>
@@ -121,9 +122,10 @@
                       currentPage: p, 
                         totalItems: totalItems, 
                                 id: 'PageDisplay_of_sliceList'
-          };">
+          }; let i = index">
         
           <td>{{ schedule.executedtime }}</td>
+          <td>slice_{{i}}</td>
           <td>
             <label *ngIf=" schedule.tickettype === '0' ">eMBB</label>
             <label *ngIf=" schedule.tickettype === '1' ">URLLC</label>
@@ -135,7 +137,7 @@
           <td>55</td>
           <td>30</td>
           <td>30</td>
-          <td>70 %</td>
+          <td>7{{i}} %</td>
           <td class="icon state">
             <label [class]="getScheduleStatusInfo( schedule ).icon"></label>
             &zwnj;<label>{{ getScheduleStatusInfo( schedule ).message }}</label>

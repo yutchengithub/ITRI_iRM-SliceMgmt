@@ -5,11 +5,11 @@
       <span class="material-icons">arrow_back</span>{{ languageService.i18n['back'] }}
     </button>
     {{languageService.i18n['slice.info']}} – 
-    <label *ngIf=" selectScheduleInfo.tickettype === '0' ">eMBB</label>
+    <!-- <label *ngIf=" selectScheduleInfo.tickettype === '0' ">eMBB</label>
     <label *ngIf=" selectScheduleInfo.tickettype === '1' ">URLLC</label>
     <label *ngIf=" selectScheduleInfo.tickettype === '2' ">mMTC</label>
     <label *ngIf=" selectScheduleInfo.tickettype === '3' ">V2X</label>
-    <label *ngIf=" selectScheduleInfo.tickettype === '4' ">HMTC</label>
+    <label *ngIf=" selectScheduleInfo.tickettype === '4' ">HMTC</label> -->slice_1
     / {{ selectScheduleInfo.executedtime }}
   </h5>
 
@@ -34,16 +34,25 @@
         <ul class="Software_info">
           <h3>{{ languageService.i18n['basic.info'] }}</h3>
           <li>
+            <label>{{ languageService.i18n['slice.id'] }}</label>
+            <span>f769da087f2044e7a0d7</span>
+          </li>
+          <li>
             <label>{{ languageService.i18n['slice.creationTime'] }}</label>
             <span>{{ selectScheduleInfo.executedtime }}</span>
           </li>
           <li>
+            <label>{{ languageService.i18n['slice.name'] }}</label>
+            <span>slice_1</span>
+          </li>
+          <li>
             <label>{{ languageService.i18n['slice.type'] }}</label>
-            <span *ngIf=" selectScheduleInfo.tickettype === '0' ">eMBB</span>
+            <!-- <span *ngIf=" selectScheduleInfo.tickettype === '0' ">eMBB</span>
             <span *ngIf=" selectScheduleInfo.tickettype === '1' ">URLLC</span>
             <span *ngIf=" selectScheduleInfo.tickettype === '2' ">mMTC</span>
             <span *ngIf=" selectScheduleInfo.tickettype === '3' ">V2X</span>
-            <span *ngIf=" selectScheduleInfo.tickettype === '4' ">HMTC</span>
+            <span *ngIf=" selectScheduleInfo.tickettype === '4' ">HMTC</span> -->
+            eMBB
           </li>
           <li>
             <label>{{ languageService.i18n['slice.status'] }}</label>
@@ -76,7 +85,7 @@
         <ul class="file_url_info">
           <h3>{{ languageService.i18n['slice.topology'] }}</h3>
           <div>
-            <img style="width: 110%; " src="assets/img/sliceTopologySample.png">
+            <img style="width: 90%; " src="assets/img/sliceTopologySample2.png">
           </div>
         </ul>
 
