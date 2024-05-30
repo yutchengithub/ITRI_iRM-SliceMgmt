@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { ElementRef } from '@angular/core';
 
 // Services
 import { CommonService }     from '../../shared/common.service';
@@ -30,7 +31,7 @@ import { apiForFieldMgmt } from '../../shared/api/For_Field_Mgmt';
 
 // 引入儲存各個資訊所需的 interfaces
 import { FieldInfo }                      from '../../shared/interfaces/Field/For_queryFieldInfo';                     // @2023/12/21 Add
-import { BsInfoInField }                  from '../../shared/interfaces/Field/For_queryFieldInfo';                     // @2023/12/21 Add
+import { BsInfoInField, CellInfo }        from '../../shared/interfaces/Field/For_queryFieldInfo';                     // @2023/12/21 Add
 import { ForCreateOrUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_createField_or_updateField';         // @2024/01/26 Add
 import { ForQueryOrUpdatePmFTPInfo }      from '../../shared/interfaces/Field/For_queryPmFtpInfo_or_updatePmFtpInfo';  // @2024/02/04 Add
 import { ForQuerySonParameter }           from '../../shared/interfaces/Field/For_querySonParameter';                  // @2024/03/30 Add
@@ -59,11 +60,9 @@ import { map } from 'rxjs/operators';              // @2023/12/24 Add
 import { GoogleMap } from '@angular/google-maps';  // @2024/01/03 Add
 import { MapMarker, MapInfoWindow } from '@angular/google-maps'; // @2024/02/27 Add
 
-import { Input } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox'; // @2024/03/30 Add
-
-import { ElementRef } from '@angular/core';
-import { Console } from 'console';
+import { Color, ScaleType } from '@swimlane/ngx-charts';
+import { LegendPosition } from '@swimlane/ngx-charts';
 
 export interface SimplifiedBSInfo {
   
@@ -115,6 +114,39 @@ enum OverlayType {
   None
 }
 
+// @2024/05/31 Add
+// 定義場域效能區 - Kpi Category 介面
+interface KpiCategory {
+  displayName: string;
+  value: string;
+}
+
+// @2024/05/31 Add
+// 定義場域效能區 - Kpi Subcategory 介面
+interface KpiSubcategory {
+  displayName: string;
+  value: string;
+}
+
+/** 
+ * @2024/05/31 Add
+ * 定義圖表數據點結構，用於存儲每個數據點的詳細信息。
+ * @interface BarChartData
+ * @property {string} [color] - 儲存顏色
+ * @property {string} [time] - 儲存時間範圍
+ * @property {string} [name] - 儲存名稱
+ * @property {any}    [value] - 儲存數值
+ * @property {string} [label] - 儲存標籤
+ * @property {string} [unit] - 儲存單位
+ */
+ export interface BarChartData {
+  color?: string;    // 儲存顏色
+  time?: string;     // 儲存時間範圍
+  name?: string;     // 儲存名稱
+  value?: any;       // 儲存數值
+  label?: string;    // 儲存標籤
+  unit?: string;     // 儲存單位
+}
 @Component({
   selector: 'app-field-info',
   templateUrl: './field-info.component.html',
@@ -264,6 +296,14 @@ export class FieldInfoComponent implements OnInit {
 
     // 此行被註釋掉，用於之後可能的表單優化功能
     //this.createFieldOptimizationForm();
+
+
+    // @2024/05/31 Add
+    // 訂閱語系切換事件，以便在語言變更時更新基站效能區的下拉選單文字
+    this.languageService.languageChanged.subscribe(() => {
+      this.updateLanguageOptions();       // 單純更新語系顯示
+      //this.updateLanguageSubcategories(); // 單純更新子類別顯示
+    });
   }
 
   /**
@@ -3377,12 +3417,16 @@ export class FieldInfoComponent implements OnInit {
   // 定義頁籤類型 @2024/05/27 Add
   fieldPMReportType: string = 'Performance_Overview'; // 預設顯示 "效能總攬" 頁面
 
-  // @2024/05/27 Update
+  // @2024/05/31 Update
   // 打開場域效能分析視窗
   openfieldPMReportWindow() {
 
     this.fieldPMReportType = 'Performance_Overview'; // 每次打開視窗都預設顯示 "場域效能總覽" 頁面
-   
+    this.updateDropdownOptions();     // 刷新下拉選單選項
+    this.selectedKpiCategory = "Accessibility";       // 預設 "KPI 類別" 選擇 Accessibility
+    this.selectedKpiSubcategory= "DRB Accessibility"; // 預設 "KPI 子類別" 選擇 DRB Accessibility
+    this.prepareAndUpdateChartData(); // 用新數據刷新圖表
+
     // 表單驗證狀態重置
     this.fieldPMReportWindow_Validated = false; 
 
@@ -3422,7 +3466,518 @@ export class FieldInfoComponent implements OnInit {
       console.log("changefieldPMReportType() - End");
   }
 
-// For 場域效能報表 @2024/05/27 Update ↑
+
+  kpiCategories: KpiCategory[] = [];       // 定義 KPI 類別的選項
+  kpiSubcategories: KpiSubcategory[] = []; // 定義 KPI 子類別的選項  
+  selectedKpiCategory: string = "";        // 當前選擇的 KPI 類別
+  selectedKpiSubcategory: string = "";     // 當前選擇的 KPI 子類別
+
+  // 數值格式化函數
+  //valueFormatting = (value: any) => `${value} ${this.getUnit()}`;
+  valueFormatting = (value: any) => `${value}`;
+
+  // 名稱格式化函數
+  nameFormatting = (name: any) => `${name}`;
+
+  // ngx-charts-bar-horizontal 圖表模組外觀設定區 ↓
+  
+    view: [number,number] = [700, 300];
+    showLegend = false;
+    legendTitle: string = this.languageService.i18n['BS.dataSource']; // 定義圖例標題名稱
+    legendPosition: LegendPosition = LegendPosition.Below;  // 使用枚舉
+    showXAxis = true;
+    showYAxis = true;
+    gradient = false;
+    showXAxisLabel = true;
+    xAxisLabel = '效能指標'; 
+    showYAxisLabel = false;
+    showDataLabel = true;
+    yAxisLabel = '基站與 Cell 識別';
+    trimYAxisTicks = false;
+    xAxisTickFormatting = this.valueFormatting;
+    yAxisTickFormatting = this.nameFormatting;
+    barPadding = 15;
+    roundDomains = true;
+
+    // 設定圖表配色方案
+    colorScheme: Color = {
+      name: 'ocean',            // 配色方案名稱
+      selectable: true,         // （ 此屬性在 ngx-charts 中沒有官方文檔說明，可能無實際作用 ）
+      group: ScaleType.Ordinal, // 配色組別，可以是 Ordinal 或 Linear
+      domain: [                 // 配色範圍，定義多個顏色用於數據系列
+        '#FF4500', // Orange Red
+        '#32CD32', // Lime Green
+        '#1E90FF', // Dodger Blue
+        '#FFD700', // Gold
+        '#FF69B4', // Hot Pink
+        '#8A2BE2', // Blue Violet
+        '#00CED1', // Dark Turquoise
+        '#FF6347', // Tomato
+        '#4682B4', // Steel Blue
+        '#7FFF00', // Chartreuse
+        '#DC143C', // Crimson
+        '#00FA9A', // Medium Spring Green
+        '#FF1493', // Deep Pink
+        '#00BFFF', // Deep Sky Blue
+        '#FF8C00', // Dark Orange
+        '#8B0000', // Dark Red
+        '#ADFF2F', // Green Yellow
+        '#20B2AA', // Light Sea Green
+        '#9370DB', // Medium Purple
+        '#FFB6C1'  // Light Pink
+      ]
+    };
+
+    // colorScheme = {
+    //   domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA','#FFFF00','#00FF00','#FF0000','#0000CD','#FF00FF','#00FFFF','#4B0082','#8B4513','#808000']
+    // };
+
+    dataColorMap = new Map<string, string>();    // 用於顯示圖表數據線的顏色映射表  
+
+    customColors = ( value: any ) => {
+  
+      console.log( "In customColors() - the get value:", value );
+  
+      // 如果值為 null 或 ""，返回透明色
+      if ( value === null || value === "" || value === "none" ) {
+        return '#ffffff00'; // 透明色 
+      }
+  
+      // 根據名稱設置顏色
+      const colorEntry = this.dataColorMap.get( value );
+      return colorEntry || '#ffff'; // 沒取得對應值就默認設為白色
+    };
+
+  // ngx-charts-bar-horizontal 圖表模組外觀設定區 ↑
+
+  preparedChartData: BarChartData[] = [];  // 經過整理後的數據，用於進一步處理
+  
+  displayChartData: BarChartData[] = [];  // 最終顯示在圖表上的數據
+
+  refreshFieldInfo_Flag: boolean = false; // 用於標記是否效能資訊是否被刷新
+
+  // 更新下拉選單的選項
+  updateDropdownOptions() {
+    this.kpiCategories = [
+      { displayName: this.languageService.i18n['BS.accessibility'], value: 'Accessibility' },        // Accessibility 選項 
+      { displayName: this.languageService.i18n['BS.integrity'], value: 'Integrity' },                // Integrity 選項
+      { displayName: this.languageService.i18n['BS.utilization'], value: 'Utilization' },            // Utilization 選項  
+      { displayName: this.languageService.i18n['BS.retainability'], value: 'Retainability' },        // Retainability 選項
+      { displayName: this.languageService.i18n['BS.mobility'], value: 'Mobility' },                  // Mobility 選項
+      { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' } // Energy Consumption 選項
+    ];
+    this.selectedKpiCategory = this.kpiCategories[0].value; // 設置預設選擇的 KPI 類別
+    this.updateKpiSubcategories(); // 更新 KPI 子類別選項
+  }
+
+  // 更新 KPI 子類別的選項
+  updateKpiSubcategories() {
+    switch ( this.selectedKpiCategory ) {
+      case 'Accessibility':
+        this.kpiSubcategories = [
+          { displayName: this.languageService.i18n['BS.drbAccessibility'], value: 'DRB Accessibility' } // DRB Accessibility 子類別  
+        ];
+        break;
+          
+      case 'Integrity':
+        this.kpiSubcategories = [
+          { displayName: this.languageService.i18n['BS.integratedDownlinkDelay'], value: 'Integrated Downlink Delay' },  // Integrated Downlink Delay 子類別
+          { displayName: this.languageService.i18n['BS.integratedUplinkDelay'], value: 'Integrated Uplink Delay' },      // Integrated Uplink Delay 子類別
+          { displayName: this.languageService.i18n['BS.ranUEDownlinkThroughput'], value: 'RAN UE Downlink Throughput' }, // RAN UE Downlink Throughput 子類別
+          { displayName: this.languageService.i18n['BS.ranUEUplinkThroughput'], value: 'RAN UE Uplink Throughput' }      // RAN UE Uplink Throughput 子類別
+        ];
+        break;
+
+      case 'Utilization':
+        this.kpiSubcategories = [
+          { displayName: this.languageService.i18n['BS.processUtilization'], value: 'Process Utilization' }, // Process Utilization 子類別
+          { displayName: this.languageService.i18n['BS.memoryUtilization'], value: 'Memory Utilization' },   // Memory Utilization 子類別  
+          { displayName: this.languageService.i18n['BS.diskUtilization'], value: 'Disk Utilization' }        // Disk Utilization 子類別
+        ];
+        break;
+
+      case 'Retainability':
+        this.kpiSubcategories = [
+          { displayName: this.languageService.i18n['BS.retainability'], value: 'Retainability' } // Retainability 子類別
+        ];
+        break;
+
+      case 'Mobility':
+        this.kpiSubcategories = [
+          { displayName: this.languageService.i18n['BS.ngRanHandoverSuccessRate'], value: 'NG-RAN Handover Success Rate' } // NG-RAN Handover Success Rate 子類別
+        ];
+        break;
+        
+      case 'Energy Consumption':
+        this.kpiSubcategories = [
+          { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' } // Energy Consumption 子類別
+        ];
+        break;
+    }
+    this.selectedKpiSubcategory = this.kpiSubcategories[0]?.value; // 設置預設選擇的 KPI 子類別
+  }
+
+  // 切換 KPI 類別時的處理
+  onKpiCategoryChange() {
+    this.updateKpiSubcategories();    // 更新 KPI 子類別選項
+    this.setXAxisLabel();             // 更新 X 軸標籤  
+    this.prepareAndUpdateChartData(); // 刷新圖表數據
+  }
+
+  // 更新語系選項
+  updateLanguageOptions() {
+
+    // 更新 KPI 類別的顯示名稱
+    this.kpiCategories.forEach( category => {
+      switch ( category.value ) {
+        case 'Accessibility':
+          category.displayName = this.languageService.i18n['BS.accessibility'];     // 更新顯示名稱為 Accessibility
+          break;
+          
+        case 'Integrity':
+          category.displayName = this.languageService.i18n['BS.integrity'];         // 更新顯示名稱為 Integrity 
+          break;
+
+        case 'Utilization': 
+          category.displayName = this.languageService.i18n['BS.utilization'];       // 更新顯示名稱為 Utilization
+          break;
+
+        case 'Retainability':
+          category.displayName = this.languageService.i18n['BS.retainability'];     // 更新顯示名稱為 Retainability
+          break;
+        
+        case 'Mobility':
+          category.displayName = this.languageService.i18n['BS.mobility'];          // 更新顯示名稱為 Mobility
+          break;
+
+        case 'Energy Consumption':
+          category.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Consumption
+          break;
+      }
+    });
+    
+    this.updateKpiSubcategories(); // 更新 KPI 子類別顯示名稱
+    this.setXAxisLabel();          // 更新 X 軸標籤
+  }
+
+  // 更新 KPI 子類別語系選項
+  updateLanguageSubcategories() {
+    switch ( this.selectedKpiCategory ) {
+      case 'Accessibility':
+        this.kpiSubcategories.forEach( subcategory => {
+          if ( subcategory.value === 'DRB Accessibility' ) {
+            subcategory.displayName = this.languageService.i18n['BS.drbAccessibility']; // 更新顯示名稱為 DRB Accessibility
+          }
+        });
+        break;
+
+      case 'Integrity':
+        this.kpiSubcategories.forEach( subcategory => {
+          switch ( subcategory.value ) {
+            case 'Integrated Downlink Delay':
+              subcategory.displayName = this.languageService.i18n['BS.integratedDownlinkDelay']; // 更新顯示名稱為 Integrated Downlink Delay
+              break;
+            case 'Integrated Uplink Delay':
+              subcategory.displayName = this.languageService.i18n['BS.integratedUplinkDelay'];   // 更新顯示名稱為 Integrated Uplink Delay  
+              break;
+            case 'RAN UE Downlink Throughput':
+              subcategory.displayName = this.languageService.i18n['BS.ranUEDownlinkThroughput']; // 更新顯示名稱為 RAN UE Downlink Throughput
+              break;
+            case 'RAN UE Uplink Throughput':
+              subcategory.displayName = this.languageService.i18n['BS.ranUEUplinkThroughput'];   // 更新顯示名稱為 RAN UE Uplink Throughput
+              break;
+          }
+        });
+        break;
+
+      case 'Utilization':
+        this.kpiSubcategories.forEach( subcategory => {
+          switch ( subcategory.value ) {
+            case 'Process Utilization':
+              subcategory.displayName = this.languageService.i18n['BS.processUtilization']; // 更新顯示名稱為 Process Utilization
+              break;
+            case 'Memory Utilization':
+              subcategory.displayName = this.languageService.i18n['BS.memoryUtilization'];  // 更新顯示名稱為 Memory Utilization
+              break;  
+            case 'Disk Utilization':
+              subcategory.displayName = this.languageService.i18n['BS.diskUtilization'];    // 更新顯示名稱為 Disk Utilization
+              break;
+          }
+        });
+        break;
+
+      case 'Retainability':
+        this.kpiSubcategories.forEach( subcategory => {
+          if ( subcategory.value === 'Retainability' ) {
+            subcategory.displayName = this.languageService.i18n['BS.retainability'];  // 更新顯示名稱為 Retainability
+          }
+        });
+        break;
+        
+      case 'Mobility':
+        this.kpiSubcategories.forEach( subcategory => {
+          if ( subcategory.value === 'NG-RAN Handover Success Rate' ) {
+            subcategory.displayName = this.languageService.i18n['BS.ngRanHandoverSuccessRate']; // 更新顯示名稱為 NG-RAN Handover Success Rate
+          }
+        });
+        break;
+
+      case 'Energy Consumption':
+        this.kpiSubcategories.forEach( subcategory => {
+          if ( subcategory.value === 'Energy Consumption' ) {
+            subcategory.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Consumption
+          }
+        });
+        break;
+    }
+  }
+
+  // 根據選擇的 KPI 類別設置 X 軸標籤
+  setXAxisLabel() {
+    let kpiName = '';    // 初始化 KPI 名稱
+    let subKpiName = ''; // 初始化子 KPI 名稱
+    let unit = '';       // 初始化單位
+    
+    // 根據選擇的 KPI 類別設置對應的 KPI 名稱
+    switch ( this.selectedKpiCategory ) {
+      case 'Accessibility':
+        kpiName = this.languageService.i18n['BS.accessibility']; // 設置 KPI 名稱為 "Accessibility"
+        subKpiName = this.languageService.i18n['BS.drbAccessibility']; // 設置子 KPI 名稱為 "DRB Accessibility"
+        unit = '%'; // 設置單位為 %
+        break;
+
+      case 'Integrity':
+        kpiName = this.languageService.i18n['BS.integrity']; // 設置 KPI 名稱為 "Integrity"
+        if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' ) {
+          subKpiName = this.languageService.i18n['BS.integratedDownlinkDelay']; // 設置子 KPI 名稱為 "Integrated Downlink Delay"
+          unit = 'ms';   // 設置單位為 ms
+        } else if ( this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
+          subKpiName = this.languageService.i18n['BS.integratedUplinkDelay']; // 設置子 KPI 名稱為 "Integrated Uplink Delay"
+          unit = 'ms';   // 設置單位為 ms
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' ) {
+          subKpiName = this.languageService.i18n['BS.ranUEDownlinkThroughput']; // 設置子 KPI 名稱為 "RAN UE Downlink Throughput"
+          unit = 'Mbps'; // 設置單位為 Mbps
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
+          subKpiName = this.languageService.i18n['BS.ranUEUplinkThroughput']; // 設置子 KPI 名稱為 "RAN UE Uplink Throughput"
+          unit = 'Mbps'; // 設置單位為 Mbps
+        }
+        break;
+
+      case 'Utilization':
+        kpiName = this.languageService.i18n['BS.utilization']; // 設置 KPI 名稱為 "Utilization"
+        if ( this.selectedKpiSubcategory === 'Process Utilization' ) {
+          subKpiName = this.languageService.i18n['BS.processUtilization']; // 設置子 KPI 名稱為 "Process Utilization"
+        } else if ( this.selectedKpiSubcategory === 'Memory Utilization' ) {
+          subKpiName = this.languageService.i18n['BS.memoryUtilization']; // 設置子 KPI 名稱為 "Memory Utilization"
+        } else if ( this.selectedKpiSubcategory === 'Disk Utilization' ) {
+          subKpiName = this.languageService.i18n['BS.diskUtilization']; // 設置子 KPI 名稱為 "Disk Utilization"
+        } 
+        unit = '%'; // 設置單位為 %
+        break;
+        
+      case 'Retainability':
+        kpiName = this.languageService.i18n['BS.retainability']; // 設置 KPI 名稱為 "Retainability"
+        unit = '%';                                              // 設置單位為 %
+        break;
+        
+      case 'Mobility': 
+        kpiName = this.languageService.i18n['BS.mobility'];                    // 設置 KPI 名稱為 "Mobility"
+        subKpiName = this.languageService.i18n['BS.ngRanHandoverSuccessRate']; // 設置子KPI 名稱為 "NG-RAN Handover Success Rate"
+        unit = '%';   
+        break;
+        
+      case 'Energy Consumption':
+        kpiName = this.languageService.i18n['BS.energyConsumption']; // 設置 KPI 名稱為 "Energy Consumption"
+        unit = 'kWh';                                                // 設置單位為 kWh
+        break;
+
+      default:
+        kpiName = 'KPI Name'; // 設置默認 KPI 名稱 
+        subKpiName = '';      // 默認子 KPI 名稱為空
+        unit = '';            // 默認單位為空
+        break;  
+    }
+
+    // 設置 X 軸標籤為 "子 KPI 名稱" 或 "KPI 名稱"
+    this.xAxisLabel = subKpiName ? `${subKpiName} ( ${unit} )` : `${kpiName} ( ${unit} )`;
+    //this.xAxisLabel = subKpiName ? `${subKpiName}` : `${kpiName}`;
+  }
+
+  // 刷新場域效能資訊
+  refreshFieldInfo() {
+    this.refreshFieldInfo_Flag = true; // 標記為 true
+
+    this.getQueryFieldInfo(); // 刷新場域資訊
+  }
+
+  // 根據選擇的 KPI 類別和子類別獲取對應的數據
+  getKpiData( data: BsInfoInField | CellInfo, bsName: string, color: string, cellName?: string ): 
+               { name?: string; value: any, label?: string, color?: string }[] {
+    
+    const kpiData: { name?: string; value: any, unit?: string, color?: string }[] = [];
+    let unit = ''; // 初始化單位
+    let name = ''; // 初始化名稱
+
+    // 輸出當前選擇的 KPI 類別到控制台
+    console.log( "In getKpiData() - selectedKpiCategory = ", this.selectedKpiCategory );
+
+    // 用於添加數據並生成名稱
+    const addDataName = ( value: any, prop: string ) => {
+      if ( 'nci' in data ) {
+        name = `${bsName} ${cellName}`;
+      } else {
+        name = `${bsName}`;
+      }
+      
+      if ( value !== null && value !== "" && value !== "none" ) { // 只在 value 有效時添加數據
+        kpiData.push( { name: name, value: parseFloat(value), unit: unit, color: color } );
+      } else {
+        kpiData.push( { name: name, value: null, unit: unit, color: '#fff0' } ); // 設置透明色
+      }
+    };
+
+    // 根據選擇的 KPI 類別設置對應的單位並添加數據名稱  
+    switch ( this.selectedKpiCategory ) {
+      case 'Accessibility':
+        unit = '%'; // 設置單位為百分比
+        addDataName( data.accessibility, 'accessibility' ); // 添加 Accessibility 數據名稱
+        break;
+      case 'Integrity':
+        // 根據子類別設置不同的單位並添加對應的數據名稱
+        if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' ) {
+          unit = 'ms'; // 設置單位為毫秒
+          addDataName( data.integrity.downlinkDelay, 'downlinkDelay' ); // 添加 Downlink Delay 數據名稱
+        } else if ( this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
+          unit = 'ms'; // 設置單位為毫秒
+          addDataName(data.integrity.uplinkDelay, 'uplinkDelay'); // 添加 Uplink Delay 數據名稱
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' ) {
+          unit = 'Mbps'; // 設置單位為 Mbps  
+          addDataName( data.integrity.downlinkThrouthput, 'downlinkThrouthput' ); // 添加 Downlink Throughput 數據名稱
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
+          unit = 'Mbps'; // 設置單位為 Mbps
+          addDataName( data.integrity.uplinkThrouthput, 'uplinkThrouthput' ); // 添加 Uplink Throughput 數據名稱
+        }
+        break;
+      case 'Utilization':
+        unit = '%'; // 設置單位為百分比  
+        // 根據子類別添加對應的數據標籤
+        if ( this.selectedKpiSubcategory === 'Process Utilization' ) {
+          addDataName( data.utilization.resourceProcess, 'resourceProcess' ); // 添加 Process Utilization 數據名稱
+        } else if ( this.selectedKpiSubcategory === 'Memory Utilization' ) {
+          addDataName( data.utilization.resourceMemory, 'resourceMemory' ); // 添加 Memory Utilization 數據名稱
+        } else if ( this.selectedKpiSubcategory === 'Disk Utilization' ) {
+          addDataName( data.utilization.resourceDisk, 'resourceDisk' ); // 添加 Disk Utilization 數據名稱
+        }
+        break;
+      case 'Retainability':
+        unit = '%'; // 設置單位為百分比
+        addDataName( data.retainability, 'retainability' ); // 添加 Retainability 數據名稱
+        break;  
+      case 'Mobility': 
+        unit = '%'; // 設置單位為百分比
+        addDataName( data.mobility, 'mobility' ); // 添加 Mobility 數據名稱
+        break;
+      case 'Energy Consumption':
+        unit = 'kWh'; // 設置單位為千瓦小時  
+        addDataName( data.energy, 'energy' ); // 添加 Energy Consumption 數據名稱
+        break;
+    }
+
+    return kpiData; // 返回包含名稱、數值、單位和顏色的數據數組
+  }
+
+  // 根據選擇的條件過濾數據
+  filterData(): BarChartData[] {
+    let filteredData: BarChartData[] = []; // 定義過濾後的數據陣列
+    const colorScheme = this.colorScheme; // 獲取當前的顏色方案
+
+    console.log( "In filterData() - dataColorMap =", this.dataColorMap ); // 輸出 dataColorMap
+
+    this.fieldInfo.bsinfo.forEach( ( bs: BsInfoInField, bsIndex ) => { // 遍歷每個基站訊息
+      const color = colorScheme.domain[bsIndex % colorScheme.domain.length]; // 根據基站索引分配顏色
+      this.dataColorMap.set( `${bs.name}`, color ); // 設置 bs 數據的顏色映射
+      console.log(`${bsIndex} Adding data with color: ${color}`); // 輸出基站索引和顏色
+
+      if ( bs.cellInfo && bs.cellInfo.length > 0 ) { // 如果有分佈式基站
+        bs.cellInfo.forEach( (cell: CellInfo, cellIndex) => { // 遍歷每個 cell 訊息
+          const cellColor = colorScheme.domain[(bsIndex + cellIndex + 2) % colorScheme.domain.length]; // 分配 cell 顏色
+          this.dataColorMap.set(`${bs.name} Cell#${cellIndex + 1} (NCI=${cell.nci})`, cellColor); // 設置 cell 數據的顏色映射
+          console.log(`In filterData() - Cell#${cellIndex + 1} Adding data with color: ${cellColor}`); // 輸出 cell 訊息和顏色
+          filteredData.push( ...this.getKpiData(cell, bs.name, cellColor, `Cell#${cellIndex + 1} (NCI=${cell.nci})`) ); // 添加 cell 數據到過濾後的數據陣列
+        });
+      } else { // 如果是一體式基站
+        const series = this.getKpiData( bs, bs.name, color ); // 獲取基站的 KPI 數據
+        filteredData.push( ...series ); // 添加基站數據到過濾後的數據陣列
+      }
+    });
+
+    console.log("In filterData() - this.customColors =", this.customColors); // 輸出 customColors
+
+    return filteredData; // 返回過濾後的數據
+  }
+
+  prepareAndUpdateChartData() {
+    // 首先根據選擇的條件過濾數據
+    let rawData = this.filterData(); // 獲取過濾後的原始數據
+    console.log( "In prepareAndUpdateChartData - rawData =", rawData ); // 輸出原始數據到控制台
+    
+    this.preparedChartData = rawData; // 將過濾後的數據賦值給 preparedChartData
+    console.log( "In prepareAndUpdateChartData - preparedChartData =", this.preparedChartData ); // 輸出整理後的數據到控制台
+    
+    //this.displayChartData = this.preparedChartData; // 將整理後的數據賦值給 displayChartData
+
+    this.displayChartData = this.preparedChartData.map(data => ({
+      ...data,
+      unit: data.unit || '' // 確保包含 unit
+    }));    
+    console.log( "In prepareAndUpdateChartData - displayChartData =", this.displayChartData ); // 輸出要顯示的數據到控制台
+
+    this.setXAxisLabel(); // 更新 X 軸標籤
+  }
+  
+  // 獲取當前選擇的 KPI 的單位
+  getUnit() {
+    switch ( this.selectedKpiCategory ) {
+      case 'Accessibility':
+        return '%';
+      case 'Integrity':
+        if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' || this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
+          return 'ms';
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' || this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
+          return 'Mbps';
+        }
+        return ''; // 添加缺失的返回值
+      case 'Utilization':
+        return '%';
+      case 'Retainability':
+        return '%';
+      case 'Mobility':
+        return '%';
+      case 'Energy Consumption':
+        return 'kWh';
+      default:
+        return '';
+    }
+  }
+
+  // 處理圖表互動事件 ( 包括圖例點擊和數據點點擊 )
+  onChartInteraction( event: any ) {
+    // 判斷事件類型是否為字串 (圖例點擊)
+    if ( typeof event === 'string' ) {
+      const legendName = event; // 獲取圖例名稱
+      console.log("In onChartInteraction() - legendName =", legendName);
+      // 執行圖例點擊相關操作，例如切換對應數據系列的顯示狀態
+    } else if ( typeof event === 'object' ) {
+      // 處理數據點點擊事件
+      console.log( "Data point clicked:", event );
+      // 執行數據點點擊相關操作，例如顯示數據點的詳細訊息
+    } else {
+      // 處理未知事件類型
+      console.warn( "Unknown event type in onChartInteraction:", event );
+    }
+  }
+
+// For 場域效能報表 @2024/05/31 Update ↑
 
 
 

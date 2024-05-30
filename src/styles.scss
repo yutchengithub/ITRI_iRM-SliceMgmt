@@ -1717,10 +1717,10 @@ ngx-charts-line-chart text {
 
 // @2024/05/22 Add
 // 設定 ngx-charts-line-chart 圖表模組，圖例區域整體樣式
-ngx-charts-line-chart .chart-legend {
-  /* position: relative;
-  top: -1px; */
-}
+// ngx-charts-line-chart .chart-legend {
+//   /* position: relative;
+//   top: -1px; */
+// }
 
 // @2024/05/22 Add
 // 設定 ngx-charts-line-chart 圖表模組，圖例標題樣式
@@ -1755,6 +1755,20 @@ ngx-charts-line-chart .chart-legend .legend-label .active .legend-label-text {
 ngx-charts-legend-entry[ng-reflect-label="none"] {
   display: none !important;        // 設置為不顯示
   pointer-events: none !important; // 設置為不可點擊 
+}
+
+// @2024/05/31 Add
+// 設定 ngx-charts-bar-horizontal 圖表模組，所有 SVG 文本元素的顏色
+ngx-charts-bar-horizontal text {
+  fill: #ffffff !important; // 將所有文本設為白色 
+}
+
+// @2024/05/31 Add
+// 調整圖表圖例中 "活動" 數據標籤的顏色和字體粗細
+ngx-charts-bar-horizontal .chart-legend .legend-label .active .legend-label-text {
+  color: #d2e0f6 !important;  // 改成亮色
+  font-weight: bold !important; // 增加字體粗細
+  //font-size: 14px !important;
 }
 
 // @2024/05/24 Add

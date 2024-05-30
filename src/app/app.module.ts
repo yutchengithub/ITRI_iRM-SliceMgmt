@@ -258,7 +258,7 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     BrowserAnimationsModule,
     SpinnerModule,      // @2024/04/17 Add
     NgxSpinnerModule,   // ngx-spinner 進度條模組
-    NgxChartsModule,    //  ngx-charts 圖表模組 @2024/05/08 Add
+    NgxChartsModule,    // ngx-charts 圖表模組 @2024/05/08 Add
   ],
   providers: [
     AuthGuard,
