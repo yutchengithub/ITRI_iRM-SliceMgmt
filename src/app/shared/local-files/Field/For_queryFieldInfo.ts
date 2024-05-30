@@ -6,126 +6,146 @@
  export class localFieldInfo {
 
     fieldInfo_local: FieldInfo = {
-
-        "id": "aa520ec8e5074f54b77d",
-        "name": "itri-field1",
-        "phone": "0912345678",
-        "fieldposition1": "[121.049825,24.778037]",
-        "fieldposition2": "[121.039552,24.778037]",
-        "fieldposition3": "[121.039552,24.770575]",
-        "fieldposition4": "[121.049825,24.770575]",
-        "bsinfo": [
+      "id": "aa520ec8e5074f54b77d",
+      "name": "itri-field1",
+      "phone": "0911000125",
+      "fieldposition1": "[121.049825,24.778037]",
+      "fieldposition2": "[121.039552,24.778037]",
+      "fieldposition3": "[121.039552,24.770575]",
+      "fieldposition4": "[121.049825,24.770575]",
+      "bsinfo": [
           {
-            "id": "97a606c4994344e09d3b",
-            "name": "BS01",
-            "accessibility": "100.0",
-            "mobility": "74.37",
-            "retainability": "0.0",
-            "energy": "28780.54",
-            "integrity": {
-              "downlinkDelay": "0",
-              "uplinkDelay": "0",
-              "downlinkThrouthput": "0",
-              "uplinkThrouthput": "0"
-            },
-            "utilization": {
-              "pdu": "0",
-              "resourceProcess": "5.0",
-              "resourceMemory": "47.0",
-              "resourceDisk": "0.0",
-              "maxPdu": "623"
-            }
+              "id": "a3587d2f75274a5d9d0e",
+              "name": "BS-all-1",
+              "accessibility": "100.0",
+              "mobility": "78.26",
+              "retainability": "0.0",
+              "energy": "28780.54",
+              "integrity": {
+                  "downlinkDelay": "0",
+                  "uplinkDelay": "0",
+                  "downlinkThrouthput": "0",
+                  "uplinkThrouthput": "0"
+              },
+              "utilization": {
+                  "pdu": "0",
+                  "resourceProcess": "5.0",
+                  "resourceMemory": "47.0",
+                  "resourceDisk": "0.0",
+                  "maxPdu": "5339"
+              }
           },
           {
-            "id": "c9bb081540ea4752982f",
-            "name": "BS02",
-            "accessibility": null,
-            "mobility": null,
-            "retainability": null,
-            "energy": null,
-            "integrity": {
-              "downlinkDelay": null,
-              "uplinkDelay": null,
-              "downlinkThrouthput": null,
-              "uplinkThrouthput": null
-            },
-            "utilization": {
-              "pdu": null,
-              "resourceProcess": "20",
-              "resourceMemory": "11",
-              "resourceDisk": null,
-              "maxPdu": null
-            },
-            "cellInfo": [
-              {
-                "nci": "000050108",
-                "accessibility": "100.0",
-                "mobility": "75.15",
-                "retainability": "0.0",
-                "energy": "28780.54",
-                "integrity": {
+              "id": "b1c72ebb77744ea6aa9a",
+              "name": "BS-D-1",
+              "accessibility": "100.0",
+              "mobility": "82.26",
+              "retainability": "10.0",
+              "energy": "29780.54",
+              "integrity": {
                   "downlinkDelay": "0",
                   "uplinkDelay": "0",
                   "downlinkThrouthput": "0",
                   "uplinkThrouthput": "0"
-                },
-                "utilization": {
-                  "pdu": "0",
-                  "resourceProcess": "5.0",
-                  "resourceMemory": "47.0",
-                  "resourceDisk": "0.0",
-                  "maxPdu": "624"
-                }
               },
-              {
-                "nci": "000050109",
-                "accessibility": "100.0",
-                "mobility": "80.84",
-                "retainability": "0.0",
-                "energy": "28780.54",
-                "integrity": {
+              "utilization": {
+                  "pdu": "0",
+                  "resourceProcess": "20",
+                  "resourceMemory": "11",
+                  "resourceDisk": "10.0",
+                  "maxPdu": "624"
+              },
+              "cellInfo": [
+                  {
+                      "nci": "00000c108",
+                      "accessibility": "100.0",
+                      "mobility": "72.77",
+                      "retainability": "0.0",
+                      "energy": "28780.54",
+                      "integrity": {
+                          "downlinkDelay": "0",
+                          "uplinkDelay": "0",
+                          "downlinkThrouthput": "0",
+                          "uplinkThrouthput": "0"
+                      },
+                      "utilization": {
+                          "pdu": "0",
+                          "resourceProcess": "5.0",
+                          "resourceMemory": "47.0",
+                          "resourceDisk": "0.0",
+                          "maxPdu": "416"
+                      }
+                  },
+                  {
+                      "nci": "00000c109",
+                      "accessibility": "100.0",
+                      "mobility": "79.68",
+                      "retainability": "0.0",
+                      "energy": "28780.54",
+                      "integrity": {
+                          "downlinkDelay": "0",
+                          "uplinkDelay": "0",
+                          "downlinkThrouthput": "0",
+                          "uplinkThrouthput": "0"
+                      },
+                      "utilization": {
+                          "pdu": "0",
+                          "resourceProcess": "5.0",
+                          "resourceMemory": "47.0",
+                          "resourceDisk": "0.0",
+                          "maxPdu": "8560"
+                      }
+                  }
+              ]
+          },
+          {
+              "id": "f5db8120fd8d4ab69399",
+              "name": "BS-all-2",
+              "accessibility": "100.0",
+              "mobility": "80.18",
+              "retainability": "0.0",
+              "energy": "28780.54",
+              "integrity": {
                   "downlinkDelay": "0",
                   "uplinkDelay": "0",
                   "downlinkThrouthput": "0",
                   "uplinkThrouthput": "0"
-                },
-                "utilization": {
+              },
+              "utilization": {
                   "pdu": "0",
                   "resourceProcess": "5.0",
                   "resourceMemory": "47.0",
                   "resourceDisk": "0.0",
-                  "maxPdu": "624"
-                }
+                  "maxPdu": "623"
               }
-            ]
           }
-        ],
-        "bsNum": 2,
-        "ueNum": "fake 10",
-        "coverage": "100",
-        "accessibility": "100.0",
-        "availability": "99.98",
-        "mobility": "76.73",
-        "retainability": "0.0",
-        "energy": "28780.54",
-        "integrity": {
+      ],
+      "bsNum": 3,
+      "ueNum": "fake 10",
+      "coverage": "72.63",
+      "accessibility": "100.0",
+      "availability": "99.8",
+      "mobility": "77.94",
+      "retainability": "88.23",
+      "energy": "28780.54",
+      "integrity": {
           "downlinkDelay": "0",
           "uplinkDelay": "0",
           "downlinkThrouthput": "0",
           "uplinkThrouthput": "0"
-        },
-        "utilization": {
+      },
+      "utilization": {
           "pdu": "0",
           "resourceProcess": "5.0",
           "resourceMemory": "47.0",
           "resourceDisk": "0.0",
-          "maxPdu": "1871"
-        },
-        "alarmCriticalNum": 5,
-        "alarmMajorNum": 294448,
-        "alarmMinorNum": 740791,
-        "alarmWarningNum": 0
-    };
+          "maxPdu": "1663"
+      },
+      "alarmCriticalNum": 6,
+      "alarmMajorNum": 17657,
+      "alarmMinorNum": 54272,
+      "alarmWarningNum": 0
+  };
 
  }
 
