@@ -5174,7 +5174,7 @@
                 </ng-template>
               
               </ngx-charts-line-chart>
-              <!-- 表格區 @2024/05/27 Add -->
+              <!-- 表格區 @2024/05/30 Update -->
               <div class="table">
                 <table>
                   <thead>
@@ -5184,7 +5184,9 @@
                         <label class="slash"></label>
                         <span>{{ languageService.i18n['BS.hourlyInterval'] }}</span>
                       </th>
-                      <th *ngFor="let timeBlock of displayOnTableChartData[0]?.series">{{ timeBlock.time }}</th>
+                      <th *ngFor="let timeBlock of displayOnTableChartData[0]?.series">
+                        {{ timeBlock.startTime }} ~ {{ timeBlock.endTime }}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>

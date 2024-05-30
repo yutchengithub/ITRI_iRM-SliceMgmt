@@ -1,12 +1,9 @@
 import { Component, OnInit, TemplateRef, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SoftwareList } from '../../software-management/software-management.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import { SystemSummary } from 'src/app/dashboard/dashboard.component';
-import { FaultMessages } from './../../fault-management/fault-management.component';
 import { ChangeDetectorRef } from '@angular/core';
 import { ChangeDetectionStrategy } from '@angular/core';
 
@@ -44,8 +41,6 @@ import { localBsKpiInfo } from '../../shared/local-files/BS/For_queryBsKpiInfo';
 // @2024/05/03 Add
 import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
 import { Color, ScaleType } from '@swimlane/ngx-charts';
-import { Console } from 'console';
-//import { curveLinear } from '@swimlane/ngx-charts';
 
 // 2024/04/01 Add
 // 搜尋基站告警用
@@ -127,18 +122,40 @@ enum ExtensionInfoParamTableNames {
   vnfParametersList_BWP = "vnfParametersList_BWP"
 }
 
-// @2024/05/20 Update - 加入儲存顏色、時間
-// 定義 ngx-charts 圖表模組，數據讀取時所需之 interface
+/**
+ * @2024/05/30 Update
+ * 定義圖表數據結構，用於 ngx-charts 圖表模組。
+ * @interface ChartData
+ * @property {string} name - 數據系列的名稱
+ * @property {Series[]} series - 數據系列的數據點集合
+ */
 export interface ChartData {
   name: string;
-  series: {
-    color?: string;
-    time?: string;
-    name?: string; 
-    value?: any; 
-    label?: string; 
-    unit?: string;
-  }[];
+  series: Series[];
+}
+
+/** 
+ * @2024/05/30 Add
+ * 定義圖表數據點結構，用於存儲每個數據點的詳細信息。
+ * @interface Series
+ * @property {string} [color] - 儲存顏色
+ * @property {string} [time] - 儲存時間範圍
+ * @property {string} [name] - 儲存名稱
+ * @property {any}    [value] - 儲存數值
+ * @property {string} [label] - 儲存標籤
+ * @property {string} [unit] - 儲存單位
+ * @property {string} [startTime] - 儲存開始時間
+ * @property {string} [endTime] - 儲存結束時間
+ */
+export interface Series {
+  color?: string;    // 儲存顏色
+  time?: string;     // 儲存時間範圍
+  name?: string;     // 儲存名稱
+  value?: any;       // 儲存數值
+  label?: string;    // 儲存標籤
+  unit?: string;     // 儲存單位
+  startTime?: string; // 儲存開始時間
+  endTime?: string;   // 儲存結束時間
 }
 
 // @2024/05/18 Add
@@ -3654,7 +3671,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 基站效能區 @2024/05/27 Update ↓
+// ↓ 基站效能區 @2024/05/30 Update ↓
 
   // @2024/05/14 Add
   // 用於儲存從 API 或 Local 獲取的 KPI 數據
@@ -3665,7 +3682,7 @@ export class BSInfoComponent implements OnInit {
   isLoadingBsKpiInfo: boolean = true;
 
   /**
-   * @2024/05/14 Add
+   * @2024/05/30 Update
    * 準備從 API 獲取指定基站的 Kpi 資訊所需的參數
    * @method prepareGetBsKpiInfoParams
    * @description
@@ -3673,28 +3690,29 @@ export class BSInfoComponent implements OnInit {
    *    - 設定查詢的時間範圍，格式化為 "YYYY-MM-DD HH:mm"。
    */
   prepareGetBsKpiInfoParams() {
-
     // 獲取當前日期和時間
-    const now = new Date(); // 創建一個新的 Date 對象，表示當前時間
+    const now = new Date(); // 當前本地時間
 
-    // 設定結束時間為當前時間的前一分鐘（為了符合給定的時間範圍）
-    const end = new Date( now.getTime() - 60000 ); // 減少 1 分鐘
+    // 將當前時間轉換為 UTC 時間
+    const nowUtc = new Date( now.getTime() + now.getTimezoneOffset() * 60000 ); // 獲取 UTC 時間
 
-    // 設定開始時間為當前時間往回推 23 小時 59 分鐘
-    const start = new Date( end.getTime() - ( 23 * 60 + 59 ) * 60000 ); // 減少 23 小時 59 分鐘
+    // 設定結束時間為當前 UTC 時間的前一分鐘
+    const endUtc = new Date( nowUtc.getTime() - 60000 ); // 減少 1 分鐘
+
+    // 設定開始時間為當前 UTC 時間往回推 23 小時 59 分鐘
+    const startUtc = new Date( endUtc.getTime() - (23 * 60 + 59) * 60000 ); // 減少 23 小時 59 分鐘
 
     // 格式化日期和時間為 "YYYY-MM-DD HH:mm"
     const formatDateTime = ( date: Date ): string => {
-        const pad = ( num: number ): string => ( num < 10 ? '0' + num : num.toString() ); // 將數字格式化為兩位字符串
-        return `${date.getFullYear()}-${pad( date.getMonth() + 1 )}-${pad( date.getDate() )} ${pad( date.getHours() )}:${pad( date.getMinutes() )}`;
+      const pad = ( num: number): string => ( num < 10 ? '0' + num : num.toString() ); // 將數字格式化為兩位字符串
+      return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())} ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}`; // 返回格式化的日期和時間字符串
     };
 
     // 返回格式化的開始和結束時間
     return {
-        start: formatDateTime( start ),
-          end: formatDateTime( end )
+      start: formatDateTime( startUtc ), // 開始時間
+        end: formatDateTime( endUtc )    // 結束時間
     };
-
   }
 
   /**
@@ -3744,25 +3762,50 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/25 Update
+   * @2024/05/30 Update
    * 處理從 API 獲取的 Kpi 數據響應
    * @method handleBsKpiInfoResponse
    * @param response - 後端 API 返回的 KPI 數據
    * @description
    *    - 此函數用於處理從 API 獲取的 KPI 數據。
+   *    - 將每筆數據的時間轉換為使用者所在時區的時間。
    *    - 更新當前的 KPI 數據狀態。
    *    - 根據實際 API 響應或 Local 檔更新 UI 顯示或解析處理數據。
    */
   handleBsKpiInfoResponse( response: any ): void {
     // 處理從 API 獲取的數據
     this.currentBsKpiInfo = response; // 假設響應直接是 BsKpiInfo 格式
+
+    // 將每筆數據的時間轉換為使用者所在時區的時間
+    Object.values(this.currentBsKpiInfo).forEach((timeBlock: TimeBlock) => {
+      timeBlock.start = this.formatTimeToLocal(timeBlock.start); // 將開始時間轉換為本地時間
+      timeBlock.end = this.formatTimeToLocal(timeBlock.end);     // 將結束時間轉換為本地時間
+    });
+
     this.isLoadingBsKpiInfo = false;  // 更新加載狀態
     this.updateDropdownOptions();     // 刷新下拉選單選項
     this.selectedKpiCategory = "Accessibility";       // 預設 "KPI 類別" 選擇 Accessibility
     this.selectedKpiSubcategory= "DRB Accessibility"; // 預設 "KPI 子類別" 選擇 DRB Accessibility
-    this.prepareAndUpdateChartData();     // 用新數據刷新圖表
-    //this.setYAxisLabel(); // 設定 Y 軸標籤
+    this.prepareAndUpdateChartData(); // 用新數據刷新圖表
+    // this.setYAxisLabel(); // 設定 Y 軸標籤
   }
+
+  /**
+   * @2024/05/30 Add
+   * 將時間字符串轉換為本地時間
+   * @method formatTimeToLocal
+   * @param time - UTC 時間字符串
+   * @returns 本地時間字符串
+   * @description
+   *    - 此函數用於將 UTC 時間字符串轉換為使用者所在時區的本地時間。
+   *    - 將傳入的 UTC 時間字符串轉換為本地時間字符串，格式為 "YYYY-MM-DD HH:mm"。
+   */
+  formatTimeToLocal(time: string): string {
+    const utcTime = new Date(time + 'Z'); // 確保是 UTC 時間
+    const localTime = new Date(utcTime.getTime() - utcTime.getTimezoneOffset() * 60000); // 將 UTC 時間轉換為本地時間
+    return localTime.toISOString().slice(0, 16).replace('T', ' '); // 格式化為 "YYYY-MM-DD HH:mm"
+  }
+
 
   // 定義圖表檢視模式的選項
                viewModes: ViewMode[] = [];       // 定義檢視模式的選項
@@ -4271,32 +4314,34 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/27 Update
-   * 填充 24 小時的時間區間
+   * @2024/05/30 Update
+   * 填充 24 小時的時間區間並補齊每筆數據的 startTime 和 endTime
    * @method fillMissingTimeBlocks
    * @description
    *    - 確保 `x` 軸顯示 24 個時間區間，不管該區間是否有數據。
    *    - 為了保證圖表上顯示的數據涵蓋完整的24小時時間段，填充缺失的時間區間。
    *    - 若某個時間區間沒有數據點，會插入一個空數據點以表示該時間區間無數據。
    *    - 同時將包含有 null 值的數據存儲在 displayOnTableChartData 變數中，用於後續顯示數據於表格上。
+   *    - 將每筆數據的 startTime 和 endTime 補齊，確保所有數據點都具有完整的時間範圍資訊。
    */
   fillMissingTimeBlocks() {
-
     // 獲取所有的時間區間
-    const allTimeBlocks: string[] = Object.values( this.currentBsKpiInfo ).map( ( timeBlock: TimeBlock ) =>
-      this.formatTimeRange( timeBlock.start, timeBlock.end )
+    const allTimeBlocks = Object.values(this.currentBsKpiInfo).map((timeBlock: TimeBlock) =>
+      this.formatTimeRange(timeBlock.start, timeBlock.end)
     );
 
     // 新增一個透明的 series 用於顯示所有時間區間
     const noneSeries = {
       name: 'none',
-      series: allTimeBlocks.map(time => ({
-        time: time,        // 設置時間區間
-        name: time,        // 設置名稱為時間區間
-        value: "",         // 設置值為空字符串
-        label: '',         // 設置標籤為空字符串
-        unit: '',          // 設置單位為空字符串
-        color: '#ffffff00' // 設置顏色為透明色
+      series: allTimeBlocks.map(({ formattedRange, formattedStart, formattedEnd }) => ({
+        time: formattedRange,        // 設置時間區間
+        name: formattedRange,        // 設置名稱為時間區間
+        value: "",                   // 設置值為空字符串
+        label: '',                   // 設置標籤為空字符串
+        unit: '',                    // 設置單位為空字符串
+        color: '#ffffff00',          // 設置顏色為透明色
+        startTime: formattedStart,   // 新增的開始時間
+        endTime: formattedEnd        // 新增的結束時間
       }))
     };
 
@@ -4304,19 +4349,26 @@ export class BSInfoComponent implements OnInit {
     // 初始化用於儲存要顯示在表格上的數據變數
     this.displayOnTableChartData = [];
 
-    // 遍歷過濾後的數據，填充缺少的時間區間
-    this.preparedChartData.forEach( series => {
-      const seriesTimeSet: Set< string > = new Set(series.series.map( ( data: { time: string }) => data.time ) );
-      allTimeBlocks.forEach( time => {
-        if ( !seriesTimeSet.has( time ) ) {
+    // 遍歷過濾後的數據，填充缺少的時間區間並補齊每筆數據的 startTime 和 endTime
+    this.preparedChartData.forEach(series => {
+      const seriesTimeSet: Set<string> = new Set(series.series.map((data: { time: string }) => data.time));
+      allTimeBlocks.forEach(({ formattedRange, formattedStart, formattedEnd }) => {
+        const existingDataPoint = series.series.find((data: { time: string }) => data.time === formattedRange);
+        if (existingDataPoint) {
+          // 補齊已有數據的 startTime 和 endTime
+          existingDataPoint.startTime = formattedStart;
+          existingDataPoint.endTime = formattedEnd;
+        } else {
           // 如果該時間區間不存在於數據系列中，則插入一個空數據點
           series.series.push({
-            time: time,                // 設置時間區間
-            name: time,                // 設置名稱為時間區間
-            value: null,               // 設置值為 null 表示無數據
-            label: series.name,        // 設置標籤為系列名稱
-            unit: series.series[0]?.unit || '',       // 設置單位為該系列的單位，若無則設置為空字符串
-            color: series.series[0]?.color || '#fff0' // 設置顏色為該系列的顏色，若無則設置為透明色
+            time: formattedRange,                // 設置時間區間
+            name: formattedRange,                // 設置名稱為時間區間
+            value: null,                         // 設置值為 null 表示無數據
+            label: series.name,                  // 設置標籤為系列名稱
+            unit: series.series[0]?.unit || '',  // 設置單位為該系列的單位，若無則設置為空字符串
+            color: series.series[0]?.color || '#fff0', // 設置顏色為該系列的顏色，若無則設置為透明色
+            startTime: formattedStart,           // 新增的開始時間
+            endTime: formattedEnd                // 新增的結束時間
           });
         }
       });
@@ -4329,44 +4381,42 @@ export class BSInfoComponent implements OnInit {
       });
 
       // 過濾掉值為 null 的數據點
-      series.series = series.series.filter( ( data: { time: string, value: number | null } ) => data.value !== null );
+      series.series = series.series.filter((data: { time: string, value: number | null }) => data.value !== null);
 
       // 按時間排序數據點
-      series.series.sort( (a: { time: string }, b: { time: string }) => new Date( a.time ).getTime() - new Date( b.time ).getTime() );
+      series.series.sort((a: { time: string }, b: { time: string }) => new Date(a.time).getTime() - new Date(b.time).getTime());
     });
 
     // 將 noneSeries 添加到 preparedChartData 中，用於顯示所有時間區間
-    this.preparedChartData.push( noneSeries );
+    this.preparedChartData.push(noneSeries);
 
-    console.log("In fillMissingTimeBlocks() end - displayOnTableChartData = ", this.displayOnTableChartData );
+    console.log("In fillMissingTimeBlocks() end - displayOnTableChartData = ", this.displayOnTableChartData);
   }
 
   /**
-   * @2024/05/27 Add
-   * 獲取所有時間區間
-   * @method getAllTimes
+   * @2024/05/16 Add
+   * 將數據同名的轉換成同系列(series)，以便數據點能連起來
+   * @method consolidateSeries
+   * @param data - 要處理的數據
    * @description
-   *    - 此函數用於獲取所有時間區間，用於表格顯示。
-   * @returns 包含所有時間區間的數組
+   *    - 將數據同名的轉換成同系列，以便數據點能連起來。
+   * @returns 處理後的數據陣列
    */
-  getAllTimes(): string[] {
-    if ( this.displayOnTableChartData.length === 0 ) return [];
-    return this.displayOnTableChartData[0].series.map( item => item.time as string );
-  }
+  consolidateSeries( data: ChartData[] ): ChartData[] {
+    const resultMap = new Map(); // 創建一個 Map 來存儲同名的數據系列
 
-  /**
-   * @2024/05/27 Add
-   * 獲取指定時間區間的數據
-   * @method getDataForTime
-   * @param item - 數據項目
-   * @param time - 時間區間
-   * @description
-   *    - 根據提供的數據項目和時間區間，返回對應的數據值。
-   * @returns 對應時間區間的數據值
-   */
-  getDataForTime( item: ChartData, time: string ): any {
-    const dataPoint = item.series.find( point => point.time === time );
-    return dataPoint ? ( dataPoint.value !== null ? dataPoint.value : this.languageService.i18n['BS.kpiValueNone'] ) : this.languageService.i18n['BS.kpiValueNone'];
+    data.forEach( item => {
+      if ( !resultMap.has( item.name ) ) { // 如果 Map 中沒有此名字的數據系列
+        console.log( "In consolidateSeries() - item.name = ", item.name ); // 輸出日誌
+        resultMap.set( item.name, { name: item.name, series: [] } );       // 在 Map 中添加新的數據系列
+      }
+      let seriesArray = resultMap.get( item.name ).series; // 獲取 Map 中該名字的數據系列
+      console.log( "In consolidateSeries() - seriesArray = ", seriesArray ); // 輸出日誌
+      seriesArray.push( ...item.series ); // 將數據添加到該系列中
+      resultMap.set( item.name, { name: item.name, series: seriesArray } );  // 更新 Map 中的數據系列
+    });
+
+    return Array.from( resultMap.values() ); // 將 Map 中的值轉換為數組並返回
   }
 
   /**
@@ -4412,7 +4462,7 @@ export class BSInfoComponent implements OnInit {
     switch( this.selectedViewMode ) { // 根據選擇的檢視模式進行處理
       case 'fullInformation':
         Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => {  // 遍歷所有的時間區塊
-          const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );    // 格式化時間範圍
+          const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end ).formattedRange;    // 格式化時間範圍
 
           timeBlock.bs.forEach( ( bs: Bs_KpiInfo, bsIndex ) => { // 遍歷每個基站訊息
             const color = colorScheme.domain[bsIndex % colorScheme.domain.length]; // 根據基站索引分配顏色
@@ -4441,7 +4491,7 @@ export class BSInfoComponent implements OnInit {
 
       case 'onlyBSLevel':
         Object.values( this.currentBsKpiInfo ).forEach( ( timeBlock: TimeBlock ) => { // 遍歷所有的時間區塊
-          const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end );   // 格式化時間範圍
+          const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end ).formattedRange;   // 格式化時間範圍
 
           timeBlock.bs.forEach( ( bs: Bs_KpiInfo, bsIndex ) => { // 遍歷每個基站訊息
             const color = colorScheme.domain[bsIndex % colorScheme.domain.length]; // 根據基站索引分配顏色
@@ -4465,7 +4515,7 @@ export class BSInfoComponent implements OnInit {
                 const color = colorScheme.domain[bsIndex % colorScheme.domain.length]; // 根據基站索引分配顏色
                 console.log(`${bsIndex} Adding data with color: ${color}`); // 輸出基站索引和顏色
                 if ( this.bsType === "1" || ( bs.cellInfoList && Object.keys( bs.cellInfoList ).length === 0 ) ) { // 檢查是否為一體式基站或 cellInfoList 為空
-                  const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end ); // 格式化時間範圍
+                  const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end ).formattedRange;  // 格式化時間範圍
                   const defaultNci = this.nciList[0]; // 獲取預設的 NCI
                   const cellColor = this.dataColorMap.get( `Cell#1 (NCI=0x${defaultNci})` ) || color; // 獲取 cell 數據的顏色或使用預設顏色
                   const series = this.getKpiData( bs, timeRange, cellColor ); // 獲取 cell 的 KPI 數據
@@ -4477,7 +4527,7 @@ export class BSInfoComponent implements OnInit {
                   const index = bs.cellInfoList.findIndex( c => c.cellId === cellId ); // 查找對應 cellId 的索引
                   if ( index !== -1 ) { // 如果找到對應的 cell
                     const cell = bs.cellInfoList[index]; // 獲取 cell 訊息
-                    const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end ); // 格式化時間範圍
+                    const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end ).formattedRange; // 格式化時間範圍
                     const cellColor = this.dataColorMap.get(`Cell#${index + 1} (NCI=0x${cell.cellId})`) || color; // 獲取 cell 數據的顏色或使用預設顏色
                     const series = this.getKpiData( cell, timeRange, cellColor, index ); // 獲取 cell 的 KPI 數據
                     filteredData.push( { name: `Cell#${index + 1} (NCI=0x${cell.cellId})`, series: series } );    // 添加 cell 數據到過濾後的數據陣列
@@ -4501,52 +4551,56 @@ export class BSInfoComponent implements OnInit {
 
     return filteredData; // 返回過濾後的數據
   }
-  
 
   /**
-   * @2024/05/16 Add
-   * 將數據同名的轉換成同系列(series)，以便數據點能連起來
-   * @method consolidateSeries
-   * @param data - 要處理的數據
-   * @description
-   *    - 將數據同名的轉換成同系列，以便數據點能連起來。
-   * @returns 處理後的數據陣列
-   */
-  consolidateSeries( data: ChartData[] ): ChartData[] {
-    const resultMap = new Map(); // 創建一個 Map 來存儲同名的數據系列
-
-    data.forEach( item => {
-      if ( !resultMap.has( item.name ) ) { // 如果 Map 中沒有此名字的數據系列
-        console.log( "In consolidateSeries() - item.name = ", item.name ); // 輸出日誌
-        resultMap.set( item.name, { name: item.name, series: [] } );       // 在 Map 中添加新的數據系列
-      }
-      let seriesArray = resultMap.get( item.name ).series; // 獲取 Map 中該名字的數據系列
-      console.log( "In consolidateSeries() - seriesArray = ", seriesArray ); // 輸出日誌
-      seriesArray.push( ...item.series ); // 將數據添加到該系列中
-      resultMap.set( item.name, { name: item.name, series: seriesArray } );  // 更新 Map 中的數據系列
-    });
-
-    return Array.from( resultMap.values() ); // 將 Map 中的值轉換為數組並返回
-  }
-
-  /**
-   * @2024/05/16 Add
+   * @2024/05/30 Update
    * 格式化要顯示於圖表上的時間範圍
    * @method formatTimeRange
    * @param start - 開始時間
-   * @param   end - 結束時間
+   * @param end - 結束時間
    * @description
-   *    - 將開始和結束時間格式化為 HH:mm 格式。
-   * @returns 格式化後的時間範圍字符串
+   *    - 將開始和結束時間格式化為 HH:mm 格式，並將時間轉換為使用者所在時區。
+   *    - 返回格式化後的時間範圍字符串，以及單獨的開始時間和結束時間字符串。
+   * @returns 包含格式化後的時間範圍字符串、開始時間和結束時間的對象
    */
-  formatTimeRange( start: string, end: string ): string {
-    const startTime = new Date( start ); // 將開始時間字符串轉換為 Date 對象
-    const endTime = new Date( end );     // 將結束時間字符串轉換為 Date 對象
+  formatTimeRange(start: string, end: string): { formattedRange: string, formattedStart: string, formattedEnd: string } {
 
-    // 轉換時間格式為 HH:mm
-    const format = ( date: Date ) => date.toTimeString().substring( 0, 5 );
+    const startTime = new Date(start); // 將開始時間字符串轉換為 Date 對象
+    const endTime = new Date(end);     // 將結束時間字符串轉換為 Date 對象
 
-    return `${format( startTime )} ~ ${format( endTime )}`; // 返回格式化後的時間範圍字符串
+    // 獲取當前時區偏移量
+    const timeZoneOffset = startTime.getTimezoneOffset() * 60000; // 獲取當前時區的偏移量，單位為毫秒
+
+    // 將格林威治標準時間轉換為本地時間
+    const localStartTime = new Date(startTime.getTime() - timeZoneOffset);
+    const localEndTime = new Date(endTime.getTime() - timeZoneOffset);
+
+    // 格式化時間為 HH:mm
+    const format = (date: Date) => {
+      const hours = date.getHours().toString().padStart(2, '0'); // 將小時轉換為兩位數字符串
+      const minutes = date.getMinutes().toString().padStart(2, '0'); // 將分鐘轉換為兩位數字符串
+      return `${hours}:${minutes}`; // 返回格式化後的時間字符串
+    };
+
+    // 格式化時間為 YYYY-MM-DD HH:mm
+    const formatWithDate = (date: Date) => {
+      const year = date.getFullYear(); // 獲取年份
+      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 獲取月份，並轉換為兩位數字符串
+      const day = date.getDate().toString().padStart(2, '0'); // 獲取日期，並轉換為兩位數字符串
+      const hours = date.getHours().toString().padStart(2, '0'); // 獲取小時，並轉換為兩位數字符串
+      const minutes = date.getMinutes().toString().padStart(2, '0'); // 獲取分鐘，並轉換為兩位數字符串
+      return `${year}-${month}-${day} ${hours}:${minutes}`; // 返回格式化後的日期時間字符串
+    };
+
+    const formattedStart = format(localStartTime); // 格式化開始時間
+    const formattedEnd = format(localEndTime);     // 格式化結束時間
+    const formattedRange = `${formattedStart} ~ ${formattedEnd}`; // 格式化時間範圍
+
+    return {
+      formattedRange, // 返回格式化後的時間範圍
+      formattedStart, // 返回格式化後的開始時間
+      formattedEnd    // 返回格式化後的結束時間
+    };
   }
 
   /**
@@ -4796,7 +4850,7 @@ export class BSInfoComponent implements OnInit {
     //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
   }
 
-// ↑ 基站效能區 @2024/05/27 Update ↑
+// ↑ 基站效能區 @2024/05/30 Update ↑
 
 
 }
