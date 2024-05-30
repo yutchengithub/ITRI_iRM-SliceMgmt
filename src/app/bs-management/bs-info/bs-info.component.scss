@@ -1054,12 +1054,21 @@ ul.treeList li a.btn {
 }
 .performance .table table {
   display: block!important;
+  width: auto!important;
+}
+.performance table th span {
+  max-width: 56px;
+  display: block;
+  margin: auto;
+}
+.performance table th {
+  text-align: center;
 }
 .performance table th.relative {
   position: relative;
   top: 0px;
-  min-width: 254px !important;
-  width: 254px !important;
+  min-width: 220px !important;
+  width: 220px !important;
   border-right: 1px solid #2562959e;
 }
 .performance table th:not(.relative) {  
@@ -1077,15 +1086,15 @@ ul.treeList li a.btn {
 }
 .performance table th.relative span:last-child {
   position: absolute;
-  right: 7px;
+  right: 63px;
   top: 7px;
 }
 .performance table th .slash {
   position: absolute;
-  top: 32px;
+  top: 31px;
   left: -2px;
-  transform: rotate(14deg);
-  width: 259px;
+  transform: rotate(15deg);
+  width: 239px;
   height: 1px;
   border-bottom: 1px solid #256295;
 }
@@ -1101,20 +1110,7 @@ ul.treeList li a.btn {
   .percent{
     margin: 1.5em 0.5em;
   }
-  .BOX {
-    /* padding: 0 1em 1.5em;
-    height: 17em; */
-  }
-  .boxTitle {
-   /*  font-size: 1.8em;
-    line-height: 1.5; */
-}
-.basicInfo ul {
-  /* font-size: .9em; */
-}
-.h30 {
-  /* height: 24em; */
-}
+ 
 .cpu span img {
   width: 2em;
 }
@@ -1124,16 +1120,11 @@ ul.treeList li a.btn {
   bottom: 0;
 }
 @media screen and (max-width:1366px) {
-  .BOX {
-    /* height: 11em; */
-}
+
   .h30 {
     height: 22em;
   }
-  .boxTitle {
-    /* font-size: 1.35em;
-    line-height: 1.5; */
-  }
+ 
   .basicInfo ul {
     font-size: .9em;
   }
@@ -1162,9 +1153,7 @@ ul.treeList li a.btn {
   .col-md-3 {
     width:28%;
   }
-  .basicInfo {
-    /* width: 39%; */
-  }
+ 
   .basicInfo ul li label {
     width: auto;
   }
@@ -1203,15 +1192,7 @@ ul.treeList li a.btn {
 .main.collabsible{
   width: 100%;
 }
-.content-inner .panel > label {
-  /* margin: 0.5em;
-  padding: 0.5em 3em 0.5em 0.5em;
-  width: 16.7em;
-  min-height: 12.5em; */
-}
-.content-inner .panel > label input[type=radio]:checked + div {
-  /* padding: 0.5em 3em 0.5em 0.5em; */
-}
+
 .content-inner .panel > label input[type=radio] {
   top: 1em;
 }

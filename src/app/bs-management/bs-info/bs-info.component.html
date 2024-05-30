@@ -5185,7 +5185,7 @@
                         <span>{{ languageService.i18n['BS.hourlyInterval'] }}</span>
                       </th>
                       <th *ngFor="let timeBlock of displayOnTableChartData[0]?.series">
-                        {{ timeBlock.startTime }} ~ {{ timeBlock.endTime }}
+                       <span>{{ timeBlock.startTime }} ~ {{ timeBlock.endTime }}</span>
                       </th>
                     </tr>
                   </thead>

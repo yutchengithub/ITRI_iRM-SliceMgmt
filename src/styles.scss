@@ -1818,3 +1818,21 @@ ngx-charts-bar-horizontal .chart-legend .legend-label .active .legend-label-text
 .gm-style-iw-t .gm-style-iw {
   padding-left: 15px!important;
 }
+#fieldPMReportWindow {
+  min-width: 45em;
+}
+#fieldPMReportWindow .filter  {
+  text-align: center;
+  margin: 0 auto 1em;
+  width: 92%;
+  white-space: nowrap;
+}
+#fieldPMReportWindow .filter select {
+  width: auto;
+}
+body.tw .performance table th.relative span:last-child {
+  right: 38px!important;
+}
+body.tw .performance table th.relative span:first-child {
+  left: 20px!important;
+}
