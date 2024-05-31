@@ -142,7 +142,7 @@ interface KpiSubcategory {
  export interface BarChartData {
   color?: string;    // 儲存顏色
   time?: string;     // 儲存時間範圍
-  name?: string;     // 儲存名稱
+  name: string;      // 儲存名稱
   value?: any;       // 儲存數值
   label?: string;    // 儲存標籤
   unit?: string;     // 儲存單位
@@ -3481,13 +3481,13 @@ export class FieldInfoComponent implements OnInit {
 
   // ngx-charts-bar-horizontal 圖表模組外觀設定區 ↓
   
-    view: [number,number] = [700, 300];
-    showLegend = false;
+    view: [number,number] = [1000, 500];
+    showLegend = true;
     legendTitle: string = this.languageService.i18n['BS.dataSource']; // 定義圖例標題名稱
-    legendPosition: LegendPosition = LegendPosition.Below;  // 使用枚舉
+    legendPosition: LegendPosition = LegendPosition.Right;  // 使用枚舉
     showXAxis = true;
     showYAxis = true;
-    gradient = false;
+    gradient = true;
     showXAxisLabel = true;
     xAxisLabel = '效能指標'; 
     showYAxisLabel = false;
@@ -3496,7 +3496,7 @@ export class FieldInfoComponent implements OnInit {
     trimYAxisTicks = false;
     xAxisTickFormatting = this.valueFormatting;
     yAxisTickFormatting = this.nameFormatting;
-    barPadding = 15;
+    barPadding = 20;
     roundDomains = true;
 
     // 設定圖表配色方案
@@ -3547,6 +3547,9 @@ export class FieldInfoComponent implements OnInit {
       const colorEntry = this.dataColorMap.get( value );
       return colorEntry || '#ffff'; // 沒取得對應值就默認設為白色
     };
+
+    // @2024/05/31 Add
+    barVisibility: { [key: string]: boolean } = {};
 
   // ngx-charts-bar-horizontal 圖表模組外觀設定區 ↑
 
@@ -3812,9 +3815,9 @@ export class FieldInfoComponent implements OnInit {
 
   // 根據選擇的 KPI 類別和子類別獲取對應的數據
   getKpiData( data: BsInfoInField | CellInfo, bsName: string, color: string, cellName?: string ): 
-               { name?: string; value: any, label?: string, color?: string }[] {
+               { name: string; value: any, label?: string, color?: string }[] {
     
-    const kpiData: { name?: string; value: any, unit?: string, color?: string }[] = [];
+    const kpiData: { name: string; value: any, unit?: string, color?: string }[] = [];
     let unit = ''; // 初始化單位
     let name = ''; // 初始化名稱
 
@@ -3889,7 +3892,7 @@ export class FieldInfoComponent implements OnInit {
   // 根據選擇的條件過濾數據
   filterData(): BarChartData[] {
     let filteredData: BarChartData[] = []; // 定義過濾後的數據陣列
-    const colorScheme = this.colorScheme; // 獲取當前的顏色方案
+    const colorScheme = this.colorScheme;  // 獲取當前的顏色方案
 
     console.log( "In filterData() - dataColorMap =", this.dataColorMap ); // 輸出 dataColorMap
 
@@ -3916,23 +3919,84 @@ export class FieldInfoComponent implements OnInit {
     return filteredData; // 返回過濾後的數據
   }
 
+  // prepareAndUpdateChartData() {
+  //   // 首先根據選擇的條件過濾數據
+  //   let rawData = this.filterData(); // 獲取過濾後的原始數據
+  //   console.log( "In prepareAndUpdateChartData - rawData =", rawData ); // 輸出原始數據到控制台
+    
+  //   this.preparedChartData = rawData; // 將過濾後的數據賦值給 preparedChartData
+  //   console.log( "In prepareAndUpdateChartData - preparedChartData =", this.preparedChartData ); // 輸出整理後的數據到控制台
+    
+  //   //this.displayChartData = this.preparedChartData; // 將整理後的數據賦值給 displayChartData
+
+  //   // this.displayChartData = this.preparedChartData.map(data => ({
+  //   //   ...data,
+  //   //   unit: data.unit || '' // 確保包含 unit
+  //   // }));    
+  //   // console.log( "In prepareAndUpdateChartData - displayChartData =", this.displayChartData ); // 輸出要顯示的數據到控制台
+
+  //   // 初始化或更新每個數據系列的顯示狀態
+  //   this.preparedChartData.forEach(data => {
+  //     if (!(data.name in this.barVisibility)) {
+  //       this.barVisibility[data.name] = true; // 初始化顯示狀態為 true
+  //     }
+  //   });
+
+  //   // 根據 barVisibility 更新 displayChartData
+  //   this.updateDisplayChartData();
+
+  //   // 過濾掉值為 null 的數據點
+  //   this.displayChartData = this.displayChartData.map(data => {
+  //     return {
+  //       ...data,
+  //       value: data.value === null ? undefined : data.value
+  //     };
+  //   });
+
+
+  //   this.setXAxisLabel(); // 更新 X 軸標籤
+  // }
   prepareAndUpdateChartData() {
     // 首先根據選擇的條件過濾數據
     let rawData = this.filterData(); // 獲取過濾後的原始數據
-    console.log( "In prepareAndUpdateChartData - rawData =", rawData ); // 輸出原始數據到控制台
-    
+    console.log("In prepareAndUpdateChartData - rawData =", rawData); // 輸出原始數據到控制台
+  
     this.preparedChartData = rawData; // 將過濾後的數據賦值給 preparedChartData
-    console.log( "In prepareAndUpdateChartData - preparedChartData =", this.preparedChartData ); // 輸出整理後的數據到控制台
-    
-    //this.displayChartData = this.preparedChartData; // 將整理後的數據賦值給 displayChartData
-
-    this.displayChartData = this.preparedChartData.map(data => ({
-      ...data,
-      unit: data.unit || '' // 確保包含 unit
-    }));    
-    console.log( "In prepareAndUpdateChartData - displayChartData =", this.displayChartData ); // 輸出要顯示的數據到控制台
-
+    console.log("In prepareAndUpdateChartData - preparedChartData =", this.preparedChartData); // 輸出整理後的數據到控制台
+  
+    // 初始化或更新每個數據系列的顯示狀態
+    this.preparedChartData.forEach(data => {
+      if (!(data.name in this.barVisibility)) {
+        this.barVisibility[data.name] = true; // 初始化顯示狀態為 true
+      }
+    });
+  
+    // 根據 barVisibility 更新 displayChartData
+    this.updateDisplayChartData();
+  
     this.setXAxisLabel(); // 更新 X 軸標籤
+  }
+
+  // updateDisplayChartData() {
+  //   this.displayChartData = this.preparedChartData.map(data => {
+  //     return {
+  //       name: data.name,
+  //       value: this.barVisibility[data.name] ? data.value : null,
+  //       label: data.label,
+  //       color: data.color
+  //     };
+  //   });
+  // }
+
+  updateDisplayChartData() {
+    this.displayChartData = this.preparedChartData.map(data => {
+      return {
+        name: data.name,
+        value: this.barVisibility[data.name] ? data.value : 0,  // 將隱藏的數據條的值設為 0
+        label: data.label,
+        color: data.color
+      };
+    });
   }
   
   // 獲取當前選擇的 KPI 的單位
@@ -3961,19 +4025,99 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // 處理圖表互動事件 ( 包括圖例點擊和數據點點擊 )
-  onChartInteraction( event: any ) {
+  // onChartInteraction( event: any ) {
+  //   // 判斷事件類型是否為字串 (圖例點擊)
+  //   if ( typeof event === 'string' ) {
+  //     const legendName = event; // 獲取圖例名稱
+  //     console.log("In onChartInteraction() - legendName =", legendName);
+  
+  //     // 切換對應數據線的顯示狀態
+  //     this.barVisibility[legendName] = !this.barVisibility[legendName];
+  //     console.log("In onChartInteraction() - barVisibility =", this.barVisibility);
+  
+  //     // 更新圖表顯示的數據
+  //     this.updateDisplayChartData();
+  //     console.log("In onChartInteraction() end - displayChartData =", this.displayChartData);
+  
+  //     // 獲取所有圖例項目
+  //     const legendItems = document.querySelectorAll('.legend-label');
+  //     legendItems.forEach(item => {
+  //       // 獲取圖例文本
+  //       const legendText = item.querySelector('.legend-label-text');
+  //       if (legendText) {
+  //         // 獲取圖例文本內容並去除多餘空白
+  //         const textContent = legendText.textContent?.trim() ?? null;
+  //         console.log("In onChartInteraction() - legendText content =", textContent);
+  
+  //         // 檢查圖例文本內容是否與點擊的圖例名稱相符
+  //         if (textContent && textContent === legendName.trim()) {
+  //           // 切換圖例文本的劃線樣式
+  //           if (this.barVisibility[legendName]) {
+  //             legendText.classList.remove('hidden-line'); // 移除劃線樣式
+  //           } else {
+  //             legendText.classList.add('hidden-line'); // 添加劃線樣式
+  //           }
+  //         }
+  //       } else {
+  //         // 若未找到圖例文本,輸出提示訊息
+  //         console.log("In onChartInteraction() - legendText is null for item", item);
+  //       }
+  //     });
+  //   } else if (typeof event === 'object') {
+  //     // 處理數據點點擊事件
+  //     console.log("Data point clicked:", event);
+  //     // 執行數據點點擊相關操作,例如顯示數據點的詳細訊息
+  //   } else {
+  //     // 處理未知事件類型
+  //     console.warn("Unknown event type in onChartInteraction:", event);
+  //   }
+  // }
+
+  onChartInteraction(event: any) {
     // 判斷事件類型是否為字串 (圖例點擊)
-    if ( typeof event === 'string' ) {
+    if (typeof event === 'string') {
       const legendName = event; // 獲取圖例名稱
       console.log("In onChartInteraction() - legendName =", legendName);
-      // 執行圖例點擊相關操作，例如切換對應數據系列的顯示狀態
-    } else if ( typeof event === 'object' ) {
+  
+      // 切換對應數據線的顯示狀態
+      this.barVisibility[legendName] = !this.barVisibility[legendName];
+      console.log("In onChartInteraction() - barVisibility =", this.barVisibility);
+  
+      // 更新圖表顯示的數據
+      this.updateDisplayChartData();
+      console.log("In onChartInteraction() end - displayChartData =", this.displayChartData);
+  
+      // 獲取所有圖例項目
+      const legendItems = document.querySelectorAll('.legend-label');
+      legendItems.forEach(item => {
+        // 獲取圖例文本
+        const legendText = item.querySelector('.legend-label-text');
+        if (legendText) {
+          // 獲取圖例文本內容並去除多餘空白
+          const textContent = legendText.textContent?.trim() ?? null;
+          console.log("In onChartInteraction() - legendText content =", textContent);
+  
+          // 檢查圖例文本內容是否與點擊的圖例名稱相符
+          if (textContent && textContent === legendName.trim()) {
+            // 切換圖例文本的劃線樣式
+            if (this.barVisibility[legendName]) {
+              legendText.classList.remove('hidden-line'); // 移除劃線樣式
+            } else {
+              legendText.classList.add('hidden-line'); // 添加劃線樣式
+            }
+          }
+        } else {
+          // 若未找到圖例文本,輸出提示訊息
+          console.log("In onChartInteraction() - legendText is null for item", item);
+        }
+      });
+    } else if (typeof event === 'object') {
       // 處理數據點點擊事件
-      console.log( "Data point clicked:", event );
-      // 執行數據點點擊相關操作，例如顯示數據點的詳細訊息
+      console.log("Data point clicked:", event);
+      // 執行數據點點擊相關操作,例如顯示數據點的詳細訊息
     } else {
-      // 處理未知事件類型
-      console.warn( "Unknown event type in onChartInteraction:", event );
+      // 處理未知事件類型 
+      console.warn("Unknown event type in onChartInteraction:", event);
     }
   }
 

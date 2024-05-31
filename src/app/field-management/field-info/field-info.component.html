@@ -1195,6 +1195,7 @@
 		<div *ngIf="fieldPMReportType === 'Performance_Overview'">
 			<div *ngIf="fieldInfo">
 				<!-- 效能總覽頁面內容 -->
+
 				<div class="filter">
 				  <span><!-- KPI 類別選項 -->
 					<label>{{ languageService.i18n['BS.viewKPICategory'] }}:</label>
@@ -1208,6 +1209,7 @@
 					  <option *ngFor="let subcategory of kpiSubcategories" [value]="subcategory.value">{{ subcategory.displayName }}</option>
 					</select>
 				  </span>
+				  {{ languageService.i18n['BS.dataTimePast24Hours'] }}
 				</div>
 					   
 				<ngx-charts-bar-horizontal
@@ -1250,7 +1252,6 @@
 				  </ng-template> -->
 		  
 				</ngx-charts-bar-horizontal>
-		  
 			  </div>
 		</div>
 		<div  *ngIf="fieldPMReportType === 'Performance_History'">
