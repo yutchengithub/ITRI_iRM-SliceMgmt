@@ -4697,7 +4697,7 @@ export class BSInfoComponent implements OnInit {
         addDataLabel( data.mobility, 'mobility' ); // 添加 Mobility 數據標籤
         break;
       case 'Energy Consumption':
-        unit = 'kWh'; // 設置單位為千瓦小時
+        unit = 'J'; // 設置單位為焦耳
         addDataLabel( data.energy, 'energy' ); // 添加 Energy Consumption 數據標籤
         break;
     }
@@ -4768,7 +4768,7 @@ export class BSInfoComponent implements OnInit {
         break;
       case 'Energy Consumption':
         kpiName = this.languageService.i18n['BS.energyConsumption']; // 設置 KPI 名稱為 "Energy Consumption"
-        unit = 'kWh';                                                // 設置單位為 kWh
+        unit = 'J';                                                // 設置單位為 J
         break;
       default:
         kpiName = 'KPI Name';  // 設置默認 KPI 名稱

@@ -3788,7 +3788,7 @@ export class FieldInfoComponent implements OnInit {
         
       case 'Energy Consumption':
         kpiName = this.languageService.i18n['BS.energyConsumption']; // 設置 KPI 名稱為 "Energy Consumption"
-        unit = 'kWh';                                                // 設置單位為 kWh
+        unit = 'J';                                                  // 設置單位為 J
         break;
 
       default:
@@ -3878,7 +3878,7 @@ export class FieldInfoComponent implements OnInit {
         addDataName( data.mobility, 'mobility' ); // 添加 Mobility 數據名稱
         break;
       case 'Energy Consumption':
-        unit = 'kWh'; // 設置單位為千瓦小時  
+        unit = 'J'; // 設置單位為焦耳  
         addDataName( data.energy, 'energy' ); // 添加 Energy Consumption 數據名稱
         break;
     }
@@ -3954,7 +3954,7 @@ export class FieldInfoComponent implements OnInit {
       case 'Mobility':
         return '%';
       case 'Energy Consumption':
-        return 'kWh';
+        return 'J';
       default:
         return '';
     }
