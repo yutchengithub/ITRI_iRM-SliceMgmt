@@ -127,6 +127,7 @@ import { ParsePositionPipe } from './shared/pipes/position-parser.pipe'; // @202
 // import API
 import { apiForFieldMgmt }    from './shared/api/For_Field_Mgmt';     // @2024/03/14 Update
 import { apiForBSMgmt }       from './shared/api/For_BS_Mgmt';        // @2024/03/14 Add
+import { apiForFaultMgmt }    from './shared/api/For_Fault_Mgmt';     // @2024/06/03 Add
 import { apiForScheduleMgmt } from './shared/api/For_Schedule_Mgmt';  // @2024/03/14 Add
 import { apiForLogMgmt }      from './shared/api/For_Log_Mgmt';       // @2024/03/14 Add
 
@@ -271,6 +272,7 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
 
     apiForFieldMgmt,    // @2024/03/14 Update for import API of Field Management
     apiForBSMgmt,       // @2024/03/14 Add for import API of BS Management
+    apiForFaultMgmt,    // @2024/06/03 Add for import API of Fault Management
     apiForScheduleMgmt, // @2024/03/14 Add for import API of Schedule Management
     apiForLogMgmt,      // @2024/03/14 Add for import API of Log Management 
 
