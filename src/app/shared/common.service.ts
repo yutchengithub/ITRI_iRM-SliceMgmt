@@ -17,7 +17,7 @@ import { Item } from './models/item';
 
 // Interfaces of NE ( Component ) management 
 import { ComponentList }   from '../component-management/component-management.component';
-import { ComponentInfo } from '../component-management/component-info/component-info.component';
+import { ComponentInfo, CurrentBsComFmList } from '../component-management/component-info/component-info.component';
 import { ComponentInfosw } from '../component-management/component-info/component-info.component';
 
 // Interfaces of Fault Management
@@ -641,6 +641,10 @@ export class CommonService {
     const url = `${this.restPath}/resetBs`;
     const bodyStr = JSON.stringify(body);
     return this.http.post(url, bodyStr);
+  }
+  queryCurrentBsComFaultMessage(comId: string, params: any): Observable<any> {
+    const url = `${this.restPath}/queryCurrentBsComFaultMessage/${this.getSessionId()}/${comId}`;
+    return this.http.get(url, { params });
   }
 
   // Software Mgmt API
@@ -5973,6 +5977,104 @@ export class CommonService {
         }
       ]
     }
+
+    currentBsComFmList: CurrentBsComFmList = {
+      "totalMessageNumber": 4,
+      "faultMessage": [
+        {
+          "bsId": "b1c72ebb77744ea6aa9a",
+          "bsName": "BS-D-1",
+          "fieldId": "f769da087f2044e7a0d7",
+          "fieldName": "field",
+          "compname": "itri_10.0.2.17",
+          "id": "85851",
+          "timestamp": "2022-02-18T14:30:01Z",
+          "compid": "51e4faf908f3434fa06d",
+          "mfgid": "51e4faf908f3434fa06d",
+          "index": 14,
+          "alarmIdentifier": "140.96.102.33",
+          "eventtype": "MAJOR",
+          "notificationtype": 0,
+          "probablecause": "Configuration file corrupted conflicting",
+          "specificproblem": "Configuration file corrupted conflicting",
+          "perceivedseverity": "MAJOR",
+          "count": 6157,
+          "createtime": "2022-02-18 14:30:01",
+          "modifytime": "2024-06-03 15:30:14",
+          "processstatus": "",
+          "processresult": ""
+        },
+        {
+          "bsId": "b1c72ebb77744ea6aa9a",
+          "bsName": "BS-D-1",
+          "fieldId": "f769da087f2044e7a0d7",
+          "fieldName": "field",
+          "compname": "itri_10.0.2.17",
+          "id": "85849",
+          "timestamp": "2020-01-11T00:00:00Z",
+          "compid": "51e4faf908f3434fa06d",
+          "mfgid": "51e4faf908f3434fa06d",
+          "index": 2,
+          "alarmIdentifier": "fault-source_2",
+          "eventtype": "MINOR",
+          "notificationtype": 0,
+          "probablecause": "fault-text_2",
+          "specificproblem": "fault-text_2",
+          "perceivedseverity": "MINOR",
+          "count": 1,
+          "createtime": "2020-01-11 00:00:00",
+          "modifytime": "2024-04-15 11:15:40",
+          "processstatus": "",
+          "processresult": ""
+        },
+        {
+          "bsId": "b1c72ebb77744ea6aa9a",
+          "bsName": "BS-D-1",
+          "fieldId": "f769da087f2044e7a0d7",
+          "fieldName": "field",
+          "compname": "itri_10.0.2.17",
+          "id": "85850",
+          "timestamp": "2020-01-01T00:00:00Z",
+          "compid": "51e4faf908f3434fa06d",
+          "mfgid": "51e4faf908f3434fa06d",
+          "index": 3,
+          "alarmIdentifier": "fault-source_3",
+          "eventtype": "CRITICAL",
+          "notificationtype": 0,
+          "probablecause": "fault-text_3",
+          "specificproblem": "fault-text_3",
+          "perceivedseverity": "CRITICAL",
+          "count": 1,
+          "createtime": "2020-01-01 00:00:00",
+          "modifytime": "2024-04-15 11:15:41",
+          "processstatus": "",
+          "processresult": ""
+        },
+        {
+          "bsId": "b1c72ebb77744ea6aa9a",
+          "bsName": "BS-D-1",
+          "fieldId": "f769da087f2044e7a0d7",
+          "fieldName": "field",
+          "compname": "itri_10.0.2.17",
+          "id": "85848",
+          "timestamp": "2020-01-01T00:00:00Z",
+          "compid": "51e4faf908f3434fa06d",
+          "mfgid": "51e4faf908f3434fa06d",
+          "index": 1,
+          "alarmIdentifier": "fault-source_1",
+          "eventtype": "MAJOR",
+          "notificationtype": 0,
+          "probablecause": "fault-text_1",
+          "specificproblem": "fault-text_1",
+          "perceivedseverity": "MAJOR",
+          "count": 1,
+          "createtime": "2020-01-01 00:00:00",
+          "modifytime": "2024-04-15 11:15:39",
+          "processstatus": "",
+          "processresult": ""
+        }
+      ]
+    };
 
   nfList: Nf[] = [
     {

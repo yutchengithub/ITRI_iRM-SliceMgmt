@@ -11,6 +11,7 @@ import { SystemSummary } from 'src/app/dashboard/dashboard.component';
 import { LanguageService } from 'src/app/shared/service/language.service';
 import { FmsgList } from './../../fault-management/fault-management.component';
 import { FaultMessages } from './../../fault-management/fault-management.component';
+import { SpinnerService } from './../../shared/service/spinner.service'; 
 import { Subscription } from 'rxjs';
 import { XMLParser } from "fast-xml-parser";
 import * as xmlJs from 'xml-js';
@@ -19,6 +20,15 @@ import * as xmlJs from 'xml-js';
 import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
 
 //component Info
+interface bsCurrentFmParams {
+  method: string;
+  start: string;
+  end: string;
+  urgency?: string; // 可選
+
+  offset: number;
+  limit: number;
+}
 export interface ComponentInfo {
   id: string;
   name: string;
@@ -94,6 +104,35 @@ interface File {
 }
 interface FileObject {
   name: string;
+}
+
+export interface CurrentBsComFmList {
+  totalMessageNumber: number;
+  faultMessage: FaultMessage[];
+}
+
+export interface FaultMessage {
+  alarmIdentifier: string;
+  bsId: string;
+  bsName: string;
+  compid: string;
+  compname: string;
+  count: number;
+  createtime: string;
+  eventtype: string;
+  fieldId: string;
+  fieldName: string;
+  id: string;
+  index: number;
+  mfgid: string;
+  modifytime: string;
+  notificationtype: number;
+  perceivedseverity: string;
+  probablecause: string;
+  processresult: string;
+  processstatus: string;
+  specificproblem: string;
+  timestamp: string;
 }
 
 @Component({
@@ -179,7 +218,19 @@ export class ComponentInfoComponent implements OnInit {
   isObject(value: any): boolean {
     return typeof value === 'object' && value !== null;
   }
-  
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+  alarmSearchForm!: FormGroup;
+  afterAlarmSearchForm!: FormGroup;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -187,28 +238,45 @@ export class ComponentInfoComponent implements OnInit {
     public commonService: CommonService,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private       location: Location,      // @2024/05/03 Add
-    public languageService: LanguageService
+    private location: Location,
+    public languageService: LanguageService,
+    public spinnerService: SpinnerService,
   ) {
     this.severitys = this.commonService.severitys;
     this.cmpsource = this.commonService.cmpsource;
+    const nowTime = this.commonService.getNowTime();
+    console.log( "getNowTime: ", nowTime );
+    const currentDate = new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`);
+    const oneMonthAgoDate = new Date(currentDate);
+    oneMonthAgoDate.setMonth(oneMonthAgoDate.getMonth() - 1);
+    const formattedMonth = ('0' + (oneMonthAgoDate.getMonth() + 1)).slice(-2);
+    const formattedDay = ('0' + oneMonthAgoDate.getDate()).slice(-2);
+    const formattedHour = ('0' + oneMonthAgoDate.getHours()).slice(-2);
+    const formattedMinute = ('0' + oneMonthAgoDate.getMinutes()).slice(-2);
+    this.alarmSearchForm = this.fb.group({
+      'from': new FormControl( `${oneMonthAgoDate.getFullYear()}-${formattedMonth}-${formattedDay} ${formattedHour}:${formattedMinute}` ), 
+      'to': new FormControl( `${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}` ),
+      'severity': new FormControl( 'All' )
+    });
   }
-
+  
   ngOnInit(): void {
     this.createSearchForm();
     this.sessionId = this.commonService.getSessionId();
     this.route.params.subscribe((params) => {
       this.comId = params['id'];
       this.getComponentInfo();
-      //this.getFaultMessage();
-      this.search();
-      
+      //this.getCurrentBsComFmList();
+      //this.search();
+      this.getCurrentBsComFmList()
+      this.afterAlarmSearchForm = _.cloneDeep( this.alarmSearchForm );
     });
   }
   ngOnDestroy() {
     clearTimeout(this.refreshTimeout);
   }
   getComponentInfo() {
+    this.showLoadingSpinner();
     this.activateSuccess = false;
     const parseOption = {
       cdataTagName: "![CDATA[",
@@ -246,6 +314,7 @@ export class ComponentInfoComponent implements OnInit {
         (res: ComponentInfo) => {
           console.log('queryComponentInfo:', res);
           this.componentInfo = res;
+          this.hideSpinner();
           const xmldata = res.info.data;
           const parser = new XMLParser(parseOption);
           const output = parser.parse(xmldata);
@@ -354,7 +423,129 @@ export class ComponentInfoComponent implements OnInit {
   get firstSoftwareSlot(): SoftwareSlot | undefined {
     return this.componentInfo?.sm['software-inventory']['software-slot'][0];
   }
+  search_currentBsFmList() {
+    console.log( 'search_currentBsComFmList() - Start' );
 
+    // 確認告警資訊是否已加載
+    if ( !this.currentBsComFmList || !this.currentBsComFmList.faultMessage ) {
+      console.error( 'currentBsFmList.faultMessage is not loaded yet.' );
+      return;
+    }
+
+    // 更新顯示的搜尋條件
+    this.afterAlarmSearchForm = this.alarmSearchForm.value;
+
+    this.p = 1; // 當點擊搜尋時,將頁數預設為 1
+
+    const from = this.alarmSearchForm.get( 'from' )?.value;
+    const to = this.alarmSearchForm.get( 'to' )?.value;
+    const severity = this.alarmSearchForm.get( 'severity' )?.value;
+    
+    console.log( 'the search severity is', severity );
+    
+    // 清除以前的搜尋結果
+    this.filtered_CurrentBsComFmList = [];
+    this.isSearch_currentBsComFmList = false;
+
+    this.afterAlarmSearchForm = _.cloneDeep( this.alarmSearchForm );
+
+    this.isLoadingCurrentBsComFmList = true; // 設置加載旗標為 true,表示開始加載
+    this.showProcessingSpinner(); // 顯示 Processing Spinner
+
+    if ( this.commonService.isLocal ) {
+
+      this.filtered_CurrentBsComFmList = this.currentBsComFmList.faultMessage.filter( msg => {
+
+        const msgDate = new Date( msg.modifytime );
+        const isAfterFrom = msgDate >= new Date( from );
+        const isBeforeTo = msgDate <= new Date( to );
+        const isSeverityMatch = severity === 'All' || msg.eventtype === severity;
+
+        return isAfterFrom && isBeforeTo && isSeverityMatch;
+      });
+
+      // 將 filtered_CurrentBsFmList 中的 processstatus 轉換為字串型態
+      this.filtered_CurrentBsComFmList.forEach( msg => {
+        msg.processstatus = String( msg.processstatus );
+      });
+
+      this.isSearch_currentBsComFmList = true;  // Local Search 完畢,設置標記為 true
+
+      this.totalItems = this.filtered_CurrentBsComFmList.length; // 確保更新 totalItems 以反映搜尋結果的數量
+
+      console.log( "In search_currentBsFmList() in Local mode - msgToDisplay:", this.msgToDisplay );
+
+      this.isLoadingCurrentBsComFmList = false; // 設置加載旗標為 false,表示加載完成
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
+
+    } else {  // 如非在 Local 環境測試
+
+
+      // 只保留傳入日期的部分
+      const formattedDate = this.commonService.dealPostDate( this.alarmSearchForm.controls['from'].value );
+      const start = formattedDate.split(' ')[0]; // 獲取日期部分,例如 '2024-03-10'
+      
+      const formattedEnd = this.commonService.dealPostDate( this.alarmSearchForm.controls['to'].value );  
+      const end = formattedEnd.split(' ')[0];    // 獲取日期部分,例如 '2024-03-10'
+
+      const params: bsCurrentFmParams = {
+        method: 'desc',
+        start,           // 取得開始日期 - 目前後端無法篩選時分秒
+        end,             // 取得結束日期 - 目前後端無法篩選時分秒
+
+        offset: ( this.p - 1 ) * this.pageSize,
+        limit: 5
+      };
+
+      // 獲取 bsCurrentFmControl 的控制元件
+      const bsCurrentFmControl = this.alarmSearchForm.get('severity');
+
+      // 判斷 severity 控制元件是否存在且有值
+      if ( bsCurrentFmControl && bsCurrentFmControl.value !== 'All' ) {
+        params.urgency = bsCurrentFmControl.value;
+      }
+      this.commonService.queryCurrentBsComFaultMessage(this.comId, params).subscribe({
+        next: ( res ) => {
+
+          console.log( 'In search_currentBsFmList() - res:', res );
+          
+          // 傳回的數據 res 已是篩選過的,故直接放入 filtered_CurrentBsFmList
+          this.filtered_CurrentBsComFmList = res.faultMessage;
+
+          // 將 filtered_CurrentBsFmList 中的 processstatus 轉換為字串型態
+          this.filtered_CurrentBsComFmList.forEach( msg => {
+            msg.processstatus = String( msg.processstatus );
+          });
+
+          this.totalItems = res.totalMessageNumber;       // 更新記錄的告警總數
+          this.isSearch_currentBsComFmList = true;        // Search 完畢,設置標記為 true,以便 msgToDisplay 切換成顯示 filtered_CurrentBsFmList
+          console.log( "In search_currentBsFmList() - msgToDisplay:", this.msgToDisplay );
+
+          this.isLoadingCurrentBsComFmList = false; // 設置加載旗標為 false,表示加載完成
+          this.hideSpinner();  // 完成後隱藏 spinner
+        },
+        error: ( error ) => {  // 錯誤的 callback
+          console.error( 'Error searching current bs fault message:', error ); // 顯示錯誤訊息
+
+          this.isLoadingCurrentBsComFmList = false; // 設置加載旗標為 false，表示加載出錯
+          this.hideSpinner();  // 出錯時隱藏 spinner
+        }
+      });
+
+    }
+
+    // // 更新顯示的搜尋條件
+    // this.afterAlarmSearchForm.patchValue({
+    //   'from': from,
+    //   'to': to,
+    //   'severity': severity
+    // });
+
+    // 檢查搜尋表單的值
+    console.log('Search criteria for current bs fault message:', this.afterAlarmSearchForm.value);
+
+    console.log("search_currentBsFmList() - End");
+  }
    // 建立搜尋表單
    createSearchForm() {
     const nowTime = this.commonService.getNowTime();
@@ -368,30 +559,90 @@ export class ComponentInfoComponent implements OnInit {
     });
     this.severitys = this.commonService.severitys;
   }
+  prepareFmListParams(): bsCurrentFmParams {
+    const formattedStartDate = this.commonService.dealPostDate( this.alarmSearchForm.controls['from'].value );
+    const start = formattedStartDate.split(' ')[0];  // 例如 '2024-03-10'
 
-  getFaultMessage() {
-    //console.log('getFaultMessage:');
+    // 格式化結束日期，同上
+    const formattedEndDate = this.commonService.dealPostDate( this.alarmSearchForm.controls['to'].value );
+    const end = formattedEndDate.split(' ')[0];  // 例如 '2024-03-10'
+
+    // 準備請求參數，包括日期範圍和分頁資訊
+    const params: bsCurrentFmParams = {
+      method: 'desc',
+      start,  // 開始日期
+      end,    // 結束日期
+      offset: ( this.p - 1 ) * this.pageSize,  // 根據當前頁數計算偏移量
+      limit: this.pageSize,  // 每頁顯示的條目數
+    };
+
+    // 檢查是否有嚴重程度的篩選條件
+    const bsCurrentFmControl = this.alarmSearchForm.get('severity');
+    if ( bsCurrentFmControl && bsCurrentFmControl.value !== 'All' ) {
+      params.urgency = bsCurrentFmControl.value;  // 添加嚴重程度條件
+    }
+
+    return params;
+  }
+  handleCurrentBsFmListResponse( res: any ) {
+    
+    if ( !this.isSearch_currentBsComFmList ) {
+      // 如果數據非因搜尋操作獲得
+      console.log( 'In getCurrentBsComFmList() not click search - res:', res );
+
+      this.currentBsComFmList = res; // 賦值響應至currentBsFmList
+
+      // 將processstatus轉換為字串型態
+      this.currentBsComFmList.faultMessage.forEach( msg => {
+        msg.processstatus = String( msg.processstatus );
+      });
+
+      console.log( 'In getCurrentBsComFmList() not click search - currentBsFmList:', this.currentBsComFmList );
+
+      this.totalItems = this.currentBsComFmList.totalMessageNumber;
+      console.log( 'In getCurrentBsComFmList() not click search - Total BsCom Fault Message Num:', this.totalItems );
+
+    } else {
+
+      // 如果是搜尋操作觸發的數據獲得
+      console.log( 'In getCurrentBsComFmList() click search - res:', res );
+
+      // 將篩選過的數據直接賦值至filtered_CurrentBsFmList
+      this.filtered_CurrentBsComFmList = res.faultMessage;
+
+      // 轉換processstatus為字串型態
+      this.filtered_CurrentBsComFmList.forEach( msg => {
+        msg.processstatus = String( msg.processstatus );
+      });
+
+      this.totalItems = res.totalMessageNumber; // 更新記錄的告警總數
+      console.log( "In getCurrentBsComFmList() click search - msgToDisplay:", this.msgToDisplay );
+    }
+
+    this.isLoadingCurrentBsComFmList = false; // 標記加載完成
+    //this.hideSpinner();  // 完成後隱藏加載指示
+  }
+
+  currentBsComFmList: CurrentBsComFmList = {} as CurrentBsComFmList;  
+  isLoadingCurrentBsComFmList = true;                // 控制加載當前 Bs Fm List 資訊狀態的標誌,初始設置為 true
+  filtered_CurrentBsComFmList: FaultMessage[] = [];  // 用於儲存篩選後的基站告警資訊
+  isSearch_currentBsComFmList: boolean = false;      // 用於標記是否進行了搜尋
+  getCurrentBsComFmList() {
+    //console.log('getCurrentBsComFmList:');
     clearTimeout(this.refreshTimeout);
+    this.isLoadingCurrentBsComFmList = true;
     if (this.commonService.isLocal) {
       /* local file test */
-      this.fmsgList = this.commonService.fmsgList;
-      this.faultMessageDeal();
+      this.currentBsComFmList = this.commonService.currentBsComFmList;
+      //this.faultMessageDeal();
     } else {
-      const emptyvalue = '';
-      const severity = this.searchForm.controls['severity'].value;
-      // const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
-      // const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
-      const offset = (this.p - 1) * this.pageSize;
-      const limit = 10;
-      if (this.queryFaultMessageScpt) this.queryFaultMessageScpt.unsubscribe();
-      this.queryFaultMessageScpt = this.commonService.queryFaultMessage(emptyvalue, emptyvalue, emptyvalue, severity, '', '', offset, limit).subscribe(
+      const params = this.prepareFmListParams();
+      this.queryFaultMessageScpt = this.commonService.queryCurrentBsComFaultMessage(this.comId, params).subscribe(
         res => {
-          console.log('getFaultMessage:');
+          console.log('getCurrentBsComFmList:');
           console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.fmsgList = JSON.parse(str);
-          this.fmsgList = res as FmsgList;
-          this.faultMessageDeal();
+          this.handleCurrentBsFmListResponse( res ); 
+          //this.faultMessageDeal();
         }
       );
     }
@@ -400,14 +651,14 @@ export class ComponentInfoComponent implements OnInit {
     //this.p = 1;
     this.totalItems = this.fmsgList.faultMessages.length;
     this.nullList = new Array(this.totalItems);
-    //this.refreshTimeout = window.setTimeout(() => this.getFaultMessage(), this.ListRefreshTime * 1000);
+    //this.refreshTimeout = window.setTimeout(() => this.getCurrentBsComFmList(), this.ListRefreshTime * 1000);
     this.refreshTimeout = window.setTimeout(() => {
       if (this.p === 1) {
         //console.log(`page[${this.p}] ===> refresh.`);
         // if (this.isSettingAdvanced) {
         //   this.getFMAdvanceSearch();
         // } else {
-          this.getFaultMessage();
+          this.getCurrentBsComFmList();
         // }
 
       } else {
@@ -452,15 +703,19 @@ export class ComponentInfoComponent implements OnInit {
     this.createSearchForm();
     this.isSearch = false;
   }  
-  get msgToDisplay(): FaultMessages[] {
+  get msgToDisplay(): FaultMessage[] {
     // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
     // 否則，顯示全部 this.fmsgList.faultMessages
-    return this.isSearch ? this.filteredFmList : this.fmsgList.faultMessages;
+    if ( this.currentBsComFmList && Array.isArray( this.currentBsComFmList.faultMessage ) ) {
+      return this.isSearch_currentBsComFmList ? this.filtered_CurrentBsComFmList : this.currentBsComFmList.faultMessage;
+    }
+    return []; // 如果數據還沒有載入，則返回一個空數組
+    //return this.isSearch ? this.filteredFmList : this.fmsgList.faultMessages;
   }
 
   pageChanged(page: number) {
     this.p = page;
-    this.getFaultMessage();
+    this.getCurrentBsComFmList();
   }
 
   openUpdateDatastoreModal(tree: any) {

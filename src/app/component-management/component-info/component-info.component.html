@@ -21,7 +21,7 @@
               <li><label>{{languageService.i18n['cm.manufacturer']}}</label><span>{{componentInfo.firm}}</span></li>
               <li><label>{{languageService.i18n['cm.model']}}</label><span>{{componentInfo.modelname}}</span></li>
               <li><label>{{languageService.i18n['table.Status']}}</label>
-                <span *ngIf="componentInfo.status === 0" class="greyLight"></span>
+                <span *ngIf="componentInfo.status === 0" class="grayLight"></span>
                 <span *ngIf="componentInfo.status === 2" class="greenLight"></span>
               </li>
               <li><label>{{languageService.i18n['software_version']}}</label>
@@ -261,7 +261,7 @@
       </div>
     </div>
 
-    <!-- <div><span>Alarms</span>
+    <div><span>{{ languageService.i18n['BS.alarms'] }}</span>
       <input id="faultMsg" class="toggle" type="checkbox">
       <label for="faultMsg" class="lbl-toggle">
         </label>
@@ -275,15 +275,29 @@
                   <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
                 </select>
               </span>
-              <span><label>{{languageService.i18n['fm.start']}}</label>
+              <span><label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}</label>
                 <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
               </span>
-              <span><label>{{languageService.i18n['fm.end']}}</label>
+              <span><label>{{ languageService.i18n['BS.alarmLatestUpdateTimeRangeEnd'] }}&ensp;</label>
                 <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
               </span>
-              <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
+              <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search_currentBsFmList()">search</span>
+              <!-- <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search_currentBsFmList()">clear</span> -->
             </div>
+             <!-- Search Criteria Summary of current bs fault message @2024/03/31 Add -->
+             <!-- <div class="filterBY">
+              <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
+              <span *ngIf="afterAlarmSearchForm.controls['severity'].value">
+                <label>{{ languageService.i18n['fm.severity'] }}:&nbsp;</label>{{ afterAlarmSearchForm.controls['severity'].value }}
+              </span>
+              <span *ngIf="afterAlarmSearchForm.controls['from'].value || afterAlarmSearchForm.controls['to'].value">
+                <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}:&nbsp;</label>
+                {{ afterAlarmSearchForm.controls['from'].value ? (commonService.dealPostDate(afterAlarmSearchForm.controls['from'].value) + ' ~ ') : '' }}
+                {{ afterAlarmSearchForm.controls['to'].value ? commonService.dealPostDate(afterAlarmSearchForm.controls['to'].value) : '' }}
+              </span>
+            </div> -->
           </form>
+
             <div class="table">
               <table>
                 <thead>
@@ -294,11 +308,12 @@
                     <th>{{languageService.i18n['fm.component']}}</th>
                     <th>{{languageService.i18n['fm.alarm']}}</th>
                     <th>{{languageService.i18n['fm.severity']}}</th>
-                    <th>{{languageService.i18n['fm.occurtime']}}</th>
-                    <th>{{languageService.i18n['fm.status']}}</th>
+                    <th>{{languageService.i18n['BS.alarmLatestUpdateTime']}}</th>
+                    <th>{{languageService.i18n['BS.processingFmStatus']}}</th>
                   </tr>
                 </thead>
                 <tbody>
+                  <ng-container *ngIf="!isLoadingCurrentBsComFmList">
                   <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: msgToDisplay.length, id: 'fmList' }; let i = index" >
                     <td>{{ (p - 1) * pageSize + i + 1 }}</td>
                     <td>{{opt.fieldName}}</td>
@@ -306,34 +321,26 @@
                     <td>{{opt.compname}}</td>
                     <td>{{opt.probablecause}}</td>
                     <td>{{opt.eventtype}}</td>
-                    <td>{{opt.timestamp}}</td>
-                    <td>{{opt.status}}</td>
+                    <td>{{ opt.modifytime }}</td>
+                    <td>
+                      <label *ngIf=" opt.processstatus === '' " class="redLight"></label>
+                      <label *ngIf=" opt.processstatus === '0' " class="redLight"></label>
+                      <label *ngIf=" opt.processstatus === '1' " class="greenLight"></label>
+                    </td>
                   </tr>
+                  <tr class="notFind" *ngIf=" totalItems === 0 ">
+                    <td colspan="8">{{ languageService.i18n['no_results'] }}</td>
+                  </tr>
+                  </ng-container>
                 </tbody>
-              </table> 
+              </table>
+              <!-- pagination -->
               <span class="total">{{languageService.i18n['fm.total1']}} {{msgToDisplay.length}} {{languageService.i18n['fm.total2']}}</span>
-              <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
-        nextLabel="" id="fmList">
-          </pagination-controls>
+              <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""nextLabel="" id="fmList"></pagination-controls>
             </div>
-
-            <div class="note_info">
-              <ul>
-                <li><label>Field Name</label><span>field01</span></li>
-                <li><label>BS Name</label><span>BS_01</span></li>
-                <li><label>Severity</label><span>CRITICAL</span></li>
-                <li><label>Occur Time</label><span>2023-02-21 09:28:01</span></li>
-                <li><label>Status</label><span>0</span></li>
-              </ul>
-              <ul class="event">
-                <li><label>Event Type</label><span>CRITICAL</span></li>
-                <li><label>Event Cause</label><span>fault-text_2</span></li>
-                <li><label>Event Desc.</label><span>fault-text_2</span></li>
-              </ul>
-            </div>
+          </div>
         </div>
       </div>
-    </div> -->
 
     <div>
       <span>{{languageService.i18n['cm.file']}}<button type="button" (click)="openUploadModal()">{{languageService.i18n['upload']}}</button></span>

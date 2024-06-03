@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CommonService } from '../shared/common.service';
 import { LanguageService } from '../shared/service/language.service';
+import { SpinnerService } from '../shared/service/spinner.service'; 
 import { Item } from '../shared/models/item';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { Subscription } from 'rxjs';
@@ -81,13 +82,20 @@ export class ComponentManagementComponent implements OnInit {
     { displayName: `CU+DU+RU`, value: '5' }
   ];
   componentId: string= '';
-
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
   constructor(
     private dialog: MatDialog,
     private router: Router,
     private commonService: CommonService,
     private http: HttpClient,
     private fb: FormBuilder,
+    public spinnerService: SpinnerService,
     public languageService: LanguageService
   ) {
     this.comtype.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
@@ -104,11 +112,11 @@ export class ComponentManagementComponent implements OnInit {
     const firm = this.searchForm.controls['firm'].value;
     const uploadtype = this.searchForm.controls['uploadtype'].value;
     const model = this.searchForm.controls['model'].value;
-    console.log('querySoftwareList params:')
-    console.log(`fileName=${firm}`);
-    console.log(`uploadtype=${uploadtype}`);
-    console.log(`model=${model}`);
+    // console.log(`fileName=${firm}`);
+    // console.log(`uploadtype=${uploadtype}`);
+    // console.log(`model=${model}`);
     clearTimeout(this.refreshTimeout);
+    this.showLoadingSpinner();
     if (this.commonService.isLocal) {
       /* local file test */
       this.componentList = this.commonService.componentList;
@@ -119,6 +127,7 @@ export class ComponentManagementComponent implements OnInit {
         res => {
           console.log('getBsComponent List:');
           console.log(res);
+          this.hideSpinner();
           const str = JSON.stringify(res);//convert array to string
           this.componentList = JSON.parse(str);
           this.componentListDeal();
@@ -240,7 +249,7 @@ export class ComponentManagementComponent implements OnInit {
       );
     }
   }
-
+  
   openDeleteModal(componentList: Components) {
     this.selectComponent = componentList;
     this.componentstatus = componentList.status;
