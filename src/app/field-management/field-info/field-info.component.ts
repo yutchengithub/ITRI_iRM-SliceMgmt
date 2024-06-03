@@ -143,7 +143,7 @@ interface KpiSubcategory {
   color?: string;    // 儲存顏色
   time?: string;     // 儲存時間範圍
   name: string;      // 儲存名稱
-  value?: any;       // 儲存數值
+  value: number;       // 儲存數值
   label?: string;    // 儲存標籤
   unit?: string;     // 儲存單位
 }
@@ -3407,7 +3407,7 @@ export class FieldInfoComponent implements OnInit {
 
 
 
-// For 場域效能報表 @2024/05/27 Update ↓
+// For 場域效能報表 @2024/06/03 Update ↓
 
   // 用於控制 場域效能報表 視窗 @2024/03/30 Add
   @ViewChild('fieldPMReportWindow') fieldPMReportWindow: any;
@@ -3487,7 +3487,7 @@ export class FieldInfoComponent implements OnInit {
     legendPosition: LegendPosition = LegendPosition.Right;  // 使用枚舉
     showXAxis = true;
     showYAxis = true;
-    gradient = true;
+    gradient = false;
     showXAxisLabel = true;
     xAxisLabel = '效能指標'; 
     showYAxisLabel = false;
@@ -3534,18 +3534,17 @@ export class FieldInfoComponent implements OnInit {
 
     dataColorMap = new Map<string, string>();    // 用於顯示圖表數據線的顏色映射表  
 
-    customColors = ( value: any ) => {
-  
-      console.log( "In customColors() - the get value:", value );
-  
+    customColors = (value: any) => {
+      console.log("In customColors() - the get value:", value);
+      
       // 如果值為 null 或 ""，返回透明色
-      if ( value === null || value === "" || value === "none" ) {
+      if (value === null || value === "" || value === "none") {
         return '#ffffff00'; // 透明色 
       }
-  
+    
       // 根據名稱設置顏色
-      const colorEntry = this.dataColorMap.get( value );
-      return colorEntry || '#ffff'; // 沒取得對應值就默認設為白色
+      const colorEntry = this.dataColorMap.get(value);
+      return colorEntry || '#ffffff'; // 沒取得對應值就默認設為白色
     };
 
     // @2024/05/31 Add
@@ -3814,79 +3813,80 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // 根據選擇的 KPI 類別和子類別獲取對應的數據
-  getKpiData( data: BsInfoInField | CellInfo, bsName: string, color: string, cellName?: string ): 
-               { name: string; value: any, label?: string, color?: string }[] {
-    
-    const kpiData: { name: string; value: any, unit?: string, color?: string }[] = [];
+  getKpiData(data: BsInfoInField | CellInfo, bsName: string, color: string, cellName?: string): 
+               { name: string; value: any, label?: string, unit?: string, color?: string }[] {
+
+    const kpiData: { name: string; value: any, label?: string, unit?: string, color?: string }[] = [];
     let unit = ''; // 初始化單位
     let name = ''; // 初始化名稱
 
-    // 輸出當前選擇的 KPI 類別到控制台
-    console.log( "In getKpiData() - selectedKpiCategory = ", this.selectedKpiCategory );
-
     // 用於添加數據並生成名稱
-    const addDataName = ( value: any, prop: string ) => {
-      if ( 'nci' in data ) {
-        name = `${bsName} ${cellName}`;
-      } else {
-        name = `${bsName}`;
-      }
-      
-      if ( value !== null && value !== "" && value !== "none" ) { // 只在 value 有效時添加數據
-        kpiData.push( { name: name, value: parseFloat(value), unit: unit, color: color } );
-      } else {
-        kpiData.push( { name: name, value: null, unit: unit, color: '#fff0' } ); // 設置透明色
-      }
+    const addDataName = (value: any, prop: string) => {
+        if ('nci' in data) {
+            name = `${bsName} - ${cellName}`;
+        } else {
+            name = `${bsName}`;
+        }
+
+        if (value !== null && value !== "" && value !== "none") {
+            kpiData.push({ name: name, value: parseFloat(value), label: name, unit: unit, color: color });
+        } else {
+            kpiData.push({ name: name, value: 0, label: name, unit: unit, color: '#fff0' }); // 設置透明色或為0
+        }
     };
 
     // 根據選擇的 KPI 類別設置對應的單位並添加數據名稱  
-    switch ( this.selectedKpiCategory ) {
-      case 'Accessibility':
-        unit = '%'; // 設置單位為百分比
-        addDataName( data.accessibility, 'accessibility' ); // 添加 Accessibility 數據名稱
-        break;
-      case 'Integrity':
-        // 根據子類別設置不同的單位並添加對應的數據名稱
-        if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' ) {
-          unit = 'ms'; // 設置單位為毫秒
-          addDataName( data.integrity.downlinkDelay, 'downlinkDelay' ); // 添加 Downlink Delay 數據名稱
-        } else if ( this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
-          unit = 'ms'; // 設置單位為毫秒
-          addDataName(data.integrity.uplinkDelay, 'uplinkDelay'); // 添加 Uplink Delay 數據名稱
-        } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' ) {
-          unit = 'Mbps'; // 設置單位為 Mbps  
-          addDataName( data.integrity.downlinkThrouthput, 'downlinkThrouthput' ); // 添加 Downlink Throughput 數據名稱
-        } else if ( this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
-          unit = 'Mbps'; // 設置單位為 Mbps
-          addDataName( data.integrity.uplinkThrouthput, 'uplinkThrouthput' ); // 添加 Uplink Throughput 數據名稱
-        }
-        break;
-      case 'Utilization':
-        unit = '%'; // 設置單位為百分比  
-        // 根據子類別添加對應的數據標籤
-        if ( this.selectedKpiSubcategory === 'Process Utilization' ) {
-          addDataName( data.utilization.resourceProcess, 'resourceProcess' ); // 添加 Process Utilization 數據名稱
-        } else if ( this.selectedKpiSubcategory === 'Memory Utilization' ) {
-          addDataName( data.utilization.resourceMemory, 'resourceMemory' ); // 添加 Memory Utilization 數據名稱
-        } else if ( this.selectedKpiSubcategory === 'Disk Utilization' ) {
-          addDataName( data.utilization.resourceDisk, 'resourceDisk' ); // 添加 Disk Utilization 數據名稱
-        }
-        break;
-      case 'Retainability':
-        unit = '%'; // 設置單位為百分比
-        addDataName( data.retainability, 'retainability' ); // 添加 Retainability 數據名稱
-        break;  
-      case 'Mobility': 
-        unit = '%'; // 設置單位為百分比
-        addDataName( data.mobility, 'mobility' ); // 添加 Mobility 數據名稱
-        break;
-      case 'Energy Consumption':
-        unit = 'J'; // 設置單位為焦耳  
-        addDataName( data.energy, 'energy' ); // 添加 Energy Consumption 數據名稱
-        break;
+    switch (this.selectedKpiCategory) {
+        case 'Accessibility':
+            unit = '%'; // 設置單位為百分比
+            addDataName(data.accessibility, 'accessibility'); // 添加 Accessibility 數據名稱
+            break;
+        case 'Integrity':
+            // 根據子類別設置不同的單位並添加對應的數據名稱
+            if (this.selectedKpiSubcategory === 'Integrated Downlink Delay') {
+                unit = 'ms'; // 設置單位為毫秒
+                addDataName(data.integrity.downlinkDelay, 'downlinkDelay'); // 添加 Downlink Delay 數據名稱
+            } else if (this.selectedKpiSubcategory === 'Integrated Uplink Delay') {
+                unit = 'ms'; // 設置單位為毫秒
+                addDataName(data.integrity.uplinkDelay, 'uplinkDelay'); // 添加 Uplink Delay 數據名稱
+            } else if (this.selectedKpiSubcategory === 'RAN UE Downlink Throughput') {
+                unit = 'Mbps'; // 設置單位為 Mbps  
+                addDataName(data.integrity.downlinkThrouthput, 'downlinkThrouthput'); // 添加 Downlink Throughput 數據名稱
+            } else if (this.selectedKpiSubcategory === 'RAN UE Uplink Throughput') {
+                unit = 'Mbps'; // 設置單位為 Mbps
+                addDataName(data.integrity.uplinkThrouthput, 'uplinkThrouthput'); // 添加 Uplink Throughput 數據名稱
+            }
+            break;
+        case 'Utilization':
+            unit = '%'; // 設置單位為百分比  
+            // 根據子類別添加對應的數據標籤
+            if (this.selectedKpiSubcategory === 'Process Utilization') {
+                addDataName(data.utilization.resourceProcess, 'resourceProcess'); // 添加 Process Utilization 數據名稱
+            } else if (this.selectedKpiSubcategory === 'Memory Utilization') {
+                addDataName(data.utilization.resourceMemory, 'resourceMemory'); // 添加 Memory Utilization 數據名稱
+            } else if (this.selectedKpiSubcategory === 'Disk Utilization') {
+                addDataName(data.utilization.resourceDisk, 'resourceDisk'); // 添加 Disk Utilization 數據名稱
+            }
+            break;
+        case 'Retainability':
+            unit = '%'; // 設置單位為百分比
+            addDataName(data.retainability, 'retainability'); // 添加 Retainability 數據名稱
+            break;
+        case 'Mobility':
+            unit = '%'; // 設置單位為百分比
+            addDataName(data.mobility, 'mobility'); // 添加 Mobility 數據名稱
+            break;
+        case 'Energy Consumption':
+            unit = 'J'; // 設置單位為焦耳  
+            addDataName(data.energy, 'energy'); // 添加 Energy Consumption 數據名稱
+            break;
     }
 
     return kpiData; // 返回包含名稱、數值、單位和顏色的數據數組
+  }
+
+  cleanData(data: any[]): any[] {
+    return data.filter(item => item !== null && item !== undefined && !isNaN(item.value) && item.value !== 0);
   }
 
   // 根據選擇的條件過濾數據
@@ -3894,111 +3894,69 @@ export class FieldInfoComponent implements OnInit {
     let filteredData: BarChartData[] = []; // 定義過濾後的數據陣列
     const colorScheme = this.colorScheme;  // 獲取當前的顏色方案
 
-    console.log( "In filterData() - dataColorMap =", this.dataColorMap ); // 輸出 dataColorMap
+    console.log("In filterData() - dataColorMap =", this.dataColorMap); // 輸出 dataColorMap
 
-    this.fieldInfo.bsinfo.forEach( ( bs: BsInfoInField, bsIndex ) => { // 遍歷每個基站訊息
+    this.fieldInfo.bsinfo.forEach((bs: BsInfoInField, bsIndex) => { // 遍歷每個基站訊息
       const color = colorScheme.domain[bsIndex % colorScheme.domain.length]; // 根據基站索引分配顏色
-      this.dataColorMap.set( `${bs.name}`, color ); // 設置 bs 數據的顏色映射
+      this.dataColorMap.set(`${bs.name}`, color); // 設置 bs 數據的顏色映射
       console.log(`${bsIndex} Adding data with color: ${color}`); // 輸出基站索引和顏色
 
-      if ( bs.cellInfo && bs.cellInfo.length > 0 ) { // 如果有分佈式基站
-        bs.cellInfo.forEach( (cell: CellInfo, cellIndex) => { // 遍歷每個 cell 訊息
+      if (bs.cellInfo && bs.cellInfo.length > 0) { // 如果有分佈式基站
+        bs.cellInfo.forEach((cell: CellInfo, cellIndex) => { // 遍歷每個 cell 訊息
           const cellColor = colorScheme.domain[(bsIndex + cellIndex + 2) % colorScheme.domain.length]; // 分配 cell 顏色
-          this.dataColorMap.set(`${bs.name} Cell#${cellIndex + 1} (NCI=${cell.nci})`, cellColor); // 設置 cell 數據的顏色映射
+          this.dataColorMap.set(`${bs.name} - Cell#${cellIndex + 1} (NCI=${cell.nci})`, cellColor); // 設置 cell 數據的顏色映射
           console.log(`In filterData() - Cell#${cellIndex + 1} Adding data with color: ${cellColor}`); // 輸出 cell 訊息和顏色
-          filteredData.push( ...this.getKpiData(cell, bs.name, cellColor, `Cell#${cellIndex + 1} (NCI=${cell.nci})`) ); // 添加 cell 數據到過濾後的數據陣列
+          const cellData = this.getKpiData(cell, bs.name, cellColor, `Cell#${cellIndex + 1} (NCI=${cell.nci})`);
+          filteredData.push(...cellData);
         });
       } else { // 如果是一體式基站
-        const series = this.getKpiData( bs, bs.name, color ); // 獲取基站的 KPI 數據
-        filteredData.push( ...series ); // 添加基站數據到過濾後的數據陣列
+        const series = this.getKpiData(bs, bs.name, color); // 獲取基站的 KPI 數據
+        filteredData.push(...series);
       }
     });
 
-    console.log("In filterData() - this.customColors =", this.customColors); // 輸出 customColors
+    // 過濾掉非法值
+    filteredData = filteredData.filter(item => item !== null && item !== undefined && !isNaN(item.value));
+
+    console.log("In filterData() - filteredData =", filteredData); // 輸出 filteredData
 
     return filteredData; // 返回過濾後的數據
   }
 
-  // prepareAndUpdateChartData() {
-  //   // 首先根據選擇的條件過濾數據
-  //   let rawData = this.filterData(); // 獲取過濾後的原始數據
-  //   console.log( "In prepareAndUpdateChartData - rawData =", rawData ); // 輸出原始數據到控制台
-    
-  //   this.preparedChartData = rawData; // 將過濾後的數據賦值給 preparedChartData
-  //   console.log( "In prepareAndUpdateChartData - preparedChartData =", this.preparedChartData ); // 輸出整理後的數據到控制台
-    
-  //   //this.displayChartData = this.preparedChartData; // 將整理後的數據賦值給 displayChartData
-
-  //   // this.displayChartData = this.preparedChartData.map(data => ({
-  //   //   ...data,
-  //   //   unit: data.unit || '' // 確保包含 unit
-  //   // }));    
-  //   // console.log( "In prepareAndUpdateChartData - displayChartData =", this.displayChartData ); // 輸出要顯示的數據到控制台
-
-  //   // 初始化或更新每個數據系列的顯示狀態
-  //   this.preparedChartData.forEach(data => {
-  //     if (!(data.name in this.barVisibility)) {
-  //       this.barVisibility[data.name] = true; // 初始化顯示狀態為 true
-  //     }
-  //   });
-
-  //   // 根據 barVisibility 更新 displayChartData
-  //   this.updateDisplayChartData();
-
-  //   // 過濾掉值為 null 的數據點
-  //   this.displayChartData = this.displayChartData.map(data => {
-  //     return {
-  //       ...data,
-  //       value: data.value === null ? undefined : data.value
-  //     };
-  //   });
-
-
-  //   this.setXAxisLabel(); // 更新 X 軸標籤
-  // }
-  prepareAndUpdateChartData() {
-    // 首先根據選擇的條件過濾數據
-    let rawData = this.filterData(); // 獲取過濾後的原始數據
-    console.log("In prepareAndUpdateChartData - rawData =", rawData); // 輸出原始數據到控制台
-  
-    this.preparedChartData = rawData; // 將過濾後的數據賦值給 preparedChartData
-    console.log("In prepareAndUpdateChartData - preparedChartData =", this.preparedChartData); // 輸出整理後的數據到控制台
-  
-    // 初始化或更新每個數據系列的顯示狀態
-    this.preparedChartData.forEach(data => {
-      if (!(data.name in this.barVisibility)) {
-        this.barVisibility[data.name] = true; // 初始化顯示狀態為 true
-      }
-    });
-  
-    // 根據 barVisibility 更新 displayChartData
-    this.updateDisplayChartData();
-  
-    this.setXAxisLabel(); // 更新 X 軸標籤
-  }
-
-  // updateDisplayChartData() {
-  //   this.displayChartData = this.preparedChartData.map(data => {
-  //     return {
-  //       name: data.name,
-  //       value: this.barVisibility[data.name] ? data.value : null,
-  //       label: data.label,
-  //       color: data.color
-  //     };
-  //   });
-  // }
-
   updateDisplayChartData() {
-    this.displayChartData = this.preparedChartData.map(data => {
+    this.displayChartData = [...this.preparedChartData.map(data => {
       return {
         name: data.name,
         value: this.barVisibility[data.name] ? data.value : 0,  // 將隱藏的數據條的值設為 0
         label: data.label,
         color: data.color
       };
-    });
+    })];
+    console.log("In updateDisplayChartData - displayChartData =", this.displayChartData);
   }
-  
+
+  prepareAndUpdateChartData() {
+    // 首先根據選擇的條件過濾數據
+    let rawData = this.filterData(); // 獲取過濾後的原始數據
+    rawData = this.cleanData(rawData); // 清理數據
+    console.log("In prepareAndUpdateChartData - rawData =", rawData); // 輸出原始數據到控制台
+    this.preparedChartData = rawData; // 將過濾後的數據賦值給 preparedChartData
+    console.log("In prepareAndUpdateChartData - preparedChartData =", this.preparedChartData); // 輸出整理後的數據到控制台
+    // 初始化或更新每個數據系列的顯示狀態
+    this.preparedChartData.forEach(data => {
+      if (!(data.name in this.barVisibility)) {
+        this.barVisibility[data.name] = true; // 初始化顯示狀態為 true
+      }
+    });
+    // 根據 barVisibility 更新 displayChartData
+    this.updateDisplayChartData();
+    console.log("In prepareAndUpdateChartData end - displayChartData =", this.displayChartData);
+    this.setXAxisLabel(); // 更新 X 軸標籤
+
+      // 強制觸發變更檢測
+    this.cdr.detectChanges();
+  }
+
   // 獲取當前選擇的 KPI 的單位
   getUnit() {
     switch ( this.selectedKpiCategory ) {
@@ -4024,69 +3982,17 @@ export class FieldInfoComponent implements OnInit {
     }
   }
 
-  // 處理圖表互動事件 ( 包括圖例點擊和數據點點擊 )
-  // onChartInteraction( event: any ) {
-  //   // 判斷事件類型是否為字串 (圖例點擊)
-  //   if ( typeof event === 'string' ) {
-  //     const legendName = event; // 獲取圖例名稱
-  //     console.log("In onChartInteraction() - legendName =", legendName);
-  
-  //     // 切換對應數據線的顯示狀態
-  //     this.barVisibility[legendName] = !this.barVisibility[legendName];
-  //     console.log("In onChartInteraction() - barVisibility =", this.barVisibility);
-  
-  //     // 更新圖表顯示的數據
-  //     this.updateDisplayChartData();
-  //     console.log("In onChartInteraction() end - displayChartData =", this.displayChartData);
-  
-  //     // 獲取所有圖例項目
-  //     const legendItems = document.querySelectorAll('.legend-label');
-  //     legendItems.forEach(item => {
-  //       // 獲取圖例文本
-  //       const legendText = item.querySelector('.legend-label-text');
-  //       if (legendText) {
-  //         // 獲取圖例文本內容並去除多餘空白
-  //         const textContent = legendText.textContent?.trim() ?? null;
-  //         console.log("In onChartInteraction() - legendText content =", textContent);
-  
-  //         // 檢查圖例文本內容是否與點擊的圖例名稱相符
-  //         if (textContent && textContent === legendName.trim()) {
-  //           // 切換圖例文本的劃線樣式
-  //           if (this.barVisibility[legendName]) {
-  //             legendText.classList.remove('hidden-line'); // 移除劃線樣式
-  //           } else {
-  //             legendText.classList.add('hidden-line'); // 添加劃線樣式
-  //           }
-  //         }
-  //       } else {
-  //         // 若未找到圖例文本,輸出提示訊息
-  //         console.log("In onChartInteraction() - legendText is null for item", item);
-  //       }
-  //     });
-  //   } else if (typeof event === 'object') {
-  //     // 處理數據點點擊事件
-  //     console.log("Data point clicked:", event);
-  //     // 執行數據點點擊相關操作,例如顯示數據點的詳細訊息
-  //   } else {
-  //     // 處理未知事件類型
-  //     console.warn("Unknown event type in onChartInteraction:", event);
-  //   }
-  // }
-
   onChartInteraction(event: any) {
     // 判斷事件類型是否為字串 (圖例點擊)
     if (typeof event === 'string') {
       const legendName = event; // 獲取圖例名稱
       console.log("In onChartInteraction() - legendName =", legendName);
-  
       // 切換對應數據線的顯示狀態
       this.barVisibility[legendName] = !this.barVisibility[legendName];
       console.log("In onChartInteraction() - barVisibility =", this.barVisibility);
-  
       // 更新圖表顯示的數據
       this.updateDisplayChartData();
       console.log("In onChartInteraction() end - displayChartData =", this.displayChartData);
-  
       // 獲取所有圖例項目
       const legendItems = document.querySelectorAll('.legend-label');
       legendItems.forEach(item => {
@@ -4096,7 +4002,6 @@ export class FieldInfoComponent implements OnInit {
           // 獲取圖例文本內容並去除多餘空白
           const textContent = legendText.textContent?.trim() ?? null;
           console.log("In onChartInteraction() - legendText content =", textContent);
-  
           // 檢查圖例文本內容是否與點擊的圖例名稱相符
           if (textContent && textContent === legendName.trim()) {
             // 切換圖例文本的劃線樣式
@@ -4111,17 +4016,32 @@ export class FieldInfoComponent implements OnInit {
           console.log("In onChartInteraction() - legendText is null for item", item);
         }
       });
+      // 獲取所有數據條
+      const bars = document.querySelectorAll('g[ngx-charts-bar]');
+      bars.forEach(bar => {
+        // 獲取數據條的 aria-label 屬性
+        const ariaLabel = bar.getAttribute('aria-label');
+        if (ariaLabel && ariaLabel.includes(legendName)) {
+          // 如果 aria-label 包含圖例名稱,則根據可見狀態添加或移除 'hidden' 類
+          if (this.barVisibility[legendName]) {
+            bar.classList.remove('hidden');
+          } else {
+            bar.classList.add('hidden');
+          }
+        }
+      });
     } else if (typeof event === 'object') {
       // 處理數據點點擊事件
       console.log("Data point clicked:", event);
       // 執行數據點點擊相關操作,例如顯示數據點的詳細訊息
     } else {
-      // 處理未知事件類型 
+      // 處理未知事件類型
       console.warn("Unknown event type in onChartInteraction:", event);
     }
   }
 
-// For 場域效能報表 @2024/05/31 Update ↑
+
+// For 場域效能報表 @2024/06/03 Update ↑
 
 
 

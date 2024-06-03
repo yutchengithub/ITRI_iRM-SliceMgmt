@@ -1227,7 +1227,7 @@
 				  [yAxis]="showYAxis"
 				  [xAxisLabel]="xAxisLabel"
 				  [yAxisLabel]="yAxisLabel"
-				  [roundDomains]="roundDomains"  
+				  [roundDomains]="roundDomains" 
 				  [xAxisTickFormatting]="xAxisTickFormatting"
 				  [trimYAxisTicks]="trimYAxisTicks"
 				  [yAxisTickFormatting]="yAxisTickFormatting"
@@ -1236,20 +1236,20 @@
 				  (select)="onChartInteraction($event)">
 				  
 				  <!-- 自定義工具提示 ( 顯示單條數據的提示 ) 模板 @2024/05/31 Add -->
-				  <!-- <ng-template #tooltipTemplate let-model="model">
-					<div> -->
+				  <ng-template #tooltipTemplate let-model="model">
+					<div> 
 					  <!-- 用於查看生成的 JSON 數據 -->
 					  <!-- <pre>{{ model|json }}</pre> -->
-					  <!-- <strong>{{ model.name }}</strong>  -->
+					  <strong>{{ model.name }}</strong>
 					  <!-- 獨立顯示 model.name ( BS 或 Cell 的名稱 ) -->
-					  <!-- <br/> -->
+					  <br/>
 					  <!-- 顏色塊 - 設定為數據值不為 null 或 "" 時才顯示 -->
-					  <!-- <span *ngIf=" model.value !== null && model.value !== '' "[style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span> -->
+					  <span *ngIf=" model.value !== null && model.value !== '' "[style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
 					  <!-- 數據內容 - 設定為數據值不為 null 或 "" 時才顯示 -->
-					  <!-- <span *ngIf=" model.value === null && model.value === '' ">{{ languageService.i18n['BS.kpiValueNone'] }}</span>
-					  <span *ngIf=" model.value !== null && model.value !== '' ">{{ model.value }} {{ model.unit }}</span>
+					  <span *ngIf=" model.value === null && model.value === '' ">{{ languageService.i18n['BS.kpiValueNone'] }}</span>
+					  <h5 *ngIf=" model.value !== null && model.value !== '' ">{{ model.value }} {{ getUnit() }}</h5>
 					</div>
-				  </ng-template> -->
+				  </ng-template>
 		  
 				</ngx-charts-bar-horizontal>
 			  </div>
@@ -1258,6 +1258,7 @@
 			<div>
 				<!-- 效能歷史查詢頁面內容 -->
 				<!-- 在這裡加入效能歷史的查詢和圖表 -->
+
 			</div>
 		</div>
 		
