@@ -123,6 +123,10 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.situations = this.commonService.situations;
   }
 
+  // @2024/06/03 Add
+  faultList: FaultList = {} as FaultList;
+
+
   fmsgList: FmsgList = {} as FmsgList;
   selectedMsg: FaultMessages = {} as FaultMessages;
   modifyMsg: FaultMessages = {} as FaultMessages;
@@ -210,6 +214,10 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     if (this.commonService.isLocal) {
       /* local file test */
       this.fmsgList = this.commonService.fmsgList;
+
+      // 引入正確 local file @2024/06/03 Add 
+      this.faultList = this.faultList_LocalFiles.faultList_local;
+
       this.faultMessageDeal();
     } else {
       const fieldName = this.searchForm.controls['fieldName'].value;
