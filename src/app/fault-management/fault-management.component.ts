@@ -17,7 +17,7 @@ import { SpinnerService } from '../shared/service/spinner.service';
 import { apiForFaultMgmt } from '../shared/api/For_Fault_Mgmt';
 
 // 引入儲存各個資訊所需的 interfaces 
-import { FaultList } from '../shared/interfaces/Fault/For_queryCurrentAllFaultMessage';       // @2024/06/03 Add
+import { FaultList, FaultMessages_new } from '../shared/interfaces/Fault/For_queryCurrentAllFaultMessage';       // @2024/06/03 Add
 
 // 引入所需 Local Files
 import { localFaultList } from '../shared/local-files/Fault/For_queryCurrentAllFaultMessage'; // @2024/06/03 Add
@@ -123,10 +123,6 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.situations = this.commonService.situations;
   }
 
-  // @2024/06/03 Add
-  faultList: FaultList = {} as FaultList;
-
-
   fmsgList: FmsgList = {} as FmsgList;
   selectedMsg: FaultMessages = {} as FaultMessages;
   modifyMsg: FaultMessages = {} as FaultMessages;
@@ -200,14 +196,38 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       'severity': new FormControl('All'),
       'status': new FormControl('All'),
       'situation': new FormControl('All'),
-      'ackOwner': new FormControl(''),
+      //'ackOwner': new FormControl(''),
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),   // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`))  // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
     });
     this.severitys = this.commonService.severitys;
     this.statusTypes = this.commonService.statusTypes;
   }
+
+  get faultListToDisplay(): FaultMessages_new[] {
+    // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
+    // 否則，顯示全部 this.faultList.faultMessage
+    return this.isSearch ? this.filteredFaultList : this.faultList.faultMessage;
+  }
+
   
+  openFaultDetail( faultMessages: FaultMessages_new ) {
+    // this.show200Msg = false;
+    // this.show500Msg = false;
+    this.selectedFaultMsg = faultMessages;
+
+    this.getFMstatus().then((value) => {
+      this.statusModalRef = this.dialog.open(this.itemDetail, { id: 'itemDetail' });
+      this.statusModalRef.afterClosed().subscribe(() => {
+
+      });
+    });  
+  }
+  selectedFaultMsg: FaultMessages_new = {} as FaultMessages_new;
+
+  // @2024/06/03 Add
+  faultList: FaultList = {} as FaultList;
+  filteredFaultList: FaultMessages_new[] = [];
   getFaultMessage() {
     console.log('getFaultMessage:');
     clearTimeout(this.refreshTimeout);
@@ -250,7 +270,8 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
 
   faultMessageDeal() {
     //this.p = 1;
-    this.totalItems = this.fmsgList.faultMessages.length;
+    //this.totalItems = this.fmsgList.faultMessages.length;
+    this.totalItems = this.faultList.faultMessage.length;
     this.nullList = new Array(this.totalItems);
     this.refreshTimeout = window.setTimeout(() => {
       if (this.p === 1) {
@@ -335,13 +356,16 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     });  
   }
 
-  openStatusModal(faultMessages: FaultMessages) {
+  openStatusModal(faultMessages: FaultMessages_new) {
     //if (faultMessages.processstatus === 1) {
     // this.fmStatus = {} as FmStatus;
     this.type = 'add_situation';
     // this.show200Msg = false;
     // this.show500Msg = false;
-    this.selectedMsg = faultMessages;
+
+    //this.selectedMsg = faultMessages;
+
+    this.selectedFaultMsg = faultMessages;
     this.selectedHistories = this.selectedMsg.histories;
 
     this.getFMstatus().then((value) => {

@@ -2,10 +2,10 @@
 // 描述系統內所有 Fault 的列表
 export interface FaultList {
     totalMessageNumber: number;
-    faultMessage: FaultMessages[];
+    faultMessage: FaultMessages_new[];
 }
   
-export interface FaultMessages {
+export interface FaultMessages_new {
     bsId: string;
     bsName: string;
     fieldName: string;

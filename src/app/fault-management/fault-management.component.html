@@ -44,9 +44,9 @@
         <p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
       </span>
     </span>
-    <span><label>{{languageService.i18n['fm.owner']}}</label>
+    <!-- <span><label>{{languageService.i18n['fm.owner']}}</label>
       <input type="text" formControlName="ackOwner">
-    </span>
+    </span> -->
     <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
     <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search()">clear</span>
   </div>
@@ -71,7 +71,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let opt of msgToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: msgToDisplay.length, id: 'fmList' }; let i = index" >
+      <tr *ngFor="let opt of faultListToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: msgToDisplay.length, id: 'fmList' }; let i = index" >
         <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
         <td>{{opt.fieldName}}</td>
         <td>{{opt.bsName}}</td>
@@ -80,16 +80,16 @@
         <td>{{opt.eventtype}}</td>
         <td>{{opt.count}}</td>
         <td>{{opt.timestamp}}</td>
-        <td>{{opt.status}}</td>
+        <td>{{opt.notificationtype}}</td>
         <td>
-          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf="opt.processstatus === 0" class="greenLight" (click)="openStatusModal(opt)"></label>
-          <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf="opt.processstatus === 1" class="redLight" (click)="openStatusModal(opt)"></label>
+          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" opt.processstatus === '0' " class="greenLight" (click)="openStatusModal(opt)"></label>
+          <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf=" opt.processstatus === '' " class="redLight" (click)="openStatusModal(opt)"></label>
           {{opt.processresult}}
         </td>
         <!-- <td>{{opt.acknowledgeOwner}}</td> -->
-        <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openItemDetail(opt)">remove_red_eye</mat-icon></td>
+        <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openFaultDetail(opt)">remove_red_eye</mat-icon></td>
       </tr>
-      <tr class="notFind" *ngIf="msgToDisplay.length === 0">
+      <tr class="notFind" *ngIf="faultListToDisplay.length === 0">
         <td colspan="12">{{languageService.i18n['no_results']}}</td>
       </tr>
     </tbody>
