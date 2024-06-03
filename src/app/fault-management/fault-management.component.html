@@ -66,7 +66,7 @@
         <th>{{languageService.i18n['fm.occurtime']}}</th>
         <th>{{languageService.i18n['fm.status']}}</th>
         <th>{{languageService.i18n['fm.situation']}}</th>
-        <th>{{languageService.i18n['fm.owner']}}</th>
+        <!-- <th>{{languageService.i18n['fm.owner']}}</th> -->
         <th>{{languageService.i18n['fm.view']}}</th>
       </tr>
     </thead>
@@ -86,7 +86,7 @@
           <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf="opt.processstatus === 1" class="redLight" (click)="openStatusModal(opt)"></label>
           {{opt.processresult}}
         </td>
-        <td>{{opt.acknowledgeOwner}}</td>
+        <!-- <td>{{opt.acknowledgeOwner}}</td> -->
         <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openItemDetail(opt)">remove_red_eye</mat-icon></td>
       </tr>
       <tr class="notFind" *ngIf="msgToDisplay.length === 0">

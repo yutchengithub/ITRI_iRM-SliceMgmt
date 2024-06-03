@@ -1,14 +1,26 @@
 import { Component, OnInit, OnDestroy, ViewChild, Inject, LOCALE_ID } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { CommonService } from '../shared/common.service';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { LanguageService } from '../shared/service/language.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { formatDate } from '@angular/common';
 import * as _ from 'lodash';
+
+// Services @2024/06/03 Add 
+import { CommonService } from '../shared/common.service';
+import { LanguageService } from '../shared/service/language.service';
+import { SpinnerService } from '../shared/service/spinner.service';
+
+// import APIs of Fault Management @2024/06/03 Add 
+import { apiForFaultMgmt } from '../shared/api/For_Fault_Mgmt';
+
+// 引入儲存各個資訊所需的 interfaces 
+import { FaultList } from '../shared/interfaces/Fault/For_queryCurrentAllFaultMessage';       // @2024/06/03 Add
+
+// 引入所需 Local Files
+import { localFaultList } from '../shared/local-files/Fault/For_queryCurrentAllFaultMessage'; // @2024/06/03 Add
 
 export interface FmsgList {
   totalMessageNumber: number;
@@ -60,20 +72,66 @@ export interface situRecord {
   styleUrls: ['./fault-management.component.scss']
 })
 export class FaultManagementComponent implements OnInit, OnDestroy {
+
   sessionId: string = '';
+  refreshTimeout!: any;
+
+  p: number = 1;            // 當前頁數
+  pageSize: number = 10;    // 每頁幾筆
+  totalItems: number = 0;   // 總筆數
+
+  pageChanged( page: number ) {
+    this.p = page;
+  }
+  
+  // @2024/06/03 Add
+  // Show Spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+
+  // @2024/06/03 Add
+  // Show Spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+  
+  // @2024/06/03 Add
+  // Hide Spinner
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
+
+  constructor(
+    @Inject(LOCALE_ID) private locale: string,
+    private   http: HttpClient,
+    private     fb: FormBuilder,
+    private  route: ActivatedRoute,
+    private dialog: MatDialog,
+
+    public     commonService: CommonService,
+    public   languageService: LanguageService,
+    public    spinnerService: SpinnerService,
+
+    public  API_Fault: apiForFaultMgmt,           // @2024/06/03 Add for import API of Fault Management
+    public  faultList_LocalFiles: localFaultList, // @2024/06/03 Add for import Fault List Local Files
+  ) {
+    this.severitys = this.commonService.severitys;
+    this.statusTypes = this.commonService.statusTypes;
+    this.situations = this.commonService.situations;
+  }
+
   fmsgList: FmsgList = {} as FmsgList;
   selectedMsg: FaultMessages = {} as FaultMessages;
   modifyMsg: FaultMessages = {} as FaultMessages;
   modifySatus?: string;
-  p: number = 1;            // 當前頁數
-  pageSize: number = 10;    // 每頁幾筆
-  totalItems: number = 0;   // 總筆數
   nullList: string[] = [];  // 給頁籤套件使用
   searchForm!: FormGroup;
   severitys: string[];
   statusTypes: string[];
   situations: string[];
-  refreshTimeout!: any;
   queryFaultMessageScpt!: Subscription;
   @ViewChild('itemDetail') itemDetail: any;
   @ViewChild('statusModal') statusModal: any;
@@ -99,20 +157,6 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   isSearch: boolean = false;
   filteredFmList: FaultMessages[] = [];
 
-  constructor(
-    @Inject(LOCALE_ID) private locale: string,
-    private http: HttpClient,
-    public commonService: CommonService,
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    public languageService: LanguageService,
-    private dialog: MatDialog,
-  ) {
-    this.severitys = this.commonService.severitys;
-    this.statusTypes = this.commonService.statusTypes;
-    this.situations = this.commonService.situations;
-  }
-
   ngOnInit(): void {
     this.createSearchForm();
     this.sessionId = this.commonService.getSessionId();
@@ -125,6 +169,9 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       }
     });
     this.getFaultMessage();
+  }
+
+  ngAfterViewInit() {
   }
 
   ngOnDestroy() {
@@ -210,11 +257,6 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
         console.log(`page[${this.p}] ===> no refresh.`);
       }
     }, 100); //timeout 100ms
-  }
-
-  pageChanged(page: number) {
-    this.p = page;
-    this.getFaultMessage();
   }
 
   search() {
