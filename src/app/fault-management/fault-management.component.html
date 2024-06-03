@@ -80,9 +80,11 @@
         <td>{{opt.eventtype}}</td>
         <td>{{opt.count}}</td>
         <td>{{opt.timestamp}}</td>
-        <td>{{opt.notificationtype}}</td>
         <td>
-          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" opt.processstatus === '0' " class="greenLight" (click)="openStatusModal(opt)"></label>
+          <label *ngIf=" opt.notificationtype === 0 ">New</label>
+        </td>
+        <td>
+          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" opt.processstatus === '1' " class="greenLight" (click)="openStatusModal(opt)"></label>
           <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf=" opt.processstatus === '' " class="redLight" (click)="openStatusModal(opt)"></label>
           {{opt.processresult}}
         </td>

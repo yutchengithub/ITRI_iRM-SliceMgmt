@@ -24,6 +24,6 @@ export interface FaultMessages_new {
     count: number;
     createtime: string;
     modifytime: string;
-    processstatus: string;
+    processstatus: string | number;
     processresult: string;
 }
