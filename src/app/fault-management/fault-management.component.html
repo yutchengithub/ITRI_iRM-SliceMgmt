@@ -66,7 +66,7 @@
         <th>{{languageService.i18n['fm.occurtime']}}</th>
         <th>{{languageService.i18n['fm.status']}}</th>
         <th>{{languageService.i18n['fm.situation']}}</th>
-        <!-- <th>{{languageService.i18n['fm.owner']}}</th> -->
+        <th>{{languageService.i18n['fm.owner']}}</th>
         <th>{{languageService.i18n['fm.view']}}</th>
       </tr>
     </thead>
@@ -84,11 +84,11 @@
           <label *ngIf=" opt.notificationtype === 0 ">New</label>
         </td>
         <td>
-          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" opt.processstatus === '1' " class="greenLight" (click)="openStatusModal(opt)"></label>
+          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" opt.processstatus === 1 " class="greenLight" (click)="openStatusModal(opt)"></label>
           <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf=" opt.processstatus === '' " class="redLight" (click)="openStatusModal(opt)"></label>
           {{opt.processresult}}
         </td>
-        <!-- <td>{{opt.acknowledgeOwner}}</td> -->
+        <td></td>
         <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openFaultDetail(opt)">remove_red_eye</mat-icon></td>
       </tr>
       <tr class="notFind" *ngIf="faultListToDisplay.length === 0">
@@ -99,8 +99,7 @@
   
   <!-- pagination -->    
   <span class="total">{{languageService.i18n['fm.total1']}} {{msgToDisplay.length}} {{languageService.i18n['fm.total2']}}</span>
-  <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel=""
-nextLabel="" id="fmList">
+  <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel="" nextLabel="" id="fmList">
   </pagination-controls>
 </div>
 
@@ -115,48 +114,53 @@ nextLabel="" id="fmList">
   </div>
   <ul *ngIf="type === 'add_situation'">
     <li>
-      <label>{{languageService.i18n['fm.field']}}: </label><span>{{selectedMsg.fieldName}}</span>
+      <label>{{languageService.i18n['fm.field']}}: </label><span>{{selectedFaultMsg.fieldName}}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.BS']}}: </label><span>{{selectedMsg.bsName}}</span>
+      <label>{{languageService.i18n['fm.BS']}}: </label><span>{{selectedFaultMsg.bsName}}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.component']}}: </label><span>{{selectedMsg.compname}}</span>
+      <label>{{languageService.i18n['fm.component']}}: </label><span>{{ selectedFaultMsg.compname }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.eCause']}}: </label><span>{{selectedMsg.probablecause}}</span>
+      <label>{{languageService.i18n['fm.eCause']}}: </label><span>{{ selectedFaultMsg.probablecause }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.severity']}}: </label><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
+      <label>{{languageService.i18n['fm.severity']}}: </label><span>{{ selectedFaultMsg.eventtype }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.occurtime']}}: </label><span>{{selectedMsg.timestamp}}</span>
+      <label>{{languageService.i18n['fm.occurtime']}}: </label><span>{{ selectedFaultMsg.timestamp }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.status']}}: </label><span>{{selectedMsg.status}}</span>
-    </li>
-    <li>
-      <label>{{languageService.i18n['fm.situation']}}: </label><span>
-        <label *ngIf="selectedMsg.processstatus === 0" class="greenLight"></label>
-        <label *ngIf="selectedMsg.processstatus === 1" class="redLight"></label> {{selectedMsg.processresult}} 
+      <label>{{languageService.i18n['fm.status']}}: </label>
+      <span>
+        <label *ngIf=" selectedFaultMsg.notificationtype === 0 ">New</label>
       </span>
-    <p>
+    </li>
+    <li>
+      <label>{{languageService.i18n['fm.situation']}}: </label>
+      <span>
+        <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" selectedFaultMsg.processstatus === 1 " class="greenLight"></label>
+        <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf=" selectedFaultMsg.processstatus === '' " class="redLight"></label>
+        {{ selectedFaultMsg.processresult }}
+      </span>
+      <br/>
       <span>
         <span class="switch">
           <mat-button-toggle-group name="isCleared" [(ngModel)]="modifySatus">
-            <mat-button-toggle value="PENDING">{{languageService.i18n['fm.pending']}}</mat-button-toggle>
-            <mat-button-toggle value="RESOLVE">{{languageService.i18n['fm.ended']}}</mat-button-toggle>
+            <mat-button-toggle value="PENDING">{{ languageService.i18n['fm.pending'] }}</mat-button-toggle>
+            <mat-button-toggle value="RESOLVE">{{ languageService.i18n['fm.ended'] }}</mat-button-toggle>
           </mat-button-toggle-group>
         </span>
         <input type="text" name="processComment" [(ngModel)]="modifyMsg.processresult">
-        <button class="modify" type="button" (click)="modify()">{{languageService.i18n['fm.add']}}</button>
+        <button class="modify" type="button" (click)="modify()">{{ languageService.i18n['fm.add'] }}</button>
 
-        <p *ngIf="show200Msg" style="color:#46c116"><span class="material-symbols-outlined">done</span>{{languageService.i18n['fm.modifySuccess']}}</p>
+        <p *ngIf="show200Msg" style="color:#46c116"><span class="material-symbols-outlined">done</span>{{ languageService.i18n['fm.modifySuccess'] }}</p>
         <p *ngIf="show500Msg" style="color:#ff469c"><span class="material-symbols-outlined">error</span>Fail modify Pending Status and Add CPU</p>
       </span>
     </li>
-
   </ul>
+
   <!-- processing_status_record -->
   <ng-template [ngIf]="type === 'situation_history'">
     <div class="table statusTable">
@@ -211,42 +215,47 @@ nextLabel="" id="fmList">
   <h5>{{languageService.i18n['fm.detail']}}</h5>
    <ul class="faultMsg_detail">
     <li>
-      <label>{{languageService.i18n['fm.field']}}: </label><span>{{selectedMsg.fieldName}}</span>
+      <label>{{languageService.i18n['fm.field']}}: </label><span>{{selectedFaultMsg.fieldName}}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.BS']}}: </label><span>{{selectedMsg.bsName}}</span>
+      <label>{{languageService.i18n['fm.BS']}}: </label><span>{{selectedFaultMsg.bsName}}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.component']}}: </label><span>{{selectedMsg.compname}}</span>
+      <label>{{languageService.i18n['fm.component']}}: </label><span>{{selectedFaultMsg.compname}}</span>
     </li>    
     <li>
-      <label>{{languageService.i18n['fm.severity']}}: </label><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
+      <label>{{languageService.i18n['fm.severity']}}: </label><span>{{ selectedFaultMsg.eventtype }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.status']}}: </label><span>{{selectedMsg.status}}</span>
+      <label>{{languageService.i18n['fm.status']}}: </label>
+      <span>
+        <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" selectedFaultMsg.processstatus === 1 " class="greenLight"></label>
+        <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf=" selectedFaultMsg.processstatus === '' " class="redLight"></label>
+        {{selectedFaultMsg.processresult}}
+      </span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.occurtime']}}: </label><span>{{selectedMsg.timestamp}}</span>
+      <label>{{languageService.i18n['fm.occurtime']}}: </label><span>{{selectedFaultMsg.timestamp}}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.createtime']}}: </label><span>{{selectedMsg.createtime}}</span>
+      <label>{{languageService.i18n['fm.createtime']}}: </label><span>{{selectedFaultMsg.createtime}}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.updatetime']}}: </label><span>{{selectedMsg.updatetime}}</span>
+      <label>{{languageService.i18n['fm.updatetime']}}: </label><span>{{selectedFaultMsg.modifytime}}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.count']}}: </label><span>{{selectedMsg.count}}</span>
+      <label>{{languageService.i18n['fm.count']}}: </label><span>{{selectedFaultMsg.count}}</span>
     </li>
   </ul>
   <ul class="faultMsg_detail">
     <li>
-      <label>{{languageService.i18n['fm.eType']}}: </label><span>{{commonService.textTransfer(selectedMsg.eventtype)}}</span>
+      <label>{{languageService.i18n['fm.eType']}}: </label><span>{{commonService.textTransfer(selectedFaultMsg.eventtype)}}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.eCause']}}: </label><span>{{selectedMsg.probablecause}}</span>
+      <label>{{languageService.i18n['fm.eCause']}}: </label><span>{{selectedFaultMsg.probablecause}}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.eDesc']}}: </label><span>{{selectedMsg.eDesc}}</span>
+      <label>{{languageService.i18n['fm.eDesc']}}: </label><span>{{selectedFaultMsg.specificproblem}}</span>
     </li>
   </ul>
 

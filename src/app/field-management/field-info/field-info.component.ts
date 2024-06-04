@@ -3813,82 +3813,111 @@ export class FieldInfoComponent implements OnInit {
   }
 
   // 根據選擇的 KPI 類別和子類別獲取對應的數據
-  getKpiData(data: BsInfoInField | CellInfo, bsName: string, color: string, cellName?: string): 
-               { name: string; value: any, label?: string, unit?: string, color?: string }[] {
-
+  getKpiData(data: BsInfoInField | CellInfo, bsName: string, color: string, cellName?: string): { name: string; value: any, label?: string, unit?: string, color?: string }[] {
     const kpiData: { name: string; value: any, label?: string, unit?: string, color?: string }[] = [];
     let unit = ''; // 初始化單位
     let name = ''; // 初始化名稱
-
-    // 用於添加數據並生成名稱
+  
+    console.log("In getKpiData() - selectedKpiCategory = ", this.selectedKpiCategory);
+  
     const addDataName = (value: any, prop: string) => {
-        if ('nci' in data) {
-            name = `${bsName} - ${cellName}`;
-        } else {
-            name = `${bsName}`;
-        }
-
-        if (value !== null && value !== "" && value !== "none") {
-            kpiData.push({ name: name, value: parseFloat(value), label: name, unit: unit, color: color });
-        } else {
-            kpiData.push({ name: name, value: 0, label: name, unit: unit, color: '#fff0' }); // 設置透明色或為0
-        }
+      if ('nci' in data) {
+        name = `${bsName} - ${cellName}`;
+      } else {
+        name = `${bsName}`;
+      }
+  
+      if (value !== null && value !== "" && value !== "none") { // 只在 value 有效時添加數據
+        kpiData.push({ name: name, value: parseFloat(value), label: name, unit: unit, color: color });
+      } else {
+        kpiData.push({ name: name, value: null, label: name, unit: unit, color: '#fff0' }); // 設置透明色
+      }
     };
-
-    // 根據選擇的 KPI 類別設置對應的單位並添加數據名稱  
+  
     switch (this.selectedKpiCategory) {
-        case 'Accessibility':
-            unit = '%'; // 設置單位為百分比
-            addDataName(data.accessibility, 'accessibility'); // 添加 Accessibility 數據名稱
-            break;
-        case 'Integrity':
-            // 根據子類別設置不同的單位並添加對應的數據名稱
-            if (this.selectedKpiSubcategory === 'Integrated Downlink Delay') {
-                unit = 'ms'; // 設置單位為毫秒
-                addDataName(data.integrity.downlinkDelay, 'downlinkDelay'); // 添加 Downlink Delay 數據名稱
-            } else if (this.selectedKpiSubcategory === 'Integrated Uplink Delay') {
-                unit = 'ms'; // 設置單位為毫秒
-                addDataName(data.integrity.uplinkDelay, 'uplinkDelay'); // 添加 Uplink Delay 數據名稱
-            } else if (this.selectedKpiSubcategory === 'RAN UE Downlink Throughput') {
-                unit = 'Mbps'; // 設置單位為 Mbps  
-                addDataName(data.integrity.downlinkThrouthput, 'downlinkThrouthput'); // 添加 Downlink Throughput 數據名稱
-            } else if (this.selectedKpiSubcategory === 'RAN UE Uplink Throughput') {
-                unit = 'Mbps'; // 設置單位為 Mbps
-                addDataName(data.integrity.uplinkThrouthput, 'uplinkThrouthput'); // 添加 Uplink Throughput 數據名稱
-            }
-            break;
-        case 'Utilization':
-            unit = '%'; // 設置單位為百分比  
-            // 根據子類別添加對應的數據標籤
-            if (this.selectedKpiSubcategory === 'Process Utilization') {
-                addDataName(data.utilization.resourceProcess, 'resourceProcess'); // 添加 Process Utilization 數據名稱
-            } else if (this.selectedKpiSubcategory === 'Memory Utilization') {
-                addDataName(data.utilization.resourceMemory, 'resourceMemory'); // 添加 Memory Utilization 數據名稱
-            } else if (this.selectedKpiSubcategory === 'Disk Utilization') {
-                addDataName(data.utilization.resourceDisk, 'resourceDisk'); // 添加 Disk Utilization 數據名稱
-            }
-            break;
-        case 'Retainability':
-            unit = '%'; // 設置單位為百分比
-            addDataName(data.retainability, 'retainability'); // 添加 Retainability 數據名稱
-            break;
-        case 'Mobility':
-            unit = '%'; // 設置單位為百分比
-            addDataName(data.mobility, 'mobility'); // 添加 Mobility 數據名稱
-            break;
-        case 'Energy Consumption':
-            unit = 'J'; // 設置單位為焦耳  
-            addDataName(data.energy, 'energy'); // 添加 Energy Consumption 數據名稱
-            break;
+      case 'Accessibility':
+        unit = '%';
+        addDataName(data.accessibility, 'accessibility');
+        break;
+      case 'Integrity':
+        if (this.selectedKpiSubcategory === 'Integrated Downlink Delay') {
+          unit = 'ms';
+          addDataName(data.integrity.downlinkDelay, 'downlinkDelay');
+        } else if (this.selectedKpiSubcategory === 'Integrated Uplink Delay') {
+          unit = 'ms';
+          addDataName(data.integrity.uplinkDelay, 'uplinkDelay');
+        } else if (this.selectedKpiSubcategory === 'RAN UE Downlink Throughput') {
+          unit = 'Mbps';
+          addDataName(data.integrity.downlinkThrouthput, 'downlinkThrouthput');
+        } else if (this.selectedKpiSubcategory === 'RAN UE Uplink Throughput') {
+          unit = 'Mbps';
+          addDataName(data.integrity.uplinkThrouthput, 'uplinkThrouthput');
+        }
+        break;
+      case 'Utilization':
+        unit = '%';
+        if (this.selectedKpiSubcategory === 'Process Utilization') {
+          addDataName(data.utilization.resourceProcess, 'resourceProcess');
+        } else if (this.selectedKpiSubcategory === 'Memory Utilization') {
+          addDataName(data.utilization.resourceMemory, 'resourceMemory');
+        } else if (this.selectedKpiSubcategory === 'Disk Utilization') {
+          addDataName(data.utilization.resourceDisk, 'resourceDisk');
+        }
+        break;
+      case 'Retainability':
+        unit = '%';
+        addDataName(data.retainability, 'retainability');
+        break;
+      case 'Mobility':
+        unit = '%';
+        addDataName(data.mobility, 'mobility');
+        break;
+      case 'Energy Consumption':
+        unit = 'J';
+        addDataName(data.energy, 'energy');
+        break;
     }
-
-    return kpiData; // 返回包含名稱、數值、單位和顏色的數據數組
+  
+    return kpiData;
   }
-
+  
   cleanData(data: any[]): any[] {
-    return data.filter(item => item !== null && item !== undefined && !isNaN(item.value) && item.value !== 0);
+    console.log("In cleanData() - data =", data);
+    const cleanedData = data.filter(item => item !== null && item !== undefined && !isNaN(Number(item.value)));
+    console.log("In cleanData() - cleanedData =", cleanedData);
+    return cleanedData;
   }
-
+  
+  prepareAndUpdateChartData() {
+    let rawData = this.filterData(); // 獲取過濾後的原始數據
+    console.log("In prepareAndUpdateChartData before clean - rawData =", rawData); 
+    rawData = this.cleanData(rawData); // 清理數據
+    console.log("In prepareAndUpdateChartData after clean - rawData =", rawData); 
+    this.preparedChartData = rawData; // 將過濾後的數據賦值給 preparedChartData
+    console.log("In prepareAndUpdateChartData - preparedChartData =", this.preparedChartData); // 輸出整理後的數據到控制台
+    this.preparedChartData.forEach(data => {
+      if (!(data.name in this.barVisibility)) {
+        this.barVisibility[data.name] = true; // 初始化顯示狀態為 true
+      }
+    });
+    this.updateDisplayChartData();
+    console.log("In prepareAndUpdateChartData end - displayChartData =", this.displayChartData);
+    this.setXAxisLabel(); // 更新 X 軸標籤
+    this.cdr.detectChanges(); // 強制觸發變更檢測
+  }
+  
+  updateDisplayChartData() {
+    this.displayChartData = this.preparedChartData.map(data => {
+      return {
+        name: data.name,
+        value: this.barVisibility[data.name] ? Number(data.value) : 0,  // 將隱藏的數據條的值設為 0，確保 value 為數字類型
+        label: data.label,
+        color: data.color
+      };
+    });
+    console.log("In updateDisplayChartData - displayChartData =", this.displayChartData);
+  }
+  
   // 根據選擇的條件過濾數據
   filterData(): BarChartData[] {
     let filteredData: BarChartData[] = []; // 定義過濾後的數據陣列
@@ -3923,39 +3952,6 @@ export class FieldInfoComponent implements OnInit {
     return filteredData; // 返回過濾後的數據
   }
 
-  updateDisplayChartData() {
-    this.displayChartData = [...this.preparedChartData.map(data => {
-      return {
-        name: data.name,
-        value: this.barVisibility[data.name] ? data.value : 0,  // 將隱藏的數據條的值設為 0
-        label: data.label,
-        color: data.color
-      };
-    })];
-    console.log("In updateDisplayChartData - displayChartData =", this.displayChartData);
-  }
-
-  prepareAndUpdateChartData() {
-    // 首先根據選擇的條件過濾數據
-    let rawData = this.filterData(); // 獲取過濾後的原始數據
-    rawData = this.cleanData(rawData); // 清理數據
-    console.log("In prepareAndUpdateChartData - rawData =", rawData); // 輸出原始數據到控制台
-    this.preparedChartData = rawData; // 將過濾後的數據賦值給 preparedChartData
-    console.log("In prepareAndUpdateChartData - preparedChartData =", this.preparedChartData); // 輸出整理後的數據到控制台
-    // 初始化或更新每個數據系列的顯示狀態
-    this.preparedChartData.forEach(data => {
-      if (!(data.name in this.barVisibility)) {
-        this.barVisibility[data.name] = true; // 初始化顯示狀態為 true
-      }
-    });
-    // 根據 barVisibility 更新 displayChartData
-    this.updateDisplayChartData();
-    console.log("In prepareAndUpdateChartData end - displayChartData =", this.displayChartData);
-    this.setXAxisLabel(); // 更新 X 軸標籤
-
-      // 強制觸發變更檢測
-    this.cdr.detectChanges();
-  }
 
   // 獲取當前選擇的 KPI 的單位
   getUnit() {
