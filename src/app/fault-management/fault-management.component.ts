@@ -104,6 +104,10 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.spinnerService.hide();
   }
 
+  // @2024/06/04 Add
+  // 用於儲存回應人員
+  owner: string = "";
+
   constructor(
     @Inject(LOCALE_ID) private locale: string,
     private   http: HttpClient,
@@ -121,6 +125,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.severitys = this.commonService.severitys;
     this.statusTypes = this.commonService.statusTypes;
     this.situations = this.commonService.situations;
+    this.owner = this.commonService.getUserId();
   }
 
   fmsgList: FmsgList = {} as FmsgList;
@@ -169,6 +174,8 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       }
     });
     this.getFaultMessage();
+    this.owner = this.commonService.getUserId();
+    console.log("ngOnInit() - owner:", this.owner);
   }
 
   ngAfterViewInit() {

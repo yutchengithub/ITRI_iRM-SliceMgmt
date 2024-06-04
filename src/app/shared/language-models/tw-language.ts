@@ -493,7 +493,7 @@ export const TwLanguage = {
   'fm.no':'編號',
   'fm.field':'場域名稱',
   'fm.BS':'基站名稱',
-  'fm.component':'元件名稱',
+  'fm.component':'網元名稱',
   'fm.alarm':'告警名稱',
   'fm.severity':'嚴重度',
   'fm.count':'發生次數',
@@ -517,6 +517,11 @@ export const TwLanguage = {
   'fm.ended':'結束',
   'fm.close':'關閉',
   'fm.modifySuccess':'修改成功',
+  'fm.processing':'待處理',
+  'fm.unprocessed':'未處理',
+  'fm.excluded':'已排除',
+  'fm.unexcluded':'未排除',
+  'fm.statusReport':'狀況回報',
 
   // Performance Management (效能管理)
   'pm.field':'場域名稱',

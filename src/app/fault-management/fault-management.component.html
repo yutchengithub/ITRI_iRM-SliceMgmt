@@ -11,7 +11,7 @@
     <span><label>{{languageService.i18n['fm.component']}}</label>
       <input type="text" formControlName="compName">
     </span>
-    <span><label>{{languageService.i18n['fm.alarm']}}</label>
+    <span><label>{{languageService.i18n['fm.eCause']}}</label>
       <input type="text" formControlName="alarmName">
     </span>
     <span><label>{{languageService.i18n['fm.severity']}}</label>
@@ -28,10 +28,10 @@
       </select>
       <mat-error *ngIf="searchForm.controls['status'].invalid">Required</mat-error>
     </span>
-    <span><label>{{languageService.i18n['fm.situation']}}</label>
+    <span><label>{{ languageService.i18n['fm.situation'] }}</label>
       <select formControlName="situation">
         <option value="All">All</option>
-        <option *ngFor="let situation of situations" [value]="situation">{{commonService.textTransfer(situation)}}</option>
+        <option *ngFor="let situation of situations" [value]="situation">{{ commonService.textTransfer(situation)}}</option>
       </select>
       <mat-error *ngIf="searchForm.controls['situation'].invalid">Required</mat-error>
     </span>
@@ -60,7 +60,7 @@
         <th>{{languageService.i18n['fm.field']}}</th>
         <th>{{languageService.i18n['fm.BS']}}</th>
         <th>{{languageService.i18n['fm.component']}}</th>
-        <th>{{languageService.i18n['fm.alarm']}}</th>
+        <th>{{languageService.i18n['fm.eCause']}}</th>
         <th>{{languageService.i18n['fm.severity']}}</th>
         <th>{{languageService.i18n['fm.count']}}</th>
         <th>{{languageService.i18n['fm.occurtime']}}</th>
@@ -73,22 +73,23 @@
     <tbody>
       <tr *ngFor="let opt of faultListToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: msgToDisplay.length, id: 'fmList' }; let i = index" >
         <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
-        <td>{{opt.fieldName}}</td>
-        <td>{{opt.bsName}}</td>
-        <td>{{opt.compname}}</td>
-        <td>{{opt.probablecause}}</td>
-        <td>{{opt.eventtype}}</td>
-        <td>{{opt.count}}</td>
-        <td>{{opt.timestamp}}</td>
+        <td>{{ opt.fieldName }}</td>
+        <td>{{ opt.bsName }}</td>
+        <td>{{ opt.compname }}</td>
+        <td>{{ opt.probablecause }}</td>
+        <td>{{ commonService.textTransfer( opt.perceivedseverity ) }}</td>
+        <td>{{ opt.count }}</td>
+        <td>{{ opt.timestamp }}</td>
         <td>
-          <label *ngIf=" opt.notificationtype === 0 ">New</label>
+          <label *ngIf=" opt.notificationtype === 0 ">{{ languageService.i18n['fm.unexcluded'] }}</label>
+          <label *ngIf=" opt.notificationtype === 1 ">{{ languageService.i18n['fm.excluded'] }}</label>
         </td>
         <td>
           <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" opt.processstatus === 1 " class="greenLight" (click)="openStatusModal(opt)"></label>
           <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf=" opt.processstatus === '' " class="redLight" (click)="openStatusModal(opt)"></label>
           {{opt.processresult}}
         </td>
-        <td></td>
+        <td>{{ owner }}</td>
         <td><mat-icon tooltip="{{languageService.i18n['view_detail']}}" (click)="openFaultDetail(opt)">remove_red_eye</mat-icon></td>
       </tr>
       <tr class="notFind" *ngIf="faultListToDisplay.length === 0">
@@ -123,18 +124,22 @@
       <label>{{languageService.i18n['fm.component']}}: </label><span>{{ selectedFaultMsg.compname }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.eCause']}}: </label><span>{{ selectedFaultMsg.probablecause }}</span>
+      <label>{{ languageService.i18n['fm.eType'] }}: </label><span>{{ selectedFaultMsg.eventtype }}</span>
+    </li>  
+    <li>
+      <label>{{ languageService.i18n['fm.severity'] }}: </label><span>{{ commonService.textTransfer( selectedFaultMsg.perceivedseverity ) }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.severity']}}: </label><span>{{ selectedFaultMsg.eventtype }}</span>
+      <label>{{languageService.i18n['fm.eCause']}}: </label><span>{{ selectedFaultMsg.probablecause }}</span>
     </li>
     <li>
       <label>{{languageService.i18n['fm.occurtime']}}: </label><span>{{ selectedFaultMsg.timestamp }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.status']}}: </label>
+      <label>{{ languageService.i18n['fm.status'] }}: </label>
       <span>
-        <label *ngIf=" selectedFaultMsg.notificationtype === 0 ">New</label>
+        <label *ngIf=" selectedFaultMsg.notificationtype === 0 ">{{ languageService.i18n['fm.unexcluded'] }}</label>
+        <label *ngIf=" selectedFaultMsg.notificationtype === 1 ">{{ languageService.i18n['fm.excluded'] }}</label>
       </span>
     </li>
     <li>
@@ -144,7 +149,13 @@
         <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf=" selectedFaultMsg.processstatus === '' " class="redLight"></label>
         {{ selectedFaultMsg.processresult }}
       </span>
-      <br/>
+    </li>
+    <li>
+      <label>{{ languageService.i18n['fm.owner'] }}: </label><span>{{ owner }}</span>
+    </li>
+    <li>
+      <label>{{ languageService.i18n['fm.statusReport'] }}: </label>
+      <!-- <br> -->
       <span>
         <span class="switch">
           <mat-button-toggle-group name="isCleared" [(ngModel)]="modifySatus">
@@ -187,7 +198,7 @@
           <td>
             <label *ngIf="opt.processStatus === 0" class="greenLight"></label>
             <label *ngIf="opt.processStatus === 1" class="redLight"></label>
-            {{opt.processComment}}
+            {{ opt.processComment }}
           </td>
           <td>{{opt.acknowledgeOwner}}</td>
         </tr>
@@ -203,63 +214,71 @@
 </ng-template>
 
 <ng-template #modifyModal>
-  <h5>{{languageService.i18n['modify_faultMsg_status']}}</h5>
-  <p>{{languageService.i18n['confirm_modify']}} ?</p>
+  <h5>{{ languageService.i18n['modify_faultMsg_status'] }}</h5>
+  <p>{{ languageService.i18n['confirm_modify'] }} ?</p>
   <div class="buttons">
-    <button type="button" mat-dialog-close>{{languageService.i18n['cancel']}}</button>
-    <button type="button" mat-dialog-close="OK">{{languageService.i18n['ok']}}</button>
+    <button type="button" mat-dialog-close>{{ languageService.i18n['cancel'] }}</button>
+    <button type="button" mat-dialog-close="OK">{{ languageService.i18n['ok'] }}</button>
   </div>
 </ng-template>
 
 <ng-template #itemDetail>
-  <h5>{{languageService.i18n['fm.detail']}}</h5>
+  <h5>{{ languageService.i18n['fm.detail'] }}</h5>
    <ul class="faultMsg_detail">
     <li>
-      <label>{{languageService.i18n['fm.field']}}: </label><span>{{selectedFaultMsg.fieldName}}</span>
+      <label>{{ languageService.i18n['fm.field'] }}: </label><span>{{ selectedFaultMsg.fieldName }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.BS']}}: </label><span>{{selectedFaultMsg.bsName}}</span>
+      <label>{{ languageService.i18n['fm.BS'] }}: </label><span>{{ selectedFaultMsg.bsName }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.component']}}: </label><span>{{selectedFaultMsg.compname}}</span>
-    </li>    
+      <label>{{ languageService.i18n['fm.component'] }}: </label><span>{{ selectedFaultMsg.compname }}</span>
+    </li>  
     <li>
-      <label>{{languageService.i18n['fm.severity']}}: </label><span>{{ selectedFaultMsg.eventtype }}</span>
+      <label>{{ languageService.i18n['fm.eType'] }}: </label><span>{{ selectedFaultMsg.eventtype }}</span>
+    </li>  
+    <li>
+      <label>{{ languageService.i18n['fm.severity'] }}: </label><span>{{ commonService.textTransfer( selectedFaultMsg.perceivedseverity ) }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.status']}}: </label>
+      <label>{{ languageService.i18n['fm.status'] }}: </label>
       <span>
-        <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" selectedFaultMsg.processstatus === 1 " class="greenLight"></label>
-        <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf=" selectedFaultMsg.processstatus === '' " class="redLight"></label>
-        {{selectedFaultMsg.processresult}}
+        <label *ngIf=" selectedFaultMsg.notificationtype === 0 ">{{ languageService.i18n['fm.unexcluded'] }}</label>
+        <label *ngIf=" selectedFaultMsg.notificationtype === 1 ">{{ languageService.i18n['fm.excluded'] }}</label>
       </span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.occurtime']}}: </label><span>{{selectedFaultMsg.timestamp}}</span>
+      <label>{{ languageService.i18n['fm.situation'] }}: </label>
+      <span>
+        <label tooltip="{{ languageService.i18n['resolved'] }}" *ngIf=" selectedFaultMsg.processstatus === 1 " class="greenLight"></label>
+        <label tooltip="{{ languageService.i18n['pending_error'] }}" *ngIf=" selectedFaultMsg.processstatus === '' " class="redLight"></label>
+        {{ selectedFaultMsg.processresult }}
+      </span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.createtime']}}: </label><span>{{selectedFaultMsg.createtime}}</span>
+      <label>{{ languageService.i18n['fm.owner'] }}: </label><span>{{ owner }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.updatetime']}}: </label><span>{{selectedFaultMsg.modifytime}}</span>
+      <label>{{ languageService.i18n['fm.occurtime'] }}: </label><span>{{ selectedFaultMsg.timestamp }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.count']}}: </label><span>{{selectedFaultMsg.count}}</span>
-    </li>
-  </ul>
-  <ul class="faultMsg_detail">
-    <li>
-      <label>{{languageService.i18n['fm.eType']}}: </label><span>{{commonService.textTransfer(selectedFaultMsg.eventtype)}}</span>
+      <label>{{ languageService.i18n['fm.createtime'] }}: </label><span>{{ selectedFaultMsg.createtime }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.eCause']}}: </label><span>{{selectedFaultMsg.probablecause}}</span>
+      <label>{{ languageService.i18n['fm.updatetime'] }}: </label><span>{{ selectedFaultMsg.modifytime }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.eDesc']}}: </label><span>{{selectedFaultMsg.specificproblem}}</span>
+      <label>{{ languageService.i18n['fm.count'] }}: </label><span>{{ selectedFaultMsg.count }}</span>
+    </li>
+    <li>
+      <label>{{ languageService.i18n['fm.eCause'] }}: </label><span>{{ selectedFaultMsg.probablecause }}</span>
+    </li>
+    <li>
+      <label>{{ languageService.i18n['fm.eDesc'] }}: </label><span>{{ selectedFaultMsg.specificproblem }}</span>
     </li>
   </ul>
 
   <div class="buttons">
-    <button type="button" mat-dialog-close>{{languageService.i18n['fm.close']}}</button>
+    <button type="button" mat-dialog-close>{{ languageService.i18n['fm.close'] }}</button>
   </div>
 </ng-template>
