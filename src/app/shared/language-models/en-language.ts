@@ -482,7 +482,7 @@ export const Enlanguage = {
   'fm.no':'No.',
   'fm.field':'Field Name',
   'fm.BS':'BS Name',
-  'fm.component':'Component Name',
+  'fm.component':'NE Name',
   'fm.alarm':'Alarm Name',
   'fm.severity':'Severity',
   'fm.count':'Count',
@@ -506,6 +506,11 @@ export const Enlanguage = {
   'fm.ended':'Ended',
   'fm.close':'Close',
   'fm.modifySuccess':'Modify successfully',
+  'fm.processing':'Processing',
+  'fm.unprocessed':'Unprocessed',
+  'fm.excluded':'Excluded',
+  'fm.unexcluded':'Unexcluded',
+  'fm.statusReport':'Status Report',
 
   // Performance Management
   'pm.field':'Field Name',

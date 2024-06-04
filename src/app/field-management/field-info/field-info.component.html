@@ -1181,7 +1181,7 @@
 		</div>
 	</ng-template>
 
-	<!-- Window of Field Performance Analysis @2024/05/29 Update -->
+	<!-- Window of Field Performance Analysis @2024/06/04 Update -->
 	<ng-template #fieldPMReportWindow>
 		<div>
 			<h5>{{ languageService.i18n['field.performance'] }}</h5>
@@ -1195,6 +1195,7 @@
 		<div *ngIf="fieldPMReportType === 'Performance_Overview'">
 			<div *ngIf="fieldInfo">
 				<!-- 效能總覽頁面內容 -->
+
 				<div class="filter">
 				  <span><!-- KPI 類別選項 -->
 					<label>{{ languageService.i18n['BS.viewKPICategory'] }}:</label>
@@ -1208,55 +1209,48 @@
 					  <option *ngFor="let subcategory of kpiSubcategories" [value]="subcategory.value">{{ subcategory.displayName }}</option>
 					</select>
 				  </span>
+				  {{ languageService.i18n['BS.dataTimePast24Hours'] }}
 				</div>
 					   
 				<ngx-charts-bar-horizontal
-				  [view]="view"
-				  [scheme]="colorScheme"
-				  [customColors]="customColors"
-				  [gradient]="gradient"
-				  [legend]="showLegend"
-				  [legendTitle]="this.languageService.i18n['BS.dataItems']"
-				  [legendPosition]="legendPosition"
-				  [showDataLabel]="showDataLabel"
-				  [showXAxisLabel]="showXAxisLabel"
-				  [showYAxisLabel]="showYAxisLabel"
-				  [xAxis]="showXAxis"
-				  [yAxis]="showYAxis"
-				  [xAxisLabel]="xAxisLabel"
-				  [yAxisLabel]="yAxisLabel"
-				  [roundDomains]="roundDomains"  
-				  [xAxisTickFormatting]="xAxisTickFormatting"
-				  [trimYAxisTicks]="trimYAxisTicks"
-				  [yAxisTickFormatting]="yAxisTickFormatting"
-				  [barPadding]="barPadding"
-				  [results]="displayChartData"
-				  (select)="onChartInteraction($event)">
-				  
-				  <!-- 自定義工具提示 ( 顯示單條數據的提示 ) 模板 @2024/05/31 Add -->
-				  <!-- <ng-template #tooltipTemplate let-model="model">
-					<div> -->
-					  <!-- 用於查看生成的 JSON 數據 -->
-					  <!-- <pre>{{ model|json }}</pre> -->
-					  <!-- <strong>{{ model.name }}</strong>  -->
-					  <!-- 獨立顯示 model.name ( BS 或 Cell 的名稱 ) -->
-					  <!-- <br/> -->
-					  <!-- 顏色塊 - 設定為數據值不為 null 或 "" 時才顯示 -->
-					  <!-- <span *ngIf=" model.value !== null && model.value !== '' "[style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span> -->
-					  <!-- 數據內容 - 設定為數據值不為 null 或 "" 時才顯示 -->
-					  <!-- <span *ngIf=" model.value === null && model.value === '' ">{{ languageService.i18n['BS.kpiValueNone'] }}</span>
-					  <span *ngIf=" model.value !== null && model.value !== '' ">{{ model.value }} {{ model.unit }}</span>
-					</div>
-				  </ng-template> -->
-		  
+					[view]="view"
+					[scheme]="colorScheme"
+					[customColors]="customColors"
+					[gradient]="gradient"
+					[legend]="showLegend"
+					[legendTitle]="this.languageService.i18n['BS.dataItems']"
+					[legendPosition]="legendPosition"
+					[showDataLabel]="showDataLabel"
+					[showXAxisLabel]="showXAxisLabel"
+					[showYAxisLabel]="showYAxisLabel"
+					[xAxis]="showXAxis"
+					[yAxis]="showYAxis"
+					[xAxisLabel]="xAxisLabel"
+					[yAxisLabel]="yAxisLabel"
+					[roundDomains]="roundDomains" 
+					[trimYAxisTicks]="trimYAxisTicks"
+					[results]="displayChartData"
+					(select)="onChartInteraction($event)">
+					
+					<ng-template #tooltipTemplate let-model="model">
+						<div style="text-align: center;"> 
+							<label><strong>{{ model.name }}</strong></label>
+								<!-- <br/> -->
+							<span *ngIf=" model.value !== null && model.value !== '' "[style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
+							<span *ngIf=" model.value === null && model.value === '' ">{{ languageService.i18n['BS.kpiValueNone'] }}</span>
+							<h5 *ngIf=" model.value !== null && model.value !== '' ">{{ model.value }} {{ getUnit() }}</h5>
+						</div>
+					</ng-template>
+
 				</ngx-charts-bar-horizontal>
-		  
+
 			  </div>
 		</div>
 		<div  *ngIf="fieldPMReportType === 'Performance_History'">
 			<div>
 				<!-- 效能歷史查詢頁面內容 -->
 				<!-- 在這裡加入效能歷史的查詢和圖表 -->
+
 			</div>
 		</div>
 		

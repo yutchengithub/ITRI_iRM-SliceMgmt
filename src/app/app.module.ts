@@ -127,6 +127,7 @@ import { ParsePositionPipe } from './shared/pipes/position-parser.pipe'; // @202
 // import API
 import { apiForFieldMgmt }    from './shared/api/For_Field_Mgmt';     // @2024/03/14 Update
 import { apiForBSMgmt }       from './shared/api/For_BS_Mgmt';        // @2024/03/14 Add
+import { apiForFaultMgmt }    from './shared/api/For_Fault_Mgmt';     // @2024/06/03 Add
 import { apiForScheduleMgmt } from './shared/api/For_Schedule_Mgmt';  // @2024/03/14 Add
 import { apiForLogMgmt }      from './shared/api/For_Log_Mgmt';       // @2024/03/14 Add
 
@@ -139,10 +140,12 @@ import { localFieldSnapshotList } from './shared/local-files/Field/For_queryFiel
 import { localFieldSonParameters } from './shared/local-files/Field/For_querySonParameter';           // @2024/03/30 Add
 import { localCalculateSonResponse } from './shared/local-files/Field/For_multiCalculateBs_response'; // @2024/03/31 Add
 
-import { localBSInfo }          from './shared/local-files/BS/For_queryBsInfo';                 // @2023/12/27 Add 
-import { localBSList }          from './shared/local-files/BS/For_queryBsList';                 // @2024/01/16 Add
-import { localCurrentBsFmList } from './shared/local-files/BS/For_queryCurrentBsFaultMessage';  // @2024/03/31 Add
-import { localBsKpiInfo }       from './shared/local-files/BS/For_queryBsKpiInfo';              // @2024/05/14 Add
+import { localBSInfo }          from './shared/local-files/BS/For_queryBsInfo';                    // @2023/12/27 Add 
+import { localBSList }          from './shared/local-files/BS/For_queryBsList';                    // @2024/01/16 Add
+import { localCurrentBsFmList } from './shared/local-files/BS/For_queryCurrentBsFaultMessage';     // @2024/03/31 Add
+import { localBsKpiInfo }       from './shared/local-files/BS/For_queryBsKpiInfo';                 // @2024/05/14 Add
+
+import { localFaultList }       from './shared/local-files/Fault/For_queryCurrentAllFaultMessage'; // @2024/06/03 Add
 
 import { localScheduleList }    from './shared/local-files/Schedule/For_queryJobTicketList';    // @2024/03/15 Add   
 import { localScheduleInfo }    from './shared/local-files/Schedule/For_queryJobTicketInfo';    // @2024/03/15 Add 
@@ -271,6 +274,7 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
 
     apiForFieldMgmt,    // @2024/03/14 Update for import API of Field Management
     apiForBSMgmt,       // @2024/03/14 Add for import API of BS Management
+    apiForFaultMgmt,    // @2024/06/03 Add for import API of Fault Management
     apiForScheduleMgmt, // @2024/03/14 Add for import API of Schedule Management
     apiForLogMgmt,      // @2024/03/14 Add for import API of Log Management 
 
@@ -282,10 +286,12 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     localFieldSonParameters,    // @2024/03/30 Add for import Local files of Field Son Parameters
     localCalculateSonResponse,  // @2024/03/31 Add for import Local files of Calculate Son Response
 
-    localBSInfo,                // @2023/12/27 Add for import Local files of BS Info
-    localBSList,                // @2024/01/16 Add for import Local files of BS List
-    localCurrentBsFmList,       // @2024/03/31 Add for import Local files of Bs Fault Message List
-    localBsKpiInfo,             // @2024/05/14 Add for import Local files of Bs Kpi Info
+    localBSInfo,              // @2023/12/27 Add for import Local files of BS Info
+    localBSList,              // @2024/01/16 Add for import Local files of BS List
+    localCurrentBsFmList,     // @2024/03/31 Add for import Local files of Bs Fault Message List
+    localBsKpiInfo,           // @2024/05/14 Add for import Local files of Bs Kpi Info
+
+    localFaultList,           // @2024/06/03 Add for import Local files of Fault List
 
     localScheduleList,        // @2024/03/15 Add for import Local files of Schedule List     
     localScheduleInfo,        // @2024/03/15 Add for import Local files of Schedule Info 
