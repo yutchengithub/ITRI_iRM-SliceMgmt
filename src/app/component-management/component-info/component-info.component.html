@@ -267,7 +267,7 @@
         </label>
       <div class="collapsible-content">
         <div class="content-inner">
-          <form [formGroup]="searchForm">
+          <form [formGroup]="alarmSearchForm">
             <div class="filter">
               <span><label>{{languageService.i18n['fm.severity']}}</label>
                 <select formControlName="severity">
@@ -285,7 +285,7 @@
               <!-- <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search_currentBsFmList()">clear</span> -->
             </div>
              <!-- Search Criteria Summary of current bs fault message @2024/03/31 Add -->
-             <!-- <div class="filterBY">
+             <div class="filterBY">
               <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
               <span *ngIf="afterAlarmSearchForm.controls['severity'].value">
                 <label>{{ languageService.i18n['fm.severity'] }}:&nbsp;</label>{{ afterAlarmSearchForm.controls['severity'].value }}
@@ -295,7 +295,7 @@
                 {{ afterAlarmSearchForm.controls['from'].value ? (commonService.dealPostDate(afterAlarmSearchForm.controls['from'].value) + ' ~ ') : '' }}
                 {{ afterAlarmSearchForm.controls['to'].value ? commonService.dealPostDate(afterAlarmSearchForm.controls['to'].value) : '' }}
               </span>
-            </div> -->
+            </div>
           </form>
 
             <div class="table">
@@ -361,7 +361,7 @@
                 <tr *ngFor="let file of fileMList">
                   <td>{{ file.filename }}</td>
                   <td>{{ file.folder }}</td> 
-                  <td class="center"><mat-icon>download_for_offline</mat-icon></td>
+                  <td class="center"><mat-icon (click)= "downloadFileM(file.filename)">download_for_offline</mat-icon></td>
                 </tr>
               </tbody>
             </table>

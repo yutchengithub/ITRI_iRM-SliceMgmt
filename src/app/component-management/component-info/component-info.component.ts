@@ -226,7 +226,7 @@ export class ComponentInfoComponent implements OnInit {
     this.spinnerService.hide();
   }
   showProcessingSpinner() {
-    this.spinnerService.isLoading = false;
+    this.spinnerService.isLoading = true;
     this.spinnerService.show();
   }
   alarmSearchForm!: FormGroup;
@@ -450,7 +450,6 @@ export class ComponentInfoComponent implements OnInit {
     this.afterAlarmSearchForm = _.cloneDeep( this.alarmSearchForm );
 
     this.isLoadingCurrentBsComFmList = true; // 設置加載旗標為 true,表示開始加載
-    this.showProcessingSpinner(); // 顯示 Processing Spinner
 
     if ( this.commonService.isLocal ) {
 
@@ -666,43 +665,6 @@ export class ComponentInfoComponent implements OnInit {
       }
     }, this.ListRefreshTime * 1000); //timeout 1000ms
   }
-
-  search() {
-    this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
-    const comp_name = 'itri_10.0.2.7';
-    const severity_lv = this.searchForm.get('severity')?.value;
-    const from = this.searchForm.get('from')?.value;
-    const to = this.searchForm.get('to')?.value;
-    // 格式化日期為所需的格式
-    const formattedFrom = this.commonService.dealPostDate(from);
-    const formattedTo = this.commonService.dealPostDate(to);
-
-    // 清除以前的搜尋結果
-    this.filteredFmList = [];
-    this.isSearch = false;
-
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.filteredFmList = this.fmsgList.faultMessages.filter(msg => {
-        const isCompMatch = !comp_name || msg.compname.includes(comp_name);
-        const isSeverityMatch = severity_lv === 'All' || msg.eventtype === severity_lv;
-        const msgDate = new Date(msg.timestamp);
-        const isAfterFrom = msgDate >= new Date(formattedFrom);
-        const isBeforeTo = msgDate <= new Date(formattedTo);
-
-        return isCompMatch && isSeverityMatch && isAfterFrom && isBeforeTo;
-      });
-      this.isSearch = true; // Local Search 完畢，設置標記為 true
-      this.totalItems = this.filteredFmList.length; // 確保更新 totalItems 以反映搜尋結果的數量
-    } else {
-
-    }
-  }
-
-  clear_search() {
-    this.createSearchForm();
-    this.isSearch = false;
-  }  
   get msgToDisplay(): FaultMessage[] {
     // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
     // 否則，顯示全部 this.fmsgList.faultMessages
@@ -843,7 +805,26 @@ export class ComponentInfoComponent implements OnInit {
         }
     );
   }
-
+  downloadFileM(file:string) {
+    //console.log("com"+this.comId +"file"+file);
+    this.showProcessingSpinner();
+    this.commonService.downloadFileM(this.comId,file).subscribe(
+      (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.hideSpinner();
+      },
+      error => {
+        console.error('Download error:', error);
+      }
+    );
+  }
   resetBs(){
     const body: any = {
       session: this.sessionId,

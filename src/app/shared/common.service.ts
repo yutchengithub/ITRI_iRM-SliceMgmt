@@ -646,6 +646,10 @@ export class CommonService {
     const url = `${this.restPath}/queryCurrentBsComFaultMessage/${this.getSessionId()}/${comId}`;
     return this.http.get(url, { params });
   }
+  downloadFileM(comId: string, fileM: String): Observable<any> {
+    const url = `${this.restPath}/downloadFileM/${this.getSessionId()}/${comId}/${fileM}`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
 
   // Software Mgmt API
   queryUploadFileInfo(fileId: string): Observable<any> {
