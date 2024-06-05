@@ -64,6 +64,9 @@ import { MatCheckboxChange } from '@angular/material/checkbox'; // @2024/03/30 A
 import { Color, ScaleType } from '@swimlane/ngx-charts';
 import { LegendPosition } from '@swimlane/ngx-charts';
 
+// chart.js 圖表配置用 @2024/06/05 Add
+import { ChartConfiguration, ChartOptions, ChartType } from "chart.js";
+
 export interface SimplifiedBSInfo {
   
     // For display and POST of update BS
@@ -4035,6 +4038,39 @@ export class FieldInfoComponent implements OnInit {
       console.warn("Unknown event type in onChartInteraction:", event);
     }
   }
+
+
+
+
+  // ng2-charts 圖表模組設定區 ↓
+
+  title = 'ng2-charts-demo';
+
+  public lineChartData: ChartConfiguration<'line'>['data'] = {
+    labels: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July'
+    ],
+    datasets: [
+      {
+        data: [ 65, 59, 80, 81, 56, 55, 40 ],
+        label: 'Series A',
+        fill: true,
+        tension: 0.5,
+        borderColor: 'black',
+        backgroundColor: 'rgba(255,0,0,0.3)'
+      }
+    ]
+  };
+  public lineChartOptions: ChartOptions<'line'> = {
+    responsive: false
+  };
+  public lineChartLegend = true;
 
 
 // For 場域效能報表 @2024/06/03 Update ↑

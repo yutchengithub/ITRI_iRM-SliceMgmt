@@ -1250,7 +1250,12 @@
 			<div>
 				<!-- 效能歷史查詢頁面內容 -->
 				<!-- 在這裡加入效能歷史的查詢和圖表 -->
-
+				<canvas baseChart width="400" height="400"
+					[type]="'line'"
+					[data]="lineChartData"
+					[options]="lineChartOptions"
+					[legend]="lineChartLegend">
+				</canvas>
 			</div>
 		</div>
 		

@@ -63,7 +63,9 @@ import { OCloudPerformanceComponent } from './performance-management/o-cloud-per
 
 import { DxCircularGaugeModule } from 'devextreme-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { NgxChartsModule } from '@swimlane/ngx-charts';  // ngx-charts 圖表模組 @2024/05/08 Add 
+import { NgChartsModule } from 'ng2-charts';             // ng2-charts 圖表模組 @2024/06/05 Add 
 
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon'; // @12/06 Add MatIconRegistry by yuchen 
 import { DomSanitizer } from '@angular/platform-browser';                // @12/06 Add by yuchen
@@ -259,9 +261,10 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     MatCheckboxModule,  // @2024/03/30 Add
 
     BrowserAnimationsModule,
-    SpinnerModule,      // @2024/04/17 Add
-    NgxSpinnerModule,   // ngx-spinner 進度條模組
-    NgxChartsModule,    // ngx-charts 圖表模組 @2024/05/08 Add
+    SpinnerModule,    // @2024/04/17 Add
+    NgxSpinnerModule, // ngx-spinner 進度條模組
+    NgxChartsModule,  // ngx-charts 圖表模組 @2024/05/08 Add
+    NgChartsModule    // ng2-charts 圖表模組 @2024/06/05 Add 
   ],
   providers: [
     AuthGuard,
