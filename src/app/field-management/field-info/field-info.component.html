@@ -1211,7 +1211,7 @@
 					{{ languageService.i18n['BS.dataTimePast24Hours'] }}
 				  </div>
 			  
-				  <canvas baseChart
+				  <canvas #chart baseChart
 						  [data]="barChartData"
 						  [options]="barChartOptions"
 						  [plugins]="barChartPlugins"

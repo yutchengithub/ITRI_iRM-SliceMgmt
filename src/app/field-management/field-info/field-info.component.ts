@@ -65,7 +65,16 @@ import { Color, ScaleType } from '@swimlane/ngx-charts';
 import { LegendPosition } from '@swimlane/ngx-charts';
 
 // chart.js 圖表配置用 @2024/06/05 Add
-import { Chart, ChartConfiguration, ChartOptions, ChartType, ChartComponentLike } from "chart.js";
+import {  Chart, 
+          ChartConfiguration, 
+          ChartOptions,
+          ChartType,
+          ChartComponentLike, 
+          ChartEvent, 
+          LegendItem
+        } from "chart.js";
+import { BaseChartDirective } from 'ng2-charts';
+
 import { Console } from 'console';
 
 export interface SimplifiedBSInfo {
@@ -4046,6 +4055,7 @@ export class FieldInfoComponent implements OnInit {
   // ng2-charts 圖表模組設定區 ↓
 
   title_overview = 'ng2-charts-demo';
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public barChartLegend = true;
   public barChartPlugins: ChartComponentLike[] = [
@@ -4071,22 +4081,219 @@ export class FieldInfoComponent implements OnInit {
     labels: [],
     datasets: []
   };
+
+  public originalLabels: string[] = [];
+
+  // public barChartOptions: ChartConfiguration<'bar'>['options'] = {
+  //   responsive: true,
+  //   indexAxis: 'y',
+  //   skipNull: true,  // 跳過空值
+  //   scales: {
+  //     x: {
+  //       stacked: false,
+  //       title: {
+  //         display: true,
+  //         text: 'KPI Name'
+  //       },
+  //     },
+  //     y: {
+  //       stacked: false,
+  //       title: {
+  //         display: false,
+  //         text: '基站與 Cell 識別'
+  //       }
+  //     }
+  //   },
+  //   plugins: {
+  //     legend: {
+  //       display: true,
+  //       position: 'right',
+  //       labels: {
+  //         font: {
+  //           size: 12
+  //         }
+  //       }
+  //     },
+  //     tooltip: {
+  //       position: 'nearest',
+  //       callbacks: {
+  //         label: (context) => {
+  //           const label = context.dataset.label || '';
+  //           const value = context.raw as number;
+  //           const unit = this.selectedKpiUnit || '';
+  //           return `${label}: ${value} ${unit}`;
+  //         },
+  //         title: (context) => {
+  //           const kpiName = this.selectedKpiSubcategory || this.selectedKpiCategory;
+  //           return `${kpiName}`;
+  //         }
+  //       }
+  //     }
+  //   }
+  // };
+  // public barChartOptions: ChartConfiguration<'bar'>['options'] = { 
+  //     responsive: true,
+  //     indexAxis: 'y',
+  //     skipNull: true,  // 跳過空值
+  //     scales: {
+  //       x: {
+  //         stacked: false,
+  //         title: {
+  //           display: true,
+  //           text: 'KPI Name'
+  //         },
+  //       },
+  //       y: {
+  //         stacked: false,
+  //         title: {
+  //           display: false,
+  //           text: '基站與 Cell 識別'
+  //         }
+  //       }
+  //     },
+  //     plugins: {
+  //       legend: {
+  //         display: true,
+  //         position: 'right',
+  //         labels: {
+  //           font: {
+  //             size: 12
+  //           }
+  //         },
+  //         onClick: (e: ChartEvent, legendItem: LegendItem, legend: any) => {
+  //           const index = legendItem.datasetIndex;
+  //           const ci = legend.chart;
+  //           const meta = ci.getDatasetMeta( index );
+
+  //           // 切換數據集顯示狀態
+  //           meta.hidden = !meta.hidden;
+
+  //           // 更新 Y 軸標籤
+  //           if ( meta.hidden ) {
+  //             if ( ci.data.labels && index !== undefined ) {
+  //               ci.data.labels[index] = '';  // 隱藏時設置為空
+  //             }
+  //           } else {
+  //             if ( ci.data.labels && index !== undefined ) {
+  //               if ( this.originalLabels[index] !== undefined && index !== undefined ) {
+  //                 ci.data.labels[index] = this.originalLabels[index];  // 恢復原本的標籤
+  //               }
+  //             }
+  //           }
+
+  //           ci.update();
+  //         }
+  //       },
+  //       tooltip: {
+  //         position: 'nearest',
+  //         callbacks: {
+  //           label: (context) => {
+  //             const label = context.dataset.label || '';
+  //             const value = context.raw as number;
+  //             const unit = this.selectedKpiUnit || '';
+  //             return `${label}: ${value} ${unit}`;
+  //           },
+  //           title: (context) => {
+  //             const kpiName = this.selectedKpiSubcategory || this.selectedKpiCategory;
+  //             return `${kpiName}`;
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   setChartData() {
+  //     const labels = this.preparedChartData.map(data => data.name);
+  //     this.originalLabels = Array.from(new Set(labels)); // 獲取唯一的標籤並保存原始標籤
+  //     const datasetsMap = new Map<string, { data: number[], label: string, backgroundColor: string[], barPercentage: number, categoryPercentage: number }>();
+    
+  //     this.preparedChartData.forEach(data => {
+  //       if (!datasetsMap.has(data.name)) {
+  //         datasetsMap.set(data.name, { data: [], label: data.name, backgroundColor: [], barPercentage: 1.0, categoryPercentage: 1.0 });
+  //       }
+  //       const dataset = datasetsMap.get(data.name);
+  //       if (dataset) {
+  //         dataset.data.push(data.value);
+  //         dataset.backgroundColor.push(data.color || '');
+  //       }
+  //     });
+    
+  //     const datasets = Array.from(datasetsMap.values()).map(dataset => {
+  //       const filledData = new Array(this.originalLabels.length).fill(null);
+  //       dataset.data.forEach((value, index) => {
+  //         const labelIndex = this.originalLabels.indexOf(dataset.label);
+  //         if (labelIndex !== -1) {
+  //           filledData[labelIndex] = value;
+  //         }
+  //       });
+  //       return {
+  //         ...dataset,
+  //         data: filledData
+  //       };
+  //     });
+    
+  //     this.barChartData = {
+  //       labels: [...this.originalLabels],  // 使用原始標籤
+  //       datasets: datasets
+  //     };
+    
+  //     console.log("In setChartData() end - barChartData:", this.barChartData);
+  //   }
   
-  public barChartOptions: ChartConfiguration<'bar'>['options'] = {
+    
+  // // 設定圖表配色方案
+  // setChartData() {
+  //   const labels = this.preparedChartData.map(data => data.name);
+  //   const uniqueLabels = Array.from(new Set(labels)); // 獲取唯一的標籤
+  //   const datasetsMap = new Map<string, { data: number[], label: string, backgroundColor: string[] }>();
+
+  //   this.preparedChartData.forEach(data => {
+  //     if (!datasetsMap.has(data.name)) {
+  //       datasetsMap.set(data.name, { data: [], label: data.name, backgroundColor: [] });
+  //     }
+  //     const dataset = datasetsMap.get(data.name);
+  //     if (dataset) {
+  //       dataset.data.push(data.value);
+  //       dataset.backgroundColor.push(data.color || '');
+  //     }
+  //   });
+
+  //   const datasets = Array.from(datasetsMap.values()).map(dataset => {
+  //     const filledData = new Array(uniqueLabels.length).fill(null);
+  //     dataset.data.forEach((value, index) => {
+  //       const labelIndex = uniqueLabels.indexOf(dataset.label);
+  //       if (labelIndex !== -1) {
+  //         filledData[labelIndex] = value;
+  //       }
+  //     });
+  //     return {
+  //       ...dataset,
+  //       data: filledData
+  //     };
+  //   });
+
+  //   this.barChartData = {
+  //     labels: uniqueLabels,
+  //     datasets: datasets
+  //   };
+
+  //   console.log("In setChartData() end - barChartData:", this.barChartData);
+  // }
+  
+  public barChartOptions: ChartConfiguration<'bar'>['options'] = { 
     responsive: true,
-    indexAxis: 'y',  // 設置水平條形圖
+    indexAxis: 'y',
+    skipNull: true,  // 跳過空值
     scales: {
       x: {
-        stacked: false,  // 取消堆疊條形圖
+        stacked: false,
         title: {
           display: true,
-          text: 'KPI Name',
-          
+          text: 'KPI Name'
         },
-        min: 0
       },
       y: {
-        stacked: false,  // 取消堆疊條形圖
+        stacked: false,
         title: {
           display: false,
           text: '基站與 Cell 識別'
@@ -4101,14 +4308,54 @@ export class FieldInfoComponent implements OnInit {
           font: {
             size: 12
           }
-        }
+        },
+        onClick: ( e: ChartEvent, legendItem: LegendItem, legend: any ) => {
+          const index = legendItem.datasetIndex;
+          const ci = legend.chart;
+          const meta = ci.getDatasetMeta(index);
+  
+          // 切換數據集顯示狀態
+          meta.hidden = !meta.hidden;
+  
+          // 更新 Y 軸標籤
+          if (meta.hidden) {
+            if (ci.data.labels && index !== undefined) {
+              ci.data.labels[index] = '';  // 隱藏時設置為空
+            }
+          } else {
+            if (ci.data.labels && index !== undefined) {
+              if (this.originalLabels[index] !== undefined && index !== undefined) {
+                ci.data.labels[index] = this.originalLabels[index];  // 恢復原本的標籤
+              }
+            }
+          }
+  
+          // 確保 this.chart 和 this.chart.chart 被正確引用
+          if (this.chart!.chart) {
+            // 更新barPercentage和categoryPercentage
+            const visibleDatasets = ci.data.datasets.filter((dataset: any, idx: number) => {
+              const datasetMeta = this.chart!.chart?.getDatasetMeta(idx);
+              return datasetMeta ? !datasetMeta.hidden : true;
+            });
+
+            const barPercentage = visibleDatasets.length > 0 ? 1 / visibleDatasets.length : 1;
+            visibleDatasets.forEach((dataset: any) => {
+              dataset.barPercentage = barPercentage;
+              dataset.categoryPercentage = barPercentage;
+            });
+    
+              ci.update();
+            }
+          }
       },
       tooltip: {
+        position: 'nearest',
         callbacks: {
-          label: function(context) {
+          label: (context) => {
             const label = context.dataset.label || '';
-            const value = context.raw as number;  // 明確指定類型
-            return `${label}: ${value}`;
+            const value = context.raw as number;
+            const unit = this.selectedKpiUnit || '';
+            return `${label}: ${value} ${unit}`;
           },
           title: (context) => {
             const kpiName = this.selectedKpiSubcategory || this.selectedKpiCategory;
@@ -4119,15 +4366,15 @@ export class FieldInfoComponent implements OnInit {
     }
   };
   
-  
   // 設定圖表配色方案
   setChartData() {
     const labels = this.preparedChartData.map(data => data.name);
-    const datasetsMap = new Map<string, { data: number[], label: string, backgroundColor: string[] }>();
+    this.originalLabels = Array.from(new Set(labels)); // 獲取唯一的標籤並保存原始標籤
+    const datasetsMap = new Map<string, { data: number[], label: string, backgroundColor: string[], barPercentage: number, categoryPercentage: number }>();
   
     this.preparedChartData.forEach(data => {
       if (!datasetsMap.has(data.name)) {
-        datasetsMap.set(data.name, { data: [], label: data.name, backgroundColor: [] });
+        datasetsMap.set(data.name, { data: [], label: data.name, backgroundColor: [], barPercentage: 1.0, categoryPercentage: 1.0 });
       }
       const dataset = datasetsMap.get(data.name);
       if (dataset) {
@@ -4136,16 +4383,45 @@ export class FieldInfoComponent implements OnInit {
       }
     });
   
-    const datasets = Array.from(datasetsMap.values());
+    const datasets = Array.from(datasetsMap.values()).map(dataset => {
+      const filledData = new Array(this.originalLabels.length).fill(null);
+      dataset.data.forEach((value, index) => {
+        const labelIndex = this.originalLabels.indexOf(dataset.label);
+        if (labelIndex !== -1) {
+          filledData[labelIndex] = value;
+        }
+      });
+      return {
+        ...dataset,
+        data: filledData
+      };
+    });
   
     this.barChartData = {
-      labels: [''],
+      labels: [...this.originalLabels],  // 使用原始標籤
       datasets: datasets
     };
-
-    console.log("barChartData:", this.barChartData);
-    
+  
+    // 確保 this.chart 和 this.chart.chart 被正確引用
+    if (this.chart && this.chart.chart) {
+      // 設置初始barPercentage和categoryPercentage
+      const visibleDatasets = this.barChartData.datasets.filter((dataset: any, index: number) => {
+        const datasetMeta = this.chart!.chart?.getDatasetMeta(index);
+        return datasetMeta ? !datasetMeta.hidden : true;
+      });
+  
+      const barPercentage = visibleDatasets.length > 0 ? 1 / visibleDatasets.length : 1;
+      visibleDatasets.forEach((dataset: any) => {
+        dataset.barPercentage = barPercentage;
+        dataset.categoryPercentage = barPercentage;
+      });
+    }
+  
+    console.log("In setChartData() end - barChartData:", this.barChartData);
   }
+  
+
+  
   
   
   // 更新下拉選單的選項
@@ -4310,7 +4586,7 @@ export class FieldInfoComponent implements OnInit {
       if (!this.barChartOptions.scales['x'].title) {
         this.barChartOptions.scales['x'].title = { display: true, text: '' };
       }
-      this.barChartOptions.scales['x'].title.text = subKpiName ? `${subKpiName} (${unit})` : `${kpiName} (${unit})`;
+      this.barChartOptions.scales['x'].title.text = subKpiName ? `${subKpiName} ( ${unit} )` : `${kpiName} ( ${unit} )`;
     }
   }
   
