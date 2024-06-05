@@ -1191,28 +1191,35 @@
 			</mat-button-toggle-group>
 		</div>
 		
-
 		<div *ngIf="fieldPMReportType === 'Performance_Overview'">
 			<div *ngIf="fieldInfo">
 				<!-- 效能總覽頁面內容 -->
 
 				<div class="filter">
-				  <span><!-- KPI 類別選項 -->
-					<label>{{ languageService.i18n['BS.viewKPICategory'] }}:</label>
-					<select [(ngModel)]="selectedKpiCategory" (ngModelChange)="onKpiCategoryChange()">
-					  <option *ngFor="let category of kpiCategories" [value]="category.value">{{ category.displayName }}</option>
-					</select>
-				  </span>
-				  <span><!-- KPI 子類別選項 -->
-					<label>{{ languageService.i18n['BS.viewKPISubcategory'] }}:</label>
-					<select [(ngModel)]="selectedKpiSubcategory" (ngModelChange)="prepareAndUpdateChartData()" [hidden]="kpiSubcategories.length === 0">
-					  <option *ngFor="let subcategory of kpiSubcategories" [value]="subcategory.value">{{ subcategory.displayName }}</option>
-					</select>
-				  </span>
-				  {{ languageService.i18n['BS.dataTimePast24Hours'] }}
-				</div>
+					<span><!-- KPI 類別選項 -->
+					  <label>{{ languageService.i18n['BS.viewKPICategory'] }}:</label>
+					  <select [(ngModel)]="selectedKpiCategory" (ngModelChange)="onKpiCategoryChange()">
+						<option *ngFor="let category of kpiCategories" [value]="category.value">{{ category.displayName }}</option>
+					  </select>
+					</span>
+					<span><!-- KPI 子類別選項 -->
+					  <label>{{ languageService.i18n['BS.viewKPISubcategory'] }}:</label>
+					  <select [(ngModel)]="selectedKpiSubcategory" (ngModelChange)="prepareAndUpdateChartData()" [hidden]="kpiSubcategories.length === 0">
+						<option *ngFor="let subcategory of kpiSubcategories" [value]="subcategory.value">{{ subcategory.displayName }}</option>
+					  </select>
+					</span>
+					{{ languageService.i18n['BS.dataTimePast24Hours'] }}
+				  </div>
+			  
+				  <canvas baseChart
+						  [data]="barChartData"
+						  [options]="barChartOptions"
+						  [plugins]="barChartPlugins"
+						  [legend]="barChartLegend"
+						  [type]="'bar'">
+				  </canvas>
 					   
-				<ngx-charts-bar-horizontal
+				<!-- <ngx-charts-bar-horizontal
 					[view]="view"
 					[scheme]="colorScheme"
 					[customColors]="customColors"
@@ -1235,15 +1242,14 @@
 					<ng-template #tooltipTemplate let-model="model">
 						<div style="text-align: center;"> 
 							<label><strong>{{ model.name }}</strong></label>
-								<!-- <br/> -->
+								<br/>
 							<span *ngIf=" model.value !== null && model.value !== '' "[style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
 							<span *ngIf=" model.value === null && model.value === '' ">{{ languageService.i18n['BS.kpiValueNone'] }}</span>
 							<h5 *ngIf=" model.value !== null && model.value !== '' ">{{ model.value }} {{ getUnit() }}</h5>
 						</div>
 					</ng-template>
 
-				</ngx-charts-bar-horizontal>
-
+				</ngx-charts-bar-horizontal> -->
 			  </div>
 		</div>
 		<div  *ngIf="fieldPMReportType === 'Performance_History'">

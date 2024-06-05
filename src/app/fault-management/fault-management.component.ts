@@ -125,7 +125,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.severitys = this.commonService.severitys;
     this.statusTypes = this.commonService.statusTypes;
     this.situations = this.commonService.situations;
-    this.owner = this.commonService.getUserId();
+    this.owner = this.commonService.userId;
   }
 
   fmsgList: FmsgList = {} as FmsgList;
@@ -174,11 +174,12 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       }
     });
     this.getFaultMessage();
-    this.owner = this.commonService.getUserId();
+    this.owner = this.commonService.userId;
     console.log("ngOnInit() - owner:", this.owner);
   }
 
   ngAfterViewInit() {
+    this.owner = this.commonService.userId;
   }
 
   ngOnDestroy() {
