@@ -277,6 +277,7 @@ export class ComponentInfoComponent implements OnInit {
   }
   getComponentInfo() {
     this.showLoadingSpinner();
+    
     this.activateSuccess = false;
     const parseOption = {
       cdataTagName: "![CDATA[",
@@ -308,13 +309,14 @@ export class ComponentInfoComponent implements OnInit {
       const output = parser.parse(xmldata);
       //console.log('Json output: ',output);
       //console.log('Json output: ', JSON.stringify(output, null, 2));
+
+      this.hideSpinner();
     } else {
       this.cmpsource = this.commonService.cmpsource;
       this.commonService.queryBsComponentInfo(this.comId).subscribe(
         (res: ComponentInfo) => {
           console.log('queryComponentInfo:', res);
           this.componentInfo = res;
-          this.hideSpinner();
           const xmldata = res.info.data;
           const parser = new XMLParser(parseOption);
           const output = parser.parse(xmldata);
@@ -327,9 +329,12 @@ export class ComponentInfoComponent implements OnInit {
           this.treeData = this.buildTree(this.jsonData);
           //console.log('Tree Data:', this.treeData);
           console.log('Json output: ', this.jsonData);
+
+          this.hideSpinner();
         },
         (error: any) => {
           console.error('Error loading ComponentInfo:', error);
+          this.hideSpinner();
         }
       );
       this.fileMlist();
