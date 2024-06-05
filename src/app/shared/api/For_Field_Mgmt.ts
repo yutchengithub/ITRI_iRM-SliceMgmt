@@ -410,4 +410,23 @@ export class apiForFieldMgmt {
     return this.http.post( url, bodyStr );
   }
 
+    /**
+   * @2024/06/05 Add
+   * 取得指定場域的 KPI 資訊
+   * @param bsId 場域 ID
+   * @param params 其他查詢參數
+   * @returns 返回一個 Observable 物件，發出 API 返回的資料
+   */
+    queryFieldKpiInfo( fieldId: string, params: any ): Observable< any > {
+    
+      // 每次調用 API 時都動態獲取最新的 sessionId
+      const sessionId = this.commonService.getSessionId();
+  
+      // 組合 API 的 URL，包含 session ID 和場域 ID
+      const url = `${this.restPath}/queryFieldKpiInfo/${sessionId}/${fieldId}`;
+  
+      // 發送 HTTP GET 請求到指定的 URL，並將 params 物件作為查詢參數傳遞給請求
+      return this.http.get( url, { params } );
+    }
+
 }
