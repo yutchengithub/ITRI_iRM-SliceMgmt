@@ -122,15 +122,18 @@ export class ComponentManagementComponent implements OnInit {
       this.componentList = this.commonService.componentList;
       console.log(this.componentList);
       this.componentListDeal();
+      this.hideSpinner();
     } else {
       this.commonService.queryBsComponentList().subscribe(
         res => {
           console.log('getBsComponent List:');
           console.log(res);
-          this.hideSpinner();
+          
           const str = JSON.stringify(res);//convert array to string
           this.componentList = JSON.parse(str);
           this.componentListDeal();
+
+          this.hideSpinner();
         }
       );
     }
