@@ -3770,38 +3770,46 @@ export class FieldInfoComponent implements OnInit {
       id: 'customPlugin', // 插件 ID
       beforeDraw: (chart: any) => {
         const ctx = chart.ctx; // 獲取圖表上下文
-        ctx.save(); // 保存當前狀態
-        ctx.font = 'bold 15px Arial'; // 設置字體樣式
-        ctx.fillStyle = 'white'; // 設置填充顏色
-        ctx.textAlign = 'right'; // 設置對齊方式
-        ctx.textBaseline = 'middle'; // 設置基線
-        ctx.restore(); // 恢復保存的狀態
+        if ( this.barChart ) {
+          ctx.save(); // 保存當前狀態
+          ctx.font = 'bold 15px Arial'; // 設置字體樣式
+          ctx.fillStyle = 'white'; // 設置填充顏色
+          ctx.textAlign = 'right'; // 設置對齊方式
+          ctx.textBaseline = 'middle'; // 設置基線
+          ctx.restore(); // 恢復保存的狀態
+        }
       },
       afterDraw: ( chart: any ) => {
         const ctx = chart.ctx; // 獲取圖表上下文
-        chart.data.datasets.forEach( ( dataset: any, i: number ) => {
-          const meta = chart.getDatasetMeta(i); // 獲取數據集元數據
-          if ( !meta.hidden ) {
-            meta.data.forEach( ( element: any, index: number ) => {
-              // 繪製數據旁邊的文字
-              ctx.fillStyle = 'rgb(255, 255, 255)'; // 設置填充顏色
-              const fontSize = 13; // 字體大小
-              const fontStyle = 'normal'; // 字體樣式
-              const fontFamily = 'Arial'; // 字體家族
-              ctx.font = `${fontStyle} ${fontSize}px ${fontFamily}`; // 設置字體
 
-              // 設定要繪製的文字
-              const dataString = dataset.label;
+        if ( this.barChart ) {
 
-              // 繪製文字到數據旁邊
-              ctx.textAlign = 'right'; // 設置對齊方式
-              ctx.textBaseline = 'middle'; // 設置基線
-              const padding = 155; // 填充
-              const position = element.tooltipPosition(); // 獲取提示位置
-              ctx.fillText( dataString, padding, position.y ); // 繪製文本
-            });
-          }
-        });
+          chart.data.datasets.forEach( ( dataset: any, i: number ) => {
+
+            const meta = chart.getDatasetMeta(i); // 獲取數據集元數據
+            
+            if ( !meta.hidden ) {
+              meta.data.forEach( ( element: any, index: number ) => {
+                // 繪製數據旁邊的文字
+                ctx.fillStyle = 'rgb(255, 255, 255)'; // 設置填充顏色
+                const fontSize = 13; // 字體大小
+                const fontStyle = 'normal'; // 字體樣式
+                const fontFamily = 'Arial'; // 字體家族
+                ctx.font = `${fontStyle} ${fontSize}px ${fontFamily}`; // 設置字體
+
+                // 設定要繪製的文字
+                const dataString = dataset.label;
+
+                // 繪製文字到數據旁邊
+                ctx.textAlign = 'right'; // 設置對齊方式
+                ctx.textBaseline = 'middle'; // 設置基線
+                const padding = 155; // 填充
+                const position = element.tooltipPosition(); // 獲取提示位置
+                ctx.fillText( dataString, padding, position.y ); // 繪製文本
+              });
+            }
+          });
+        }
       }
     }
   ];
