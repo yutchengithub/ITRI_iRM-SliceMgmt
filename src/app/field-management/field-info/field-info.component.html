@@ -1181,7 +1181,7 @@
 		</div>
 	</ng-template>
 
-	<!-- Window of Field Performance Analysis @2024/06/04 Update -->
+	<!-- Window of Field Performance Analysis @2024/06/06 Update -->
 	<ng-template #fieldPMReportWindow>
 		<div>
 			<h5>{{ languageService.i18n['field.performance'] }}</h5>
@@ -1194,31 +1194,39 @@
 		<div *ngIf="fieldPMReportType === 'Performance_Overview'">
 			<div *ngIf="fieldInfo">
 				<!-- 效能總覽頁面內容 -->
-
 				<div class="filter">
-					<span><!-- KPI 類別選項 -->
+					<span>
+					  <!-- KPI 類別下拉選單 -->
 					  <label>{{ languageService.i18n['BS.viewKPICategory'] }}:</label>
-					  <select [(ngModel)]="selectedKpiCategory" (ngModelChange)="onKpiCategoryChange()">
+					  <select [(ngModel)]="selectedKpiCategory" (ngModelChange)="onKpiCategoryChange_for_chartJS_barChart()">
 						<option *ngFor="let category of kpiCategories" [value]="category.value">{{ category.displayName }}</option>
 					  </select>
 					</span>
-					<span><!-- KPI 子類別選項 -->
+					<span>
+					  <!-- KPI 子類別下拉選單 -->
 					  <label>{{ languageService.i18n['BS.viewKPISubcategory'] }}:</label>
-					  <select [(ngModel)]="selectedKpiSubcategory" (ngModelChange)="prepareAndUpdateChartData()" [hidden]="kpiSubcategories.length === 0">
+					  <select [(ngModel)]="selectedKpiSubcategory" (ngModelChange)="prepareAndUpdateChartData_for_chartJS_barChart()" [hidden]="kpiSubcategories.length === 0">
 						<option *ngFor="let subcategory of kpiSubcategories" [value]="subcategory.value">{{ subcategory.displayName }}</option>
 					  </select>
 					</span>
-					{{ languageService.i18n['BS.dataTimePast24Hours'] }}
+					<span>
+						<label>{{ languageService.i18n['BS.dataTimePast24Hours'] }}</label>
+					</span>
 				  </div>
 			  
-				  <canvas #chart baseChart
+				  <!-- ng2-charts - Bar Chart @2024/06/06 Update -->
+				  <canvas #barChart 
+				  		  baseChart 
+						  width="1000" 
+						  height="400"
 						  [data]="barChartData"
 						  [options]="barChartOptions"
 						  [plugins]="barChartPlugins"
 						  [legend]="barChartLegend"
 						  [type]="'bar'">
 				  </canvas>
-					   
+				
+				<!-- ngx-charts - Horizontal Bar Chart @2024/06/06 - 已不使用 -->
 				<!-- <ngx-charts-bar-horizontal
 					[view]="view"
 					[scheme]="colorScheme"
@@ -1250,7 +1258,7 @@
 					</ng-template>
 
 				</ngx-charts-bar-horizontal> -->
-			  </div>
+			</div>
 		</div>
 		<div  *ngIf="fieldPMReportType === 'Performance_History'">
 			<div>
@@ -1271,9 +1279,6 @@
 			</button>
 		</div>
 	</ng-template>
-
-
-
 
 	<!-- Window of Field Optimization @2024/04/08 Update-->
 	<ng-template #fieldOptimizationWindow>
