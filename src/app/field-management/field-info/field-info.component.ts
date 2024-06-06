@@ -3656,7 +3656,7 @@ export class FieldInfoComponent implements OnInit {
   public barChartLegend = true;
 
   // 定義圖表類型為條形圖
-  public barChartType: ChartType = 'bar';
+  //public barChartType: ChartType = 'bar';
 
   // 初始化圖表數據
   public barChartData: ChartConfiguration<'bar'>['data'] = {

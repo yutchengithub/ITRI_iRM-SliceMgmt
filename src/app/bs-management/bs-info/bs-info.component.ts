@@ -42,6 +42,18 @@ import { localBsKpiInfo } from '../../shared/local-files/BS/For_queryBsKpiInfo';
 import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
 import { Color, ScaleType } from '@swimlane/ngx-charts';
 
+// chart.js 圖表配置用 @2024/06/06 Add
+import {  Chart, 
+          ChartConfiguration, 
+          ChartOptions,
+          ChartType,
+          ChartComponentLike, 
+          ChartEvent, 
+          LegendItem,
+          ChartDataset
+        } from "chart.js";
+import { BaseChartDirective } from 'ng2-charts';
+
 // 2024/04/01 Add
 // 搜尋基站告警用
 interface bsCurrentFmParams {
@@ -291,11 +303,12 @@ export class BSInfoComponent implements OnInit {
       //this.getBsKpiInfo();
     });
 
-    // @2024/05/18 Add
+    // @2024/06/06 Update
     // 訂閱語系切換事件，以便在語言變更時更新基站效能區的下拉選單文字
     this.languageService.languageChanged.subscribe(() => {
-      this.updateLanguageOptions();       // 單純更新語系顯示
+      this.updateLanguageOptions();         // 單純更新語系顯示
       //this.updateLanguageSubcategories(); // 單純更新子類別顯示
+      this.updateChartLanguage();           // 更新圖表( Chart.js ) 語系顯示 @2024/06/06 Add
     });
   }
 
@@ -3777,9 +3790,9 @@ export class BSInfoComponent implements OnInit {
     this.currentBsKpiInfo = response; // 假設響應直接是 BsKpiInfo 格式
 
     // 將每筆數據的時間轉換為使用者所在時區的時間
-    Object.values(this.currentBsKpiInfo).forEach((timeBlock: TimeBlock) => {
-      timeBlock.start = this.formatTimeToLocal(timeBlock.start); // 將開始時間轉換為本地時間
-      timeBlock.end = this.formatTimeToLocal(timeBlock.end);     // 將結束時間轉換為本地時間
+    Object.values(this.currentBsKpiInfo).forEach( ( timeBlock: TimeBlock ) => {
+      timeBlock.start = this.formatTimeToLocal( timeBlock.start ); // 將開始時間轉換為本地時間
+        timeBlock.end = this.formatTimeToLocal( timeBlock.end );   // 將結束時間轉換為本地時間
     });
 
     this.isLoadingBsKpiInfo = false;  // 更新加載狀態
@@ -4075,6 +4088,157 @@ export class BSInfoComponent implements OnInit {
     }
   }
 
+// ng2-charts 圖表模組設定區 @2024/06/06 Add ↓
+
+  title_overview = 'ng2-charts-demo';
+  @ViewChild( BaseChartDirective ) lineChart?: BaseChartDirective;
+
+  public lineChartLegend = true;
+  //public lineChartType: ChartType = 'line';
+  public lineChartData: ChartConfiguration<'line'>['data'] = {
+    labels: [],
+    datasets: []
+  };
+
+  public lineChartOptions: ChartConfiguration<'line'>['options'] = {
+    responsive: true,
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: '時間',
+          color: 'white'
+        },
+        ticks: {
+          color: 'white'
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.5)'
+        }
+      },
+      y: {
+        title: {
+          display: true,
+          text: '數值 ( 單位 )',
+          color: 'white'
+        },
+        ticks: {
+          color: 'white'
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.5)'
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        position: 'right', // 圖例位置在右側
+        align: 'start',    // 將圖例整區置上
+        labels: {
+          color: 'white'
+        },
+        title: {
+          display: true, // 顯示圖例標題
+          text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
+          font: {
+            size: 14,      // 圖例標題字體大小
+            weight: 'bold' // 圖例標題字體粗細
+          },
+          color: 'white',  // 圖例標題顏色
+          padding: {
+            right: 10, // 圖例標題右側間距
+            bottom: 0  // 圖例標題下方間距
+          }
+        },
+      },
+      tooltip: {
+        //backgroundColor: 'white',
+        titleColor: 'white',
+        borderColor: 'white',
+        footerColor: 'white',
+        displayColors: true, // 顯示對應數據點的顏色塊
+        callbacks: {
+          label: (context) => {
+            context.dataset.borderColor
+            return `${context.dataset.label}: ${context.raw} ${this.getUnit()}`;
+          }
+        }
+      }
+    }
+  };
+
+  /**
+   * @2024/06/06 Add
+   * 更新圖表語言
+   * @method updateChartLanguage
+   * @description
+   * - 根據當前語言設置更新圖表的圖例標題。
+   * - 使用語言服務中的翻譯來設置圖表標題文本。
+   */
+  updateChartLanguage() {
+    if (this.lineChartOptions && this.lineChartOptions.plugins && this.lineChartOptions.plugins.legend  && this.lineChartOptions.plugins.legend.title) {
+      this.lineChartOptions.plugins.legend.title.text = this.languageService.i18n['BS.dataItems'];
+    }
+    this.lineChart?.update(); // 更新圖表
+    this.changeDetectorRef.detectChanges(); // 強制觸發變更檢測
+  }
+
+  // 獲取當前選擇的 KPI 的單位
+  getUnit() {
+    switch ( this.selectedKpiCategory ) {
+      case 'Accessibility':
+        return '%';
+      case 'Integrity':
+        if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' || this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
+          return 'ms';
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' || this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
+          return 'Mbps';
+        }
+        return ''; // 添加缺失的返回值
+      case 'Utilization':
+        return '%';
+      case 'Retainability':
+        return '%';
+      case 'Mobility':
+        return '%';
+      case 'Energy Consumption':
+        return 'J';
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * @2024/06/06 Add
+   * 設置圖表數據
+   * @method setChartData_for_chartJS_lineChart
+   * @description
+   * - 根據準備好的數據設置圖表的數據。
+   */
+  setChartData_for_chartJS_lineChart() {
+    const rawData = this.displayOnTableChartData;
+    const labels = rawData[0].series.map( data => data.time ); // 獲取時間標籤
+    this.lineChartData.labels = labels; // 設置圖表的 x 軸標籤
+
+    
+    const datasets = rawData.map(data => {
+      return {
+        label: data.name,
+        data: data.series.map(point => point.value),
+        borderColor: data.series.map(point => point.color),          // 數據線的顏色
+        backgroundColor: data.series.map(point => point.color),      // 背景顏色
+        pointBackgroundColor: data.series.map(point => point.color), // 數據點的顏色
+        fill: false
+      } as ChartDataset<'line'>;
+    });
+
+    this.lineChartData.datasets = datasets; // 設置圖表的數據集
+    this.lineChart?.update(); // 更新圖表
+  }
+
+// ng2-charts 圖表設定區 @2024/06/06 Add ↑
+
+
   // ngx-charts-line-chart 圖表模組外觀設定區 ↓
 
               view: [number, number] = [1355, 525]; // 定義圖表區長寬
@@ -4266,7 +4430,7 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/25 Update
+   * @2024/06/06 Update
    * 更新並準備圖表數據
    * @method prepareAndUpdateChartData
    * @description
@@ -4307,7 +4471,12 @@ export class BSInfoComponent implements OnInit {
     // this.xScaleMin = firstTimeBlock;
     // this.xScaleMax = lastTimeBlock;
 
+    // @2024/06/06 Add
+    // 刷新 Chart.js 的 line Chart
+    this.setChartData_for_chartJS_lineChart();
+
     this.setYAxisLabel(); // 更新 y 軸標籤
+    this.changeDetectorRef.detectChanges(); // 觸發變更檢測
 
     // 標記為需要檢查，因為有使用了 OnPush ( @2024/05/21 Update - 貌似沒看到甚麼效果出現，故先註解掉 )
     // this.changeDetectorRef.markForCheck(); // 標記為需要檢查，確保變更檢測機制正確觸發
@@ -4420,7 +4589,7 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/24 Add
+   * @2024/06/06 Update
    * 根據 lineVisibility 更新圖表顯示的數據
    * @method updateDisplayChartData
    * @description
@@ -4706,7 +4875,7 @@ export class BSInfoComponent implements OnInit {
   }
   
   /**
-   * @2024/05/22 Update
+   * @2024/06/06 Update
    * 根據選擇的 KPI 類別設置 Y 軸標籤
    * @method setYAxisLabel
    * @description
@@ -4779,6 +4948,19 @@ export class BSInfoComponent implements OnInit {
 
     // 設置 Y 軸標籤為 "子 KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"
     this.yAxisLabel = subKpiName ? `${subKpiName} ( ${unit} )` : `${kpiName} ( ${unit} )`;
+  
+    console.log("In setYAxisLabel() - this.yAxisLabel = ", this.yAxisLabel)
+
+    // 檢查和設置 X 軸標題文本
+    if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
+      if (!this.lineChartOptions.scales['y'].title) {
+        this.lineChartOptions.scales['y'].title = { display: true, text: '' }; // 初始化 Y 軸標題
+      }
+      this.lineChartOptions.scales['y'].title.text = this.yAxisLabel; // 設置 Y 軸標題文本
+    }
+
+    this.lineChart?.update(); // 確保圖表的更新
+    this.changeDetectorRef.detectChanges(); // 強制觸發變更檢測
   }
 
 
