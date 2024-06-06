@@ -64,7 +64,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox'; // @2024/03/30 A
 import { Color, ScaleType } from '@swimlane/ngx-charts';
 import { LegendPosition } from '@swimlane/ngx-charts';
 
-// chart.js 圖表配置用 @2024/06/05 Add
+// chart.js 圖表配置用 @2024/06/06 Update
 import {  Chart, 
           ChartConfiguration, 
           ChartOptions,
@@ -314,10 +314,10 @@ export class FieldInfoComponent implements OnInit {
     // @2024/06/06 Update
     // 訂閱語系切換事件，以便在語言變更時更新基站效能區的下拉選單文字
     this.languageService.languageChanged.subscribe(() => {
-      this.updateLanguageOptions();       // 單純更新語系顯示
+      this.updateLanguageOptions();         // 單純更新語系顯示
       //this.updateLanguageSubcategories(); // 單純更新子類別顯示
 
-      this.updateChartLanguage(); // 更新圖表語言 @2024/06/06 Add
+      this.updateChartLanguage(); // 更新圖表( Chart.js ) 語系顯示 @2024/06/06 Add
     });
   }
 
@@ -3806,15 +3806,24 @@ export class FieldInfoComponent implements OnInit {
     }
   ];
 
-  // @2024/06/06 Add
-  // 更新圖表語言
+  /**
+   * @2024/06/06 Add
+   * 更新圖表語言
+   * @method updateChartLanguage
+   * @description
+   * - 根據當前語言設置更新圖表的圖例標題。
+   * - 使用語言服務中的翻譯來設置圖表標題文本。
+   */
   updateChartLanguage() {
+    // 檢查 "總覽" 圖表選項和圖例標題是否存在
     if ( this.barChartOptions && this.barChartOptions.plugins && this.barChartOptions.plugins.legend && this.barChartOptions.plugins.legend.title ) {
+      // 更新圖例標題的文本為當前語言的翻譯
       this.barChartOptions.plugins.legend.title.text = this.languageService.i18n['BS.dataItems'];
     }
-    this.barChart?.update(); // 更新圖表
+    // 更新圖表，應用新的標題文本
+    this.barChart?.update(); //  "總覽" 圖表
   }
-  
+
   /**
    * @2024/06/06 Update
    * 設置圖表數據
