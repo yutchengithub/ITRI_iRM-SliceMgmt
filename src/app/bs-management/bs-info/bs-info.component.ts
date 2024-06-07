@@ -263,7 +263,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   bsCellCount: string = ''; // 用於存儲當前選中的 BS Cell 數量
 
   /**
-   * @2024/05/18 Update
+   * @2024/06/08 Update
    * 初始化組件時執行的操作
    * @method ngOnInit
    * @description
@@ -303,12 +303,14 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       //this.getBsKpiInfo();
     });
 
-    // @2024/06/06 Update
+    // @2024/06/08 Update
     // 訂閱語系切換事件，以便在語言變更時更新基站效能區的下拉選單文字
     this.languageService.languageChanged.subscribe(() => {
       this.updateLanguageOptions();         // 單純更新語系顯示
       //this.updateLanguageSubcategories(); // 單純更新子類別顯示
-      this.updateChartLanguage();           // 更新圖表( Chart.js ) 語系顯示 @2024/06/06 Add
+
+      // @2024/06/08 Note - 發現於 lineChartOptions 中直接設定 languageService.i18n[] 中英語言變換字串，中英語系切換時就會觸發切換
+      //this.updateChartLanguage();         // 更新圖表( Chart.js ) 語系顯示 @2024/06/06 Add
     });
   }
 
@@ -4088,7 +4090,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-// ng2-charts 圖表模組設定區 @2024/06/06 Add ↓
+// ng2-charts 圖表模組設定區 @2024/06/08 Update ↓
 
   title_BsPM = 'ng2-charts-demo-line-charts';
   @ViewChild( BaseChartDirective ) lineChart?: BaseChartDirective;
@@ -4106,7 +4108,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       x: {
         title: {
           display: true,
-          text: '時間',
+          text: this.languageService.i18n['BS.hourlyInterval'],
           color: 'white'
         },
         ticks: {
@@ -4119,8 +4121,8 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       y: {
         title: {
           display: true,
-          text: '數值 ( 單位 )',
-          color: 'white'
+          text: `${this.selectedKpiSubcategory} ( ${this.getUnit()} )`,
+          color: 'white',
         },
         ticks: {
           color: 'white'
@@ -4168,7 +4170,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   /**
-   * @2024/06/06 Add
+   * @2024/06/08 Update
    * 更新圖表語言
    * @method updateChartLanguage
    * @description
@@ -4180,7 +4182,9 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       this.lineChartOptions.plugins.legend.title.text = this.languageService.i18n['BS.dataItems'];
     }
     this.lineChart?.update(); // 更新圖表
-    this.changeDetectorRef.detectChanges(); // 強制觸發變更檢測
+
+    console.log("切換語系觸發 updateChartLanguage() 更換圖例標題語系");
+    //this.changeDetectorRef.detectChanges(); // 強制觸發變更檢測
   }
 
   /**
@@ -4217,13 +4221,14 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/06/06 Add
+   * @2024/06/08 Update
    * 設置圖表數據
    * @method setChartData_for_chartJS_lineChart
    * @description
    * - 根據準備好的數據設置圖表的數據。
    */
   setChartData_for_chartJS_lineChart() {
+    //const rawData = this.displayOnTableChartData;
     const rawData = this.displayOnTableChartData;
     const labels = rawData[0].series.map( data => data.time ); // 獲取時間標籤
     this.lineChartData.labels = labels; // 設置圖表的 x 軸標籤
@@ -4240,7 +4245,11 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.lineChartData.datasets = datasets; // 設置圖表的數據集
-    this.lineChart?.update(); // 更新圖表
+
+    console.log("In setChartData_for_chartJS_lineChart() end - lineChartData",  this.lineChartData);
+
+    // @2024/06/08 Note - 都改至 prepareAndUpdateChartData() 最後統一更新圖表
+    //this.lineChart?.update(); // 更新圖表
   }
 
 // ng2-charts 圖表設定區 @2024/06/06 Add ↑
@@ -4437,7 +4446,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/06/06 Update
+   * @2024/06/08 Update
    * 更新並準備圖表數據
    * @method prepareAndUpdateChartData
    * @description
@@ -4483,6 +4492,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setChartData_for_chartJS_lineChart();
 
     this.setYAxisLabel(); // 更新 y 軸標籤
+    this.lineChart?.update(); // 確保圖表的更新 @2024/06/08 Add - 待前面的設定更新好，於此一次更新圖表顯示
     this.changeDetectorRef.detectChanges(); // 觸發變更檢測
 
     // 標記為需要檢查，因為有使用了 OnPush ( @2024/05/21 Update - 貌似沒看到甚麼效果出現，故先註解掉 )
@@ -4882,7 +4892,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   
   /**
-   * @2024/06/07 Update
+   * @2024/06/08 Update
    * 根據選擇的 KPI 類別設置 Y 軸標籤
    * @method setYAxisLabel
    * @description
@@ -4958,17 +4968,89 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     
     console.log("In setYAxisLabel() - this.yAxisLabel = ", this.yAxisLabel);
 
-    // 檢查和設置 Y 軸標題文本
-    if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
-      if (!this.lineChartOptions.scales['y'].title) {
-        this.lineChartOptions.scales['y'].title = { display: true, text: '' }; // 初始化 Y 軸標題
-      }
-      this.lineChartOptions.scales['y'].title.text = this.yAxisLabel; // 設置 Y 軸標題文本
-      console.log("In setYAxisLabel() - this.lineChartOptions.scales['y'].title.text = ", this.lineChartOptions.scales['y'].title.text);
-    }
+    // 檢查和設置 Y 軸標題文本 ( @2024/06/08 Note - 此方法使用下拉選單切換檢視 KPI 時，無法正確切換，不管怎麼切都是預設標題 )
+    // if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
+    //   if (!this.lineChartOptions.scales['y'].title) {
+    //     this.lineChartOptions.scales['y'].title = { display: true, text: '' }; // 初始化 Y 軸標題
+    //   }
+    //   this.lineChartOptions.scales['y'].title.text = subKpiName ? `${subKpiName} ( ${unit} )` : `${kpiName} ( ${unit} )`;; // 設置 Y 軸標題文本
+    //   console.log("In setYAxisLabel() - this.lineChartOptions.scales['y'].title.text = ", this.lineChartOptions.scales['y'].title.text);
+    // }
 
-    this.lineChart?.update(); // 確保圖表的更新
-    this.changeDetectorRef.detectChanges(); // 強制觸發變更檢測
+
+    // @2024/06/08 Add
+    // 採用重新設置 lineChartOptions 針對 Y 軸 title 才真正進行切換
+    this.lineChartOptions = {
+      responsive: true,
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: this.languageService.i18n['BS.hourlyInterval'],
+            color: 'white'
+          },
+          ticks: {
+            color: 'white'
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.5)'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: this.yAxisLabel,
+            color: 'white',
+          },
+          ticks: {
+            color: 'white'
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.5)'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'right', // 圖例位置在右側
+          align: 'start',    // 將圖例整區置上
+          labels: {
+            color: 'white'
+          },
+          title: {
+            display: true, // 顯示圖例標題
+            text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
+            font: {
+              size: 14,      // 圖例標題字體大小
+              weight: 'bold' // 圖例標題字體粗細
+            },
+            color: 'white',  // 圖例標題顏色
+            padding: {
+              right: 10, // 圖例標題右側間距
+              bottom: 0  // 圖例標題下方間距
+            }
+          },
+        },
+        tooltip: {
+          //backgroundColor: 'white',
+          titleColor: 'white',
+          borderColor: 'white',
+          footerColor: 'white',
+          displayColors: true, // 顯示對應數據點的顏色塊
+          callbacks: {
+            label: (context) => {
+              context.dataset.borderColor
+              return `${context.dataset.label}: ${context.raw} ${this.getUnit()}`;
+            }
+          }
+        }
+      }
+    };
+
+
+    // @2024/06/08 Note - 都改至 prepareAndUpdateChartData() 最後統一更新圖表
+    //this.lineChart?.update(); // 確保圖表的更新
+    //this.changeDetectorRef.detectChanges(); // 強制觸發變更檢測
   }
 
 
