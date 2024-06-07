@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, TemplateRef, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -197,7 +197,7 @@ interface KpiSubcategory {
   styleUrls: ['./bs-info.component.scss'],
   //changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BSInfoComponent implements OnInit {
+export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   sessionId: string = '';   // sessionId 用於存儲當前會話 ID
   refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
@@ -4090,7 +4090,7 @@ export class BSInfoComponent implements OnInit {
 
 // ng2-charts 圖表模組設定區 @2024/06/06 Add ↓
 
-  title_overview = 'ng2-charts-demo';
+  title_BsPM = 'ng2-charts-demo-line-charts';
   @ViewChild( BaseChartDirective ) lineChart?: BaseChartDirective;
 
   public lineChartLegend = true;
@@ -4183,28 +4183,36 @@ export class BSInfoComponent implements OnInit {
     this.changeDetectorRef.detectChanges(); // 強制觸發變更檢測
   }
 
-  // 獲取當前選擇的 KPI 的單位
+  /**
+     * @2024/06/07 Add
+     * 獲取當前選擇的 KPI 的單位
+     * @method getUnit
+     * @description
+     *    - 根據當前選擇的 KPI 類別和子類別，返回對應的單位。
+     *    - 用於顯示圖表數據的單位標籤。
+     * @returns {string} 當前選擇的 KPI 單位
+     */
   getUnit() {
     switch ( this.selectedKpiCategory ) {
       case 'Accessibility':
-        return '%';
+        return '%'; // Accessibility 類別的單位為百分比
       case 'Integrity':
         if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' || this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
-          return 'ms';
+          return 'ms'; // Integrated Downlink/Uplink Delay 的單位為毫秒
         } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' || this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
-          return 'Mbps';
+          return 'Mbps'; // RAN UE Downlink/Uplink Throughput 的單位為 Mbps
         }
         return ''; // 添加缺失的返回值
       case 'Utilization':
-        return '%';
+        return '%'; // Utilization 類別的單位為百分比
       case 'Retainability':
-        return '%';
+        return '%'; // Retainability 類別的單位為百分比
       case 'Mobility':
-        return '%';
+        return '%'; // Mobility 類別的單位為百分比
       case 'Energy Consumption':
-        return 'J';
+        return 'J'; // Energy Consumption 類別的單位為焦耳
       default:
-        return '';
+        return ''; // 默認情況下返回空字符串
     }
   }
 
@@ -4220,7 +4228,6 @@ export class BSInfoComponent implements OnInit {
     const labels = rawData[0].series.map( data => data.time ); // 獲取時間標籤
     this.lineChartData.labels = labels; // 設置圖表的 x 軸標籤
 
-    
     const datasets = rawData.map(data => {
       return {
         label: data.name,
@@ -4875,7 +4882,7 @@ export class BSInfoComponent implements OnInit {
   }
   
   /**
-   * @2024/06/06 Update
+   * @2024/06/07 Update
    * 根據選擇的 KPI 類別設置 Y 軸標籤
    * @method setYAxisLabel
    * @description
@@ -4948,20 +4955,22 @@ export class BSInfoComponent implements OnInit {
 
     // 設置 Y 軸標籤為 "子 KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"
     this.yAxisLabel = subKpiName ? `${subKpiName} ( ${unit} )` : `${kpiName} ( ${unit} )`;
-  
-    console.log("In setYAxisLabel() - this.yAxisLabel = ", this.yAxisLabel)
+    
+    console.log("In setYAxisLabel() - this.yAxisLabel = ", this.yAxisLabel);
 
-    // 檢查和設置 X 軸標題文本
+    // 檢查和設置 Y 軸標題文本
     if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
       if (!this.lineChartOptions.scales['y'].title) {
         this.lineChartOptions.scales['y'].title = { display: true, text: '' }; // 初始化 Y 軸標題
       }
       this.lineChartOptions.scales['y'].title.text = this.yAxisLabel; // 設置 Y 軸標題文本
+      console.log("In setYAxisLabel() - this.lineChartOptions.scales['y'].title.text = ", this.lineChartOptions.scales['y'].title.text);
     }
 
     this.lineChart?.update(); // 確保圖表的更新
     this.changeDetectorRef.detectChanges(); // 強制觸發變更檢測
   }
+
 
 
   /**

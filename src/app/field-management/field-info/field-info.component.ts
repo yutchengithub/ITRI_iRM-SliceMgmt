@@ -1,5 +1,5 @@
 
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -64,7 +64,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox'; // @2024/03/30 A
 import { Color, ScaleType } from '@swimlane/ngx-charts';
 import { LegendPosition } from '@swimlane/ngx-charts';
 
-// chart.js 圖表配置用 @2024/06/06 Update
+// chart.js 圖表配置用 @2024/06/07 Update
 import {  Chart, 
           ChartConfiguration, 
           ChartOptions,
@@ -72,10 +72,20 @@ import {  Chart,
           ChartComponentLike, 
           ChartEvent, 
           LegendItem,
-          ChartDataset
+          ChartDataset,
+          Plugin
         } from "chart.js";
 import { BaseChartDirective } from 'ng2-charts';
 
+/**
+ * @2024/06/07 Add
+ * 用於標識 Chart.js 圖表插件是否應用在當前頁面
+ * @property isBarChartActive
+ * @description
+ *    - 這個變數用於標識 Chart.js 圖表插件是否應用在當前頁面。
+ *    - 在 Chart.js 圖表的 beforeDraw 和 afterDraw 方法中進行條件檢查。
+ */
+let isBarChartActive = false; // 全局變量來標識 Chart.js 圖表插件是否應用在當前頁面
 
 export interface SimplifiedBSInfo {
   
@@ -166,7 +176,7 @@ interface KpiSubcategory {
   styleUrls: ['./field-info.component.scss']
 })
 
-export class FieldInfoComponent implements OnInit {
+export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   sessionId: string = '';
 
@@ -284,8 +294,10 @@ export class FieldInfoComponent implements OnInit {
 
   // 頁面初始化時執行的方法
   ngOnInit(){
+
     // 從 commonService 獲取會話 ID 並存儲在 sessionId 變數中
     this.sessionId = this.commonService.getSessionId();
+
     // 在控制台打印會話 ID，用於調試
     console.log( 'The sessionId is', this.sessionId );
 
@@ -309,7 +321,6 @@ export class FieldInfoComponent implements OnInit {
 
     // 此行被註釋掉，用於之後可能的表單優化功能
     //this.createFieldOptimizationForm();
-
 
     // @2024/06/06 Update
     // 訂閱語系切換事件，以便在語言變更時更新基站效能區的下拉選單文字
@@ -412,6 +423,9 @@ export class FieldInfoComponent implements OnInit {
 
         });
       });
+
+      // @2024/06/07 Add
+      isBarChartActive = true; // 當頁面初始化時，設置 Chart.js 圖表插件為激活狀態
     }
     
     //this.getQueryPmFtpInfo();  // 此時先取得"效能管理參數設定"資訊 @2024/02/22 Add
@@ -434,6 +448,9 @@ export class FieldInfoComponent implements OnInit {
     if ( this.querySonParameter ) this.querySonParameter.unsubscribe();
     if ( this.multiCalculateBs ) this.multiCalculateBs.unsubscribe();
     if ( this.multiOptimalBs ) this.multiOptimalBs.unsubscribe();
+
+    // @2024/06/07 Add
+    isBarChartActive = false; // 當頁面銷毀時，設置 Chart.js 圖表插件為非激活狀態
   }
 
 // ↑ Page Init ↑
@@ -3422,7 +3439,7 @@ export class FieldInfoComponent implements OnInit {
 
 
 
-// For 場域效能報表 @2024/06/06 Update ↓
+// For 場域效能報表 @2024/06/07 Update ↓
 
   // 用於控制 場域效能報表 視窗 @2024/03/30 Add
   @ViewChild('fieldPMReportWindow') fieldPMReportWindow: any;
@@ -3432,56 +3449,81 @@ export class FieldInfoComponent implements OnInit {
   // 定義頁籤類型 @2024/05/27 Add
   fieldPMReportType: string = 'Performance_Overview'; // 預設顯示 "效能總覽" 頁面
 
-  // @2024/06/06 Update
-  // 打開場域效能分析視窗
+  /**
+   * @2024/06/07 Update
+   * 打開場域效能分析視窗
+   * @method openfieldPMReportWindow
+   * @description
+   *    - 此函數用於打開場域效能分析視窗。
+   *    - 每次打開視窗時，預設顯示 "場域效能總覽" 頁面。
+   *    - 刷新下拉選單選項並設置預設的 KPI 類別和子類別。
+   *    - 使用新數據刷新圖表。
+   *    - 重置表單驗證狀態。
+   *    - 打開場域效能分析視窗並訂閱視窗關閉事件。
+   */
   openfieldPMReportWindow() {
-
     this.fieldPMReportType = 'Performance_Overview'; // 每次打開視窗都預設顯示 "場域效能總覽" 頁面
-    //this.updateDropdownOptions();     // 刷新下拉選單選項
+    // this.updateDropdownOptions();     // 刷新下拉選單選項
     this.updateDropdownOptions_for_chartJS_barChart(); // 刷新下拉選單選項
     this.selectedKpiCategory = "Accessibility";        // 預設 "KPI 類別" 選擇 Accessibility
     this.selectedKpiSubcategory= "DRB Accessibility";  // 預設 "KPI 子類別" 選擇 DRB Accessibility
-    //this.prepareAndUpdateChartData(); // 用新數據刷新圖表
+    // this.prepareAndUpdateChartData(); // 用新數據刷新圖表
     this.prepareAndUpdateChartData_for_chartJS_barChart(); // 用新數據刷新圖表
 
     // 表單驗證狀態重置
     this.fieldPMReportWindow_Validated = false; 
 
     // 打開場域效能分析視窗
-    this.fieldPMReportWindow_Ref = this.dialog.open( this.fieldPMReportWindow, { 
-        id: 'fieldPMReportWindow',
-        // 自定義視窗寬高設置
-        // width: '800px', 
-        // height: '650px'
+    this.fieldPMReportWindow_Ref = this.dialog.open(this.fieldPMReportWindow, { 
+      id: 'fieldPMReportWindow',
+      // 自定義視窗寬高設置
+      // width: '800px', 
+      // height: '650px'
     });
 
     // 訂閱視窗關閉事件
     this.fieldPMReportWindow_Ref.afterClosed().subscribe(() => {
-        this.fieldPMReportType = 'Performance_Overview'; // 重置頁籤
-        this.fieldPMReportWindow_Validated = false;      // 重置表單驗證狀態
+      this.fieldPMReportType = 'Performance_Overview'; // 重置頁籤
+      this.fieldPMReportWindow_Validated = false;      // 重置表單驗證狀態
     });
 
-    console.log( "Open the window of field PM Report's page is:", this.fieldPMReportType );
+    console.log("Open the window of field PM Report's page is:", this.fieldPMReportType);
   }
 
-  // @2024/06/06 Update
-  // 處理場域效能分析彈出視窗的頁籤切換函數
+  /**
+   * @2024/06/07 Update
+   * 處理場域效能分析彈出視窗的頁籤切換函數
+   * @method changeFieldPMReportType
+   * @param e - MatButtonToggleChange 事件參數
+   * @description
+   *    - 此函數用於處理場域效能分析彈出視窗的頁籤切換。
+   *    - 根據用戶當前的選擇來設定頁籤顯示的類型。
+   *    - 設置 Chart.js 圖表插件激活狀態，當選擇 "Performance_Overview" 時激活，"Performance_History" 時取消激活。
+   *    - 預設 "Performance_History" 頁籤的 KPI 類別和子類別。
+   *    - 頁籤切換後輸出結果到控制台。
+   */
   changeFieldPMReportType( e: MatButtonToggleChange ) {
-      console.log("changefieldPMReportType() - Start");
+    console.log("changefieldPMReportType() - Start");
 
-      // 根據用戶當前的選擇來設定頁籤顯示的類型
-      if ( e.value === 'Performance_Overview' ) {
-          this.fieldPMReportType = 'Performance_Overview';
-      } else if ( e.value === 'Performance_History' ) {
-          this.fieldPMReportType = 'Performance_History';
-          this.selectedKpiCategory = "Accessibility";        // 預設 "KPI 類別" 選擇 Accessibility
-          this.selectedKpiSubcategory= "DRB Accessibility";  // 預設 "KPI 子類別" 選擇 DRB Accessibility
-      }
+    // 根據用戶當前的選擇來設定頁籤顯示的類型
+    if ( e.value === 'Performance_Overview' ) {
+      this.fieldPMReportType = 'Performance_Overview';
+      isBarChartActive = true; // 設置 Chart.js 圖表插件為激活狀態
 
-      // 輸出頁籤切換結果
-      console.log( "頁籤切換後顯示的類型:", this.fieldPMReportType );
-      console.log("changefieldPMReportType() - End");
+    } else if ( e.value === 'Performance_History' ) {
+      this.fieldPMReportType = 'Performance_History';
+      isBarChartActive = false; // 設置 Chart.js 圖表插件為非激活狀態
+
+      this.selectedKpiCategory = "Accessibility";        // 預設 "KPI 類別" 選擇 Accessibility
+      this.selectedKpiSubcategory= "DRB Accessibility";  // 預設 "KPI 子類別" 選擇 DRB Accessibility
+    }
+
+    // 輸出頁籤切換結果
+    console.log("頁籤切換後顯示的類型:", this.fieldPMReportType);
+    console.log("changefieldPMReportType() - End");
   }
+
+
 
   kpiCategories: KpiCategory[] = [];       // 定義 KPI 類別的選項
   kpiSubcategories: KpiSubcategory[] = []; // 定義 KPI 子類別的選項  
@@ -3489,32 +3531,48 @@ export class FieldInfoComponent implements OnInit {
   selectedKpiSubcategory: string = "";     // 當前選擇的 KPI 子類別
   selectedKpiUnit: string = "";            // 當前選擇的 KPI 單位
 
-  // 獲取當前選擇的 KPI 的單位
+ /**
+   * @2024/06/07 Add
+   * 獲取當前選擇的 KPI 的單位
+   * @method getUnit
+   * @description
+   *    - 根據當前選擇的 KPI 類別和子類別，返回對應的單位。
+   *    - 用於顯示圖表數據的單位標籤。
+   * @returns {string} 當前選擇的 KPI 單位
+   */
   getUnit() {
     switch ( this.selectedKpiCategory ) {
       case 'Accessibility':
-        return '%';
+        return '%'; // Accessibility 類別的單位為百分比
       case 'Integrity':
         if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' || this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
-          return 'ms';
+          return 'ms'; // Integrated Downlink/Uplink Delay 的單位為毫秒
         } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' || this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
-          return 'Mbps';
+          return 'Mbps'; // RAN UE Downlink/Uplink Throughput 的單位為 Mbps
         }
         return ''; // 添加缺失的返回值
       case 'Utilization':
-        return '%';
+        return '%'; // Utilization 類別的單位為百分比
       case 'Retainability':
-        return '%';
+        return '%'; // Retainability 類別的單位為百分比
       case 'Mobility':
-        return '%';
+        return '%'; // Mobility 類別的單位為百分比
       case 'Energy Consumption':
-        return 'J';
+        return 'J'; // Energy Consumption 類別的單位為焦耳
       default:
-        return '';
+        return ''; // 默認情況下返回空字符串
     }
   }
 
-  // 刷新場域效能資訊
+  /**
+   * @2024/06/07 Add
+   * 刷新場域效能資訊
+   * @method refreshFieldInfo
+   * @description
+   *    - 此函數用於刷新場域效能資訊。
+   *    - 首先將 `refreshFieldInfo_Flag` 標記設置為 `true`。
+   *    - 然後調用 `getQueryFieldInfo` 函數以刷新場域資訊。
+   */
   refreshFieldInfo() {
     this.refreshFieldInfo_Flag = true; // 標記為 true
 
@@ -3522,7 +3580,7 @@ export class FieldInfoComponent implements OnInit {
   }
 
 
-// ng2-charts 圖表模組設定區 @2024/06/06 Update ↓
+// ng2-charts 圖表模組設定區 @2024/06/07 Update ↓
 
   /**
    * @2024/06/06 Update
@@ -3646,29 +3704,62 @@ export class FieldInfoComponent implements OnInit {
     return kpiData;
   }
   
-  // 定義圖表概述標題
-  title_overview = 'ng2-charts-demo';
+  /**
+   * @2024/06/07 Add
+   * 圖表概述標題
+   * @property title_overview
+   * @description
+   *    - 這個變數定義了圖表的概述標題。
+   */
+  title_overview = 'ng2-charts-demo-bar-charts';
 
-  // 設置 BaseChartDirective 的 ViewChild
-  @ViewChild(BaseChartDirective) barChart: BaseChartDirective | undefined;
+  /**
+   * @2024/06/07 Add
+   * 設置 BaseChartDirective 的 ViewChild
+   * @property barChart
+   * @description
+   *    - 這個變數用於訪問圖表的 BaseChartDirective 實例。
+   */
+  @ViewChild( BaseChartDirective ) barChart_Overview: BaseChartDirective | undefined;
 
-  // 定義圖表圖例顯示
-  public barChartLegend = true;
+  /**
+   * @2024/06/07 Add
+   * 圖表圖例顯示
+   * @property barChartLegend
+   * @description
+   *    - 這個變數定義了圖表的圖例顯示狀態。
+   */
+  barChartLegend = true;
 
-  // 定義圖表類型為條形圖
-  //public barChartType: ChartType = 'bar';
-
-  // 初始化圖表數據
-  public barChartData: ChartConfiguration<'bar'>['data'] = {
+  /**
+   * @2024/06/07 Add
+   * 初始化圖表數據
+   * @property barChartData
+   * @description
+   *    - 這個變數定義了圖表的初始數據，包括標籤和數據集。
+   */
+  barChartData: ChartConfiguration<'bar'>['data'] = {
     labels: [], // 標籤
     datasets: [] // 數據集
   };
 
-  // 初始化原始標籤
-  public originalLabels: string[] = [];
+  /**
+   * @2024/06/07 Add
+   * 初始化原始標籤
+   * @property originalLabels
+   * @description
+   *    - 這個變數存儲圖表的原始標籤，用於後續操作。
+   */
+  originalLabels: string[] = [];
 
-  // 定義圖表選項
-  public barChartOptions: ChartConfiguration<'bar'>['options'] = {
+  /**
+   * @2024/06/07 Add
+   * 定義圖表選項
+   * @property barChartOptions
+   * @description
+   *    - 這個變數定義了圖表的各種選項設置，包括響應式、軸、網格和 Chart.js 圖表插件配置。
+   */
+  barChartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: true, // 圖表響應式
     indexAxis: 'y',   // Y 軸為索引軸
     skipNull: true,   // 跳過空值
@@ -3732,7 +3823,7 @@ export class FieldInfoComponent implements OnInit {
         onClick: ( e: ChartEvent, legendItem: LegendItem, legend: any ) => {
           const index = legendItem.datasetIndex; // 獲取數據集索引
           const ci = legend.chart; // 獲取圖表實例
-          const meta = ci.getDatasetMeta( index ); // 獲取數據集元數據
+          const meta = ci.getDatasetMeta(index); // 獲取數據集元數據
 
           // 切換數據集顯示狀態
           meta.hidden = !meta.hidden;
@@ -3764,52 +3855,56 @@ export class FieldInfoComponent implements OnInit {
     }
   };
 
-  // 自定義插件配置
-  public barChartPlugins: ChartComponentLike[] = [
+  /**
+   * @2024/06/07 Add
+   * 自定義 Chart.js 圖表插件配置
+   * @property allChartPlugins
+   * @description
+   *    - 這個變數是一個包含自定義 Chart.js 插件的陣列。
+   *    - 用於在圖表繪製之前和之後進行自定義操作。
+   *    - beforeDraw 和 afterDraw 方法會根據 isBarChartActive 變數進行條件檢查。
+   */
+  allChartPlugins: Plugin[] = [
     {
       id: 'customPlugin', // 插件 ID
       beforeDraw: (chart: any) => {
+        if (!isBarChartActive) return; // 如果 Chart.js 圖表插件未激活，則返回
+
         const ctx = chart.ctx; // 獲取圖表上下文
-        if ( this.barChart ) {
-          ctx.save(); // 保存當前狀態
-          ctx.font = 'bold 15px Arial'; // 設置字體樣式
-          ctx.fillStyle = 'white'; // 設置填充顏色
-          ctx.textAlign = 'right'; // 設置對齊方式
-          ctx.textBaseline = 'middle'; // 設置基線
-          ctx.restore(); // 恢復保存的狀態
-        }
+        ctx.save(); // 保存當前狀態
+        ctx.font = 'bold 15px Arial'; // 設置字體樣式
+        ctx.fillStyle = 'white'; // 設置填充顏色
+        ctx.textAlign = 'right'; // 設置對齊方式
+        ctx.textBaseline = 'middle'; // 設置基線
+        ctx.restore(); // 恢復保存的狀態
       },
-      afterDraw: ( chart: any ) => {
+      afterDraw: (chart: any) => {
+        console.log("afterDraw start - isBarChartActive =", isBarChartActive);
+        if (!isBarChartActive) return; // 如果 Chart.js 圖表插件未激活，則返回
+
         const ctx = chart.ctx; // 獲取圖表上下文
 
-        if ( this.barChart ) {
+        chart.data.datasets.forEach((dataset: any, i: number) => {
+          const meta = chart.getDatasetMeta(i); // 獲取數據集元數據
+          
+          if (!meta.hidden) { // 如果數據集未隱藏
+            meta.data.forEach((element: any, index: number) => {
+              ctx.fillStyle = 'rgb(255, 255, 255)'; // 設置填充顏色
+              const fontSize = 13; // 字體大小
+              const fontStyle = 'normal'; // 字體樣式
+              const fontFamily = 'Arial'; // 字體家族
+              ctx.font = `${fontStyle} ${fontSize}px ${fontFamily}`; // 設置字體
 
-          chart.data.datasets.forEach( ( dataset: any, i: number ) => {
+              const dataString = dataset.label; // 設定要繪製的文字
 
-            const meta = chart.getDatasetMeta(i); // 獲取數據集元數據
-            
-            if ( !meta.hidden ) {
-              meta.data.forEach( ( element: any, index: number ) => {
-                // 繪製數據旁邊的文字
-                ctx.fillStyle = 'rgb(255, 255, 255)'; // 設置填充顏色
-                const fontSize = 13; // 字體大小
-                const fontStyle = 'normal'; // 字體樣式
-                const fontFamily = 'Arial'; // 字體家族
-                ctx.font = `${fontStyle} ${fontSize}px ${fontFamily}`; // 設置字體
-
-                // 設定要繪製的文字
-                const dataString = dataset.label;
-
-                // 繪製文字到數據旁邊
-                ctx.textAlign = 'right'; // 設置對齊方式
-                ctx.textBaseline = 'middle'; // 設置基線
-                const padding = 155; // 填充
-                const position = element.tooltipPosition(); // 獲取提示位置
-                ctx.fillText( dataString, padding, position.y ); // 繪製文本
-              });
-            }
-          });
-        }
+              ctx.textAlign = 'right'; // 設置對齊方式
+              ctx.textBaseline = 'middle'; // 設置基線
+              const padding = 155; // 填充
+              const position = element.tooltipPosition(); // 獲取提示位置
+              ctx.fillText(dataString, padding, position.y); // 繪製文本
+            });
+          }
+        });
       }
     }
   ];
@@ -3823,22 +3918,24 @@ export class FieldInfoComponent implements OnInit {
    * - 使用語言服務中的翻譯來設置圖表標題文本。
    */
   updateChartLanguage() {
+
     // 檢查 "總覽" 圖表選項和圖例標題是否存在
     if ( this.barChartOptions && this.barChartOptions.plugins && this.barChartOptions.plugins.legend && this.barChartOptions.plugins.legend.title ) {
       // 更新圖例標題的文本為當前語言的翻譯
       this.barChartOptions.plugins.legend.title.text = this.languageService.i18n['BS.dataItems'];
     }
-    // 更新圖表，應用新的標題文本
-    this.barChart?.update(); //  "總覽" 圖表
+
+    // 更新 "總覽" 圖表，應用新的標題文本
+    this.barChart_Overview?.update();
   }
 
   /**
    * @2024/06/06 Update
-   * 設置圖表數據
+   * 設置 "總覽" 圖表數據
    * @method setChartData_for_chartJS_barChart
    * @description
-   * - 根據準備好的數據設置圖表的數據。
-   * - 包括設置每個數據集的懸停顏色。
+   *    - 根據準備好的數據設置圖表的數據。
+   *    - 包括設置每個數據集的懸停顏色。
    */
   setChartData_for_chartJS_barChart() {
     const labels = this.preparedChartData.map( data => data.name ); // 獲取數據標籤
@@ -4083,7 +4180,7 @@ export class FieldInfoComponent implements OnInit {
     return filteredData.filter(item => item !== null && item !== undefined && !isNaN(item.value)); // 返回過濾後的有效數據
   }
 
-// ng2-charts 圖表設定區 @2024/06/06 Update ↑
+// ng2-charts 圖表設定區 @2024/06/07 Update ↑
   
   
 // ngx-charts - Horizontal Bar Chart 用 ( @2024/06/06 - 已不使用 ) ↓
@@ -4622,13 +4719,9 @@ export class FieldInfoComponent implements OnInit {
 // ngx-charts - Horizontal Bar Chart 用 ( @2024/06/06 - 已不使用 ) ↑
 
 
-
-
-
-
   title = 'ng2-charts-demo';
 
-  public lineChartData: ChartConfiguration<'line'>['data'] = {
+  lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: [
       'January',
       'February',
@@ -4649,13 +4742,13 @@ export class FieldInfoComponent implements OnInit {
       }
     ]
   };
-  public lineChartOptions: ChartOptions<'line'> = {
+  lineChartOptions: ChartOptions<'line'> = {
     responsive: false
   };
-  public lineChartLegend = true;
+  lineChartLegend = true;
 
 
-// For 場域效能報表 @2024/06/03 Update ↑
+// For 場域效能報表 @2024/06/07 Update ↑
 
 
 

@@ -1215,13 +1215,13 @@
 				  </div>
 			  
 				  <!-- ng2-charts - Bar Chart @2024/06/06 Update -->
-				  <canvas #barChart 
+				  <canvas #barChart_Overview 
 				  		  baseChart 
 						  width="1000" 
 						  height="400"
 						  [data]="barChartData"
 						  [options]="barChartOptions"
-						  [plugins]="barChartPlugins"
+						  [plugins]="allChartPlugins"
 						  [legend]="barChartLegend"
 						  [type]="'bar'">
 				  </canvas>
