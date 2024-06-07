@@ -315,7 +315,7 @@ import { BsKpiInfo } from '../../interfaces/BS/For_queryBsKpiInfo';
                   "name": "BS-D-1",
                   "accessibility": "100.0",
                   "availability": "99.67",
-                  "mobility": "79.94",
+                  "mobility": null,
                   "energy": "28780.54",
                   "integrity": {
                       "downlinkDelay": "0",
