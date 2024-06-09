@@ -4090,57 +4090,78 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-// ng2-charts 圖表模組設定區 @2024/06/08 Update ↓
+// ng2-charts 圖表模組設定區 @2024/06/10 Update ↓
 
+  // 圖表標題
   title_BsPM = 'ng2-charts-demo-line-charts';
+
+  // 設置 BaseChartDirective 的 ViewChild
   @ViewChild( BaseChartDirective ) lineChart?: BaseChartDirective;
 
+  // 設置圖例為顯示
   public lineChartLegend = true;
+
+  // 設置圖表類型為折線圖（此行已註解）
   //public lineChartType: ChartType = 'line';
+
+  // 初始化圖表數據
   public lineChartData: ChartConfiguration<'line'>['data'] = {
-    labels: [],
-    datasets: []
+    labels: [], // 標籤
+    datasets: [] // 數據集
   };
 
+  // 初始化圖表選項
   public lineChartOptions: ChartConfiguration<'line'>['options'] = {
-    responsive: true,
+    responsive: true, // 響應式設計
     scales: {
-      x: {
+      x: { // X 軸設置
         title: {
-          display: true,
-          text: this.languageService.i18n['BS.hourlyInterval'],
-          color: 'white'
+          display: true, // 顯示標題
+          text: this.languageService.i18n['BS.hourlyInterval'], // X 軸標題文本
+          color: 'white' // X 軸標題顏色
         },
         ticks: {
-          color: 'white'
+          color: 'white' // X 軸刻度顏色
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.5)'
+          color: 'rgba(255, 255, 255, 0.65)' // X 軸網格線顏色
         }
       },
-      y: {
+      y: { // Y 軸設置
         title: {
-          display: true,
-          text: `${this.selectedKpiSubcategory} ( ${this.getUnit()} )`,
-          color: 'white',
+          display: true,  // 顯示標題
+          text: `${this.selectedKpiSubcategory} ( ${this.getUnit()} )`, // Y 軸標題文本
+          color: 'white', // Y 軸標題顏色
         },
         ticks: {
-          color: 'white'
+          color: 'white'  // Y 軸刻度顏色
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.5)'
+          color: 'rgba(255, 255, 255, 0.65)' // Y 軸網格線顏色
         }
       }
     },
     plugins: {
-      legend: {
+      // title: {
+      //   display: true,
+      //   text: 'TEST', // 顯示的圖表標題文本
+      //   color: 'white',        // 設置標題字體顏色
+      //   font: {
+      //     size: 20 // 設置標題字體大小
+      //   },
+      //   padding: {
+      //     top: 10, // 標題的上間距
+      //     bottom: 10 // 標題的下間距
+      //   }
+      // },
+      legend: {            // 圖例設置
         position: 'right', // 圖例位置在右側
         align: 'start',    // 將圖例整區置上
         labels: {
-          color: 'white'
+          color: 'white'   // 圖例標籤顏色
         },
         title: {
-          display: true, // 顯示圖例標題
+          display: true,   // 顯示圖例標題
           text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
           font: {
             size: 14,      // 圖例標題字體大小
@@ -4153,16 +4174,22 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         },
       },
-      tooltip: {
-        //backgroundColor: 'white',
-        titleColor: 'white',
-        borderColor: 'white',
-        footerColor: 'white',
-        displayColors: true, // 顯示對應數據點的顏色塊
+      tooltip: { 
+        // 自定義工具提示內容
+
+        //backgroundColor: 'white', // 提示框背景顏色（已註解）
+        titleColor: 'white',        // 提示框標題顏色
+        borderColor: 'white',       // 提示框邊框顏色
+        footerColor: 'white',       // 提示框底部顏色
+        displayColors: true,        // 顯示對應數據點的顏色塊
         callbacks: {
-          label: (context) => {
-            context.dataset.borderColor
-            return `${context.dataset.label}: ${context.raw} ${this.getUnit()}`;
+          // 自定義工具提示標籤內容
+          label: ( context ) => {
+            // 獲取數據集邊框 borderColor 顏色（此行沒用到，可移除）
+            context.dataset.borderColor; 
+
+            // 返回工具提示標籤文本，包括數據集標籤、數據值和單位
+            return `${context.dataset.label}: ${context.raw} ${this.getUnit()}`; 
           }
         }
       }
@@ -4170,7 +4197,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   /**
-   * @2024/06/08 Update
+   * @2024/06/10 Update
    * 更新圖表語言
    * @method updateChartLanguage
    * @description
@@ -4178,13 +4205,22 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
    * - 使用語言服務中的翻譯來設置圖表標題文本。
    */
   updateChartLanguage() {
-    if (this.lineChartOptions && this.lineChartOptions.plugins && this.lineChartOptions.plugins.legend  && this.lineChartOptions.plugins.legend.title) {
+
+    // 檢查 lineChartOptions 是否存在，以及是否包含 plugins 和 legend 的設置
+    if ( this.lineChartOptions && this.lineChartOptions.plugins && this.lineChartOptions.plugins.legend && this.lineChartOptions.plugins.legend.title ) {
+
+      // 根據當前語言設置圖例標題文本
       this.lineChartOptions.plugins.legend.title.text = this.languageService.i18n['BS.dataItems'];
     }
-    this.lineChart?.update(); // 更新圖表
 
+    // 更新圖表
+    this.lineChart?.update();
+
+    // 輸出日誌訊息以確認語言更新操作
     console.log("切換語系觸發 updateChartLanguage() 更換圖例標題語系");
-    //this.changeDetectorRef.detectChanges(); // 強制觸發變更檢測
+    
+    // 強制觸發變更檢測（ 目前已註解，根據需要可打開 ）
+    // this.changeDetectorRef.detectChanges();
   }
 
   /**
@@ -4194,7 +4230,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
      * @description
      *    - 根據當前選擇的 KPI 類別和子類別，返回對應的單位。
      *    - 用於顯示圖表數據的單位標籤。
-     * @returns {string} 當前選擇的 KPI 單位
+     * @returns { string } 當前選擇的 KPI 單位
      */
   getUnit() {
     switch ( this.selectedKpiCategory ) {
@@ -4221,38 +4257,37 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/06/08 Update
+   * @2024/06/10 Update
    * 設置圖表數據
    * @method setChartData_for_chartJS_lineChart
    * @description
-   * - 根據準備好的數據設置圖表的數據。
+   *    - 根據準備好的數據設置圖表的數據。
+   *    - 將數據格式化為圖表可用的格式，並更新圖表數據。
    */
   setChartData_for_chartJS_lineChart() {
-    //const rawData = this.displayOnTableChartData;
-    const rawData = this.displayOnTableChartData;
+    const rawData = this.displayOnTableChartData; // 獲取顯示在表格上的數據
     const labels = rawData[0].series.map( data => data.time ); // 獲取時間標籤
     this.lineChartData.labels = labels; // 設置圖表的 x 軸標籤
 
-    const datasets = rawData.map(data => {
+    const datasets = rawData.map( data => {
       return {
-        label: data.name,
-        data: data.series.map(point => point.value),
-        borderColor: data.series.map(point => point.color),          // 數據線的顏色
-        backgroundColor: data.series.map(point => point.color),      // 背景顏色
-        pointBackgroundColor: data.series.map(point => point.color), // 數據點的顏色
-        fill: false
+        label: data.name, // 設置數據集的標籤
+        data: data.series.map( point => point.value ), // 設置數據集的數據點
+        borderColor: data.series.map( point => point.color ), // 設置數據線的顏色
+        backgroundColor: data.series.map( point => point.color ), // 設置背景顏色
+        pointBackgroundColor: data.series.map( point => point.color ), // 設置數據點的顏色
+        fill: false // 不填充數據線下方的區域
       } as ChartDataset<'line'>;
     });
 
     this.lineChartData.datasets = datasets; // 設置圖表的數據集
 
-    console.log("In setChartData_for_chartJS_lineChart() end - lineChartData",  this.lineChartData);
+    console.log( "In setChartData_for_chartJS_lineChart() end - lineChartData", this.lineChartData ); // 輸出更新後的圖表數據
 
-    // @2024/06/08 Note - 都改至 prepareAndUpdateChartData() 最後統一更新圖表
-    //this.lineChart?.update(); // 更新圖表
+    // this.lineChart?.update(); // 更新圖表 @2024/06/08 Note - 都改至 prepareAndUpdateChartData() 最後統一更新圖表
   }
 
-// ng2-charts 圖表設定區 @2024/06/06 Add ↑
+// ng2-charts 圖表設定區 @2024/06/10 Update ↑
 
 
   // ngx-charts-line-chart 圖表模組外觀設定區 ↓
@@ -4446,7 +4481,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/06/08 Update
+   * @2024/06/10 Update
    * 更新並準備圖表數據
    * @method prepareAndUpdateChartData
    * @description
@@ -4484,8 +4519,8 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // console.log("In prepareAndUpdateChartData - after fillMissingTimeBlock, the firstTimeBlock =", firstTimeBlock);
     // console.log("In prepareAndUpdateChartData - after fillMissingTimeBlock, the lastTimeBlock =", lastTimeBlock);
 
-    // this.xScaleMin = firstTimeBlock;
-    // this.xScaleMax = lastTimeBlock;
+    // this.xScaleMin = firstTimeBlock; // 設置 x 軸的最小時間範圍（已註解）
+    // this.xScaleMax = lastTimeBlock;  // 設置 x 軸的最大時間範圍（已註解）
 
     // @2024/06/06 Add
     // 刷新 Chart.js 的 line Chart
@@ -4892,12 +4927,12 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   
   /**
-   * @2024/06/08 Update
+   * @2024/06/09 Update
    * 根據選擇的 KPI 類別設置 Y 軸標籤
    * @method setYAxisLabel
    * @description
    *    - 此方法根據當前選擇的 KPI 類別和子類別設置圖表的 Y 軸標籤。
-   *    - Y 軸標籤的格式為 "子KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"。
+   *    - Y 軸標籤的格式為 "子 KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"。
    *    - 先根據選擇的 KPI 類別設置 KPI 名稱和單位。
    *    - 然後根據選擇的子類別設置子類別名稱和相應的單位。
    *    - 如果存在子類別名稱，Y 軸標籤將顯示為 "子KPI 名稱 ( 單位 )"。
@@ -4954,7 +4989,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         break;
       case 'Energy Consumption':
         kpiName = this.languageService.i18n['BS.energyConsumption']; // 設置 KPI 名稱為 "Energy Consumption"
-        unit = 'J';                                                // 設置單位為 J
+        unit = 'J';                                                  // 設置單位為 J
         break;
       default:
         kpiName = 'KPI Name';  // 設置默認 KPI 名稱
@@ -4966,7 +5001,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // 設置 Y 軸標籤為 "子 KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"
     this.yAxisLabel = subKpiName ? `${subKpiName} ( ${unit} )` : `${kpiName} ( ${unit} )`;
     
-    console.log("In setYAxisLabel() - this.yAxisLabel = ", this.yAxisLabel);
+    console.log("In setYAxisLabel() - this.yAxisLabel = ", this.yAxisLabel); // 輸出設置的 Y 軸標籤
 
     // 檢查和設置 Y 軸標題文本 ( @2024/06/08 Note - 此方法使用下拉選單切換檢視 KPI 時，無法正確切換，不管怎麼切都是預設標題 )
     // if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
@@ -4977,82 +5012,91 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     //   console.log("In setYAxisLabel() - this.lineChartOptions.scales['y'].title.text = ", this.lineChartOptions.scales['y'].title.text);
     // }
 
-
-    // @2024/06/08 Add
+    // @2024/06/09 Add
     // 採用重新設置 lineChartOptions 針對 Y 軸 title 才真正進行切換
-    this.lineChartOptions = {
-      responsive: true,
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: this.languageService.i18n['BS.hourlyInterval'],
-            color: 'white'
-          },
-          ticks: {
-            color: 'white'
-          },
-          grid: {
-            color: 'rgba(255, 255, 255, 0.5)'
-          }
-        },
-        y: {
-          title: {
-            display: true,
-            text: this.yAxisLabel,
-            color: 'white',
-          },
-          ticks: {
-            color: 'white'
-          },
-          grid: {
-            color: 'rgba(255, 255, 255, 0.5)'
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          position: 'right', // 圖例位置在右側
-          align: 'start',    // 將圖例整區置上
-          labels: {
-            color: 'white'
-          },
-          title: {
-            display: true, // 顯示圖例標題
-            text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
-            font: {
-              size: 14,      // 圖例標題字體大小
-              weight: 'bold' // 圖例標題字體粗細
-            },
-            color: 'white',  // 圖例標題顏色
-            padding: {
-              right: 10, // 圖例標題右側間距
-              bottom: 0  // 圖例標題下方間距
-            }
-          },
-        },
-        tooltip: {
-          //backgroundColor: 'white',
-          titleColor: 'white',
-          borderColor: 'white',
-          footerColor: 'white',
-          displayColors: true, // 顯示對應數據點的顏色塊
-          callbacks: {
-            label: (context) => {
-              context.dataset.borderColor
-              return `${context.dataset.label}: ${context.raw} ${this.getUnit()}`;
-            }
-          }
-        }
-      }
-    };
-
+    this.replaceTitleOfYAxisInLineChartOptions();
 
     // @2024/06/08 Note - 都改至 prepareAndUpdateChartData() 最後統一更新圖表
     //this.lineChart?.update(); // 確保圖表的更新
     //this.changeDetectorRef.detectChanges(); // 強制觸發變更檢測
   }
 
+  /**
+   * @2024/06/09 Add
+   * 替換圖表 Y 軸標題
+   * @method replaceTitleOfYAxisInLineChartOptions
+   * @description
+   *    - 重新設置 lineChartOptions 以更新 Y 軸的標題。
+   *    - 確保圖表的配置能夠反映新的 Y 軸標題。
+   */
+  replaceTitleOfYAxisInLineChartOptions() {
+    this.lineChartOptions = {
+      responsive: true,  // 響應式設計
+      scales: {
+        x: {  // X 軸設置
+          title: {
+            display: true, // 顯示標題
+            text: this.languageService.i18n['BS.hourlyInterval'], // 設置 X 軸標題
+            color: 'white' // 設置 X 軸標題顏色
+          },
+          ticks: {
+            color: 'white' // 設置 X 軸刻度顏色
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.5)' // 設置 X 軸網格顏色
+          }
+        },
+        y: {// Y 軸設置
+          title: {
+            display: true, // 顯示標題
+            text: this.yAxisLabel, // 設置 Y 軸標題文本
+            color: 'white' // 設置 Y 軸標題顏色
+          },
+          ticks: {
+            color: 'white' // 設置 Y 軸刻度顏色
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.5)' // 設置 Y 軸網格顏色
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'right', // 圖例位置在右側
+          align: 'start', // 將圖例整區置上
+          labels: {
+            color: 'white' // 設置圖例標籤顏色
+          },
+          title: {
+            display: true, // 顯示圖例標題
+            text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
+            font: {
+              size: 14, // 圖例標題字體大小
+              weight: 'bold' // 圖例標題字體粗細
+            },
+            color: 'white', // 圖例標題顏色
+            padding: {
+              right: 10, // 圖例標題右側間距
+              bottom: 0 // 圖例標題下方間距
+            }
+          }
+        },
+        tooltip: {
+          // backgroundColor: 'white', // 註解掉的背景顏色設置
+          titleColor: 'white', // 設置工具提示框標題顏色
+          borderColor: 'white', // 設置工具提示框邊框顏色
+          footerColor: 'white', // 設置工具提示框腳本顏色
+          displayColors: true, // 顯示對應數據點的顏色塊
+          callbacks: {
+            label: (context) => {
+              context.dataset.borderColor; // 設置數據集邊框顏色
+              return `${context.dataset.label}: ${context.raw} ${this.getUnit()}`; // 設置工具提示框標籤文本
+            }
+          }
+        }
+      }
+    };
+  }
 
 
   /**
