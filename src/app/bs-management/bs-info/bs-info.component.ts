@@ -3686,7 +3686,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
 
-// ↓ 基站效能區 @2024/05/30 Update ↓
+// ↓ 基站效能區 @2024/06/11 Update ↓
 
   // @2024/05/14 Add
   // 用於儲存從 API 或 Local 獲取的 KPI 數據
@@ -5211,7 +5211,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
   }
 
-// ↑ 基站效能區 @2024/05/30 Update ↑
+// ↑ 基站效能區 @2024/06/11 Update ↑
 
 
 }
