@@ -35,6 +35,8 @@ import { BsInfoInField, CellInfo }        from '../../shared/interfaces/Field/Fo
 import { ForCreateOrUpdateField, Bsinfo } from '../../shared/interfaces/Field/For_createField_or_updateField';         // @2024/01/26 Add
 import { ForQueryOrUpdatePmFTPInfo }      from '../../shared/interfaces/Field/For_queryPmFtpInfo_or_updatePmFtpInfo';  // @2024/02/04 Add
 import { ForQuerySonParameter }           from '../../shared/interfaces/Field/For_querySonParameter';                  // @2024/03/30 Add
+import { FieldKpiInfo, TimeBlock, Bs_KpiInfo, Cell_KpiInfo1, Cell_KpiInfo2,
+           Utilization, Integrity } from '../../shared/interfaces/Field/For_queryFieldKpiInfo'; // @2024/06/12 Add
 
 import { ForCalculateSon, ForCalculateSonResponse,
           cco_CellIndividualResult, ProcessedCcoResult,
@@ -4816,6 +4818,19 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     responsive: false
   };
   lineChartLegend = true;
+
+
+  // @2024/06/12 Add
+  // 用於儲存從 API 或 Local 獲取的 KPI 數據
+  searchFieldKpiInfo: FieldKpiInfo = {} as FieldKpiInfo;
+
+  // @2024/06/12 Add
+  // 控制加載 KPI 資訊的狀態標誌，初始化為 true 表示正在加載
+  isLoadingFieldKpiInfo: boolean = true;
+
+
+
+
 
 
 // For 場域效能報表 @2024/06/12 Update ↑
