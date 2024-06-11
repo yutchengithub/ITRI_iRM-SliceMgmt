@@ -15,11 +15,11 @@ export interface TimeBlock {
 
 // 表示場域相關的數據點
 export interface Field {
-    accessibility: null | string; // 訪問性能評分，可能為 null
-     availability: null | string; // 可用性評分，可能為 null
-         mobility: null | string; // 移動性能評分，可能為 null
-    retainability: null | number; // 保留性質量，可能為 null
-           energy: null | string; // 能耗數據，可能為 null
+    accessibility: null | string | number; // 訪問性能評分，可能為 null
+     availability: null | string | number; // 可用性評分，可能為 null
+         mobility: null | string | number; // 移動性能評分，可能為 null
+    retainability: null | string | number; // 保留性質量，可能為 null
+           energy: null | string | number; // 能耗數據，可能為 null
       utilization: Utilization;   // 利用率相關數據
         integrity: Integrity;     // 完整性指標
 }
@@ -29,13 +29,13 @@ export interface Bs_KpiInfo {
                id: string;         // 基站的唯一識別 ID
            compId: string;         // 網元 ID
              name: string;         // 基站名稱
-    accessibility: null | string;  // 基站訪問性評分
-     availability: null | string;  // 基站可用性評分
-         mobility: null | string;  // 基站行動性能評分
-           energy: null | string;  // 基站耗能
+    accessibility: null | string | number;  // 基站訪問性評分
+     availability: null | string | number;  // 基站可用性評分
+         mobility: null | string | number;  // 基站行動性能評分
+           energy: null | string | number;  // 基站耗能
         integrity: Integrity;      // 基站完整性指標
       utilization: Utilization;    // 基站利用率數據
-    retainability: null | string;  // 基站保留性質量
+    retainability: null | string | number;  // 基站保留性質量
      cellInfoList: Cell_KpiInfo[]; // 基站內的 Cell 訊息列表
 }
 
