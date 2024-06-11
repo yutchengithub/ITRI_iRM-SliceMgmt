@@ -37,20 +37,21 @@ import { ForQueryOrUpdatePmFTPInfo }      from '../../shared/interfaces/Field/Fo
 import { ForQuerySonParameter }           from '../../shared/interfaces/Field/For_querySonParameter';                  // @2024/03/30 Add
 
 import { ForCalculateSon, ForCalculateSonResponse,
-         cco_CellIndividualResult, ProcessedCcoResult,
-         anr_CellIndividualResult, ProcessedAnrResult, anr_Neighbor,
-         pci_CellIndividualResult, pci_Collisioncell, pci_Collisioncount, pci_Confusioncell, pci_Confusioncount
-  } from '../../shared/interfaces/Field/For_multiCalculateBs'; // @2024/03/31 Add
+          cco_CellIndividualResult, ProcessedCcoResult,
+            anr_CellIndividualResult, ProcessedAnrResult, anr_Neighbor,
+              pci_CellIndividualResult, pci_Collisioncell, pci_Collisioncount, pci_Confusioncell, pci_Confusioncount
+        } from '../../shared/interfaces/Field/For_multiCalculateBs'; // @2024/03/31 Add
 import { ForApplySon, ApplySon_BsInfo }   from '../../shared/interfaces/Field/For_multiOptimalBs';  // @2024/04/12 Add
 
 import { BSInfo } from '../../shared/interfaces/BS/For_queryBsInfo_BS';       // @2023/12/21 Add
 import { BSInfo_dist, PLMNid,
-         Components_dist, duID, ruID,} from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
+          Components_dist, duID, ruID,} from '../../shared/interfaces/BS/For_queryBsInfo_dist_BS';  // @2023/12/24 Add
 import { BSList, Basestation } from '../../shared/interfaces/BS/For_queryBsList';                  // @2024/01/25 Update
 
 // 引入所需 Local Files
 import { localFieldInfo }            from '../../shared/local-files/Field/For_queryFieldInfo';    // @2024/03/14 Add
 import { localPmFTPInfo }            from '../../shared/local-files/Field/For_queryPmFtpInfo';    // @2024/02/04 Add
+import { localFieldKpiInfo }         from '../../shared/local-files/Field/For_queryFieldKpiInfo'; // @2024/06/11 Add
 import { localFieldSonParameters }   from '../../shared/local-files/Field/For_querySonParameter'; // @2024/03/30 Add
 import { localCalculateSonResponse } from '../../shared/local-files/Field/For_multiCalculateBs_response'; // @2024/03/31 Add
 import { localBSList }    from '../../shared/local-files/BS/For_queryBsList';       // @2024/01/16 Add
@@ -273,12 +274,13 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     private navigationService: NavigationService, // 用於跟蹤路由歷史 @2024/05/03 Add
     private fieldStateService: FieldStateService, // 用於跟蹤場域頁面的 showMapModel 的顯示模式狀態 @2024/05/03 Add
 
-    public       API_Field: apiForFieldMgmt,        // @2024/03/14 Update for import API of Field Management
+    public       API_Field: apiForFieldMgmt,      // @2024/03/14 Update for import API of Field Management
 
-    public    fieldInfo_LocalFiles: localFieldInfo, // @2024/03/14 Add for import Field Info Local Files
-    public       bsInfo_LocalFiles: localBSInfo,    // @2023/12/27 Add for import BS Info Local Files
-    public       bsList_LocalFiles: localBSList,    // @2024/01/16 Add for import BS List Local Files local
-    public    pmFtpInfo_LocalFiles: localPmFTPInfo, // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+    public    fieldInfo_LocalFiles: localFieldInfo,       // @2024/03/14 Add for import Field Info Local Files
+    public       bsInfo_LocalFiles: localBSInfo,          // @2023/12/27 Add for import BS Info Local Files
+    public       bsList_LocalFiles: localBSList,          // @2024/01/16 Add for import BS List Local Files 
+    public    pmFtpInfo_LocalFiles: localPmFTPInfo,       // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+    public    fieldKpiInfo_LocalFiles: localFieldKpiInfo, // @2024/06/11 Add fieldKpiInfo_LocalFiles for import Current Field Kpi Info
     public    fieldSonParameters_LocalFiles: localFieldSonParameters,   // @2024/03/30 Add for import info of Field Son Parameters Local Files
     public  calculateSonResponse_LocalFiles: localCalculateSonResponse, // @2024/03/31 Add for import info of Calculate Son Response Local Files
   ) {
@@ -289,7 +291,6 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.createBSInfoForm();              // For updateBs API @2024/01/05 Add 
     this.createFieldInfoForm();           // For Field Info in Field Editing  @2024/01/17 Add
    // this.createFieldOptimizationForm(); // For Son Parameters in Field Optimization  @2024/03/30 Add
-
   }
 
   // 頁面初始化時執行的方法

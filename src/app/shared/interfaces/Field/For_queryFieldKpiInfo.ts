@@ -1,7 +1,7 @@
 
-// @2024/06/11 Update for get queryBsKpiInfo
-// BsKpiInfo 介面，將索引簽名用於數組或對象，其中包含多個 TimeBlock 元素
-export interface BsKpiInfo {
+// @2024/06/11 Add for get queryFieldKpiInfo
+// FieldKpiInfo 介面，將索引簽名用於數組或對象，其中包含多個 TimeBlock 元素
+export interface FieldKpiInfo {
     [index: number]: TimeBlock;
 }
 
@@ -16,31 +16,31 @@ export interface TimeBlock {
 // 表示場域相關的數據點
 export interface Field {
     accessibility: null | string | number; // 訪問性能評分，可能為 null
-     availability: null | string | number; // 可用性評分，可能為 null
+     availability: null | string | number; //   可用性評分，可能為 null
          mobility: null | string | number; // 移動性能評分，可能為 null
-    retainability: null | string | number; // 保留性質量，可能為 null
+    retainability: null | string | number; //   保留性質量，可能為 null
            energy: null | string | number; // 能耗或能效數據，可能為 null
-      utilization: Utilization;   // 利用率相關數據
-        integrity: Integrity;     // 完整性指標
+      utilization: Utilization; // 利用率相關數據
+        integrity: Integrity;   // 完整性指標
 }
 
 // 表示一個基站的詳細資訊
 export interface Bs_KpiInfo {
-               id: string; // 基站的唯一識別 ID
-           compId: string; // 網元 ID
-             name: string; // 基站名稱
+               id: string;         // 基站的唯一識別 ID
+           compId: string;         // 網元 ID
+             name: string;         // 基站名稱
     accessibility: null | string | number;  // 基站訪問性評分
      availability: null | string | number;  // 基站可用性評分
          mobility: null | string | number;  // 基站行動性能評分
            energy: null | string | number;  // 基站能耗或能效
-        integrity: Integrity;               // 基站完整性指標
-      utilization: Utilization;             // 基站利用率數據
+        integrity: Integrity;      // 基站完整性指標
+      utilization: Utilization;    // 基站利用率數據
     retainability: null | string | number;  // 基站保留性質量
-     cellInfoList: Cell_KpiInfo[] | Cell_KpiInfo2; // 基站內的 Cell 訊息列表
+     cellInfoList: Cell_KpiInfo1[] | Cell_KpiInfo2; // 基站內的 Cell 訊息列表
 }
 
 // 表示單個 Cell 的資訊
-export interface Cell_KpiInfo {
+export interface Cell_KpiInfo1 {
            cellId: string;      // Cell 的唯一識別ID
     accessibility: string;      // Cell 訪問性評分
      availability: string;      // Cell 可用性評分

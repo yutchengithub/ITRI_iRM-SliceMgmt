@@ -134,13 +134,14 @@ import { apiForScheduleMgmt } from './shared/api/For_Schedule_Mgmt';  // @2024/0
 import { apiForLogMgmt }      from './shared/api/For_Log_Mgmt';       // @2024/03/14 Add
 
 // import Local Files
-import { localFieldSummaryInfo }  from './shared/local-files/Field/For_queryFieldSummaryInfo';        // @2024/03/14 Add
-import { localFieldList }         from './shared/local-files/Field/For_queryFieldList';               // @2024/01/29 Add
-import { localFieldInfo }         from './shared/local-files/Field/For_queryFieldInfo';               // @2024/03/14 Add
-import { localPmFTPInfo }         from './shared/local-files//Field/For_queryPmFtpInfo';              // @2024/02/04 Add
-import { localFieldSnapshotList } from './shared/local-files/Field/For_queryFieldSnapshotList';       // @2024/03/06 Add
-import { localFieldSonParameters } from './shared/local-files/Field/For_querySonParameter';           // @2024/03/30 Add
+import { localFieldSummaryInfo }     from './shared/local-files/Field/For_queryFieldSummaryInfo';     // @2024/03/14 Add
+import { localFieldList }            from './shared/local-files/Field/For_queryFieldList';            // @2024/01/29 Add
+import { localFieldInfo }            from './shared/local-files/Field/For_queryFieldInfo';            // @2024/03/14 Add
+import { localPmFTPInfo }            from './shared/local-files//Field/For_queryPmFtpInfo';           // @2024/02/04 Add
+import { localFieldSnapshotList }    from './shared/local-files/Field/For_queryFieldSnapshotList';    // @2024/03/06 Add
+import { localFieldSonParameters }   from './shared/local-files/Field/For_querySonParameter';         // @2024/03/30 Add
 import { localCalculateSonResponse } from './shared/local-files/Field/For_multiCalculateBs_response'; // @2024/03/31 Add
+import { localFieldKpiInfo }         from './shared/local-files/Field/For_queryFieldKpiInfo';         // @2024/06/11 Add
 
 import { localBSInfo }          from './shared/local-files/BS/For_queryBsInfo';                    // @2023/12/27 Add 
 import { localBSList }          from './shared/local-files/BS/For_queryBsList';                    // @2024/01/16 Add
@@ -285,9 +286,10 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     localFieldList,            // @2024/01/29 Add for import Local files of Field List
     localFieldInfo,            // @2024/03/14 Add for import Local files of Field Info
     localFieldSnapshotList,    // @2024/03/06 Add for import Local files of Field Snapshot List
-    localPmFTPInfo,             // @2024/02/04 Add for import info of PM Parameter Setting Local Files
-    localFieldSonParameters,    // @2024/03/30 Add for import Local files of Field Son Parameters
-    localCalculateSonResponse,  // @2024/03/31 Add for import Local files of Calculate Son Response
+    localPmFTPInfo,            // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+    localFieldKpiInfo,         // @2024/06/11 Add for import Local files of Field Kpi Info
+    localFieldSonParameters,   // @2024/03/30 Add for import Local files of Field Son Parameters
+    localCalculateSonResponse, // @2024/03/31 Add for import Local files of Calculate Son Response
 
     localBSInfo,              // @2023/12/27 Add for import Local files of BS Info
     localBSList,              // @2024/01/16 Add for import Local files of BS List

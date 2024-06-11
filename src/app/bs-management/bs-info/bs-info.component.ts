@@ -3860,13 +3860,24 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         } else {
           // 對於分佈式基站，正常處理每個 cell
-          bs.cellInfoList.forEach( ( cell: Cell_KpiInfo, index ) => {
-            const cellIdentifier = `Cell#${index + 1} ( NCI=0x${cell.cellId} )`; // 生成分佈式基站的 Cell 識別符
-            if ( !processedCells.has( cellIdentifier ) ) { // 如果該 Cell 尚未處理過
-              cellIds.add( { displayName: cellIdentifier, value: cellIdentifier } ); // 添加到 Cell 列表中
-              processedCells.add( cellIdentifier );        // 標記為已處理
+          const cellInfoList = bs.cellInfoList;
+          if ( Array.isArray( cellInfoList ) ) {
+            // 處理 Cell_KpiInfo[]
+            (cellInfoList as Cell_KpiInfo[]).forEach((cell: Cell_KpiInfo, index) => {
+              const cellIdentifier = `Cell#${index + 1} ( NCI=0x${cell.cellId} )`; // 生成分佈式基站的 Cell 識別符
+              if (!processedCells.has(cellIdentifier)) { // 如果該 Cell 尚未處理過
+                cellIds.add({ displayName: cellIdentifier, value: cellIdentifier }); // 添加到 Cell 列表中
+                processedCells.add(cellIdentifier);      // 標記為已處理
+              }
+            });
+          } else {
+            // 處理 Cell_KpiInfo2
+            const cellIdentifier = `Cell#1 ( NCI=unknown )`; // 生成默認的 Cell 識別符
+            if (!processedCells.has(cellIdentifier)) {       // 如果該 Cell 尚未處理過
+              cellIds.add({ displayName: cellIdentifier, value: cellIdentifier }); // 添加到 Cell 列表中
+              processedCells.add(cellIdentifier);            // 標記為已處理
             }
-          });
+          }
         }
       });
     });
@@ -4719,7 +4730,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
               const defaultNci = this.selectedNci; // 獲取預設的 NCI
               this.dataColorMap.set(`Cell#${bsIndex + 1} (NCI=0x${defaultNci})`, cellColor); // 設置 cell 數據的顏色映射
               filteredData.push({ name: `Cell#1 (NCI=0x${defaultNci})`, series: series });   // 添加 cell 數據到過濾後的數據陣列
-            } else { // 如果不是一體式基站
+            } else if (Array.isArray(bs.cellInfoList)) { // 確保 cellInfoList 是數組
               bs.cellInfoList.forEach((cell: Cell_KpiInfo, cellIndex) => { // 遍歷每個 cell 訊息
                 const cellColor = colorScheme.domain[(bsIndex + cellIndex + 1) % colorScheme.domain.length]; // 分配 cell 顏色
                 this.dataColorMap.set(`Cell#${cellIndex + 1} (NCI=0x${cell.cellId})`, cellColor); // 設置 cell 數據的顏色映射
@@ -4765,14 +4776,14 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
                   if ( defaultNci === cellId ) { // 如果默認 NCI 等於當前 cellId
                     filteredData.push( { name: `Cell#1 (NCI=0x${defaultNci})`, series: series } ); // 添加 cell 數據到過濾後的數據陣列
                   }
-                } else {
-                  const index = bs.cellInfoList.findIndex( c => c.cellId === cellId ); // 查找對應 cellId 的索引
-                  if ( index !== -1 ) { // 如果找到對應的 cell
+                } else if (Array.isArray(bs.cellInfoList)) { // 確保 cellInfoList 是數組
+                  const index = bs.cellInfoList.findIndex((c: Cell_KpiInfo) => c.cellId === cellId); // 查找對應 cellId 的索引
+                  if (index !== -1) { // 如果找到對應的 cell
                     const cell = bs.cellInfoList[index]; // 獲取 cell 訊息
-                    const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end ).formattedRange; // 格式化時間範圍
+                    const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end).formattedRange; // 格式化時間範圍
                     const cellColor = this.dataColorMap.get(`Cell#${index + 1} (NCI=0x${cell.cellId})`) || color; // 獲取 cell 數據的顏色或使用預設顏色
-                    const series = this.getKpiData( cell, timeRange, cellColor, index ); // 獲取 cell 的 KPI 數據
-                    filteredData.push( { name: `Cell#${index + 1} (NCI=0x${cell.cellId})`, series: series } );    // 添加 cell 數據到過濾後的數據陣列
+                    const series = this.getKpiData(cell, timeRange, cellColor, index); // 獲取 cell 的 KPI 數據
+                    filteredData.push({ name: `Cell#${index + 1} (NCI=0x${cell.cellId})`, series: series });    // 添加 cell 數據到過濾後的數據陣列
                   }
                 }
               });
