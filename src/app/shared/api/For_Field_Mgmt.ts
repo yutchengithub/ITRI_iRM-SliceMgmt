@@ -413,7 +413,7 @@ export class apiForFieldMgmt {
   /**
    * @2024/06/05 Add
    * 取得指定場域的 KPI 資訊
-   * @param bsId 場域 ID
+   * @param fieldId 場域 ID
    * @param params 其他查詢參數
    * @returns 返回一個 Observable 物件，發出 API 返回的資料
    */
