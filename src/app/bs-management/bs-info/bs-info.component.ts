@@ -3831,7 +3831,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedKpiSubcategory: string = "";           // 當前選擇的 KPI 子類別
 
   /**
-   * @2024/05/20 Update
+   * @2024/06/11 Update
    * 更新下拉選單的選項
    * @method updateDropdownOptions
    * @description
@@ -3882,14 +3882,15 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       { displayName: this.languageService.i18n['BS.utilization'], value: 'Utilization' },            // Utilization 選項
       { displayName: this.languageService.i18n['BS.retainability'], value: 'Retainability' },        // Retainability 選項
       { displayName: this.languageService.i18n['BS.mobility'], value: 'Mobility' },                  // Mobility 選項
-      { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' } // Energy Consumption 選項
+      //{ displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' }, // Energy Consumption 選項
+      { displayName: "Energy Efficiency", value: 'Energy Efficiency' }  // Energy Efficiency  選項
     ];
     this.selectedKpiCategory = this.kpiCategories[0].value; // 設置預設選擇的 KPI 類別
     this.updateKpiSubcategories(); // 更新 KPI 子類別選項
   }
 
   /**
-   * @2024/05/20 Update
+   * @2024/06/11 Update
    * 更新 KPI 子類別的選項
    * @method updateKpiSubcategories
    * @description
@@ -3935,6 +3936,12 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'Energy Consumption':
         this.kpiSubcategories = [
           { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' } // Energy Consumption 子類別
+        ];
+        break;
+
+      case 'Energy Efficiency':
+        this.kpiSubcategories = [
+          { displayName: 'Energy Efficiency', value: 'Energy Efficiency' } // Energy Efficiency 子類別
         ];
         break;
     }
@@ -4005,6 +4012,10 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         case 'Energy Consumption':
           category.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Consumption
           break;
+
+        case 'Energy Efficiency':
+          category.displayName = 'Energy Efficiency'; // 更新顯示名稱為 Energy Efficiency
+          break;
       }
     });
 
@@ -4013,7 +4024,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/05/18 Add
+   * @2024/06/11 Update
    * 更新 KPI 子類別語系選項
    * @method updateLanguageSubcategories
    * @description
@@ -4084,6 +4095,14 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         this.kpiSubcategories.forEach( subcategory => {
           if ( subcategory.value === 'Energy Consumption' ) {
             subcategory.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Consumption
+          }
+        });
+        break;
+
+      case 'Energy Efficiency':
+        this.kpiSubcategories.forEach( subcategory => {
+          if ( subcategory.value === 'Energy Efficiency' ) {
+            subcategory.displayName = 'Energy Efficiency'; // 更新顯示名稱為 Energy Efficiency
           }
         });
         break;
@@ -4224,7 +4243,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-     * @2024/06/07 Add
+     * @2024/06/11 Update
      * 獲取當前選擇的 KPI 的單位
      * @method getUnit
      * @description
@@ -4251,6 +4270,8 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         return '%'; // Mobility 類別的單位為百分比
       case 'Energy Consumption':
         return 'J'; // Energy Consumption 類別的單位為焦耳
+      case 'Energy Efficiency':
+        return 'bit/J'; // Energy Efficiency 類別的單位為 bit/J
       default:
         return ''; // 默認情況下返回空字符串
     }
@@ -4825,7 +4846,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/05/22 Update
+   * @2024/06/11 Update
    * 根據選擇的 KPI 類別和子類別獲取對應的數據
    * @method getKpiData
    * @param data - Bs_KpiInfo 或 Cell_KpiInfo 類型的數據
@@ -4921,6 +4942,10 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         unit = 'J'; // 設置單位為焦耳
         addDataLabel( data.energy, 'energy' ); // 添加 Energy Consumption 數據標籤
         break;
+      case 'Energy Efficiency':
+        unit = 'bit/J'; // 設置單位為 bit/J
+        addDataLabel( data.energy, 'energy' ); // 添加 Energy Efficiency 數據標籤
+        break;
     }
 
     return kpiData; // 返回包含顏色、時間、名稱、數值、標籤和單位的數據數組
@@ -4990,6 +5015,10 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'Energy Consumption':
         kpiName = this.languageService.i18n['BS.energyConsumption']; // 設置 KPI 名稱為 "Energy Consumption"
         unit = 'J';                                                  // 設置單位為 J
+        break;
+      case 'Energy Efficiency':
+        kpiName = 'Energy Efficiency'; // 設置 KPI 名稱為 "Energy Efficiency"
+        unit = 'bit/J';                // 設置單位為 bit/J
         break;
       default:
         kpiName = 'KPI Name';  // 設置默認 KPI 名稱
@@ -5100,7 +5129,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   /**
-   * @2024/05/18 Add
+   * @2024/06/11 Update
    * 根據選擇的 KPI 類別設置 Y 軸標籤
    * @method setYAxisLabel_onlyUnit
    * @description
@@ -5139,6 +5168,10 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'Energy Consumption':
         // 如果是 Energy Consumption，設置 Y 軸標籤為功率（千瓦小時）
         this.yAxisLabel = this.languageService.i18n['BS.Power'];
+        break;
+      case 'Energy Efficiency':
+        // 如果是 Energy Efficiency，設置 Y 軸標籤為 bit/J
+        this.yAxisLabel = "bit/J";
         break;
       default:
         // 如果沒有匹配的 KPI 類別，設置 Y 軸標籤為默認值 'KPI Name'

@@ -2042,6 +2042,12 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     return parseFloat( this.fieldInfo.energy );
   }
 
+  // @2024/06/11 Add
+  // energy efficiency - 能源效率
+  get energyEfficiencyAsNumber(): number {
+    return parseFloat( this.fieldInfo.energy );
+  }
+
   resourceProcess: number = 0;
   resourceMemory: number = 0;
   updateResourceUtilization() {
@@ -3531,15 +3537,15 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedKpiSubcategory: string = "";     // 當前選擇的 KPI 子類別
   selectedKpiUnit: string = "";            // 當前選擇的 KPI 單位
 
- /**
-   * @2024/06/07 Add
-   * 獲取當前選擇的 KPI 的單位
-   * @method getUnit
-   * @description
-   *    - 根據當前選擇的 KPI 類別和子類別，返回對應的單位。
-   *    - 用於顯示圖表數據的單位標籤。
-   * @returns {string} 當前選擇的 KPI 單位
-   */
+  /**
+     * @2024/06/11 Update
+     * 獲取當前選擇的 KPI 的單位
+     * @method getUnit
+     * @description
+     *    - 根據當前選擇的 KPI 類別和子類別，返回對應的單位。
+     *    - 用於顯示圖表數據的單位標籤。
+     * @returns { string } 當前選擇的 KPI 單位
+     */
   getUnit() {
     switch ( this.selectedKpiCategory ) {
       case 'Accessibility':
@@ -3559,6 +3565,8 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         return '%'; // Mobility 類別的單位為百分比
       case 'Energy Consumption':
         return 'J'; // Energy Consumption 類別的單位為焦耳
+      case 'Energy Efficiency':
+        return 'bit/J'; // Energy Efficiency 類別的單位為 bit/J
       default:
         return ''; // 默認情況下返回空字符串
     }
@@ -3618,6 +3626,11 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         break;
       case 'Energy Consumption':
         this.kpiSubcategories = [{ displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' }]; // 設置 Energy Consumption 子類別
+        break;
+      case 'Energy Efficiency':
+        this.kpiSubcategories = [
+          { displayName: 'Energy Efficiency', value: 'Energy Efficiency' } // Energy Efficiency 子類別
+        ];
         break;
     }
     this.selectedKpiSubcategory = this.kpiSubcategories[0]?.value; // 初始化選擇的子類別為第一個選項
@@ -3697,7 +3710,11 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         break;
       case 'Energy Consumption':
         unit = 'J'; // 設置單位為焦耳
-        addDataName(data.energy, 'energy'); // 添加 Energy Consumption 數據
+        addDataName( data.energy, 'energy' ); // 添加 Energy Consumption 數據
+        break;
+      case 'Energy Efficiency':
+        unit = 'bit/J'; // 設置單位為 bit/J
+        addDataName( data.energy, 'energy' ); // 添加 Energy Efficiency 數據標籤
         break;
     }
 
@@ -4010,7 +4027,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/06/06 Update
+   * @2024/06/11 Update
    * 設置 X 軸標籤
    * @method setXAxisLabel_for_chartJS_barChart
    * @description
@@ -4078,6 +4095,10 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         unit = 'J'; // 設置單位
         this.selectedKpiUnit = unit; // 保存單位
         break;
+      case 'Energy Efficiency':
+        kpiName = 'Energy Efficiency'; // 設置 KPI 名稱為 "Energy Efficiency"
+        unit = 'bit/J';                // 設置單位為 bit/J
+        break;
       default:
         kpiName = 'KPI Name'; // 默認 KPI 名稱
         subKpiName = ''; // 默認子 KPI 名稱
@@ -4087,8 +4108,8 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     
     // 檢查和設置 X 軸標題文本
-    if (this.barChartOptions && this.barChartOptions.scales && this.barChartOptions.scales['x']) {
-      if (!this.barChartOptions.scales['x'].title) {
+    if ( this.barChartOptions && this.barChartOptions.scales && this.barChartOptions.scales['x'] ) {
+      if ( !this.barChartOptions.scales['x'].title ) {
         this.barChartOptions.scales['x'].title = { display: true, text: '' }; // 初始化 X 軸標題
       }
       this.barChartOptions.scales['x'].title.text = subKpiName ? `${subKpiName} ( ${unit} )` : `${kpiName} ( ${unit} )`; // 設置 X 軸標題文本
@@ -4110,7 +4131,8 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       { displayName: this.languageService.i18n['BS.utilization'], value: 'Utilization' },
       { displayName: this.languageService.i18n['BS.retainability'], value: 'Retainability' },
       { displayName: this.languageService.i18n['BS.mobility'], value: 'Mobility' },
-      { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' }
+      //{ displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' }, // Energy Consumption 選項
+      { displayName: "Energy Efficiency", value: 'Energy Efficiency' }  // Energy Efficiency  選項
     ];
     this.selectedKpiCategory = this.kpiCategories[0].value; // 初始化選擇的 KPI 類別為第一個選項
     this.updateKpiSubcategories_for_chartJS(); // 更新子類別選項
@@ -4279,21 +4301,28 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       { displayName: this.languageService.i18n['BS.utilization'], value: 'Utilization' },            // Utilization 選項  
       { displayName: this.languageService.i18n['BS.retainability'], value: 'Retainability' },        // Retainability 選項
       { displayName: this.languageService.i18n['BS.mobility'], value: 'Mobility' },                  // Mobility 選項
-      { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' } // Energy Consumption 選項
+      //{ displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' }, // Energy Consumption 選項
+      { displayName: "Energy Efficiency", value: 'Energy Efficiency' }  // Energy Efficiency  選項
     ];
     this.selectedKpiCategory = this.kpiCategories[0].value; // 設置預設選擇的 KPI 類別
     this.updateKpiSubcategories(); // 更新 KPI 子類別選項
   }
 
-  // 更新 KPI 子類別的選項
+  /**
+   * @2024/06/11 Update
+   * 更新 KPI 子類別的選項
+   * @method updateKpiSubcategories
+   * @description
+   *    - 根據當前選擇的 KPI 類別更新子類別的下拉選項。
+   */
   updateKpiSubcategories() {
     switch ( this.selectedKpiCategory ) {
       case 'Accessibility':
         this.kpiSubcategories = [
-          { displayName: this.languageService.i18n['BS.drbAccessibility'], value: 'DRB Accessibility' } // DRB Accessibility 子類別  
+          { displayName: this.languageService.i18n['BS.drbAccessibility'], value: 'DRB Accessibility' } // DRB Accessibility 子類別
         ];
         break;
-          
+        
       case 'Integrity':
         this.kpiSubcategories = [
           { displayName: this.languageService.i18n['BS.integratedDownlinkDelay'], value: 'Integrated Downlink Delay' },  // Integrated Downlink Delay 子類別
@@ -4306,7 +4335,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'Utilization':
         this.kpiSubcategories = [
           { displayName: this.languageService.i18n['BS.processUtilization'], value: 'Process Utilization' }, // Process Utilization 子類別
-          { displayName: this.languageService.i18n['BS.memoryUtilization'], value: 'Memory Utilization' },   // Memory Utilization 子類別  
+          { displayName: this.languageService.i18n['BS.memoryUtilization'], value: 'Memory Utilization' },   // Memory Utilization 子類別
           { displayName: this.languageService.i18n['BS.diskUtilization'], value: 'Disk Utilization' }        // Disk Utilization 子類別
         ];
         break;
@@ -4322,10 +4351,16 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           { displayName: this.languageService.i18n['BS.ngRanHandoverSuccessRate'], value: 'NG-RAN Handover Success Rate' } // NG-RAN Handover Success Rate 子類別
         ];
         break;
-        
+
       case 'Energy Consumption':
         this.kpiSubcategories = [
           { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' } // Energy Consumption 子類別
+        ];
+        break;
+
+      case 'Energy Efficiency':
+        this.kpiSubcategories = [
+          { displayName: 'Energy Efficiency', value: 'Energy Efficiency' } // Energy Efficiency 子類別
         ];
         break;
     }
@@ -4350,23 +4385,27 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           break;
           
         case 'Integrity':
-          category.displayName = this.languageService.i18n['BS.integrity'];         // 更新顯示名稱為 Integrity 
+          category.displayName = this.languageService.i18n['BS.integrity'];         // 更新顯示名稱為 Integrity
           break;
 
-        case 'Utilization': 
+        case 'Utilization':
           category.displayName = this.languageService.i18n['BS.utilization'];       // 更新顯示名稱為 Utilization
           break;
 
         case 'Retainability':
           category.displayName = this.languageService.i18n['BS.retainability'];     // 更新顯示名稱為 Retainability
           break;
-        
+
         case 'Mobility':
           category.displayName = this.languageService.i18n['BS.mobility'];          // 更新顯示名稱為 Mobility
           break;
 
         case 'Energy Consumption':
           category.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Consumption
+          break;
+
+        case 'Energy Efficiency':
+          category.displayName = 'Energy Efficiency'; // 更新顯示名稱為 Energy Efficiency
           break;
       }
     });
@@ -4375,7 +4414,13 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setXAxisLabel_for_chartJS_barChart(); // 更新 X 軸標籤
   }
 
-  // 更新 KPI 子類別語系選項
+  /**
+   * @2024/06/11 Update
+   * 更新 KPI 子類別語系選項
+   * @method updateLanguageSubcategories
+   * @description
+   *    - 根據當前語系更新 KPI 子類別的顯示名稱。
+   */
   updateLanguageSubcategories() {
     switch ( this.selectedKpiCategory ) {
       case 'Accessibility':
@@ -4393,7 +4438,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
               subcategory.displayName = this.languageService.i18n['BS.integratedDownlinkDelay']; // 更新顯示名稱為 Integrated Downlink Delay
               break;
             case 'Integrated Uplink Delay':
-              subcategory.displayName = this.languageService.i18n['BS.integratedUplinkDelay'];   // 更新顯示名稱為 Integrated Uplink Delay  
+              subcategory.displayName = this.languageService.i18n['BS.integratedUplinkDelay'];   // 更新顯示名稱為 Integrated Uplink Delay
               break;
             case 'RAN UE Downlink Throughput':
               subcategory.displayName = this.languageService.i18n['BS.ranUEDownlinkThroughput']; // 更新顯示名稱為 RAN UE Downlink Throughput
@@ -4413,7 +4458,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
               break;
             case 'Memory Utilization':
               subcategory.displayName = this.languageService.i18n['BS.memoryUtilization'];  // 更新顯示名稱為 Memory Utilization
-              break;  
+              break;
             case 'Disk Utilization':
               subcategory.displayName = this.languageService.i18n['BS.diskUtilization'];    // 更新顯示名稱為 Disk Utilization
               break;
@@ -4441,6 +4486,14 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         this.kpiSubcategories.forEach( subcategory => {
           if ( subcategory.value === 'Energy Consumption' ) {
             subcategory.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Consumption
+          }
+        });
+        break;
+
+      case 'Energy Efficiency':
+        this.kpiSubcategories.forEach( subcategory => {
+          if ( subcategory.value === 'Energy Efficiency' ) {
+            subcategory.displayName = 'Energy Efficiency'; // 更新顯示名稱為 Energy Efficiency
           }
         });
         break;
@@ -4504,6 +4557,11 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'Energy Consumption':
         kpiName = this.languageService.i18n['BS.energyConsumption']; // 設置 KPI 名稱為 "Energy Consumption"
         unit = 'J';                                                  // 設置單位為 J
+        break;
+
+      case 'Energy Efficiency':
+        kpiName = 'Energy Efficiency'; // 設置 KPI 名稱為 "Energy Efficiency"
+        unit = 'bit/J';                // 設置單位為 bit/J
         break;
 
       default:
@@ -4572,15 +4630,19 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         break;
       case 'Retainability':
         unit = '%';
-        addDataName(data.retainability, 'retainability');
+        addDataName( data.retainability, 'retainability' );
         break;
       case 'Mobility':
         unit = '%';
-        addDataName(data.mobility, 'mobility');
+        addDataName( data.mobility, 'mobility' );
         break;
       case 'Energy Consumption':
         unit = 'J';
-        addDataName(data.energy, 'energy');
+        addDataName( data.energy, 'energy' );
+        break;
+      case 'Energy Efficiency':
+        unit = 'bit/J';
+        addDataName( data.energy, 'energy' );
         break;
     }
   
