@@ -550,3 +550,7 @@ mat-dialog-container h5 .mat-icon {
 .performance table th .slash {
   border-bottom:1px solid #5997cb;
 }
+#fieldPMReportWindow table th .slash {
+  width: 163px!important;
+  border-bottom: 1px solid #63acc9!important;
+}

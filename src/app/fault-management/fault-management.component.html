@@ -84,7 +84,7 @@
           <label *ngIf=" opt.notificationtype === 0 ">{{ languageService.i18n['fm.unexcluded'] }}</label>
           <label *ngIf=" opt.notificationtype === 1 ">{{ languageService.i18n['fm.excluded'] }}</label>
         </td>
-        <td>
+        <td class="icon state">
           <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" opt.processstatus === 1 " class="greenLight" (click)="openStatusModal(opt)"></label>
           <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf=" opt.processstatus === '' " class="redLight" (click)="openStatusModal(opt)"></label>
           {{opt.processresult}}
@@ -105,14 +105,13 @@
 </div>
 
 <ng-template #statusModal>
-  <h5>{{languageService.i18n['fm.situation']}}</h5>
-  <!-- processing_status -->
-  <div class="tab">
-    <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
-      <mat-button-toggle value="add_situation">{{languageService.i18n['fm.addsitch']}}</mat-button-toggle>
-      <mat-button-toggle value="situation_history">{{languageService.i18n['fm.sHistory']}}</mat-button-toggle>
-    </mat-button-toggle-group>
-  </div>
+  <h5>{{languageService.i18n['fm.situation']}}
+    <!-- processing_status -->
+      <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
+        <mat-button-toggle value="add_situation">{{languageService.i18n['fm.addsitch']}}</mat-button-toggle>
+        <mat-button-toggle value="situation_history">{{languageService.i18n['fm.sHistory']}}</mat-button-toggle>
+      </mat-button-toggle-group>
+  </h5>
   <ul *ngIf="type === 'add_situation'">
     <li>
       <label>{{languageService.i18n['fm.field']}}: </label><span>{{selectedFaultMsg.fieldName}}</span>
@@ -156,7 +155,7 @@
     <li>
       <label>{{ languageService.i18n['fm.statusReport'] }}: </label>
       <!-- <br> -->
-      <span>
+      <span class="nowrap">
         <span class="switch">
           <mat-button-toggle-group name="isCleared" [(ngModel)]="modifySatus">
             <mat-button-toggle value="PENDING">{{ languageService.i18n['fm.pending'] }}</mat-button-toggle>

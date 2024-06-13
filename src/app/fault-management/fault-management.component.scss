@@ -83,7 +83,10 @@ button.modify {
   max-height: 42vh;
   font-size: 1em;
 }
-
+td.icon.state > label:first-child {
+  margin: 0 0.35em 0 2.5em;
+  vertical-align: middle;
+}
 
 @media screen and (max-width:1920px) {
   .table table {

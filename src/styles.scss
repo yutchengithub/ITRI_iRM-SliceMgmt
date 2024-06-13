@@ -893,6 +893,7 @@ transition: all 0.3s;
 .switch .mat-button-toggle-appearance-standard .mat-button-toggle-focus-overlay {
   background-color: #000;
 }
+#fault_statusModal .switch .mat-button-toggle-appearance-standard.mat-button-toggle-checked,
 #statusModal .switch .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
   background: #fff!important;
   color: #000!important;
@@ -1783,22 +1784,36 @@ ngx-charts-bar-horizontal .chart-legend .legend-label .active .legend-label-text
 .hidden {
   display: none;
 }
-
+#fault_statusModal {
+  position: relative;
+  width: 45em;
+}
+#fault_statusModal table th {
+  min-width: 10.96em;
+  font-size: .9em;
+}
+body.tw #fault_statusModal ul li > label {
+  min-width: 11%;
+}
 #fieldPMReportWindow {
   position: relative;
 }
+#fault_statusModal h5 mat-button-toggle-group ,
 #fieldPMReportWindow mat-button-toggle-group {
   position: absolute;
   top: 5px;
   right: 5px;
 }
+#fault_statusModal h5 mat-button-toggle-group  .mat-button-toggle-appearance-standard.mat-button-toggle-checked ,
 #fieldPMReportWindow mat-button-toggle-group .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
   background-color: #ba5a2a !important;
 }
+#fault_statusModal h5 mat-button-toggle-group .mat-button-toggle-appearance-standard ,
 #fieldPMReportWindow mat-button-toggle-group .mat-button-toggle-appearance-standard {
   background-color: #485c77 !important;
   color: #ddd;
 }
+#fault_statusModal h5 .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle,
 #fieldPMReportWindow .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
   border-left: solid 1px #427ebd;
 }
@@ -1826,18 +1841,72 @@ ngx-charts-bar-horizontal .chart-legend .legend-label .active .legend-label-text
   padding-left: 15px!important;
 }
 
-#fieldPMReportWindow {
+#fieldPMReportWindow .Overview {
   min-width: 80em;
   max-height: 50em;
+  overflow: auto;
 }
 #fieldPMReportWindow .filter  {
-  text-align: center;
+  padding:8px 0 6px 1%;
   margin: 0 auto 1em;
-  width: 92%;
+  width: 97%;
   white-space: nowrap;
+  background-color: #acb8c7c2;
 }
 #fieldPMReportWindow .filter select {
   width: auto;
+}
+#fieldPMReportWindow canvas {
+  margin: 1em 3em;
+}
+#fieldPMReportWindow .filter .material-icons,
+#fieldPMReportWindow .filter .material-symbols-outlined {
+  color: #ffffff;
+  border: 1px solid #ddd;
+  background: #4180b7;
+  font-size: 20px;
+}
+#fieldPMReportWindow .table table {
+  max-height: 14em;
+}
+#fieldPMReportWindow table th {
+  font-size: .9em;
+  line-height: 1em;
+}
+#fieldPMReportWindow table td {
+  text-align: center;
+  line-height: 1em;
+}
+#fieldPMReportWindow .filter form {
+  display: inline-block;
+  margin: 0 .5em 0 0;
+}
+#fieldPMReportWindow table th .slash {
+  position: absolute;
+  top: 29px;
+  left: -4px;
+  transform: rotate(20deg);
+  width: 165px;
+  height: 1px;
+  border-bottom: 1px solid #256295;
+}
+#fieldPMReportWindow table th.relative {
+  position: sticky;
+  top: 0px;
+  border-right: 1px solid #2562959e;
+}
+#fieldPMReportWindow table th.relative span:first-child {
+  position: absolute;
+  left: 9px;
+  bottom: 10px;
+}
+#fieldPMReportWindow table th.relative span:last-child {
+  position: absolute;
+  right: 8px;
+  top: 7px;
+}
+.nowrap {
+  white-space: nowrap!important;
 }
 body.tw .performance table th.relative span:last-child {
   right: 38px!important;

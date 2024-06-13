@@ -377,7 +377,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.selectedHistories = this.selectedMsg.histories;
 
     this.getFMstatus().then((value) => {
-      this.statusModalRef = this.dialog.open(this.statusModal, { id: 'statusModal' });
+      this.statusModalRef = this.dialog.open(this.statusModal, { id: 'fault_statusModal' });
       this.statusModalRef.afterClosed().subscribe(() => {
 
       });
