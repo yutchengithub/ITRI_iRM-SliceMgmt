@@ -3906,7 +3906,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   originalLabels: string[] = [];
 
   /**
-   * @2024/06/07 Add
+   * @2024/06/14 Update
    * 定義圖表選項
    * @property barChartOptions
    * @description
@@ -3927,7 +3927,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         ticks: {
           color: 'white', // X 軸刻度字體顏色
           font: {
-            size: 13      // 調整這裡改變字體大小
+            size: 12      // 調整這裡改變字體大小
           }
         },
         grid: {
@@ -3956,7 +3956,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         align: 'start',    // 將圖例整區置上
         labels: {
           font: {
-            size: 12 // 圖例字體大小
+            size: 11 // 圖例字體大小
           },
           color: 'white' // 圖例字體顏色
         },
@@ -3964,13 +3964,14 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           display: true, // 顯示圖例標題
           text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
           font: {
-            size: 14,      // 圖例標題字體大小
+            size: 13.5,      // 圖例標題字體大小
             weight: 'bold' // 圖例標題字體粗細
           },
           color: 'white',  // 圖例標題顏色
           padding: {
             right: 10, // 圖例標題右側間距
-            bottom: 0  // 圖例標題下方間距
+            //bottom: 100,  // 圖例標題下方間距
+            top: 0,  // 圖例標題下方間距
           }
         },
         onClick: ( e: ChartEvent, legendItem: LegendItem, legend: any ) => {
@@ -4003,7 +4004,10 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     layout: {
       padding: {
-        left: 150 // 調整此值以將圖例向左移動，靠近右上角
+        left: 200, // 調整此值以增加左邊距，讓文字遠離邊界
+        right: 50, // 調整此值以增加右邊距
+        top: 10,   // 調整此值以增加上邊距
+        bottom: 5 // 調整此值以增加下邊距
       }
     }
   };
@@ -4043,7 +4047,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           if (!meta.hidden) { // 如果數據集未隱藏
             meta.data.forEach((element: any, index: number) => {
               ctx.fillStyle = 'rgb(255, 255, 255)'; // 設置填充顏色
-              const fontSize = 13; // 字體大小
+              const fontSize = 12; // 字體大小
               const fontStyle = 'normal'; // 字體樣式
               const fontFamily = 'Arial'; // 字體家族
               ctx.font = `${fontStyle} ${fontSize}px ${fontFamily}`; // 設置字體
@@ -4053,7 +4057,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
               ctx.textAlign = 'right'; // 設置對齊方式
               ctx.textBaseline = 'middle'; // 設置基線
-              const padding = 155; // 填充
+              const padding = 208; // 填充
               const position = element.tooltipPosition(); // 獲取提示位置
               //ctx.fillText(dataString, padding, position.y); // 繪製文本
 
