@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, TemplateRef, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -41,6 +41,18 @@ import { localBsKpiInfo } from '../../shared/local-files/BS/For_queryBsKpiInfo';
 // @2024/05/03 Add
 import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
 import { Color, ScaleType } from '@swimlane/ngx-charts';
+
+// chart.js 圖表配置用 @2024/06/06 Add
+import {  Chart, 
+          ChartConfiguration, 
+          ChartOptions,
+          ChartType,
+          ChartComponentLike, 
+          ChartEvent, 
+          LegendItem,
+          ChartDataset
+        } from "chart.js";
+import { BaseChartDirective } from 'ng2-charts';
 
 // 2024/04/01 Add
 // 搜尋基站告警用
@@ -185,7 +197,7 @@ interface KpiSubcategory {
   styleUrls: ['./bs-info.component.scss'],
   //changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BSInfoComponent implements OnInit {
+export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   sessionId: string = '';   // sessionId 用於存儲當前會話 ID
   refreshTimeout!: any;     // refreshTimeout 用於存儲 setTimeout 的引用，方便之後清除
@@ -251,7 +263,7 @@ export class BSInfoComponent implements OnInit {
   bsCellCount: string = ''; // 用於存儲當前選中的 BS Cell 數量
 
   /**
-   * @2024/05/18 Update
+   * @2024/06/08 Update
    * 初始化組件時執行的操作
    * @method ngOnInit
    * @description
@@ -291,11 +303,14 @@ export class BSInfoComponent implements OnInit {
       //this.getBsKpiInfo();
     });
 
-    // @2024/05/18 Add
+    // @2024/06/08 Update
     // 訂閱語系切換事件，以便在語言變更時更新基站效能區的下拉選單文字
     this.languageService.languageChanged.subscribe(() => {
-      this.updateLanguageOptions();       // 單純更新語系顯示
+      this.updateLanguageOptions();         // 單純更新語系顯示
       //this.updateLanguageSubcategories(); // 單純更新子類別顯示
+
+      // @2024/06/08 Note - 發現於 lineChartOptions 中直接設定 languageService.i18n[] 中英語言變換字串，中英語系切換時就會觸發切換
+      //this.updateChartLanguage();         // 更新圖表( Chart.js ) 語系顯示 @2024/06/06 Add
     });
   }
 
@@ -3671,7 +3686,7 @@ export class BSInfoComponent implements OnInit {
 
 
 
-// ↓ 基站效能區 @2024/05/30 Update ↓
+// ↓ 基站效能區 @2024/06/11 Update ↓
 
   // @2024/05/14 Add
   // 用於儲存從 API 或 Local 獲取的 KPI 數據
@@ -3777,9 +3792,9 @@ export class BSInfoComponent implements OnInit {
     this.currentBsKpiInfo = response; // 假設響應直接是 BsKpiInfo 格式
 
     // 將每筆數據的時間轉換為使用者所在時區的時間
-    Object.values(this.currentBsKpiInfo).forEach((timeBlock: TimeBlock) => {
-      timeBlock.start = this.formatTimeToLocal(timeBlock.start); // 將開始時間轉換為本地時間
-      timeBlock.end = this.formatTimeToLocal(timeBlock.end);     // 將結束時間轉換為本地時間
+    Object.values(this.currentBsKpiInfo).forEach( ( timeBlock: TimeBlock ) => {
+      timeBlock.start = this.formatTimeToLocal( timeBlock.start ); // 將開始時間轉換為本地時間
+        timeBlock.end = this.formatTimeToLocal( timeBlock.end );   // 將結束時間轉換為本地時間
     });
 
     this.isLoadingBsKpiInfo = false;  // 更新加載狀態
@@ -3816,7 +3831,7 @@ export class BSInfoComponent implements OnInit {
   selectedKpiSubcategory: string = "";           // 當前選擇的 KPI 子類別
 
   /**
-   * @2024/05/20 Update
+   * @2024/06/11 Update
    * 更新下拉選單的選項
    * @method updateDropdownOptions
    * @description
@@ -3845,13 +3860,24 @@ export class BSInfoComponent implements OnInit {
           }
         } else {
           // 對於分佈式基站，正常處理每個 cell
-          bs.cellInfoList.forEach( ( cell: Cell_KpiInfo, index ) => {
-            const cellIdentifier = `Cell#${index + 1} ( NCI=0x${cell.cellId} )`; // 生成分佈式基站的 Cell 識別符
-            if ( !processedCells.has( cellIdentifier ) ) { // 如果該 Cell 尚未處理過
-              cellIds.add( { displayName: cellIdentifier, value: cellIdentifier } ); // 添加到 Cell 列表中
-              processedCells.add( cellIdentifier );        // 標記為已處理
+          const cellInfoList = bs.cellInfoList;
+          if ( Array.isArray( cellInfoList ) ) {
+            // 處理 Cell_KpiInfo[]
+            (cellInfoList as Cell_KpiInfo[]).forEach((cell: Cell_KpiInfo, index) => {
+              const cellIdentifier = `Cell#${index + 1} ( NCI=0x${cell.cellId} )`; // 生成分佈式基站的 Cell 識別符
+              if (!processedCells.has(cellIdentifier)) { // 如果該 Cell 尚未處理過
+                cellIds.add({ displayName: cellIdentifier, value: cellIdentifier }); // 添加到 Cell 列表中
+                processedCells.add(cellIdentifier);      // 標記為已處理
+              }
+            });
+          } else {
+            // 處理 Cell_KpiInfo2
+            const cellIdentifier = `Cell#1 ( NCI=unknown )`; // 生成默認的 Cell 識別符
+            if (!processedCells.has(cellIdentifier)) {       // 如果該 Cell 尚未處理過
+              cellIds.add({ displayName: cellIdentifier, value: cellIdentifier }); // 添加到 Cell 列表中
+              processedCells.add(cellIdentifier);            // 標記為已處理
             }
-          });
+          }
         }
       });
     });
@@ -3867,14 +3893,15 @@ export class BSInfoComponent implements OnInit {
       { displayName: this.languageService.i18n['BS.utilization'], value: 'Utilization' },            // Utilization 選項
       { displayName: this.languageService.i18n['BS.retainability'], value: 'Retainability' },        // Retainability 選項
       { displayName: this.languageService.i18n['BS.mobility'], value: 'Mobility' },                  // Mobility 選項
-      { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' } // Energy Consumption 選項
+      //{ displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' }, // Energy Consumption 選項
+      { displayName: "Energy Efficiency", value: 'Energy Efficiency' }  // Energy Efficiency  選項
     ];
     this.selectedKpiCategory = this.kpiCategories[0].value; // 設置預設選擇的 KPI 類別
     this.updateKpiSubcategories(); // 更新 KPI 子類別選項
   }
 
   /**
-   * @2024/05/20 Update
+   * @2024/06/11 Update
    * 更新 KPI 子類別的選項
    * @method updateKpiSubcategories
    * @description
@@ -3920,6 +3947,12 @@ export class BSInfoComponent implements OnInit {
       case 'Energy Consumption':
         this.kpiSubcategories = [
           { displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' } // Energy Consumption 子類別
+        ];
+        break;
+
+      case 'Energy Efficiency':
+        this.kpiSubcategories = [
+          { displayName: 'Energy Efficiency', value: 'Energy Efficiency' } // Energy Efficiency 子類別
         ];
         break;
     }
@@ -3990,6 +4023,10 @@ export class BSInfoComponent implements OnInit {
         case 'Energy Consumption':
           category.displayName = this.languageService.i18n['BS.energyConsumption']; // 更新顯示名稱為 Energy Consumption
           break;
+
+        case 'Energy Efficiency':
+          category.displayName = 'Energy Efficiency'; // 更新顯示名稱為 Energy Efficiency
+          break;
       }
     });
 
@@ -3998,7 +4035,7 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/18 Add
+   * @2024/06/11 Update
    * 更新 KPI 子類別語系選項
    * @method updateLanguageSubcategories
    * @description
@@ -4072,8 +4109,218 @@ export class BSInfoComponent implements OnInit {
           }
         });
         break;
+
+      case 'Energy Efficiency':
+        this.kpiSubcategories.forEach( subcategory => {
+          if ( subcategory.value === 'Energy Efficiency' ) {
+            subcategory.displayName = 'Energy Efficiency'; // 更新顯示名稱為 Energy Efficiency
+          }
+        });
+        break;
     }
   }
+
+// ng2-charts 圖表模組設定區 @2024/06/10 Update ↓
+
+  // 圖表標題
+  title_BsPM = 'ng2-charts-demo-line-charts';
+
+  // 設置 BaseChartDirective 的 ViewChild
+  @ViewChild( BaseChartDirective ) lineChart?: BaseChartDirective;
+
+  // 設置圖例為顯示
+  public lineChartLegend = true;
+
+  // 設置圖表類型為折線圖（此行已註解）
+  //public lineChartType: ChartType = 'line';
+
+  // 初始化圖表數據
+  public lineChartData: ChartConfiguration<'line'>['data'] = {
+    labels: [], // 標籤
+    datasets: [] // 數據集
+  };
+
+  // 初始化圖表選項
+  public lineChartOptions: ChartConfiguration<'line'>['options'] = {
+    responsive: true, // 響應式設計
+    scales: {
+      x: { // X 軸設置
+        title: {
+          display: true, // 顯示標題
+          text: this.languageService.i18n['BS.hourlyInterval'], // X 軸標題文本
+          color: 'white' // X 軸標題顏色
+        },
+        ticks: {
+          color: 'white' // X 軸刻度顏色
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.65)' // X 軸網格線顏色
+        }
+      },
+      y: { // Y 軸設置
+        title: {
+          display: true,  // 顯示標題
+          text: `${this.selectedKpiSubcategory} ( ${this.getUnit()} )`, // Y 軸標題文本
+          color: 'white', // Y 軸標題顏色
+        },
+        ticks: {
+          color: 'white'  // Y 軸刻度顏色
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.65)' // Y 軸網格線顏色
+        }
+      }
+    },
+    plugins: {
+      // title: {
+      //   display: true,
+      //   text: 'TEST', // 顯示的圖表標題文本
+      //   color: 'white',        // 設置標題字體顏色
+      //   font: {
+      //     size: 20 // 設置標題字體大小
+      //   },
+      //   padding: {
+      //     top: 10, // 標題的上間距
+      //     bottom: 10 // 標題的下間距
+      //   }
+      // },
+      legend: {            // 圖例設置
+        position: 'right', // 圖例位置在右側
+        align: 'start',    // 將圖例整區置上
+        labels: {
+          color: 'white'   // 圖例標籤顏色
+        },
+        title: {
+          display: true,   // 顯示圖例標題
+          text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
+          font: {
+            size: 14,      // 圖例標題字體大小
+            weight: 'bold' // 圖例標題字體粗細
+          },
+          color: 'white',  // 圖例標題顏色
+          padding: {
+            right: 10, // 圖例標題右側間距
+            bottom: 0  // 圖例標題下方間距
+          }
+        },
+      },
+      tooltip: { 
+        // 自定義工具提示內容
+
+        //backgroundColor: 'white', // 提示框背景顏色（已註解）
+        titleColor: 'white',        // 提示框標題顏色
+        borderColor: 'white',       // 提示框邊框顏色
+        footerColor: 'white',       // 提示框底部顏色
+        displayColors: true,        // 顯示對應數據點的顏色塊
+        callbacks: {
+          // 自定義工具提示標籤內容
+          label: ( context ) => {
+            // 獲取數據集邊框 borderColor 顏色（此行沒用到，可移除）
+            context.dataset.borderColor; 
+
+            // 返回工具提示標籤文本，包括數據集標籤、數據值和單位
+            return `${context.dataset.label}: ${context.raw} ${this.getUnit()}`; 
+          }
+        }
+      }
+    }
+  };
+
+  /**
+   * @2024/06/10 Update
+   * 更新圖表語言
+   * @method updateChartLanguage
+   * @description
+   * - 根據當前語言設置更新圖表的圖例標題。
+   * - 使用語言服務中的翻譯來設置圖表標題文本。
+   */
+  updateChartLanguage() {
+
+    // 檢查 lineChartOptions 是否存在，以及是否包含 plugins 和 legend 的設置
+    if ( this.lineChartOptions && this.lineChartOptions.plugins && this.lineChartOptions.plugins.legend && this.lineChartOptions.plugins.legend.title ) {
+
+      // 根據當前語言設置圖例標題文本
+      this.lineChartOptions.plugins.legend.title.text = this.languageService.i18n['BS.dataItems'];
+    }
+
+    // 更新圖表
+    this.lineChart?.update();
+
+    // 輸出日誌訊息以確認語言更新操作
+    console.log("切換語系觸發 updateChartLanguage() 更換圖例標題語系");
+    
+    // 強制觸發變更檢測（ 目前已註解，根據需要可打開 ）
+    // this.changeDetectorRef.detectChanges();
+  }
+
+  /**
+     * @2024/06/11 Update
+     * 獲取當前選擇的 KPI 的單位
+     * @method getUnit
+     * @description
+     *    - 根據當前選擇的 KPI 類別和子類別，返回對應的單位。
+     *    - 用於顯示圖表數據的單位標籤。
+     * @returns { string } 當前選擇的 KPI 單位
+     */
+  getUnit() {
+    switch ( this.selectedKpiCategory ) {
+      case 'Accessibility':
+        return '%'; // Accessibility 類別的單位為百分比
+      case 'Integrity':
+        if ( this.selectedKpiSubcategory === 'Integrated Downlink Delay' || this.selectedKpiSubcategory === 'Integrated Uplink Delay' ) {
+          return 'ms'; // Integrated Downlink/Uplink Delay 的單位為毫秒
+        } else if ( this.selectedKpiSubcategory === 'RAN UE Downlink Throughput' || this.selectedKpiSubcategory === 'RAN UE Uplink Throughput' ) {
+          return 'Mbps'; // RAN UE Downlink/Uplink Throughput 的單位為 Mbps
+        }
+        return ''; // 添加缺失的返回值
+      case 'Utilization':
+        return '%'; // Utilization 類別的單位為百分比
+      case 'Retainability':
+        return '%'; // Retainability 類別的單位為百分比
+      case 'Mobility':
+        return '%'; // Mobility 類別的單位為百分比
+      case 'Energy Consumption':
+        return 'J'; // Energy Consumption 類別的單位為焦耳
+      case 'Energy Efficiency':
+        return 'bit/J'; // Energy Efficiency 類別的單位為 bit/J
+      default:
+        return ''; // 默認情況下返回空字符串
+    }
+  }
+
+  /**
+   * @2024/06/10 Update
+   * 設置圖表數據
+   * @method setChartData_for_chartJS_lineChart
+   * @description
+   *    - 根據準備好的數據設置圖表的數據。
+   *    - 將數據格式化為圖表可用的格式，並更新圖表數據。
+   */
+  setChartData_for_chartJS_lineChart() {
+    const rawData = this.displayOnTableChartData; // 獲取顯示在表格上的數據
+    const labels = rawData[0].series.map( data => data.time ); // 獲取時間標籤
+    this.lineChartData.labels = labels; // 設置圖表的 x 軸標籤
+
+    const datasets = rawData.map( data => {
+      return {
+        label: data.name, // 設置數據集的標籤
+        data: data.series.map( point => point.value ), // 設置數據集的數據點
+        borderColor: data.series.map( point => point.color ), // 設置數據線的顏色
+        backgroundColor: data.series.map( point => point.color ), // 設置背景顏色
+        pointBackgroundColor: data.series.map( point => point.color ), // 設置數據點的顏色
+        fill: false // 不填充數據線下方的區域
+      } as ChartDataset<'line'>;
+    });
+
+    this.lineChartData.datasets = datasets; // 設置圖表的數據集
+
+    console.log( "In setChartData_for_chartJS_lineChart() end - lineChartData", this.lineChartData ); // 輸出更新後的圖表數據
+
+    // this.lineChart?.update(); // 更新圖表 @2024/06/08 Note - 都改至 prepareAndUpdateChartData() 最後統一更新圖表
+  }
+
+// ng2-charts 圖表設定區 @2024/06/10 Update ↑
+
 
   // ngx-charts-line-chart 圖表模組外觀設定區 ↓
 
@@ -4266,7 +4513,7 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/25 Update
+   * @2024/06/10 Update
    * 更新並準備圖表數據
    * @method prepareAndUpdateChartData
    * @description
@@ -4304,10 +4551,16 @@ export class BSInfoComponent implements OnInit {
     // console.log("In prepareAndUpdateChartData - after fillMissingTimeBlock, the firstTimeBlock =", firstTimeBlock);
     // console.log("In prepareAndUpdateChartData - after fillMissingTimeBlock, the lastTimeBlock =", lastTimeBlock);
 
-    // this.xScaleMin = firstTimeBlock;
-    // this.xScaleMax = lastTimeBlock;
+    // this.xScaleMin = firstTimeBlock; // 設置 x 軸的最小時間範圍（已註解）
+    // this.xScaleMax = lastTimeBlock;  // 設置 x 軸的最大時間範圍（已註解）
+
+    // @2024/06/06 Add
+    // 刷新 Chart.js 的 line Chart
+    this.setChartData_for_chartJS_lineChart();
 
     this.setYAxisLabel(); // 更新 y 軸標籤
+    this.lineChart?.update(); // 確保圖表的更新 @2024/06/08 Add - 待前面的設定更新好，於此一次更新圖表顯示
+    this.changeDetectorRef.detectChanges(); // 觸發變更檢測
 
     // 標記為需要檢查，因為有使用了 OnPush ( @2024/05/21 Update - 貌似沒看到甚麼效果出現，故先註解掉 )
     // this.changeDetectorRef.markForCheck(); // 標記為需要檢查，確保變更檢測機制正確觸發
@@ -4420,7 +4673,7 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/24 Add
+   * @2024/06/06 Update
    * 根據 lineVisibility 更新圖表顯示的數據
    * @method updateDisplayChartData
    * @description
@@ -4477,7 +4730,7 @@ export class BSInfoComponent implements OnInit {
               const defaultNci = this.selectedNci; // 獲取預設的 NCI
               this.dataColorMap.set(`Cell#${bsIndex + 1} (NCI=0x${defaultNci})`, cellColor); // 設置 cell 數據的顏色映射
               filteredData.push({ name: `Cell#1 (NCI=0x${defaultNci})`, series: series });   // 添加 cell 數據到過濾後的數據陣列
-            } else { // 如果不是一體式基站
+            } else if (Array.isArray(bs.cellInfoList)) { // 確保 cellInfoList 是數組
               bs.cellInfoList.forEach((cell: Cell_KpiInfo, cellIndex) => { // 遍歷每個 cell 訊息
                 const cellColor = colorScheme.domain[(bsIndex + cellIndex + 1) % colorScheme.domain.length]; // 分配 cell 顏色
                 this.dataColorMap.set(`Cell#${cellIndex + 1} (NCI=0x${cell.cellId})`, cellColor); // 設置 cell 數據的顏色映射
@@ -4523,14 +4776,14 @@ export class BSInfoComponent implements OnInit {
                   if ( defaultNci === cellId ) { // 如果默認 NCI 等於當前 cellId
                     filteredData.push( { name: `Cell#1 (NCI=0x${defaultNci})`, series: series } ); // 添加 cell 數據到過濾後的數據陣列
                   }
-                } else {
-                  const index = bs.cellInfoList.findIndex( c => c.cellId === cellId ); // 查找對應 cellId 的索引
-                  if ( index !== -1 ) { // 如果找到對應的 cell
+                } else if (Array.isArray(bs.cellInfoList)) { // 確保 cellInfoList 是數組
+                  const index = bs.cellInfoList.findIndex((c: Cell_KpiInfo) => c.cellId === cellId); // 查找對應 cellId 的索引
+                  if (index !== -1) { // 如果找到對應的 cell
                     const cell = bs.cellInfoList[index]; // 獲取 cell 訊息
-                    const timeRange = this.formatTimeRange( timeBlock.start, timeBlock.end ).formattedRange; // 格式化時間範圍
+                    const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end).formattedRange; // 格式化時間範圍
                     const cellColor = this.dataColorMap.get(`Cell#${index + 1} (NCI=0x${cell.cellId})`) || color; // 獲取 cell 數據的顏色或使用預設顏色
-                    const series = this.getKpiData( cell, timeRange, cellColor, index ); // 獲取 cell 的 KPI 數據
-                    filteredData.push( { name: `Cell#${index + 1} (NCI=0x${cell.cellId})`, series: series } );    // 添加 cell 數據到過濾後的數據陣列
+                    const series = this.getKpiData(cell, timeRange, cellColor, index); // 獲取 cell 的 KPI 數據
+                    filteredData.push({ name: `Cell#${index + 1} (NCI=0x${cell.cellId})`, series: series });    // 添加 cell 數據到過濾後的數據陣列
                   }
                 }
               });
@@ -4604,7 +4857,7 @@ export class BSInfoComponent implements OnInit {
   }
 
   /**
-   * @2024/05/22 Update
+   * @2024/06/11 Update
    * 根據選擇的 KPI 類別和子類別獲取對應的數據
    * @method getKpiData
    * @param data - Bs_KpiInfo 或 Cell_KpiInfo 類型的數據
@@ -4700,18 +4953,22 @@ export class BSInfoComponent implements OnInit {
         unit = 'J'; // 設置單位為焦耳
         addDataLabel( data.energy, 'energy' ); // 添加 Energy Consumption 數據標籤
         break;
+      case 'Energy Efficiency':
+        unit = 'bit/J'; // 設置單位為 bit/J
+        addDataLabel( data.energy, 'energy' ); // 添加 Energy Efficiency 數據標籤
+        break;
     }
 
     return kpiData; // 返回包含顏色、時間、名稱、數值、標籤和單位的數據數組
   }
   
   /**
-   * @2024/05/22 Update
+   * @2024/06/09 Update
    * 根據選擇的 KPI 類別設置 Y 軸標籤
    * @method setYAxisLabel
    * @description
    *    - 此方法根據當前選擇的 KPI 類別和子類別設置圖表的 Y 軸標籤。
-   *    - Y 軸標籤的格式為 "子KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"。
+   *    - Y 軸標籤的格式為 "子 KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"。
    *    - 先根據選擇的 KPI 類別設置 KPI 名稱和單位。
    *    - 然後根據選擇的子類別設置子類別名稱和相應的單位。
    *    - 如果存在子類別名稱，Y 軸標籤將顯示為 "子KPI 名稱 ( 單位 )"。
@@ -4768,7 +5025,11 @@ export class BSInfoComponent implements OnInit {
         break;
       case 'Energy Consumption':
         kpiName = this.languageService.i18n['BS.energyConsumption']; // 設置 KPI 名稱為 "Energy Consumption"
-        unit = 'J';                                                // 設置單位為 J
+        unit = 'J';                                                  // 設置單位為 J
+        break;
+      case 'Energy Efficiency':
+        kpiName = 'Energy Efficiency'; // 設置 KPI 名稱為 "Energy Efficiency"
+        unit = 'bit/J';                // 設置單位為 bit/J
         break;
       default:
         kpiName = 'KPI Name';  // 設置默認 KPI 名稱
@@ -4779,11 +5040,107 @@ export class BSInfoComponent implements OnInit {
 
     // 設置 Y 軸標籤為 "子 KPI 名稱 ( 單位 )" 或 "KPI 名稱 ( 單位 )"
     this.yAxisLabel = subKpiName ? `${subKpiName} ( ${unit} )` : `${kpiName} ( ${unit} )`;
+    
+    console.log("In setYAxisLabel() - this.yAxisLabel = ", this.yAxisLabel); // 輸出設置的 Y 軸標籤
+
+    // 檢查和設置 Y 軸標題文本 ( @2024/06/08 Note - 此方法使用下拉選單切換檢視 KPI 時，無法正確切換，不管怎麼切都是預設標題 )
+    // if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
+    //   if (!this.lineChartOptions.scales['y'].title) {
+    //     this.lineChartOptions.scales['y'].title = { display: true, text: '' }; // 初始化 Y 軸標題
+    //   }
+    //   this.lineChartOptions.scales['y'].title.text = subKpiName ? `${subKpiName} ( ${unit} )` : `${kpiName} ( ${unit} )`;; // 設置 Y 軸標題文本
+    //   console.log("In setYAxisLabel() - this.lineChartOptions.scales['y'].title.text = ", this.lineChartOptions.scales['y'].title.text);
+    // }
+
+    // @2024/06/09 Add
+    // 採用重新設置 lineChartOptions 針對 Y 軸 title 才真正進行切換
+    this.replaceTitleOfYAxisInLineChartOptions();
+
+    // @2024/06/08 Note - 都改至 prepareAndUpdateChartData() 最後統一更新圖表
+    //this.lineChart?.update(); // 確保圖表的更新
+    //this.changeDetectorRef.detectChanges(); // 強制觸發變更檢測
+  }
+
+  /**
+   * @2024/06/09 Add
+   * 替換圖表 Y 軸標題
+   * @method replaceTitleOfYAxisInLineChartOptions
+   * @description
+   *    - 重新設置 lineChartOptions 以更新 Y 軸的標題。
+   *    - 確保圖表的配置能夠反映新的 Y 軸標題。
+   */
+  replaceTitleOfYAxisInLineChartOptions() {
+    this.lineChartOptions = {
+      responsive: true,  // 響應式設計
+      scales: {
+        x: {  // X 軸設置
+          title: {
+            display: true, // 顯示標題
+            text: this.languageService.i18n['BS.hourlyInterval'], // 設置 X 軸標題
+            color: 'white' // 設置 X 軸標題顏色
+          },
+          ticks: {
+            color: 'white' // 設置 X 軸刻度顏色
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.5)' // 設置 X 軸網格顏色
+          }
+        },
+        y: {// Y 軸設置
+          title: {
+            display: true, // 顯示標題
+            text: this.yAxisLabel, // 設置 Y 軸標題文本
+            color: 'white' // 設置 Y 軸標題顏色
+          },
+          ticks: {
+            color: 'white' // 設置 Y 軸刻度顏色
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.5)' // 設置 Y 軸網格顏色
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'right', // 圖例位置在右側
+          align: 'start', // 將圖例整區置上
+          labels: {
+            color: 'white' // 設置圖例標籤顏色
+          },
+          title: {
+            display: true, // 顯示圖例標題
+            text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
+            font: {
+              size: 14, // 圖例標題字體大小
+              weight: 'bold' // 圖例標題字體粗細
+            },
+            color: 'white', // 圖例標題顏色
+            padding: {
+              right: 10, // 圖例標題右側間距
+              bottom: 0 // 圖例標題下方間距
+            }
+          }
+        },
+        tooltip: {
+          // backgroundColor: 'white', // 註解掉的背景顏色設置
+          titleColor: 'white', // 設置工具提示框標題顏色
+          borderColor: 'white', // 設置工具提示框邊框顏色
+          footerColor: 'white', // 設置工具提示框腳本顏色
+          displayColors: true, // 顯示對應數據點的顏色塊
+          callbacks: {
+            label: (context) => {
+              context.dataset.borderColor; // 設置數據集邊框顏色
+              return `${context.dataset.label}: ${context.raw} ${this.getUnit()}`; // 設置工具提示框標籤文本
+            }
+          }
+        }
+      }
+    };
   }
 
 
   /**
-   * @2024/05/18 Add
+   * @2024/06/11 Update
    * 根據選擇的 KPI 類別設置 Y 軸標籤
    * @method setYAxisLabel_onlyUnit
    * @description
@@ -4823,6 +5180,10 @@ export class BSInfoComponent implements OnInit {
         // 如果是 Energy Consumption，設置 Y 軸標籤為功率（千瓦小時）
         this.yAxisLabel = this.languageService.i18n['BS.Power'];
         break;
+      case 'Energy Efficiency':
+        // 如果是 Energy Efficiency，設置 Y 軸標籤為 bit/J
+        this.yAxisLabel = "bit/J";
+        break;
       default:
         // 如果沒有匹配的 KPI 類別，設置 Y 軸標籤為默認值 'KPI Name'
         this.yAxisLabel = 'KPI Name';
@@ -4850,7 +5211,7 @@ export class BSInfoComponent implements OnInit {
     //this.changeDetectorRef.detectChanges(); // 手動觸發變更檢測
   }
 
-// ↑ 基站效能區 @2024/05/30 Update ↑
+// ↑ 基站效能區 @2024/06/11 Update ↑
 
 
 }

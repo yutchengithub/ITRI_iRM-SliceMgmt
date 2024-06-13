@@ -63,7 +63,9 @@ import { OCloudPerformanceComponent } from './performance-management/o-cloud-per
 
 import { DxCircularGaugeModule } from 'devextreme-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { NgxChartsModule } from '@swimlane/ngx-charts';  // ngx-charts 圖表模組 @2024/05/08 Add 
+import { NgChartsModule } from 'ng2-charts';             // ng2-charts 圖表模組 @2024/06/05 Add 
 
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon'; // @12/06 Add MatIconRegistry by yuchen 
 import { DomSanitizer } from '@angular/platform-browser';                // @12/06 Add by yuchen
@@ -116,6 +118,8 @@ import { LanguageService } from './shared/service/language.service';
 import { SpinnerService } from './shared/service/spinner.service';        // 用於控制顯示 Spinner @2024/04/17 Add
 import { FieldStateService } from './shared/service/field-state.service'; // 用於跟蹤場域頁面的 showMapModel 的顯示模式狀態 @2024/05/03 Add
 import { NavigationService } from './shared/service/navigation.service';  // 用於跟蹤路由歷史 @2024/05/03 Add
+import { ColorService } from './shared/service/color.service';            // 用來動態生成圖表模組的數據條或線的配色方案 @2024/06/13 Add
+
 import { NgxSpinnerModule } from "ngx-spinner";
 
 
@@ -132,13 +136,14 @@ import { apiForScheduleMgmt } from './shared/api/For_Schedule_Mgmt';  // @2024/0
 import { apiForLogMgmt }      from './shared/api/For_Log_Mgmt';       // @2024/03/14 Add
 
 // import Local Files
-import { localFieldSummaryInfo }  from './shared/local-files/Field/For_queryFieldSummaryInfo';        // @2024/03/14 Add
-import { localFieldList }         from './shared/local-files/Field/For_queryFieldList';               // @2024/01/29 Add
-import { localFieldInfo }         from './shared/local-files/Field/For_queryFieldInfo';               // @2024/03/14 Add
-import { localPmFTPInfo }         from './shared/local-files//Field/For_queryPmFtpInfo';              // @2024/02/04 Add
-import { localFieldSnapshotList } from './shared/local-files/Field/For_queryFieldSnapshotList';       // @2024/03/06 Add
-import { localFieldSonParameters } from './shared/local-files/Field/For_querySonParameter';           // @2024/03/30 Add
+import { localFieldSummaryInfo }     from './shared/local-files/Field/For_queryFieldSummaryInfo';     // @2024/03/14 Add
+import { localFieldList }            from './shared/local-files/Field/For_queryFieldList';            // @2024/01/29 Add
+import { localFieldInfo }            from './shared/local-files/Field/For_queryFieldInfo';            // @2024/03/14 Add
+import { localPmFTPInfo }            from './shared/local-files//Field/For_queryPmFtpInfo';           // @2024/02/04 Add
+import { localFieldSnapshotList }    from './shared/local-files/Field/For_queryFieldSnapshotList';    // @2024/03/06 Add
+import { localFieldSonParameters }   from './shared/local-files/Field/For_querySonParameter';         // @2024/03/30 Add
 import { localCalculateSonResponse } from './shared/local-files/Field/For_multiCalculateBs_response'; // @2024/03/31 Add
+import { localFieldKpiInfo }         from './shared/local-files/Field/For_queryFieldKpiInfo';         // @2024/06/11 Add
 
 import { localBSInfo }          from './shared/local-files/BS/For_queryBsInfo';                    // @2023/12/27 Add 
 import { localBSList }          from './shared/local-files/BS/For_queryBsList';                    // @2024/01/16 Add
@@ -259,9 +264,10 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     MatCheckboxModule,  // @2024/03/30 Add
 
     BrowserAnimationsModule,
-    SpinnerModule,      // @2024/04/17 Add
-    NgxSpinnerModule,   // ngx-spinner 進度條模組
-    NgxChartsModule,    // ngx-charts 圖表模組 @2024/05/08 Add
+    SpinnerModule,    // @2024/04/17 Add
+    NgxSpinnerModule, // ngx-spinner 進度條模組
+    NgxChartsModule,  // ngx-charts 圖表模組 @2024/05/08 Add
+    NgChartsModule    // ng2-charts 圖表模組 @2024/06/05 Add 
   ],
   providers: [
     AuthGuard,
@@ -271,6 +277,7 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     Location,           // 在 providers 中提供 Location 服務，用於控制瀏覽器的歷史記錄導航 @2024/05/03 Add
     FieldStateService,  // 用於跟蹤場域頁面的 showMapModel 的顯示模式狀態 @2024/05/03 Add
     NavigationService,  // 用於跟蹤路由歷史 @2024/05/03 Add
+    ColorService,       // 用來動態生成圖表模組的數據條或線的配色方案 @2024/06/13 Add
 
     apiForFieldMgmt,    // @2024/03/14 Update for import API of Field Management
     apiForBSMgmt,       // @2024/03/14 Add for import API of BS Management
@@ -282,9 +289,10 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     localFieldList,            // @2024/01/29 Add for import Local files of Field List
     localFieldInfo,            // @2024/03/14 Add for import Local files of Field Info
     localFieldSnapshotList,    // @2024/03/06 Add for import Local files of Field Snapshot List
-    localPmFTPInfo,             // @2024/02/04 Add for import info of PM Parameter Setting Local Files
-    localFieldSonParameters,    // @2024/03/30 Add for import Local files of Field Son Parameters
-    localCalculateSonResponse,  // @2024/03/31 Add for import Local files of Calculate Son Response
+    localPmFTPInfo,            // @2024/02/04 Add for import info of PM Parameter Setting Local Files
+    localFieldKpiInfo,         // @2024/06/11 Add for import Local files of Field Kpi Info
+    localFieldSonParameters,   // @2024/03/30 Add for import Local files of Field Son Parameters
+    localCalculateSonResponse, // @2024/03/31 Add for import Local files of Calculate Son Response
 
     localBSInfo,              // @2023/12/27 Add for import Local files of BS Info
     localBSList,              // @2024/01/16 Add for import Local files of BS List

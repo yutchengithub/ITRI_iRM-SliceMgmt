@@ -518,12 +518,20 @@
 								</span>
 							</div>
 							<hr>
-							<div class="item">
+							<!-- <div class="item"> -->
 								<!-- 能源消耗量 @2024/05/27 Add -->
-								<img src="assets/img/energy.png">
+								<!-- <img src="assets/img/energy.png">
 								<span class="label-container">
 									{{ languageService.i18n['field.energyConsumption'] }}
 									<span>{{ energyConsumptionAsNumber }}&thinsp;J</span>
+								</span>
+							</div> -->
+							<div class="item">
+								<!-- 能源效率 @2024/06/11 Add -->
+								<img src="assets/img/energy.png">
+								<span class="label-container">
+									{{ languageService.i18n['pm.efficiency'] }}
+									<span>{{ energyEfficiencyAsNumber }}&thinsp;bit/J</span>
 								</span>
 							</div>
 							<!-- <div class="item"> -->
@@ -1181,7 +1189,7 @@
 		</div>
 	</ng-template>
 
-	<!-- Window of Field Performance Analysis @2024/06/04 Update -->
+	<!-- Window of Field Performance Analysis @2024/06/06 Update -->
 	<ng-template #fieldPMReportWindow>
 		<div>
 			<h5>{{ languageService.i18n['field.performance'] }}</h5>
@@ -1191,28 +1199,43 @@
 			</mat-button-toggle-group>
 		</div>
 		
-
 		<div *ngIf="fieldPMReportType === 'Performance_Overview'">
 			<div *ngIf="fieldInfo">
 				<!-- 效能總覽頁面內容 -->
-
 				<div class="filter">
-				  <span><!-- KPI 類別選項 -->
-					<label>{{ languageService.i18n['BS.viewKPICategory'] }}:</label>
-					<select [(ngModel)]="selectedKpiCategory" (ngModelChange)="onKpiCategoryChange()">
-					  <option *ngFor="let category of kpiCategories" [value]="category.value">{{ category.displayName }}</option>
-					</select>
-				  </span>
-				  <span><!-- KPI 子類別選項 -->
-					<label>{{ languageService.i18n['BS.viewKPISubcategory'] }}:</label>
-					<select [(ngModel)]="selectedKpiSubcategory" (ngModelChange)="prepareAndUpdateChartData()" [hidden]="kpiSubcategories.length === 0">
-					  <option *ngFor="let subcategory of kpiSubcategories" [value]="subcategory.value">{{ subcategory.displayName }}</option>
-					</select>
-				  </span>
-				  {{ languageService.i18n['BS.dataTimePast24Hours'] }}
+					<span>
+					  <!-- KPI 類別下拉選單 -->
+					  <label>{{ languageService.i18n['BS.viewKPICategory'] }}:</label>
+					  <select [(ngModel)]="selectedKpiCategory_bar" (ngModelChange)="onKpiCategoryChange_for_chartJS_barChart()">
+						<option *ngFor="let category of kpiCategories_bar" [value]="category.value">{{ category.displayName }}</option>
+					  </select>
+					</span>
+					<span>
+					  <!-- KPI 子類別下拉選單 -->
+					  <label>{{ languageService.i18n['BS.viewKPISubcategory'] }}:</label>
+					  <select [(ngModel)]="selectedKpiSubcategory_bar" (ngModelChange)="prepareAndUpdateChartData_for_chartJS_barChart()" [hidden]="kpiSubcategories_bar.length === 0">
+						<option *ngFor="let subcategory of kpiSubcategories_bar" [value]="subcategory.value">{{ subcategory.displayName }}</option>
+					  </select>
+					</span>
+					<span>
+						<label>{{ languageService.i18n['BS.dataTimePast24Hours'] }}</label>
+					</span>
 				</div>
-					   
-				<ngx-charts-bar-horizontal
+			  
+				  <!-- ng2-charts - Bar Chart @2024/06/06 Update -->
+				  <canvas #barChart_Overview 
+				  		  baseChart 
+						  width="1000" 
+						  height="400"
+						  [data]="barChartData"
+						  [options]="barChartOptions"
+						  [plugins]="allChartPlugins"
+						  [legend]="barChartLegend"
+						  [type]="'bar'">
+				  </canvas>
+				
+				<!-- ngx-charts - Horizontal Bar Chart @2024/06/06 - 已不使用 -->
+				<!-- <ngx-charts-bar-horizontal
 					[view]="view"
 					[scheme]="colorScheme"
 					[customColors]="customColors"
@@ -1235,24 +1258,96 @@
 					<ng-template #tooltipTemplate let-model="model">
 						<div style="text-align: center;"> 
 							<label><strong>{{ model.name }}</strong></label>
-								<!-- <br/> -->
+								<br/>
 							<span *ngIf=" model.value !== null && model.value !== '' "[style.background-color]="model.color" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></span>
 							<span *ngIf=" model.value === null && model.value === '' ">{{ languageService.i18n['BS.kpiValueNone'] }}</span>
 							<h5 *ngIf=" model.value !== null && model.value !== '' ">{{ model.value }} {{ getUnit() }}</h5>
 						</div>
 					</ng-template>
 
-				</ngx-charts-bar-horizontal>
-
-			  </div>
-		</div>
-		<div  *ngIf="fieldPMReportType === 'Performance_History'">
-			<div>
-				<!-- 效能歷史查詢頁面內容 -->
-				<!-- 在這裡加入效能歷史的查詢和圖表 -->
-
+				</ngx-charts-bar-horizontal> -->
 			</div>
 		</div>
+		<div *ngIf="fieldPMReportType === 'Performance_History'">
+			<div>
+			  <!-- 效能歷史查詢頁面內容 -->
+			  <div class="filter">
+				<form [formGroup]="dateForm_line">
+				  <span>
+					<label>{{ languageService.i18n['BS.timeInterval'] }}</label>
+					<p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+				  </span>
+				  <span>
+					<label>{{ languageService.i18n['BS.alarmLatestUpdateTimeRangeEnd'] }}&ensp;</label>
+					<p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+				  </span>
+				  <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="searchFieldKpiInfo()">search</span>
+				  <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSearch()">clear</span>
+				</form>
+				<br>
+				<form [formGroup]="viewModeForm_line">
+				  <span><!-- 檢視模式-->
+					<label>{{ languageService.i18n['BS.viewMode'] }}:</label>
+					<select formControlName="viewMode_line" [(ngModel)]="selectedViewMode_line" (change)="onViewModeChange_line()">
+					  <option *ngFor="let mode of viewModes_line" [value]="mode.value">{{ mode.displayName }}</option>
+					</select>
+				  </span>
+				  <span><!-- KPI 類別選項 -->
+					<label>{{ languageService.i18n['BS.viewKPICategory'] }}:</label>
+					<select formControlName="kpiCategory_line" [(ngModel)]="selectedKpiCategory_line" (change)="onKpiCategoryChange_line()">
+					  <option *ngFor="let category of kpiCategories_line" [value]="category.value">{{ category.displayName }}</option>
+					</select>
+				  </span>
+				  <span><!-- KPI 子類別選項 -->
+					<label>{{ languageService.i18n['BS.viewKPISubcategory'] }}:</label>
+					<select formControlName="kpiSubcategory_line" [(ngModel)]="selectedKpiSubcategory_line" (change)="prepareAndUpdateChartData_line()" [hidden]="kpiSubcategories_line.length === 0">
+					  <option *ngFor="let subcategory of kpiSubcategories_line" [value]="subcategory.value">{{ subcategory.displayName }}</option>
+					</select>
+				  </span>
+				</form>
+			  </div>
+			  <!-- 圖表區 -->
+			  <div class="chart-container">
+				<canvas #lineChart
+						baseChart
+						width="1200" 
+						height="325"
+						[type]="'line'"
+						[data]="lineChartData"
+						[options]="lineChartOptions"
+						[legend]="lineChartLegend">
+				</canvas>
+			  </div>
+			  <!-- 表格區 -->
+			  <div class="table">
+				<table>
+				  <thead>
+					<tr>
+					  <th class="relative">
+						<span>{{ languageService.i18n['BS.dataItems'] }}</span>
+						<label class="slash"></label>
+						<span>{{ languageService.i18n['BS.timeInterval'] }}</span>
+					  </th>
+					  <th *ngFor="let timeBlock of displayOnTableChartData_line[0]?.series">
+						<span>{{ timeBlock.startTime }}<br>~<br>{{ timeBlock.endTime }}</span>
+						<!-- <span>{{ timeBlock.time }}</span>  -->
+					</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					<tr *ngFor="let series of displayOnTableChartData_line">
+					  <td>{{ series.name }}</td>
+					  <td *ngFor="let dataPoint of series.series">
+						<span *ngIf="dataPoint.value !== null">{{ dataPoint.value }}&thinsp;{{ dataPoint.unit }}</span>
+						<span *ngIf="dataPoint.value === null">{{ languageService.i18n['BS.kpiValueNone'] }}</span>
+					  </td>
+					</tr>
+				  </tbody>
+				</table>
+			  </div>
+			</div>
+		  </div>
+		  
 		
 		<div class="buttons buttons-centered">
 			<button type="button" mat-dialog-close>
@@ -1260,9 +1355,6 @@
 			</button>
 		</div>
 	</ng-template>
-
-
-
 
 	<!-- Window of Field Optimization @2024/04/08 Update-->
 	<ng-template #fieldOptimizationWindow>

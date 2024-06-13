@@ -102,6 +102,10 @@ input, select {
   background-color: #78c2ffb9;
 }
 
+// 字體變正體 @2024/06/12 Add
+.normal-text {
+  font-style: normal !important;
+}
 
 .content {
   margin: 0 0 0 2%;
@@ -1821,8 +1825,10 @@ ngx-charts-bar-horizontal .chart-legend .legend-label .active .legend-label-text
 .gm-style-iw-t .gm-style-iw {
   padding-left: 15px!important;
 }
+
 #fieldPMReportWindow {
-  min-width: 45em;
+  min-width: 80em;
+  max-height: 50em;
 }
 #fieldPMReportWindow .filter  {
   text-align: center;

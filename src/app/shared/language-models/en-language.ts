@@ -204,7 +204,9 @@ export const Enlanguage = {
   'field.HistorySearch': 'History Search',  // @2024/05/29 Add
   'field.historyPerformanceSearch': 'Historical Performance Search', // @2024/05/27 Add
   'field.performanceHistorySearch': 'Performance History Search',    // @2024/05/27 Add
-  'field.items':'Items',  // @2024/05/27 Add
+  'field.items':'Items',                 // @2024/05/27 Add
+  'field.fieldAverage': 'Field Average', // @2024/06/13 Add
+
 
   'field.reportFM':'Alarms (FM)',                   // @12/12 Add
   'field.optim':'Field Optimization',               // @12/12 Add
