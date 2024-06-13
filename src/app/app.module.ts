@@ -118,6 +118,8 @@ import { LanguageService } from './shared/service/language.service';
 import { SpinnerService } from './shared/service/spinner.service';        // 用於控制顯示 Spinner @2024/04/17 Add
 import { FieldStateService } from './shared/service/field-state.service'; // 用於跟蹤場域頁面的 showMapModel 的顯示模式狀態 @2024/05/03 Add
 import { NavigationService } from './shared/service/navigation.service';  // 用於跟蹤路由歷史 @2024/05/03 Add
+import { ColorService } from './shared/service/color.service';            // 用來動態生成圖表模組的數據條或線的配色方案 @2024/06/13 Add
+
 import { NgxSpinnerModule } from "ngx-spinner";
 
 
@@ -275,6 +277,7 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     Location,           // 在 providers 中提供 Location 服務，用於控制瀏覽器的歷史記錄導航 @2024/05/03 Add
     FieldStateService,  // 用於跟蹤場域頁面的 showMapModel 的顯示模式狀態 @2024/05/03 Add
     NavigationService,  // 用於跟蹤路由歷史 @2024/05/03 Add
+    ColorService,       // 用來動態生成圖表模組的數據條或線的配色方案 @2024/06/13 Add
 
     apiForFieldMgmt,    // @2024/03/14 Update for import API of Field Management
     apiForBSMgmt,       // @2024/03/14 Add for import API of BS Management

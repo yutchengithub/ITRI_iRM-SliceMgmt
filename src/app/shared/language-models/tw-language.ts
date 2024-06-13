@@ -203,7 +203,8 @@ export const TwLanguage = {
   'field.HistorySearch': '歷史查詢',         // @2024/05/29 Add
   'field.historyPerformanceSearch': '歷史效能查詢', // @2024/05/27 Add
   'field.performanceHistorySearch': '效能歷史查詢', // @2024/05/27 Add
-  'field.items':'項目',  // @2024/05/27 Add
+  'field.items':'項目',             // @2024/05/27 Add
+  'field.fieldAverage': '場域平均', // @2024/06/13 Add
 
   'field.reportFM':'告警資訊(FM)',          // @12/12 Add
   'field.optim':'場域優化',                  // @12/12 Add
