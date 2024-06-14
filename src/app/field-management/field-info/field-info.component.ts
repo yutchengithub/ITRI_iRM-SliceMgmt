@@ -3922,12 +3922,15 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         title: {
           display: true,    // 顯示標題
           text: 'KPI Name', // 標題文本
+          font: {
+            size: 14
+          },
           color: 'white'    // X 軸標題字體顏色
         },
         ticks: {
           color: 'white', // X 軸刻度字體顏色
           font: {
-            size: 12      // 調整這裡改變字體大小
+            size: 12.5   // 調整這裡改變字體大小
           }
         },
         grid: {
@@ -3954,24 +3957,26 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         display: true,     // 顯示圖例
         position: 'right', // 圖例位置在右側
         align: 'start',    // 將圖例整區置上
+        maxWidth: 350,
         labels: {
           font: {
-            size: 11 // 圖例字體大小
+            size: 11.5 // 圖例字體大小
           },
-          color: 'white' // 圖例字體顏色
+          color: 'white', // 圖例字體顏色
+          padding: 10
         },
         title: {
           display: true, // 顯示圖例標題
           text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
           font: {
-            size: 13.5,      // 圖例標題字體大小
+            size: 15,      // 圖例標題字體大小
             weight: 'bold' // 圖例標題字體粗細
           },
           color: 'white',  // 圖例標題顏色
           padding: {
-            right: 10, // 圖例標題右側間距
+            right: 100, // 圖例標題右側間距
             //bottom: 100,  // 圖例標題下方間距
-            top: 0,  // 圖例標題下方間距
+            top: 5,  // 圖例標題下方間距
           }
         },
         onClick: ( e: ChartEvent, legendItem: LegendItem, legend: any ) => {
@@ -3993,7 +3998,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
             const label = context.dataset.label || ''; // 獲取數據集標籤
             const value = context.raw as number; // 獲取數據值
             const unit = this.getUnit() || '';   // 獲取單位
-            return ` ${value} ${unit}`;          // 返回顯示的文本
+            return ` ${label} : ${value} ${unit}`; // 返回顯示的文本
           },
           title: ( context ) => {
             const kpiName = this.selectedKpiSubcategory_bar || this.selectedKpiCategory_bar; // 獲取 KPI 名稱
@@ -4004,16 +4009,16 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     layout: {
       padding: {
-        left: 200, // 調整此值以增加左邊距，讓文字遠離邊界
-        right: 50, // 調整此值以增加右邊距
-        top: 10,   // 調整此值以增加上邊距
-        bottom: 5 // 調整此值以增加下邊距
+        left: 235, // 調整此值以增加左邊距，讓文字遠離邊界
+        right: 45, // 調整此值以增加右邊距
+        top: 8,   // 調整此值以增加上邊距
+        bottom: 0 // 調整此值以增加下邊距
       }
     }
   };
 
   /**
-   * @2024/06/07 Add
+   * @2024/06/14 Update
    * 自定義 Chart.js 圖表插件配置
    * @property allChartPlugins
    * @description
@@ -4029,7 +4034,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
         const ctx = chart.ctx; // 獲取圖表上下文
         ctx.save(); // 保存當前狀態
-        ctx.font = 'bold 15px Arial'; // 設置字體樣式
+        ctx.font = 'bold 12.5px Arial'; // 設置字體樣式
         ctx.fillStyle = 'white'; // 設置填充顏色
         ctx.textAlign = 'right'; // 設置對齊方式
         ctx.textBaseline = 'middle'; // 設置基線
@@ -4047,7 +4052,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           if (!meta.hidden) { // 如果數據集未隱藏
             meta.data.forEach((element: any, index: number) => {
               ctx.fillStyle = 'rgb(255, 255, 255)'; // 設置填充顏色
-              const fontSize = 12; // 字體大小
+              const fontSize = 12.5; // 字體大小
               const fontStyle = 'normal'; // 字體樣式
               const fontFamily = 'Arial'; // 字體家族
               ctx.font = `${fontStyle} ${fontSize}px ${fontFamily}`; // 設置字體
@@ -4057,7 +4062,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
               ctx.textAlign = 'right'; // 設置對齊方式
               ctx.textBaseline = 'middle'; // 設置基線
-              const padding = 208; // 填充
+              const padding = 239.5; // 填充
               const position = element.tooltipPosition(); // 獲取提示位置
               //ctx.fillText(dataString, padding, position.y); // 繪製文本
 
@@ -5028,6 +5033,8 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   // 控制加載 KPI 資訊的狀態標誌，初始化為 true 表示正在加載
   isLoadingFieldKpiInfo: boolean = true;
 
+  yAxisLabel_line: string = "";
+
   // @2024/06/12 Add
   dateForm_line!: FormGroup;
   viewModeForm_line!: FormGroup;
@@ -5046,26 +5053,38 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         title: {
           display: true,
           text: this.languageService.i18n['BS.timeInterval'],
+          font: {
+            size: 14
+          },
           color: 'white'
         },
         ticks: {
-          color: 'white'
+          color: 'white', // X 軸刻度字體顏色
+          font: {
+            size: 12.5   // 調整這裡改變字體大小
+          }
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.65)'
+          color: 'rgba(255, 255, 255, 0.7)'
         }
       },
       y: {
         title: {
           display: true,
-          text: '',
+          text: this.yAxisLabel_line, // 設置 Y 軸標題文本
+          font: {
+            size: 14
+          },
           color: 'white'
         },
         ticks: {
-          color: 'white'
+          color: 'white', // Y 軸刻度字體顏色
+          font: {
+            size: 12.5   // 調整這裡改變字體大小
+          }
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.65)'
+          color: 'rgba(255, 255, 255, 0.7)'
         }
       }
     },
@@ -5074,13 +5093,17 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         position: 'right',
         align: 'start',
         labels: {
-          color: 'white'
+          font: {
+            size: 11.5 // 圖例字體大小
+          },
+          color: 'white',
+          padding: 10
         },
         title: {
           display: true,
           text: this.languageService.i18n['BS.dataItems'],
           font: {
-            size: 14,
+            size: 15,
             weight: 'bold'
           },
           color: 'white',
@@ -5097,9 +5120,20 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         displayColors: true,
         callbacks: {
           label: (context) => {
-            return `${context.dataset.label}: ${context.raw} ${this.getUnit_line()}`;
+            const label = context.dataset.label || ''; // 獲取數據集標籤
+            const value = context.raw as number; // 獲取數據值
+            const unit = this.getUnit() || '';   // 獲取單位
+            return ` ${label} : ${value} ${unit}`;
           }
         }
+      }
+    },
+    layout: {
+      padding: {
+        left: 150, // 調整此值以增加左邊距，讓文字遠離邊界
+        right: 45, // 調整此值以增加右邊距
+        top: 10,   // 調整此值以增加上邊距
+        bottom: 5 // 調整此值以增加下邊距
       }
     }
   };
@@ -5744,8 +5778,6 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.lineChart?.update(); // 更新圖表 @2024/06/08 Note - 都改至 prepareAndUpdateChartData() 最後統一更新圖表
   }
 
-  yAxisLabel_line: string = "";
-
   setYAxisLabel_line() {
     let kpiName = '';      // 初始化 KPI 名稱
     let subKpiName = '';   // 初始化子KPI 名稱
@@ -5833,7 +5865,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/06/12 Add
+   * @2024/06/14 Update
    * 替換圖表 Y 軸標題
    * @method replaceTitleOfYAxisInLineChartOptions
    * @description
@@ -5842,68 +5874,93 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   replaceTitleOfYAxisInLineChartOptions() {
     this.lineChartOptions = {
-      responsive: true,  // 響應式設計
+      responsive: true,
       scales: {
-        x: {  // X 軸設置
+        x: {
           title: {
-            display: true, // 顯示標題
-            text: this.languageService.i18n['BS.timeInterval'], // 設置 X 軸標題
-            color: 'white' // 設置 X 軸標題顏色
+            display: true,
+            text: this.languageService.i18n['BS.timeInterval'],
+            font: {
+              size: 14
+            },
+            color: 'white'
           },
           ticks: {
-            color: 'white' // 設置 X 軸刻度顏色
+            color: 'white', // X 軸刻度字體顏色
+            font: {
+              size: 12.5   // 調整這裡改變字體大小
+            }
           },
           grid: {
-            color: 'rgba(255, 255, 255, 0.5)' // 設置 X 軸網格顏色
+            color: 'rgba(255, 255, 255, 0.7)'
           }
         },
-        y: {// Y 軸設置
+        y: {
           title: {
-            display: true, // 顯示標題
+            display: true,
             text: this.yAxisLabel_line, // 設置 Y 軸標題文本
-            color: 'white' // 設置 Y 軸標題顏色
+            font: {
+              size: 14
+            },
+            color: 'white'
           },
           ticks: {
-            color: 'white' // 設置 Y 軸刻度顏色
+            color: 'white', // Y 軸刻度字體顏色
+            font: {
+              size: 12.5   // 調整這裡改變字體大小
+            }
           },
           grid: {
-            color: 'rgba(255, 255, 255, 0.5)' // 設置 Y 軸網格顏色
+            color: 'rgba(255, 255, 255, 0.7)'
           }
         }
       },
       plugins: {
         legend: {
-          position: 'right', // 圖例位置在右側
-          align: 'start', // 將圖例整區置上
+          position: 'right',
+          align: 'start',
           labels: {
-            color: 'white' // 設置圖例標籤顏色
+            font: {
+              size: 11.5 // 圖例字體大小
+            },
+            color: 'white',
+            padding: 10
           },
           title: {
-            display: true, // 顯示圖例標題
-            text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
+            display: true,
+            text: this.languageService.i18n['BS.dataItems'],
             font: {
-              size: 14, // 圖例標題字體大小
-              weight: 'bold' // 圖例標題字體粗細
+              size: 15,
+              weight: 'bold'
             },
-            color: 'white', // 圖例標題顏色
+            color: 'white',
             padding: {
-              right: 10, // 圖例標題右側間距
-              bottom: 0 // 圖例標題下方間距
+              right: 10,
+              bottom: 0
             }
           }
         },
         tooltip: {
-          // backgroundColor: 'white', // 註解掉的背景顏色設置
-          titleColor: 'white', // 設置工具提示框標題顏色
-          borderColor: 'white', // 設置工具提示框邊框顏色
-          footerColor: 'white', // 設置工具提示框腳本顏色
-          displayColors: true, // 顯示對應數據點的顏色塊
+          titleColor: 'white',
+          borderColor: 'white',
+          footerColor: 'white',
+          displayColors: true,
           callbacks: {
             label: (context) => {
-              context.dataset.borderColor; // 設置數據集邊框顏色
-              return `${context.dataset.label}: ${context.raw} ${this.getUnit_line()}`; // 設置工具提示框標籤文本
+              const label = context.dataset.label || ''; // 獲取數據集標籤
+              const value = context.raw as number; // 獲取數據值
+              const unit = this.getUnit() || '';   // 獲取單位
+              return ` ${label} : ${value} ${unit}`;
             }
           }
+        }
+      },
+      layout: {
+        padding: {
+          left: 150, // 調整此值以增加左邊距，讓文字遠離邊界
+          right: 45, // 調整此值以增加右邊距
+          top: 10,   // 調整此值以增加上邊距
+          bottom: 5 // 調整此值以增加下邊距
         }
       }
     };
