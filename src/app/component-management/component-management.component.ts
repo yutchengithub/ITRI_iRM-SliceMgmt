@@ -122,21 +122,28 @@ export class ComponentManagementComponent implements OnInit {
       this.componentList = this.commonService.componentList;
       console.log(this.componentList);
       this.componentListDeal();
-      this.hideSpinner();
     } else {
       this.commonService.queryBsComponentList().subscribe(
         res => {
           console.log('getBsComponent List:');
           console.log(res);
-          
+          this.hideSpinner();
           const str = JSON.stringify(res);//convert array to string
           this.componentList = JSON.parse(str);
           this.componentListDeal();
-
-          this.hideSpinner();
         }
       );
     }
+  }
+
+  getVersion(opt: any): string {
+    if (opt.sm && opt.sm['software-inventory'] && opt.sm['software-inventory']['software-slot']) {
+      const softwareSlot = opt.sm['software-inventory']['software-slot'][0];
+      if (softwareSlot && softwareSlot.files && softwareSlot.files.version) {
+        return softwareSlot.files.version;
+      }
+    }
+    return '';
   }
 
   componentListDeal() {

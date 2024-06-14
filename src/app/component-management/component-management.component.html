@@ -6,8 +6,20 @@
       <span><label>{{languageService.i18n['cm.name']}}</label>
         <input type="text"formControlName="firm">
       </span>
-      <span><label>{{languageService.i18n['software_version']}}</label>
+      <span><label>IP Address</label>
           <input type="text"formControlName="model">
+      </span>
+      <span><label>Port</label>
+          <input type="text"formControlName="model">
+      </span>
+      <span>
+        <label>{{ languageService.i18n['type'] }}</label>
+        <!-- <select formControlName="Type">
+          <option *ngFor="let type of sliceTypes" [ngValue]="type.value">
+            {{ type.displayName }}
+          </option>
+        </select>
+        <mat-error *ngIf="searchForm.controls['Type'].invalid">Required</mat-error> -->
       </span>
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
       <!-- <span tooltip="{{languageService.i18n['ExportCSV']}}" class="material-icons" (click)="exportToCSV('componentList')">content_paste_go</span> -->
@@ -26,10 +38,10 @@
         <th>IP Address</th>
         <th>Port</th>
         <th>{{languageService.i18n['type']}}</th>
+        <th>{{languageService.i18n['BS.neSFversion']}}</th>
         <th>{{languageService.i18n['table.Status']}}</th>
         <th>{{languageService.i18n['index.view']}}</th>
         <th>{{languageService.i18n['cm.provision']}}</th>
-        <!-- <th>{{languageService.i18n['software_version']}}</th> -->
         <th>{{languageService.i18n['table.delete']}}</th>
       </tr>
     </thead>
@@ -40,7 +52,7 @@
         <td>{{opt.ip}}</td>
         <td>{{opt.port}}</td>
         <td>{{typeText(opt.comtype)}}</td>
-        <!-- <td>{{opt.sm?.['software-inventory']?.['software-slot'][0]?.files?.version}}</td> -->
+        <td>{{ getVersion(opt) }}</td>
         <td class="icon">
           <label *ngIf="opt.status === 2" class="greenLight"></label>
           <label *ngIf="opt.status === 0" class="grayLight"></label>
