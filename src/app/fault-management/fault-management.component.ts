@@ -125,7 +125,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.severitys = this.commonService.severitys;
     this.statusTypes = this.commonService.statusTypes;
     this.situations = this.commonService.situations;
-    this.owner = this.commonService.userId;
+    this.owner = this.commonService.getUserId();
   }
 
   fmsgList: FmsgList = {} as FmsgList;
