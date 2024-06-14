@@ -74,14 +74,32 @@ export interface situRecord {
 export class FaultManagementComponent implements OnInit, OnDestroy {
 
   sessionId: string = '';
-  refreshTimeout!: any;
+  // @2024/06/04 Add
+  owner: string = ""; // 用於儲存回應人員
+
+  isSearch: boolean = false;
+
+  severitys: string[] = [];
+  statusTypes: string[] = [];
+  situations: string[] = [];
+
+  searchForm!: FormGroup;
+
+  refreshTimeout: any;
+  queryCurrentAllFaultMessage: any;
+  queryFMstatusScpt: any;
+  queryFMstatusrecordScpt: any;
+  queryFMProcessScpt: any;
+  fmsgList: any;
 
   p: number = 1;            // 當前頁數
   pageSize: number = 10;    // 每頁幾筆
   totalItems: number = 0;   // 總筆數
 
   pageChanged( page: number ) {
-    this.p = page;
+    if ( !this.commonService.isLocal ) {
+      this.getFaultList();
+    }
   }
   
   // @2024/06/03 Add
@@ -104,10 +122,6 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.spinnerService.hide();
   }
 
-  // @2024/06/04 Add
-  // 用於儲存回應人員
-  owner: string = "";
-
   constructor(
     @Inject(LOCALE_ID) private locale: string,
     private   http: HttpClient,
@@ -128,30 +142,21 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.owner = this.commonService.getUserId();
   }
 
-  fmsgList: FmsgList = {} as FmsgList;
   selectedMsg: FaultMessages = {} as FaultMessages;
   modifyMsg: FaultMessages = {} as FaultMessages;
   modifySatus?: string;
   nullList: string[] = [];  // 給頁籤套件使用
-  searchForm!: FormGroup;
-  severitys: string[];
-  statusTypes: string[];
-  situations: string[];
-  queryFaultMessageScpt!: Subscription;
   @ViewChild('itemDetail') itemDetail: any;
   @ViewChild('statusModal') statusModal: any;
   statusModalRef!: MatDialogRef<any>;
   selectFaultId: string = '';
   fmStatus: FmStatus = {} as FmStatus;
-  queryFMstatusScpt!: Subscription;
   type: string = '';
-  queryFMstatusrecordScpt!: Subscription;
   selectedHistories: situRecord[] = []; //situation history of selected message
   showHistories: situRecord[] = []; //situation history of selected message for display
   addSitu: situRecord = {} as situRecord;
   @ViewChild('modifyModal') modifyModal: any;
   modifyModalRef!: MatDialogRef<any>;
-  queryFMProcessScpt!: Subscription;
   show200MsgTimeout!: any;
   show200Msg = false;
   show500Msg = false;
@@ -159,32 +164,32 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   record_pageSize: number = 5;
   record_totalItems: number = 0;
   timeSort: '' | 'asc' | 'desc' = '';
-  isSearch: boolean = false;
   filteredFmList: FaultMessages[] = [];
 
   ngOnInit(): void {
     this.createSearchForm();
     this.sessionId = this.commonService.getSessionId();
-    this.route.params.subscribe((params) => {
-      if (params['fieldName'] !== 'All') {
-        this.searchForm.controls['fieldName'].setValue(params['fieldName']);
+
+    this.route.params.subscribe( ( params ) => {
+      if ( params['fieldName'] !== 'All' ) {
+        this.searchForm.controls['fieldName'].setValue( params['fieldName'] );
       }
-      if (params['nfName'] !== 'All') {
-        this.searchForm.controls['nfName'].setValue(params['nfName']);
+      if ( params['nfName'] !== 'All' ) {
+        this.searchForm.controls['nfName'].setValue( params['nfName'] );
       }
     });
-    this.getFaultMessage();
-    this.owner = this.commonService.userId;
+    this.getFaultList();
+    this.owner = this.commonService.getUserId();
     console.log("ngOnInit() - owner:", this.owner);
   }
 
   ngAfterViewInit() {
-    this.owner = this.commonService.userId;
+    this.owner = this.commonService.getUserId();
   }
 
   ngOnDestroy() {
     clearTimeout(this.refreshTimeout);
-    if (this.queryFaultMessageScpt) this.queryFaultMessageScpt.unsubscribe();
+    if (this.queryCurrentAllFaultMessage) this.queryCurrentAllFaultMessage.unsubscribe();
     if (this.queryFMstatusScpt) this.queryFMstatusScpt.unsubscribe();
     if (this.queryFMstatusrecordScpt) this.queryFMstatusrecordScpt.unsubscribe();
     if (this.queryFMProcessScpt) this.queryFMProcessScpt.unsubscribe();
@@ -199,7 +204,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     this.searchForm = this.fb.group({
       'fieldName': new FormControl(''),
       'BSName': new FormControl(''),
-      'compName': new FormControl(''),
+      'neName': new FormControl(''),
       'alarmName': new FormControl(''),
       'severity': new FormControl('All'),
       'status': new FormControl('All'),
@@ -208,8 +213,66 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),   // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`))  // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
     });
-    this.severitys = this.commonService.severitys;
-    this.statusTypes = this.commonService.statusTypes;
+    //this.severitys = this.commonService.severitys;
+    //this.statusTypes = this.commonService.statusTypes;
+  }
+
+  // @2024/06/03 Add
+  faultList: FaultList = {} as FaultList;
+  filteredFaultList: FaultMessages_new[] = [];
+  getFaultList() {
+    console.log('getFaultMessage:');
+    clearTimeout(this.refreshTimeout);
+    if (this.commonService.isLocal) {
+      /* local file test */
+
+      // 引入正確 local file @2024/06/03 Add 
+      this.faultList = this.faultList_LocalFiles.faultList_local;
+      this.faultMessagesDeal();
+
+    } else {
+      const fieldName = this.searchForm.controls['fieldName'].value;
+      const BSName = this.searchForm.controls['BSName'].value;
+      const compName = this.searchForm.controls['neName'].value;
+      const alarmName = this.searchForm.controls['alarmName'].value;
+      const severity = this.searchForm.controls['severity'].value;
+      const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
+      const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
+      //const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
+      const offset = (this.p - 1) * this.pageSize;
+      const limit = 10;
+
+      if ( this.queryCurrentAllFaultMessage ) this.queryCurrentAllFaultMessage.unsubscribe();
+      this.queryCurrentAllFaultMessage = this.API_Fault.queryCurrentAllFaultMessage({
+        fieldName, 
+        BSName, 
+        compName, 
+        alarmName, 
+        severity, 
+        start, 
+        end, 
+        offset, 
+        limit
+      }).subscribe(res => {
+        this.faultList = res;
+        this.faultMessagesDeal();
+      });
+    }
+  }
+
+  faultMessagesDeal() {
+    //this.p = 1;
+    //this.totalItems = this.fmsgList.faultMessages.length;
+    this.totalItems = this.faultList.faultMessage.length;
+    this.nullList = new Array(this.totalItems);
+    // this.refreshTimeout = window.setTimeout(() => {
+    //   if (this.p === 1) {
+    //     console.log(`page[${this.p}] ===> refresh.`);
+    //     this.getFaultList();
+    //   } else {
+    //     console.log(`page[${this.p}] ===> no refresh.`);
+    //   }
+    // }, 100); //timeout 100ms
   }
 
   get faultListToDisplay(): FaultMessages_new[] {
@@ -218,7 +281,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     return this.isSearch ? this.filteredFaultList : this.faultList.faultMessage;
   }
 
-  
+  selectedFaultMsg: FaultMessages_new = {} as FaultMessages_new;
   openFaultDetail( faultMessages: FaultMessages_new ) {
     // this.show200Msg = false;
     // this.show500Msg = false;
@@ -231,76 +294,12 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
       });
     });  
   }
-  selectedFaultMsg: FaultMessages_new = {} as FaultMessages_new;
-
-  // @2024/06/03 Add
-  faultList: FaultList = {} as FaultList;
-  filteredFaultList: FaultMessages_new[] = [];
-  getFaultMessage() {
-    console.log('getFaultMessage:');
-    clearTimeout(this.refreshTimeout);
-    if (this.commonService.isLocal) {
-      /* local file test */
-      this.fmsgList = this.commonService.fmsgList;
-
-      // 引入正確 local file @2024/06/03 Add 
-      this.faultList = this.faultList_LocalFiles.faultList_local;
-
-      this.faultMessageDeal();
-    } else {
-      const fieldName = this.searchForm.controls['fieldName'].value;
-      const nfName = this.searchForm.controls['nfName'].value;
-      const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
-      const severity = this.searchForm.controls['severity'].value;
-      const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
-      const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
-      const offset = (this.p - 1) * this.pageSize;
-      const limit = 10;
-      if (this.queryFaultMessageScpt) this.queryFaultMessageScpt.unsubscribe();
-      this.queryFaultMessageScpt = this.commonService.queryFaultMessage(fieldName, nfName, acknowledgeOwner, severity, start, end, offset, limit).subscribe(
-        res => {
-          console.log('getFaultMessage:');
-          console.log(res);
-          const str = JSON.stringify(res);//convert array to string
-          this.fmsgList = JSON.parse(str);
-          this.fmsgList = res as FmsgList;
-          this.faultMessageDeal();
-        }
-      );
-    }
-  }
-
-  get msgToDisplay(): FaultMessages[] {
-    // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
-    // 否則，顯示全部 this.fmsgList.faultMessages
-    return this.isSearch ? this.filteredFmList : this.fmsgList.faultMessages;
-  }
-
-  faultMessageDeal() {
-    //this.p = 1;
-    //this.totalItems = this.fmsgList.faultMessages.length;
-    this.totalItems = this.faultList.faultMessage.length;
-    this.nullList = new Array(this.totalItems);
-    this.refreshTimeout = window.setTimeout(() => {
-      if (this.p === 1) {
-        console.log(`page[${this.p}] ===> refresh.`);
-        // if (this.isSettingAdvanced) {
-        //   this.getFMAdvanceSearch();
-        // } else {
-          this.getFaultMessage();
-        // }
-
-      } else {
-        console.log(`page[${this.p}] ===> no refresh.`);
-      }
-    }, 100); //timeout 100ms
-  }
 
   search() {
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
     const field_name = this.searchForm.get('fieldName')?.value || '';
     const BS_name = this.searchForm.get('BSName')?.value || '';
-    const comp_name = this.searchForm.get('compName')?.value || '';
+    const ne_name = this.searchForm.get('neName')?.value || '';
     const alarm_name = this.searchForm.get('alarmName')?.value || '';
     const severity_lv = this.searchForm.get('severity')?.value;
     const status_type = this.searchForm.get('status')?.value;
@@ -308,48 +307,66 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     const from = this.searchForm.get('from')?.value;
     const to = this.searchForm.get('to')?.value;
     const owner_name = this.searchForm.get('ackOwner')?.value || '';
-    let situ_num = 0;
 
-    if(situ_type === 'Pending')
-        situ_num = 1;
+    let situ_num = 0;
+    if (situ_type === 'Pending') situ_num = 1;
 
     // 格式化日期為所需的格式
     const formattedFrom = this.commonService.dealPostDate(from);
     const formattedTo = this.commonService.dealPostDate(to);
 
     // 清除以前的搜尋結果
-    this.filteredFmList = [];
+    this.filteredFaultList = [];
     this.isSearch = false;
 
     if (this.commonService.isLocal) {
       /* local file test */
-      this.filteredFmList = this.fmsgList.faultMessages.filter(msg => {
-        const isFieldMatch = !field_name || msg.fieldName.includes(field_name);
-        const isBSMatch = !BS_name || msg.bsName.includes(BS_name);
-        const isCompMatch = !comp_name || msg.compname.includes(comp_name);
+      this.filteredFaultList = this.faultList.faultMessage.filter( msg => {
+        const isFieldMatch = !field_name || msg.fieldName.includes( field_name );
+        const isBSMatch = !BS_name || msg.bsName.includes( BS_name );
+        const isNEMatch = !ne_name || msg.compname.includes( ne_name );
         const isAlarmMatch = !alarm_name || msg.probablecause.includes(alarm_name);
-        const isSeverityMatch = severity_lv === 'All' || msg.eventtype === severity_lv;
-        const isStatusMatch = status_type === 'All' || msg.status === status_type;
+        const isSeverityMatch = severity_lv === 'All' || msg.perceivedseverity === severity_lv;
+        const isStatusMatch = status_type === 'All' || msg.notificationtype === (status_type === 'excluded' ? 1 : 0);
         const isSituMatch = situ_type === 'All' || msg.processstatus === situ_num;
         const msgDate = new Date(msg.timestamp);
         const isAfterFrom = msgDate >= new Date(formattedFrom);
         const isBeforeTo = msgDate <= new Date(formattedTo);
-        const isOwnerMatch = !owner_name || msg.acknowledgeOwner.includes(owner_name);
+        //const isOwnerMatch = !owner_name || msg.acknowledgeOwner.includes(owner_name);
 
-        return isFieldMatch && isBSMatch && isCompMatch && isAlarmMatch && isSeverityMatch 
-                && isStatusMatch && isSituMatch && isAfterFrom && isBeforeTo && isOwnerMatch;
+        return isFieldMatch && isBSMatch && isNEMatch && isAlarmMatch && isSeverityMatch 
+                && isStatusMatch && isSituMatch && isAfterFrom && isBeforeTo;
       });
       this.isSearch = true; // Local Search 完畢，設置標記為 true
-      this.totalItems = this.filteredFmList.length; // 確保更新 totalItems 以反映搜尋結果的數量
+      this.totalItems = this.filteredFaultList.length; // 確保更新 totalItems 以反映搜尋結果的數量
     } else {
+      const params = {
+        fieldName: field_name,
+        BSName: BS_name,
+        compName: ne_name,
+        alarmName: alarm_name,
+        severity: severity_lv,
+        status: status_type,
+        situation: situ_type,
+        from: formattedFrom,
+        to: formattedTo,
+        offset: (this.p - 1) * this.pageSize,
+        limit: this.pageSize
+      };
 
+      this.queryCurrentAllFaultMessage = this.API_Fault.queryCurrentAllFaultMessage( params ).subscribe( res => {
+        this.filteredFaultList = res.faultMessage;
+        this.totalItems = res.totalMessageNumber;
+        this.isSearch = true;
+      });
     }
   }
 
   clear_search() {
     this.createSearchForm();
     this.isSearch = false;
-  }  
+    this.getFaultList();
+  } 
 
   openItemDetail(faultMessages: FaultMessages) {
     // this.show200Msg = false;
@@ -445,7 +462,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
             this.addSitu.acknowledgeOwner = "admin";
             this.selectedHistories.push(_.cloneDeep(this.addSitu));
 
-            this.getFaultMessage();
+            this.getFaultList();
             this.modifyMsg.processresult = "";
             //close message display after 1 sec
             this.show200MsgTimeout = window.setTimeout(() => this.show200Msg = false, 1 * 1000);
