@@ -4148,10 +4148,16 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         title: {
           display: true, // 顯示標題
           text: this.languageService.i18n['BS.hourlyInterval'], // X 軸標題文本
+          font: {
+            size: 14
+          },
           color: 'white' // X 軸標題顏色
         },
         ticks: {
-          color: 'white' // X 軸刻度顏色
+          color: 'white', // X 軸刻度字體顏色
+          font: {
+            size: 12.5   // 調整這裡改變字體大小
+          }
         },
         grid: {
           color: 'rgba(255, 255, 255, 0.65)' // X 軸網格線顏色
@@ -4161,10 +4167,16 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         title: {
           display: true,  // 顯示標題
           text: `${this.selectedKpiSubcategory} ( ${this.getUnit()} )`, // Y 軸標題文本
+          font: {
+            size: 14
+          },
           color: 'white', // Y 軸標題顏色
         },
         ticks: {
-          color: 'white'  // Y 軸刻度顏色
+          color: 'white', // Y 軸刻度字體顏色
+          font: {
+            size: 12.5   // 調整這裡改變字體大小
+          }
         },
         grid: {
           color: 'rgba(255, 255, 255, 0.65)' // Y 軸網格線顏色
@@ -5071,71 +5083,101 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   replaceTitleOfYAxisInLineChartOptions() {
     this.lineChartOptions = {
-      responsive: true,  // 響應式設計
+      responsive: true, // 響應式設計
       scales: {
-        x: {  // X 軸設置
+        x: { // X 軸設置
           title: {
             display: true, // 顯示標題
-            text: this.languageService.i18n['BS.hourlyInterval'], // 設置 X 軸標題
-            color: 'white' // 設置 X 軸標題顏色
+            text: this.languageService.i18n['BS.hourlyInterval'], // X 軸標題文本
+            font: {
+              size: 14
+            },
+            color: 'white' // X 軸標題顏色
           },
           ticks: {
-            color: 'white' // 設置 X 軸刻度顏色
+            color: 'white', // X 軸刻度字體顏色
+            font: {
+              size: 12.5   // 調整這裡改變字體大小
+            }
           },
           grid: {
-            color: 'rgba(255, 255, 255, 0.5)' // 設置 X 軸網格顏色
+            color: 'rgba(255, 255, 255, 0.65)' // X 軸網格線顏色
           }
         },
-        y: {// Y 軸設置
+        y: { // Y 軸設置
           title: {
-            display: true, // 顯示標題
-            text: this.yAxisLabel, // 設置 Y 軸標題文本
-            color: 'white' // 設置 Y 軸標題顏色
+            display: true,  // 顯示標題
+            text: `${this.selectedKpiSubcategory} ( ${this.getUnit()} )`, // Y 軸標題文本
+            font: {
+              size: 14
+            },
+            color: 'white', // Y 軸標題顏色
           },
           ticks: {
-            color: 'white' // 設置 Y 軸刻度顏色
+            color: 'white', // Y 軸刻度字體顏色
+            font: {
+              size: 12.5   // 調整這裡改變字體大小
+            }
           },
           grid: {
-            color: 'rgba(255, 255, 255, 0.5)' // 設置 Y 軸網格顏色
+            color: 'rgba(255, 255, 255, 0.65)' // Y 軸網格線顏色
           }
         }
       },
       plugins: {
-        legend: {
+        // title: {
+        //   display: true,
+        //   text: 'TEST', // 顯示的圖表標題文本
+        //   color: 'white',        // 設置標題字體顏色
+        //   font: {
+        //     size: 20 // 設置標題字體大小
+        //   },
+        //   padding: {
+        //     top: 10, // 標題的上間距
+        //     bottom: 10 // 標題的下間距
+        //   }
+        // },
+        legend: {            // 圖例設置
           position: 'right', // 圖例位置在右側
-          align: 'start', // 將圖例整區置上
+          align: 'start',    // 將圖例整區置上
           labels: {
-            color: 'white' // 設置圖例標籤顏色
+            color: 'white'   // 圖例標籤顏色
           },
           title: {
-            display: true, // 顯示圖例標題
+            display: true,   // 顯示圖例標題
             text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
             font: {
-              size: 14, // 圖例標題字體大小
+              size: 14,      // 圖例標題字體大小
               weight: 'bold' // 圖例標題字體粗細
             },
-            color: 'white', // 圖例標題顏色
+            color: 'white',  // 圖例標題顏色
             padding: {
               right: 10, // 圖例標題右側間距
-              bottom: 0 // 圖例標題下方間距
+              bottom: 0  // 圖例標題下方間距
             }
-          }
+          },
         },
-        tooltip: {
-          // backgroundColor: 'white', // 註解掉的背景顏色設置
-          titleColor: 'white', // 設置工具提示框標題顏色
-          borderColor: 'white', // 設置工具提示框邊框顏色
-          footerColor: 'white', // 設置工具提示框腳本顏色
-          displayColors: true, // 顯示對應數據點的顏色塊
+        tooltip: { 
+          // 自定義工具提示內容
+  
+          //backgroundColor: 'white', // 提示框背景顏色（已註解）
+          titleColor: 'white',        // 提示框標題顏色
+          borderColor: 'white',       // 提示框邊框顏色
+          footerColor: 'white',       // 提示框底部顏色
+          displayColors: true,        // 顯示對應數據點的顏色塊
           callbacks: {
-            label: (context) => {
-              context.dataset.borderColor; // 設置數據集邊框顏色
-              return `${context.dataset.label}: ${context.raw} ${this.getUnit()}`; // 設置工具提示框標籤文本
+            // 自定義工具提示標籤內容
+            label: ( context ) => {
+              // 獲取數據集邊框 borderColor 顏色（此行沒用到，可移除）
+              context.dataset.borderColor; 
+  
+              // 返回工具提示標籤文本，包括數據集標籤、數據值和單位
+              return `${context.dataset.label}: ${context.raw} ${this.getUnit()}`; 
             }
           }
         }
       }
-    };
+    }
   }
 
 
