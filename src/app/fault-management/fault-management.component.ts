@@ -91,16 +91,6 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   queryFMstatusrecordScpt: any;
   queryFMProcessScpt: any;
   fmsgList: any;
-
-  p: number = 1;            // 當前頁數
-  pageSize: number = 10;    // 每頁幾筆
-  totalItems: number = 0;   // 總筆數
-
-  pageChanged( page: number ) {
-    if ( !this.commonService.isLocal ) {
-      this.getFaultList();
-    }
-  }
   
   // @2024/06/03 Add
   // Show Spinner of Loading Title 
@@ -151,7 +141,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   statusModalRef!: MatDialogRef<any>;
   selectFaultId: string = '';
   fmStatus: FmStatus = {} as FmStatus;
-  type: string = '';
+  
   selectedHistories: situRecord[] = []; //situation history of selected message
   showHistories: situRecord[] = []; //situation history of selected message for display
   addSitu: situRecord = {} as situRecord;
@@ -215,6 +205,22 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     });
     //this.severitys = this.commonService.severitys;
     //this.statusTypes = this.commonService.statusTypes;
+  }
+
+           p: number = 1;  // 當前頁數
+    pageSize: number = 10; // 每頁幾筆
+  totalItems: number = 0;  // 總筆數
+
+  displayMode: string = '';
+  pageChanged( page: number ) {
+    this.p = page;
+    console.log( "Current faultList displayMode:", this.displayMode+", Page:", this.p );
+
+    // @2024/03/13 Add
+    // 如非 Local 模式，切換每頁時才呼叫 API 取得 log 資訊 
+    if ( !this.commonService.isLocal ) {
+      this.getFaultList();
+    }
   }
 
   // @2024/06/03 Add
@@ -381,6 +387,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     });  
   }
 
+  type: string = '';
   openStatusModal(faultMessages: FaultMessages_new) {
     //if (faultMessages.processstatus === 1) {
     // this.fmStatus = {} as FmStatus;
