@@ -411,11 +411,13 @@ export class LogManagementComponent implements OnInit, OnDestroy {
 
     // 判斷使用者 ID 是否為 'admin'
     if ( currentUserId !== 'admin' ) {
+      console.log("In local:", currentUserId);
       this.isUserIdDisabled = true;
       this.searchForm.get('UserID')?.setValue( currentUserId ); // 自動設定 UserID
       this.searchForm.get('UserID')?.disable(); // 禁用 UserID 欄位
     } else {
       this.isUserIdDisabled = false;
+      console.log("In local:", currentUserId);
 
       // 暫時關閉方便外包調整 @2024/04/25
       this.searchForm.get('UserID')?.enable(); // 確保 UserID 欄位是啟用的
@@ -1319,6 +1321,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
     // 格式化日期為所需的格式
     const formattedFrom = this.commonService.dealPostDate( from );
     const formattedTo = this.commonService.dealPostDate( to );
+    console.log("seach neName:", comp_name);
 
     // 清除以前的搜尋結果
     this.filtered_NELogs = [];

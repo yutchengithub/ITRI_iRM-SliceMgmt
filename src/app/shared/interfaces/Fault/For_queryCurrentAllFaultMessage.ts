@@ -9,6 +9,7 @@ export interface FaultMessages_new {
     bsId: string;
     bsName: string;
     fieldName: string;
+    fieldId?: string;
     compname: string;
     id: string;
     timestamp: string;

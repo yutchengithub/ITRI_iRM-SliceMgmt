@@ -23,15 +23,17 @@
     </span>
     <span><label>{{languageService.i18n['fm.status']}}</label>
       <select formControlName="status">
-        <option value="All">All</option>
-        <option *ngFor="let status of statusTypes" [value]="status">{{commonService.textTransfer(status)}}</option>
+        <option *ngFor="let status of statusTypes" [ngValue]="status.value">
+          {{ status.displayName }}
+        </option>
       </select>
       <mat-error *ngIf="searchForm.controls['status'].invalid">Required</mat-error>
     </span>
     <span><label>{{ languageService.i18n['fm.situation'] }}</label>
       <select formControlName="situation">
-        <option value="All">All</option>
-        <option *ngFor="let situation of situations" [value]="situation">{{ commonService.textTransfer(situation)}}</option>
+        <option *ngFor="let situation of situationTypes" [ngValue]="situation.value">
+          {{ situation.displayName }}
+        </option>
       </select>
       <mat-error *ngIf="searchForm.controls['situation'].invalid">Required</mat-error>
     </span>

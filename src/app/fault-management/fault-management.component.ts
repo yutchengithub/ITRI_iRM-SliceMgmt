@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Inject, LOCALE_ID } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Inject, LOCALE_ID } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
@@ -66,31 +66,74 @@ export interface situRecord {
   acknowledgeOwner: string;
 }
 
+
+// @2024/06/16 Add 
+// 定義 Status Type ( 告警狀態 ) 介面
+interface StatusType {
+  displayName: string;
+  value: string | number;
+}
+
+// @2024/06/16 Add 
+// 定義 Situation Type ( 處理狀況 ) 介面
+interface SituationType {
+  displayName: string;
+  value: string | number;
+}
+
 @Component({
   selector: 'app-fault-management',
   templateUrl: './fault-management.component.html',
   styleUrls: ['./fault-management.component.scss']
 })
-export class FaultManagementComponent implements OnInit, OnDestroy {
+export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sessionId: string = '';
+
+  refreshTimeout: any;
+
   // @2024/06/04 Add
   owner: string = ""; // 用於儲存回應人員
 
   isSearch: boolean = false;
 
   severitys: string[] = [];
-  statusTypes: string[] = [];
-  situations: string[] = [];
 
-  searchForm!: FormGroup;
+  // @2024/06/16 Add
+  // 定義所有 "告警狀態" 的類型及其對應的 notificationtype
+  statusTypes: StatusType[] = [
+    { displayName: 'All', value: 'All' },
+    { displayName: this.languageService.i18n['fm.unexcluded'], value: 0 },
+    { displayName: this.languageService.i18n['fm.excluded'], value: 1 },
+  ];
 
-  refreshTimeout: any;
-  queryCurrentAllFaultMessage: any;
-  queryFMstatusScpt: any;
-  queryFMstatusrecordScpt: any;
-  queryFMProcessScpt: any;
-  fmsgList: any;
+  // @2024/06/16 Add
+  // 定義所有的類型及其對應的 processstatus
+  situationTypes: StatusType[] = [
+    { displayName: 'All', value: 'All' },
+    { displayName: this.languageService.i18n['pending_error'], value: '' },
+    { displayName: this.languageService.i18n['resolved'], value: 1 },
+  ];
+
+  // @2024/06/16 Add
+  // 更新排程狀態和類型的顯示訊息，以對應當前用戶選擇的語言設定。這確保了用戶介面中相關訊息的多語言一致性。
+  updateFilterOptions() {
+
+    // 更新 statusTypes 以反映 "告警狀態" 下拉式選單的多語言選項
+    this.statusTypes = [
+      { displayName: 'All', value: 'All' },
+      { displayName: this.languageService.i18n['fm.unexcluded'], value: 0 },
+      { displayName: this.languageService.i18n['fm.excluded'], value: 1 },
+    ];
+
+    // 更新 situationTypes 以反映 "處理狀況" 下拉式選單的多語言選項
+    this.situationTypes = [
+      { displayName: 'All', value: 'All' },
+      { displayName: this.languageService.i18n['pending_error'], value: '' },
+      { displayName: this.languageService.i18n['resolved'], value: 1 },
+    ];
+
+  }
   
   // @2024/06/03 Add
   // Show Spinner of Loading Title 
@@ -113,7 +156,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    @Inject(LOCALE_ID) private locale: string,
+    @Inject( LOCALE_ID ) private locale: string,
     private   http: HttpClient,
     private     fb: FormBuilder,
     private  route: ActivatedRoute,
@@ -127,8 +170,6 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     public  faultList_LocalFiles: localFaultList, // @2024/06/03 Add for import Fault List Local Files
   ) {
     this.severitys = this.commonService.severitys;
-    this.statusTypes = this.commonService.statusTypes;
-    this.situations = this.commonService.situations;
     this.owner = this.commonService.getUserId();
   }
 
@@ -159,31 +200,47 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.createSearchForm();
     this.sessionId = this.commonService.getSessionId();
+    this.owner = this.commonService.getUserId();
+    console.log("ngOnInit() - owner:", this.owner);
 
     this.route.params.subscribe( ( params ) => {
       if ( params['fieldName'] !== 'All' ) {
         this.searchForm.controls['fieldName'].setValue( params['fieldName'] );
       }
-      if ( params['nfName'] !== 'All' ) {
-        this.searchForm.controls['nfName'].setValue( params['nfName'] );
+      if ( params['neName'] !== 'All' ) {
+        this.searchForm.controls['neName'].setValue( params['neName'] );
       }
     });
+
+    // 取得告警列表數據
     this.getFaultList();
-    this.owner = this.commonService.getUserId();
-    console.log("ngOnInit() - owner:", this.owner);
+
+    // @2024/06/16 Add
+    // 訂閱語系切換事件，以便在語言變更時更新告警下拉選單選項語系
+    this.languageService.languageChanged.subscribe(
+      ( language ) => this.updateFilterOptions(), // 監聽下拉選單選項語系
+    );
   }
 
   ngAfterViewInit() {
     this.owner = this.commonService.getUserId();
   }
 
+  queryCurrentAllFaultMessage: any;
+  queryCurrentFieldFaultMessage: any;
+  queryCurrentBsFaultMessage: any;
+  queryCurrentBsComFaultMessage: any;
+  fmsgList: any;
+
   ngOnDestroy() {
-    clearTimeout(this.refreshTimeout);
-    if (this.queryCurrentAllFaultMessage) this.queryCurrentAllFaultMessage.unsubscribe();
-    if (this.queryFMstatusScpt) this.queryFMstatusScpt.unsubscribe();
-    if (this.queryFMstatusrecordScpt) this.queryFMstatusrecordScpt.unsubscribe();
-    if (this.queryFMProcessScpt) this.queryFMProcessScpt.unsubscribe();
+    clearTimeout( this.refreshTimeout );
+    if ( this.queryCurrentAllFaultMessage ) this.queryCurrentAllFaultMessage.unsubscribe();
+    if ( this.queryCurrentFieldFaultMessage ) this.queryCurrentFieldFaultMessage.unsubscribe();
+    if ( this.queryCurrentBsFaultMessage ) this.queryCurrentBsFaultMessage.unsubscribe();
+    if ( this.queryCurrentBsComFaultMessage ) this.queryCurrentBsComFaultMessage.unsubscribe();
   }
+  
+  searchForm!: FormGroup;
 
   // 建立搜尋表單
   createSearchForm() {
@@ -270,7 +327,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     //this.p = 1;
     //this.totalItems = this.fmsgList.faultMessages.length;
     this.totalItems = this.faultList.faultMessage.length;
-    this.nullList = new Array(this.totalItems);
+    this.nullList = new Array( this.totalItems );
     // this.refreshTimeout = window.setTimeout(() => {
     //   if (this.p === 1) {
     //     console.log(`page[${this.p}] ===> refresh.`);
@@ -313,9 +370,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
     const from = this.searchForm.get('from')?.value;
     const to = this.searchForm.get('to')?.value;
     const owner_name = this.searchForm.get('ackOwner')?.value || '';
-
-    let situ_num = 0;
-    if (situ_type === 'Pending') situ_num = 1;
+    console.log("seach field_name:", field_name);
 
     // 格式化日期為所需的格式
     const formattedFrom = this.commonService.dealPostDate(from);
@@ -333,8 +388,8 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
         const isNEMatch = !ne_name || msg.compname.includes( ne_name );
         const isAlarmMatch = !alarm_name || msg.probablecause.includes(alarm_name);
         const isSeverityMatch = severity_lv === 'All' || msg.perceivedseverity === severity_lv;
-        const isStatusMatch = status_type === 'All' || msg.notificationtype === (status_type === 'excluded' ? 1 : 0);
-        const isSituMatch = situ_type === 'All' || msg.processstatus === situ_num;
+        const isStatusMatch = status_type === 'All' || msg.notificationtype === status_type;
+        const isSituMatch = situ_type === 'All' || msg.processstatus === situ_type;
         const msgDate = new Date(msg.timestamp);
         const isAfterFrom = msgDate >= new Date(formattedFrom);
         const isBeforeTo = msgDate <= new Date(formattedTo);
@@ -343,8 +398,10 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
         return isFieldMatch && isBSMatch && isNEMatch && isAlarmMatch && isSeverityMatch 
                 && isStatusMatch && isSituMatch && isAfterFrom && isBeforeTo;
       });
+
       this.isSearch = true; // Local Search 完畢，設置標記為 true
-      this.totalItems = this.filteredFaultList.length; // 確保更新 totalItems 以反映搜尋結果的數量
+      this.totalItems = this.filteredFaultList.length; // 確保更新 totalItems 以更新左下角統計數量，反映搜尋結果的數量
+
     } else {
       const params = {
         fieldName: field_name,
@@ -369,6 +426,7 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
   }
 
   clear_search() {
+    this.p = 1; // 重置回第 1 頁
     this.createSearchForm();
     this.isSearch = false;
     this.getFaultList();
@@ -427,8 +485,8 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
         this.fMstatusDeal();
         resolve(true);
       } else {
-        if (this.queryFMstatusScpt) this.queryFMstatusScpt.unsubscribe();
-        this.queryFMstatusScpt = this.commonService.queryFMstatus(this.selectFaultId).subscribe(
+        if (this.queryCurrentFieldFaultMessage) this.queryCurrentFieldFaultMessage.unsubscribe();
+        this.queryCurrentFieldFaultMessage = this.commonService.queryFMstatus(this.selectFaultId).subscribe(
           res => {
             console.log('getFMstatus:');
             console.log(res);
@@ -491,9 +549,9 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
         let status = 200; //Always success now        
         resolve(status);
       } else {
-        if (this.queryFMProcessScpt) this.queryFMProcessScpt.unsubscribe();
+        if (this.queryCurrentBsFaultMessage) this.queryCurrentBsFaultMessage.unsubscribe();
         const processStatus = (this.fmStatus.__processStatus === 'PENDING') ? 1 : 0;
-        this.queryFMstatusrecordScpt = this.commonService.queryFMProcess(this.selectFaultId, processStatus, this.fmStatus.processComment, this.fmStatus.acknowledgeOwner).subscribe(
+        this.queryCurrentBsFaultMessage = this.commonService.queryFMProcess(this.selectFaultId, processStatus, this.fmStatus.processComment, this.fmStatus.acknowledgeOwner).subscribe(
           (res: HttpResponse<any>) => {
             console.log('queryFMProcess:');
             console.log(res.status);
@@ -515,8 +573,8 @@ export class FaultManagementComponent implements OnInit, OnDestroy {
         this.fMstatusrecordDeal();
         resolve(true);
       } else {
-        if (this.queryFMstatusrecordScpt) this.queryFMstatusrecordScpt.unsubscribe();
-        this.queryFMstatusrecordScpt = this.commonService.queryFMstatusrecord(this.selectFaultId).subscribe(
+        if (this.queryCurrentBsComFaultMessage) this.queryCurrentBsComFaultMessage.unsubscribe();
+        this.queryCurrentBsComFaultMessage = this.commonService.queryFMstatusrecord(this.selectFaultId).subscribe(
           res => {
             // console.log('getFMstatusrecord:');
             // console.log(res);
