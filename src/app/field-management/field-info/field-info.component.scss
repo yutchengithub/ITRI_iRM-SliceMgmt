@@ -1615,11 +1615,14 @@ h6 {
   border: none;
   padding: 10px;
 }
-.filter .past24 label {
+.filter .past24  {
   float: right;
   color: #49515c;
-  margin: 0.6em 1.8em 0 0;
+  margin: 0 1.8em 0 0;
   font-size: 0.95em;
+}
+.filter .past24 .mat-icon {
+  margin: 0 .5em 0 0;
 }
 #fieldPMReportWindow canvas {
   margin: 2em;

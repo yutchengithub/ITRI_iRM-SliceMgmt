@@ -730,6 +730,8 @@ margin: 0 0 0 .5em;
 border-radius: 50em;
 padding: 0.2em;
 transition: all 0.3s;
+width: initial;
+height: initial;
 }
 #advancedModal ul li {
   display: inline-block;
@@ -976,6 +978,7 @@ transition: all 0.3s;
 p-calendar #time {
   width: 10.06em;
   padding: 5px 6px;
+  margin: 0 2px;
 }
 .p-datepicker table th {
   background: #d8e5f5!important;
@@ -1797,6 +1800,7 @@ body.tw #fault_statusModal ul li > label {
 }
 #fieldPMReportWindow {
   position: relative;
+  width: 96em;
 }
 #fault_statusModal h5 mat-button-toggle-group ,
 #fieldPMReportWindow mat-button-toggle-group {
@@ -1856,6 +1860,7 @@ body.tw #fault_statusModal ul li > label {
 }
 #fieldPMReportWindow .filter select {
   width: auto;
+  margin: 0 3px;
 }
 #fieldPMReportWindow canvas {
   margin: 1em 3em;
@@ -1869,6 +1874,14 @@ body.tw #fault_statusModal ul li > label {
 }
 #fieldPMReportWindow .table table {
   max-height: 14em;
+  width: 93%;
+  border: 0;
+}
+#fieldPMReportWindow table tbody tr td:first-child {
+  border-left: 1px solid #223b50;
+}
+#fieldPMReportWindow table tbody tr td {
+  border-bottom: 1px solid #223b50;
 }
 #fieldPMReportWindow table th {
   font-size: .9em;
@@ -1877,18 +1890,19 @@ body.tw #fault_statusModal ul li > label {
 #fieldPMReportWindow table td {
   text-align: center;
   line-height: 1em;
+  font-size: 14px;
   padding: 0.5em 0.6em;
 }
 #fieldPMReportWindow .filter form {
   display: inline-block;
-  margin: 0 .5em 0 0;
+  margin: 0 5px 0 0;
 }
 #fieldPMReportWindow table th .slash {
   position: absolute;
-  top: 29px;
-  left: -4px;
-  transform: rotate(20deg);
-  width: 165px;
+  top: 28px;
+  left: 0;
+  transform: rotate(12deg);
+  width: 260px;
   height: 1px;
   border-bottom: 1px solid #256295;
 }
@@ -1896,6 +1910,8 @@ body.tw #fault_statusModal ul li > label {
   position: sticky;
   top: 0px;
   border-right: 1px solid #2562959e;
+  margin: 0!important;
+  width: 260px;
 }
 #fieldPMReportWindow table th.relative span:first-child {
   position: absolute;
@@ -1907,8 +1923,26 @@ body.tw #fault_statusModal ul li > label {
   right: 8px;
   top: 7px;
 }
+#fieldPMReportWindow .Overview table th span {
+  margin: 0 1em;
+  display: block;
+}
 .nowrap {
   white-space: nowrap!important;
+}
+#fieldPMReportWindow .filter form:first-child::after {
+  content: "";
+  width: 1px;
+  height: 25px;
+  display: inline-block;
+  background-color: #4b6274;
+  margin: 0 0 0 5px;
+  vertical-align: middle;
+}
+#fieldPMReportWindow .canvas.chart-container {
+  display: block;
+  width: 85%;
+  margin: auto;
 }
 body.tw .performance table th.relative span:last-child {
   right: 38px!important;

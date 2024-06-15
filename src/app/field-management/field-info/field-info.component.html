@@ -1289,7 +1289,7 @@
 					
 					<form [formGroup]="viewModeForm_line">
 						&nbsp;
-						<span><!-- 檢視模式-->
+						<span class="border-left"><!-- 檢視模式-->
 							<label>{{ languageService.i18n['BS.viewMode'] }}:</label>
 							<select formControlName="viewMode_line" [(ngModel)]="selectedViewMode_line" (change)="onViewModeChange_line()">
 							<option *ngFor="let mode of viewModes_line" [value]="mode.value">{{ mode.displayName }}</option>
@@ -1310,7 +1310,7 @@
 					</form>
 				</div>
 				<!-- 圖表區 -->
-				<div class="chart-container">
+				<div class="canvas chart-container">
 					<canvas #lineChart
 							baseChart
 							width="1200" 

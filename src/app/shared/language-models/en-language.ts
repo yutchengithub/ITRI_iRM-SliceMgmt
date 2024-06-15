@@ -451,8 +451,8 @@ export const Enlanguage = {
   'BS.onlyBSLevel': 'Only BS Level',
   'BS.kpiCategory': 'KPI Category',
   'BS.kpiSubcategory': 'KPI Subcategory',
-  'BS.viewKPICategory': 'View KPI Category',
-  'BS.viewKPISubcategory': 'View KPI Subcategory',
+  'BS.viewKPICategory': 'KPI Category',
+  'BS.viewKPISubcategory': 'KPI Subcategory',
 
 
   'BS.accessibility': 'Accessibility',

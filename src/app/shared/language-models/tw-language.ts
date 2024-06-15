@@ -440,8 +440,8 @@ export const TwLanguage = {
   'BS.onlyBSLevel': '僅基站層級',
   'BS.kpiCategory': 'KPI 類別',
   'BS.kpiSubcategory': 'KPI 子類別',
-  'BS.viewKPICategory': '檢視 KPI 類別',
-  'BS.viewKPISubcategory': '檢視 KPI 子類別',
+  'BS.viewKPICategory': 'KPI 類別',
+  'BS.viewKPISubcategory': 'KPI 子類別',
 
 
   // "BS.accessibility": "連線成功率",
