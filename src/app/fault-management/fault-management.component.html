@@ -52,6 +52,38 @@
     <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
     <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clear_search()">clear</span>
   </div>
+
+  <!-- Search Criteria Summary of Fault Management -->
+  <div class="filterBY">
+    <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
+    <span *ngIf="afterSearchForm.controls['fieldName'].value">
+      <label>{{ languageService.i18n['fm.field'] }}:&nbsp;</label>{{ afterSearchForm.controls['fieldName'].value }}
+    </span>
+    <span *ngIf="afterSearchForm.controls['BSName'].value">
+      <label>{{ languageService.i18n['fm.BS'] }}:&nbsp;</label>{{ afterSearchForm.controls['BSName'].value }}
+    </span>
+    <span *ngIf="afterSearchForm.controls['neName'].value">
+      <label>{{ languageService.i18n['fm.component'] }}:&nbsp;</label>{{ afterSearchForm.controls['neName'].value }}
+    </span>
+    <span *ngIf="afterSearchForm.controls['alarmName'].value">  
+      <label>{{ languageService.i18n['fm.eCause'] }}:&nbsp;</label>{{ afterSearchForm.controls['alarmName'].value }}
+    </span>
+    <span *ngIf="afterSearchForm.controls['severity'].value">
+      <label>{{ languageService.i18n['fm.severity'] }}:&nbsp;</label>{{ commonService.textTransfer(afterSearchForm.controls['severity'].value) }}
+    </span>
+    <span *ngIf="afterSearchForm.controls['status'].value">
+      <label>{{ languageService.i18n['fm.status'] }}:&nbsp;</label>{{ getStatusDisplayName(afterSearchForm.controls['status'].value) }}  
+    </span>
+    <span *ngIf="afterSearchForm.controls['situation'].value">
+      <label>{{ languageService.i18n['fm.situation'] }}:&nbsp;</label>{{ getSituationDisplayName(afterSearchForm.controls['situation'].value) }}
+    </span>
+    <span *ngIf="afterSearchForm.controls['from'].value || afterSearchForm.controls['to'].value">
+      <label>{{ languageService.i18n['fm.occurtime'] }}:&nbsp;</label>
+        {{ afterSearchForm.controls['from'].value ? (commonService.dealPostDate(afterSearchForm.controls['from'].value) + ' ~ ') : '' }}
+        {{ afterSearchForm.controls['to'].value ? commonService.dealPostDate(afterSearchForm.controls['to'].value) : '' }}  
+    </span>
+  </div>
+
 </form>
 
 <div class="table fault_mgr">

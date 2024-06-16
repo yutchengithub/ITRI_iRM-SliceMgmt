@@ -109,7 +109,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   // @2024/06/16 Add
   // 定義所有的類型及其對應的 processstatus
-  situationTypes: StatusType[] = [
+  situationTypes: SituationType[] = [
     { displayName: 'All', value: 'All' },
     { displayName: this.languageService.i18n['pending_error'], value: '' },
     { displayName: this.languageService.i18n['resolved'], value: 1 },
@@ -166,11 +166,14 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     public   languageService: LanguageService,
     public    spinnerService: SpinnerService,
 
-    public  API_Fault: apiForFaultMgmt,           // @2024/06/03 Add for import API of Fault Management
-    public  faultList_LocalFiles: localFaultList, // @2024/06/03 Add for import Fault List Local Files
+    public             API_Fault: apiForFaultMgmt,  // @2024/06/03 Add for import API of Fault Management
+    public  faultList_LocalFiles: localFaultList,   // @2024/06/03 Add for import Fault List Local Files
   ) {
+
     this.severitys = this.commonService.severitys;
     this.owner = this.commonService.getUserId();
+
+    this.createSearchForm(); // 初始化並創建篩選 Fault Mgmt 用的 FormGroup
   }
 
   selectedMsg: FaultMessages = {} as FaultMessages;
@@ -198,8 +201,9 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   filteredFmList: FaultMessages[] = [];
 
   ngOnInit(): void {
-    this.createSearchForm();
+    
     this.sessionId = this.commonService.getSessionId();
+
     this.owner = this.commonService.getUserId();
     console.log("ngOnInit() - owner:", this.owner);
 
@@ -211,6 +215,11 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
         this.searchForm.controls['neName'].setValue( params['neName'] );
       }
     });
+
+    this.createSearchForm();
+
+    // 建立 searchForm 的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。
+    this.afterSearchForm = _.cloneDeep( this.searchForm );
 
     // 取得告警列表數據
     this.getFaultList();
@@ -230,7 +239,6 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   queryCurrentFieldFaultMessage: any;
   queryCurrentBsFaultMessage: any;
   queryCurrentBsComFaultMessage: any;
-  fmsgList: any;
 
   ngOnDestroy() {
     clearTimeout( this.refreshTimeout );
@@ -242,11 +250,25 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   
   searchForm!: FormGroup;
 
+  // 建立搜尋表單的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。 
+  afterSearchForm!: FormGroup;
+
+
+  // 取得狀態的顯示名稱
+  getStatusDisplayName( value: string | number ): string {
+    const matchedStatus = this.statusTypes.find( status => status.value === value );
+    return matchedStatus ? matchedStatus.displayName : '';
+  }
+
+  // 取得處理狀況的顯示名稱  
+  getSituationDisplayName( value: string | number ): string {
+    const matchedSituation = this.situationTypes.find( situation => situation.value === value );
+    return matchedSituation ? matchedSituation.displayName : '';  
+  }
+
   // 建立搜尋表單
   createSearchForm() {
     const nowTime = this.commonService.getNowTime();
-    // // // console.log(nowTime)
-    // // // 格式驗證需要處理?
 
     this.searchForm = this.fb.group({
       'fieldName': new FormControl(''),
@@ -260,8 +282,6 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),   // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`))  // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
     });
-    //this.severitys = this.commonService.severitys;
-    //this.statusTypes = this.commonService.statusTypes;
   }
 
            p: number = 1;  // 當前頁數
@@ -325,7 +345,6 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   faultMessagesDeal() {
     //this.p = 1;
-    //this.totalItems = this.fmsgList.faultMessages.length;
     this.totalItems = this.faultList.faultMessage.length;
     this.nullList = new Array( this.totalItems );
     // this.refreshTimeout = window.setTimeout(() => {
@@ -359,7 +378,13 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   search() {
+    console.log( 'search() - Start' );
+
+    // 更新顯示的搜尋條件
+    this.afterSearchForm = this.searchForm.value;
+
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
+
     const field_name = this.searchForm.get('fieldName')?.value || '';
     const BS_name = this.searchForm.get('BSName')?.value || '';
     const ne_name = this.searchForm.get('neName')?.value || '';
@@ -379,6 +404,8 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     // 清除以前的搜尋結果
     this.filteredFaultList = [];
     this.isSearch = false;
+
+    this.afterSearchForm = _.cloneDeep(this.searchForm); // 更新顯示的搜尋條件
 
     if (this.commonService.isLocal) {
       /* local file test */
@@ -423,12 +450,24 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
         this.isSearch = true;
       });
     }
+
+    // 檢查搜尋表單的值
+    console.log( 'Search criteria for fault mgmt:', this.afterSearchForm.value );
+
+    console.log( "search() - End" );
   }
 
   clear_search() {
-    this.p = 1; // 重置回第 1 頁
-    this.createSearchForm();
+
     this.isSearch = false;
+
+    this.searchForm.reset();
+    this.createSearchForm();
+    this.afterSearchForm = _.cloneDeep( this.searchForm );
+    
+
+    this.p = 1; // 當點擊重置搜尋時，將顯示頁數預設為 1
+
     this.getFaultList();
   } 
 
