@@ -304,9 +304,11 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   faultList: FaultList = {} as FaultList;
   filteredFaultList: FaultMessages_new[] = [];
   getFaultList() {
-    console.log('getFaultMessage:');
-    clearTimeout(this.refreshTimeout);
-    if (this.commonService.isLocal) {
+    console.log('getFaultList() - Start');
+
+    clearTimeout( this.refreshTimeout );
+
+    if ( this.commonService.isLocal ) {
       /* local file test */
 
       // 引入正確 local file @2024/06/03 Add 
@@ -341,20 +343,22 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
         this.faultMessagesDeal();
       });
     }
+
+    console.log('getFaultList() - End');
   }
 
   faultMessagesDeal() {
     //this.p = 1;
     this.totalItems = this.faultList.faultMessage.length;
     this.nullList = new Array( this.totalItems );
-    // this.refreshTimeout = window.setTimeout(() => {
-    //   if (this.p === 1) {
-    //     console.log(`page[${this.p}] ===> refresh.`);
-    //     this.getFaultList();
-    //   } else {
-    //     console.log(`page[${this.p}] ===> no refresh.`);
-    //   }
-    // }, 100); //timeout 100ms
+    this.refreshTimeout = window.setTimeout(() => {
+      if ( this.p === 1 ) {
+        console.log(`page[${this.p}] ===> refresh.`);
+        this.getFaultList();
+      } else {
+        console.log(`page[${this.p}] ===> no refresh.`);
+      }
+    }, 60000 ); // 設定 60000 ms ( 60s ) 後執行
   }
 
   get faultListToDisplay(): FaultMessages_new[] {
