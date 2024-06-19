@@ -150,7 +150,8 @@ import { localBSList }          from './shared/local-files/BS/For_queryBsList'; 
 import { localCurrentBsFmList } from './shared/local-files/BS/For_queryCurrentBsFaultMessage';     // @2024/03/31 Add
 import { localBsKpiInfo }       from './shared/local-files/BS/For_queryBsKpiInfo';                 // @2024/05/14 Add
 
-import { localFaultList }       from './shared/local-files/Fault/For_queryCurrentAllFaultMessage'; // @2024/06/03 Add
+import { localFaultList }        from './shared/local-files/Fault/For_queryCurrentAllFaultMessage';      // @2024/06/03 Add
+import { localFaultProcessList } from './shared/local-files/Fault/For_queryFaultAlarmProcessStatusList'; // @2024/06/19 Add
 
 import { localScheduleList }    from './shared/local-files/Schedule/For_queryJobTicketList';    // @2024/03/15 Add   
 import { localScheduleInfo }    from './shared/local-files/Schedule/For_queryJobTicketInfo';    // @2024/03/15 Add 
@@ -159,6 +160,7 @@ import { localUserLogsList }    from './shared/local-files/Log/For_queryLogList'
 import { localNELogsList }      from './shared/local-files/Log/For_queryUserNetconfLog';        // @2024/03/14 Add
 import { localNEList }          from './shared/local-files/NE/For_queryBsComponentList';        // @2024/03/14 Add
 import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeList';           // @2024/04/26 Add
+
 
 @NgModule({
   declarations: [
@@ -300,6 +302,7 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     localBsKpiInfo,           // @2024/05/14 Add for import Local files of Bs Kpi Info
 
     localFaultList,           // @2024/06/03 Add for import Local files of Fault List
+    localFaultProcessList,    // @2024/06/19 Add for import Local files of Fault Process List
 
     localScheduleList,        // @2024/03/15 Add for import Local files of Schedule List     
     localScheduleInfo,        // @2024/03/15 Add for import Local files of Schedule Info 

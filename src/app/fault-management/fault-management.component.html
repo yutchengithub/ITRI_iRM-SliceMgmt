@@ -90,22 +90,22 @@
   <table>
     <thead>
       <tr>
-        <th>{{languageService.i18n['fm.no']}}</th>
-        <th>{{languageService.i18n['fm.field']}}</th>
-        <th>{{languageService.i18n['fm.BS']}}</th>
-        <th>{{languageService.i18n['fm.component']}}</th>
-        <th>{{languageService.i18n['fm.eCause']}}</th>
-        <th>{{languageService.i18n['fm.severity']}}</th>
-        <th>{{languageService.i18n['fm.count']}}</th>
-        <th>{{languageService.i18n['fm.occurtime']}}</th>
-        <th>{{languageService.i18n['fm.status']}}</th>
-        <th>{{languageService.i18n['fm.situation']}}</th>
-        <th>{{languageService.i18n['fm.owner']}}</th>
-        <th>{{languageService.i18n['fm.view']}}</th>
+        <th>{{ languageService.i18n['fm.no'] }}</th>
+        <th>{{ languageService.i18n['fm.field'] }}</th>
+        <th>{{ languageService.i18n['fm.BS'] }}</th>
+        <th>{{ languageService.i18n['fm.component'] }}</th>
+        <th>{{ languageService.i18n['fm.eCause'] }}</th>
+        <th>{{ languageService.i18n['fm.severity'] }}</th>
+        <th>{{ languageService.i18n['fm.count'] }}</th>
+        <th>{{ languageService.i18n['fm.occurtime'] }}</th>
+        <th>{{ languageService.i18n['fm.status'] }}</th>
+        <th>{{ languageService.i18n['fm.situation'] }}</th>
+        <th>{{ languageService.i18n['fm.owner'] }}</th>
+        <th>{{ languageService.i18n['fm.view']}}</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let opt of faultListToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'fmList' }; let i = index">
+      <tr *ngFor="let opt of faultListToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'faultList' }; let i = index">
         <td>{{ (p - 1) * pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
         <td>{{ opt.fieldName }}</td>
         <td>{{ opt.bsName }}</td>
@@ -133,13 +133,14 @@
   </table>
   
   <!-- pagination -->    
-  <span class="total">{{languageService.i18n['fm.total1']}} {{totalItems}} {{languageService.i18n['fm.total2']}}</span>
-  <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel="" nextLabel="" id="fmList">
+  <span class="total">{{ languageService.i18n['fm.total1'] }} {{ totalItems }} {{ languageService.i18n['fm.total2'] }}</span>
+  <pagination-controls (pageChange)="pageChanged($event)" screenReaderPaginationLabel="Pagination" 
+                          previousLabel="" nextLabel="" id="faultList">
   </pagination-controls>
 </div>
 
 <ng-template #statusModal>
-  <h5>{{languageService.i18n['fm.situation']}}
+  <h5>{{ languageService.i18n['fm.situation'] }}
     <!-- processing_status -->
       <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
         <mat-button-toggle value="add_situation">{{languageService.i18n['fm.add']}}</mat-button-toggle>
@@ -208,38 +209,49 @@
   <!-- processing_status_record -->
   <ng-template [ngIf]="type === 'situation_history'">
     <div class="table statusTable">
-    <table>
-      <thead>
-        <tr>
-          <th>{{languageService.i18n['fm.no']}}</th>
-          <th (click)="doSortTime()">{{languageService.i18n['time']}}
-            <span class="material-symbols-outlined" *ngIf="timeSort === 'asc'">
-              arrow_downward
-            </span>
-            <span class="material-symbols-outlined" *ngIf="timeSort === 'desc'">
-              arrow_upward
-            </span>
-          </th>
-          <th>{{languageService.i18n['fm.situation']}}</th>
-          <th>{{languageService.i18n['fm.owner']}}</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr *ngFor="let opt of showHistories| paginate: { itemsPerPage: record_pageSize, currentPage: record_p, totalItems: record_totalItems, id: 'record' }; let i = index ">
-          <td>{{ (record_p - 1) * record_pageSize + i + 1 }}</td> <!-- 更動為動態生成每條訊息的編號 -->
-          <td>{{opt.timestamp}}</td>
-          <td>
-            <label *ngIf="opt.processStatus === 0" class="greenLight"></label>
-            <label *ngIf="opt.processStatus === 1" class="redLight"></label>
-            {{ opt.processComment }}
-          </td>
-          <td>{{opt.acknowledgeOwner}}</td>
-        </tr>
-      </tbody>
-    </table>
-    <pagination-controls (pageChange)="recordPageChanged($event)" screenReaderPaginationLabel="Pagination" previousLabel="" nextLabel="" id="record"></pagination-controls>
-  </div>
+      <table>
+        <thead>
+          <tr>
+            <th>{{ languageService.i18n['fm.no'] }}</th>
+            <th>
+              {{ languageService.i18n['time'] }}
+              <!-- <span class="material-symbols-outlined" *ngIf="timeSort === 'asc'" (click)="doSortTime()">
+                arrow_downward
+              </span>
+              <span class="material-symbols-outlined" *ngIf="timeSort === 'desc'">
+                arrow_upward
+              </span> -->
+            </th>
+            <th>{{ languageService.i18n['fm.situation'] }}</th>
+            <th>{{ languageService.i18n['fm.owner'] }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let opt of faultProcessListToDisplay | 
+                        paginate: { itemsPerPage: record_pageSize, currentPage: record_p, totalItems: record_totalItems, id: 'record' }; let i = index">
+            <td>{{ ( record_p - 1 ) * record_pageSize + i + 1 }}</td> <!-- 動態生成每條訊息的編號 -->
+            <td>{{ opt.createtime }}</td>
+            <td>
+              <label *ngIf="opt.processstatus === 0" class="greenLight"></label>
+              <label *ngIf="opt.processstatus === 1" class="redLight"></label>
+              {{ opt.processresult }}
+            </td>
+            <td>{{ owner }}</td>
+          </tr>
+          <tr class="notFind" *ngIf="faultProcessListToDisplay.length === 0">
+            <td colspan="4">{{ languageService.i18n['no_results'] }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- pagination -->    
+      <span class="total">{{ languageService.i18n['fm.total1'] }} {{ record_totalItems }} {{ languageService.i18n['fm.situation'] }}</span>
+      <pagination-controls (pageChange)="recordPageChanged($event)" screenReaderPaginationLabel="Pagination_Situation" 
+                              previousLabel="" nextLabel="" id="record">
+      </pagination-controls>
+    </div>
   </ng-template>
+  
 
   <div class="buttons">
     <button type="button" mat-dialog-close>{{languageService.i18n['fm.close']}}</button>

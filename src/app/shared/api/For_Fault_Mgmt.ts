@@ -100,7 +100,7 @@ export class apiForFaultMgmt {
    * @param params 其他查詢參數
    * @returns 返回一個 Observable 物件，發出 API 返回的資料
    */
-  queryFaultAlarmProcessStatusList( faultId: string, params: any ): Observable<any> {
+  queryFaultAlarmProcessStatusList( faultId: string ): Observable<any> {
 
     // 每次調用 API 時都動態獲取最新的 sessionId
     const sessionId = this.commonService.getSessionId();
@@ -109,7 +109,7 @@ export class apiForFaultMgmt {
     const url = `${this.restPath}/queryFaultAlarmProcessStatusList/${sessionId}/${faultId}`;
 
     // 發送 HTTP GET 請求到指定的 URL，並將 params 物件作為查詢參數傳遞給請求
-    return this.http.get( url, { params } );
+    return this.http.get( url );
   }
 
   /**

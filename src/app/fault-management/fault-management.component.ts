@@ -17,10 +17,12 @@ import { SpinnerService } from '../shared/service/spinner.service';
 import { apiForFaultMgmt } from '../shared/api/For_Fault_Mgmt';
 
 // 引入儲存各個資訊所需的 interfaces 
-import { FaultList, FaultMessages_new } from '../shared/interfaces/Fault/For_queryCurrentAllFaultMessage';       // @2024/06/03 Add
+import { FaultList, FaultMessages_new }        from '../shared/interfaces/Fault/For_queryCurrentAllFaultMessage';      // @2024/06/03 Add
+import { FaultProcessList, FaultAlarmProcess } from '../shared/interfaces/Fault/For_queryFaultAlarmProcessStatusList'; // @2024/06/19 Add
 
 // 引入所需 Local Files
 import { localFaultList } from '../shared/local-files/Fault/For_queryCurrentAllFaultMessage'; // @2024/06/03 Add
+import { localFaultProcessList } from '../shared/local-files/Fault/For_queryFaultAlarmProcessStatusList'; // @2024/06/19 Add
 
 export interface FmsgList {
   totalMessageNumber: number;
@@ -115,25 +117,29 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     { displayName: this.languageService.i18n['resolved'], value: 1 },
   ];
 
-  // @2024/06/16 Add
-  // 更新排程狀態和類型的顯示訊息，以對應當前用戶選擇的語言設定。這確保了用戶介面中相關訊息的多語言一致性。
+  /**
+   * @2024/06/16 Add
+   * 更新排程狀態和類型的顯示訊息，以對應當前用戶選擇的語言設定。
+   * 這確保了用戶介面中相關訊息的多語言一致性。
+   */
   updateFilterOptions() {
 
     // 更新 statusTypes 以反映 "告警狀態" 下拉式選單的多語言選項
     this.statusTypes = [
-      { displayName: 'All', value: 'All' },
-      { displayName: this.languageService.i18n['fm.unexcluded'], value: 0 },
-      { displayName: this.languageService.i18n['fm.excluded'], value: 1 },
+      { displayName: 'All', value: 'All' },  // 顯示所有選項
+      { displayName: this.languageService.i18n['fm.unexcluded'], value: 0 },  // 顯示未排除的選項
+      { displayName: this.languageService.i18n['fm.excluded'], value: 1 },  // 顯示已排除的選項
     ];
 
     // 更新 situationTypes 以反映 "處理狀況" 下拉式選單的多語言選項
     this.situationTypes = [
-      { displayName: 'All', value: 'All' },
-      { displayName: this.languageService.i18n['pending_error'], value: '' },
-      { displayName: this.languageService.i18n['resolved'], value: 1 },
+      { displayName: 'All', value: 'All' },  // 顯示所有選項
+      { displayName: this.languageService.i18n['pending_error'], value: '' },  // 顯示待處理錯誤的選項
+      { displayName: this.languageService.i18n['resolved'], value: 1 },  // 顯示已解決的選項
     ];
 
   }
+
   
   // @2024/06/03 Add
   // Show Spinner of Loading Title 
@@ -166,8 +172,9 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     public   languageService: LanguageService,
     public    spinnerService: SpinnerService,
 
-    public             API_Fault: apiForFaultMgmt,  // @2024/06/03 Add for import API of Fault Management
-    public  faultList_LocalFiles: localFaultList,   // @2024/06/03 Add for import Fault List Local Files
+    public                    API_Fault: apiForFaultMgmt,        // @2024/06/03 Add for import API of Fault Management
+    public         faultList_LocalFiles: localFaultList,         // @2024/06/03 Add for import Fault List Local Files
+    public  faultProcessList_LocalFiles: localFaultProcessList,  // @2024/06/19 Add for import Fault Process List Local Files
   ) {
 
     this.severitys = this.commonService.severitys;
@@ -194,10 +201,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   show200MsgTimeout!: any;
   show200Msg = false;
   show500Msg = false;
-  record_p: number = 1;
-  record_pageSize: number = 5;
-  record_totalItems: number = 0;
-  timeSort: '' | 'asc' | 'desc' = '';
+  //timeSort: '' | 'asc' | 'desc' = '';
   filteredFmList: FaultMessages[] = [];
 
   ngOnInit(): void {
@@ -302,30 +306,32 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   /**
    * @2024/06/19 Add
    * 將時間戳格式化為 "YYYY-MM-DD HH:mm:ss" 格式的字串
+   * @method formatTimestamp
    * @param timestamp 要格式化的時間戳字串
    * @returns 返回格式化後的日期時間字串
    */
-  formatTimestamp(timestamp: string): string {
+  formatTimestamp( timestamp: string ): string {
+
     // 將傳入的時間戳字串轉換為 Date 物件
-    const date = new Date(timestamp);
+    const date = new Date( timestamp );
 
     // 獲取年份
     const year = date.getFullYear();
 
     // 獲取月份，並確保是兩位數字
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const month = String( date.getMonth() + 1 ).padStart( 2, '0' );
 
     // 獲取日期，並確保是兩位數字
-    const day = String(date.getDate()).padStart(2, '0');
+    const day = String( date.getDate() ).padStart( 2, '0' );
 
     // 獲取小時，並確保是兩位數字
-    const hours = String(date.getHours()).padStart(2, '0');
-
+    const hours = String( date.getHours() ).padStart( 2, '0' );
+ 
     // 獲取分鐘，並確保是兩位數字
-    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const minutes = String( date.getMinutes() ).padStart( 2, '0');
 
     // 獲取秒數，並確保是兩位數字
-    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const seconds = String( date.getSeconds() ).padStart( 2, '0' );
 
     // 返回格式化後的日期時間字串
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
@@ -355,7 +361,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
       const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
       const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
       //const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
-      const offset = (this.p - 1) * this.pageSize;
+      const offset = ( this.p - 1 ) * this.pageSize;
       const limit = 10;
 
       if ( this.queryCurrentAllFaultMessage ) this.queryCurrentAllFaultMessage.unsubscribe();
@@ -519,7 +525,6 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     });  
   }
 
-  type: string = '';
   openStatusModal(faultMessages: FaultMessages_new) {
     //if (faultMessages.processstatus === 1) {
     // this.fmStatus = {} as FmStatus;
@@ -541,14 +546,113 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     //}
   }
 
-  changeType(e: MatButtonToggleChange) {
-    console.log(this.type);
-    if (this.type === 'add_situation') {
-      this.getFMstatus();
+  type: string = 'add_situation';
+  changeType( e: MatButtonToggleChange ) {
+    console.log( this.type );
+    if ( this.type === 'add_situation' ) {
+      //this.getFMstatus();
     } else {
-      this.getFMstatusrecord();
+      this.getFaultProcessList();
     }
   }
+
+
+  faultProcessList: FaultProcessList = {} as FaultProcessList;
+  isLoadingFaultProcessList = true;    // 表示是否正在加載 "處理狀況" 歷史列表
+  queryFaultProcessList!: Subscription; // 用於存儲從 API 請求獲得 "處理狀況" 歷史列表的訂閱對象
+
+  get faultProcessListToDisplay(): FaultAlarmProcess[] {
+    // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
+    // 否則，顯示全部 this.faultList.faultMessage
+    return this.faultProcessList.FaultAlarmProcess;
+  }
+
+  record_p: number = 1;
+  record_pageSize: number = 5;
+  record_totalItems: number = 0;
+  timeSort: 'asc' | 'desc' = 'asc';
+
+  recordPageChanged( page: number ) {
+    this.record_p = page;
+  }
+
+  doSortTime() {
+    this.timeSort = this.timeSort === 'asc' ? 'desc' : 'asc';
+    this.showHistories_new.sort((a, b) => {
+      const dateA = new Date(a.createtime).getTime();
+      const dateB = new Date(b.createtime).getTime();
+      return this.timeSort === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+  }
+
+  /**
+   * @2024/06/19 Add
+   * 用於取得指定告警的 "處理狀況" 歷史列表
+   * @method getFaultProcessList
+   * @returns {void}
+   * @description
+   *    - 根據運行模式（本地或服務器），從不同來源獲取 "處理狀況" 歷史列表
+   */
+  getFaultProcessList() {
+    console.log('getFaultProcessList() - Start'); // 標記開始獲取數據
+
+    this.isLoadingFaultProcessList = true;  // 開始加載數據
+    this.showLoadingSpinner();              // 顯示加載中的提示
+
+    const faultId = this.selectedFaultMsg.id; // 取得選中的告警ID
+
+    if ( this.commonService.isLocal ) {
+      // 如果是本地模式，從本地文件中獲取數據
+      
+      // 假設本地數據結構如下：
+      this.faultProcessList = this.faultProcessList_LocalFiles.faultAlarmProcessStatusList_local;
+      this.processFaultProcessList( this.faultProcessList );
+
+      console.log('In Local - FaultProcessList:', this.faultProcessList);
+      this.isLoadingFaultProcessList = false; // 標記加載完成
+      this.hideSpinner();  // 隱藏加載提示
+
+    } else {
+
+      // 非本地模式，從後端 API 獲取數據
+      this.queryFaultProcessList = this.API_Fault.queryFaultAlarmProcessStatusList( faultId ).subscribe({
+        next: ( res: FaultProcessList ) => {
+          this.faultProcessList = res; // 更新列表
+          console.log('From Server - FaultProcessList:', this.faultProcessList);
+          this.processFaultProcessList( this.faultProcessList ); // 處理獲得的列表
+          this.isLoadingFaultProcessList = false; // 標記加載完成
+          this.hideSpinner();  // 隱藏加載提示
+        },
+        error: ( error ) => {
+          console.error('Error fetching Fault Process list:', error);
+          this.isLoadingFaultProcessList = false; // 標記加載完成
+          this.hideSpinner();  // 隱藏加載提示
+        },
+        complete: () => {
+          console.log('Fault Process list fetch completed'); // 標記獲取完成
+          this.hideSpinner();  // 隱藏加載提示
+        }
+      });
+    }
+
+    console.log('getFaultProcessList() - End'); // 標記結束獲取數據
+  }
+
+  showHistories_new: FaultAlarmProcess[] = [];
+
+  // @2024/06/19 Add
+  processFaultProcessList( list: FaultProcessList ) {
+    // 處理獲得的列表邏輯
+    this.showHistories_new = list.FaultAlarmProcess;
+    this.record_totalItems = this.showHistories_new.length;
+  }
+
+
+
+
+
+
+  
 
   /* Add Situation start */
   getFMstatus(): Promise<any> {
@@ -639,7 +743,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   /* Situation History Start */
   getFMstatusrecord() {
-    this.timeSort = '';
+    //this.timeSort = '';
     return new Promise((resolve, reject) => {
       if (this.commonService.isLocal) {
         /* local file test */
@@ -666,24 +770,21 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     this.record_totalItems = this.selectedHistories.length;
   }
 
-  recordPageChanged(page: number) {
-    this.record_p = page;
-  }
 
-  doSortTime() {
-    if (this.timeSort === '') {
-      this.timeSort = 'asc';
-    } else if (this.timeSort === 'asc') {
-      this.timeSort = 'desc';
-    } else {
-      this.timeSort = '';
-    }
+  // doSortTime() {
+  //   if (this.timeSort === '') {
+  //     this.timeSort = 'asc';
+  //   } else if (this.timeSort === 'asc') {
+  //     this.timeSort = 'desc';
+  //   } else {
+  //     this.timeSort = '';
+  //   }
 
-    if (this.timeSort === '') {
-      this.showHistories = _.cloneDeep(this.selectedHistories);
-    } else {
-      this.showHistories = _.orderBy(this.selectedHistories, ['timestamp'], [this.timeSort as any]);
-    }
-  }
+  //   if (this.timeSort === '') {
+  //     this.showHistories = _.cloneDeep(this.selectedHistories);
+  //   } else {
+  //     this.showHistories = _.orderBy(this.selectedHistories, ['timestamp'], [this.timeSort as any]);
+  //   }
+  // }
   /* Situation History End */
 }
