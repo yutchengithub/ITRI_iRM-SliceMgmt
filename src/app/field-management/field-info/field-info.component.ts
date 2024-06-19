@@ -2580,6 +2580,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   //fieldEditType: string = 'BS_List';        // 預設選擇 "BS List"   
   isFirstEnterInBSListPage: boolean = false;  // 用於檢測是不是第一次進 "BS List" 頁 @2024/01/27 Add
   
+  // @2024/06/19 Update - 調整呼叫 getQueryBsList() 時機
   // 變更 field Edit 視窗顯示類型的函數
   changefieldEditType( e: MatButtonToggleChange ) {
     console.log( "changefieldEditType() - Start" );
@@ -2599,16 +2600,16 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // @2024/01/27 Add
       // 如是進入 BS_List 的第一次，則載入數據 
-      if ( !this.isFirstEnterInBSListPage ) {
+      // if ( !this.isFirstEnterInBSListPage ) {
           
-          this.getQueryBsList();                // 載入 BS List 數據
-          this.isFirstEnterInBSListPage = true; // 切換該 Flag ( 表示已不是第一次進入該頁面 )
-      } else {
+      //     this.getQueryBsList();                // 載入 BS List 數據
+      //     this.isFirstEnterInBSListPage = true; // 切換該 Flag ( 表示已不是第一次進入該頁面 )
+      // } else {
 
         // @2024/01/28 Add
         // 如果不是第一次該頁面，則同步基站選中狀態 
         this.syncBasestationSelection();
-      }
+     // }
       
       // 否則不需要做任何事情，保留 displayAllBSFlag 和 selectedBsInfos 的狀態
     }
