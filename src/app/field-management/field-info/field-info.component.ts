@@ -2487,7 +2487,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 // BS Modify Configuration Setting @2024/01/05 Add ↑
 
 
-// For Field Editing Setting @2024/01/11 Add ↓
+// For Field Editing Setting @2024/06/19 Update ↓
 
   // 創建表單組，用於場域編輯
   fieldEditForm!: FormGroup;
@@ -3105,7 +3105,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.isFieldImageOnFieldEditLoading = false;
   }
 
-// For Field Editing Setting @2024/01/11 Add ↑
+// For Field Editing Setting @2024/06/19 Update ↑
 
 
 // For PM Parameter Setting @2024/02/24 Update ↓
