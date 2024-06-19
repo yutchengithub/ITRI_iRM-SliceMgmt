@@ -1498,7 +1498,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   /**
-   * @2024/04/10 Update
+   * @2024/06/19 Update
    * 將 BSInfo 類型轉換為 SimplifiedBSInfo 類型 - All-in-one BS
    * @function convertBsInfoToSimplifiedFormat
    * @param {BSInfo} bsInfo - 待轉換的一體式基站資訊對象
@@ -1537,16 +1537,23 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       name: bsInfo.name,               // 從 bsInfo 取出基站名稱
       bstype: bsInfo.bstype,           // 從 bsInfo 取出基站類型
       status: bsInfo.status,           // 從 bsInfo 取出基站狀態
-      nci: bsInfo.info['bs-conf'].nci, // 從 bsInfo 的 info['bs-conf'] 取出 nci
-      pci: bsInfo.info['bs-conf'].pci, // 從 bsInfo 的 info['bs-conf'] 取出 pci
+      //nci: bsInfo.info['bs-conf'].nci, // 從 bsInfo 的 info['bs-conf'] 取出 nci
+      //pci: bsInfo.info['bs-conf'].pci, // 從 bsInfo 的 info['bs-conf'] 取出 pci
+      nci: bsInfo.extension_info[0].nci, // 從 bsInfo 的 extension_info 取出 nci
+      pci:  bsInfo.extension_info[0].NRCellDU!.db.nRPCI , // 從 bsInfo 的 extension_info 取出 pci
       'plmn-id': { 
         // 從 bsInfo 的 info['bs-conf']['plmn-id'] 取出 mcc 和 mnc
-        mcc: bsInfo.info['bs-conf']['plmn-id'].mcc,
-        mnc: bsInfo.info['bs-conf']['plmn-id'].mnc,
+        //mcc: bsInfo.info['bs-conf']['plmn-id'].mcc,
+        //mnc: bsInfo.info['bs-conf']['plmn-id'].mnc,
+        mcc: bsInfo.extension_info[0].NRCellDU!.db.pLMNId_MCC,
+        mnc: bsInfo.extension_info[0].NRCellDU!.db.pLMNId_MNC,
       },
-      "tx-power": bsInfo.info['bs-conf']['tx-power'],     // 從 bsInfo 的 info['bs-conf'] 取出發射功率
-      "nrarfcn-dl": bsInfo.info['bs-conf']['nrarfcn-dl'], // 從 bsInfo 的 info['bs-conf'] 取出下行 NR ARFCN
-      "nrarfcn-ul": bsInfo.info['bs-conf']['nrarfcn-ul'], // 從 bsInfo 的 info['bs-conf'] 取出上行 NR ARFCN 
+      //"tx-power": bsInfo.info['bs-conf']['tx-power'],     // 從 bsInfo 的 info['bs-conf'] 取出發射功率
+      "tx-power": bsInfo.extension_info[0].NRSectorCarrier!.db.configuredMaxTxPower,
+      //"nrarfcn-dl": bsInfo.info['bs-conf']['nrarfcn-dl'], // 從 bsInfo 的 info['bs-conf'] 取出下行 NR ARFCN
+      "nrarfcn-dl": bsInfo.extension_info[0].NRSectorCarrier!.db.arfcnDL,
+      //"nrarfcn-ul": bsInfo.info['bs-conf']['nrarfcn-ul'], // 從 bsInfo 的 info['bs-conf'] 取出上行 NR ARFCN 
+      "nrarfcn-ul": bsInfo.extension_info[0].NRSectorCarrier!.db.arfcnUL,
       position: bsInfo.position,  // 從 bsInfo 取出基站位置  
 
       componentId: bsInfo.extension_info[0].gNBCUFunction?.db.componentId, // 取出 CU 配置的 ID
@@ -1556,8 +1563,10 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       iconUrl: "",  // 初始化圖標 URL
 
       // When update BS need these:
-      tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
-      channelbandwidth: bsInfo.info['bs-conf']['channel-bandwidth'], // 從 bsInfo 取出基站 channelbandwidth
+      //tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
+      tac: bsInfo.extension_info[0].NRCellDU!.db.nRTAC, 
+      //channelbandwidth: bsInfo.info['bs-conf']['channel-bandwidth'], // 從 bsInfo 取出基站 channelbandwidth
+      channelbandwidth: bsInfo.extension_info[0].NRCellDU!.db.bSChannelBwDL,
       description: bsInfo.description, // 從 bsInfo 取出總基站描述
       components: bsInfo.components,
 
