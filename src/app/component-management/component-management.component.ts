@@ -139,12 +139,11 @@ export class ComponentManagementComponent implements OnInit {
 
   getVersion(opt: any): string {
     if (opt.sm && opt.sm['software-inventory'] && opt.sm['software-inventory']['software-slot']) {
-      const softwareSlot = opt.sm['software-inventory']['software-slot'][0];
-      if (softwareSlot && softwareSlot.files && softwareSlot.files.version) {
-        return softwareSlot.files.version;
-      }
+      const softwareSlots = opt.sm['software-inventory']['software-slot'];
+      const activeSlot = softwareSlots.find((slot: any) => slot.active === 'true');
+      return activeSlot ? activeSlot['build-version'] : 'N/A';
     }
-    return '';
+    return 'N/A';
   }
 
   componentListDeal() {

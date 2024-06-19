@@ -14,12 +14,11 @@
       </span>
       <span>
         <label>{{ languageService.i18n['type'] }}</label>
-        <!-- <select formControlName="Type">
-          <option *ngFor="let type of sliceTypes" [ngValue]="type.value">
-            {{ type.displayName }}
-          </option>
+        <select formControlName="comtype">
+          <option value="" ></option>
+          <option *ngFor="let opt of comtype" [value]="opt.value">{{opt.displayName}}</option>
         </select>
-        <mat-error *ngIf="searchForm.controls['Type'].invalid">Required</mat-error> -->
+        <mat-error *ngIf="formValidated&&createForm.controls['comtype'].invalid">Required</mat-error>
       </span>
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
       <!-- <span tooltip="{{languageService.i18n['ExportCSV']}}" class="material-icons" (click)="exportToCSV('componentList')">content_paste_go</span> -->
