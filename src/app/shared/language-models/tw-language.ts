@@ -515,6 +515,7 @@ export const TwLanguage = {
   'fm.detail':'詳細告警訊息',
   'fm.addsitch':'新增處理狀況',
   'fm.sHistory':'處理狀況歷史紀錄',
+  'fm.history': '歷史記錄',
   'fm.add':'新增',
   'fm.pending':'待處理',
   'fm.ended':'結束',
@@ -584,6 +585,7 @@ export const TwLanguage = {
   'pending_error':'待處理',
   'resolved':'已解決',
   'no_results':'未找到您想搜尋的相關數據。請嘗試修改搜尋關鍵字',
+
 
   //Dashboard
   'num_fields':'場域數量',

@@ -142,8 +142,8 @@
   <h5>{{languageService.i18n['fm.situation']}}
     <!-- processing_status -->
       <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
-        <mat-button-toggle value="add_situation">{{languageService.i18n['fm.addsitch']}}</mat-button-toggle>
-        <mat-button-toggle value="situation_history">{{languageService.i18n['fm.sHistory']}}</mat-button-toggle>
+        <mat-button-toggle value="add_situation">{{languageService.i18n['fm.add']}}</mat-button-toggle>
+        <mat-button-toggle value="situation_history">{{languageService.i18n['fm.history']}}</mat-button-toggle>
       </mat-button-toggle-group>
   </h5>
   <ul *ngIf="type === 'add_situation'">

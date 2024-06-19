@@ -505,6 +505,7 @@ export const Enlanguage = {
   'fm.detail':'Fault Message Detail',
   'fm.addsitch':'Add Situation',
   'fm.sHistory':'Situation History',
+  'fm.history': 'History',
   'fm.add':'Add',
   'fm.pending':'Pending',
   'fm.ended':'Ended',
