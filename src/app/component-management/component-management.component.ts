@@ -100,6 +100,7 @@ export class ComponentManagementComponent implements OnInit {
   ) {
     this.comtype.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
     this.createSearchForm();
+    this.afterSearchForm = _.cloneDeep( this.searchForm );
   }
 
   ngOnInit(): void {
@@ -109,12 +110,6 @@ export class ComponentManagementComponent implements OnInit {
   }
 
   getComponentList() {
-    const firm = this.searchForm.controls['firm'].value;
-    const uploadtype = this.searchForm.controls['uploadtype'].value;
-    const model = this.searchForm.controls['model'].value;
-    // console.log(`fileName=${firm}`);
-    // console.log(`uploadtype=${uploadtype}`);
-    // console.log(`model=${model}`);
     clearTimeout(this.refreshTimeout);
     this.showLoadingSpinner();
     if (this.commonService.isLocal) {
@@ -157,13 +152,8 @@ export class ComponentManagementComponent implements OnInit {
   }
 
   createSearchForm() {
-    const nowTime = this.commonService.getNowTime();
     this.searchForm = this.fb.group({
-      'firm': new FormControl(''),
-      'model': new FormControl(''),
-      'uploadtype': new FormControl('All'),
-      'version': new FormControl(''),
-      'fileName': new FormControl(''),
+      'comtype': new FormControl('All'),
     });
   }
   openCreateModal() {
@@ -368,25 +358,42 @@ export class ComponentManagementComponent implements OnInit {
     this.p = page;
   }
 
+  filtered_ComponentList: Components[] = []; 
+  isSearch_componentList: boolean = false;
   search() {
-    this.getComponentList();
+    // 確認 scheduleList 是否已加載
+    if ( !this.componentList || !this.componentList.components ) {
+      console.error('componentList.components is not loaded yet.');
+      return;
+    }
+  
+    // 更新顯示的搜尋條件，使用 Deep Copy
+    this.afterSearchForm = _.cloneDeep( this.searchForm ); 
+    this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
+    
+    // 清除以前的搜尋結果
+    this.filtered_ComponentList = []; // 存儲篩選結果的陣列
+    this.isSearch_componentList = false;
+    
+    // 從表單獲取篩選條件
+    const selectedTypeValue = this.searchForm.get('comtype')?.value;
+    console.log(selectedTypeValue);
+    // 應用篩選條件
+    this.filtered_ComponentList = this.componentList.components.filter(component => {
+      const isStateMatch = selectedTypeValue === 'All' || component.comtype.toString() === selectedTypeValue;
+      return isStateMatch;
+    });
+
+    this.isSearch_componentList = true; // 標記搜尋完成
+    this.totalItems = this.filtered_ComponentList.length; // 確保更新 totalItems 以反映搜尋結果的數量
+    console.log("篩選後的 filtered_ScheduleList :", this.filtered_ComponentList );
   }
 
-  debug() {
-    const body = this.createForm.value;
-    if (this.createForm.controls['uploadtype'].value === 'CU') {
-      body['uploadtype'] = 1;
-    } else if (this.createForm.controls['uploadtype'].value === 'DU') {
-      body['uploadtype'] = 2;
-    } else if (this.createForm.controls['uploadtype'].value === 'RU') {
-      body['uploadtype'] = 3;
-    } else if (this.createForm.controls['uploadtype'].value === 'CU+DU') {
-      body['uploadtype'] = 4;  
-    } else if (this.createForm.controls['uploadtype'].value === 'CU+DU+RU') {
-      body['uploadtype'] = 5;
+  get componentListToDisplay(): Components[] {
+    if (this.componentList && Array.isArray(this.componentList.components)) {
+      return this.isSearch_componentList ? this.filtered_ComponentList : this.componentList.components;
     }
-    body['sessionid'] = this.sessionId;
-    console.log(body);
+    return []; // If the data has not yet been loaded, return an empty array
   }
 
   viewPage(componentList: Components) {
@@ -394,9 +401,11 @@ export class ComponentManagementComponent implements OnInit {
   }
 
   clearSetting() {
-    this.isSearch = false;
+    this.searchForm.reset();
+    this.isSearch_componentList = false;
     this.createSearchForm();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
+    this.p = 1; // 當點擊重置搜尋時，將顯示頁數預設為 1
     this.getComponentList();
   }
 

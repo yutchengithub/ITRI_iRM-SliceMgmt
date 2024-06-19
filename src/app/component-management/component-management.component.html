@@ -15,10 +15,10 @@
       <span>
         <label>{{ languageService.i18n['type'] }}</label>
         <select formControlName="comtype">
-          <option value="" ></option>
-          <option *ngFor="let opt of comtype" [value]="opt.value">{{opt.displayName}}</option>
+          <option *ngFor="let type of comtype" [ngValue]="type.value">
+            {{ type.displayName }}
+          </option>
         </select>
-        <mat-error *ngIf="formValidated&&createForm.controls['comtype'].invalid">Required</mat-error>
       </span>
       <span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="search()">search</span>
       <!-- <span tooltip="{{languageService.i18n['ExportCSV']}}" class="material-icons" (click)="exportToCSV('componentList')">content_paste_go</span> -->
@@ -46,7 +46,7 @@
     </thead>
     <tbody>
       <tr
-        *ngFor="let opt of componentList.components | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
+        *ngFor="let opt of componentListToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
         <td>{{opt.name}}</td>
         <td>{{opt.ip}}</td>
         <td>{{opt.port}}</td>
