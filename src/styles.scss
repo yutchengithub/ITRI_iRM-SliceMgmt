@@ -1828,12 +1828,24 @@ body.tw #fault_statusModal ul li > label {
   background-color: #607089;
 }
 
-// bs-info mouseover 
+// bs-info mouseover @2024/06/19 Update
 .gm-style-iw-chr button[title="Close"] {
   width: 12px!important;
   height: 12px!important;
 }
 .gm-style-iw-chr button[title="Close"] span {
+  width: 18px !important;
+  height: 18px !important;
+  margin: 0 !important;
+  position: absolute;
+  right: 1px;
+  top: 2px;
+}
+.gm-style-iw-chr button[title="關閉"] {
+  width: 12px!important;
+  height: 12px!important;
+}
+.gm-style-iw-chr button[title="關閉"] span {
   width: 18px !important;
   height: 18px !important;
   margin: 0 !important;
