@@ -253,7 +253,6 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   // 建立搜尋表單的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。 
   afterSearchForm!: FormGroup;
 
-
   // 取得狀態的顯示名稱
   getStatusDisplayName( value: string | number ): string {
     const matchedStatus = this.statusTypes.find( status => status.value === value );
@@ -298,6 +297,38 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     if ( !this.commonService.isLocal ) {
       this.getFaultList();
     }
+  }
+
+  /**
+   * @2024/06/19 Add
+   * 將時間戳格式化為 "YYYY-MM-DD HH:mm:ss" 格式的字串
+   * @param timestamp 要格式化的時間戳字串
+   * @returns 返回格式化後的日期時間字串
+   */
+  formatTimestamp(timestamp: string): string {
+    // 將傳入的時間戳字串轉換為 Date 物件
+    const date = new Date(timestamp);
+
+    // 獲取年份
+    const year = date.getFullYear();
+
+    // 獲取月份，並確保是兩位數字
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+
+    // 獲取日期，並確保是兩位數字
+    const day = String(date.getDate()).padStart(2, '0');
+
+    // 獲取小時，並確保是兩位數字
+    const hours = String(date.getHours()).padStart(2, '0');
+
+    // 獲取分鐘，並確保是兩位數字
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    // 獲取秒數，並確保是兩位數字
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    // 返回格式化後的日期時間字串
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 
   // @2024/06/03 Add

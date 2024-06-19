@@ -113,7 +113,7 @@
         <td>{{ opt.probablecause }}</td>
         <td>{{ commonService.textTransfer( opt.perceivedseverity ) }}</td>
         <td>{{ opt.count }}</td>
-        <td>{{ opt.timestamp }}</td>
+        <td>{{ formatTimestamp( opt.timestamp ) }}</td>
         <td>
           <label *ngIf=" opt.notificationtype === 0 ">{{ languageService.i18n['fm.unexcluded'] }}</label>
           <label *ngIf=" opt.notificationtype === 1 ">{{ languageService.i18n['fm.excluded'] }}</label>
@@ -166,7 +166,7 @@
       <label>{{languageService.i18n['fm.eCause']}}: </label><span>{{ selectedFaultMsg.probablecause }}</span>
     </li>
     <li>
-      <label>{{languageService.i18n['fm.occurtime']}}: </label><span>{{ selectedFaultMsg.timestamp }}</span>
+      <label>{{languageService.i18n['fm.occurtime']}}: </label><span>{{ formatTimestamp( selectedFaultMsg.timestamp ) }}</span>
     </li>
     <li>
       <label>{{ languageService.i18n['fm.status'] }}: </label>
@@ -292,7 +292,7 @@
       <label>{{ languageService.i18n['fm.owner'] }}: </label><span>{{ owner }}</span>
     </li>
     <li>
-      <label>{{ languageService.i18n['fm.occurtime'] }}: </label><span>{{ selectedFaultMsg.timestamp }}</span>
+      <label>{{ languageService.i18n['fm.occurtime'] }}: </label><span>{{ formatTimestamp( selectedFaultMsg.timestamp ) }}</span>
     </li>
     <li>
       <label>{{ languageService.i18n['fm.createtime'] }}: </label><span>{{ selectedFaultMsg.createtime }}</span>
