@@ -4,13 +4,13 @@
   <form [formGroup]="searchForm">
     <div class="filter">
       <span><label>{{languageService.i18n['cm.name']}}</label>
-        <input type="text"formControlName="firm">
+        <input type="text" formControlName="name">
       </span>
       <span><label>IP Address</label>
-          <input type="text"formControlName="model">
+          <input type="text" formControlName="ipaddress">
       </span>
       <span><label>Port</label>
-          <input type="text"formControlName="model">
+          <input type="text" formControlName="port">
       </span>
       <span>
         <label>{{ languageService.i18n['type'] }}</label>
@@ -26,6 +26,27 @@
         <mat-icon svgIcon="export_to_csv"></mat-icon>
       </span>
       <span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSetting()">clear</span>
+    </div>
+    <div class="filterBY">
+      <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
+        <span *ngIf="afterSearchForm.controls['name'].value">
+          <label>{{ languageService.i18n['cm.name'] }}:&nbsp;</label>{{ afterSearchForm.controls['name'].value }}
+        </span>
+        <span *ngIf="afterSearchForm.controls['ipaddress'].value">
+          <label>IP Address:&nbsp;</label>{{ afterSearchForm.controls['ipaddress'].value }}
+        </span>
+        <span *ngIf="afterSearchForm.controls['port'].value">
+          <label>Port:&nbsp;</label>{{ afterSearchForm.controls['port'].value }}
+        </span>
+        <span *ngIf="afterSearchForm && afterSearchForm.controls['comtype'] && afterSearchForm.controls['comtype'].value">
+          <label>{{ languageService.i18n['type'] }}:&nbsp;</label>
+          <label *ngIf="afterSearchForm.controls['comtype'].value === 'All'">All</label>
+          <label *ngIf=" afterSearchForm.controls['comtype'].value === '1' ">CU</label>
+          <label *ngIf=" afterSearchForm.controls['comtype'].value === '2' ">DU</label>
+          <label *ngIf=" afterSearchForm.controls['comtype'].value === '3' ">RU</label>
+          <label *ngIf=" afterSearchForm.controls['comtype'].value === '4' ">CU+DU</label>
+          <label *ngIf=" afterSearchForm.controls['comtype'].value === '5' ">CU+DU+RU</label>
+        </span>
     </div>
   </form>
 

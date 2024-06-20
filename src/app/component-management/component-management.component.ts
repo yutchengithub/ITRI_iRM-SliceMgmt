@@ -153,7 +153,10 @@ export class ComponentManagementComponent implements OnInit {
 
   createSearchForm() {
     this.searchForm = this.fb.group({
-      'comtype': new FormControl('All'),
+      'name': new FormControl(''),
+      'ipaddress': new FormControl(''),
+      'port': new FormControl(''),
+      'comtype': new FormControl('All')
     });
   }
   openCreateModal() {
@@ -358,7 +361,7 @@ export class ComponentManagementComponent implements OnInit {
     this.p = page;
   }
 
-  filtered_ComponentList: Components[] = []; 
+  filtered_ComponentList: Components[] = [];
   isSearch_componentList: boolean = false;
   search() {
     // 確認 scheduleList 是否已加載
@@ -377,11 +380,17 @@ export class ComponentManagementComponent implements OnInit {
     
     // 從表單獲取篩選條件
     const selectedTypeValue = this.searchForm.get('comtype')?.value;
-    console.log(selectedTypeValue);
+    const ipaddressValue = this.searchForm.get('ipaddress')?.value;
+    const portValue = this.searchForm.get('port')?.value;
+    const nameValue = this.searchForm.get('name')?.value;
+    console.log(nameValue);
     // 應用篩選條件
     this.filtered_ComponentList = this.componentList.components.filter(component => {
-      const isStateMatch = selectedTypeValue === 'All' || component.comtype.toString() === selectedTypeValue;
-      return isStateMatch;
+      const isTypeMatch = selectedTypeValue === 'All' || component.comtype.toString() === selectedTypeValue;
+      const isNameMatch = !nameValue || component.name.includes(nameValue);
+      const isIpAddressMatch = !ipaddressValue || component.ip.includes(ipaddressValue);
+      const isPortMatch = !portValue || component.port.toString() === portValue;
+      return isTypeMatch && isNameMatch && isIpAddressMatch && isPortMatch;
     });
 
     this.isSearch_componentList = true; // 標記搜尋完成
@@ -410,16 +419,13 @@ export class ComponentManagementComponent implements OnInit {
   }
 
   exportToCSV(dataType: string) {
+    console.log(dataType);
     let dataToExport: Components[] = [];
-    const from = this.commonService.dealPostDate(this.searchForm.get('from')?.value);
-    const to = this.commonService.dealPostDate(this.searchForm.get('to')?.value);
-    const formattedFromDate = from.split(' ')[0];
-    const formattedToDate = to.split(' ')[0];
     if (this.commonService.isLocal) {
       /* local file test */
       dataToExport = this.commonService.componentList.components;
-    } else {//run iRM API
-      dataToExport = this.componentList.components;
+    } else { //run iRM API
+      dataToExport = this.isSearch_componentList ? this.filtered_ComponentList : this.componentList.components;
     }
     const csvData = this.convertToCSV(dataToExport);
     const blob = new Blob([csvData], { type: 'text/csv' });
@@ -434,6 +440,9 @@ export class ComponentManagementComponent implements OnInit {
   }
 
   convertToCSV(data: any[]): string {
+    if (data.length === 0) {
+      return '';
+    }
     const header = Object.keys(data[0]).join(',');
     const rows = data.map(row => {
       return Object.values(row).map(value => {
