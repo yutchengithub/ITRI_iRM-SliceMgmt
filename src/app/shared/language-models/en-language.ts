@@ -516,6 +516,7 @@ export const Enlanguage = {
   'fm.excluded':'Excluded',
   'fm.unexcluded':'Unexcluded',
   'fm.statusReport':'Status Report',
+  'fm.processingTotal2':'Situations',
 
   // Performance Management
   'pm.field':'Field Name',

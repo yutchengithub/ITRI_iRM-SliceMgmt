@@ -507,8 +507,8 @@ export const TwLanguage = {
   'fm.situation':'處理狀況',
   'fm.owner':'回應人員',
   'fm.view':'檢視',
-  'fm.total1':'全部共有',
-  'fm.total2':'項訊息',
+  'fm.total1':'總共',
+  'fm.total2':'項告警訊息',
   'fm.eType':'告警分類',
   'fm.eCause':'告警原因',
   'fm.eDesc':'詳細描述',
@@ -516,6 +516,7 @@ export const TwLanguage = {
   'fm.addsitch':'新增處理狀況',
   'fm.sHistory':'處理狀況歷史紀錄',
   'fm.history': '歷史記錄',
+  
   'fm.add':'新增',
   'fm.pending':'待處理',
   'fm.ended':'結束',
@@ -526,6 +527,7 @@ export const TwLanguage = {
   'fm.excluded':'已排除',
   'fm.unexcluded':'未排除',
   'fm.statusReport':'狀況回報',
+  'fm.processingTotal2':'項處理狀況',
 
   // Performance Management (效能管理)
   'pm.field':'場域名稱',

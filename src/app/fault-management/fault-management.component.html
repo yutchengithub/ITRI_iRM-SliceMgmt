@@ -143,8 +143,8 @@
   <h5>{{ languageService.i18n['fm.situation'] }}
     <!-- processing_status -->
       <mat-button-toggle-group name="type" [(ngModel)]="type" (change)="changeType($event)">
-        <mat-button-toggle value="add_situation">{{languageService.i18n['fm.add']}}</mat-button-toggle>
-        <mat-button-toggle value="situation_history">{{languageService.i18n['fm.history']}}</mat-button-toggle>
+        <mat-button-toggle value="add_situation">{{ languageService.i18n['fm.add'] }}</mat-button-toggle>
+        <mat-button-toggle value="situation_history">{{ languageService.i18n['fm.history'] }}</mat-button-toggle>
       </mat-button-toggle-group>
   </h5>
   <ul *ngIf="type === 'add_situation'">
@@ -245,7 +245,7 @@
       </table>
 
       <!-- pagination -->    
-      <span class="total">{{ languageService.i18n['fm.total1'] }} {{ record_totalItems }} {{ languageService.i18n['fm.situation'] }}</span>
+      <span class="total">{{ languageService.i18n['Log.total'] }} {{ record_totalItems }} {{ languageService.i18n['fm.processingTotal2'] }}</span>
       <pagination-controls (pageChange)="recordPageChanged($event)" screenReaderPaginationLabel="Pagination_Situation" 
                               previousLabel="" nextLabel="" id="record">
       </pagination-controls>
@@ -254,7 +254,7 @@
   
 
   <div class="buttons">
-    <button type="button" mat-dialog-close>{{languageService.i18n['fm.close']}}</button>
+    <button type="button" mat-dialog-close>{{ languageService.i18n['fm.close'] }}</button>
   </div>
 </ng-template>
 
