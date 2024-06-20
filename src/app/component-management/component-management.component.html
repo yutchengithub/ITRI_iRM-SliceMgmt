@@ -3,7 +3,7 @@
 </h5>
   <form [formGroup]="searchForm">
     <div class="filter">
-      <span><label>{{languageService.i18n['cm.name']}}</label>
+      <span><label>{{languageService.i18n['BS.neName']}}</label>
         <input type="text" formControlName="name">
       </span>
       <span><label>IP Address</label>
@@ -30,7 +30,7 @@
     <div class="filterBY">
       <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
         <span *ngIf="afterSearchForm.controls['name'].value">
-          <label>{{ languageService.i18n['cm.name'] }}:&nbsp;</label>{{ afterSearchForm.controls['name'].value }}
+          <label>{{ languageService.i18n['BS.neName'] }}:&nbsp;</label>{{ afterSearchForm.controls['name'].value }}
         </span>
         <span *ngIf="afterSearchForm.controls['ipaddress'].value">
           <label>IP Address:&nbsp;</label>{{ afterSearchForm.controls['ipaddress'].value }}
@@ -54,7 +54,7 @@
   <table>
     <thead>
       <tr>
-        <th>{{languageService.i18n['cm.name']}}</th>
+        <th>{{languageService.i18n['BS.neName']}}</th>
         <th>IP Address</th>
         <th>Port</th>
         <th>{{languageService.i18n['type']}}</th>
@@ -100,14 +100,14 @@
   <form [formGroup]="createForm" >
     <ul class="addcomponent-ul-li-label">
       <li>
-        <label>{{languageService.i18n['cm.name']}}</label>
+        <label>{{languageService.i18n['BS.neName']}}</label>
         <span>
           <input type="text" formControlName="name" class="{{formValidated&&createForm.controls['name'].invalid?'required':''}}">
           <mat-error *ngIf="formValidated&&createForm.controls['name'].invalid">Required</mat-error>
         </span>
       </li>
       <li>
-        <label>{{languageService.i18n['cm.type']}}</label>
+        <label>{{languageService.i18n['BS.neType']}}</label>
         <span>
           <select formControlName="comtype" class="{{formValidated&&createForm.controls['comtype'].invalid?'required':''}}">
             <option value="" ></option>
