@@ -481,6 +481,7 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
   margin: .5em 0;
   text-align: right;
   width: 96%;
+  position: relative;
 }
 .ngx-pagination li {
   margin:0;
@@ -1014,8 +1015,9 @@ p-calendar #time {
 .filter .p-calendar .p-datepicker {
   margin: 0;
   padding: 0 0.5rem;
-  top: 5vh !important;
+  top: 1em !important;
   min-width: 13em;
+  transform: scale(.9) translate(-11px, 17px);
 }
 .filter input[type=text] {
   max-width: 10em;
@@ -1119,7 +1121,7 @@ transition: all .25s;
 cursor: pointer;
 }
 .ocloudInfo.component .ngx-pagination .small-screen {
-  left: 2.5em;
+  left: -2.5em;
 }
 #modifyConfigWindow ul li span {
   min-width: 15em;
@@ -1791,9 +1793,19 @@ ngx-charts-bar-horizontal .chart-legend .legend-label .active .legend-label-text
   position: relative;
   width: 45em;
 }
-#fault_statusModal table th {
-  min-width: 10.96em;
+#fault_statusModal table td {
   font-size: .9em;
+  min-width: initial!important;
+}
+#fault_statusModal table tbody tr td:nth-child(3){
+  min-width: 10.96em;
+}
+#fault_statusModal .total {
+  margin: .5em 0 0 2.5em;
+  display: block;
+}
+table td.icon.state {
+  text-align: left!important;
 }
 body.tw #fault_statusModal ul li > label {
   min-width: 11%;
@@ -1821,7 +1833,9 @@ body.tw #fault_statusModal ul li > label {
 #fieldPMReportWindow .mat-button-toggle-group-appearance-standard .mat-button-toggle + .mat-button-toggle {
   border-left: solid 1px #427ebd;
 }
-
+#fault_statusModal .ngx-pagination .small-screen {
+  left: -2.5em!important;
+}
 // 調整未選中狀態下滑桿的背景色 @2024/05/29 Add
 .mat-slide-toggle.mat-slide-toggle-disabled .mat-slide-toggle-bar,
 .mat-slide-toggle .mat-slide-toggle-bar {
@@ -1961,4 +1975,7 @@ body.tw .performance table th.relative span:last-child {
 }
 body.tw .performance table th.relative span:first-child {
   left: 20px!important;
+}
+.content-inner.hasFilter {
+  min-height: 21em;
 }

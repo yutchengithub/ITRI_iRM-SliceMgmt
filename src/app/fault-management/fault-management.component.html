@@ -231,7 +231,7 @@
                         paginate: { itemsPerPage: record_pageSize, currentPage: record_p, totalItems: record_totalItems, id: 'record' }; let i = index">
             <td>{{ ( record_p - 1 ) * record_pageSize + i + 1 }}</td> <!-- 動態生成每條訊息的編號 -->
             <td>{{ opt.createtime }}</td>
-            <td>
+            <td class="icon state">
               <label *ngIf="opt.processstatus === 0" class="greenLight"></label>
               <label *ngIf="opt.processstatus === 1" class="redLight"></label>
               {{ opt.processresult }}
