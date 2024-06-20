@@ -2,8 +2,10 @@
   <h5>
     <button (click)="back()"><span class="material-icons">arrow_back</span>{{ languageService.i18n['back'] }}</button>
       {{ languageService.i18n['BS.info'] }} – {{ bsName }} /
-    <label *ngIf=" bsType === '1' ">All-in-one:&thinsp;[CU + DU + RU]</label>
-    <label *ngIf=" bsType === '2' ">Disaggregated:&thinsp;[CU] + [DU] + [RU]</label>
+    <!-- <label *ngIf=" bsType === '1' ">All-in-one:&thinsp;[CU + DU + RU]</label> -->
+    <!-- <label *ngIf=" bsType === '2' ">Disaggregated:&thinsp;[CU] + [DU] + [RU]</label> -->
+    <label *ngIf=" bsType === '1' ">{{ languageService.i18n['BS.all-in-one'] }}</label>
+    <label *ngIf=" bsType === '2' ">{{ languageService.i18n['BS.dist'] }}</label>
   </h5>
 
   <div class="main collabsible">
@@ -40,8 +42,10 @@
               <li>
                 <!-- 基站類型 -->
                 <label>{{ languageService.i18n['BS.type'] }}</label>
-                <span *ngIf="selectBsInfo.bstype === 1">All-in-one:&thinsp;[CU + DU + RU]</span>
-                <span *ngIf="selectBsInfo_dist.bstype === 2">Disaggregated:&thinsp;[CU] + [DU] + [RU]</span>
+                <!-- <span *ngIf="selectBsInfo.bstype === 1">All-in-one:&thinsp;[CU + DU + RU]</span>
+                <span *ngIf="selectBsInfo_dist.bstype === 2">Disaggregated:&thinsp;[CU] + [DU] + [RU]</span> -->
+                <span *ngIf=" selectBsInfo.bstype === 1">{{ languageService.i18n['BS.all-in-one'] }}</span>
+                <span *ngIf=" selectBsInfo_dist.bstype === 2">{{ languageService.i18n['BS.dist'] }}</span>
               </li>
               <li>
                 <!-- 基站狀態 -->

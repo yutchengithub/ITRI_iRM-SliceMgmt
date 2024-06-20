@@ -40,16 +40,16 @@
             id: 'PageDisplay_of_bsList' 
           };">
           <td>{{ BS.name }}</td>
-          <td>{{ BS.bstype === 1 ? 'A' : 'D' }}</td>
-          <!-- <td> -->
+          <!-- <td>{{ BS.bstype === 1 ? 'A' : 'D' }}</td> -->
+          <td>
             <!-- 如果 BS.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
             <!-- <label *ngIf="BS.bstype === 1"> All-in-one: [CU + DU + RU] </label> -->
-            <!-- <label *ngIf="BS.bstype === 1">{{ languageService.i18n['BS.all-in-one'] }}</label> -->
+            <label *ngIf="BS.bstype === 1">{{ languageService.i18n['BS.all-in-one'] }}</label>
 
             <!-- 如果 BS.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
             <!-- <label *ngIf="BS.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label> -->
-            <!-- <label *ngIf="BS.bstype === 2">{{ languageService.i18n['BS.dist'] }}</label> -->
-          <!-- </td> -->
+            <label *ngIf="BS.bstype === 2">{{ languageService.i18n['BS.dist'] }}</label>
+          </td>
           <td>{{ BS.cellCount }}</td>
           <td>{{ BS.description }}</td>
           <td>{{ BS.fieldName }}</td>

@@ -355,12 +355,12 @@
 									</td>
 									<td>
 										<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
-										<label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label>
-										<!-- <label *ngIf="opt.bstype === 1">{{ languageService.i18n['BS.all-in-one'] }}</label> -->
+										<!-- <label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label> -->
+										<label *ngIf="opt.bstype === 1">{{ languageService.i18n['BS.all-in-one'] }}</label>
 
 										<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
-										<label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label>
-										<!-- <label *ngIf="opt.bstype === 2">{{ languageService.i18n['BS.dist'] }}</label> -->
+										<!-- <label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label> -->
+										<label *ngIf="opt.bstype === 2">{{ languageService.i18n['BS.dist'] }}</label>
 									</td>
 									<td>
 										<label>{{ opt.position }}</label>
@@ -952,10 +952,12 @@
 									</td>
 									<td>
 										<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
-										<label *ngIf="opt.bstype === 1"> A </label>
+										<!-- <label *ngIf="opt.bstype === 1"> A </label> -->
+										<label *ngIf="opt.bstype === 1">{{ languageService.i18n['BS.all-in-one'] }}</label>
 										
 										<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
-										<label *ngIf="opt.bstype === 2"> D </label>
+										<!-- <label *ngIf="opt.bstype === 2"> D </label> -->
+										<span *ngIf=" opt.bstype === 2">{{ languageService.i18n['BS.dist'] }}</span>
 									</td>
 									<td>
 										{{ opt.gNBId }}
