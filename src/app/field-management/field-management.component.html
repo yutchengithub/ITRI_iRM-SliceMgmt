@@ -268,10 +268,10 @@
   </div>
 </ng-template>
 
-<!-- Confirm Window of Delete Field @2024/01/29 Update -->
+<!-- Confirm Window of Delete Field @2024/06/21 Update -->
 <ng-template #deleteField_ConfirmWindow>
   <!-- 標題部分，使用 languageService.i18n['confirm'] 來國際化確認文字 -->
-  <h5>{{languageService.i18n['field.warningFault']}}</h5>
+  <h5><mat-icon>warning_amber</mat-icon>{{languageService.i18n['field.warningFault']}}</h5>
   
   <!-- 確認刪除的提示信息，展示場域名稱 -->
   <p>{{languageService.i18n['confirm_del_field']}} - {{selectField.name}} ?</p>
