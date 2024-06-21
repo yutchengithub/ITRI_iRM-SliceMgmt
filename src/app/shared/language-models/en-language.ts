@@ -621,7 +621,7 @@ export const Enlanguage = {
   'cm.manufacturer':'Manufacturer',
   'cm.model':'Model',
   'cm.delete':'Delete Component',
-  'cm.confirm_del':'Confirm to Delete Component',
+  'cm.confirm_del':'Confirm to Delete NE',
   'cm.unable_del':'Can not delete the NE which has been assigned to a certain BS',
   'cm.error':'ERROR',
   'cm.info':'NE Detail Information',

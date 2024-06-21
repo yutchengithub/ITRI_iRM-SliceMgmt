@@ -167,21 +167,24 @@
 </ng-template>
 
 <ng-template #deleteModal>
-  <h5 *ngIf="selectComponent.status === 0">{{ languageService.i18n['cm.delete'] }}</h5>
+  <h5 *ngIf="selectComponent.status === 0">
+    <mat-icon class="error-icon">warning_amber</mat-icon>
+    {{ languageService.i18n['field.warningFault'] }}
+  </h5>
   <h5 *ngIf="selectComponent.status === 2">
     <mat-icon class="error-icon">error_outline</mat-icon>
     {{ languageService.i18n['field.noFieldImageAvailableTitle'] }}
   </h5>
   <ul>
     <label *ngIf="selectComponent.status === 0">
-      {{ languageService.i18n['cm.confirm_del'] }} – {{ selectComponent.name }}
+      {{ languageService.i18n['cm.confirm_del'] }} – {{ selectComponent.name }} ?
     </label>
     <label *ngIf="selectComponent.status === 2">
       {{ languageService.i18n['cm.bsInUseCannotDelete'] }}
     </label>
   </ul>
   <div class="buttons">
-    <button *ngIf="selectComponent.status === 0" type="button" (click)="delete()">Delete</button>
+    <button *ngIf="selectComponent.status === 0" type="button" (click)="delete()">{{ languageService.i18n['confirm'] }}</button>
     <button type="button" mat-dialog-close>{{ languageService.i18n['close'] }}</button>
   </div>
 </ng-template>

@@ -170,12 +170,21 @@
 </ng-template>
 
 <ng-template #deleteModal>
-  <h5>{{languageService.i18n['delsoftware']}}
-  </h5>
-  <p>{{languageService.i18n['confirm_del_soft']}} – {{selectSoftware.uploadinfo}}</p>
+
+  <!-- <h5>{{languageService.i18n['delsoftware']}}</h5> -->
+
+  <!-- 確認視窗標題 -->
+  <h5><mat-icon>warning_amber</mat-icon>{{ languageService.i18n['field.warningFault'] }}</h5>
+
+
+  <p>{{languageService.i18n['confirm_del_soft']}} – {{selectSoftware.uploadinfo}} ?</p>
   <div class="buttons">
-    <button type="button" (click)="delete()">Delete</button>
-    <button type="button" mat-dialog-close>Cancel</button>
+    <button type="button" (click)="delete()">
+      {{ languageService.i18n['confirm'] }}
+    </button>
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }}
+    </button>
   </div>
 </ng-template>
 

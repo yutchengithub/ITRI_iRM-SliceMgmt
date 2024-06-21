@@ -77,10 +77,10 @@
    id="PageDisplay_of_bsList"
   ></pagination-controls>
 
-<!-- Confirm Window of Delete BS @2024/03/22 Add -->
+<!-- Confirm Window of Delete BS @2024/06/21 Update -->
 <ng-template #deleteBS_ConfirmWindow>
 
-  <h5>{{languageService.i18n['field.warningFault']}}</h5>
+  <h5><mat-icon>warning_amber</mat-icon>{{languageService.i18n['field.warningFault']}}</h5>
   
   <!-- 確認刪除的提示信息，展示 BS 名稱 -->
   <p>{{ languageService.i18n['BS.confirm_del'] }} - {{ selectBS.name }} ?</p>

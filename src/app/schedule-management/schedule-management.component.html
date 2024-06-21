@@ -164,11 +164,11 @@
     id="PageDisplay_of_scheduleList"
   ></pagination-controls>
 
-<!-- Confirm Window of Delete Schedule @2024/03/22 Add -->
+<!-- Confirm Window of Delete Schedule @2024/06/21 Update -->
 <ng-template #deleteSchedule_ConfirmWindow>
   
   <!-- 確認視窗標題 -->
-  <h5>{{ languageService.i18n['field.warningFault'] }}</h5>
+  <h5><mat-icon>warning_amber</mat-icon>{{ languageService.i18n['field.warningFault'] }}</h5>
 
   <!-- 確認刪除的提示信息，展示 Schedule 相關資訊 -->
   <p>{{ languageService.i18n['sm.confirm_del'] }} ?</p>

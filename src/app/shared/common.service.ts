@@ -1744,7 +1744,7 @@ export class CommonService {
         "comtype": 5,
         "firm": "ITRI",
         "modelname": "v2.0",
-        "status": 1
+        "status": 0
       },
       {
         "id": "28a6c246a4ca425aa8dc",
@@ -1758,7 +1758,7 @@ export class CommonService {
         "comtype": 5,
         "firm": "ITRI",
         "modelname": "v2.0",
-        "status": 0
+        "status": 2
       },
       {
         "id": "28a6c246a4ca425aa8dc",
@@ -1772,7 +1772,7 @@ export class CommonService {
         "comtype": 5,
         "firm": "ITRI",
         "modelname": "v2.0",
-        "status": 0
+        "status": 2
       },
       {
         "id": "28a6c246a4ca425aa8dc",
@@ -1786,7 +1786,7 @@ export class CommonService {
         "comtype": 5,
         "firm": "ITRI",
         "modelname": "v2.0",
-        "status": 0
+        "status": 2
       },
       {
         "id": "28a6c246a4ca425aa8dc",
@@ -1800,7 +1800,7 @@ export class CommonService {
         "comtype": 5,
         "firm": "ITRI",
         "modelname": "v2.0",
-        "status": 0
+        "status": 2
       },
       {
         "id": "28a6c246a4ca425aa8dc",
@@ -1814,7 +1814,7 @@ export class CommonService {
         "comtype": 5,
         "firm": "ITRI",
         "modelname": "v2.0",
-        "status": 0
+        "status": 2
       },
       {
         "id": "28a6c246a4ca425aa8dc",
@@ -1828,7 +1828,7 @@ export class CommonService {
         "comtype": 5,
         "firm": "ITRI",
         "modelname": "v2.0",
-        "status": 0
+        "status": 2
       },
       {
         "id": "28a6c246a4ca425aa8dc",
@@ -1842,7 +1842,7 @@ export class CommonService {
         "comtype": 5,
         "firm": "ITRI",
         "modelname": "v2.0",
-        "status": 0
+        "status": 2
       },
       {
         "id": "28a6c246a4ca425aa8dc",
@@ -1856,7 +1856,7 @@ export class CommonService {
         "comtype": 5,
         "firm": "ITRI",
         "modelname": "v2.0",
-        "status": 0
+        "status": 2
       },
       {
         "id": "28a6c246a4ca425aa8dc",
@@ -1870,7 +1870,7 @@ export class CommonService {
         "comtype": 5,
         "firm": "ITRI",
         "modelname": "v2.0",
-        "status": 0
+        "status": 2
       },
       {
         "id": "28a6c246a4ca425aa8dc",
@@ -1884,7 +1884,7 @@ export class CommonService {
         "comtype": 5,
         "firm": "ITRI",
         "modelname": "v2.0",
-        "status": 0
+        "status": 2
       }
     ]};
 
