@@ -633,6 +633,9 @@ export const Enlanguage = {
   'cm.notice' : 'Notice',
   'cm.applysoftware' : 'Software Apply Success',
   'cm.restart' : 'Reboot',
+  'cm.BS' : 'BS',
+  'cm.bsInUseCannotDelete': 'BS in use, cannot be deleted.',
+
 
   // Account Management
   'user_account':'User',

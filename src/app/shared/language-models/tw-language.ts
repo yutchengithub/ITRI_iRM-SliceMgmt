@@ -645,6 +645,9 @@ export const TwLanguage = {
   'cm.notice' : '通知',
   'cm.applysoftware' : '軟體套用成功',
   'cm.restart' : '重啟',
+  'cm.BS' : '基站',
+  'cm.bsInUseCannotDelete': '有基站使用中，無法刪除。',
+
   
   // Account Management (帳號管理)
   'user_account':'帳號',
