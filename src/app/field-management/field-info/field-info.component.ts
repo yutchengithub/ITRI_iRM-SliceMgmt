@@ -1389,29 +1389,36 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   queryBsInfo!: Subscription;
 
-  // 用於獲取場地內所有 BS 的資訊 @2024/03/19 Update - 關閉預設顯示第一筆 BS 資訊為預設點擊 icon 
-  // Get the All infos of BSs in the field 
-  getQueryBsInfoForAll( bsNum: number, bsinfo_Infield: BsInfoInField[] ) {
+  /**
+   * @2024/06/21 Update
+   * 獲取場地內所有 BS 的資訊
+   * @function getQueryBsInfoForAll
+   * @param {number} bsNum - 場地內基站的總數
+   * @param {BsInfoInField[]} bsinfo_Infield - 場地內基站的資訊數組
+   * @description
+   * - 此函數會根據提供的基站資訊數組，發起異步請求以獲取每個基站的詳細資訊
+   * - 根據基站類型和狀態，將原始基站資訊轉換為簡化的基站資訊
+   * - 對於缺失的字段設置了默認值，以確保轉換過程中不會發生錯誤
+   * - 最終會將轉換後的所有簡化基站資訊存儲到 allSimplifiedBsInfo 屬性中，並更新 displayBsInfo 屬性
+   */
+  getQueryBsInfoForAll(bsNum: number, bsinfo_Infield: BsInfoInField[]): void {
 
     // 輸出開始處理的訊息到控制台
     console.log('getQueryBsInfoForAll() - Start');
-    
+
     // 輸出場地內基站的總數
     console.log('There are', bsNum, 'BSs in the', this.fieldInfo.name, 'field');
-    
+
     // 將場地內基站的資訊映射為一個 Observable 數組，用於異步請求每個基站的詳細資訊
-    const observables: Observable< BSInfo | BSInfo_dist >[] = bsinfo_Infield.map( ( originalBsInfoInfield ) => {
+    const observables: Observable<BSInfo | BSInfo_dist>[] = bsinfo_Infield.map((originalBsInfoInfield) => {
       // 發起異步請求以獲取每個基站的詳細資訊
-      return this.API_Field.queryBsInfo( originalBsInfoInfield.id ).pipe(
-        map( ( response: BSInfo | BSInfo_dist ) => {
-
+      return this.API_Field.queryBsInfo(originalBsInfoInfield.id).pipe(
+        map((response: BSInfo | BSInfo_dist) => {
           // 根據是否包含特定屬性來判斷返回的資訊類型
-          if ( 'cellInfo' in originalBsInfoInfield ) {
-
+          if ('cellInfo' in originalBsInfoInfield) {
             // 如果原始資訊中包含 cellInfo 屬性，則視為 BSInfo_dist 類型
             return response as BSInfo_dist;
           } else {
-
             // 否則，視為 BSInfo 類型
             return response as BSInfo;
           }
@@ -1422,26 +1429,53 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // 使用 forkJoin 等待所有 Observable 完成，然後處理它們的結果
     this.queryBsInfo = forkJoin( observables ).subscribe({
       next: ( results: ( BSInfo | BSInfo_dist )[] ) => {
-
-        console.log( "取得的基站資訊:", results );
+        // 輸出取得的基站資訊到控制台
+        console.log("取得的基站資訊:", results);
 
         // 初始化一個新數組用於存放所有轉換後的 SimplifiedBSInfo 對象
         const allSimplifiedData: SimplifiedBSInfo[] = [];
 
         // 遍歷每個異步請求的結果
-        results.forEach( result => {
+        results.forEach(result => {
+          try {
+            if (result.bstype === 2) {
+              // 如果基站類型為 2，則處理為 BSInfo_dist 類型
+              allSimplifiedData.push(...this.convertDistBsInfoToSimplifiedFormat(result as BSInfo_dist));
+            } else {
+              // 否則，處理為 BSInfo 類型
+              allSimplifiedData.push(this.convertBsInfoToSimplifiedFormat(result as BSInfo));
+            }
+          } catch ( error ) {
 
-          if ( result.bstype === 2 ) {
+            // 捕獲並處理轉換過程中的錯誤
+            console.error('Error processing BS Info:', error);
 
-            // 如果結果為 BSInfo_dist 類型，則處理每個子基站資訊
-            // 使用展開運算符...將每個子基站轉換函數返回的數組元素加入到 allSimplifiedData 數組中
-            allSimplifiedData.push( ...this.convertDistBsInfoToSimplifiedFormat( result as BSInfo_dist ) );
-          } else {
-
-            // 如果結果為 BSInfo 類型，則直接將轉換後的對象加入到 allSimplifiedData 數組
-            allSimplifiedData.push( this.convertBsInfoToSimplifiedFormat( result as BSInfo ) );
+            // 為錯誤的基站資訊設置默認值，並加入到 allSimplifiedData 數組中
+            const defaultBsInfo: SimplifiedBSInfo = {
+              id: result.id || 'none', // 基站的 ID
+              name: result.name || 'none', // 基站的名稱
+              bstype: result.bstype ?? -1, // 基站的類型
+              status: result.status ?? -1, // 基站的狀態
+              nci: 'none', // 默認 NCI
+              pci: -1, // 默認 PCI
+              'plmn-id': { mcc: 'none', mnc: 'none' }, // 默認 PLMN ID
+              "tx-power": -1, // 默認傳輸功率
+              "nrarfcn-dl": -1, // 默認下行頻率
+              "nrarfcn-ul": -1, // 默認上行頻率
+              position: result.position || 'none', // 基站的位置
+              componentId: 'none', // 默認組件 ID
+              cellInfo: {}, // 默認 cellInfo
+              neighbors: [], // 默認鄰居資訊
+              iconUrl: '', // 默認圖標 URL
+              tac: 'none', // 默認 TAC
+              channelbandwidth: -1, // 默認頻寬
+              description: result.description || 'none', // 基站的描述
+              components: [], // 默認組件數組
+              gNBId: -1, // 默認 gNBId
+              gNBIdLength: -1 // 默認 gNBId 長度
+            };
+            allSimplifiedData.push(defaultBsInfo);
           }
-
         });
 
         // 將合併後的所有 SimplifiedBSInfo 對象賦值給 this.allSimplifiedBsInfo 屬性
@@ -1449,46 +1483,33 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // 檢查 allSimplifiedBsInfo 數組是否包含任何基站資訊
         if ( this.allSimplifiedBsInfo.length > 0 ) {
-
-          // 有就遍歷 allSimplifiedBsInfo 並為每個基站設置圖標 URL
+          // 遍歷 allSimplifiedBsInfo 並為每個基站設置圖標 URL
           this.allSimplifiedBsInfo.forEach( ( bsInfo, index ) => {
-            // 獲取 allSimplifiedBsInfo 數組中第一筆資料的名稱
-            // const firstBsInfoName = this.allSimplifiedBsInfo[0].name;
-            const firstBsInfoName = "";
-
-            // 判斷當前處理的基站是否為數組中的第一個元素（即索引為 0 的元素）
-            // 如果是第一個元素（index === 0），則 isSelected 為 true，否則為 false
-            // isSelected 用於確定當前基站是否應該顯示為「被選中」狀態的圖標
-            // const isSelected = (index === 0);
-            const isSelected = false;
-
-            // 為當前基站設置圖標 URL，根據基站的類型、狀態、是否被選中以及是否是數組中的第一個基站
-            bsInfo.iconUrl = this.setIconUrl( bsInfo.bstype, bsInfo.status, isSelected, firstBsInfoName, bsInfo.name);
+            const firstBsInfoName = ""; // 首筆基站資訊名稱初始化為空
+            const isSelected = false; // 預設為未選中
+            // 為當前基站設置圖標 URL
+            bsInfo.iconUrl = this.setIconUrl( bsInfo.bstype, bsInfo.status, isSelected, firstBsInfoName, bsInfo.name );
           });
 
           // 將 allSimplifiedBsInfo 數組中的第一筆基站資訊預設顯示於「基站資訊」欄位上
           this.displayBsInfo = this.allSimplifiedBsInfo[0];
-
-          // 當 displayBsInfo 更新後，更新表單 @2024/01/17 Add
-          //this.updateModifyConfigForm( this.displayBsInfo );
         }
 
-        this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
+        // 加載完成，隱藏 spinner
+        this.isMarkersLoading = false;
       },
-      error: ( error ) => {
-
+      error: (error) => {
         // 如果在請求過程中出現錯誤，則在控制台輸出錯誤訊息
         console.error('Error fetching BS Infos:', error);
-        this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
+        // 加載完成，隱藏 spinner
+        this.isMarkersLoading = false;
       },
       complete: () => {
-
         // 當所有請求都完成後，輸出一個完成訊息
         console.log('All BS Info fetches completed');
-        console.log("In getQueryBsInfoForAll() - allSimplifiedBsInfo", this.allSimplifiedBsInfo );
-
-        this.isMarkersLoading = false; // 加載完成，隱藏 spinner @12/28 Add for Progress Spinner
-        //this.hideSpinner();  // 完成後隱藏 spinner
+        console.log("In getQueryBsInfoForAll() - allSimplifiedBsInfo", this.allSimplifiedBsInfo);
+        // 加載完成，隱藏 spinner
+        this.isMarkersLoading = false;
       }
     });
 
@@ -1498,7 +1519,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   /**
-   * @2024/06/19 Update
+   * @2024/06/21 Update
    * 將 BSInfo 類型轉換為 SimplifiedBSInfo 類型 - All-in-one BS
    * @function convertBsInfoToSimplifiedFormat
    * @param {BSInfo} bsInfo - 待轉換的一體式基站資訊對象
@@ -1507,259 +1528,226 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
    * - 使用可選鏈操作符和映射從 bsInfo.anr 中提取鄰居訊息，並建立 SimplifiedNeighborInfo 陣列
    * - 創建一個 SimplifiedBSInfo 類型的對象，並使用 bsInfo 中的數據填充此對象
    * - 確保當 bsInfo.anr 為 undefined 時，neighbors 默認為空陣列，避免錯誤
+   * - 函數提供了對數據不完整的處理，對於缺失的字段設置了默認值，以確保轉換過程中不會發生錯誤
    * - 此函數對於一體式基站資訊進行轉換，方便後續的資料處理和顯示
    */
-  convertBsInfoToSimplifiedFormat( bsInfo: BSInfo ): SimplifiedBSInfo {
+  convertBsInfoToSimplifiedFormat(bsInfo: BSInfo): SimplifiedBSInfo {
 
     // 輸出開始處理的訊息到控制台
     console.log('convertBsInfoToSimplifiedFormat() - Start');
+    console.log('bsInfo', bsInfo); // 輸出待轉換的 bsInfo 對象
 
-    // 使用可選鏈和映射來從 bsInfo.anr 中的鄰居訊息創建 SimplifiedNeighborInfo 數組
-    const neighbors = bsInfo.anr?.['anr-son-output']?.neighbor.map( neighborItem => ({
-      
-      // 從 neighborItem 取出鄰居 BS 的 id
-      id: neighborItem.id,
+    // 使用可選鏈操作符從 bsInfo.anr 中提取鄰居訊息，並建立 SimplifiedNeighborInfo 陣列
+    const neighbors = bsInfo.anr?.['anr-son-output']?.neighbor.map(neighborItem => ({
+      id: neighborItem.id || 'none', // 鄰居 BS 的 ID
+      'plmn-id': neighborItem['plmn-id'] || { mcc: 'none', mnc: 'none' }, // 鄰居 BS 的 PLMN ID
+      nci: neighborItem.nci || 'none', // 鄰居 BS 的 NCI
+      pci: neighborItem.pci ?? -1 // 鄰居 BS 的 PCI
+    })) || []; // 如果 bsInfo.anr 為 undefined，則 neighbors 默認為空陣列
 
-      // 從 neighborItem 取出'plmn-id'，並假設它在 BSInfo 和 SimplifiedBSInfo 中是相同類型
-      'plmn-id': neighborItem['plmn-id'],
-
-      // 從 neighborItem 取出 nci
-      nci: neighborItem.nci,
-
-      // 從 neighborItem 取出pci
-      pci: neighborItem.pci
-    })) || []; // 如果 bsInfo.anr 是 undefined，則 neighbors 預設為空數組
-
-    // 創建一個 SimplifiedBSInfo 類型的對象，並用 bsInfo 中的數據填充
+    // 創建一個 SimplifiedBSInfo 對象，並使用 bsInfo 中的數據填充此對象
     const simplified: SimplifiedBSInfo = {
-
-      id: bsInfo.id,                   // 從 bsInfo 取出基站 id
-      name: bsInfo.name,               // 從 bsInfo 取出基站名稱
-      bstype: bsInfo.bstype,           // 從 bsInfo 取出基站類型
-      status: bsInfo.status,           // 從 bsInfo 取出基站狀態
-      //nci: bsInfo.info['bs-conf'].nci, // 從 bsInfo 的 info['bs-conf'] 取出 nci
-      //pci: bsInfo.info['bs-conf'].pci, // 從 bsInfo 的 info['bs-conf'] 取出 pci
-      nci: bsInfo.extension_info[0].nci, // 從 bsInfo 的 extension_info 取出 nci
-      pci:  bsInfo.extension_info[0].NRCellDU!.db.nRPCI , // 從 bsInfo 的 extension_info 取出 pci
-      'plmn-id': { 
-        // 從 bsInfo 的 info['bs-conf']['plmn-id'] 取出 mcc 和 mnc
-        //mcc: bsInfo.info['bs-conf']['plmn-id'].mcc,
-        //mnc: bsInfo.info['bs-conf']['plmn-id'].mnc,
-        mcc: bsInfo.extension_info[0].NRCellDU!.db.pLMNId_MCC,
-        mnc: bsInfo.extension_info[0].NRCellDU!.db.pLMNId_MNC,
+      id: bsInfo.id || 'none', // 一體式基站的 ID
+      name: bsInfo.name || 'none', // 一體式基站的名稱
+      bstype: bsInfo.bstype ?? -1, // 一體式基站的類型
+      status: bsInfo.status ?? -1, // 一體式基站的狀態
+      nci: bsInfo.extension_info[0]?.nci || 'none', // 一體式基站的 NCI
+      pci: bsInfo.extension_info[0]?.NRCellDU?.db.nRPCI ?? -1, // 一體式基站的 PCI
+      'plmn-id': { // 一體式基站的 PLMN ID
+        mcc: bsInfo.extension_info[0]?.NRCellDU?.db.pLMNId_MCC || 'none',
+        mnc: bsInfo.extension_info[0]?.NRCellDU?.db.pLMNId_MNC || 'none',
       },
-      //"tx-power": bsInfo.info['bs-conf']['tx-power'],     // 從 bsInfo 的 info['bs-conf'] 取出發射功率
-      "tx-power": bsInfo.extension_info[0].NRSectorCarrier!.db.configuredMaxTxPower,
-      //"nrarfcn-dl": bsInfo.info['bs-conf']['nrarfcn-dl'], // 從 bsInfo 的 info['bs-conf'] 取出下行 NR ARFCN
-      "nrarfcn-dl": bsInfo.extension_info[0].NRSectorCarrier!.db.arfcnDL,
-      //"nrarfcn-ul": bsInfo.info['bs-conf']['nrarfcn-ul'], // 從 bsInfo 的 info['bs-conf'] 取出上行 NR ARFCN 
-      "nrarfcn-ul": bsInfo.extension_info[0].NRSectorCarrier!.db.arfcnUL,
-      position: bsInfo.position,  // 從 bsInfo 取出基站位置  
-
-      componentId: bsInfo.extension_info[0].gNBCUFunction?.db.componentId, // 取出 CU 配置的 ID
-         cellInfo: bsInfo.cellInfo, // 取出基站的 cellInfo 訊息 ( 一體式的目前都會為空 )
-
-      neighbors,    // 取出鄰居基站數據
-      iconUrl: "",  // 初始化圖標 URL
-
-      // When update BS need these:
-      //tac: bsInfo.info['bs-conf'].tac, // 從 bsInfo 取出基站 tac
-      tac: bsInfo.extension_info[0].NRCellDU!.db.nRTAC, 
-      //channelbandwidth: bsInfo.info['bs-conf']['channel-bandwidth'], // 從 bsInfo 取出基站 channelbandwidth
-      channelbandwidth: bsInfo.extension_info[0].NRCellDU!.db.bSChannelBwDL,
-      description: bsInfo.description, // 從 bsInfo 取出總基站描述
-      components: bsInfo.components,
-
-      // @2024/01/11 Add
-      // When open Field Edit need these: 
-      gNBId: bsInfo.info.gNBId,
-      gNBIdLength: bsInfo.info.gNBIdLength
+      "tx-power": bsInfo.extension_info[0]?.NRSectorCarrier?.db.configuredMaxTxPower ?? -1, // 一體式基站的傳輸功率
+      "nrarfcn-dl": bsInfo.extension_info[0]?.NRSectorCarrier?.db.arfcnDL ?? -1, // 一體式基站的下行頻率
+      "nrarfcn-ul": bsInfo.extension_info[0]?.NRSectorCarrier?.db.arfcnUL ?? -1, // 一體式基站的上行頻率
+      position: bsInfo.position || 'none', // 一體式基站的位置
+      componentId: bsInfo.extension_info[0]?.gNBCUFunction?.db.componentId || 'none', // CU 配置的 ID
+      cellInfo: bsInfo.cellInfo || {}, // 一體式基站的 cellInfo
+      neighbors, // 鄰居 BS 數據
+      iconUrl: '', // 圖標 URL 初始化
+      tac: bsInfo.extension_info[0]?.NRCellDU?.db.nRTAC || 'none', // 一體式基站的 TAC
+      channelbandwidth: bsInfo.extension_info[0]?.NRCellDU?.db.bSChannelBwDL ?? -1, // 一體式基站的頻寬
+      description: bsInfo.description || 'none', // 一體式基站的描述
+      components: bsInfo.components || [], // 一體式基站的組件
+      gNBId: bsInfo.info.gNBId ?? -1, // 一體式基站的 gNBId
+      gNBIdLength: bsInfo.info.gNBIdLength ?? -1 // 一體式基站的 gNBId 長度
     };
-    
-    // 輸出函數結束的訊息到控制台
-    console.log( 'convertBsInfoToSimplifiedFormat() - End' );
 
-    // 返回轉換後的 SimplifiedBSInfo 對象
-    return simplified;
+    // 輸出整理後的數據到控制台
+    console.log('整理的後回傳的數據:', simplified);
+    // 輸出函數結束的訊息到控制台
+    console.log('convertBsInfoToSimplifiedFormat() - End');
+    return simplified; // 返回轉換後的 SimplifiedBSInfo 對象
   }
 
-  
   /**
-   * @2024/04/10 Update
-   * 將 BSInfo_dist 類型轉換為 SimplifiedBSInfo 類型的數組
+   * @2024/06/21 Update
+   * 將 BSInfo_dist 類型轉換為 SimplifiedBSInfo 類型的數組 - Disaggregated BS
    * @function convertDistBsInfoToSimplifiedFormat
    * @param {BSInfo_dist} Dist_bsInfo - 待轉換的分佈式基站資訊對象
    * @returns {SimplifiedBSInfo[]} 轉換後的簡化基站資訊數組
    * @description
    * - 如果原始資料中的 info 不是陣列，則嘗試從 extension_info 屬性中構建 SimplifiedBSInfo 數組
    * - 每個基站的簡化資訊會包含從原始資料和擴展資訊中提取的相關屬性
-   * - 函數提供了對數據不完整的處理，以確保轉換過程中不會發生錯誤
+   * - 函數提供了對數據不完整的處理，對於缺失的字段設置了默認值，以確保轉換過程中不會發生錯誤
    */
-  convertDistBsInfoToSimplifiedFormat( Dist_bsInfo: BSInfo_dist ): SimplifiedBSInfo[] {
+  convertDistBsInfoToSimplifiedFormat(Dist_bsInfo: BSInfo_dist): SimplifiedBSInfo[] {
 
     // 輸出開始處理的訊息到控制台
     console.log('convertDistBsInfoToSimplifiedFormat() - Start');
 
-    // 首先檢查 Dist_bsInfo.info 是否為陣列 
-    if ( !Array.isArray( Dist_bsInfo.info ) ) {
+    // 首先檢查 Dist_bsInfo.info 是否為陣列
+    if (!Array.isArray(Dist_bsInfo.info)) {
 
-        console.log( " Dist_bsInfo.info 無數據 - 開始啟用備案處理分佈式基站資訊 " )
+      // 輸出提示信息到控制台，表示無數據並將啟用備案處理
+      console.log("Dist_bsInfo.info 無數據 - 開始啟用備案處理分佈式基站資訊");
 
-        // 如果 extension_info 也不是陣列或為空，則返回空陣列
-        if (!Array.isArray(Dist_bsInfo.extension_info) || Dist_bsInfo.extension_info.length === 0) {
-          console.error('Dist_bsInfo.info 和 Dist_bsInfo.extension_info 都不是有效的陣列。');
-          return [];
-        }
+      // 如果 extension_info 也不是陣列或為空，則返回空陣列並報錯
+      if (!Array.isArray(Dist_bsInfo.extension_info) || Dist_bsInfo.extension_info.length === 0) {
+        console.error('Dist_bsInfo.info 和 Dist_bsInfo.extension_info 都不是有效的陣列。');
+        return [];
+      }
 
-        // 遍歷 extension_info 陣列構建 SimplifiedBSInfo 陣列
-        const simplifiedInfos: SimplifiedBSInfo[]  = Dist_bsInfo.extension_info.map((extensionItem) => {
-          // 從 Dist_bsInfo.anr 中獲取對應 nci 的鄰居資訊
-          const anrNeighbors = Dist_bsInfo.anr[extensionItem.nci]?.['anr-son-output']?.neighbor.map(neighborItem => ({
+      // 遍歷 extension_info 陣列構建 SimplifiedBSInfo 陣列
+      const simplifiedInfos: SimplifiedBSInfo[] = Dist_bsInfo.extension_info.map((extensionItem) => {
+        // 從 Dist_bsInfo.anr 中獲取對應 nci 的鄰居資訊
+        const anrNeighbors = Dist_bsInfo.anr[extensionItem.nci]?.['anr-son-output']?.neighbor.map(neighborItem => ({
+          id: neighborItem.id || 'none',  // 鄰居 BS 的 ID
+          'plmn-id': {
+            mcc: neighborItem['plmn-id']?.mcc || 'none', // 鄰居 BS 的 MCC
+            mnc: neighborItem['plmn-id']?.mnc || 'none'  // 鄰居 BS 的 MNC
+          },
+          nci: neighborItem.nci || 'none',  // 鄰居 BS 的 NCI
+          pci: neighborItem.pci ?? -1       // 鄰居 BS 的 PCI
+        })) || [];
 
-            // 從 neighborItem 取出鄰居 BS 的 id
-            id: neighborItem.id,
+        // 確認 Dist_bsInfo.components 的類型為 Components_dist
+        const components: Components_dist = Dist_bsInfo.components;
 
-            'plmn-id': {
-              mcc: neighborItem['plmn-id'].mcc,
-              mnc: neighborItem['plmn-id'].mnc
-            },
+        // 查找 componentId 對應的位置資訊
+        let position = 'none';
 
-            nci: neighborItem.nci,
-            pci: neighborItem.pci
-
-          })) || [];
-
-          // 確認 Dist_bsInfo.components 的類型為 Components_dist
-          const components: Components_dist = Dist_bsInfo.components;
-
-          // 查找 componentId 對應的位置資訊
-          let position = '';
-          Object.values(components).forEach((duObject: duID) => {
-            Object.values(duObject).forEach((ruArray: ruID[]) => {
-              ruArray.forEach((ruObj: ruID) => {
-                // ruObj 的類型應為 ruID，包含一組具有字串鍵和值的對象
-                const ruId = Object.keys(ruObj)[0];
-                if (ruId === extensionItem.NRCellCU?.db.componentId) {
-                  position = ruObj[ruId];
-                }
-              });
+        // 遍歷 components 的值來查找 DU
+        Object.values(components).forEach((duObject: duID) => {
+          // 遍歷 DU 對象的值來查找 RU 陣列
+          Object.values(duObject).forEach((ruArray: ruID[]) => {
+            // 遍歷 RU 陣列的每個 RU 對象
+            ruArray.forEach((ruObj: ruID) => {
+              // 獲取 RU 對象的鍵（即 RU 的 ID）
+              const ruId = Object.keys(ruObj)[0];
+              // 如果 RU 的 ID 與 extensionItem 中的 componentId 匹配，則設置位置
+              if (ruId === extensionItem.NRCellCU?.db.componentId) {
+                position = ruObj[ruId] || 'none';
+              }
             });
           });
+        });
 
-          // 創建 SimplifiedBSInfo 物件
-          return {
-                  id: Dist_bsInfo.id,       // 分佈式基站總 ID
-                name: Dist_bsInfo.name,     // 分佈式基站名稱
-              bstype: Dist_bsInfo.bstype,   // 分佈式基站類型
-              status: Dist_bsInfo.status,   // 分佈式基站狀態
-        
-              nci: extensionItem.nci,                 // 子基站的 NCI
-              pci: extensionItem.NRCellDU?.db.nRPCI,  // 子基站的 PCI
-              'plmn-id': {                            // 子基站的 PLMN ID 訊息
-                mcc: extensionItem.NRCellCU?.db.pLMNId_MCC,
-                mnc: extensionItem.NRCellCU?.db.pLMNId_MNC,
-              },
-              "tx-power": extensionItem.NRSectorCarrier?.db.configuredMaxTxPower,  // 子基站的傳輸功率
-              "nrarfcn-dl": extensionItem.NRSectorCarrier?.db.arfcnDL,             // 子基站的下行頻率
-              "nrarfcn-ul": extensionItem.NRSectorCarrier?.db.arfcnUL,             // 子基站的上行頻率
-              position: position,  // 子基站的位置資訊
-        
-              componentId: extensionItem.gNBCUFunction?.db.componentId, // CU 配置的 ID
-              cellInfo: Dist_bsInfo.cellInfo,    // 子基站的 cellInfo 訊息
-        
-              neighbors: anrNeighbors,           // 映射後的鄰居 BS 數據
-              iconUrl: "",                       // 圖標 URL 初始化
-        
-              // When update Dist BS need these:
-              description: Dist_bsInfo.description,   // 總基站描述
-              components:  Dist_bsInfo.components,    // 基站組件
-              channelbandwidth: extensionItem.NRCellDU?.db.bSChannelBwDL, // 子基站的頻寬
-              tac: extensionItem.NRCellDU?.db.nRTAC,  // 子基站的 TAC
-        
-              // When open Field Edit need these: 
-              gNBId: extensionItem.gNBId,             // 子基站的 gNBId
-              gNBIdLength: extensionItem.gNBIdLength, // 子基站的 gNBId 長度
-          };
+        // 創建 SimplifiedBSInfo 物件
+        return {
+          id: Dist_bsInfo.id || 'none',       // 分佈式基站總 ID
+          name: Dist_bsInfo.name || 'none',     // 分佈式基站名稱
+          bstype: Dist_bsInfo.bstype ?? -1,   // 分佈式基站類型
+          status: Dist_bsInfo.status ?? -1,   // 分佈式基站狀態
+          nci: extensionItem.nci || 'none',                 // 子基站的 NCI
+          pci: extensionItem.NRCellDU?.db.nRPCI ?? -1,  // 子基站的 PCI
+          'plmn-id': {                            // 子基站的 PLMN ID 訊息
+            mcc: extensionItem.NRCellCU?.db.pLMNId_MCC || 'none',
+            mnc: extensionItem.NRCellCU?.db.pLMNId_MNC || 'none'
+          },
+          "tx-power": extensionItem.NRSectorCarrier?.db.configuredMaxTxPower ?? -1,  // 子基站的傳輸功率
+          "nrarfcn-dl": extensionItem.NRSectorCarrier?.db.arfcnDL ?? -1,             // 子基站的下行頻率
+          "nrarfcn-ul": extensionItem.NRSectorCarrier?.db.arfcnUL ?? -1,             // 子基站的上行頻率
+          position: position,  // 子基站的位置資訊
+          componentId: extensionItem.gNBCUFunction?.db.componentId || 'none', // CU 配置的 ID
+          cellInfo: Dist_bsInfo.cellInfo || {},    // 子基站的 cellInfo 訊息
+          neighbors: anrNeighbors,           // 映射後的鄰居 BS 數據
+          iconUrl: '',                       // 圖標 URL 初始化
+          description: Dist_bsInfo.description || 'none',   // 總基站描述
+          components:  Dist_bsInfo.components || {},    // 基站組件
+          channelbandwidth: extensionItem.NRCellDU?.db.bSChannelBwDL ?? -1, // 子基站的頻寬
+          tac: extensionItem.NRCellDU?.db.nRTAC || 'none',  // 子基站的 TAC
+          gNBId: extensionItem.gNBId ?? -1,             // 子基站的 gNBId
+          gNBIdLength: extensionItem.gNBIdLength ?? -1  // 子基站的 gNBId 長度
+        };
       });
 
       // 輸出函數結束的訊息到控制台
-      console.log( 'convertDistBsInfoToSimplifiedFormat() - End' );
+      console.log('convertDistBsInfoToSimplifiedFormat() - End');
+      return simplifiedInfos;
 
-      return simplifiedInfos; // 返回轉換後的 SimplifiedBSInfo 數組
+    } else {
+      // 當 Dist_bsInfo.info 有值時的處理
+      console.log("Dist_bsInfo.info 有數據 - 使用一般方式處理分佈式基站資訊");
 
-
-    } else {  // 當 Dist_bsInfo.info 有值時的處理
-
-      console.log( " Dist_bsInfo.info 有數據 - 使用一般方式處理分佈式基站資訊 " )
- 
       // 創建一個 SimplifiedBSInfo 數組來存放每個子基站的簡化訊息
-      const simplifiedInfos: SimplifiedBSInfo[] = Dist_bsInfo.info.map( subBsInfo => {
+      const simplifiedInfos: SimplifiedBSInfo[] = Dist_bsInfo.info.map(subBsInfo => {
+        // 為當前子基站尋找相應的 ANR 訊息，使用子基站的 nci 值作為鍵
+        const anrKey = subBsInfo.nci;
+        // 從 Dist_bsInfo.anr 中獲取對應 nci 的鄰居訊息，並映射為 SimplifiedNeighborInfo 數組
+        const anrNeighbors = Dist_bsInfo.anr[anrKey]?.['anr-son-output']?.neighbor.map(neighborItem => ({
+          id: neighborItem.id || 'none',  // 鄰居 BS 的 ID
+          'plmn-id': {
+            mcc: neighborItem['plmn-id']?.mcc || 'none', // 鄰居 BS 的 MCC
+            mnc: neighborItem['plmn-id']?.mnc || 'none'  // 鄰居 BS 的 MNC
+          },
+          nci: neighborItem.nci || 'none',  // 鄰居 BS 的 NCI
+          pci: neighborItem.pci ?? -1       // 鄰居 BS 的 PCI
+        })) || [];
 
-          // 為當前子基站尋找相應的 ANR 訊息，使用子基站的 nci 值作為鍵
-          const anrKey = subBsInfo.nci;
-
-          // 從 Dist_bsInfo.anr 中獲取對應nci的鄰居訊息，並映射為 SimplifiedNeighborInfo 數組
-          const anrNeighbors = Dist_bsInfo.anr[anrKey]?.['anr-son-output']?.neighbor.map(neighborItem => ({
-
-            id: neighborItem.id,                // 提取鄰居 BS 的 id
-            'plmn-id': neighborItem['plmn-id'], // 提取鄰居 BS 的 PLMN ID 訊息
-            nci: neighborItem.nci,              // 提取鄰居 BS 的 NCI 訊息
-            pci: neighborItem.pci               // 提取鄰居 BS 的 PCI 訊息
-          })) || []; // 如果對應的 ANR 訊息不存在，則使用空數組作為預設值
-
-          // 創建一個新的 SimplifiedBSInfo 對象，包含從子基站訊息和 ANR 訊息中提取的數據
-          return {
-            id: Dist_bsInfo.id,                   // 從 Dist_bsInfo 取出總基站 id
-            name: Dist_bsInfo.name,               // 從 Dist_bsInfo 取出總基站名稱
-            bstype: Dist_bsInfo.bstype,           // 從 Dist_bsInfo 取出總基站類型
-            status: Dist_bsInfo.status,           // 從 Dist_bsInfo 取出總基站狀態
-
-            nci: subBsInfo.nci,                   // 從 Dist_bsInfo 取出子基站的 NCI
-            pci: subBsInfo.DU?.nRPCI,             // 從 Dist_bsInfo 取出子基站的 DU 中的 nRPCI 值
-            'plmn-id': {                          // 從 Dist_bsInfo 取出子基站的 PLMN ID 訊息
-              mcc: subBsInfo.CU?.pLMNId_MCC,
-              mnc: subBsInfo.CU?.pLMNId_MNC,
-            },
-            "tx-power": subBsInfo.DU?.configuredMaxTxPower, // 取出 DU 配置的最大傳輸功率
-            "nrarfcn-dl": subBsInfo.DU?.arfcnDL,            // 取出 DU 配置下行頻率
-            "nrarfcn-ul": subBsInfo.DU?.arfcnUL,            // 取出 DU 配置上行頻率
-            position: subBsInfo.RU?.position,               // 取出 RU 的位置訊息
-
-            componentId: subBsInfo.CU.id,                   // 取出 CU 配置的 ID
-            cellInfo: Dist_bsInfo.cellInfo,                 // 從 Dist_bsInfo 取出子基站的 cellInfo 訊息
-
-            neighbors: anrNeighbors,                        // 映射後的鄰居 BS 數據
-
-            iconUrl: "",                                    // 初始化圖標 URL
-
-            // @2024/01/11 Add
-            // When update Dist BS need these:
-            description: Dist_bsInfo.description,           // 從 Dist_bsInfo 取出總基站描述
-            components: Dist_bsInfo.components,
-
-            channelbandwidth: subBsInfo.DU?.bSChannelBwDL,  // 取出 DU 配置 bSChannelBwDL
-            tac: subBsInfo.DU?.nRTAC,                       // 取出 DU 配置 tac
-
-            // @2024/01/11 Add
-            // When open Field Edit need these: 
-            gNBId: subBsInfo.gNBId,
-            gNBIdLength: subBsInfo.gNBIdLength
-          };
-
+        // 創建一個新的 SimplifiedBSInfo 對象，包含從子基站訊息和 ANR 訊息中提取的數據
+        return {
+          id: Dist_bsInfo.id || 'none',           // 分佈式基站總 ID
+          name: Dist_bsInfo.name || 'none',       // 分佈式基站名稱
+          bstype: Dist_bsInfo.bstype ?? -1,       // 分佈式基站類型
+          status: Dist_bsInfo.status ?? -1,       // 分佈式基站狀態
+          nci: subBsInfo.nci || 'none',           // 子基站的 NCI
+          pci: subBsInfo.DU?.nRPCI ?? -1,         // 子基站的 PCI
+          'plmn-id': {                            // 子基站的 PLMN ID 訊息
+            mcc: subBsInfo.CU?.pLMNId_MCC || 'none',
+            mnc: subBsInfo.CU?.pLMNId_MNC || 'none'
+          },
+          "tx-power": subBsInfo.DU?.configuredMaxTxPower ?? -1, // 子基站的傳輸功率
+          "nrarfcn-dl": subBsInfo.DU?.arfcnDL ?? -1,            // 子基站的下行頻率
+          "nrarfcn-ul": subBsInfo.DU?.arfcnUL ?? -1,            // 子基站的上行頻率
+          position: subBsInfo.RU?.position || 'none',           // 子基站的位置資訊
+          componentId: subBsInfo.CU?.id || 'none',              // CU 配置的 ID
+          cellInfo: Dist_bsInfo.cellInfo || {},                 // 子基站的 cellInfo 訊息
+          neighbors: anrNeighbors,                              // 映射後的鄰居 BS 數據
+          iconUrl: '',                                          // 圖標 URL 初始化
+          description: Dist_bsInfo.description || 'none',       // 總基站描述
+          components: Dist_bsInfo.components || {},             // 基站組件
+          channelbandwidth: subBsInfo.DU?.bSChannelBwDL ?? -1,  // 子基站的頻寬
+          tac: subBsInfo.DU?.nRTAC || 'none',                   // 子基站的 TAC
+          gNBId: subBsInfo.gNBId ?? -1,                         // 子基站的 gNBId
+          gNBIdLength: subBsInfo.gNBIdLength ?? -1              // 子基站的 gNBId 長度
+        };
       });
 
       // 輸出函數結束的訊息到控制台
-      console.log( 'convertDistBsInfoToSimplifiedFormat() - End' );
-
-      return simplifiedInfos; // 返回轉換後的 SimplifiedBSInfo 數組
+      console.log('convertDistBsInfoToSimplifiedFormat() - End');
+      return simplifiedInfos;
     }
-
   }
 
-  // @12/26 Add
-  // 函數定義: 根據基站類型、狀態、選中狀態以及名稱來決定顯示的圖標
+  /**
+   * @2024/06/21 Update
+   * 根據基站類型、狀態、選中狀態以及名稱來決定顯示的圖標
+   * @function setIconUrl
+   * @param {number} bsInfoBSType - 基站類型 ( 1 表示一體式基站，2 表示分佈式基站 )
+   * @param {number} bsInfoStatus - 基站狀態 ( 0 表示完全連不上線，1 表示連得上線，但參數(yaml)等配置不符合目前 O1 可讀取的格式，2 表示在線 )
+   * @param {boolean} [isSelected=false] - 基站是否被選中
+   * @param {string} firstORclickBsInfoName - 第一筆資料或點擊的基站名稱
+   * @param {string} currentBsInfoName - 當前基站名稱
+   * @returns {string} 對應圖標的 URL
+   * @description
+   * - 根據基站類型和狀態決定顯示的圖標
+   * - 選中的基站圖標與未選中的不同
+   * - bsInfoStatus 為 0 時的圖標與 bsInfoStatus 為 1 時相同
+   * - 返回對應的圖標 URL
+   */
   setIconUrl( bsInfoBSType: number, bsInfoStatus: number,
-               isSelected: boolean = false, firstORclickBsInfoName: string, currentBsInfoName: string ): string {
+              isSelected: boolean = false, firstORclickBsInfoName: string, currentBsInfoName: string ): string {
 
     // 設定圖標的基礎路徑
     const basePath = './assets/img/bs_icons_v3/';
@@ -1768,14 +1756,14 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // 檢查基站是否被選中
     if ( isSelected ) {
 
-      if ( bsInfoBSType === 2 && bsInfoStatus === 1 ) {
+      if ( bsInfoBSType === 2 && (bsInfoStatus === 0 || bsInfoStatus === 1) ) {
         iconName = 'dist_gnb_offline_selected.png'; // 分布式基站離線且被選中的圖標
       } else if (bsInfoBSType === 2 && bsInfoStatus === 2) {
         iconName = 'dist_gnb_online_selected.png';  // 分布式基站在線且被選中的圖標
-      } else if (bsInfoBSType === 1 && bsInfoStatus === 1) {
-        iconName = 'gnb_offline_selected.png';      // 通用基站離線且被選中的圖標
+      } else if (bsInfoBSType === 1 && (bsInfoStatus === 0 || bsInfoStatus === 1)) {
+        iconName = 'gnb_offline_selected.png';      // 一體式基站離線且被選中的圖標
       } else if (bsInfoBSType === 1 && bsInfoStatus === 2) {
-        iconName = 'gnb_online_selected.png';       // 通用基站在線且被選中的圖標
+        iconName = 'gnb_online_selected.png';       // 一體式基站在線且被選中的圖標
       }
 
     } else { // 若基站未被選中
@@ -1784,18 +1772,18 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       if ( bsInfoBSType === 2 && currentBsInfoName === firstORclickBsInfoName ) {
       
         // 符合就選擇分布式基站的非選中圖標
-        iconName = ( bsInfoStatus === 1 ) ? 'dist_gnb_offline_nonselected.png' : 'dist_gnb_online_nonselected.png';
+        iconName = ( bsInfoStatus === 0 || bsInfoStatus === 1 ) ? 'dist_gnb_offline_nonselected.png' : 'dist_gnb_online_nonselected.png';
         
       } else { // 其他情況選擇預設圖標
 
-        if ( bsInfoBSType === 2 && bsInfoStatus === 1 ) {
+        if ( bsInfoBSType === 2 && (bsInfoStatus === 0 || bsInfoStatus === 1) ) {
           iconName = 'dist_gnb_offline_default.png'; // 分布式基站離線的預設圖標
         } else if ( bsInfoBSType === 2 && bsInfoStatus === 2 ) {
           iconName = 'dist_gnb_online_default.png';  // 分布式基站在線的預設圖標
-        } else if ( bsInfoBSType === 1 && bsInfoStatus === 1 ) {
-          iconName = 'gnb_offline_nonselected.png';  // 通用基站離線的非選中圖標
+        } else if ( bsInfoBSType === 1 && (bsInfoStatus === 0 || bsInfoStatus === 1) ) {
+          iconName = 'gnb_offline_nonselected.png';  // 一體式基站離線的非選中圖標
         } else if ( bsInfoBSType === 1 && bsInfoStatus === 2 ) {
-          iconName = 'gnb_online_nonselected.png';   // 通用基站在線的非選中圖標
+          iconName = 'gnb_online_nonselected.png';   // 一體式基站在線的非選中圖標
         }
       }
     }
@@ -2508,7 +2496,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   fieldEditWindowRef!: MatDialogRef<any>;
   fieldEditFormValidated = false;
 
-  // 打開場域編輯視窗 @2024/01/28 Update
+  // 打開場域編輯視窗 @2024/06/21 Update
   openfieldEditWindow() {
 
     // 確保場域資訊和邊界資訊已獲取
@@ -2552,15 +2540,24 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // 根據旗標狀態切換 displayedBasestations 的數據來源 ( 只要打開該視窗都是先顯示場域內 BS ) 
     this.displayedBasestations = this.displayAllBSFlag 
                                   ? this.SortAllBasestationsInO1 
-                                  : this.BasestationsInField;
+                                    : this.BasestationsInField;
 
-    this.getQueryBsList(); // 打開該視窗就先載入 BS List 數據  @2024/01/28 Add  
+    //this.getQueryBsList(); // 打開該視窗就先載入 BS List 數據  @2024/01/28 Add  
+
+    // 同步基站選中狀態 @2024/06/21 Add  
+    //this.syncBasestationSelection();
     
     // 打印當前場域內選中的基站 ID
-    console.log("In openfieldEditWindow(),\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos )
+    console.log("In openfieldEditWindow()，\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos )
 
     // 取得場域圖片
     this.getfieldImage_forFieldEdit();
+
+    // 載入 BS List 數據
+    this.getQueryBsList(); 
+
+    // 同步基站選中狀態 @2024/06/21 Add  
+    this.syncBasestationSelection();
   }
 
   // 場域圖片編輯視窗開啟函數 @2024/04/18 Add
@@ -2606,12 +2603,16 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       //     this.isFirstEnterInBSListPage = true; // 切換該 Flag ( 表示已不是第一次進入該頁面 )
       // } else {
 
-        // @2024/01/28 Add
-        // 如果不是第一次該頁面，則同步基站選中狀態 
-        this.syncBasestationSelection();
-     // }
+      //   // @2024/01/28 Add
+      //   // 如果不是第一次該頁面，則同步基站選中狀態 
+      //   this.syncBasestationSelection();
+      // }
+      //this.showLoadingSpinner; // 開始顯示載入 Spinner
+      //this.getQueryBsList(); // 載入 BS List 數據  @2024/06/21 Add 
+      //this.syncBasestationSelection();
       
       // 否則不需要做任何事情，保留 displayAllBSFlag 和 selectedBsInfos 的狀態
+      
     }
 
     // 輸出場域編輯類型的變更結果
@@ -2641,22 +2642,26 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedBsInfos: Bsinfo[] = [];  // 用於存儲選中的基站 ID @2024/01/26 Add
   isGetQueryBsListLoading = false; // 用於表示加載 BS List 的 flag，初始設置為 false @2024/01/17 Add for Progress Spinner
 
-  displayedBasestations: Basestation[] = [];    // 用於控制顯示於"場域編輯"頁面上的所有 BS 列表 @2024/01/25 Add
-  BasestationsInField: Basestation[] = [];      // 用於存儲場域內的 BS  @2024/01/26 Add
-  SortAllBasestationsInO1: Basestation[] = [];  // 用於存儲排序過 O1 內的所有 BS 列表 @2024/01/26 Add
+    displayedBasestations: Basestation[] = []; // 用於控制顯示於"場域編輯"頁面上的所有 BS 列表 @2024/01/25 Add
+      BasestationsInField: Basestation[] = []; // 用於存儲場域內的 BS  @2024/01/26 Add
+  SortAllBasestationsInO1: Basestation[] = []; // 用於存儲排序過 O1 內的所有 BS 列表 @2024/01/26 Add
 
-  // Get the BS List in the O1 System @2024/01/26 Update
+  // @2024/06/21 Update
+  // Get the BS List in the O1 System 
   getQueryBsList() {
     console.log('getQueryBsList() - Start');       // getQueryBsList() 啟動 
     console.log('Start fetching info of Bs List'); // 開始獲取 BS List 資訊
     clearTimeout(this.refreshTimeout);
 
     this.isGetQueryBsListLoading = true; // 開始顯示 Spinner 表載入 BS List 數據中
+    //this.showLoadingSpinner; // 開始顯示載入 Spinner
 
     // 檢查是否為 local 環境
     if ( this.commonService.isLocal ) { 
       // For testing with local files
       console.log('Start fetching BS List in Local'); // 開始獲取 Local BS List 資訊
+
+      this.showLoadingSpinner; // 開始顯示載入 Spinner
 
       // 模擬從 Local files 獲取數據並初始化 selected 屬性
       this.bsList = this.bsList_LocalFiles.bsList_local;
@@ -2683,9 +2688,11 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       this.SortAllBasestationsInO1 = this.SortAllBSInO1( [...this.bsList.basestation] );
       
       this.isGetQueryBsListLoading = false; // 加載完成，隱藏 spinner
+      this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
       console.log('Start fetching BS List from API'); // 開始獲取 BS List 資訊
+      this.showLoadingSpinner; // 開始顯示載入 Spinner
 
       // Use API_Field's queryBsList() to make an HTTP GET request
       this.queryBsList = this.API_Field.queryBsList().subscribe({
@@ -2722,6 +2729,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           console.error( '獲取基站列表資訊出錯:', error );
           console.error( 'Error fetching - BS List:', error );
           this.isGetQueryBsListLoading = false; // 出錯時也應隱藏 spinner
+          this.hideSpinner(); 
         },
         complete: () => {
           console.log('基站列表資訊獲取完成');
@@ -2745,8 +2753,8 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // 根據旗標狀態切換 displayedBasestations 的數據來源
     this.displayedBasestations = this.displayAllBSFlag 
-                                ? this.SortAllBasestationsInO1 
-                                : this.BasestationsInField;
+                                  ? this.SortAllBasestationsInO1 
+                                      : this.BasestationsInField;
   }
 
   // 顯示所有 BS 時用的排序函數 @2024/01/26 Add

@@ -183,7 +183,7 @@
 								(mapClick)="onSelectBsInfo( markerElem, bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">
 					</map-marker>
 
-					<!-- Google Maps APIs Mouseover 視窗 @2024/02/29 Update -->	
+					<!-- Google Maps APIs Mouseover 視窗 @2024/06/21 Update -->	
 					<!-- 在 Google 地圖的資訊視窗中使用 Angular Material 的摺疊面板 -->
 					<map-info-window>
 						<!-- 判斷是否有基站資訊可顯示 -->
@@ -208,7 +208,7 @@
 									<!-- 顯示經度資訊 -->
 									<!-- 使用 displayBsInfo_for_googleMapInfoWindowPosition getter 獲取經度 -->
 									<li>
-										<label>{{languageService.i18n['field.Longitude']}}: </label>
+										<label>{{ languageService.i18n['field.Longitude'] }}: </label>
 										<span>{{ displayBsInfo_for_googleMapInfoWindowPosition.lng }}</span>
 									</li>
 									<!-- 顯示緯度資訊 -->
@@ -219,29 +219,63 @@
 									</li>
 									<li>
 										<label>PCI: </label>
-										<span>{{ displayBsInfo_for_googleMapInfoWindow.pci }}</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow.pci !== -1 ">
+											{{ displayBsInfo_for_googleMapInfoWindow.pci }}
+										</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow.pci === -1 ">
+											{{ languageService.i18n['field.none'] }}
+										</span>
 									</li>
 									<li>
 										<label>NCI: </label>
-										<span>{{ displayBsInfo_for_googleMapInfoWindow.nci }}</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow.nci !== 'none' ">
+											{{ displayBsInfo_for_googleMapInfoWindow.nci }}
+										</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow.nci === 'none' ">
+											{{ languageService.i18n['field.none'] }}
+										</span>
 									</li>
 									<li>
 										<label>PLMN ID: </label>
-										<span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc === 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc === 'none' ">
+											{{ languageService.i18n['field.none'] }}
+										</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc === 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc !== 'none' ">
+											{{ languageService.i18n['field.none'] }} {{ displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc }}
+										</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc !== 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc === 'none' ">
+											{{ displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc }} {{ languageService.i18n['field.none'] }} 
+										</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc !== 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc !== 'none' ">
 											{{ displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc }}{{ displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc }}
 										</span>
 									</li>
 									<li>
 										<label>Tx Power (dBm): </label>
-										<span>{{ displayBsInfo_for_googleMapInfoWindow['tx-power'] }}</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['tx-power'] !== -1 ">
+											{{ displayBsInfo_for_googleMapInfoWindow['tx-power'] }}
+										</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['tx-power'] === -1 ">
+											{{ languageService.i18n['field.none'] }}
+										</span>
 									</li>
 									<li>
 										<label>NR-ARFCN-UL: </label>
-										<span>{{ displayBsInfo_for_googleMapInfoWindow['nrarfcn-ul'] }}</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['nrarfcn-ul'] !== -1 ">
+											{{ displayBsInfo_for_googleMapInfoWindow['nrarfcn-ul'] }}
+										</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['nrarfcn-ul'] === -1 ">
+											{{ languageService.i18n['field.none'] }}
+										</span>
 									</li> 
 									<li> 
 										<label>NR-ARFCN-DL: </label>
-										<span>{{ displayBsInfo_for_googleMapInfoWindow['nrarfcn-dl'] }}</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['nrarfcn-dl'] !== -1 ">
+											{{ displayBsInfo_for_googleMapInfoWindow['nrarfcn-dl'] }}
+										</span>
+										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['nrarfcn-dl'] === -1 ">
+											{{ languageService.i18n['field.none'] }}
+										</span>
 									</li>
 								</ul>
 							</mat-expansion-panel>
@@ -866,7 +900,7 @@
 								</div>
 							</ng-container> -->
 							<!-- 顯示場域圖片 -->
-							<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
+							<!-- <ng-container *ngIf="!isFieldImageOnFieldEditLoading"> -->
 								<!-- For local @2024/01/23 Add -->
 								<div class="preview">
 									<div class="center">{{ languageService.i18n['field.preview'] }}</div>
@@ -881,7 +915,7 @@
 									{{ languageService.i18n['field.fieldImageNotUploaded1'] }}<br>
 									{{ languageService.i18n['field.fieldImageNotUploaded2'] }}
 								</div>
-							</ng-container>
+							<!-- </ng-container> -->
 						</div>
 						<div class="button-container">
 							<!-- 按鈕，用於觸發隱藏的 input 元素 -->
@@ -937,7 +971,7 @@
 								</tr>
 							</ng-container> -->
 							<!-- 顯示數據 -->
-							<ng-container *ngIf="!isGetQueryBsListLoading">
+							<!-- <ng-container *ngIf="!isGetQueryBsListLoading"> -->
 								<!-- <tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;"> -->
 								
 								<!-- 根據 displayAllBSFlag 旗標選擇迭代的數據來源 ( .ts 進行控制 ) -->
@@ -974,7 +1008,7 @@
 										<label *ngIf="opt.status === 2" class="greenLight"></label>
 									</td>
 								</tr>
-							</ng-container>
+							<!-- </ng-container> -->
 						</tbody>
 					</table>
 				</div>
@@ -994,24 +1028,26 @@
 
 	</ng-template>
 
-	<!-- 場域圖片編輯視窗 @2024/04/18 Add -->
+	<!-- 場域圖片編輯視窗 @2024/06/21 Update -->
 	<ng-template #fieldImageEdit>
 		<div>
 			<h3>{{ languageService.i18n['field.indoorMap'] }}</h3>
 			<div>
 				<!-- 顯示進度條 -->
-				<ng-container *ngIf="isFieldImageOnFieldEditLoading">
+				<!-- <ng-container *ngIf="isFieldImageOnFieldEditLoading">
 					<div class="progress-spinner-container">
 						<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="35"></mat-progress-spinner>
 					</div>
-				</ng-container>
+				</ng-container> -->
 				<!-- 顯示場域圖片 -->
-				<ng-container *ngIf="!isFieldImageOnFieldEditLoading">
+				<!-- <ng-container *ngIf="!isFieldImageOnFieldEditLoading"> -->
+				<ng-container>
 					<div class="preview">
 						<div class="center">{{ languageService.i18n['field.preview'] }}</div>
 						<mat-icon title="{{ languageService.i18n['field.DeletefieldImage'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon> <img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}"> <img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}"> </div>
 					<div id="noImageMessage" style="display: none;"> <span class="material-symbols-outlined"> error </span> {{ languageService.i18n['field.fieldImageNotUploaded1'] }}
-						<br> {{ languageService.i18n['field.fieldImageNotUploaded2'] }} </div>
+						<br> {{ languageService.i18n['field.fieldImageNotUploaded2'] }}
+					</div>
 				</ng-container>
 			</div>
 			<div class="button-container">
