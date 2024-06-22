@@ -9,8 +9,8 @@
         "basestation": [
           {
             "id": "97a606c4994344e09d3b",
-            //"fieldId": "aa520ec8e5074f54b77d",
-            //"fieldName": "ITRI2",
+            // "fieldId": "aa520ec8e5074f54b77d",
+            // "fieldName": "ITRI2",
             "name": "BS1",
             "ip": "",
             "port": "",
@@ -725,5 +725,5 @@
             "lastoff": null
           }
         ]
-      }
+    };
   }
