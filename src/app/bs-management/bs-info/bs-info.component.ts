@@ -4294,7 +4294,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'Energy Consumption':
         return 'J'; // Energy Consumption 類別的單位為焦耳
       case 'Energy Efficiency':
-        return 'bit/J'; // Energy Efficiency 類別的單位為 bit/J
+        return 'Mbit/J'; // Energy Efficiency 類別的單位為 Mbit/J
       default:
         return ''; // 默認情況下返回空字符串
     }
@@ -4966,7 +4966,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         addDataLabel( data.energy, 'energy' ); // 添加 Energy Consumption 數據標籤
         break;
       case 'Energy Efficiency':
-        unit = 'bit/J'; // 設置單位為 bit/J
+        unit = 'Mbit/J'; // 設置單位為 Mbit/J
         addDataLabel( data.energy, 'energy' ); // 添加 Energy Efficiency 數據標籤
         break;
     }
@@ -5041,7 +5041,7 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         break;
       case 'Energy Efficiency':
         kpiName = 'Energy Efficiency'; // 設置 KPI 名稱為 "Energy Efficiency"
-        unit = 'bit/J';                // 設置單位為 bit/J
+        unit = 'Mbit/J';                // 設置單位為 Mbit/J
         break;
       default:
         kpiName = 'KPI Name';  // 設置默認 KPI 名稱
@@ -5223,8 +5223,8 @@ export class BSInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         this.yAxisLabel = this.languageService.i18n['BS.Power'];
         break;
       case 'Energy Efficiency':
-        // 如果是 Energy Efficiency，設置 Y 軸標籤為 bit/J
-        this.yAxisLabel = "bit/J";
+        // 如果是 Energy Efficiency，設置 Y 軸標籤為 Mbit/J
+        this.yAxisLabel = "Mbit/J";
         break;
       default:
         // 如果沒有匹配的 KPI 類別，設置 Y 軸標籤為默認值 'KPI Name'
