@@ -123,11 +123,11 @@
       "bsNum": 3,
       "ueNum": "fake 10",
       "coverage": "72.63",
-      "accessibility": "100.0",
+      "accessibility": "94.23",
       "availability": "99.8",
       "mobility": "77.94",
       "retainability": "88.23",
-      "energy": "28780.54",
+      "energy": "3.8",
       "integrity": {
           "downlinkDelay": "0",
           "uplinkDelay": "0",

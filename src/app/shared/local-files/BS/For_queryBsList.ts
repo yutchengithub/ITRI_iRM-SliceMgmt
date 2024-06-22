@@ -353,7 +353,7 @@
             "port": "",
             "position": "[120.646912,23.475321]",
             "description": "bs-3",
-            "bstype": 2,
+            "bstype": 1,
             "components": [
               {
                 "type": "cu+du+ru",
@@ -395,7 +395,7 @@
             "port": "",
             "position": "[120.198765,23.987654]",
             "description": "bs-5",
-            "bstype": 2,
+            "bstype": 1,
             "components": [
               {
                 "type": "cu+du+ru",
@@ -437,7 +437,7 @@
             "port": "",
             "position": "[121.345678,25.234567]",
             "description": "bs-7",
-            "bstype": 2,
+            "bstype": 1,
             "components": [
               {
                 "type": "cu+du+ru",
@@ -479,7 +479,7 @@
             "port": "",
             "position": "[120.567890,23.210987]",
             "description": "bs-9",
-            "bstype": 2,
+            "bstype": 1,
             "components": [
               {
                 "type": "cu+du+ru",
@@ -521,7 +521,7 @@
             "port": "",
             "position": "[121.654321,25.123456]",
             "description": "bs-11",
-            "bstype": 2,
+            "bstype": 1,
             "components": [
               {
                 "type": "cu+du+ru",
@@ -563,7 +563,7 @@
             "port": "",
             "position": "[121.432109,24.567890]",
             "description": "bs-13",
-            "bstype": 2,
+            "bstype": 1,
             "components": [
               {
                 "type": "cu+du+ru",
@@ -605,7 +605,7 @@
             "port": "",
             "position": "[121.210987,22.987654]",
             "description": "bs-15",
-            "bstype": 2,
+            "bstype": 1,
             "components": [
               {
                 "type": "cu+du+ru",
@@ -647,7 +647,7 @@
             "port": "",
             "position": "[121.098765,24.789012]",
             "description": "bs-17",
-            "bstype": 2,
+            "bstype": 1,
             "components": [
               {
                 "type": "cu+du+ru",
@@ -689,7 +689,7 @@
             "port": "",
             "position": "[121.789012,25.012345]",
             "description": "bs-19",
-            "bstype": 2,
+            "bstype": 1,
             "components": [
               {
                 "type": "cu+du+ru",
