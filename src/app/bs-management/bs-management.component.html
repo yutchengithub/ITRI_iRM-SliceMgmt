@@ -65,6 +65,9 @@
             <mat-icon tooltip="{{ languageService.i18n['BS.delete'] }}" (click)="openDeleteBS_ConfirmWindow( BS )">delete_forever</mat-icon>
           </td>
         </tr>
+        <tr class="notFind" *ngIf="bsList.basestation.length === 0">
+          <td colspan="12">{{ languageService.i18n['BS.noBSAvailable'] }}</td>
+        </tr>
       <!-- </ng-container> -->
     </tbody>
   </table>

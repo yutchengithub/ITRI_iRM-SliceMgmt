@@ -60,7 +60,8 @@ export const Enlanguage = {
   'field.list':'Field List',
   'field.name':'Field Name',
   'field.bsNum':'Number of BSs',
-
+  'field.noFieldsAvailable': 'No fields available.',
+  
   'field.create':'Create field',
   'field.createTitle':'Field Creation',
   'field.createNext': 'Next',                  // @2024/01/31 Add
@@ -72,6 +73,7 @@ export const Enlanguage = {
   'field.setNotificationNum':  'Set Admin Notification Number',   // @2024/01/31 Add  
   'field.PhoneNum': 'Phone Number',                   // @2024/01/31 Add
   'field.selectBaseStations': 'Select Base Stations', // @2024/01/31 Add
+  'field.noBSForConfiguration': 'No base stations available for configuration, please create a new base station first.',
   'field.setupComplete': 'Field Setup Complete.',     // @2024/01/31 Add
   'field.bsDescription': 'Description',               // @2024/02/01 Add
   'field.validLongitude': 'Please enter a valid longitude ( -180.0 ~ 180.0 )',  // @2024/02/02 Add
@@ -218,6 +220,7 @@ export const Enlanguage = {
   'field.mapModel':'Field Map',       // @2024/04/12 Update
   'field.map':'Map', 
   'field.bsList':'BS List',           // @12/12 Add
+  'field.noBSInField': 'No base stations available in this field.',
 
   'field.bsAntennaCoord':'BS Antenna Coordinates',  // @12/13 Add
   'field.BSstatus':'BS Status',                     // @12/13 Add
@@ -295,6 +298,7 @@ export const Enlanguage = {
   
   // BS Management ( 基站管理 )
   'BS.list':'BS List',
+  'BS.noBSAvailable': 'No base stations available.',
   'BS.createWindowTitle':'BS Creation',
   'BS.create':'Create BS',
 
@@ -302,7 +306,6 @@ export const Enlanguage = {
   'BS.enterBSName': 'Please Enter BS Name',
   'BS.nameExists': 'This name already exists',
   'BS.nameUsedInAccount': 'This BS name already used in this account',
-
 
   'BS.setBSType': 'Set BS Type',
   'BS.selectBSType': 'Please Select Base Station Type',
@@ -332,7 +335,6 @@ export const Enlanguage = {
   'BS.setLatitude':'Set Latitude',
   'BS.setLongitude':'Set Longitude',
 
-
   'BS.setBSLocationDescriptionAndUploadParameters': 'Set BS Location Description and Upload BS Parameter File',
   'BS.generateParameterSampleFile': 'Generate BS Parameter Sample File (.xlsx)',
   'BS.generateParameterSampleDownload': 'Sample Download (.xlsx)',
@@ -358,14 +360,10 @@ export const Enlanguage = {
   'BS.inUseCannotDelete': ' is in use, cannot be deleted.',
   'BS.field': 'Field',
 
-
-
   'BS.info':'BS Detailed Information',
   'BS.alarmLatestUpdateTime': 'Latest Update Time',
   'BS.alarmLatestUpdateTimeRangeEnd':'～',    
   'BS.processingFmStatus': 'Processing Status',
-
-
 
   // 基本訊息區
   'BS.editSettings':'Edit Settings',

@@ -412,6 +412,9 @@
 										<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}" (click)="goFaultMgr()">warning</mat-icon>
 									</td>
 								</tr>
+								<tr class="notFind" *ngIf="allSimplifiedBsInfo.length === 0">
+									<td colspan="12">{{ languageService.i18n['field.noBSInField'] }}</td>
+								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -603,15 +606,15 @@
 				</label>
 				<div>
 					<!-- 顯示進度條 -->
-					<ng-container *ngIf="isMarkersLoading">
+					<!-- <ng-container *ngIf="isMarkersLoading"> -->
 						<!-- 加載中顯示 spinner -->
-						<div class="spinner-container">
+						<!-- <div class="spinner-container">
 							<mat-progress-spinner mode="indeterminate" diameter="150"></mat-progress-spinner>
 						</div>
-					</ng-container>
+					</ng-container> -->
 
 					<!-- 數據加載完畢後顯示基站資訊 -->
-					<ng-container *ngIf="!isMarkersLoading">
+					<!-- <ng-container *ngIf="!isMarkersLoading"> -->
 						<ul *ngIf="displayBsInfo">
 							<li>
 								<label>{{ languageService.i18n['field.BSname'] }}</label>
@@ -685,7 +688,7 @@
 								<mat-icon>info</mat-icon>{{ languageService.i18n['field.nothingChanged'] }} !
 							</div>
 						</div>
-					</ng-container>
+					<!-- </ng-container> -->
 				</div>
 				<div>
 					<label class="boxTitle">{{ languageService.i18n['field.neighboringBSList'] }}</label>
@@ -701,16 +704,16 @@
 						</thead>
 						<tbody>
 							<!-- 顯示進度條 -->
-							<ng-container *ngIf="isMarkersLoading">
+							<!-- <ng-container *ngIf="isMarkersLoading">
 								<tr>
 									<td colspan="6">
-										<div class="progress-spinner-container">
+										<div class="progress-spinner-container"> -->
 																											<!-- diameter: 指示器大小-->
-											<mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+											<!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
 										</div>
 									</td>
 								</tr>
-							</ng-container>
+							</ng-container> -->
 
 							<!-- 顯示數據 -->
 							<ng-container *ngIf="!isMarkersLoading  && displayBsInfo">	
@@ -943,7 +946,7 @@
 						{{ displayAllBSFlag ? languageService.i18n['field.showFieldBS'] : languageService.i18n['field.showAllBS'] }}
 				</button>
 
-				<!-- 基站列表 For field Edit @2024/01/11 Add by yuchen -->	
+				<!-- 基站列表 For field Edit @2024/06/23 Update by yuchen -->	
 				<div class="table">
 					<table class="center">
 						<thead>
@@ -1009,6 +1012,11 @@
 										<label *ngIf="opt.status === 2" class="greenLight"></label>
 									</td>
 								</tr>
+								<tr class="notFind" *ngIf="displayedBasestations.length === 0">
+									<td colspan="12">
+										{{ displayAllBSFlag ? languageService.i18n['field.noBSForConfiguration'] : languageService.i18n['field.noBSInField'] }}
+									</td>
+								</tr>
 							<!-- </ng-container> -->
 						</tbody>
 					</table>
@@ -1042,14 +1050,14 @@
 				</ng-container> -->
 				<!-- 顯示場域圖片 -->
 				<!-- <ng-container *ngIf="!isFieldImageOnFieldEditLoading"> -->
-				<ng-container>
+				<!-- <ng-container> -->
 					<div class="preview">
 						<div class="center">{{ languageService.i18n['field.preview'] }}</div>
 						<mat-icon title="{{ languageService.i18n['field.DeletefieldImage'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon> <img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}"> <img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}"> </div>
 					<div id="noImageMessage" style="display: none;"> <span class="material-symbols-outlined"> error </span> {{ languageService.i18n['field.fieldImageNotUploaded1'] }}
 						<br> {{ languageService.i18n['field.fieldImageNotUploaded2'] }}
 					</div>
-				</ng-container>
+				<!-- </ng-container> -->
 			</div>
 			<div class="button-container">
 				<!-- 按鈕，用於觸發隱藏的 input 元素 -->

@@ -84,8 +84,12 @@
           <mat-icon (click)="openProvisionModal(opt)">upload_file</mat-icon>
         </td>
         <td class="icon">
-          <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDeleteModal(opt)">delete_forever</mat-icon>
+          <mat-icon tooltip="{{ languageService.i18n['delItem'] }}" (click)="openDeleteModal(opt)">delete_forever</mat-icon>
         </td>
+      </tr>
+      <!-- @2024/06/23 Add by yuchen -->
+      <tr class="notFind" *ngIf="componentListToDisplay.length === 0">
+        <td colspan="12">{{ languageService.i18n['no_results'] }}</td>
       </tr>
     </tbody>
   </table>
