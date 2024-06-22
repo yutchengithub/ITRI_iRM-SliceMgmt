@@ -2,14 +2,17 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonService } from './../../shared/common.service';
 import { SoftwareLists } from './../../software-management/software-management.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { SystemSummary } from 'src/app/dashboard/dashboard.component';
-import { LanguageService } from 'src/app/shared/service/language.service';
 import { Item } from 'src/app/shared/models/item';
+
+// Services
+import { CommonService }   from '../../shared/common.service';
+import { LanguageService } from '../../shared/service/language.service';
+import { SpinnerService }  from '../../shared/service/spinner.service'; // 用於控制顯示 Spinner
 
 // @2024/05/03 Add
 import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
@@ -41,15 +44,20 @@ interface FileObject {
 })
 
 export class SoftwareInfoComponent implements OnInit {
+
   sessionId: string = '';
   cloudId: string = '';
   cloudName: string = '';
+
   file: any;
   fileMsg: string = '';
+
   createForm!: FormGroup;
   // utilizationPercent: number = 0;
+
   softwareInfo: SoftwareInfo = {} as SoftwareInfo;
   //softwareList: SoftwareList[] = [];
+
   systemSummary: SystemSummary = {} as SystemSummary;;
   fileNameMapSoftware: Map<string, SoftwareInfo> = new Map();
   faultColors: string[] = ['#FF0000', '#FFA042', '	#FFFF37', '#00FFFF'];
@@ -80,14 +88,37 @@ export class SoftwareInfoComponent implements OnInit {
     { displayName: 'CU+DU+RU', value: 5 }
   ];
 
+  // @2024/06/22 Add
+  // Show Spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+
+  // @2024/06/22 Add
+  // Show Spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+  
+  // @2024/06/22 Add
+  // Hide Spinner
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    public commonService: CommonService,
     private http: HttpClient,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    public languageService: LanguageService,
+
+    public    commonService: CommonService,
+    public  languageService: LanguageService,
+    public   spinnerService: SpinnerService,
+
     private location: Location,  // @2024/05/03 Add
 
   ) {
@@ -152,18 +183,29 @@ export class SoftwareInfoComponent implements OnInit {
   //     this.selectedTypeName = selectedType.displayName;
   //   }
   // }
+
   getSoftwareInfo() {
-    if (this.commonService.isLocal) {
+
+    this.showLoadingSpinner();  // 顯示 spinner
+
+    if ( this.commonService.isLocal ) {
+
       /* local file test */
       this.softwareInfo = this.commonService.softwareInfo;
+
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
+
     } else {
-      this.commonService.queryUploadFileInfo(this.cloudId).subscribe(
+      this.commonService.queryUploadFileInfo( this.cloudId ).subscribe(
         res => {
           console.log('getSoftwareInfo:');
           console.log(res);
           const str = JSON.stringify(res);//convert array to string
+
           this.softwareInfo = JSON.parse(str);
           this.softwareInfo = res as SoftwareInfo;
+
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       );
     }

@@ -3,12 +3,15 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { CommonService } from '../shared/common.service';
-import { LanguageService } from '../shared/service/language.service';
 import { Item } from '../shared/models/item';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
+
+// Services
+import { CommonService }   from '../shared/common.service';
+import { LanguageService } from '../shared/service/language.service';
+import { SpinnerService }  from '../shared/service/spinner.service';
 
 export interface SoftwareList {
   id: string;
@@ -83,13 +86,36 @@ export class SoftwareManagementComponent implements OnInit {
     { displayName: `CU+DU+RU`, value: '5' }
   ];
 
+  // @2024/06/22 Add
+  // Show Spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+
+  // @2024/06/22 Add
+  // Show Spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+  
+  // @2024/06/22 Add
+  // Hide Spinner
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
+
   constructor(
     private dialog: MatDialog,
     private router: Router,
-    private commonService: CommonService,
     private http: HttpClient,
     private fb: FormBuilder,
-    public languageService: LanguageService
+
+    public   commonService: CommonService,
+    public  languageService: LanguageService,
+    public   spinnerService: SpinnerService,
+
   ) {
     this.uploadtypeList.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
     this.uploadtypeList = this.commonService.nfTypeList;
@@ -99,10 +125,14 @@ export class SoftwareManagementComponent implements OnInit {
     this.createSearchForm();
     this.sessionId = this.commonService.getSessionId();
     this.afterSearchForm = _.cloneDeep(this.searchForm);
+
     this.getSoftwareList();
   }
 
   getSoftwareList() {
+    
+    this.showLoadingSpinner();  // 顯示 spinner
+
     const firm = this.searchForm.controls['firm'].value;
     const uploadtype = this.searchForm.controls['uploadtype'].value;
     const model = this.searchForm.controls['model'].value;
@@ -110,27 +140,38 @@ export class SoftwareManagementComponent implements OnInit {
     console.log(`fileName=${firm}`);
     console.log(`uploadtype=${uploadtype}`);
     console.log(`model=${model}`);
-    clearTimeout(this.refreshTimeout);
-    if (this.commonService.isLocal) {
+    clearTimeout( this.refreshTimeout );
+
+    if ( this.commonService.isLocal ) {
+
       /* local file test */
       this.softwareLists = this.commonService.softwareLists;
-      console.log(this.softwareLists);
+      console.log( this.softwareLists );
+
       this.softwareListDeal();
+
+      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
+
     } else {
+
       this.commonService.queryUploadFileList().subscribe(
         res => {
           console.log('Get software list:');
-          console.log(res);
+          console.log( res );
           this.softwareLists = res as SoftwareLists;
           this.softwareListDeal();
+
+          this.hideSpinner();  // 完成後隱藏 spinner
         }
       );
     }
   }
+
   get msgToDisplay(): Uploadinfos[] {
     // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
     return this.isSearch ? this.filteredSwList : this.softwareLists.uploadinfos;
   }
+
   softwareListDeal() {
     this.totalItems = this.softwareLists.uploadinfos.length;
   }
@@ -154,6 +195,7 @@ export class SoftwareManagementComponent implements OnInit {
     });
     this.uploadtypeList = this.commonService.nfTypeList;
   }
+  
   openCreateModal() {
     this.formValidated = false;
     this.createForm = this.fb.group({
