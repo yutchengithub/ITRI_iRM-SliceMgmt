@@ -224,7 +224,7 @@
                 <!-- 顯示 gNB ID 長度 -->
                 <td>{{ opt.gNBIdLength }}</td>
                 <!-- 顯示基站天線座標 -->
-                <td>{{ opt.position }}</td>
+                <td>{{ commonService.formatPosition( opt.position ) }}</td>
                 <!-- 顯示基站描述 -->
                 <td>{{ opt.description }}</td>
               </tr>

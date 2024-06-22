@@ -398,7 +398,7 @@
 										<label *ngIf="opt.bstype === 2">{{ languageService.i18n['BS.dist'] }}</label>
 									</td>
 									<td>
-										<label>{{ opt.position }}</label>
+										<label>{{ commonService.formatPosition( opt.position ) }}</label>
 									</td>
 									<td class="icon">
 										<label *ngIf="opt.status === 0" class="grayLight"></label>
@@ -566,7 +566,7 @@
 								<img src="assets/img/energy.png">
 								<span class="label-container">
 									{{ languageService.i18n['pm.efficiency'] }}
-									<span>{{ energyEfficiencyAsNumber }}&thinsp;bit/J</span>
+									<span>{{ energyEfficiencyAsNumber }}&thinsp;Mbit/J</span>
 								</span>
 							</div>
 							<!-- <div class="item"> -->
@@ -1001,7 +1001,7 @@
 										{{ opt.gNBIdLength }}
 									</td>
 									<td>
-										<label>{{ opt.position }}</label>
+										<label>{{ commonService.formatPosition( opt.position ) }}</label>
 									</td>
 									<td class="icon">
 										<label *ngIf="opt.status === 0 || opt.status === 1" class="redLight"></label>

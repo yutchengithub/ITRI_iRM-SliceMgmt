@@ -73,8 +73,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     private router:         Router,          // Router 用於在應用內導航
     private dialog:         MatDialog,       // MatDialog 用於彈出對話框
     public languageService: LanguageService, // LanguageService 用於語言切換和國際化
-    private commonService:  CommonService,   // CommonService 提供通用的服務（如 Session ID 獲取）
-    public spinnerService: SpinnerService,
+    public   commonService:  CommonService,  // CommonService 提供通用的服務（如 Session ID 獲取）
+    public  spinnerService: SpinnerService,
     private fb:             FormBuilder,     // FormBuilder 用於建立表單
 
     public                    API_Field: apiForFieldMgmt,         // API_Field 用於場域管理相關的 API 請求
