@@ -270,8 +270,6 @@ export const TwLanguage = {
   'field.newConfusionPairs': '新混淆對',
   'field.confused': '混淆基站',
 
-  
-
 
   'field.optimizationType': '優化種類',
   'field.optimizationResult': '優化結果',
@@ -352,8 +350,6 @@ export const TwLanguage = {
   'BS.confirm_del':'確定要刪除基站',
   'BS.inUseCannotDelete': '使用中，無法刪除。',
   'BS.field': '場域',
-
-
 
   'BS.info':'基站詳細資訊',
 
@@ -532,10 +528,10 @@ export const TwLanguage = {
   // Performance Management (效能管理)
   'pm.field':'場域名稱',
   'pm.accessibility':'可用性',
-  'pm.integrity':'完整性 (4指標)',
+  'pm.integrity':'完整性 ( 4 指標 )',
   'pm.retainability':'穩定性',
   'pm.efficiency':'能源效率',
-  'pm.utilization':'利用率 (5指標)',
+  'pm.utilization':'利用率 ( 5 指標 )',
   'pm.mobility':'移動性',
   'information':'詳情資訊',
   'basic.info':'基本訊息',
@@ -550,7 +546,7 @@ export const TwLanguage = {
   'view_detail':'詳細查看此項目',
   'createNF':'新增 NF',
   'delItem':'刪除此項',
-  'updateSoftware':'更新此軟件',
+  'updateSoftware':'更新此軟體',
   'nfRun':'NF 執行中',
   'nfNotRun':'NF 停止執行',
   'stopDE':'停止部署',
@@ -589,7 +585,7 @@ export const TwLanguage = {
   'no_results':'未找到您想搜尋的相關數據。請嘗試修改搜尋關鍵字',
 
 
-  //Dashboard
+  // Dashboard
   'num_fields':'場域數量',
   'num_BSs':'基站數量',
   'num_UEs':'使用者數量',
@@ -600,7 +596,11 @@ export const TwLanguage = {
   'warning_Alarm':'警告告警',
   'dashboard.view':'檢視',
 
-  //Software Management
+  // Software Management
+  'sf.info': '軟體詳細資訊',
+  'sf.information': '資訊',
+  'sf.fileName': '檔案名稱',
+  'sf.fileSize': '檔案大小',
   'firm':'firm',
   'model':'型號',
   'manufacturer':'生產廠商',

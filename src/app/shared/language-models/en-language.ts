@@ -521,10 +521,10 @@ export const Enlanguage = {
   // Performance Management
   'pm.field':'Field Name',
   'pm.accessibility':'Accessibility',
-  'pm.integrity':'Integrity (4 Indicator)',
+  'pm.integrity':'Integrity ( 4 Indicator )',
   'pm.retainability':'Retainability',
   'pm.efficiency':'Energy Efficiency',
-  'pm.utilization':'Utilization (5 Indicator)',
+  'pm.utilization':'Utilization ( 5 Indicator )',
   'pm.mobility':'Mobility',
   'information':'Information',
   'basic.info':'Basic Information',
@@ -589,6 +589,10 @@ export const Enlanguage = {
   'dashboard.view':'View',
   
   // Software Management
+  'sf.info': 'Software Detailed Information',
+  'sf.information': 'Information',
+  'sf.fileName': 'File Name',
+  'sf.fileSize': 'File Size',
   'firm':'Firm',
   'model':'Model',
   'manufacturer':'Manufacturer',
