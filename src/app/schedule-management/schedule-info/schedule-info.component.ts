@@ -17,9 +17,9 @@ import { formatDate } from '@angular/common';
 import { Location } from '@angular/common';  // 引入 Location 服務，用於控制瀏覽器的歷史記錄導航
 
 // Services
-import { CommonService } from '../../shared/common.service';
+import { CommonService }   from '../../shared/common.service';
 import { LanguageService } from '../../shared/service/language.service';
-import { SpinnerService } from '../../shared/service/spinner.service';    // 用於控制顯示 Spinner @2024/04/17 Add
+import { SpinnerService }  from '../../shared/service/spinner.service'; // 用於控制顯示 Spinner @2024/04/17 Add
 
 
 // For import APIs of Schedule Management 
