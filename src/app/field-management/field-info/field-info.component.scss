@@ -170,6 +170,12 @@ F
   margin: 0 0 0 5px!important;
   vertical-align: initial!important;
 }
+.hoverInfo > span:first-child {
+  border-radius: 5px 5px 0 0;
+}
+.hoverInfo > span:last-child {
+  border-radius: 0 0 5px 5px;
+}
 .percent {
   font-weight: bold;
   font-family: Microsoft JhengHei;

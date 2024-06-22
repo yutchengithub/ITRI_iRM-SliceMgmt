@@ -480,7 +480,7 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
 .ngx-pagination {
   margin: .5em 0;
   text-align: right;
-  width: 96%;
+  width: 98%;
   position: relative;
 }
 .ngx-pagination li {
@@ -501,7 +501,6 @@ mat-dialog-container .mat-button-toggle-appearance-standard .mat-button-toggle-l
 }
 nav[role="navigation"] {
   position: relative;
-    padding-left: 5em;
 }
 .top {
   vertical-align: top;
@@ -714,6 +713,7 @@ padding: 8px 0 6px 2%;
 width: 97.65%;
 border-radius: 5px;
 }
+
 .filter > span {
   margin: 0 .5em 0 0;
   }
@@ -1224,6 +1224,7 @@ body.en #fieldEditWindow {
 }
 #fieldEditWindow table {
   width: 100%;
+  white-space: nowrap;
 }
 #fieldEditWindow ul {
   margin: 1% 3%;
@@ -1305,10 +1306,14 @@ body.tw #PMgmtParameterSetWindow ul li > label {
   width: 22em;
 }
 body.en .fault_mgr.table table tbody tr td:nth-child(4) {
-  min-width: 9em;
+  min-width: 11em;
+}
+body.en .filter.fault_mgr {
+  padding: 8px 0 6px 6px;
 }
  #fieldCreationWindow {
   width: 50em!important;
+  height: 45em;
 }
 
 .pw {
@@ -1900,8 +1905,9 @@ body.tw #fault_statusModal ul li > label {
 }
 #fieldPMReportWindow .table table {
   max-height: 14em;
-  width: 93%;
+  width: 97%;
   border: 0;
+  white-space: nowrap;
 }
 #fieldPMReportWindow table tbody tr td:first-child {
   border-left: 1px solid #223b50;
@@ -1918,6 +1924,9 @@ body.tw #fault_statusModal ul li > label {
   line-height: 1em;
   font-size: 14px;
   padding: 0.5em 0.6em;
+}
+#fieldPMReportWindow table tbody tr td:first-child {
+  width: 260px;
 }
 #fieldPMReportWindow .filter form {
   display: inline-block;
@@ -1938,6 +1947,7 @@ body.tw #fault_statusModal ul li > label {
   border-right: 1px solid #2562959e;
   margin: 0!important;
   width: 260px;
+  min-width: 260px;
 }
 #fieldPMReportWindow table th.relative span:first-child {
   position: absolute;
@@ -1950,7 +1960,7 @@ body.tw #fault_statusModal ul li > label {
   top: 7px;
 }
 #fieldPMReportWindow .Overview table th span {
-  margin: 0 1em;
+  margin: 0 .5em;
   display: block;
 }
 .nowrap {
@@ -1978,4 +1988,8 @@ body.tw .performance table th.relative span:first-child {
 }
 .content-inner.hasFilter {
   min-height: 21em;
+}
+#fieldCreationWindow table {
+  max-height: 15em;
+  white-space: nowrap;
 }
