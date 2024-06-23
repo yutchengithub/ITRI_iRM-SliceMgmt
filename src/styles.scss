@@ -170,6 +170,7 @@ mat-dialog-container h5 + p {
   margin: auto!important;
   display: block;
   word-break: break-word!important;
+  white-space: nowrap;
 }
 mat-dialog-container ul {
   margin: 1% 6%;
@@ -1992,4 +1993,7 @@ body.tw .performance table th.relative span:first-child {
 #fieldCreationWindow table {
   max-height: 15em;
   white-space: nowrap;
+}
+#deleteModal ul {
+  text-align: center;
 }
