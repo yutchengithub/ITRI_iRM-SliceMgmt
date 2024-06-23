@@ -3,13 +3,16 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { CommonService } from '../shared/common.service';
-import { LanguageService } from '../shared/service/language.service';
-import { SpinnerService } from '../shared/service/spinner.service'; 
 import { Item } from '../shared/models/item';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
+
+// Services
+import { CommonService } from '../shared/common.service';
+import { LanguageService } from '../shared/service/language.service';
+import { SpinnerService } from '../shared/service/spinner.service';    // 用於控制顯示 Spinner
+
 
 export interface ComponentList {
   components: Components[];
@@ -79,22 +82,33 @@ export class ComponentManagementComponent implements OnInit {
     { displayName: `CU+DU`, value: '4' },
     { displayName: `CU+DU+RU`, value: '5' }
   ];
+
   componentId: string= '';
+
   showLoadingSpinner() {
     this.spinnerService.isLoading = true;
     this.spinnerService.show();
   }
+
   hideSpinner() {
     this.spinnerService.hide();
   }
+
+  // Show Spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+  
   constructor(
     private dialog: MatDialog,
     private router: Router,
-    private commonService: CommonService,
     private http: HttpClient,
     private fb: FormBuilder,
-    public spinnerService: SpinnerService,
-    public languageService: LanguageService
+    private    commonService: CommonService,
+    public   languageService: LanguageService,
+    public    spinnerService: SpinnerService
+
   ) {
     this.comtype.forEach((row) => this.typeMap.set(Number(row.value), row.displayName));
     this.createSearchForm();
@@ -304,7 +318,46 @@ export class ComponentManagementComponent implements OnInit {
     this.delete();
   }
 
+  // delete() {
+  //   if (this.commonService.isLocal) {
+  //     /* local file test */
+  //     for (let i = 0; i < this.commonService.componentList.components.length; i++) {
+  //       if (this.selectComponent.id === this.commonService.componentList.components[i].id) {
+  //         this.commonService.componentList.components.splice(i, 1);
+  //         break;
+  //       }
+  //     }
+  //     this.deleteModalRef.close();
+  //     this.getComponentList();
+  //   } else {
+  //     const removeBsBody: any = {
+  //       session: this.sessionId,
+  //       id:this.selectComponent.id,
+  //     };
+  //     const httpOptions = {
+  //       // 設定 HTTP 標頭
+  //       headers: new HttpHeaders({
+  //         'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
+  //       }),
+  //       body: removeBsBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
+  //     };
+  //     this.commonService.removeBsComponent(httpOptions).subscribe(
+  //       res => {
+  //         this.deleteModalRef.close();
+  //         this.getComponentList();
+  //       }
+  //     );
+  //   }
+  // }
+
+  // @2024/06/23 Update by yuchen
   delete() {
+
+    // 輸出將要刪除的網元名稱
+    console.log("Deleted component name: ", this.selectComponent.name);
+
+    this.showProcessingSpinner();  // 顯示 spinner
+
     if (this.commonService.isLocal) {
       /* local file test */
       for (let i = 0; i < this.commonService.componentList.components.length; i++) {
@@ -315,24 +368,42 @@ export class ComponentManagementComponent implements OnInit {
       }
       this.deleteModalRef.close();
       this.getComponentList();
+      
+      this.hideSpinner();  // 隱藏 spinner
     } else {
+
       const removeBsBody: any = {
         session: this.sessionId,
-        id:this.selectComponent.id,
+        id: this.selectComponent.id,
       };
+
       const httpOptions = {
-        // 設定 HTTP 標頭
         headers: new HttpHeaders({
-          'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
+          'Content-Type': 'application/json'
         }),
-        body: removeBsBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
+        body: removeBsBody
       };
-      this.commonService.removeBsComponent(httpOptions).subscribe(
-        res => {
+
+      this.commonService.removeBsComponent(httpOptions).subscribe({
+        next: ( response ) => {
+          // 刪除成功的回調
+
+          console.log('Component removed successfully', response);
           this.deleteModalRef.close();
+          
           this.getComponentList();
+
+        },
+        error: (error) => {
+          // 刪除失敗的回調
+          console.error('Failed to remove component:', error);
+          this.hideSpinner();  // 出錯時隱藏 spinner
+        },
+        complete: () => {
+          // 請求完成後的回調，不管成功或失敗都會執行
+          this.hideSpinner();  // 隱藏 spinner
         }
-      );
+      });
     }
   }
 
@@ -381,8 +452,6 @@ export class ComponentManagementComponent implements OnInit {
     }
     this.getComponentList();
   }
-
-
 
   changeType(e: MatButtonToggleChange) {
     this.formValidated = false;
