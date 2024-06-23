@@ -1123,6 +1123,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   queryFieldInfo!: Subscription;
   isMarkersLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
 
+  // @2024/06/24 update
   // @2024/01/02 Add - 儲存場域邊界點
   // @2024/01/04 Update - Add calculateBestZoom()
   getQueryFieldInfo() {
@@ -1390,7 +1391,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   queryBsInfo!: Subscription;
 
   /**
-   * @2024/06/21 Update
+   * @2024/06/24 Update
    * 獲取場地內所有 BS 的資訊
    * @function getQueryBsInfoForAll
    * @param {number} bsNum - 場地內基站的總數
