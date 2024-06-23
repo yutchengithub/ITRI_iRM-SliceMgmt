@@ -1741,22 +1741,25 @@ export class BSManagementComponent implements OnInit {
 
           // 處理API成功響應，通常包括日誌輸出及後續處理
           console.log("基站建立成功:", response);
+          this.hideSpinner();  // 在成功響應後隱藏 spinner
 
           // 基站建立成功後刷新基站列表
-          //this.getQueryBsList();
+          this.getQueryBsList();
+          this.bsCreationWindowRef.close();  // 關閉創建窗口
 
         },
         error: ( error ) => {
           // 處理API失敗響應，通常為錯誤日誌輸出
           console.error( "基站建立失敗:", error );
+          this.hideSpinner();
         },
-        complete: () => {
-          // 請求完成後的回調，不管成功或失敗都會執行
-          //this.hideSpinner();  // 隱藏 spinner
+        // complete: () => {
+        //   // 請求完成後的回調，不管成功或失敗都會執行
+        //   //this.hideSpinner();  // 隱藏 spinner
 
-          // 基站建立成功後刷新基站列表
-          this.getQueryBsList();
-        }
+        //   // 基站建立成功後刷新基站列表
+        //   this.getQueryBsList();
+        // }
       });
     }
 
