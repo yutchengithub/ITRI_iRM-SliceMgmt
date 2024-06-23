@@ -44,7 +44,7 @@ export const TwLanguage = {
   'table.performance':'部署狀態',
   'table.delete':'刪除',
   
-  // Common Items (共用項目)
+  // Common Items ( 共用項目 )
   "back": '返回',
   'ok':'確定',
   'confirm':'確認',             // @2024/01/10 Add by yuchen
@@ -55,10 +55,11 @@ export const TwLanguage = {
   'close': '關閉',               // @2024/01/22 Add
   'clear_select':'重置選擇',     // @2024/04/25 Add
 
-  // Field Management (場域管理) @11/30 Add by yuchen
+  // Field Management ( 場域管理 ) Add by yuchen
   'field.list':'場域列表',
   'field.name':'場域名稱',
   'field.bsNum':'基站數量',
+  'field.noFieldsAvailable': '目前無任何場域。',
 
   'field.create':'建立場域',        // @2024/01/31 Add
   'field.createNext':'下一步',      // @2024/01/31 Add
@@ -71,6 +72,7 @@ export const TwLanguage = {
   'field.setNotificationNum': '設定管理者通知門號',  // @2024/01/31 Add
   'field.PhoneNum': '電話號碼',                    // @2024/01/31 Add
   'field.selectBaseStations': '選擇基站',          // @2024/01/31 Add
+  'field.noBSForConfiguration': '目前無任何基站可配置，請先建立新基站。',
   'field.setupComplete': '場域設定完成。',          // @2024/01/31 Add
   'field.bsDescription': '基站地點說明',            // @2024/02/01 Add
   'field.validLongitude': '請輸入有效經度 ( -180.0 ~ 180.0 )',  // @2024/02/02 Add
@@ -167,6 +169,8 @@ export const TwLanguage = {
   'field.showAllBS': '顯示所有基站',
 
 
+
+
   'field.fieldImageUpload':'場域圖片上傳',      // @2024/02/23 Update
   'field.fieldImageNone':'未有場域圖片',        // @2024/02/23 Update
   'field.fieldImageNotUploaded': '尚未上傳場域圖片(如室內或室外地圖)',      // @2024/02/23 Update
@@ -216,6 +220,7 @@ export const TwLanguage = {
   'field.mapModel':'場域地圖',       // @2024/04/12 Update
   'field.map':'地圖', 
   'field.bsList':'基站列表',         // @12/12 Add
+  'field.noBSInField': '目前此場域內無任何基站。',
 
   'field.bsAntennaCoord':'基站天線座標',      // @12/13 Add
   'field.BSstatus':'連線狀態',                // @12/13 Add
@@ -270,8 +275,6 @@ export const TwLanguage = {
   'field.newConfusionPairs': '新混淆對',
   'field.confused': '混淆基站',
 
-  
-
 
   'field.optimizationType': '優化種類',
   'field.optimizationResult': '優化結果',
@@ -292,6 +295,7 @@ export const TwLanguage = {
 
   // BS Management ( 基站管理 )
   'BS.list':'基站列表',
+  'BS.noBSAvailable': '目前無任何基站。',
   'BS.createWindowTitle':'基站建立',
   'BS.create':'建立基站',
   
@@ -352,8 +356,6 @@ export const TwLanguage = {
   'BS.confirm_del':'確定要刪除基站',
   'BS.inUseCannotDelete': '使用中，無法刪除。',
   'BS.field': '場域',
-
-
 
   'BS.info':'基站詳細資訊',
 
@@ -532,10 +534,10 @@ export const TwLanguage = {
   // Performance Management (效能管理)
   'pm.field':'場域名稱',
   'pm.accessibility':'可用性',
-  'pm.integrity':'完整性 (4指標)',
+  'pm.integrity':'完整性 ( 4 指標 )',
   'pm.retainability':'穩定性',
   'pm.efficiency':'能源效率',
-  'pm.utilization':'利用率 (5指標)',
+  'pm.utilization':'利用率 ( 5 指標 )',
   'pm.mobility':'移動性',
   'information':'詳情資訊',
   'basic.info':'基本訊息',
@@ -550,7 +552,7 @@ export const TwLanguage = {
   'view_detail':'詳細查看此項目',
   'createNF':'新增 NF',
   'delItem':'刪除此項',
-  'updateSoftware':'更新此軟件',
+  'updateSoftware':'更新此軟體',
   'nfRun':'NF 執行中',
   'nfNotRun':'NF 停止執行',
   'stopDE':'停止部署',
@@ -586,10 +588,10 @@ export const TwLanguage = {
   'confirm_modify':'確認修改',
   'pending_error':'待處理',
   'resolved':'已解決',
-  'no_results':'未找到您想搜尋的相關數據。請嘗試修改搜尋關鍵字',
+  'no_results':'未找到您想搜尋的相關數據。請嘗試修改搜尋關鍵字。',
 
 
-  //Dashboard
+  // Dashboard
   'num_fields':'場域數量',
   'num_BSs':'基站數量',
   'num_UEs':'使用者數量',
@@ -600,7 +602,11 @@ export const TwLanguage = {
   'warning_Alarm':'警告告警',
   'dashboard.view':'檢視',
 
-  //Software Management
+  // Software Management
+  'sf.info': '軟體詳細資訊',
+  'sf.information': '資訊',
+  'sf.fileName': '檔案名稱',
+  'sf.fileSize': '檔案大小',
   'firm':'firm',
   'model':'型號',
   'manufacturer':'生產廠商',

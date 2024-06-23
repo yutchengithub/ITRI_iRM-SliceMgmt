@@ -35,7 +35,7 @@
         </ng-container> -->
 
         <!-- 加載完成後顯示場域數據 -->
-        <ng-container *ngIf="!isLoading">
+        <!-- <ng-container *ngIf="!isLoading"> -->
           <!-- 循環顯示場域列表，並應用分頁 -->
           <tr *ngFor="let field of fieldList.fields | paginate: { 
               itemsPerPage: pageSize,
@@ -60,13 +60,17 @@
               <mat-icon tooltip="{{ languageService.i18n['field.alarm'] }}" (click)="viewFieldAlarmInfo( field )">warning</mat-icon>
             </td>
             <td class="icon">
-              <mat-icon tooltip="{{languageService.i18n['field.snapshot']}}" (click)="openfieldSnapshotSetWindow( field )">camera_alt</mat-icon>
+              <mat-icon tooltip="{{ languageService.i18n['field.snapshot'] }}" (click)="openfieldSnapshotSetWindow( field )">camera_alt</mat-icon>
             </td>
             <td class="icon">
-              <mat-icon tooltip="{{languageService.i18n['field.delItem']}}" (click)="openDeleteField_ConfirmWindow( field )">delete_forever</mat-icon>
+              <mat-icon tooltip="{{ languageService.i18n['field.delItem'] }}" (click)="openDeleteField_ConfirmWindow( field )">delete_forever</mat-icon>
             </td>
           </tr>
-        </ng-container>
+           <!-- @2024/06/23 Add -->
+           <tr class="notFind" *ngIf="fieldList.fields.length === 0">
+            <td colspan="12">{{ languageService.i18n['field.noFieldsAvailable'] }}</td>
+          </tr>
+        <!-- </ng-container> -->
     </tbody>
   </table>
 </div>
@@ -227,6 +231,10 @@
                 <td>{{ commonService.formatPosition( opt.position ) }}</td>
                 <!-- 顯示基站描述 -->
                 <td>{{ opt.description }}</td>
+              </tr>
+              <!-- @2024/06/23 Add -->
+              <tr class="notFind" *ngIf="displayedBSs.length === 0">
+                <td colspan="12">{{ languageService.i18n['field.noBSForConfiguration'] }}</td>
               </tr>
             </tbody>
           </table>

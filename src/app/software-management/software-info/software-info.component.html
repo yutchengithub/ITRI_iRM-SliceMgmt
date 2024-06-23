@@ -3,36 +3,36 @@
     <button (click)="back()">
       <span class="material-icons">arrow_back</span>{{ languageService.i18n['back'] }}
     </button>
-    Software {{languageService.i18n['information']}} – {{softwareInfo.firm}}/{{softwareInfo.modelname}} {{mapUploadType(softwareInfo.uploadtype)}} {{softwareInfo.uploadversion}}
+    {{ languageService.i18n['sf.info'] }} – {{mapUploadType(softwareInfo.uploadtype)}} / {{softwareInfo.firm}} / {{softwareInfo.modelname}} / {{softwareInfo.uploadversion}}
   </h5>
 
   <div class="BOX basicInfo ">
-    <label class="boxTitle">{{languageService.i18n['basic.info']}}</label>
+    <label class="boxTitle">{{languageService.i18n['sm.detailInfo']}}</label>
     <div class="center">
       <ul class="Software_info">
-        <h3>Software Information</h3>
-        
-        <li><label>{{languageService.i18n['manufacturer']}}</label>{{softwareInfo.firm}}</li>
-        <li><label>{{languageService.i18n['model']}}</label>{{softwareInfo.modelname}}</li>
+        <h3>{{ languageService.i18n['basic.info'] }}</h3>
+        <li><label>{{ languageService.i18n['type'] }}</label>{{ mapUploadType(softwareInfo.uploadtype) }}</li>
+        <li><label>{{ languageService.i18n['manufacturer'] }}</label>{{ softwareInfo.firm }}</li>
+        <li><label>{{ languageService.i18n['model'] }}</label>{{ softwareInfo.modelname }}</li>
         <!-- <li><label>{{languageService.i18n['model']}}</label><input type="text" [(ngModel)]="softwareInfo.modelname"/></li> -->
         <!-- <li><label>{{languageService.i18n['type']}}</label>
           <select [(ngModel)]="softwareInfo.uploadtype" >
             <option *ngFor="let opt of uploadtypeUI" [value]="opt.value">{{opt.displayName}}</option>
           </select>
         </li> -->
-        <li><label>{{languageService.i18n['type']}}</label>{{mapUploadType(softwareInfo.uploadtype)}}</li>
-        <li><label>{{languageService.i18n['version']}}</label>{{softwareInfo.uploadversion}}</li>
-        <li><label>{{languageService.i18n['notes']}}</label>{{softwareInfo.description}}</li>
+        <li><label>{{ languageService.i18n['version'] }}</label>{{ softwareInfo.uploadversion }}</li>
+        
+        <li><label>{{ languageService.i18n['notes'] }}</label>{{ softwareInfo.description }}</li>
       </ul>
       <ul class="file_url_info">
-        <h3>File/URL Information</h3>
-        <li><label>File name</label><span>{{softwareInfo.uploadinfo}}</span></li>
-        <li><label>URL</label><span>{{softwareInfo.uploadurl}}</span></li>
-        <li><label>File size</label><span>{{softwareInfo.size}}</span></li>
-        <li><label>CheckSum</label><span>{{softwareInfo.checksum}}</span></li>
+        <h3>File/URL {{ languageService.i18n['sf.information'] }}</h3>
+        <li><label>{{ languageService.i18n['sf.fileName'] }}</label><span>{{ softwareInfo.uploadinfo }}</span></li>
+        <li><label>{{ languageService.i18n['sf.fileSize'] }}</label><span>{{ softwareInfo.size }}</span></li>
+        <li><label>URL</label><span>{{ softwareInfo.uploadurl }}</span></li>
+        <li><label>CheckSum</label><span>{{ softwareInfo.checksum }}</span></li>
       </ul>
       <ul class="ftp_info">
-        <h3>FTP Information</h3>
+        <h3>FTP {{ languageService.i18n['sf.information'] }}</h3>
         <li><label>{{languageService.i18n['ftp.account']}}</label>{{softwareInfo.ftpid}}</li>
         <li><label>{{languageService.i18n['ftp.password']}}</label>{{softwareInfo.ftpkey}}</li>
       </ul>
