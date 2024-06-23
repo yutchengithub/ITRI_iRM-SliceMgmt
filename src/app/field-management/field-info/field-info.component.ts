@@ -1285,11 +1285,11 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           console.log( 'Field info fetch completed' );
           //this.isMarkersLoading = false; // 加載完成 @12/28 Add for Progress Spinner
           
-          window.setTimeout(() => {
+          // window.setTimeout(() => {
 
-            this.hideSpinner();  // 完成後隱藏 spinner
+          //   this.hideSpinner();  // 完成後隱藏 spinner
 
-          }, 2800 ); // 設定 10000 ms ( s ) 後執行
+          // }, 2800 ); // 設定 10000 ms ( s ) 後執行
         }
       });
     }
@@ -1496,7 +1496,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         // 加載完成，隱藏 spinner
-        this.isMarkersLoading = false;
+        //this.isMarkersLoading = false;
       },
       error: (error) => {
         // 如果在請求過程中出現錯誤，則在控制台輸出錯誤訊息
@@ -1510,6 +1510,8 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log("In getQueryBsInfoForAll() - allSimplifiedBsInfo", this.allSimplifiedBsInfo);
         // 加載完成，隱藏 spinner
         this.isMarkersLoading = false;
+
+        this.hideSpinner();  // 完成後隱藏 spinner
       }
     });
 
