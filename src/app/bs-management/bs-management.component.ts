@@ -489,7 +489,7 @@ export class BSManagementComponent implements OnInit {
   // 用於跟踪 "基站建立" 表單的驗證狀態 
   bsCreationFormValidated = false; // 默認為 false，表示尚未驗證
 
-  /** @2024/04/26 Add
+  /** @2024/06/23 Update
    *  打開 "基站建立" 視窗
    *  @method openBsCreationWindow
    *  @returns {void}
@@ -504,6 +504,12 @@ export class BSManagementComponent implements OnInit {
     // 確保 bsList 可用後再創建表單
     this.createBsCreationForm( this.bsList.basestation );
 
+    // 初始化所有輸入的"基站建立"設定與初始化各種網元可選擇的選項
+    this.resetBsCreationForm();
+
+    // 打開視窗時加載未使用網元列表數據
+    this.getUnusedNEList();
+
     // 打開 "基站建立" 彈出視窗
     this.bsCreationWindowRef = this.dialog.open( this.bsCreationWindow, {
       id: 'bsCreationWindow',
@@ -517,13 +523,7 @@ export class BSManagementComponent implements OnInit {
       this.resetBsCreationForm();
     });
 
-    // 打開視窗時加載未使用網元列表數據
-    this.getUnusedNEList();
-
-    // 初始化所有輸入的"基站建立"設定
-    this.resetBsCreationForm();
-
-    // 輸出相關的狀態信息
+    // 輸出相關的狀態訊息
     console.log("When Open BS Creation Window the bsComponents", this.bsComponents);
     console.log("When Open BS Creation Window the selectedDUIds", this.selectedDUIds);
     console.log("When Open BS Creation Window the selectedRUIds", this.selectedRUIds);
@@ -562,7 +562,7 @@ export class BSManagementComponent implements OnInit {
    *  @param { Basestation[] } bsList - 基站列表
    *  @returns { ValidatorFn } 返回一個表單驗證器函數
    */
-  uniqueBSNameValidator(bsList: Basestation[]): ValidatorFn {
+  uniqueBSNameValidator( bsList: Basestation[] ): ValidatorFn {
     return ( control: AbstractControl ): ValidationErrors | null => {
       // 使用 'some' 方法檢查是否存在具有相同名稱的基站
       const nameExists = bsList.some( bs => bs.name === control.value );
@@ -605,7 +605,7 @@ export class BSManagementComponent implements OnInit {
     });
   }
 
-  /** @2024/04/29 Update
+  /** @2024/06/23 Update
    *  用於重置所有輸入的"基站建立"設定
    *  @method resetBsCreationForm
    *  @returns { void }
@@ -619,14 +619,22 @@ export class BSManagementComponent implements OnInit {
     this.bsFormGroup_Elements.reset();
     this.bsFormGroup_Description.reset();
 
-    // 重置 bsComponents 網元信息
+    // 重置 bsComponents 網元訊息
     this.bsComponents = {};
 
-    // 重置已選擇的 DU 和 RU IDs
+    // @2024/06/23 Add
+    // 重置所有可選擇的網元選項
+    this.CUOptions = [];
+    this.DUOptions = [];
+    this.RUOptions = [];
+    this.CUDUOptions = [];
+    this.allInOneOptions = [];
+
+    // 重置已選擇的 DU 和 RU 網元 IDs
     this.selectedDUIds = [];
     this.selectedRUIds = [];
 
-    // 重置可選擇的連接 DU 選項
+    // 重置可選擇的連接 DU 網元選項
     this.connectedDUOptions = [];
 
     // 重置 RUElementsFormArray 中的 connectedDU 控制項
