@@ -355,44 +355,7 @@ export class ComponentManagementComponent implements OnInit {
     this.delete();
   }
 
-  // delete() {
-  //   if (this.commonService.isLocal) {
-  //     /* local file test */
-  //     for (let i = 0; i < this.commonService.componentList.components.length; i++) {
-  //       if (this.selectComponent.id === this.commonService.componentList.components[i].id) {
-  //         this.commonService.componentList.components.splice(i, 1);
-  //         break;
-  //       }
-  //     }
-  //     this.deleteModalRef.close();
-  //     this.getComponentList();
-  //   } else {
-  //     const removeBsBody: any = {
-  //       session: this.sessionId,
-  //       id:this.selectComponent.id,
-  //     };
-  //     const httpOptions = {
-  //       // 設定 HTTP 標頭
-  //       headers: new HttpHeaders({
-  //         'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
-  //       }),
-  //       body: removeBsBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
-  //     };
-  //     this.commonService.removeBsComponent(httpOptions).subscribe(
-  //       res => {
-  //         this.deleteModalRef.close();
-  //         this.getComponentList();
-  //       }
-  //     );
-  //   }
-  // }
-
-  // @2024/06/23 update by yuchen
   delete() {
-
-    // 輸出將要刪除的網元名稱
-    console.log("Deleted component name: ", this.selectComponent.name);
-
     this.showProcessingSpinner();  // 顯示 spinner
 
     if (this.commonService.isLocal) {
@@ -405,47 +368,86 @@ export class ComponentManagementComponent implements OnInit {
       }
       this.deleteModalRef.close();
       this.getComponentList();
-      
-      //this.hideSpinner();  // 隱藏 spinner
-
     } else {
-
       const removeBsBody: any = {
         session: this.sessionId,
-        id: this.selectComponent.id,
+        id:this.selectComponent.id,
       };
-
       const httpOptions = {
+        // 設定 HTTP 標頭
         headers: new HttpHeaders({
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
         }),
-        body: removeBsBody
+        body: removeBsBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
       };
-
-      this.commonService.removeBsComponent(httpOptions).subscribe({
-        next: ( response ) => {
-          // 刪除成功的回調
-
-          console.log('Component removed successfully', response);
+      this.commonService.removeBsComponent(httpOptions).subscribe(
+        res => {
           this.deleteModalRef.close();
-          
           this.getComponentList();
-
-          //this.hideSpinner();  // 隱藏 spinner
-
-        },
-        error: (error) => {
-          // 刪除失敗的回調
-          console.error('Failed to remove component:', error);
-          //this.hideSpinner();  // 出錯時隱藏 spinner
-        },
-        complete: () => {
-          // 請求完成後的回調，不管成功或失敗都會執行
-          //this.hideSpinner();  // 隱藏 spinner
         }
-      });
+      );
     }
   }
+
+  // @2024/06/23 update by yuchen
+  // delete() {
+
+  //   // 輸出將要刪除的網元名稱
+  //   console.log("Deleted component name: ", this.selectComponent.name);
+
+  //   this.showProcessingSpinner();  // 顯示 spinner
+
+  //   if (this.commonService.isLocal) {
+  //     /* local file test */
+  //     for (let i = 0; i < this.commonService.componentList.components.length; i++) {
+  //       if (this.selectComponent.id === this.commonService.componentList.components[i].id) {
+  //         this.commonService.componentList.components.splice(i, 1);
+  //         break;
+  //       }
+  //     }
+  //     this.deleteModalRef.close();
+  //     this.getComponentList();
+      
+  //     //this.hideSpinner();  // 隱藏 spinner
+
+  //   } else {
+
+  //     const removeBsBody: any = {
+  //       session: this.sessionId,
+  //       id: this.selectComponent.id,
+  //     };
+
+  //     const httpOptions = {
+  //       headers: new HttpHeaders({
+  //         'Content-Type': 'application/json'
+  //       }),
+  //       body: removeBsBody
+  //     };
+
+  //     this.commonService.removeBsComponent(httpOptions).subscribe({
+  //       next: ( response ) => {
+  //         // 刪除成功的回調
+
+  //         console.log('Component removed successfully', response);
+  //         this.deleteModalRef.close();
+          
+  //         this.getComponentList();
+
+  //         //this.hideSpinner();  // 隱藏 spinner
+
+  //       },
+  //       error: (error) => {
+  //         // 刪除失敗的回調
+  //         console.error('Failed to remove component:', error);
+  //         //this.hideSpinner();  // 出錯時隱藏 spinner
+  //       },
+  //       complete: () => {
+  //         // 請求完成後的回調，不管成功或失敗都會執行
+  //         //this.hideSpinner();  // 隱藏 spinner
+  //       }
+  //     });
+  //   }
+  // }
 
   openProvisionModal(componentList: Components) {
     this.formValidated = false;
