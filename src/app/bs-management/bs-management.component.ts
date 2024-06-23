@@ -1688,7 +1688,7 @@ export class BSManagementComponent implements OnInit {
   }
 
   /**
-   * @2024/04/30 Add
+   * @2024/06/24 Update
    * 表單提交事件處理
    * @method BsCreation_Submit
    * @returns {void}
@@ -1697,6 +1697,8 @@ export class BSManagementComponent implements OnInit {
    */
   BsCreation_Submit() {
     console.log("BsCreation_Submit() - Start");
+
+    this.showProcessingSpinner();  // 顯示 spinner
 
     // 獲取表單控件 'BSType' 的值，用於後續判斷基站的類型
     const typeValue = this.bsFormGroup_Type.get('BSType')?.value;
@@ -1720,6 +1722,9 @@ export class BSManagementComponent implements OnInit {
       // 本地模式下僅打印模擬的提交數據
       console.log("Local 模擬基站建立，提交的數據:", submitData);
 
+      // 基站建立成功後刷新基站列表
+      this.getQueryBsList();
+
     } else {
 
       // 生產環境下根據基站類型執行對應的API調用
@@ -1735,12 +1740,19 @@ export class BSManagementComponent implements OnInit {
           console.log("基站建立成功:", response);
 
           // 基站建立成功後刷新基站列表
-          this.getQueryBsList();
+          //this.getQueryBsList();
 
         },
         error: ( error ) => {
           // 處理API失敗響應，通常為錯誤日誌輸出
           console.error( "基站建立失敗:", error );
+        },
+        complete: () => {
+          // 請求完成後的回調，不管成功或失敗都會執行
+          //this.hideSpinner();  // 隱藏 spinner
+
+          // 基站建立成功後刷新基站列表
+          this.getQueryBsList();
         }
       });
     }

@@ -568,12 +568,14 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
     console.log("checkFieldCreationJSON() - End");
   }
 
-  // @2024/02/02 Add
+  // @2024/06/24 Update
   // 提交場域建立表單的函數。如果處於 Local 模式，則模擬提交過程；如果處於生產模式，則向後端 API 發送請求。
   FieldCreation_Submit() {
 
     // 在控制台記錄開始執行函數的訊息
     console.log( "FieldCreation_Submit() - Start" );
+
+    this.showProcessingSpinner();  // 顯示 spinner
 
     // 根據用戶填寫的表單資料，建立提交到後端的數據結構
     const fieldCreationData: ForCreateOrUpdateField = {
@@ -611,12 +613,19 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           console.log( "場域建立成功:", response );
 
           // 建立成功後，刷新場域列表
-          this.getQueryFieldList();
+          //this.getQueryFieldList();
         },
         error: ( error ) => {
           // 處理失敗響應
           console.error("場域建立失敗:", error);
           // 例如顯示錯誤訊息給用戶
+        },
+        complete: () => {
+          // 請求完成後的回調，不管成功或失敗都會執行
+          //this.hideSpinner();  // 隱藏 spinner
+
+          // 建立成功後，刷新場域列表
+          this.getQueryFieldList();
         }
       });
     }
