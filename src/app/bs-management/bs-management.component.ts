@@ -163,7 +163,7 @@ export class BSManagementComponent implements OnInit {
           console.log( '基站列表資訊\n( BS List ):', this.bsList ); // 取得的 BS List 資訊 ( Obtained BS List information )
           
           this.isGetQueryBsListLoading = false; // 取得後隱藏 spinner
-          this.hideSpinner();  // 完成後隱藏 spinner
+          //this.hideSpinner();  // 完成後隱藏 spinner
         },
         error: ( error ) => {
           console.error( '獲取基站列表資訊出錯:', error );
@@ -317,8 +317,8 @@ export class BSManagementComponent implements OnInit {
       this.getQueryBsList();
 
       // 關閉加載指示器
-      this.isGetQueryBsListLoading = false;
-      this.hideSpinner();  // 隱藏 spinner
+      //this.isGetQueryBsListLoading = false;
+      //this.hideSpinner();  // 隱藏 spinner
 
     } else {
 
@@ -330,7 +330,7 @@ export class BSManagementComponent implements OnInit {
           console.log( 'BS removed successfully', response );
 
           // 刷新 BS 列表或進行其他更新
-          this.getQueryBsList();
+          //this.getQueryBsList();
 
           // 關閉加載指示器
           this.isGetQueryBsListLoading = false;
@@ -342,15 +342,18 @@ export class BSManagementComponent implements OnInit {
           console.error('Failed to remove BS:', error);
 
           // 關閉加載指示器
-          this.isGetQueryBsListLoading = false;
+          //this.isGetQueryBsListLoading = false;
           this.hideSpinner();  // 出錯時隱藏 spinner
         },
         complete: () => {
 
           // 請求完成後的回調,不管成功或失敗都會執行
           // 關閉加載指示器
-          this.isGetQueryBsListLoading = false;
-          this.hideSpinner();  // 出錯時隱藏 spinner
+          //this.isGetQueryBsListLoading = false;
+          //this.hideSpinner();  // 出錯時隱藏 spinner
+
+          // 刷新 BS 列表或進行其他更新
+          this.getQueryBsList();
         }
       });
     }
