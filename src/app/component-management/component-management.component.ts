@@ -393,7 +393,7 @@ export class ComponentManagementComponent implements OnInit {
     // 輸出將要刪除的網元名稱
     console.log("Deleted component name: ", this.selectComponent.name);
 
-    //this.showProcessingSpinner();  // 顯示 spinner
+    this.showProcessingSpinner();  // 顯示 spinner
 
     if (this.commonService.isLocal) {
       /* local file test */
