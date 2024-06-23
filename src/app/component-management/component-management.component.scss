@@ -10,6 +10,14 @@
   width: 7.5em;
   text-align: center;
 }
+
+// 設置標籤的字體大小
+.label-centered {
+  display: block;
+  text-align: center;
+  font-size: 1.05em; 
+}
+
 input[type="file"] {
   outline: 0;
 }

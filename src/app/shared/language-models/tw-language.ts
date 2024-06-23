@@ -653,6 +653,7 @@ export const TwLanguage = {
   'cm.restart' : '重啟',
   'cm.BS' : '基站',
   'cm.bsInUseCannotDelete': '有基站使用中，無法刪除。',
+  'cm.belongBS':'隸屬基站',
 
   
   // Account Management (帳號管理)

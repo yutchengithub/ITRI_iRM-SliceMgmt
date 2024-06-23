@@ -59,6 +59,7 @@
         <th>Port</th>
         <th>{{languageService.i18n['type']}}</th>
         <th>{{languageService.i18n['BS.neSFversion']}}</th>
+        <th>{{languageService.i18n['cm.belongBS']}}</th>
         <th>{{languageService.i18n['table.Status']}}</th>
         <th>{{languageService.i18n['index.view']}}</th>
         <th>{{languageService.i18n['cm.provision']}}</th>
@@ -68,11 +69,12 @@
     <tbody>
       <tr
         *ngFor="let opt of componentListToDisplay | paginate: { itemsPerPage: pageSize, currentPage: p, totalItems: totalItems, id: 'display' } ">
-        <td>{{opt.name}}</td>
-        <td>{{opt.ip}}</td>
-        <td>{{opt.port}}</td>
+        <td>{{ opt.name }}</td>
+        <td>{{ opt.ip }}</td>
+        <td>{{ opt.port }}</td>
         <td>{{typeText(opt.comtype)}}</td>
         <td>{{ getVersion(opt) }}</td>
+        <td>{{ opt.bsName }}</td>
         <td class="icon">
           <label *ngIf="opt.status === 2" class="greenLight"></label>
           <label *ngIf="opt.status === 0" class="grayLight"></label>
@@ -170,26 +172,37 @@
   </form>
 </ng-template>
 
-<ng-template #deleteModal>
-  <h5 *ngIf="selectComponent.status === 0">
-    <mat-icon class="error-icon">warning_amber</mat-icon>
-    {{ languageService.i18n['field.warningFault'] }}
-  </h5>
-  <h5 *ngIf="selectComponent.status === 2">
-    <mat-icon class="error-icon">error_outline</mat-icon>
-    {{ languageService.i18n['field.noFieldImageAvailableTitle'] }}
-  </h5>
-  <ul>
-    <label style="font-size: 1.05em;" *ngIf="selectComponent.status === 0">
-      {{ languageService.i18n['cm.confirm_del'] }} – {{ selectComponent.name }} ?
-    </label>
-    <label style="font-size: 1.05em;" *ngIf="selectComponent.status === 2">
-      {{ languageService.i18n['cm.bsInUseCannotDelete'] }}
-    </label>
-  </ul>
+<!-- Confirm Window for Delete Component @2024/06/23 Add by yuchen -->
+<ng-template #deleteComponent_ConfirmWindow>
+  <h5><mat-icon>warning_amber</mat-icon>{{languageService.i18n['field.warningFault']}}</h5>
+  
+  <p>{{ languageService.i18n['cm.confirm_del'] }} - {{ selectComponent.name }} ?</p>
+  
   <div class="buttons">
-    <button *ngIf="selectComponent.status === 0" type="button" (click)="delete()">{{ languageService.i18n['confirm'] }}</button>
-    <button type="button" mat-dialog-close>{{ languageService.i18n['close'] }}</button>
+    <button type="button" (click)="confirmDeleteComponent()" mat-dialog-close>
+      {{ languageService.i18n['confirm'] }}
+    </button>
+    
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['cancel'] }}
+    </button>
+  </div>
+</ng-template>
+
+<!-- Component in use by BS prompt window @2024/06/23 by yuchen -->
+<ng-template #bsInUsePromptWindow>
+  <div>
+    <h5><mat-icon>error_outline</mat-icon>{{ languageService.i18n['field.noFieldImageAvailableTitle'] }}</h5>
+  </div>
+  
+  <label class="label-centered">
+    <!-- {{ languageService.i18n['cm.bsInUseCannotDelete'] }} -->
+    {{ languageService.i18n['cm.BS'] }} - {{ selectComponent.bsName }} {{ languageService.i18n['BS.inUseCannotDelete'] }}
+  </label>
+  <div class="buttons">
+    <button type="button" mat-dialog-close>
+      {{ languageService.i18n['close'] }}
+    </button>
   </div>
 </ng-template>
 

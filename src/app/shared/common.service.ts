@@ -1734,8 +1734,6 @@ export class CommonService {
       components: [
       {
         "id": "0f03212c522b4c86abda",
-        "bsId": "8e427f7c5ff34326a380",
-        "bsName": "itri_10.0.2.10",
         "name": "BSCOM0",
         "ip": "10.0.2.10",
         "port": "830",
@@ -1762,8 +1760,6 @@ export class CommonService {
       },
       {
         "id": "28a6c246a4ca425aa8dc",
-        "bsId": "1830b1015796405fb12e",
-        "bsName": "itri_10.0.2.12",
         "name": "BSCOM2",
         "ip": "10.0.2.12",
         "port": "830",
@@ -1776,8 +1772,6 @@ export class CommonService {
       },
       {
         "id": "28a6c246a4ca425aa8dc",
-        "bsId": "1830b1015796405fb12e",
-        "bsName": "itri_10.0.2.13",
         "name": "BSCOM3",
         "ip": "10.0.2.13",
         "port": "830",
@@ -1790,8 +1784,6 @@ export class CommonService {
       },
       {
         "id": "28a6c246a4ca425aa8dc",
-        "bsId": "1830b1015796405fb12e",
-        "bsName": "itri_10.0.2.14",
         "name": "BSCOM4",
         "ip": "10.0.2.14",
         "port": "830",
@@ -1846,8 +1838,6 @@ export class CommonService {
       },
       {
         "id": "28a6c246a4ca425aa8dc",
-        "bsId": "1830b1015796405fb12e",
-        "bsName": "itri_10.0.2.18",
         "name": "BSCOM8",
         "ip": "10.0.2.18",
         "port": "830",
@@ -1874,8 +1864,6 @@ export class CommonService {
       },
       {
         "id": "28a6c246a4ca425aa8dc",
-        "bsId": "1830b1015796405fb12e",
-        "bsName": "itri_10.0.2.20",
         "name": "BSCOM10",
         "ip": "10.0.2.20",
         "port": "830",

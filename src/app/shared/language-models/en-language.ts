@@ -637,7 +637,7 @@ export const Enlanguage = {
   'cm.restart' : 'Reboot',
   'cm.BS' : 'BS',
   'cm.bsInUseCannotDelete': 'BS in use, cannot be deleted.',
-
+  'cm.belongBS':'Affiliated BS',
 
   // Account Management
   'user_account':'User',

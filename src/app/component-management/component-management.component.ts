@@ -17,8 +17,8 @@ export interface ComponentList {
 
 export interface Components {
   id: string;
-  bsId: string;
-  bsName: string;
+  bsId?: string;
+  bsName?: string;
   name: string;
   ip: string;
   port: string;
@@ -57,8 +57,6 @@ export class ComponentManagementComponent implements OnInit {
   provisionModalRef!: MatDialogRef<any>;
   createForm!: FormGroup;
   provisionForm!: FormGroup;
-  selectComponent!: Components;
-  componentstatus: number=-1;
   file: any;
   typeMap: Map<number, string> = new Map();
   p: number = 1;            // 當前頁數
@@ -203,11 +201,14 @@ export class ComponentManagementComponent implements OnInit {
   }
   
   create() {
+
     this.formValidated = true;
-    if (!this.createForm.valid) {
+    if ( !this.createForm.valid ) {
       return;
     }
-    if (this.commonService.isLocal) {
+
+    if ( this.commonService.isLocal ) {
+
       /* local file test */
       this.commonService.componentList.components.push(
         {
@@ -225,27 +226,30 @@ export class ComponentManagementComponent implements OnInit {
           status: 1
         }
       );
+
       this.createModalRef.close();
       this.getComponentList();
 
     } else {
+
       const body = this.createForm.value;
-      if (this.createForm.controls['comtype'].value === 'CU') {
+
+      if ( this.createForm.controls['comtype'].value === 'CU' ) {
         body['comtype'] = 1;
-      } else if (this.createForm.controls['comtype'].value === 'DU') {
+      } else if ( this.createForm.controls['comtype'].value === 'DU' ) {
         body['comtype'] = 2;
-      } else if (this.createForm.controls['comtype'].value === 'RU') {
+      } else if ( this.createForm.controls['comtype'].value === 'RU' ) {
         body['comtype'] = 3;
-      } else if (this.createForm.controls['comtype'].value === 'CU+DU') {
+      } else if ( this.createForm.controls['comtype'].value === 'CU+DU' ) {
         body['comtype'] = 4;  
-      } else if (this.createForm.controls['comtype'].value === 'CU+DU+RU') {
+      } else if ( this.createForm.controls['comtype'].value === 'CU+DU+RU' ) {
         body['comtype'] = 5;
       }
-      console.log(body);
-      this.commonService.createBsComponent(body).subscribe(
+      console.log( body );
+      this.commonService.createBsComponent( body ).subscribe(
         res => {
           console.log('createBsComponent:');
-          console.log(res);
+          console.log( res );
           this.createModalRef.close();
           this.getComponentList();
         }
@@ -253,11 +257,83 @@ export class ComponentManagementComponent implements OnInit {
     }
   }
   
-  openDeleteModal(componentList: Components) {
+  // @2024/06/23 Add by yuchen
+  @ViewChild('deleteComponent_ConfirmWindow') deleteComponent_ConfirmWindow: any;
+  @ViewChild('bsInUsePromptWindow') bsInUsePromptWindow: any;
+
+  // @2024/06/23 Add by yuchen
+  deleteComponent_ConfirmWindowRef!: MatDialogRef<any>;
+  bsInUsePromptWindowRef!: MatDialogRef<any>;
+
+  selectComponent!: Components;
+  componentstatus: number = -1;
+
+  // @2024/06/23 update by yuchen
+  openDeleteModal( componentList: Components ) {
+
     this.selectComponent = componentList;
     this.componentstatus = componentList.status;
-    console.log("test "+this.componentstatus);
-    this.deleteModalRef = this.dialog.open(this.deleteModal, { id: 'deleteModal' });
+    console.log("Component status: " + this.componentstatus);
+
+    if ( this.selectComponent.bsName ) {
+
+      // If there's a BS name, show the prompt that it's in use
+      this.bsInUsePromptWindowRef = this.dialog.open(
+        this.bsInUsePromptWindow, { id: 'bsInUsePromptWindow' }
+      );
+
+      this.bsInUsePromptWindowRef.afterClosed().subscribe(result => {
+        console.log('The BS in use dialog was closed');
+      });
+    } else {
+
+      // If there's no BS name, show the normal delete confirmation window
+      this.deleteComponent_ConfirmWindowRef = this.dialog.open(
+        this.deleteComponent_ConfirmWindow, { id: 'deleteComponent_ConfirmWindow' }
+      );
+
+      this.deleteComponent_ConfirmWindowRef.afterClosed().subscribe(confirm => {
+        // Handle the user's action after closing the dialog
+      });
+    }
+  }
+
+  // @2024/06/23 Add by yuchen
+  confirmDeleteComponent() {
+    // Implement your delete logic here
+    this.delete();
+  }
+
+  delete() {
+    if (this.commonService.isLocal) {
+      /* local file test */
+      for (let i = 0; i < this.commonService.componentList.components.length; i++) {
+        if (this.selectComponent.id === this.commonService.componentList.components[i].id) {
+          this.commonService.componentList.components.splice(i, 1);
+          break;
+        }
+      }
+      this.deleteModalRef.close();
+      this.getComponentList();
+    } else {
+      const removeBsBody: any = {
+        session: this.sessionId,
+        id:this.selectComponent.id,
+      };
+      const httpOptions = {
+        // 設定 HTTP 標頭
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
+        }),
+        body: removeBsBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
+      };
+      this.commonService.removeBsComponent(httpOptions).subscribe(
+        res => {
+          this.deleteModalRef.close();
+          this.getComponentList();
+        }
+      );
+    }
   }
 
   openProvisionModal(componentList: Components) {
@@ -304,40 +380,10 @@ export class ComponentManagementComponent implements OnInit {
         }
     }
     this.getComponentList();
-}
-
-
-  delete() {
-    if (this.commonService.isLocal) {
-      /* local file test */
-      for (let i = 0; i < this.commonService.componentList.components.length; i++) {
-        if (this.selectComponent.id === this.commonService.componentList.components[i].id) {
-          this.commonService.componentList.components.splice(i, 1);
-          break;
-        }
-      }
-      this.deleteModalRef.close();
-      this.getComponentList();
-    } else {
-      const removeBsBody: any = {
-        session: this.sessionId,
-        id:this.selectComponent.id,
-      };
-      const httpOptions = {
-        // 設定 HTTP 標頭
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json' // 指定內容類型為 JSON，告知伺服器正文格式
-        }),
-        body: removeBsBody // 在 DELETE 請求中包含正文，雖然不常見但有些後端設計需要
-      };
-      this.commonService.removeBsComponent(httpOptions).subscribe(
-        res => {
-          this.deleteModalRef.close();
-          this.getComponentList();
-        }
-      );
-    }
   }
+
+
+
   changeType(e: MatButtonToggleChange) {
     this.formValidated = false;
     if (e.value === 'imageUrl') {
