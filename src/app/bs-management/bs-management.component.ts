@@ -217,7 +217,7 @@ export class BSManagementComponent implements OnInit {
       } else {
         console.log( `page[${this.p}] ===> no refresh.` );
       }
-    }, 60000 ); // 設定 60000 ms ( 60s ) 後執行
+    }, 100000 ); // 設定 100000 ms ( 100s ) 後執行
   }
 
   selectBS!: Basestation;  // 用於存儲當前選中的 BS 訊息 @2024/03/22 Add
@@ -1741,11 +1741,11 @@ export class BSManagementComponent implements OnInit {
 
           // 處理API成功響應，通常包括日誌輸出及後續處理
           console.log("基站建立成功:", response);
-          this.hideSpinner();  // 在成功響應後隱藏 spinner
+          //this.hideSpinner();  // 在成功響應後隱藏 spinner
 
           // 基站建立成功後刷新基站列表
-          this.getQueryBsList();
-          this.bsCreationWindowRef.close();  // 關閉創建窗口
+          //this.getQueryBsList();
+          //this.bsCreationWindowRef.close();  // 關閉創建窗口
 
         },
         error: ( error ) => {
@@ -1753,13 +1753,13 @@ export class BSManagementComponent implements OnInit {
           console.error( "基站建立失敗:", error );
           this.hideSpinner();
         },
-        // complete: () => {
-        //   // 請求完成後的回調，不管成功或失敗都會執行
-        //   //this.hideSpinner();  // 隱藏 spinner
+        complete: () => {
+          // 請求完成後的回調，不管成功或失敗都會執行
+          //this.hideSpinner();  // 隱藏 spinner
 
-        //   // 基站建立成功後刷新基站列表
-        //   this.getQueryBsList();
-        // }
+          // 基站建立成功後刷新基站列表
+          this.getQueryBsList();
+        }
       });
     }
 
