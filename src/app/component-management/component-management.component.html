@@ -59,7 +59,7 @@
         <th>Port</th>
         <th>{{languageService.i18n['type']}}</th>
         <th>{{languageService.i18n['BS.neSFversion']}}</th>
-        <th>{{languageService.i18n['cm.belongBS']}}</th>
+        <th>{{languageService.i18n['cm.belongBS']}}</th><!-- @2024/06/23 Add by yuchen -->
         <th>{{languageService.i18n['table.Status']}}</th>
         <th>{{languageService.i18n['index.view']}}</th>
         <th>{{languageService.i18n['cm.provision']}}</th>
@@ -74,7 +74,7 @@
         <td>{{ opt.port }}</td>
         <td>{{typeText(opt.comtype)}}</td>
         <td>{{ getVersion(opt) }}</td>
-        <td>{{ opt.bsName }}</td>
+        <td>{{ opt.bsName }}</td><!-- @2024/06/23 Add by yuchen -->
         <td class="icon">
           <label *ngIf="opt.status === 2" class="greenLight"></label>
           <label *ngIf="opt.status === 0" class="grayLight"></label>
@@ -108,14 +108,14 @@
       <li>
         <label>{{languageService.i18n['BS.neName']}}</label>
         <span>
-          <input type="text" formControlName="name" class="{{formValidated&&createForm.controls['name'].invalid?'required':''}}">
+          <input type="text" formControlName="name" class="{{ formValidated&&createForm.controls['name'].invalid?'required':'' }}">
           <mat-error *ngIf="formValidated&&createForm.controls['name'].invalid">Required</mat-error>
         </span>
       </li>
       <li>
-        <label>{{languageService.i18n['BS.neType']}}</label>
+        <label>{{ languageService.i18n['BS.neType'] }}</label>
         <span>
-          <select formControlName="comtype" class="{{formValidated&&createForm.controls['comtype'].invalid?'required':''}}">
+          <select formControlName="comtype" class="{{ formValidated&&createForm.controls['comtype'].invalid?'required':'' }}">
             <option value="" ></option>
             <option *ngFor="let opt of comtype" [value]="opt.value">{{opt.displayName}}</option>
           </select>
