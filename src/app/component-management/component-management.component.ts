@@ -289,7 +289,7 @@ export class ComponentManagementComponent implements OnInit {
       this.createModalRef.close();
       this.getComponentList();
 
-      this.hideSpinner();
+      //this.hideSpinner();
 
     } else {
 
@@ -300,11 +300,13 @@ export class ComponentManagementComponent implements OnInit {
           this.createModalRef.close();
           this.getComponentList();
 
-          this.hideSpinner();
+          //this.hideSpinner();
         }
       );
     }
   }
+
+  
   
   // @2024/06/23 Add by yuchen
   @ViewChild('deleteComponent_ConfirmWindow') deleteComponent_ConfirmWindow: any;
@@ -391,7 +393,7 @@ export class ComponentManagementComponent implements OnInit {
     // 輸出將要刪除的網元名稱
     console.log("Deleted component name: ", this.selectComponent.name);
 
-    this.showProcessingSpinner();  // 顯示 spinner
+    //this.showProcessingSpinner();  // 顯示 spinner
 
     if (this.commonService.isLocal) {
       /* local file test */
@@ -404,7 +406,7 @@ export class ComponentManagementComponent implements OnInit {
       this.deleteModalRef.close();
       this.getComponentList();
       
-      this.hideSpinner();  // 隱藏 spinner
+      //this.hideSpinner();  // 隱藏 spinner
 
     } else {
 
@@ -429,17 +431,17 @@ export class ComponentManagementComponent implements OnInit {
           
           this.getComponentList();
 
-          this.hideSpinner();  // 隱藏 spinner
+          //this.hideSpinner();  // 隱藏 spinner
 
         },
         error: (error) => {
           // 刪除失敗的回調
           console.error('Failed to remove component:', error);
-          this.hideSpinner();  // 出錯時隱藏 spinner
+          //this.hideSpinner();  // 出錯時隱藏 spinner
         },
         complete: () => {
           // 請求完成後的回調，不管成功或失敗都會執行
-          this.hideSpinner();  // 隱藏 spinner
+          //this.hideSpinner();  // 隱藏 spinner
         }
       });
     }
