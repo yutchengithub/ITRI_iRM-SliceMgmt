@@ -393,6 +393,8 @@ export class ComponentManagementComponent implements OnInit {
           
           this.getComponentList();
 
+          this.hideSpinner();  // 隱藏 spinner
+
         },
         error: (error) => {
           // 刪除失敗的回調
