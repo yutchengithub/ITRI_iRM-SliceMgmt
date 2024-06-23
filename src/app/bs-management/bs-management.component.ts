@@ -301,7 +301,7 @@ export class BSManagementComponent implements OnInit {
     console.log( "Deleted BS name: ", this.selectBS.name );
 
     // 顯示加載指示器
-    this.isGetQueryBsListLoading = true;
+    //this.isGetQueryBsListLoading = true;
     this.showProcessingSpinner();  // 顯示 spinner
 
     // 檢查是否是 Local 環境
@@ -333,8 +333,8 @@ export class BSManagementComponent implements OnInit {
           //this.getQueryBsList();
 
           // 關閉加載指示器
-          this.isGetQueryBsListLoading = false;
-          this.hideSpinner();  // 出錯時隱藏 spinner
+          //this.isGetQueryBsListLoading = false;
+          //this.hideSpinner();  // 出錯時隱藏 spinner
         },
         error: ( error ) => {
 

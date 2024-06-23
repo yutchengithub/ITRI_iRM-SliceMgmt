@@ -136,7 +136,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   // queryFieldList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
   queryFieldList!: Subscription;  // @11/30 Add by yuchen
 
-  /** @2024/01/29 Update by yuchen
+  /** @2024/06/24 Update by yuchen
    *  用於獲取場域列表。
    *  根據是否處於 Local 模式，它會從 Local 文件或通過 API 從伺服器獲取場域資訊。
    */
@@ -168,7 +168,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           this.fieldList = res; // 更新場域列表數據
           this.FieldListDeal(); // 調用處理函數，進行數據處理（如分頁）
 
-          this.hideSpinner();  // 完成後隱藏 spinner
+          //this.hideSpinner();  // 完成後隱藏 spinner
           
         },
         error: ( error ) => {
@@ -703,7 +703,8 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   confirmDeleteField() {
 
     // 顯示加載指示器
-    this.isLoading = true;
+    //this.isLoading = true;
+    this.showProcessingSpinner();  // 顯示 spinner
 
     // 檢查是否是 Local 環境
     if ( this.commonService.isLocal ) {
@@ -717,7 +718,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
       this.getQueryFieldList();
       
       // 關閉加載指示器
-      this.isLoading = false;
+      //this.isLoading = false;
 
     } else {
 
@@ -729,10 +730,10 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           console.log( 'Field removed successfully', response );
 
           // 刷新場域列表或進行其他更新
-          this.getQueryFieldList();
+          //this.getQueryFieldList();
 
           // 關閉加載指示器
-          this.isLoading = false;
+          //this.isLoading = false;
         },
         error: ( error ) => {
 
@@ -740,13 +741,17 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
           console.error('Failed to remove field:', error);
 
           // 關閉加載指示器
-          this.isLoading = false;
+          //this.isLoading = false;
+          this.hideSpinner();  // 出錯時隱藏 spinner
         },
         complete: () => {
 
           // 請求完成後的回調，不管成功或失敗都會執行
           // 關閉加載指示器
-          this.isLoading = false;
+          //this.isLoading = false;
+
+          // 刷新場域列表或進行其他更新
+          this.getQueryFieldList();
         }
       });   
     }
