@@ -180,10 +180,10 @@
     {{ languageService.i18n['field.noFieldImageAvailableTitle'] }}
   </h5>
   <ul>
-    <label *ngIf="selectComponent.status === 0">
+    <label style="font-size: 1.05em;" *ngIf="selectComponent.status === 0">
       {{ languageService.i18n['cm.confirm_del'] }} – {{ selectComponent.name }} ?
     </label>
-    <label *ngIf="selectComponent.status === 2">
+    <label style="font-size: 1.05em;" *ngIf="selectComponent.status === 2">
       {{ languageService.i18n['cm.bsInUseCannotDelete'] }}
     </label>
   </ul>

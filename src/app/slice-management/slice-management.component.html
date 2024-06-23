@@ -175,7 +175,7 @@
 
   <!-- 確認刪除的提示信息，展示 Schedule 相關資訊 -->
   <p>{{ languageService.i18n['sm.confirm_del'] }} ?</p>
-  <div class="del_confirmName">
+  <div class="del_confirmName" style="font-size: 1em;">
     <label *ngIf=" selectSchedule.tickettype === '0' ">{{ languageService.i18n['sm.sfUpdate'] }}</label>
     <label *ngIf=" selectSchedule.tickettype === '1' ">{{ languageService.i18n['sm.caReport'] }}</label>
     <label *ngIf=" selectSchedule.tickettype === '2' ">{{ languageService.i18n['sm.pmReport'] }}</label>
