@@ -174,40 +174,20 @@ export class ComponentManagementComponent implements OnInit {
       'comtype': new FormControl('All')
     });
   }
-  // openCreateModal() {
-  //   this.formValidated = false;
-  //   this.createForm = this.fb.group({
-  //     'session': this.sessionId,
-  //     'name': new FormControl('', [Validators.required]),
-  //     'ip': new FormControl('', [Validators.required]),
-  //     'port': new FormControl('', [Validators.required]),
-  //     'account': new FormControl('', [Validators.required]),
-  //     'key': new FormControl('', [Validators.required]),
-  //     'comtype': new FormControl('', [Validators.required]),
-  //     'firm': new FormControl('', [Validators.required]),
-  //     'modelname': new FormControl('', [Validators.required])
-      
-  //   });
-  //   this.createModalRef = this.dialog.open(this.createComponentModal, { id: 'createComponentModal' });
-  //   this.createModalRef.afterClosed().subscribe(() => {
-  //     this.fileMsg = '';
-  //     this.formValidated = false;
-  //   });
-  // }
-
+  
   openCreateModal() {
-    
     this.formValidated = false;
     this.createForm = this.fb.group({
       'session': this.sessionId,
-      'name': new FormControl('comp-all-15', [Validators.required]),
-      'ip': new FormControl('60.250.213.43', [Validators.required]),
-      'port': new FormControl('30125', [Validators.required]),
-      'account': new FormControl('root', [Validators.required]),
-      'key': new FormControl('root', [Validators.required]),
-      'comtype': new FormControl( 5, [Validators.required]), // 預設選擇 "CU+DU+RU"
-      'firm': new FormControl('ITRI', [Validators.required]),
-      'modelname': new FormControl('A001', [Validators.required])
+      'name': new FormControl('', [Validators.required]),
+      'ip': new FormControl('', [Validators.required]),
+      'port': new FormControl('', [Validators.required]),
+      'account': new FormControl('', [Validators.required]),
+      'key': new FormControl('', [Validators.required]),
+      'comtype': new FormControl('', [Validators.required]),
+      'firm': new FormControl('', [Validators.required]),
+      'modelname': new FormControl('', [Validators.required])
+      
     });
     this.createModalRef = this.dialog.open(this.createComponentModal, { id: 'createComponentModal' });
     this.createModalRef.afterClosed().subscribe(() => {
@@ -215,6 +195,28 @@ export class ComponentManagementComponent implements OnInit {
       this.formValidated = false;
     });
   }
+
+  // For demo @2024/06/23 Add
+  // openCreateModal() {
+    
+  //   this.formValidated = false;
+  //   this.createForm = this.fb.group({
+  //     'session': this.sessionId,
+  //     'name': new FormControl('comp-all-15', [Validators.required]),
+  //     'ip': new FormControl('60.250.213.43', [Validators.required]),
+  //     'port': new FormControl('30125', [Validators.required]),
+  //     'account': new FormControl('root', [Validators.required]),
+  //     'key': new FormControl('root', [Validators.required]),
+  //     'comtype': new FormControl( 5, [Validators.required]), // 預設選擇 "CU+DU+RU"
+  //     'firm': new FormControl('ITRI', [Validators.required]),
+  //     'modelname': new FormControl('A001', [Validators.required])
+  //   });
+  //   this.createModalRef = this.dialog.open(this.createComponentModal, { id: 'createComponentModal' });
+  //   this.createModalRef.afterClosed().subscribe(() => {
+  //     this.fileMsg = '';
+  //     this.formValidated = false;
+  //   });
+  // }
   
 
   fileChange(e: any) {
@@ -397,7 +399,8 @@ export class ComponentManagementComponent implements OnInit {
 
     this.showProcessingSpinner();  // 顯示 spinner
 
-    if (this.commonService.isLocal) {
+    if ( this.commonService.isLocal ) {
+
       /* local file test */
       for (let i = 0; i < this.commonService.componentList.components.length; i++) {
         if (this.selectComponent.id === this.commonService.componentList.components[i].id) {
@@ -430,9 +433,7 @@ export class ComponentManagementComponent implements OnInit {
 
           console.log('Component removed successfully', response);
           this.deleteModalRef.close();
-          
-          
-
+        
           //this.hideSpinner();  // 隱藏 spinner
 
         },
