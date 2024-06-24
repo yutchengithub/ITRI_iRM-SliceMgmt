@@ -40,7 +40,7 @@
           <li (click)="changePage(pageRourter['component-management'])" class="{{page === 'component-management'?'active':''}}" tooltip=""><mat-icon>view_in_ar</mat-icon><label>{{languageService.i18n['index.menu_componentMgr']}}</label></li>
           
           <!-- 計畫面 - 切片管理顯示順序 ( 網元故障管理之間 ) @2024/05/03 Add by yuchen -->
-          <!-- <li (click)="changePage( pageRourter['slice-management'] )" class="{{ page === 'slice-management'?'active':'' }}" tooltip="">	<mat-icon>storage</mat-icon><label>{{languageService.i18n['index.menu_sliceMgr']}}</label></li> -->
+          <li (click)="changePage( pageRourter['slice-management'] )" class="{{ page === 'slice-management'?'active':'' }}" tooltip="">	<mat-icon>storage</mat-icon><label>{{languageService.i18n['index.menu_sliceMgr']}}</label></li>
           
           <li (click)="changePage(pageRourter['fault-management'])" class="{{page === 'fault-management'?'active':''}}" tooltip=""><mat-icon>warning</mat-icon><label>{{languageService.i18n['index.menu_faultMgr']}}</label></li>
           <li (click)="changePage(pageRourter['performance-management'])" class="{{page === 'performance-management'?'active':''}}" tooltip=""><mat-icon>trending_up</mat-icon><label>{{languageService.i18n['index.menu_performMgr']}}</label></li>
@@ -68,7 +68,7 @@
       <li (click)="changePage(pageRourter['component-management'])" class="{{page === 'component-management'?'active':''}}"><mat-icon>view_in_ar</mat-icon><label>{{languageService.i18n['index.menu_componentMgr']}}</label></li>
       
       <!-- 計畫面 - 切片管理顯示順序( 網元故障管理之間 ) @2024/05/03 Add by yuchen -->
-      <!-- <li (click)="changePage( pageRourter['slice-management'] )" class="{{ page === 'slice-management'?'active':'' }}"><mat-icon>storage</mat-icon><label>{{languageService.i18n['index.menu_sliceMgr']}}</label></li>  -->
+      <li (click)="changePage( pageRourter['slice-management'] )" class="{{ page === 'slice-management'?'active':'' }}"><mat-icon>storage</mat-icon><label>{{languageService.i18n['index.menu_sliceMgr']}}</label></li> 
       
       <li (click)="changePage( pageRourter['fault-management'] )" class="{{page === 'fault-management'?'active':''}}" ><mat-icon>warning</mat-icon><label>{{languageService.i18n['index.menu_faultMgr']}}</label></li>
       <li (click)="changePage( pageRourter['performance-management'] )" class="{{page === 'performance-management'?'active':''}}" ><mat-icon>trending_up</mat-icon><label>{{languageService.i18n['index.menu_performMgr']}}</label></li>
