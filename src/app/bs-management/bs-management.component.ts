@@ -515,13 +515,13 @@ export class BSManagementComponent implements OnInit {
 
     // @2024/06/24 Add for demo
     // 預選第一個 all-in-one 網元
-    this.bsFormGroup_Elements.patchValue({
-      allInOneElement: this.allInOneOptions[0]?.id || ''
-    });
+    // this.bsFormGroup_Elements.patchValue({
+    //   allInOneElement: this.allInOneOptions[0]?.id || ''
+    // });
 
     // @2024/06/24 Add for demo
     // 更新 bsComponents
-    this.updateBsComponentsForAllInOne();
+    //this.updateBsComponentsForAllInOne();
 
     // 打開 "基站建立" 彈出視窗
     this.bsCreationWindowRef = this.dialog.open( this.bsCreationWindow, {
@@ -591,60 +591,60 @@ export class BSManagementComponent implements OnInit {
    *  @param { Basestation[] } bsList - 基站列表，用於名稱檢查
    *  @returns { void }
    */
-  // createBsCreationForm( bsList: Basestation[] ) {
+  createBsCreationForm( bsList: Basestation[] ) {
 
-  //   // 步驟 1: 設定基站名稱，加入唯一名稱驗證
-  //   this.bsFormGroup_Name = this.fb.group({
-  //     BSName: ['', [Validators.required, this.uniqueBSNameValidator(bsList)]]
-  //   });
-
-  //   // 步驟 2: 設定基站類型和 DU、RU 的數量
-  //   this.bsFormGroup_Type = this.fb.group({
-  //       BSType: ['', Validators.required],
-  //     DUNumber: ['', [Validators.required]], // 使用下拉選單控制
-  //     RUNumber: ['', [Validators.required]]  // 使用下拉選單控制
-  //   });
-
-  //   // 步驟 3: 基於基站類型動態初始化網元和 GPS 表單
-  //   this.bsFormGroup_Elements = this.fb.group({});
-  //   this.bsFormGroup_Type.get('BSType')?.valueChanges.subscribe( ( bsType ) => {
-  //     this.initializeElementsForm( bsType );
-  //   });
-
-  //   // 步驟 4: 設定基站地點描述和上傳配置文件
-  //   this.bsFormGroup_Description = this.fb.group({
-  //     LocationDescription: ['', Validators.required],
-  //       ConfigurationFile: [null, Validators.required]
-  //   });
-  // }
-
-  // @2024/06/24 Update For demo
-  createBsCreationForm(bsList: Basestation[]) {
     // 步驟 1: 設定基站名稱，加入唯一名稱驗證
     this.bsFormGroup_Name = this.fb.group({
-      BSName: ['bs-15', [Validators.required, this.uniqueBSNameValidator(bsList)]]
+      BSName: ['', [Validators.required, this.uniqueBSNameValidator(bsList)]]
     });
-  
+
     // 步驟 2: 設定基站類型和 DU、RU 的數量
     this.bsFormGroup_Type = this.fb.group({
-      BSType: ['allInOne', Validators.required],
-      DUNumber: [{value: '', disabled: true}],
-      RUNumber: [{value: '', disabled: true}]
+        BSType: ['', Validators.required],
+      DUNumber: ['', [Validators.required]], // 使用下拉選單控制
+      RUNumber: ['', [Validators.required]]  // 使用下拉選單控制
     });
-  
+
     // 步驟 3: 基於基站類型動態初始化網元和 GPS 表單
-    this.bsFormGroup_Elements = this.fb.group({
-      allInOneElement: ['', Validators.required],
-      allInOneLongitude: ['121.042987', [Validators.required, Validators.pattern(this.longitudePattern)]],
-      allInOneLatitude: ['24.774566', [Validators.required, Validators.pattern(this.latitudePattern)]],
+    this.bsFormGroup_Elements = this.fb.group({});
+    this.bsFormGroup_Type.get('BSType')?.valueChanges.subscribe( ( bsType ) => {
+      this.initializeElementsForm( bsType );
     });
-  
+
     // 步驟 4: 設定基站地點描述和上傳配置文件
     this.bsFormGroup_Description = this.fb.group({
-      LocationDescription: ['bs-15', Validators.required],
-      ConfigurationFile: [null, Validators.required]
+      LocationDescription: ['', Validators.required],
+        ConfigurationFile: [null, Validators.required]
     });
   }
+
+  // @2024/06/24 Update For demo
+  // createBsCreationForm(bsList: Basestation[]) {
+  //   // 步驟 1: 設定基站名稱，加入唯一名稱驗證
+  //   this.bsFormGroup_Name = this.fb.group({
+  //     BSName: ['bs-15', [Validators.required, this.uniqueBSNameValidator(bsList)]]
+  //   });
+  
+  //   // 步驟 2: 設定基站類型和 DU、RU 的數量
+  //   this.bsFormGroup_Type = this.fb.group({
+  //     BSType: ['allInOne', Validators.required],
+  //     DUNumber: [{value: '', disabled: true}],
+  //     RUNumber: [{value: '', disabled: true}]
+  //   });
+  
+  //   // 步驟 3: 基於基站類型動態初始化網元和 GPS 表單
+  //   this.bsFormGroup_Elements = this.fb.group({
+  //     allInOneElement: ['', Validators.required],
+  //     allInOneLongitude: ['121.042987', [Validators.required, Validators.pattern(this.longitudePattern)]],
+  //     allInOneLatitude: ['24.774566', [Validators.required, Validators.pattern(this.latitudePattern)]],
+  //   });
+  
+  //   // 步驟 4: 設定基站地點描述和上傳配置文件
+  //   this.bsFormGroup_Description = this.fb.group({
+  //     LocationDescription: ['bs-15', Validators.required],
+  //     ConfigurationFile: [null, Validators.required]
+  //   });
+  // }
 
 
   /** @2024/06/23 Update
@@ -652,97 +652,97 @@ export class BSManagementComponent implements OnInit {
    *  @method resetBsCreationForm
    *  @returns { void }
    */
-  // resetBsCreationForm() {
-  //   console.log("Resetting bs creation form settings.");
-
-  //   // 重置各個步驟的 FormGroup
-  //   this.bsFormGroup_Name.reset();
-  //   this.bsFormGroup_Type.reset();
-  //   this.bsFormGroup_Elements.reset();
-  //   this.bsFormGroup_Description.reset();
-
-  //   // 重置 bsComponents 網元訊息
-  //   this.bsComponents = {};
-
-  //   // @2024/06/23 Add
-  //   // 重置所有可選擇的網元選項
-  //   this.CUOptions = [];
-  //   this.DUOptions = [];
-  //   this.RUOptions = [];
-  //   this.CUDUOptions = [];
-  //   this.allInOneOptions = [];
-
-  //   // 重置已選擇的 DU 和 RU 網元 IDs
-  //   this.selectedDUIds = [];
-  //   this.selectedRUIds = [];
-
-  //   // 重置可選擇的連接 DU 網元選項
-  //   this.connectedDUOptions = [];
-
-  //   // 重置 RUElementsFormArray 中的 connectedDU 控制項
-  //   if ( this.bsFormGroup_Elements?.contains('RUElements') ) {
-  //     const RUElementsArray = this.bsFormGroup_Elements.get('RUElements') as FormArray;
-  //     RUElementsArray.controls.forEach( control => {
-  //       control.get('connectedDU')?.reset();
-  //     });
-  //   }
-
-  //   // 重置上傳檔案名稱
-  //   this.selectedFileName = '';
-
-  //   // 重置 bsCreationData
-  //   this.bsCreationData = {
-  //     name: null,
-  //     bstype: null,
-  //     description: null,
-  //     components: null,
-  //     componentsInfo: null
-  //   };
-
-  //   console.log("BS creation form settings have been reset.");
-  // }
-
-  // @2024/06/24 Update For demo
   resetBsCreationForm() {
     console.log("Resetting bs creation form settings.");
-  
-    // 不重置預填的值
-    // this.bsFormGroup_Name.reset();
-    // this.bsFormGroup_Type.reset();
-    // this.bsFormGroup_Elements.reset();
-    // this.bsFormGroup_Description.reset();
-  
+
+    // 重置各個步驟的 FormGroup
+    this.bsFormGroup_Name.reset();
+    this.bsFormGroup_Type.reset();
+    this.bsFormGroup_Elements.reset();
+    this.bsFormGroup_Description.reset();
+
     // 重置 bsComponents 網元訊息
     this.bsComponents = {};
-  
+
+    // @2024/06/23 Add
     // 重置所有可選擇的網元選項
     this.CUOptions = [];
     this.DUOptions = [];
     this.RUOptions = [];
     this.CUDUOptions = [];
     this.allInOneOptions = [];
-  
+
     // 重置已選擇的 DU 和 RU 網元 IDs
     this.selectedDUIds = [];
     this.selectedRUIds = [];
-  
+
     // 重置可選擇的連接 DU 網元選項
     this.connectedDUOptions = [];
-  
+
+    // 重置 RUElementsFormArray 中的 connectedDU 控制項
+    if ( this.bsFormGroup_Elements?.contains('RUElements') ) {
+      const RUElementsArray = this.bsFormGroup_Elements.get('RUElements') as FormArray;
+      RUElementsArray.controls.forEach( control => {
+        control.get('connectedDU')?.reset();
+      });
+    }
+
     // 重置上傳檔案名稱
     this.selectedFileName = '';
-  
+
     // 重置 bsCreationData
     this.bsCreationData = {
-      name: 'bs-15',
-      bstype: '1',
-      description: 'bs-15',
+      name: null,
+      bstype: null,
+      description: null,
       components: null,
       componentsInfo: null
     };
-  
+
     console.log("BS creation form settings have been reset.");
   }
+
+  // @2024/06/24 Update For demo
+  // resetBsCreationForm() {
+  //   console.log("Resetting bs creation form settings.");
+  
+  //   // 不重置預填的值
+  //   // this.bsFormGroup_Name.reset();
+  //   // this.bsFormGroup_Type.reset();
+  //   // this.bsFormGroup_Elements.reset();
+  //   // this.bsFormGroup_Description.reset();
+  
+  //   // 重置 bsComponents 網元訊息
+  //   this.bsComponents = {};
+  
+  //   // 重置所有可選擇的網元選項
+  //   this.CUOptions = [];
+  //   this.DUOptions = [];
+  //   this.RUOptions = [];
+  //   this.CUDUOptions = [];
+  //   this.allInOneOptions = [];
+  
+  //   // 重置已選擇的 DU 和 RU 網元 IDs
+  //   this.selectedDUIds = [];
+  //   this.selectedRUIds = [];
+  
+  //   // 重置可選擇的連接 DU 網元選項
+  //   this.connectedDUOptions = [];
+  
+  //   // 重置上傳檔案名稱
+  //   this.selectedFileName = '';
+  
+  //   // 重置 bsCreationData
+  //   this.bsCreationData = {
+  //     name: 'bs-15',
+  //     bstype: '1',
+  //     description: 'bs-15',
+  //     components: null,
+  //     componentsInfo: null
+  //   };
+  
+  //   console.log("BS creation form settings have been reset.");
+  // }
 
   /**
    * 獲取 DU 表單陣列
@@ -1079,46 +1079,46 @@ export class BSManagementComponent implements OnInit {
    * @description
    * - 更新 all-in-one 型基站的網元訊息，包括位置和網元 ID
    */
-  // updateBsComponentsForAllInOne() {
-  //   // 從表單中獲取選擇的網元 ID 和位置訊息
-  //   const selectedId = this.bsFormGroup_Elements.get('allInOneElement')?.value;
-  //   const  longitude = this.bsFormGroup_Elements.get('allInOneLongitude')?.value;
-  //   const   latitude = this.bsFormGroup_Elements.get('allInOneLatitude')?.value;
-  //   // 格式化位置數據為字串
-  //   const position = `[${longitude},${latitude}]`;
-
-  //   // 如果有選擇的網元 ID，則更新 bsComponents 對象
-  //   if ( selectedId ) {
-  //     this.bsComponents.all = [{
-  //       type: 'cu+du+ru',  // 指定網元類型
-  //       id: selectedId,    // 網元 ID
-  //       position: position // 網元位置
-  //     }];
-  //   }
-
-  //   // 輸出選擇的組件訊息和位置
-  //   console.log( "selected All-In-One ID:", selectedId );
-  //   console.log( "this.bsComponents:", this.bsComponents );
-  // }
-
-  // @2024/06/24 Update For demo
   updateBsComponentsForAllInOne() {
+    // 從表單中獲取選擇的網元 ID 和位置訊息
     const selectedId = this.bsFormGroup_Elements.get('allInOneElement')?.value;
-    const longitude = this.bsFormGroup_Elements.get('allInOneLongitude')?.value;
-    const latitude = this.bsFormGroup_Elements.get('allInOneLatitude')?.value;
+    const  longitude = this.bsFormGroup_Elements.get('allInOneLongitude')?.value;
+    const   latitude = this.bsFormGroup_Elements.get('allInOneLatitude')?.value;
+    // 格式化位置數據為字串
     const position = `[${longitude},${latitude}]`;
-  
-    if (selectedId) {
+
+    // 如果有選擇的網元 ID，則更新 bsComponents 對象
+    if ( selectedId ) {
       this.bsComponents.all = [{
-        type: 'cu+du+ru',
-        id: selectedId,
-        position: position
+        type: 'cu+du+ru',  // 指定網元類型
+        id: selectedId,    // 網元 ID
+        position: position // 網元位置
       }];
     }
-  
-    console.log("selected All-In-One ID:", selectedId);
-    console.log("this.bsComponents:", this.bsComponents);
+
+    // 輸出選擇的組件訊息和位置
+    console.log( "selected All-In-One ID:", selectedId );
+    console.log( "this.bsComponents:", this.bsComponents );
   }
+
+  // @2024/06/24 Update For demo
+  // updateBsComponentsForAllInOne() {
+  //   const selectedId = this.bsFormGroup_Elements.get('allInOneElement')?.value;
+  //   const longitude = this.bsFormGroup_Elements.get('allInOneLongitude')?.value;
+  //   const latitude = this.bsFormGroup_Elements.get('allInOneLatitude')?.value;
+  //   const position = `[${longitude},${latitude}]`;
+  
+  //   if (selectedId) {
+  //     this.bsComponents.all = [{
+  //       type: 'cu+du+ru',
+  //       id: selectedId,
+  //       position: position
+  //     }];
+  //   }
+  
+  //   console.log("selected All-In-One ID:", selectedId);
+  //   console.log("this.bsComponents:", this.bsComponents);
+  // }
 
 
   // @2024/04/30 Add 
