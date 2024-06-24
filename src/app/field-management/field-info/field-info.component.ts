@@ -2519,6 +2519,30 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // 表單驗證狀態重置
     this.fieldEditFormValidated = false; 
 
+    this.fieldEditType = 'Field_Infos';    // 每次打開該視窗都預設顯示場域資訊頁       @2024/01/28 Add
+    this.selectedBsInfos = [];             // 每次打開該視窗都初始化 selectedBsInfos @2024/01/28 Add
+    this.isFirstEnterInBSListPage = false; // 每次打開該視窗都初始化該 Flag @2024/01/27 Add
+    this.displayAllBSFlag =  false;        // 每次打開該視窗都初始化該 Flag ( 表只要當接著馬上打開 BS List 頁都是先顯示場域內 BS ) @2024/01/27 Add
+    
+    // 根據旗標狀態切換 displayedBasestations 的數據來源 ( 只要打開該視窗都是先顯示場域內 BS ) 
+    this.displayedBasestations = this.displayAllBSFlag 
+                                  ? this.SortAllBasestationsInO1 
+                                    : this.BasestationsInField;
+
+
+    // 打印當前場域內選中的基站 ID
+    console.log("In openfieldEditWindow()，\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos )
+
+    // 取得場域圖片
+    this.getfieldImage_forFieldEdit();
+
+    // 載入 BS List 數據
+    this.getQueryBsList(); 
+
+    // 同步基站選中狀態 @2024/06/21 Add  
+    this.syncBasestationSelection();
+
+
     // 打開場域編輯視窗
     this.fieldEditWindowRef = this.dialog.open( this.fieldEditWindow, { 
           id: 'fieldEditWindow',
@@ -2535,32 +2559,14 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // 打印當前場域編輯類型頁 
     console.log( "Open the window of field Edit is:", this.fieldEditType )
 
-    this.fieldEditType = 'Field_Infos';    // 每次打開該視窗都預設顯示場域資訊頁       @2024/01/28 Add
-    this.selectedBsInfos = [];             // 每次打開該視窗都初始化 selectedBsInfos @2024/01/28 Add
-    this.isFirstEnterInBSListPage = false; // 每次打開該視窗都初始化該 Flag @2024/01/27 Add
-    this.displayAllBSFlag =  false;        // 每次打開該視窗都初始化該 Flag ( 表只要當接著馬上打開 BS List 頁都是先顯示場域內 BS ) @2024/01/27 Add
-    
-    // 根據旗標狀態切換 displayedBasestations 的數據來源 ( 只要打開該視窗都是先顯示場域內 BS ) 
-    this.displayedBasestations = this.displayAllBSFlag 
-                                  ? this.SortAllBasestationsInO1 
-                                    : this.BasestationsInField;
+
 
     //this.getQueryBsList(); // 打開該視窗就先載入 BS List 數據  @2024/01/28 Add  
 
     // 同步基站選中狀態 @2024/06/21 Add  
     //this.syncBasestationSelection();
     
-    // 打印當前場域內選中的基站 ID
-    console.log("In openfieldEditWindow()，\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos )
-
-    // 取得場域圖片
-    this.getfieldImage_forFieldEdit();
-
-    // 載入 BS List 數據
-    this.getQueryBsList(); 
-
-    // 同步基站選中狀態 @2024/06/21 Add  
-    this.syncBasestationSelection();
+  
   }
 
   // 場域圖片編輯視窗開啟函數 @2024/04/18 Add
