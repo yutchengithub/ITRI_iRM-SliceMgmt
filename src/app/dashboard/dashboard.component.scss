@@ -87,7 +87,8 @@
 }
 .dashboard .table table tr td:last-child {
     cursor: pointer;
-    color: #2e94e7;
+   // color: #2e94e7;
+   text-align: center;
 }
 .dashboard .table table tr td:last-child .material-icons {
     font-size: 1.6em;
