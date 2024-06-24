@@ -298,9 +298,9 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
     // @2024/03/13 Add
     // 如非 Local 模式，切換每頁時才呼叫 API 取得 log 資訊 
-    if ( !this.commonService.isLocal ) {
-      this.getFaultList();
-    }
+    // if ( !this.commonService.isLocal ) {
+    //   this.getFaultList();
+    // }
   }
 
   /**
@@ -345,41 +345,41 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
     clearTimeout( this.refreshTimeout );
 
-    if ( this.commonService.isLocal ) {
+   // if ( this.commonService.isLocal ) {
       /* local file test */
 
       // 引入正確 local file @2024/06/03 Add 
       this.faultList = this.faultList_LocalFiles.faultList_local;
       this.faultMessagesDeal();
 
-    } else {
-      const fieldName = this.searchForm.controls['fieldName'].value;
-      const BSName = this.searchForm.controls['BSName'].value;
-      const compName = this.searchForm.controls['neName'].value;
-      const alarmName = this.searchForm.controls['alarmName'].value;
-      const severity = this.searchForm.controls['severity'].value;
-      const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
-      const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
-      //const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
-      const offset = ( this.p - 1 ) * this.pageSize;
-      const limit = 10;
+    // } else {
+    //   const fieldName = this.searchForm.controls['fieldName'].value;
+    //   const BSName = this.searchForm.controls['BSName'].value;
+    //   const compName = this.searchForm.controls['neName'].value;
+    //   const alarmName = this.searchForm.controls['alarmName'].value;
+    //   const severity = this.searchForm.controls['severity'].value;
+    //   const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
+    //   const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
+    //   //const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
+    //   const offset = ( this.p - 1 ) * this.pageSize;
+    //   const limit = 10;
 
-      if ( this.queryCurrentAllFaultMessage ) this.queryCurrentAllFaultMessage.unsubscribe();
-      this.queryCurrentAllFaultMessage = this.API_Fault.queryCurrentAllFaultMessage({
-        fieldName, 
-        BSName, 
-        compName, 
-        alarmName, 
-        severity, 
-        start, 
-        end, 
-        offset, 
-        limit
-      }).subscribe(res => {
-        this.faultList = res;
-        this.faultMessagesDeal();
-      });
-    }
+    //   if ( this.queryCurrentAllFaultMessage ) this.queryCurrentAllFaultMessage.unsubscribe();
+    //   this.queryCurrentAllFaultMessage = this.API_Fault.queryCurrentAllFaultMessage({
+    //     fieldName, 
+    //     BSName, 
+    //     compName, 
+    //     alarmName, 
+    //     severity, 
+    //     start, 
+    //     end, 
+    //     offset, 
+    //     limit
+    //   }).subscribe(res => {
+    //     this.faultList = res;
+    //     this.faultMessagesDeal();
+    //   });
+    //}
 
     console.log('getFaultList() - End');
   }
@@ -448,7 +448,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
     this.afterSearchForm = _.cloneDeep(this.searchForm); // 更新顯示的搜尋條件
 
-    if (this.commonService.isLocal) {
+    //if (this.commonService.isLocal) {
       /* local file test */
       this.filteredFaultList = this.faultList.faultMessage.filter( msg => {
         const isFieldMatch = !field_name || msg.fieldName.includes( field_name );
@@ -470,27 +470,27 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
       this.isSearch = true; // Local Search 完畢，設置標記為 true
       this.totalItems = this.filteredFaultList.length; // 確保更新 totalItems 以更新左下角統計數量，反映搜尋結果的數量
 
-    } else {
-      const params = {
-        fieldName: field_name,
-        BSName: BS_name,
-        compName: ne_name,
-        alarmName: alarm_name,
-        severity: severity_lv,
-        status: status_type,
-        situation: situ_type,
-        from: formattedFrom,
-        to: formattedTo,
-        offset: (this.p - 1) * this.pageSize,
-        limit: this.pageSize
-      };
+    // } else {
+    //   const params = {
+    //     fieldName: field_name,
+    //     BSName: BS_name,
+    //     compName: ne_name,
+    //     alarmName: alarm_name,
+    //     severity: severity_lv,
+    //     status: status_type,
+    //     situation: situ_type,
+    //     from: formattedFrom,
+    //     to: formattedTo,
+    //     offset: (this.p - 1) * this.pageSize,
+    //     limit: this.pageSize
+    //   };
 
-      this.queryCurrentAllFaultMessage = this.API_Fault.queryCurrentAllFaultMessage( params ).subscribe( res => {
-        this.filteredFaultList = res.faultMessage;
-        this.totalItems = res.totalMessageNumber;
-        this.isSearch = true;
-      });
-    }
+    //   this.queryCurrentAllFaultMessage = this.API_Fault.queryCurrentAllFaultMessage( params ).subscribe( res => {
+    //     this.filteredFaultList = res.faultMessage;
+    //     this.totalItems = res.totalMessageNumber;
+    //     this.isSearch = true;
+    //   });
+   // }
 
     // 檢查搜尋表單的值
     console.log( 'Search criteria for fault mgmt:', this.afterSearchForm.value );
@@ -601,7 +601,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
     const faultId = this.selectedFaultMsg.id; // 取得選中的告警ID
 
-    if ( this.commonService.isLocal ) {
+    //if ( this.commonService.isLocal ) {
       // 如果是本地模式，從本地文件中獲取數據
       
       // 假設本地數據結構如下：
@@ -612,31 +612,31 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
       this.isLoadingFaultProcessList = false; // 標記加載完成
       this.hideSpinner();  // 隱藏加載提示
 
-    } else {
+    // } else {
 
-      // 非本地模式，從後端 API 獲取數據
-      this.queryFaultProcessList = this.API_Fault.queryFaultAlarmProcessStatusList( faultId ).subscribe({
-        next: ( res: FaultProcessList ) => {
-          this.faultProcessList = res; // 更新列表
-          console.log('From Server - FaultProcessList:', this.faultProcessList);
-          this.processFaultProcessList( this.faultProcessList ); // 處理獲得的列表
-          this.isLoadingFaultProcessList = false; // 標記加載完成
-          this.hideSpinner();  // 隱藏加載提示
-        },
-        error: ( error ) => {
-          console.error('Error fetching Fault Process list:', error);
-          this.isLoadingFaultProcessList = false; // 標記加載完成
-          this.hideSpinner();  // 隱藏加載提示
-        },
-        complete: () => {
-          console.log('Fault Process list fetch completed'); // 標記獲取完成
-          this.hideSpinner();  // 隱藏加載提示
-        }
-      });
+    //   // 非本地模式，從後端 API 獲取數據
+    //   this.queryFaultProcessList = this.API_Fault.queryFaultAlarmProcessStatusList( faultId ).subscribe({
+    //     next: ( res: FaultProcessList ) => {
+    //       this.faultProcessList = res; // 更新列表
+    //       console.log('From Server - FaultProcessList:', this.faultProcessList);
+    //       this.processFaultProcessList( this.faultProcessList ); // 處理獲得的列表
+    //       this.isLoadingFaultProcessList = false; // 標記加載完成
+    //       this.hideSpinner();  // 隱藏加載提示
+    //     },
+    //     error: ( error ) => {
+    //       console.error('Error fetching Fault Process list:', error);
+    //       this.isLoadingFaultProcessList = false; // 標記加載完成
+    //       this.hideSpinner();  // 隱藏加載提示
+    //     },
+    //     complete: () => {
+    //       console.log('Fault Process list fetch completed'); // 標記獲取完成
+    //       this.hideSpinner();  // 隱藏加載提示
+    //     }
+    //   });
     }
 
-    console.log('getFaultProcessList() - End'); // 標記結束獲取數據
-  }
+  //   console.log('getFaultProcessList() - End'); // 標記結束獲取數據
+  // }
 
   showHistories_new: FaultAlarmProcess[] = [];
 
@@ -657,23 +657,23 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   /* Add Situation start */
   getFMstatus(): Promise<any> {
     return new Promise((resolve, reject) => {
-      if (this.commonService.isLocal) {
+      //if (this.commonService.isLocal) {
         /* local file test */
         this.fmStatus = this.commonService.fmStatus;
         this.fMstatusDeal();
         resolve(true);
-      } else {
-        if (this.queryCurrentFieldFaultMessage) this.queryCurrentFieldFaultMessage.unsubscribe();
-        this.queryCurrentFieldFaultMessage = this.commonService.queryFMstatus(this.selectFaultId).subscribe(
-          res => {
-            console.log('getFMstatus:');
-            console.log(res);
-            this.fmStatus = res as FmStatus;
-            this.fMstatusDeal();
-            resolve(true);
-          }
-        );
-      }
+      //} else {
+        // if (this.queryCurrentFieldFaultMessage) this.queryCurrentFieldFaultMessage.unsubscribe();
+        // this.queryCurrentFieldFaultMessage = this.commonService.queryFMstatus(this.selectFaultId).subscribe(
+        //   res => {
+        //     console.log('getFMstatus:');
+        //     console.log(res);
+        //     this.fmStatus = res as FmStatus;
+        //     this.fMstatusDeal();
+        //     resolve(true);
+        //   }
+        // );
+      //}
     });
   }
 
@@ -720,23 +720,23 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   queryFMProcess() {
     return new Promise((resolve, reject) => {
-      if (this.commonService.isLocal) {
+      //if (this.commonService.isLocal) {
         /* local file test */
         // const num = Math.floor(Math.random() * 2); //回傳0或1
         // const status = (num === 0) ? 200 : 500;
         let status = 200; //Always success now        
         resolve(status);
-      } else {
-        if (this.queryCurrentBsFaultMessage) this.queryCurrentBsFaultMessage.unsubscribe();
-        const processStatus = (this.fmStatus.__processStatus === 'PENDING') ? 1 : 0;
-        this.queryCurrentBsFaultMessage = this.commonService.queryFMProcess(this.selectFaultId, processStatus, this.fmStatus.processComment, this.fmStatus.acknowledgeOwner).subscribe(
-          (res: HttpResponse<any>) => {
-            console.log('queryFMProcess:');
-            console.log(res.status);
-            resolve(res.status);
-          }
-        );
-      }
+      //} else {
+        // if (this.queryCurrentBsFaultMessage) this.queryCurrentBsFaultMessage.unsubscribe();
+        // const processStatus = (this.fmStatus.__processStatus === 'PENDING') ? 1 : 0;
+        // this.queryCurrentBsFaultMessage = this.commonService.queryFMProcess(this.selectFaultId, processStatus, this.fmStatus.processComment, this.fmStatus.acknowledgeOwner).subscribe(
+        //   (res: HttpResponse<any>) => {
+        //     console.log('queryFMProcess:');
+        //     console.log(res.status);
+        //     resolve(res.status);
+        //   }
+        // );
+      //}
     });
   }
   /* Add Situation End */
@@ -745,23 +745,23 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   getFMstatusrecord() {
     //this.timeSort = '';
     return new Promise((resolve, reject) => {
-      if (this.commonService.isLocal) {
+      //if (this.commonService.isLocal) {
         /* local file test */
         this.showHistories = _.cloneDeep(this.selectedHistories);
         this.fMstatusrecordDeal();
         resolve(true);
-      } else {
-        if (this.queryCurrentBsComFaultMessage) this.queryCurrentBsComFaultMessage.unsubscribe();
-        this.queryCurrentBsComFaultMessage = this.commonService.queryFMstatusrecord(this.selectFaultId).subscribe(
-          res => {
+      //} else {
+       // if (this.queryCurrentBsComFaultMessage) this.queryCurrentBsComFaultMessage.unsubscribe();
+        //this.queryCurrentBsComFaultMessage = this.commonService.queryFMstatusrecord(this.selectFaultId).subscribe(
+          //res => {
             // console.log('getFMstatusrecord:');
             // console.log(res);
             // this.orgFmStatusRecordList = res as FmStatusRecord[];
             // this.fMstatusrecordDeal();
             // resolve(true);
-          }
-        );
-      }
+          //}
+        //);
+      //}
     });
   }
 

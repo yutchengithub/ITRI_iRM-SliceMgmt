@@ -244,7 +244,7 @@
           <!-- 上一步按鈕 -->
           <button mat-button matStepperPrevious>{{ languageService.i18n['field.createBack'] }}</button>
           <!-- 下一步按鈕 -->
-          <button mat-button matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
+          <button mat-button (click)="checkFieldCreationJSON()" matStepperNext>{{ languageService.i18n['field.createNext'] }}</button>
         </div>
       </form>
     </mat-step>

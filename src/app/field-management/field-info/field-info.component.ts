@@ -1123,6 +1123,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   queryFieldInfo!: Subscription;
   isMarkersLoading = true; // 加載狀態的標誌，初始設置為 true @12/28 Add for Progress Spinner
 
+  // @2024/06/24 update
   // @2024/01/02 Add - 儲存場域邊界點
   // @2024/01/04 Update - Add calculateBestZoom()
   getQueryFieldInfo() {
@@ -1285,11 +1286,11 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           console.log( 'Field info fetch completed' );
           //this.isMarkersLoading = false; // 加載完成 @12/28 Add for Progress Spinner
           
-          window.setTimeout(() => {
+          // window.setTimeout(() => {
 
-            this.hideSpinner();  // 完成後隱藏 spinner
+          //   this.hideSpinner();  // 完成後隱藏 spinner
 
-          }, 2800 ); // 設定 10000 ms ( s ) 後執行
+          // }, 2800 ); // 設定 10000 ms ( s ) 後執行
         }
       });
     }
@@ -1390,7 +1391,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   queryBsInfo!: Subscription;
 
   /**
-   * @2024/06/21 Update
+   * @2024/06/24 Update
    * 獲取場地內所有 BS 的資訊
    * @function getQueryBsInfoForAll
    * @param {number} bsNum - 場地內基站的總數
@@ -1496,7 +1497,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         // 加載完成，隱藏 spinner
-        this.isMarkersLoading = false;
+        //this.isMarkersLoading = false;
       },
       error: (error) => {
         // 如果在請求過程中出現錯誤，則在控制台輸出錯誤訊息
@@ -1510,6 +1511,8 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log("In getQueryBsInfoForAll() - allSimplifiedBsInfo", this.allSimplifiedBsInfo);
         // 加載完成，隱藏 spinner
         this.isMarkersLoading = false;
+
+        this.hideSpinner();  // 完成後隱藏 spinner
       }
     });
 
@@ -2475,7 +2478,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 // BS Modify Configuration Setting @2024/01/05 Add ↑
 
 
-// For Field Editing Setting @2024/06/19 Update ↓
+// For Field Editing Setting @2024/06/24 Update ↓
 
   // 創建表單組，用於場域編輯
   fieldEditForm!: FormGroup;
@@ -2496,7 +2499,8 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   fieldEditWindowRef!: MatDialogRef<any>;
   fieldEditFormValidated = false;
 
-  // 打開場域編輯視窗 @2024/06/21 Update
+  // @2024/06/24 Update
+  // 打開場域編輯視窗
   openfieldEditWindow() {
 
     // 確保場域資訊和邊界資訊已獲取
@@ -2516,6 +2520,28 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // 表單驗證狀態重置
     this.fieldEditFormValidated = false; 
 
+    this.fieldEditType = 'Field_Infos';    // 每次打開該視窗都預設顯示場域資訊頁       @2024/01/28 Add
+    this.selectedBsInfos = [];             // 每次打開該視窗都初始化 selectedBsInfos @2024/01/28 Add
+    this.isFirstEnterInBSListPage = false; // 每次打開該視窗都初始化該 Flag @2024/01/27 Add
+    this.displayAllBSFlag =  false;        // 每次打開該視窗都初始化該 Flag ( 表只要當接著馬上打開 BS List 頁都是先顯示場域內 BS ) @2024/01/27 Add
+    
+    // 根據旗標狀態切換 displayedBasestations 的數據來源 ( 只要打開該視窗都是先顯示場域內 BS ) 
+    this.displayedBasestations = this.displayAllBSFlag 
+                                  ? this.SortAllBasestationsInO1 
+                                    : this.BasestationsInField;
+
+    // 取得場域圖片
+    this.getfieldImage_forFieldEdit();
+
+    // 載入 BS List 數據
+    this.getQueryBsList(); 
+
+    // 同步基站選中狀態 @2024/06/21 Add  
+    this.syncBasestationSelection();
+
+    // 打印當前場域內選中的基站 ID
+    console.log("In openfieldEditWindow()，\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos )
+
     // 打開場域編輯視窗
     this.fieldEditWindowRef = this.dialog.open( this.fieldEditWindow, { 
           id: 'fieldEditWindow',
@@ -2532,32 +2558,12 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // 打印當前場域編輯類型頁 
     console.log( "Open the window of field Edit is:", this.fieldEditType )
 
-    this.fieldEditType = 'Field_Infos';    // 每次打開該視窗都預設顯示場域資訊頁       @2024/01/28 Add
-    this.selectedBsInfos = [];             // 每次打開該視窗都初始化 selectedBsInfos @2024/01/28 Add
-    this.isFirstEnterInBSListPage = false; // 每次打開該視窗都初始化該 Flag @2024/01/27 Add
-    this.displayAllBSFlag =  false;        // 每次打開該視窗都初始化該 Flag ( 表只要當接著馬上打開 BS List 頁都是先顯示場域內 BS ) @2024/01/27 Add
-    
-    // 根據旗標狀態切換 displayedBasestations 的數據來源 ( 只要打開該視窗都是先顯示場域內 BS ) 
-    this.displayedBasestations = this.displayAllBSFlag 
-                                  ? this.SortAllBasestationsInO1 
-                                    : this.BasestationsInField;
 
     //this.getQueryBsList(); // 打開該視窗就先載入 BS List 數據  @2024/01/28 Add  
 
     // 同步基站選中狀態 @2024/06/21 Add  
     //this.syncBasestationSelection();
-    
-    // 打印當前場域內選中的基站 ID
-    console.log("In openfieldEditWindow()，\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos )
-
-    // 取得場域圖片
-    this.getfieldImage_forFieldEdit();
-
-    // 載入 BS List 數據
-    this.getQueryBsList(); 
-
-    // 同步基站選中狀態 @2024/06/21 Add  
-    this.syncBasestationSelection();
+  
   }
 
   // 場域圖片編輯視窗開啟函數 @2024/04/18 Add
@@ -2760,35 +2766,61 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   // 顯示所有 BS 時用的排序函數 @2024/01/26 Add
   // SortAllBSInO1 函數接受一個 Basestation 類型的陣列作為參數，
   // 如果沒有傳入參數，則預設為一個空陣列。
-  SortAllBSInO1( sortBasestations: Basestation[] = [] ) {
-    console.log( "已觸發 SortAllBSInO1()" );
+  // SortAllBSInO1( sortBasestations: Basestation[] = [] ) {
+  //   console.log( "已觸發 SortAllBSInO1()" );
 
-    // 對傳入的 sortBasestations 陣列進行排序
-    sortBasestations.sort( ( a, b ) => {
-      // 首先比較基站的狀態。如果 a 基站的狀態為 0 或 1（ 紅燈狀態，代表有問題或不可用 ），
-      // 而 b 基站的狀態不是 0 或 1，則 a 應該排在 b 之前（ -1 表示 a 在排序中應該出現在 b 之前 ）。
-      if (( a.status === 0 || a.status === 1 ) && ( b.status !== 0 && b.status !== 1 )) {
+  //   // 對傳入的 sortBasestations 陣列進行排序
+  //   sortBasestations.sort( ( a, b ) => {
+  //     // 首先比較基站的狀態。如果 a 基站的狀態為 0 或 1（ 紅燈狀態，代表有問題或不可用 ），
+  //     // 而 b 基站的狀態不是 0 或 1，則 a 應該排在 b 之前（ -1 表示 a 在排序中應該出現在 b 之前 ）。
+  //     if (( a.status === 0 || a.status === 1 ) && ( b.status !== 0 && b.status !== 1 )) {
+  //       return -1;
+  //     } else if (( b.status === 0 || b.status === 1 ) && ( a.status !== 0 && a.status !== 1 )) {
+  //       // 如果 b 基站的狀態為 0 或 1 而 a 不是，則 b 應該排在 a 之前。
+  //       return 1;
+  //     }
+
+  //     // 如果基站 a 和 b 的狀態相同，則進一步比較它們是否被選中（ selected ）。
+  //     // 如果 a 被選中而 b 沒有，則 a 應排在 b 之前。
+  //     if ( a.selected && !b.selected ) {
+  //       return -1;
+  //     } else if ( b.selected && !a.selected ) {
+  //       // 如果 b 被選中而 a 沒有，則 b 應排在 a 之前。
+  //       return 1;
+  //     }
+
+  //     // 如果基站 a 和 b 的狀態以及選中狀況相同，則根據它們在原始 bsList.basestation 陣列中的順序進行排序。
+  //     // 找到 a 和 b 在原始陣列中的索引，並返回它們的差值，這將保持它們的原始順序。
+  //     return this.bsList.basestation.findIndex( bs => bs.id === a.id ) - this.bsList.basestation.findIndex( bs => bs.id === b.id );
+  //   });
+
+  //   // 返回排序後的陣列
+  //   return sortBasestations;
+  // }
+
+  // 顯示所有 BS 時用的排序函數 @2024/06/24 update
+  SortAllBSInO1(sortBasestations: Basestation[] = []) {
+    console.log("已觸發 SortAllBSInO1()");
+  
+    sortBasestations.sort((a, b) => {
+      // 首先比較基站的狀態。紅燈狀態（0 或 1）的基站排在最前面
+      if ((a.status === 0 || a.status === 1) && (b.status !== 0 && b.status !== 1)) {
         return -1;
-      } else if (( b.status === 0 || b.status === 1 ) && ( a.status !== 0 && a.status !== 1 )) {
-        // 如果 b 基站的狀態為 0 或 1 而 a 不是，則 b 應該排在 a 之前。
+      } else if ((b.status === 0 || b.status === 1) && (a.status !== 0 && a.status !== 1)) {
         return 1;
       }
-
-      // 如果基站 a 和 b 的狀態相同，則進一步比較它們是否被選中（ selected ）。
-      // 如果 a 被選中而 b 沒有，則 a 應排在 b 之前。
-      if ( a.selected && !b.selected ) {
+  
+      // 接著比較基站是否被選中，未被選中的排在前面
+      if (!a.selected && b.selected) {
         return -1;
-      } else if ( b.selected && !a.selected ) {
-        // 如果 b 被選中而 a 沒有，則 b 應排在 a 之前。
+      } else if (!b.selected && a.selected) {
         return 1;
       }
-
-      // 如果基站 a 和 b 的狀態以及選中狀況相同，則根據它們在原始 bsList.basestation 陣列中的順序進行排序。
-      // 找到 a 和 b 在原始陣列中的索引，並返回它們的差值，這將保持它們的原始順序。
-      return this.bsList.basestation.findIndex( bs => bs.id === a.id ) - this.bsList.basestation.findIndex( bs => bs.id === b.id );
+  
+      // 如果狀態和選中狀況都相同，則保持原有順序
+      return this.bsList.basestation.findIndex(bs => bs.id === a.id) - this.bsList.basestation.findIndex(bs => bs.id === b.id);
     });
-
-    // 返回排序後的陣列
+  
     return sortBasestations;
   }
 
@@ -3113,7 +3145,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.isFieldImageOnFieldEditLoading = false;
   }
 
-// For Field Editing Setting @2024/06/19 Update ↑
+// For Field Editing Setting @2024/06/24 Update ↑
 
 
 // For PM Parameter Setting @2024/02/24 Update ↓

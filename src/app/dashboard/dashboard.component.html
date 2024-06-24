@@ -87,7 +87,7 @@
           </ng-container> -->
 
           <!-- 加載完成後顯示場域數據 @2024/03/14 Add -->
-          <ng-container *ngIf="!isFieldListLoading">
+          <!-- <ng-container *ngIf="!isFieldListLoading"> -->
             <!-- 循環顯示場域列表，並應用分頁 -->
             <tr *ngFor="let opt of fieldList.fields">
               <td>{{opt.name}}</td>
@@ -103,7 +103,11 @@
                 <mat-icon tooltip="{{languageService.i18n['view_detail']}}" >remove_red_eye</mat-icon>
               </td>
             </tr>
-          </ng-container>
+          <!-- @2024/06/24 Add -->
+          <tr class="notFind" *ngIf="fieldList.fields.length === 0">
+            <td colspan="12">{{ languageService.i18n['field.noFieldsAvailable'] }}</td>
+          </tr>
+          <!-- </ng-container> -->
         </tbody>
       </table>
     </div>

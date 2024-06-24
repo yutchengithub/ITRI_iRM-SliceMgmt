@@ -134,11 +134,14 @@ export class ComponentManagementComponent implements OnInit {
       this.commonService.queryBsComponentList().subscribe(
         res => {
           console.log('getBsComponent List:');
-          console.log(res);
-          this.hideSpinner();
-          const str = JSON.stringify(res);//convert array to string
-          this.componentList = JSON.parse(str);
+          console.log( res );
+
+          const str = JSON.stringify( res );//convert array to string
+          this.componentList = JSON.parse( str );
+          
           this.componentListDeal();
+
+          this.hideSpinner();
         }
       );
     }
@@ -171,19 +174,40 @@ export class ComponentManagementComponent implements OnInit {
       'comtype': new FormControl('All')
     });
   }
+  // openCreateModal() {
+  //   this.formValidated = false;
+  //   this.createForm = this.fb.group({
+  //     'session': this.sessionId,
+  //     'name': new FormControl('', [Validators.required]),
+  //     'ip': new FormControl('', [Validators.required]),
+  //     'port': new FormControl('', [Validators.required]),
+  //     'account': new FormControl('', [Validators.required]),
+  //     'key': new FormControl('', [Validators.required]),
+  //     'comtype': new FormControl('', [Validators.required]),
+  //     'firm': new FormControl('', [Validators.required]),
+  //     'modelname': new FormControl('', [Validators.required])
+      
+  //   });
+  //   this.createModalRef = this.dialog.open(this.createComponentModal, { id: 'createComponentModal' });
+  //   this.createModalRef.afterClosed().subscribe(() => {
+  //     this.fileMsg = '';
+  //     this.formValidated = false;
+  //   });
+  // }
+
   openCreateModal() {
+    
     this.formValidated = false;
     this.createForm = this.fb.group({
       'session': this.sessionId,
-      'name': new FormControl('', [Validators.required]),
-      'ip': new FormControl('', [Validators.required]),
-      'port': new FormControl('', [Validators.required]),
-      'account': new FormControl('', [Validators.required]),
-      'key': new FormControl('', [Validators.required]),
-      'comtype': new FormControl('', [Validators.required]),
-      'firm': new FormControl('', [Validators.required]),
-      'modelname': new FormControl('', [Validators.required])
-      
+      'name': new FormControl('comp-all-15', [Validators.required]),
+      'ip': new FormControl('60.250.213.43', [Validators.required]),
+      'port': new FormControl('30125', [Validators.required]),
+      'account': new FormControl('root', [Validators.required]),
+      'key': new FormControl('root', [Validators.required]),
+      'comtype': new FormControl( 5, [Validators.required]), // 預設選擇 "CU+DU+RU"
+      'firm': new FormControl('ITRI', [Validators.required]),
+      'modelname': new FormControl('A001', [Validators.required])
     });
     this.createModalRef = this.dialog.open(this.createComponentModal, { id: 'createComponentModal' });
     this.createModalRef.afterClosed().subscribe(() => {
@@ -191,6 +215,7 @@ export class ComponentManagementComponent implements OnInit {
       this.formValidated = false;
     });
   }
+  
 
   fileChange(e: any) {
     // console.log(e);
@@ -204,7 +229,7 @@ export class ComponentManagementComponent implements OnInit {
         this.fileMsg = '格式只允許[file].xml';
       }
     }
-    if (passFile === null) {
+    if ( passFile === null ) {
       this.file = null;
       this.provisionForm.controls['fileName'].setValue('');
     } else {
@@ -214,12 +239,32 @@ export class ComponentManagementComponent implements OnInit {
     // console.log(files);
   }
   
+  // 06/24 update by yuchen
   create() {
+
+    this.showProcessingSpinner();
 
     this.formValidated = true;
     if ( !this.createForm.valid ) {
       return;
     }
+
+    const body = this.createForm.value;
+
+    // if ( this.createForm.controls['comtype'].value === 'CU' ) {
+    //   body['comtype'] = 1;
+    // } else if ( this.createForm.controls['comtype'].value === 'DU' ) {
+    //   body['comtype'] = 2;
+    // } else if ( this.createForm.controls['comtype'].value === 'RU' ) {
+    //   body['comtype'] = 3;
+    // } else if ( this.createForm.controls['comtype'].value === 'CU+DU' ) {
+    //   body['comtype'] = 4;  
+    // } else if ( this.createForm.controls['comtype'].value === 'CU+DU+RU' ) {
+    //   body['comtype'] = 5;
+    // }
+
+    body['comtype'] = Number( body['comtype'] );
+    console.log("The post json for create NE:", body);
 
     if ( this.commonService.isLocal ) {
 
@@ -244,32 +289,24 @@ export class ComponentManagementComponent implements OnInit {
       this.createModalRef.close();
       this.getComponentList();
 
+      //this.hideSpinner();
+
     } else {
 
-      const body = this.createForm.value;
-
-      if ( this.createForm.controls['comtype'].value === 'CU' ) {
-        body['comtype'] = 1;
-      } else if ( this.createForm.controls['comtype'].value === 'DU' ) {
-        body['comtype'] = 2;
-      } else if ( this.createForm.controls['comtype'].value === 'RU' ) {
-        body['comtype'] = 3;
-      } else if ( this.createForm.controls['comtype'].value === 'CU+DU' ) {
-        body['comtype'] = 4;  
-      } else if ( this.createForm.controls['comtype'].value === 'CU+DU+RU' ) {
-        body['comtype'] = 5;
-      }
-      console.log( body );
       this.commonService.createBsComponent( body ).subscribe(
         res => {
           console.log('createBsComponent:');
           console.log( res );
           this.createModalRef.close();
           this.getComponentList();
+
+          //this.hideSpinner();
         }
       );
     }
   }
+
+  
   
   // @2024/06/23 Add by yuchen
   @ViewChild('deleteComponent_ConfirmWindow') deleteComponent_ConfirmWindow: any;
@@ -319,6 +356,8 @@ export class ComponentManagementComponent implements OnInit {
   }
 
   // delete() {
+  //   this.showProcessingSpinner();  // 顯示 spinner
+
   //   if (this.commonService.isLocal) {
   //     /* local file test */
   //     for (let i = 0; i < this.commonService.componentList.components.length; i++) {
@@ -350,7 +389,7 @@ export class ComponentManagementComponent implements OnInit {
   //   }
   // }
 
-  // @2024/06/23 Update by yuchen
+  // @2024/06/23 update by yuchen
   delete() {
 
     // 輸出將要刪除的網元名稱
@@ -369,7 +408,8 @@ export class ComponentManagementComponent implements OnInit {
       this.deleteModalRef.close();
       this.getComponentList();
       
-      this.hideSpinner();  // 隱藏 spinner
+      //this.hideSpinner();  // 隱藏 spinner
+
     } else {
 
       const removeBsBody: any = {
@@ -391,19 +431,21 @@ export class ComponentManagementComponent implements OnInit {
           console.log('Component removed successfully', response);
           this.deleteModalRef.close();
           
-          this.getComponentList();
+          
 
-          this.hideSpinner();  // 隱藏 spinner
+          //this.hideSpinner();  // 隱藏 spinner
 
         },
         error: (error) => {
           // 刪除失敗的回調
           console.error('Failed to remove component:', error);
-          this.hideSpinner();  // 出錯時隱藏 spinner
+          //this.hideSpinner();  // 出錯時隱藏 spinner
         },
         complete: () => {
           // 請求完成後的回調，不管成功或失敗都會執行
-          this.hideSpinner();  // 隱藏 spinner
+          //this.hideSpinner();  // 隱藏 spinner
+
+          this.getComponentList();
         }
       });
     }
