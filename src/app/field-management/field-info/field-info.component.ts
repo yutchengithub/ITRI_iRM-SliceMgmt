@@ -2529,10 +2529,6 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
                                   ? this.SortAllBasestationsInO1 
                                     : this.BasestationsInField;
 
-
-    // 打印當前場域內選中的基站 ID
-    console.log("In openfieldEditWindow()，\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos )
-
     // 取得場域圖片
     this.getfieldImage_forFieldEdit();
 
@@ -2542,6 +2538,8 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // 同步基站選中狀態 @2024/06/21 Add  
     this.syncBasestationSelection();
 
+    // 打印當前場域內選中的基站 ID
+    console.log("In openfieldEditWindow()，\n 目前在場域內(被選中)的基站 id 目前有", this.selectedBsInfos )
 
     // 打開場域編輯視窗
     this.fieldEditWindowRef = this.dialog.open( this.fieldEditWindow, { 
@@ -2560,12 +2558,10 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log( "Open the window of field Edit is:", this.fieldEditType )
 
 
-
     //this.getQueryBsList(); // 打開該視窗就先載入 BS List 數據  @2024/01/28 Add  
 
     // 同步基站選中狀態 @2024/06/21 Add  
     //this.syncBasestationSelection();
-    
   
   }
 
