@@ -95,7 +95,7 @@ export const Enlanguage = {
   'field.saveFieldSnapshot':'Save',
   'field.snapshotNameRequired': 'Enter snapshot name (no whitespace only)',
   'field.mustContainNonWhitespace': 'The snapshot name must contain at least one non-whitespace character',
-  
+  'field.noSnapshotsInField': 'No snapshots have been saved in this field yet.',
 
   'field.downloadCurrentFieldSnapshot':'Download This Snapshot',
   'field.snapshotNo':'No.',

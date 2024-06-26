@@ -95,6 +95,7 @@ export const TwLanguage = {
   'field.snapshotNameRequired': '請輸入快照名稱（不可僅含空白）',
   'field.mustContainNonWhitespace': '快照名稱至少包含一個非空格字符',
   'field.downloadCurrentFieldSnapshot':'下載此快照',
+  'field.noSnapshotsInField': '目前此場域還未儲存任何快照。',
   'field.snapshotNo':'編號',
   'field.snapshotName':'快照名稱',
   'field.createdTime': '建立時間',

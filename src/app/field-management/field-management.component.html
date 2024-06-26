@@ -403,14 +403,14 @@
             </ng-container> -->
             
             <!-- 加載完成後顯示場域快照數據 -->
-            <ng-container *ngIf="!isGetQueryFieldSnapshotLoading">
+            <!-- <ng-container *ngIf="!isGetQueryFieldSnapshotLoading"> -->
               <!-- 循環顯示所有 Snapshots，並應用分頁  -->
               <tr *ngFor="let Snapshot of getFieldSnapshotList.fieldSnapshot | paginate: { 
-                            itemsPerPage: pageSize_getFieldSnapshotList,
-                            currentPage: p_getFieldSnapshotList, 
-                            totalItems: totalItems_getFieldSnapshotList, 
-                            id: 'PageDisplay_of_fieldSnapshotList' };  
-                          let i = index">
+                                                                                  itemsPerPage: pageSize_getFieldSnapshotList,
+                                                                                   currentPage: p_getFieldSnapshotList, 
+                                                                                    totalItems: totalItems_getFieldSnapshotList, 
+                                                                                            id: 'PageDisplay_of_fieldSnapshotList' };  
+                                                                                                                          let i = index">
                 <!-- 顯示 Snapshot 編號 -->
                 <td>{{ (p_getFieldSnapshotList - 1) * pageSize_getFieldSnapshotList + i + 1 }}</td> <!-- 動態生成每條 Snapshot 的編號 -->
                 <!-- 顯示 Snapshot 名稱 -->
@@ -426,7 +426,10 @@
                     <mat-icon tooltip="{{languageService.i18n['field.deleteSnapshot']}}">delete_forever</mat-icon>
                 </td>
               </tr>
-            </ng-container>
+              <tr class="notFind" *ngIf="getFieldSnapshotList.fieldSnapshot.length === 0">
+                <td colspan="5">{{ languageService.i18n['field.noSnapshotsInField'] }}</td>
+              </tr>
+            <!-- </ng-container> -->
           </tbody>
         </table>
       </div>
