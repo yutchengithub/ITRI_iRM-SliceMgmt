@@ -503,6 +503,12 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     if ( this.querySonParameter ) this.querySonParameter.unsubscribe();
     if ( this.multiCalculateBs ) this.multiCalculateBs.unsubscribe();
     if ( this.multiOptimalBs ) this.multiOptimalBs.unsubscribe();
+  
+    // @2024/06/26 Add
+    // 如存在進行中的動畫，取消它
+    if ( this.animationFrameId ) {
+      cancelAnimationFrame( this.animationFrameId );
+    }
 
     // @2024/06/07 Add
     isBarChartActive = false; // 當頁面銷毀時，設置 Chart.js 圖表插件為非激活狀態
@@ -3613,7 +3619,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   fieldPMReportType: string = 'Performance_Overview'; // 預設顯示 "效能總覽" 頁面
 
   /**
-   * @2024/06/25 Update
+   * @2024/06/26 Update
    * 打開場域效能分析視窗
    * @method openfieldPMReportWindow
    * @description
@@ -3627,6 +3633,11 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   openfieldPMReportWindow() {
 
     this.fieldPMReportType = 'Performance_Overview'; // 每次打開視窗都預設顯示 "場域效能總覽" 頁面
+
+    // @2024/06/25 Add
+    // 開始倒數刷新總覽資訊
+    this.startCountdown();
+
     // this.updateDropdownOptions(); // 刷新下拉選單選項
     this.updateDropdownOptions_for_chartJS_barChart();    // 刷新下拉選單選項
     this.selectedKpiCategory_bar = "Accessibility";       // 預設 "KPI 類別" 選擇 Accessibility
@@ -3666,7 +3677,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/06/12 Update
+   * @2024/06/26 Update
    * 處理場域效能分析彈出視窗的頁籤切換函數
    * @method changeFieldPMReportType
    * @param e - MatButtonToggleChange 事件參數
@@ -3674,7 +3685,9 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
    *    - 此函數用於處理場域效能分析彈出視窗的頁籤切換。
    *    - 根據用戶當前的選擇來設定頁籤顯示的類型。
    *    - 設置 Chart.js 圖表插件激活狀態，當選擇 "Performance_Overview" 時激活，"Performance_History" 時取消激活。
-   *    - 預設 "Performance_History" 頁籤的 KPI 類別和子類別。
+   *    - 在 "Performance_Overview" 模式下，啟動自動刷新倒數計時機制。
+   *    - 在 "Performance_History" 模式下，停止自動刷新倒數計時。
+   *    - 預設 "Performance_History" 頁籤的 KPI 類別和子類別，並設置日期範圍。
    *    - 頁籤切換後輸出結果到控制台。
    */
   changeFieldPMReportType( e: MatButtonToggleChange ) {
@@ -3688,12 +3701,23 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       this.fieldPMReportType = 'Performance_Overview';
       isBarChartActive = true; // 設置 Chart.js 圖表插件為激活狀態
 
+      // @2024/06/26 Add
+      // 啟動自動刷新倒數計時
+      this.startCountdown();
+
     } else if ( e.value === 'Performance_History' ) {
+
+      // @2024/06/26 Add
+      // 停止自動刷新倒數計時
+      if ( this.animationFrameId ) {
+        cancelAnimationFrame( this.animationFrameId );
+      }
+
       this.fieldPMReportType = 'Performance_History';
       isBarChartActive = false; // 設置 Chart.js 圖表插件為非激活狀態
 
       // @2024/06/12 Add
-      // 預設歷史查詢日期表單值 ( 一個星期 )
+      // 預設歷史查詢日期範圍 ( 一週 )
       const now = new Date();
       const currentHour = new Date(now.setMinutes(0, 0, 0));
       const lastWeek = new Date(now.setDate(now.getDate() - 7)); // 將當前日期減去7天
@@ -3702,9 +3726,9 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         to: currentHour
       });
 
-      //this.updateDropdownOptions_line();
       this.searchFieldKpiInfo();
-
+      
+      //this.updateDropdownOptions_line();
       //this.selectedKpiCategory_line = "Accessibility";        // 預設 "KPI 類別" 選擇 Accessibility
       //this.selectedKpiSubcategory_line= "DRB Accessibility";  // 預設 "KPI 子類別" 選擇 DRB Accessibility
     }
@@ -3714,6 +3738,98 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log("changefieldPMReportType() - End");
   }
 
+  /**
+   * @2024/06/26 Update
+   * 刷新場域效能資訊
+   * @method refreshFieldInfo
+   * @description
+   *    - 此函數用於刷新場域效能資訊。
+   *    - 首先將 `refreshFieldInfo_Flag` 標記設置為 `true`。
+   *    - 然後調用 `getQueryFieldInfo` 函數以刷新場域資訊。
+   *    - 重置並重新開始倒數計時。
+   */
+  refreshFieldInfo() {
+
+    // 設置刷新標記為 true
+    this.refreshFieldInfo_Flag = true;
+
+    // 調用函數獲取最新的場域資訊
+    this.getQueryFieldInfo();
+    
+    // 如果存在進行中的動畫，取消它
+    if ( this.animationFrameId ) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+    // 重新開始倒數計時
+    this.startCountdown();
+  }
+
+  // @2024/06/26 Add
+  // 倒數計時的當前值，初始為 60 秒
+  countdown: number = 60;
+
+  // @2024/06/26 Add
+  // 上次更新倒數計時的時間戳
+  lastUpdate: number = 0;
+
+  // @2024/06/26 Add
+  // 用於存儲 requestAnimationFrame 的 ID
+  animationFrameId: number = 0;
+
+  /**
+   * @2024/06/26 Add
+   * 動畫循環函數
+   * @method animate
+   * @description
+   *    - 使用 requestAnimationFrame 創建動畫循環。
+   *    - 每秒更新一次倒數計時。
+   *    - 當倒數結束時，刷新場域資訊並重新開始計時。
+   */
+  animate() {
+    // 請求下一幀動畫，並存儲返回的 ID
+    this.animationFrameId = requestAnimationFrame(() => {
+      // 獲取當前時間戳
+      const now = Date.now();
+      // 如果距離上次更新已經過去了至少 1 秒
+      if ( now - this.lastUpdate >= 1000 ) {
+        // 減少倒數計時值
+        this.countdown--;
+        // 更新最後更新時間
+        this.lastUpdate = now;
+      }
+      // 如果倒數計時還未結束
+      if ( this.countdown > 0 ) {
+        // 繼續下一幀動畫
+        this.animate();
+      } else {
+        // 倒數結束，刷新場域資訊
+        this.getQueryFieldInfo();
+        // 重新開始倒數
+        this.startCountdown();
+      }
+    });
+  }
+
+  /**
+   * @2024/06/26 Add
+   * 開始倒數計時
+   * @method startCountdown
+   * @description
+   *    - 重置倒數計時為 60 秒。
+   *    - 更新最後更新時間為當前時間。
+   *    - 啟動動畫循環。
+   */
+  startCountdown() {
+
+    // 重置倒數計時為 60 秒
+    this.countdown = 60;
+
+    // 設置最後更新時間為當前時間
+    this.lastUpdate = Date.now();
+
+    // 啟動動畫循環
+    this.animate();
+  }
 
 
   kpiCategories_bar: KpiCategory[] = [];       // 定義 KPI 類別的選項
@@ -3755,21 +3871,6 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       default:
         return ''; // 默認情況下返回空字符串
     }
-  }
-
-  /**
-   * @2024/06/07 Add
-   * 刷新場域效能資訊
-   * @method refreshFieldInfo
-   * @description
-   *    - 此函數用於刷新場域效能資訊。
-   *    - 首先將 `refreshFieldInfo_Flag` 標記設置為 `true`。
-   *    - 然後調用 `getQueryFieldInfo` 函數以刷新場域資訊。
-   */
-  refreshFieldInfo() {
-    this.refreshFieldInfo_Flag = true; // 標記為 true
-
-    this.getQueryFieldInfo(); // 刷新場域資訊
   }
 
 
@@ -6142,7 +6243,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-// For 場域效能報表 @2024/06/13 Update ↑
+// For 場域效能報表 @2024/06/26 Update ↑
 
 
 // For 場域優化 @2024/04/12 Update ↓

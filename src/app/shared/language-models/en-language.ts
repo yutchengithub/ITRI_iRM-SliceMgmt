@@ -208,8 +208,10 @@ export const Enlanguage = {
   'field.performanceHistorySearch': 'Performance History Search',    // @2024/05/27 Add
   'field.items':'Items',                 // @2024/05/27 Add
   'field.fieldAverage': 'Field Average', // @2024/06/13 Add
-  'field.refreshOverviewInfo': 'Refresh Overview Information', // @2024/06/14 Add
-
+  'field.refreshOverviewInfo': 'Refresh Overview Information',    // @2024/06/14 Add
+  'field.exportAsXlsx': 'Export as .xlsx',                        // @2024/06/26 Add
+  'field.exportPerformanceHistory': 'Export Performance History', // @2024/06/26 Add
+  "BS.refreshCountdown": "... Refresh in {0} seconds",            // @2024/06/26 Add
 
 
   'field.reportFM':'Alarms (FM)',                   // @12/12 Add
@@ -436,7 +438,7 @@ export const Enlanguage = {
 
   'BS.performance':'BS Performance',
   'BS.refreshBSPerformanceInfo': 'Refresh BS Performance Information',
-  'BS.dataTimePast24Hours': 'Data Time: Past 24 Hours',
+  'BS.dataTimePast24Hours': 'Data Time : Past 24 Hours',
 
   "BS.timeInterval": "Time Interval",
   'BS.timeIntervalHourly': 'Time Interval ( Hourly )',

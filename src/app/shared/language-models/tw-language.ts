@@ -211,7 +211,9 @@ export const TwLanguage = {
   'field.items':'項目',             // @2024/05/27 Add
   'field.fieldAverage': '場域平均', // @2024/06/13 Add
   'field.refreshOverviewInfo': '刷新總覽資訊', // @2024/06/14 Add
-
+  'field.exportAsXlsx': '匯出成 .xlsx',             // @2024/06/26 Add
+  'field.exportPerformanceHistory': '匯出效能歷史', // @2024/06/26 Add
+  "BS.refreshCountdown": "... {0} 秒後刷新",        // @2024/06/26 Add
 
   'field.reportFM':'告警資訊(FM)',          // @12/12 Add
   'field.optim':'場域優化',                  // @12/12 Add
