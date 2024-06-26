@@ -116,7 +116,7 @@
       </ng-container> -->
 
       <!-- 加載完成後顯示 排程列表 數據 -->
-      <ng-container *ngIf="!isLoadingScheduleList">
+      <!-- <ng-container *ngIf="!isLoadingScheduleList"> -->
         <tr *ngFor="let schedule of scheduleListToDisplay | paginate: { 
                       itemsPerPage: pageSize,
                       currentPage: p, 
@@ -152,7 +152,7 @@
         <tr class="notFind" *ngIf="scheduleListToDisplay.length === 0">
           <td colspan="7">{{ languageService.i18n['no_results'] }}</td>
         </tr> 
-      </ng-container>
+      <!-- </ng-container> -->
     </tbody>
   </table>
 </div>

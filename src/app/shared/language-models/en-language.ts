@@ -524,6 +524,8 @@ export const Enlanguage = {
   'pm.efficiency':'Energy Efficiency',
   'pm.utilization':'Utilization ( 5 Indicator )',
   'pm.mobility':'Mobility',
+  'pm.noPerformanceInfo': 'No performance information available.',
+
   'information':'Information',
   'basic.info':'Basic Information',
   'nf.list':'NF List',

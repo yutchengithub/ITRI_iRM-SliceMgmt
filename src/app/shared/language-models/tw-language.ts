@@ -540,6 +540,8 @@ export const TwLanguage = {
   'pm.efficiency':'能源效率',
   'pm.utilization':'利用率 ( 5 指標 )',
   'pm.mobility':'移動性',
+  'pm.noPerformanceInfo': '目前無任何效能資訊。',
+  
   'information':'詳情資訊',
   'basic.info':'基本訊息',
   'nf.list':'NF 列表',
