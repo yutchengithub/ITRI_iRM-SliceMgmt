@@ -95,7 +95,7 @@ export const Enlanguage = {
   'field.saveFieldSnapshot':'Save',
   'field.snapshotNameRequired': 'Enter snapshot name (no whitespace only)',
   'field.mustContainNonWhitespace': 'The snapshot name must contain at least one non-whitespace character',
-  
+  'field.noSnapshotsInField': 'No snapshots have been saved in this field yet.',
 
   'field.downloadCurrentFieldSnapshot':'Download This Snapshot',
   'field.snapshotNo':'No.',
@@ -524,6 +524,8 @@ export const Enlanguage = {
   'pm.efficiency':'Energy Efficiency',
   'pm.utilization':'Utilization ( 5 Indicator )',
   'pm.mobility':'Mobility',
+  'pm.noPerformanceInfo': 'No performance information available.',
+
   'information':'Information',
   'basic.info':'Basic Information',
   'nf.list':'NF List',

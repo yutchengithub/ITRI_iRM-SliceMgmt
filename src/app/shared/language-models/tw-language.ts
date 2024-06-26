@@ -95,6 +95,7 @@ export const TwLanguage = {
   'field.snapshotNameRequired': '請輸入快照名稱（不可僅含空白）',
   'field.mustContainNonWhitespace': '快照名稱至少包含一個非空格字符',
   'field.downloadCurrentFieldSnapshot':'下載此快照',
+  'field.noSnapshotsInField': '目前此場域還未儲存任何快照。',
   'field.snapshotNo':'編號',
   'field.snapshotName':'快照名稱',
   'field.createdTime': '建立時間',
@@ -539,6 +540,8 @@ export const TwLanguage = {
   'pm.efficiency':'能源效率',
   'pm.utilization':'利用率 ( 5 指標 )',
   'pm.mobility':'移動性',
+  'pm.noPerformanceInfo': '目前無任何效能資訊。',
+  
   'information':'詳情資訊',
   'basic.info':'基本訊息',
   'nf.list':'NF 列表',
