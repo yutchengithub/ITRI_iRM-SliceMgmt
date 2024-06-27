@@ -165,7 +165,7 @@ interface KpiSubcategory {
 
 /** 
  * @2024/05/31 Add
- * 定義圖表數據點結構，用於存儲每個數據點的詳細信息。
+ * 定義圖表數據點結構，用於存儲每個數據點的詳細訊息。
  * @interface BarChartData
  * @property {string} [color] - 儲存顏色
  * @property {string} [time] - 儲存時間範圍
@@ -198,7 +198,7 @@ export interface LineChartData {
 
 /** 
  * @2024/06/12 Add
- * 定義圖表數據點結構，用於存儲每個數據點的詳細信息。
+ * 定義圖表數據點結構，用於存儲每個數據點的詳細訊息。
  * @interface Series
  * @property {string} [color] - 儲存顏色
  * @property {string} [time] - 儲存時間範圍
@@ -1609,7 +1609,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // 首先檢查 Dist_bsInfo.info 是否為陣列
     if (!Array.isArray(Dist_bsInfo.info)) {
 
-      // 輸出提示信息到控制台，表示無數據並將啟用備案處理
+      // 輸出提示訊息到控制台，表示無數據並將啟用備案處理
       console.log("Dist_bsInfo.info 無數據 - 開始啟用備案處理分佈式基站資訊");
 
       // 如果 extension_info 也不是陣列或為空，則返回空陣列並報錯
@@ -3841,6 +3841,19 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.animate();
   }
 
+  /**
+   * @2024/06/27 Add
+   * @property viewModes_bar
+   * @description 存儲檢視模式選項的數組
+   */
+  viewModes_bar: ViewMode[] = [];
+
+  /**
+   * @2024/06/27 Add
+   * @property selectedViewMode_bar
+   * @description 當前選中的檢視模式，默認為 'fullInformation'
+   */
+  selectedViewMode_bar: string = 'fullInformation';
 
   kpiCategories_bar: KpiCategory[] = [];       // 定義 KPI 類別的選項
   kpiSubcategories_bar: KpiSubcategory[] = []; // 定義 KPI 子類別的選項  
@@ -3884,7 +3897,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-// ng2-charts 圖表模組設定區 @2024/06/25 Update ↓
+// ng2-charts 圖表模組設定區 @2024/06/27 Update ↓
 
   /**
    * @2024/06/13 Update
@@ -3901,17 +3914,17 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         break;
       case 'Integrity':
         this.kpiSubcategories_bar = [
-          { displayName: this.languageService.i18n['BS.integratedDownlinkDelay'], value: 'Integrated Downlink Delay' }, // 設置 Integrated Downlink Delay 子類別
-          { displayName: this.languageService.i18n['BS.integratedUplinkDelay'], value: 'Integrated Uplink Delay' }, // 設置 Integrated Uplink Delay 子類別
+          { displayName: this.languageService.i18n['BS.integratedDownlinkDelay'], value: 'Integrated Downlink Delay' },  // 設置 Integrated Downlink Delay 子類別
+          { displayName: this.languageService.i18n['BS.integratedUplinkDelay'], value: 'Integrated Uplink Delay' },      // 設置 Integrated Uplink Delay 子類別
           { displayName: this.languageService.i18n['BS.ranUEDownlinkThroughput'], value: 'RAN UE Downlink Throughput' }, // 設置 RAN UE Downlink Throughput 子類別
-          { displayName: this.languageService.i18n['BS.ranUEUplinkThroughput'], value: 'RAN UE Uplink Throughput' } // 設置 RAN UE Uplink Throughput 子類別
+          { displayName: this.languageService.i18n['BS.ranUEUplinkThroughput'], value: 'RAN UE Uplink Throughput' }      // 設置 RAN UE Uplink Throughput 子類別
         ];
         break;
       case 'Utilization':
         this.kpiSubcategories_bar = [
           { displayName: this.languageService.i18n['BS.processUtilization'], value: 'Process Utilization' }, // 設置 Process Utilization 子類別
-          { displayName: this.languageService.i18n['BS.memoryUtilization'], value: 'Memory Utilization' }, // 設置 Memory Utilization 子類別
-          { displayName: this.languageService.i18n['BS.diskUtilization'], value: 'Disk Utilization' } // 設置 Disk Utilization 子類別
+          { displayName: this.languageService.i18n['BS.memoryUtilization'], value: 'Memory Utilization' },   // 設置 Memory Utilization 子類別
+          { displayName: this.languageService.i18n['BS.diskUtilization'], value: 'Disk Utilization' }        // 設置 Disk Utilization 子類別
         ];
         break;
       case 'Retainability':
@@ -4448,25 +4461,74 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/06/06 Update
-   * 更新下拉選單的選項
+   * @2024/06/27 Update
    * @method updateDropdownOptions_for_chartJS_barChart
    * @description
-   * - 根據語言服務中的翻譯更新 KPI 類別的選項。
-   * - 初始化選擇的 KPI 類別為第一個選項。
+   *  - 更新下拉選單的選項
+   *  - 設置檢視模式選項
+   *  - 為每個基站和 Cell 添加選項
+   *  - 設置 KPI 類別選項
+   *  - 初始化選擇的 KPI 類別
    */
   updateDropdownOptions_for_chartJS_barChart() {
+
+    // 設置基本的檢視模式選項
+    this.viewModes_bar = [
+      { displayName: this.languageService.i18n['BS.fullInformation'], value: 'fullInformation' },
+      { displayName: this.languageService.i18n['BS.onlyBSLevel'], value: 'onlyBSLevel' }
+    ];
+
+    // 遍歷每個基站訊息
+    this.fieldInfo.bsinfo.forEach(bs => {
+      // 檢查基站是否有 Cell 訊息
+      if (bs.cellInfo && bs.cellInfo.length > 0) {
+        // 為多 Cell 基站添加選項
+        bs.cellInfo.forEach((cell, index) => {
+          this.viewModes_bar.push({
+            displayName: `${bs.name} - Cell#${index + 1} ( NCI = 0x${cell.nci} )`,
+            value: `${bs.name}-Cell#${index + 1}`
+          });
+        });
+      } else {
+        // 為單 Cell 基站添加選項
+        const defaultNci = this.allSimplifiedBsInfo.find(info => info.id === bs.id)?.nci;
+        this.viewModes_bar.push({
+          displayName: `${bs.name} - Cell#1 ( NCI = 0x${defaultNci} )`,
+          value: `${bs.name}-Cell#1`
+        });
+      }
+    });
+
+    // 設置 KPI 類別選項
     this.kpiCategories_bar = [
       { displayName: this.languageService.i18n['BS.accessibility'], value: 'Accessibility' },
       { displayName: this.languageService.i18n['BS.integrity'], value: 'Integrity' },
       { displayName: this.languageService.i18n['BS.utilization'], value: 'Utilization' },
       { displayName: this.languageService.i18n['BS.retainability'], value: 'Retainability' },
       { displayName: this.languageService.i18n['BS.mobility'], value: 'Mobility' },
+      { displayName: "Energy Efficiency", value: 'Energy Efficiency' },
       //{ displayName: this.languageService.i18n['BS.energyConsumption'], value: 'Energy Consumption' }, // Energy Consumption 選項
-      { displayName: "Energy Efficiency", value: 'Energy Efficiency' }  // Energy Efficiency  選項
     ];
-    this.selectedKpiCategory_bar = this.kpiCategories_bar[0].value; // 初始化選擇的 KPI 類別為第一個選項
-    this.updateKpiSubcategories_for_chartJS(); // 更新子類別選項
+
+    // @2024/06/27 Add
+    // 初始化選擇的檢視模式為第一個選項，以避免選擇不存在的選項
+    this.selectedViewMode_bar = this.viewModes_bar[0].value;
+    
+    // 初始化選擇的 KPI 類別為第一個選項
+    this.selectedKpiCategory_bar = this.kpiCategories_bar[0].value;
+    
+    // 更新子類別選項
+    this.updateKpiSubcategories_for_chartJS();
+  }
+
+  /**
+   * @2024/06/27 Add
+   * @method onViewModeChange_bar
+   * @description 當檢視模式改變時觸發，更新圖表數據
+   */
+  onViewModeChange_bar() {
+    // 調用準備和更新圖表數據的方法
+    this.prepareAndUpdateChartData_for_chartJS_barChart();
   }
   
   /**
@@ -4501,96 +4563,108 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   //dataColorMap_bar = new Map<string, string>();    // 用於顯示圖表數據線的顏色映射表  
   dataColorMap_bar = new Map<string, number>(); // 用於顯示圖表數據線的顏色映射表
-    
-  /**
-   * @2024/06/25 Update
-   * 過濾數據
+
+  /** @2024/06/27 Update
    * @method filterData_for_chartJS_barChart
-   * @returns {Array} 過濾後的數據陣列
    * @description
-   * - 根據所選的 KPI 類別和子類別過濾數據。
-   * - 為場域、每個基站與 Cell 設置顏色。
-   * - 返回過濾後的有效數據。
+   * - 根據當前選擇的檢視模式過濾數據
+   * - 為場域、基站和 Cell 分配顏色
+   * - 根據選擇的檢視模式添加相應的數據
+   * - 確保每個層級都顯示場域平均數據
+   * @returns {BarChartData[]} 過濾後的數據數組
    */
   filterData_for_chartJS_barChart(): BarChartData[] {
+    // 初始化過濾後的數據數組
+    let filteredData: BarChartData[] = [];
+    // 獲取顏色方案
+    const colorScheme = this.colorScheme;
+    // 初始化顏色索引
+    let colorIndex = 0;
 
-    let filteredData: BarChartData[] = []; // 初始化過濾數據數組
-    const colorScheme = this.colorScheme;  // 獲取顏色方案
-
-    let colorIndex = 0; // 初始化顏色索引
-
-    // 處理場域效能數據
+    // 處理場域平均數據
+    // 無論選擇什麼檢視模式，都會添加場域平均數據，確保在每個層級（全訊息、僅基站、單一 Cell ）都顯示
     if (!this.dataColorMap_bar.has(this.languageService.i18n['field.fieldAverage'])) {
-        const fieldColorIndex = colorIndex % colorScheme.domain.length; // 根據場域索引分配顏色索引
-        this.dataColorMap_bar.set(this.languageService.i18n['field.fieldAverage'], fieldColorIndex); // 設置場域平均數據的顏色索引映射
-        colorIndex++; // 增加顏色索引
+      // 為場域平均分配顏色
+      const fieldColorIndex = colorIndex % colorScheme.domain.length;
+      this.dataColorMap_bar.set(this.languageService.i18n['field.fieldAverage'], fieldColorIndex);
+      colorIndex++;
     }
-    const fieldColorIndex = this.dataColorMap_bar.get(this.languageService.i18n['field.fieldAverage']); // 獲取場域平均的顏色索引
+    const fieldColorIndex = this.dataColorMap_bar.get(this.languageService.i18n['field.fieldAverage']);
     if (fieldColorIndex !== undefined) {
-        const fieldColor = colorScheme.domain[fieldColorIndex]; // 獲取顏色
-        console.log(`In filterData_for_chartJS_barChart() - Adding field average data with color: ${fieldColor}`);
-        
-        // 添加場域平均數據到過濾後的數據陣列
-        const fieldData = this.getKpiData_for_chartJS( this.fieldInfo, fieldColor );
-        filteredData.push(...fieldData);
+      // 獲取場域平均的顏色
+      const fieldColor = colorScheme.domain[fieldColorIndex];
+      // 獲取場域平均的 KPI 數據
+      const fieldData = this.getKpiData_for_chartJS(this.fieldInfo, fieldColor);
+      // 將場域平均數據添加到過濾後的數據中，確保它在所有檢視模式下都會顯示
+      filteredData.push(...fieldData);
     }
 
-    this.fieldInfo.bsinfo.forEach( ( bs, bsIndex ) => {
-        // 設置基站顏色索引
-        if (!this.dataColorMap_bar.has( bs.name )) {
-            const bsColorIndex = colorIndex % colorScheme.domain.length;
-            this.dataColorMap_bar.set( bs.name, bsColorIndex );
-            colorIndex++;
+    // 處理基站和 Cell 數據
+    this.fieldInfo.bsinfo.forEach((bs, bsIndex) => {
+      // 為基站分配顏色
+      if (!this.dataColorMap_bar.has(bs.name)) {
+        const bsColorIndex = colorIndex % colorScheme.domain.length;
+        this.dataColorMap_bar.set(bs.name, bsColorIndex);
+        colorIndex++;
+      }
+      const bsColorIndex = this.dataColorMap_bar.get(bs.name);
+
+      if (bsColorIndex !== undefined) {
+        // 獲取基站的顏色
+        const bsColor = colorScheme.domain[bsColorIndex];
+
+        // 添加基站數據（如果檢視模式為全訊息或僅基站級別）
+        if (this.selectedViewMode_bar === 'fullInformation' || this.selectedViewMode_bar === 'onlyBSLevel') {
+          const bsData = this.getKpiData_for_chartJS(bs, bsColor, bs.name);
+          filteredData.push(...bsData);
         }
-        const bsColorIndex = this.dataColorMap_bar.get( bs.name );
 
-        if ( bsColorIndex !== undefined ) {
-            const bsColor = colorScheme.domain[bsColorIndex];
-            console.log(`${bsIndex} Adding data with color: ${bsColor}`);
-
-            // 先處理基站本身數據
-            const bsData = this.getKpiData_for_chartJS( bs, bsColor, bs.name );
-            filteredData.push( ...bsData );
-
-            // 如為分佈式基站
-            if ( bs.cellInfo && bs.cellInfo.length > 0 ) {
-
-                bs.cellInfo.forEach( ( cell, cellIndex ) => {
-                    const cellName = `${bs.name} - Cell#${cellIndex + 1} (NCI=${cell.nci})`;
-                    if ( !this.dataColorMap_bar.has( cellName ) ) {
-                        const cellColorIndex = colorIndex % colorScheme.domain.length;
-                        this.dataColorMap_bar.set( cellName, cellColorIndex );
-                        colorIndex++;
-                    }
-                    const cellColorIndex = this.dataColorMap_bar.get( cellName );
-                    if ( cellColorIndex !== undefined ) {
-                        const cellColor = colorScheme.domain[cellColorIndex];
-                        console.log(`In filterData_for_chartJS_barChart() - Cell#${cellIndex + 1} Adding data with color: ${cellColor}`);
-                        const cellData = this.getKpiData_for_chartJS(cell, cellColor, bs.name, `Cell#${cellIndex + 1} (NCI=${cell.nci})`);
-                        filteredData.push( ...cellData );
-                    }
-                });
-            } else {
-                // 處理一體式基站
-                const defaultNci = this.allSimplifiedBsInfo.find( info => info.id === bs.id )?.nci;
-                const cellName = `${bs.name} - Cell#1 (NCI=0x${defaultNci})`;
-                if ( !this.dataColorMap_bar.has( cellName ) ) {
-                    const cellColorIndex = colorIndex % colorScheme.domain.length;
-                    this.dataColorMap_bar.set( cellName, cellColorIndex );
-                    colorIndex++;
-                }
-                const cellColorIndex = this.dataColorMap_bar.get( cellName );
-                if ( cellColorIndex !== undefined ) {
-                    const cellColor = colorScheme.domain[cellColorIndex];
-                    console.log(`In filterData_for_chartJS_barChart() - 一體式基站 - Cell#1 Adding data with color: ${cellColor}`);
-                    const series = this.getKpiData_for_chartJS( bs, cellColor, cellName );
-                    filteredData.push( ...series );
-                }
+        // 處理 Cell 數據
+        if (this.selectedViewMode_bar === 'fullInformation' || this.selectedViewMode_bar.startsWith(bs.name)) {
+          if (bs.cellInfo && bs.cellInfo.length > 0) {
+            // 處理多 Cell 基站
+            bs.cellInfo.forEach((cell, cellIndex) => {
+              const cellName = `${bs.name} - Cell#${cellIndex + 1} ( NCI = ${cell.nci} )`;
+              if (!this.dataColorMap_bar.has(cellName)) {
+                // 為 Cell 分配顏色
+                const cellColorIndex = colorIndex % colorScheme.domain.length;
+                this.dataColorMap_bar.set(cellName, cellColorIndex);
+                colorIndex++;
+              }
+              const cellColorIndex = this.dataColorMap_bar.get(cellName);
+              if (cellColorIndex !== undefined && (this.selectedViewMode_bar === 'fullInformation' || this.selectedViewMode_bar === `${bs.name}-Cell#${cellIndex + 1}`)) {
+                // 獲取 Cell 的顏色
+                const cellColor = colorScheme.domain[cellColorIndex];
+                // 獲取 Cell 的 KPI 數據
+                const cellData = this.getKpiData_for_chartJS(cell, cellColor, bs.name, `Cell#${cellIndex + 1} ( NCI = ${cell.nci} )`);
+                filteredData.push(...cellData);
+              }
+            });
+          } else {
+            // 處理單 Cell 基站
+            const defaultNci = this.allSimplifiedBsInfo.find(info => info.id === bs.id)?.nci;
+            const cellName = `${bs.name} - Cell#1 ( NCI = 0x${defaultNci} )`;
+            if (!this.dataColorMap_bar.has(cellName)) {
+              // 為單 Cell 基站分配顏色
+              const cellColorIndex = colorIndex % colorScheme.domain.length;
+              this.dataColorMap_bar.set(cellName, cellColorIndex);
+              colorIndex++;
             }
+            const cellColorIndex = this.dataColorMap_bar.get(cellName);
+            if (cellColorIndex !== undefined && (this.selectedViewMode_bar === 'fullInformation' || this.selectedViewMode_bar === `${bs.name}-Cell#1`)) {
+              // 獲取單 Cell 基站的顏色
+              const cellColor = colorScheme.domain[cellColorIndex];
+              // 獲取單 Cell 基站的 KPI 數據
+              const series = this.getKpiData_for_chartJS(bs, cellColor, cellName);
+              filteredData.push(...series);
+            }
+          }
         }
+      }
     });
 
-    return filteredData.filter( item => item !== null && item !== undefined && !isNaN( item.value ) ); // 返回過濾後的有效數據
+    // 過濾掉無效數據並返回結果
+    return filteredData.filter(item => item !== null && item !== undefined && !isNaN(item.value));
   }
 
 
@@ -5095,9 +5169,9 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
         bs.cellInfo.forEach( ( cell: CellInfo, cellIndex ) => { // 遍歷每個 cell 訊息
           const cellColor = colorScheme.domain[(bsIndex + cellIndex + 2) % colorScheme.domain.length]; // 分配 cell 顏色
-          this.dataColorMap.set(`${bs.name} - Cell#${cellIndex + 1} (NCI=${cell.nci})`, cellColor); // 設置 cell 數據的顏色映射
+          this.dataColorMap.set(`${bs.name} - Cell#${cellIndex + 1} ( NCI = ${cell.nci} )`, cellColor); // 設置 cell 數據的顏色映射
           console.log(`In filterData() - Cell#${cellIndex + 1} Adding data with color: ${cellColor}`); // 輸出 cell 訊息和顏色
-          const cellData = this.getKpiData(cell, bs.name, cellColor, `Cell#${cellIndex + 1} (NCI=${cell.nci})`);
+          const cellData = this.getKpiData(cell, bs.name, cellColor, `Cell#${cellIndex + 1} ( NCI = ${cell.nci} )`);
           filteredData.push(...cellData);
         });
 
@@ -5106,14 +5180,14 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         // 獲取一體式基站的 NCI
         const defaultNci = this.allSimplifiedBsInfo.find( info => info.id === bs.id )?.nci;
 
-        if (!this.dataColorMap.has(`${bs.name} - Cell#1 (NCI=0x${defaultNci})`)) {
+        if (!this.dataColorMap.has(`${bs.name} - Cell#1 ( NCI = 0x${defaultNci} )`)) {
             const cellColorIndex = ( bsIndex + 1 ) % colorScheme.domain.length; // 分配 cell 顏色索引
-            this.dataColorMap.set( `${bs.name} - Cell#1 (NCI=0x${defaultNci})`, colorScheme.domain[cellColorIndex] ); // 設置 cell 數據的顏色映射
+            this.dataColorMap.set( `${bs.name} - Cell#1 ( NCI = 0x${defaultNci} )`, colorScheme.domain[cellColorIndex] ); // 設置 cell 數據的顏色映射
         }
-        const cellColor = this.dataColorMap.get(`${bs.name} - Cell#1 (NCI=0x${defaultNci})`); // 獲取 cell 的顏色
+        const cellColor = this.dataColorMap.get(`${bs.name} - Cell#1 ( NCI = 0x${defaultNci} )`); // 獲取 cell 的顏色
         if ( cellColor ) {
           console.log(`In filterData() - 一體式基站 - Cell#1 Adding data with color: ${cellColor}`); // 輸出 cell 顏色
-          const series = this.getKpiData(bs, `${bs.name} - Cell#1 (NCI=0x${defaultNci})`, cellColor); // 獲取 cell 的 KPI 數據
+          const series = this.getKpiData(bs, `${bs.name} - Cell#1 ( NCI = 0x${defaultNci} )`, cellColor); // 獲取 cell 的 KPI 數據
           filteredData.push(...series);
         }
 
@@ -5242,6 +5316,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     datasets: []
   };
 
+  // @2024/06/27 Update
   lineChartOptions: ChartConfiguration<'line'>['options'] = {
     responsive: true,
     scales: {
@@ -5326,10 +5401,10 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     layout: {
       padding: {
-        left: 150, // 調整此值以增加左邊距，讓文字遠離邊界
+        left: 135, // 調整此值以增加左邊距，讓文字遠離邊界
         right: 45, // 調整此值以增加右邊距
         top: 10,   // 調整此值以增加上邊距
-        bottom: 5 // 調整此值以增加下邊距
+        bottom: 5  // 調整此值以增加下邊距
       }
     }
   };
@@ -5452,7 +5527,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           // 對於一體式基站，使用預設從 allSimplifiedBsInfo 中比對符合的 BS ID，並取得其 NCI
           const defaultNci = this.allSimplifiedBsInfo.find( info => info.id === bs.id )?.nci;  
           console.log( "In updateDropdownOptions_line() - defaultNci =", defaultNci ); // 記錄選中的 NCI
-          const cellIdentifier = `${bsName} - Cell#1 ( NCI=0x${defaultNci} )`; // 生成一體式基站的 Cell 識別符
+          const cellIdentifier = `${bsName} - Cell#1 ( NCI = 0x${defaultNci} )`; // 生成一體式基站的 Cell 識別符
           if ( !processedCells.has( cellIdentifier ) ) { // 如果該 Cell 尚未處理過
             cellIds.add( { displayName: cellIdentifier, value: cellIdentifier } ); // 添加到 Cell 列表中
             processedCells.add( cellIdentifier );       // 標記為已處理
@@ -5465,7 +5540,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
           if ( Array.isArray( cellInfoList ) ) {
             // 處理 Cell_KpiInfo1[]
             (cellInfoList as Cell_KpiInfo1[]).forEach((cell: Cell_KpiInfo1, index) => {
-              const cellIdentifier = `${bsName} - Cell#${index + 1} ( NCI=0x${cell.cellId} )`; // 生成分佈式基站的 Cell 識別符
+              const cellIdentifier = `${bsName} - Cell#${index + 1} ( NCI = 0x${cell.cellId} )`; // 生成分佈式基站的 Cell 識別符
               if (!processedCells.has(cellIdentifier)) { // 如果該 Cell 尚未處理過
                 cellIds.add({ displayName: cellIdentifier, value: cellIdentifier }); // 添加到 Cell 列表中
                 processedCells.add(cellIdentifier);      // 標記為已處理
@@ -5473,7 +5548,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
             });
           } else {
             // 處理 Cell_KpiInfo2
-            const cellIdentifier = `${bsName} - Cell#1 ( NCI=unknown )`; // 生成默認的 Cell 識別符
+            const cellIdentifier = `${bsName} - Cell#1 ( NCI = unknown )`; // 生成默認的 Cell 識別符
             if (!processedCells.has(cellIdentifier)) {       // 如果該 Cell 尚未處理過
               cellIds.add({ displayName: cellIdentifier, value: cellIdentifier }); // 添加到 Cell 列表中
               processedCells.add(cellIdentifier);            // 標記為已處理
@@ -5487,7 +5562,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log( "In updateDropdownOptions_line() end - cellIds = ", cellIds ); // 輸出 Cell 列表
 
     this.viewModes_line = [...modes, ...Array.from( cellIds )]; // 更新檢視模式選項
-    this.selectedViewMode_line = this.viewModes_line[0].value;  // 重設選擇的檢視模式以避免選擇不存在的選項
+    this.selectedViewMode_line = this.viewModes_line[0].value;  // 初始化選擇的檢視模式為第一個選項，以避免選擇不存在的選項
 
     this.kpiCategories_line = [
       { displayName: this.languageService.i18n['BS.accessibility'], value: 'Accessibility' },        // Accessibility 選項
@@ -5557,7 +5632,18 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
-  filterData_line(fieldKpiInfo: FieldKpiInfo): LineChartData[] {
+  /** 
+   * @2024/06/27 Update
+   * @method filterData_line
+   * @description
+   * - 根據當前選擇的檢視模式過濾數據
+   * - 為場域、基站和小區分配顏色
+   * - 根據選擇的檢視模式添加相應的數據
+   * - 確保每個層級都顯示場域平均數據
+   * @param {FieldKpiInfo} fieldKpiInfo - 場域 KPI 信息
+   * @returns {LineChartData[]} 過濾後的數據數組
+   */
+  filterData_line( fieldKpiInfo: FieldKpiInfo ): LineChartData[] {
     let filteredData_line: LineChartData[] = [];   // 定義過濾後的數據陣列
     const colorScheme = this.colorScheme; // 獲取當前的顏色方案
 
@@ -5566,25 +5652,45 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
     let colorIndex = 0; // 初始化顏色索引
 
-    switch (this.selectedViewMode_line) { // 根據選擇的檢視模式進行處理
+    // @2024/06/27 Add
+    // 處理場域平均數據，無論選擇什麼檢視模式，都會添加場域平均數據
+    if ( !this.dataColorMap_line.has( this.languageService.i18n['field.fieldAverage'] ) ) {
+      const fieldColorIndex = colorIndex % colorScheme.domain.length; // 為場域平均數據分配顏色索引
+      this.dataColorMap_line.set(this.languageService.i18n['field.fieldAverage'], fieldColorIndex); // 將場域平均數據的顏色索引存儲到 Map 中
+      colorIndex++; // 增加顏色索引
+    }
+    const fieldColorIndex = this.dataColorMap_line.get(this.languageService.i18n['field.fieldAverage']); // 獲取場域平均數據的顏色索引
+    if (fieldColorIndex !== undefined) {
+      Object.values(fieldKpiInfo).forEach((timeBlock: TimeBlock) => { // 遍歷每個時間區塊
+        if (timeBlock.field) { // 如果時間區塊包含場域數據
+          const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end).formattedRange; // 格式化時間範圍
+          filteredData_line.push({ // 添加場域平均數據到過濾後的數據陣列
+            name: this.languageService.i18n['field.fieldAverage'],
+            series: this.getKpiData_line(timeBlock.field, timeRange, colorScheme.domain[fieldColorIndex], this.languageService.i18n['field.fieldAverage'])
+          });
+        }
+      });
+    }
+
+    switch ( this.selectedViewMode_line ) { // 根據選擇的檢視模式進行處理
         case 'fullInformation':
             Object.values(fieldKpiInfo).forEach((timeBlock: TimeBlock) => {  // 遍歷所有的時間區塊
                 const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end).formattedRange;    // 格式化時間範圍
 
-                // 處理場域效能數據
-                if (!this.dataColorMap_line.has( this.languageService.i18n['field.fieldAverage'] )) {
-                    const fieldColorIndex = colorIndex % colorScheme.domain.length; // 根據場域索引分配顏色索引
-                    this.dataColorMap_line.set( this.languageService.i18n['field.fieldAverage'], fieldColorIndex ); // 設置場域平均數據的顏色索引映射
-                    colorIndex++; // 增加顏色索引
-                }
-                const fieldColorIndex = this.dataColorMap_line.get( this.languageService.i18n['field.fieldAverage'] ); // 獲取場域平均的顏色索引
-                if (fieldColorIndex !== undefined && timeBlock.field) {
-                    filteredData_line.push({
-                        name: this.languageService.i18n['field.fieldAverage'],
-                        series: this.getKpiData_line(timeBlock.field, timeRange, colorScheme.domain[fieldColorIndex], this.languageService.i18n['field.fieldAverage'])
-                    }); // 添加場域平均數據到過濾後的數據陣列
-                    console.log(`In filterData_line() fullInformation -', this.languageService.i18n['field.fieldAverage'], 'Adding data with color: ${colorScheme.domain[fieldColorIndex]}`);   // 輸出場域平均訊息和顏色
-                }
+                // // 處理場域效能數據
+                // if (!this.dataColorMap_line.has( this.languageService.i18n['field.fieldAverage'] )) {
+                //     const fieldColorIndex = colorIndex % colorScheme.domain.length; // 根據場域索引分配顏色索引
+                //     this.dataColorMap_line.set( this.languageService.i18n['field.fieldAverage'], fieldColorIndex ); // 設置場域平均數據的顏色索引映射
+                //     colorIndex++; // 增加顏色索引
+                // }
+                // const fieldColorIndex = this.dataColorMap_line.get( this.languageService.i18n['field.fieldAverage'] ); // 獲取場域平均的顏色索引
+                // if (fieldColorIndex !== undefined && timeBlock.field) {
+                //     filteredData_line.push({
+                //         name: this.languageService.i18n['field.fieldAverage'],
+                //         series: this.getKpiData_line(timeBlock.field, timeRange, colorScheme.domain[fieldColorIndex], this.languageService.i18n['field.fieldAverage'])
+                //     }); // 添加場域平均數據到過濾後的數據陣列
+                //     console.log(`In filterData_line() fullInformation -', this.languageService.i18n['field.fieldAverage'], 'Adding data with color: ${colorScheme.domain[fieldColorIndex]}`);   // 輸出場域平均訊息和顏色
+                // }
 
                 timeBlock.bs.forEach((bs: Bs_KpiInfo) => { // 遍歷每個基站訊息
                     // 取得基站名稱
@@ -5609,21 +5715,21 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
                         // 對於一體式基站，使用預設從 allSimplifiedBsInfo 中比對符合的 BS ID，並取得其 NCI
                         const defaultNci = this.allSimplifiedBsInfo.find(info => info.id === bs.id)?.nci;
 
-                        if (!this.dataColorMap_line.has(`${bsName} - Cell#1 (NCI=0x${defaultNci})`)) {
+                        if (!this.dataColorMap_line.has(`${bsName} - Cell#1 ( NCI = 0x${defaultNci} )`)) {
                             const cellColorIndex = colorIndex % colorScheme.domain.length; // 分配 cell 顏色索引
-                            this.dataColorMap_line.set(`${bsName} - Cell#1 (NCI=0x${defaultNci})`, cellColorIndex); // 設置 cell 數據的顏色索引映射
+                            this.dataColorMap_line.set(`${bsName} - Cell#1 ( NCI = 0x${defaultNci} )`, cellColorIndex); // 設置 cell 數據的顏色索引映射
                             colorIndex++; // 增加顏色索引
                         }
-                        const cellColorIndex = this.dataColorMap_line.get(`${bsName} - Cell#1 (NCI=0x${defaultNci})`); // 獲取 cell 的顏色索引
+                        const cellColorIndex = this.dataColorMap_line.get(`${bsName} - Cell#1 ( NCI = 0x${defaultNci} )`); // 獲取 cell 的顏色索引
                         if (cellColorIndex !== undefined) {
                             console.log(`In filterData_line() fullInformation - bsType = 1 - cellColor: ${colorScheme.domain[cellColorIndex]}`); // 輸出 cell 顏色
                             const series = this.getKpiData_line(bs, timeRange, colorScheme.domain[cellColorIndex], bsName); // 獲取 cell 的 KPI 數據
 
-                            filteredData_line.push({ name: `${bsName} - Cell#1 (NCI=0x${defaultNci})`, series: series });   // 添加 cell 數據到過濾後的數據陣列
+                            filteredData_line.push({ name: `${bsName} - Cell#1 ( NCI = 0x${defaultNci} )`, series: series });   // 添加 cell 數據到過濾後的數據陣列
                         }
                     } else if (Array.isArray(bs.cellInfoList)) { // 確保 cellInfoList 是數組
                         bs.cellInfoList.forEach((cell: Cell_KpiInfo1, cellIndex) => { // 遍歷每個 cell 訊息
-                            const cellName = `${bsName} - Cell#${cellIndex + 1} (NCI=0x${cell.cellId})`;
+                            const cellName = `${bsName} - Cell#${cellIndex + 1} ( NCI = 0x${cell.cellId} )`;
                             if (!this.dataColorMap_line.has(cellName)) {
                                 const cellColorIndex = colorIndex % colorScheme.domain.length; // 分配 cell 顏色索引
                                 this.dataColorMap_line.set(cellName, cellColorIndex); // 設置 cell 數據的顏色索引映射
@@ -5659,8 +5765,8 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
         default:
             if (this.selectedViewMode_line.includes('Cell#')) { // 檢查是否為 Cell 模式
-                const match = this.selectedViewMode_line.match(/\(\s*NCI=0x([0-9a-fA-F]+)\s*\)/); // 匹配 NCI
-                if (match) {
+                const match = this.selectedViewMode_line.match(/\(\s*NCI\s*=\s*0x([0-9a-fA-F]+)\s*\)/); // 匹配 NCI
+                if ( match ) {
                     const cellId = match[1]; // 獲取 cellId
                     console.log("In filterData_line() - cellId:", cellId); // 輸出 cellId
 
@@ -5683,7 +5789,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
                                     // 對於一體式基站，使用預設從 allSimplifiedBsInfo 中比對符合的 BS ID，並取得其 NCI
                                     const defaultNci = this.allSimplifiedBsInfo.find(info => info.id === bs.id)?.nci;
 
-                                    const cellName = `${bsName} - Cell#1 (NCI=0x${defaultNci})`;
+                                    const cellName = `${bsName} - Cell#1 ( NCI = 0x${defaultNci} )`;
                                     const cellColorIndex = this.dataColorMap_line.get(cellName) || colorIndex; // 獲取 cell 數據的顏色索引或使用預設顏色索引
                                     if (typeof cellColorIndex === 'number') {
                                         const cellColor = colorScheme.domain[cellColorIndex]; // 獲取顏色
@@ -5698,7 +5804,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
                                     if (index !== -1) { // 如果找到對應的 cell
                                         const cell = bs.cellInfoList[index]; // 獲取 cell 訊息
                                         const timeRange = this.formatTimeRange(timeBlock.start, timeBlock.end).formattedRange; // 格式化時間範圍
-                                        const cellName = `${bsName} - Cell#${index + 1} (NCI=0x${cell.cellId})`;
+                                        const cellName = `${bsName} - Cell#${index + 1} ( NCI = 0x${cell.cellId} )`;
                                         const cellColorIndex = this.dataColorMap_line.get(cellName) || colorIndex; // 獲取 cell 數據的顏色索引或使用預設顏色索引
                                         if (typeof cellColorIndex === 'number') {
                                             const cellColor = colorScheme.domain[cellColorIndex]; // 獲取顏色
@@ -5720,6 +5826,19 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     return filteredData_line; // 返回過濾後的數據
   }
 
+  /** 
+   * @2024/06/27 Update
+   * @method getKpiData_line
+   * @description
+   * - 根據選擇的KPI類別和子類別獲取對應的數據
+   * - 為每個數據點添加顏色、時間、名稱、值、標籤和單位信息
+   * @param {Field | Bs_KpiInfo | Cell_KpiInfo1} data - 基站、Cell或場域資訊
+   * @param {string} time - 時間
+   * @param {string} color - 顏色
+   * @param {string} [label] - 標籤（可選）
+   * @param {number} [index] - 索引（可選）
+   * @returns {Array} 包含KPI數據的陣列
+   */
   getKpiData_line( data: Field | Bs_KpiInfo | Cell_KpiInfo1, time: string, color: string, label?: string, index?: number ): 
                     { color?: string, time?: string, name?: string; value: any, label?: string, unit?: string }[] {
     
@@ -5732,7 +5851,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // 用於添加數據並生成標籤 ( 此生成的標籤用於鼠標懸浮於對應時間點的數據時顯示 )
     const addDataLabel = (value: any, prop: string) => {
         if ('cellId' in data && index !== undefined) {
-            const cellLabel = `${label} - Cell#${index + 1} ( NCI=0x${data.cellId} )`;
+            const cellLabel = `${label} - Cell#${index + 1} ( NCI = 0x${data.cellId} )`;
             if (value !== null) {
                 kpiData.push({ time: time, name: time, value: parseFloat(value), label: cellLabel, unit: unit, color: color });
             } else {
@@ -5741,7 +5860,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         } else if ('name' in data) {
             if (this.selectedViewMode_line.includes('Cell#')) {
                 const defaultNci = this.allSimplifiedBsInfo.find(info => info.id === data.id)?.nci;
-                const cellLabel = `${label} - Cell#1 ( NCI=0x${defaultNci} )`;
+                const cellLabel = `${label} - Cell#1 ( NCI = 0x${defaultNci} )`;
                 if (value !== null) {
                     kpiData.push({ time: time, name: time, value: parseFloat(value), label: cellLabel, unit: unit, color: color });
                 } else {
@@ -5817,8 +5936,23 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     return kpiData; // 返回包含顏色、時間、名稱、數值、標籤和單位的數據數組
   }
   
+  /** 
+   * @2024/06/27 Update
+   * @property lineVisibility
+   * @description 存儲每個數據系列的顯示狀態
+   * @type {{ [key: string]: boolean }}
+   */
   lineVisibility: { [key: string]: boolean } = {};
 
+  /** 
+   * @2024/06/27 Update
+   * @method prepareAndUpdateChartData_line
+   * @description
+   *    - 準備和更新折線圖的數據
+   *    - 過濾數據，整理數據點，填充缺失的時間區間
+   *    - 更新數據系列的顯示狀態
+   *    - 設置圖表數據並更新圖表
+   */
   prepareAndUpdateChartData_line() {
 
      // 首先根據選擇的條件過濾數據
@@ -5832,7 +5966,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.fillMissingTimeBlocks_line(); // 填充缺少的時間區間
     console.log( "In prepareAndUpdateChartData_line - after fillMissingTimeBlock, the preparedChartData_line =", this.preparedChartData_line ); // 輸出整理後的數據到控制台
 
-    // 初始化或更新每個數據系列的顯示狀態
+    // 初始化或更新每個數據系列的顯示狀態，包括場域平均
     this.preparedChartData_line.forEach( series => {
       // 判斷 lineVisibility 是否已存在該 series.name 的狀態
       if ( !( series.name in this.lineVisibility ) ) {
@@ -5852,6 +5986,14 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   
   }
 
+  /** 
+   * @2024/06/27 Update
+   * @method consolidateSeries_line
+   * @description
+   *    - 合併同名的數據系列
+   * @param {LineChartData[]} data - 原始數據陣列
+   * @returns {LineChartData[]} 合併後的數據陣列
+   */
   consolidateSeries_line( data: LineChartData[] ): LineChartData[] {
     const resultMap = new Map(); // 創建一個 Map 來存儲同名的數據系列
 
@@ -5869,6 +6011,14 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     return Array.from( resultMap.values() ); // 將 Map 中的值轉換為數組並返回
   }
 
+  /** 
+   * @2024/06/27 Update
+   * @method fillMissingTimeBlocks_line
+   * @description
+   *    - 填充缺失的時間區間
+   *    - 為每個數據系列添加空數據點
+   *    - 準備用於表格顯示的數據
+   */
   fillMissingTimeBlocks_line() {
     // 獲取所有的時間區間
     const allTimeBlocks = Object.values( this.getfieldKpiInfo ).map((timeBlock: TimeBlock) =>
@@ -5935,11 +6085,18 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     // 將 noneSeries 添加到 preparedChartData 中，用於顯示所有時間區間
-    this.preparedChartData_line.push(noneSeries);
+    this.preparedChartData_line.push( noneSeries );
 
     console.log("In fillMissingTimeBlocks() end - displayOnTableChartData_line = ", this.displayOnTableChartData_line);
   }
 
+  /** 
+   * @2024/06/27 Update
+   * @method updateDisplayChartData_line
+   * @description
+   *    - 根據 lineVisibility 更新 displayChartData
+   *    - 控制數據系列的顯示或隱藏
+   */
   updateDisplayChartData_line() {
     // 更新 displayChartData，使其根據 lineVisibility 的狀態顯示或隱藏數據系列
     this.displayChartData_line = this.preparedChartData_line.map( series => {
@@ -5951,6 +6108,14 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /** 
+   * @2024/06/27 Update
+   * @method setChartData_for_chartJS_line
+   * @description
+   *    - 設置Chart.js折線圖的數據
+   *    - 準備標籤和數據集
+   *    - 設置數據點的顏色和樣式
+   */
   setChartData_for_chartJS_line() {
     const rawData = this.displayOnTableChartData_line; // 獲取顯示在表格上的數據
     const labels = rawData[0].series.map( data => data.time ); // 獲取時間標籤
@@ -5974,6 +6139,13 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.lineChart?.update(); // 更新圖表 @2024/06/08 Note - 都改至 prepareAndUpdateChartData() 最後統一更新圖表
   }
 
+  /** @2024/06/27 Update
+   * @method setYAxisLabel_line
+   * @description
+   *    - 設置 Y 軸標籤
+   *    - 根據選擇的 KPI 類別和子 KPI 類別設置適當的標籤和單位
+   *    - 更新圖表選項中的 Y 軸標題
+   */
   setYAxisLabel_line() {
     let kpiName = '';      // 初始化 KPI 名稱
     let subKpiName = '';   // 初始化子KPI 名稱
@@ -6061,7 +6233,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/06/14 Update
+   * @2024/06/27 Update
    * 替換圖表 Y 軸標題
    * @method replaceTitleOfYAxisInLineChartOptions
    * @description
@@ -6153,10 +6325,10 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       layout: {
         padding: {
-          left: 150, // 調整此值以增加左邊距，讓文字遠離邊界
+          left: 135, // 調整此值以增加左邊距，讓文字遠離邊界
           right: 45, // 調整此值以增加右邊距
           top: 10,   // 調整此值以增加上邊距
-          bottom: 5 // 調整此值以增加下邊距
+          bottom: 5  // 調整此值以增加下邊距
         }
       }
     };
@@ -6272,6 +6444,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
 // For 場域效能報表 @2024/06/27 Update ↑
+
 
 
 // For 場域優化 @2024/04/12 Update ↓
@@ -7018,16 +7191,16 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         // 遍歷每個 Cell 結果
         tempPci.cellIndividualResult.forEach( res => {
 
-          // 將小區結果加入到 gnbsPci 陣列中
+          // 將 Cell 結果加入到 gnbsPci 陣列中
           this.gnbsPci.push( res );
 
-          // 取得當前小區的鄰居 Cell 數量
+          // 取得當前 Cell 的鄰居 Cell 數量
           const count = res.NRCellRelation.length;
 
-          // 將當前小區的鄰居 Cell 數量加到總數中
+          // 將當前 Cell 的鄰居 Cell 數量加到總數中
           neighborCount += count;
 
-          // 計算當前小區的鄰居 Cell 組合數,並加到總組合數中
+          // 計算當前 Cell 的鄰居 Cell 組合數,並加到總組合數中
           combineCount += ( count * ( count - 1 ) ) / 2;
         });
 

@@ -86,7 +86,7 @@
 						<span class="material-symbols-outlined">
 							wysiwyg
 						</span>
-						<span>{{ languageService.i18n['field.reportPM'] }}</span>
+						<span>{{ languageService.i18n['field.performance'] }}</span>
 					</button>
 				<!-- @12/13 Add click goFaultMgr() -->
 				<!-- <button mat-menu-item (click)="goFaultMgr()">
@@ -1237,7 +1237,7 @@
 		</div>
 	</ng-template>
 
-	<!-- Window of Field Performance Analysis @2024/06/26 Update -->
+	<!-- Window of Field Performance Analysis @2024/06/27 Update -->
 	<ng-template #fieldPMReportWindow>
 		
 			<h5>{{ languageService.i18n['field.performance'] }}</h5>
@@ -1251,6 +1251,13 @@
 					<!-- 效能總覽頁面內容 -->
 					<div class="filter">
 						<span>
+							<!-- 檢視模式 @2024/06/27 Add -->
+							<label>{{ languageService.i18n['BS.viewMode'] }} :</label>
+							<select [(ngModel)]="selectedViewMode_bar" (ngModelChange)="onViewModeChange_bar()">
+							  <option *ngFor="let mode of viewModes_bar" [value]="mode.value">{{ mode.displayName }}</option>
+							</select>
+						</span>
+						<span>
 							<!-- KPI 類別下拉選單 -->
 							<label>{{ languageService.i18n['BS.viewKPICategory'] }} :</label>
 							<select [(ngModel)]="selectedKpiCategory_bar" (ngModelChange)="onKpiCategoryChange_for_chartJS_barChart()">
@@ -1258,8 +1265,8 @@
 							</select>
 						</span>
 						<span>
-						<!-- KPI 子類別下拉選單 -->
-						<label>{{ languageService.i18n['BS.viewKPISubcategory'] }} :</label>
+							<!-- KPI 子類別下拉選單 -->
+							<label>{{ languageService.i18n['BS.viewKPISubcategory'] }} :</label>
 							<select [(ngModel)]="selectedKpiSubcategory_bar" (ngModelChange)="prepareAndUpdateChartData_for_chartJS_barChart()" [hidden]="kpiSubcategories_bar.length === 0">
 								<option *ngFor="let subcategory of kpiSubcategories_bar" [value]="subcategory.value">{{ subcategory.displayName }}</option>
 							</select>
@@ -1344,22 +1351,25 @@
 						
 						<form [formGroup]="viewModeForm_line">
 							&nbsp;
-							<span class="border-left"><!-- 檢視模式-->
+							<span class="border-left">
+								<!-- 檢視模式-->
 								<label>{{ languageService.i18n['BS.viewMode'] }} :</label>
 								<select formControlName="viewMode_line" [(ngModel)]="selectedViewMode_line" (change)="onViewModeChange_line()">
-								<option *ngFor="let mode of viewModes_line" [value]="mode.value">{{ mode.displayName }}</option>
+									<option *ngFor="let mode of viewModes_line" [value]="mode.value">{{ mode.displayName }}</option>
 								</select>
 							</span>
-							<span><!-- KPI 類別選項 -->
+							<span>
+								<!-- KPI 類別選項 -->
 								<label>{{ languageService.i18n['BS.viewKPICategory'] }} :</label>
 								<select formControlName="kpiCategory_line" [(ngModel)]="selectedKpiCategory_line" (change)="onKpiCategoryChange_line()">
-								<option *ngFor="let category of kpiCategories_line" [value]="category.value">{{ category.displayName }}</option>
+									<option *ngFor="let category of kpiCategories_line" [value]="category.value">{{ category.displayName }}</option>
 								</select>
 							</span>
-							<span><!-- KPI 子類別選項 -->
+							<span>
+								<!-- KPI 子類別選項 -->
 								<label>{{ languageService.i18n['BS.viewKPISubcategory'] }} :</label>
 								<select formControlName="kpiSubcategory_line" [(ngModel)]="selectedKpiSubcategory_line" (change)="prepareAndUpdateChartData_line()" [hidden]="kpiSubcategories_line.length === 0">
-								<option *ngFor="let subcategory of kpiSubcategories_line" [value]="subcategory.value">{{ subcategory.displayName }}</option>
+									<option *ngFor="let subcategory of kpiSubcategories_line" [value]="subcategory.value">{{ subcategory.displayName }}</option>
 								</select>
 							</span>
 						</form>
@@ -1416,6 +1426,7 @@
 			</div>
 		</div>
 	</ng-template>
+
 
 	<!-- Window of Field Optimization @2024/04/08 Update-->
 	<ng-template #fieldOptimizationWindow>
@@ -1869,4 +1880,3 @@
 			</button>
 		</div>
 	</ng-template>
-
