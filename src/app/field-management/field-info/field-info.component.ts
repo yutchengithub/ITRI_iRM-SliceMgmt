@@ -80,6 +80,7 @@ import {  Chart,
           Plugin
         } from "chart.js";
 import { BaseChartDirective } from 'ng2-charts';
+import { Console } from 'console';
 
 /**
  * @2024/06/07 Add
@@ -3556,7 +3557,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
 
-// For 場域效能報表 @2024/06/25 Update ↓
+// For 場域效能報表 @2024/06/27 Update ↓
 
   /**
    * @2024/06/25 Update
@@ -3619,7 +3620,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   fieldPMReportType: string = 'Performance_Overview'; // 預設顯示 "效能總覽" 頁面
 
   /**
-   * @2024/06/26 Update
+   * @2024/06/27 Update
    * 打開場域效能分析視窗
    * @method openfieldPMReportWindow
    * @description
@@ -3671,6 +3672,14 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.fieldPMReportWindow_Ref.afterClosed().subscribe(() => {
       this.fieldPMReportType = 'Performance_Overview'; // 重置頁籤
       this.fieldPMReportWindow_Validated = false;      // 重置表單驗證狀態
+
+      // @2024/06/27 Add
+      // 停止自動刷新倒數計時
+      if ( this.animationFrameId ) {
+        cancelAnimationFrame( this.animationFrameId );
+
+        console.log("自動倒數刷新總覽數據已停止");
+      }
     });
 
     console.log("Open the window of field PM Report's page is:", this.fieldPMReportType);
@@ -3758,7 +3767,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     
     // 如果存在進行中的動畫，取消它
     if ( this.animationFrameId ) {
-      cancelAnimationFrame(this.animationFrameId);
+      cancelAnimationFrame( this.animationFrameId );
     }
     // 重新開始倒數計時
     this.startCountdown();
@@ -3797,13 +3806,14 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         // 更新最後更新時間
         this.lastUpdate = now;
       }
-      // 如果倒數計時還未結束
+      // 如倒數計時還未結束
       if ( this.countdown > 0 ) {
         // 繼續下一幀動畫
         this.animate();
       } else {
         // 倒數結束，刷新場域資訊
         this.getQueryFieldInfo();
+        
         // 重新開始倒數
         this.startCountdown();
       }
@@ -3836,7 +3846,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   kpiSubcategories_bar: KpiSubcategory[] = []; // 定義 KPI 子類別的選項  
   selectedKpiCategory_bar: string = "";        // 當前 Bar chart 選擇的 KPI 類別
   selectedKpiSubcategory_bar: string = "";     // 當前 Bar chart 選擇的 KPI 子類別
-  selectedKpiUnit: string = "";            // 當前 Bar chart 選擇的 KPI 單位
+  selectedKpiUnit: string = "";                // 當前 Bar chart 選擇的 KPI 單位
 
   /**
      * @2024/06/11 Update
@@ -3951,11 +3961,11 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
             name = `${bsName}`; // 設置基站名稱
         }
 
-        //if (value !== null && value !== "" && value !== "none") { // 只在 value 有效時添加數據
-            kpiData.push({ name: name, value: parseFloat(value), label: name, unit: unit, color: color }); // 添加有效數據
-       // } //else {
-           // kpiData.push({ name: name, value: null, label: name, unit: unit, color: '#fff0' }); // 設置無效數據為透明色
-       // }
+        if ( value !== null && value !== "" && value !== "none" ) { // 只在 value 有效時添加數據
+            kpiData.push({ name: name, value: parseFloat( value ), label: name, unit: unit, color: color }); // 添加有效數據
+        } else {
+            kpiData.push({ name: name, value: null, label: name, unit: unit, color: '#fff0' }); // 設置無效數據為透明色
+        }
     };
 
     switch ( this.selectedKpiCategory_bar ) {
@@ -4058,31 +4068,32 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   originalLabels: string[] = [];
 
   /**
-   * @2024/06/14 Update
+   * @2024/06/27 Update
    * 定義圖表選項
    * @property barChartOptions
    * @description
-   *    - 這個變數定義了圖表的各種選項設置，包括響應式、軸、網格和 Chart.js 圖表插件配置。
+   *    - 這個變數定義了圖表的各種選項設置，包括響應式、軸、網格、圖例和工具提示等配置。
+   *    - 包含了對無效數據處理的邏輯。
    */
   barChartOptions: ChartConfiguration<'bar'>['options'] = {
-    responsive: true, // 圖表響應式
-    indexAxis: 'y',   // Y 軸為索引軸
-    skipNull: true,   // 跳過空值
+    responsive: true, // 設置圖表為響應式
+    indexAxis: 'y',   // 設置 Y 軸為索引軸
+    skipNull: true,   // 設置跳過空值
     scales: {
       x: {
-        stacked: false,     // X 軸不堆疊
+        stacked: false,     // 設置 X 軸不堆疊
         title: {
-          display: true,    // 顯示標題
-          text: 'KPI Name', // 標題文本
+          display: true,    // 顯示 X 軸標題
+          text: 'KPI Name', // X 軸標題文本
           font: {
-            size: 14
+            size: 14        // X 軸標題字體大小
           },
           color: 'white'    // X 軸標題字體顏色
         },
         ticks: {
-          color: 'white', // X 軸刻度字體顏色
+          color: 'white',   // X 軸刻度字體顏色
           font: {
-            size: 12.5   // 調整這裡改變字體大小
+            size: 12.5      // X 軸刻度字體大小
           }
         },
         grid: {
@@ -4090,11 +4101,11 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       },
       y: {
-        stacked: false, // Y 軸不堆疊
+        stacked: false, // 設置 Y 軸不堆疊
         title: {
-          display: false, // 不顯示標題
-          text: this.languageService.i18n['BS.dataItems'], // 標題文本
-          color: 'white' // Y 軸標題字體顏色
+          display: false, // 不顯示 Y 軸標題
+          text: this.languageService.i18n['BS.dataItems'], // Y 軸標題文本（未使用）
+          color: 'white' // Y 軸標題字體顏色（未使用）
         },
         ticks: {
           color: 'white' // Y 軸刻度字體顏色
@@ -4107,44 +4118,43 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     plugins: {
       legend: {
         display: true,     // 顯示圖例
-        position: 'right', // 圖例位置在右側
+        position: 'right', // 設置圖例位置在右側
         align: 'start',    // 將圖例整區置上
-        maxWidth: 350,
+        maxWidth: 350,     // 設置圖例最大寬度
         labels: {
           font: {
-            size: 11.5 // 圖例字體大小
+            size: 11.5     // 設置圖例字體大小
           },
-          color: 'white', // 圖例字體顏色
-          padding: 10
+          color: 'white',  // 設置圖例字體顏色
+          padding: 10      // 設置圖例內邊距
         },
         title: {
-          display: true, // 顯示圖例標題
+          display: true,   // 顯示圖例標題
           text: this.languageService.i18n['BS.dataItems'], // 圖例標題文本
           font: {
-            size: 15,      // 圖例標題字體大小
-            weight: 'bold' // 圖例標題字體粗細
+            size: 15,      // 設置圖例標題字體大小
+            weight: 'bold' // 設置圖例標題字體粗細
           },
-          color: 'white',  // 圖例標題顏色
+          color: 'white',  // 設置圖例標題顏色
           padding: {
-            right: 100, // 圖例標題右側間距
-            //bottom: 100,  // 圖例標題下方間距
-            top: 5,  // 圖例標題下方間距
+            right: 100,    // 設置圖例標題右側間距
+            top: 5,        // 設置圖例標題上方間距
           }
         },
         onClick: ( e: ChartEvent, legendItem: LegendItem, legend: any ) => {
-          const index = legendItem.datasetIndex; // 獲取數據集索引
+          const index = legendItem.datasetIndex; // 獲取被點擊的數據集索引
           const ci = legend.chart; // 獲取圖表實例
-          const meta = ci.getDatasetMeta(index); // 獲取數據集元數據
+          const meta = ci.getDatasetMeta( index ); // 獲取數據集元數據
 
           // 切換數據集顯示狀態
-          meta.hidden = !meta.hidden;
+          meta.hidden = meta.hidden === null ? !ci.data.datasets.hidden : null;
 
           // 更新圖表
           ci.update();
         }
       },
       tooltip: {
-        position: 'nearest', // 工具提示框位置
+        position: 'nearest', // 設置工具提示框位置
         callbacks: {
           label: ( context ) => {
             const label = context.dataset.label || ''; // 獲取數據集標籤
@@ -4161,64 +4171,64 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     layout: {
       padding: {
-        left: 235, // 調整此值以增加左邊距，讓文字遠離邊界
-        right: 45, // 調整此值以增加右邊距
-        top: 8,   // 調整此值以增加上邊距
-        bottom: 0 // 調整此值以增加下邊距
+        left: 235, // 設置左邊距，讓文字遠離邊界
+        right: 45, // 設置右邊距
+        top: 8,    // 設置上邊距
+        bottom: 0  // 設置下邊距
       }
     }
   };
 
   /**
-   * @2024/06/14 Update
+   * @2024/06/27 Update
    * 自定義 Chart.js 圖表插件配置
    * @property allChartPlugins
    * @description
-   *    - 這個變數是一個包含自定義 Chart.js 插件的陣列。
-   *    - 用於在圖表繪製之前和之後進行自定義操作。
-   *    - beforeDraw 和 afterDraw 方法會根據 isBarChartActive 變數進行條件檢查。
+   *    - 這個陣列包含自定義的 Chart.js 插件。
+   *    - 用於在圖表繪製前後進行自定義操作。
+   *    - 包含對無效數據的處理邏輯，確保只顯示有效數據的標籤。
    */
   allChartPlugins: Plugin[] = [
     {
       id: 'customPlugin', // 插件 ID
-      beforeDraw: (chart: any) => {
-        if (!isBarChartActive) return; // 如果 Chart.js 圖表插件未激活，則返回
+      beforeDraw: ( chart: any ) => {
+        if (!isBarChartActive) return; // 如果圖表未激活，則返回
 
         const ctx = chart.ctx; // 獲取圖表上下文
         ctx.save(); // 保存當前狀態
         ctx.font = 'bold 12.5px Arial'; // 設置字體樣式
         ctx.fillStyle = 'white'; // 設置填充顏色
-        ctx.textAlign = 'right'; // 設置對齊方式
-        ctx.textBaseline = 'middle'; // 設置基線
+        ctx.textAlign = 'right'; // 設置文本對齊方式
+        ctx.textBaseline = 'middle'; // 設置文本基線
         ctx.restore(); // 恢復保存的狀態
       },
-      afterDraw: (chart: any) => {
+      afterDraw: ( chart: any ) => {
         console.log("afterDraw start - isBarChartActive =", isBarChartActive);
-        if (!isBarChartActive) return; // 如果 Chart.js 圖表插件未激活，則返回
+        if (!isBarChartActive) return; // 如果圖表未激活，則返回
 
         const ctx = chart.ctx; // 獲取圖表上下文
 
         chart.data.datasets.forEach((dataset: any, i: number) => {
           const meta = chart.getDatasetMeta(i); // 獲取數據集元數據
           
-          if (!meta.hidden) { // 如果數據集未隱藏
+          // 檢查數據集是否隱藏或是否包含有效數據
+          if (!meta.hidden && dataset.data.some((value: any) => value !== null && !isNaN(value))) {
             meta.data.forEach((element: any, index: number) => {
               ctx.fillStyle = 'rgb(255, 255, 255)'; // 設置填充顏色
-              const fontSize = 12.5; // 字體大小
-              const fontStyle = 'normal'; // 字體樣式
-              const fontFamily = 'Arial'; // 字體家族
+              const fontSize = 12.5; // 設置字體大小
+              const fontStyle = 'normal'; // 設置字體樣式
+              const fontFamily = 'Arial'; // 設置字體家族
               ctx.font = `${fontStyle} ${fontSize}px ${fontFamily}`; // 設置字體
 
-              const dataString = dataset.label; // 設定要繪製的文字
-              const lines = dataString.split('\n'); // 將文字按換行符分割為多行
+              const dataString = dataset.label; // 獲取標籤文本
+              const lines = dataString.split('\n'); // 將文本分割為多行
 
-              ctx.textAlign = 'right'; // 設置對齊方式
-              ctx.textBaseline = 'middle'; // 設置基線
-              const padding = 239.5; // 填充
+              ctx.textAlign = 'right'; // 設置文本對齊方式
+              ctx.textBaseline = 'middle'; // 設置文本基線
+              const padding = 239.5; // 設置填充
               const position = element.tooltipPosition(); // 獲取提示位置
-              //ctx.fillText(dataString, padding, position.y); // 繪製文本
 
-               // 繪製每行文字
+              // 繪製每行文字
               lines.forEach((line: string, lineIndex: number) => {
                 ctx.fillText(line, padding, position.y + (lineIndex * fontSize)); // 繪製文本
               });
@@ -4250,48 +4260,66 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @2024/06/06 Update
+   * @2024/06/27 Update
    * 設置 "總覽" 圖表數據
    * @method setChartData_for_chartJS_barChart
    * @description
    *    - 根據準備好的數據設置圖表的數據。
-   *    - 包括設置每個數據集的懸停顏色。
+   *    - 處理無效數據，設置數據集的隱藏狀態。
+   *    - 設置每個數據集的背景顏色和懸停顏色。
    */
   setChartData_for_chartJS_barChart() {
     const labels = this.preparedChartData_bar.map( data => data.name ); // 獲取數據標籤
     this.originalLabels = Array.from( new Set( labels ) ); // 獲取唯一的標籤並保存原始標籤
     
     // 初始化數據集的 Map
-    const datasetsMap = new Map<string, { data: number[], label: string, backgroundColor: string[], hoverBackgroundColor: string[], barPercentage: number, categoryPercentage: number }>();
+    const datasetsMap = new Map<string, { 
+      data: ( number | null )[], // 數據陣列，可包含 null 值
+      label: string, 
+      backgroundColor: string[], 
+      hoverBackgroundColor: string[], 
+      barPercentage: number, 
+      categoryPercentage: number,
+      hidden: boolean  // 數據集隱藏狀態
+    }>();
 
     // 遍歷準備好的數據
     this.preparedChartData_bar.forEach(data => {
       // 如果 Map 中沒有這個數據集，則初始化它
       if ( !datasetsMap.has( data.name ) ) {
         datasetsMap.set( data.name, { 
-          data: [],                 // 數據值
-          label: data.name,         // 標籤名稱
-          backgroundColor: [],      // 背景顏色
-          hoverBackgroundColor: [], // 懸停背景顏色
-          barPercentage: 0.9,       // 條形圖百分比
-          categoryPercentage: 0.9   // 類別百分比
+          data: [],                 // 初始化數據陣列
+          label: data.name,         // 設置標籤名稱
+          backgroundColor: [],      // 初始化背景顏色陣列
+          hoverBackgroundColor: [], // 初始化懸停背景顏色陣列
+          barPercentage: 0.9,       // 設置條形圖百分比
+          categoryPercentage: 0.9,  // 設置類別百分比
+          hidden: false             // 初始化隱藏狀態為 false
         });
       }
 
       const dataset = datasetsMap.get( data.name ); // 獲取數據集
       if ( dataset ) {
-        dataset.data.push( data.value ); // 添加數據值
-        dataset.backgroundColor.push( data.color || '' ); // 添加背景顏色
-        const hoverColor = this.lightenColor_for_chartJS_barChart( data.color || '', 35 ); // 亮 35 % 的顏色作為懸停顏色
-        dataset.hoverBackgroundColor.push( hoverColor ); // 添加懸停顏色
+        const isValidData = data.value !== null && !isNaN(data.value);
+
+        dataset.data.push( isValidData ? Number( data.value ) : null ); // 添加數據值，無效數據設為 null
+        dataset.backgroundColor.push( data.color || '' );   // 添加背景顏色
+        const hoverColor = this.lightenColor_for_chartJS_barChart( data.color || '', 35 ); // 計算懸停顏色
+        dataset.hoverBackgroundColor.push( hoverColor );  // 添加懸停顏色
+
+        // 如果數據無效，設置 hidden 為 true
+        if ( !isValidData ) {
+          dataset.hidden = true;
+        }
       }
     });
 
     // 將 Map 轉換為數組
     const datasets = Array.from( datasetsMap.values() ).map( dataset => ({
       ...dataset,
-      data: dataset.data,  // 直接使用原始數據
-      hoverBackgroundColor: dataset.hoverBackgroundColor  // 設置懸停顏色
+      data: dataset.data as number[], // 使用類型斷言
+      hoverBackgroundColor: dataset.hoverBackgroundColor,
+      hidden: dataset.hidden
     } as ChartDataset<'bar'>) );
 
     // 設置圖表數據
@@ -4305,7 +4333,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   
   /**
    * @2024/06/06 Update
-   * 變亮顏色
+   * 當鼠標懸浮於特定數據條上時，變亮此數據條顏色
    * @method lightenColor_for_chartJS_barChart
    * @param {string} color - 十六進制格式的顏色值
    * @param {number} percent - 變亮的百分比
@@ -4507,66 +4535,66 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
         filteredData.push(...fieldData);
     }
 
-    this.fieldInfo.bsinfo.forEach((bs, bsIndex) => {
+    this.fieldInfo.bsinfo.forEach( ( bs, bsIndex ) => {
         // 設置基站顏色索引
-        if (!this.dataColorMap_bar.has(bs.name)) {
+        if (!this.dataColorMap_bar.has( bs.name )) {
             const bsColorIndex = colorIndex % colorScheme.domain.length;
-            this.dataColorMap_bar.set(bs.name, bsColorIndex);
+            this.dataColorMap_bar.set( bs.name, bsColorIndex );
             colorIndex++;
         }
-        const bsColorIndex = this.dataColorMap_bar.get(bs.name);
+        const bsColorIndex = this.dataColorMap_bar.get( bs.name );
 
-        if (bsColorIndex !== undefined) {
+        if ( bsColorIndex !== undefined ) {
             const bsColor = colorScheme.domain[bsColorIndex];
             console.log(`${bsIndex} Adding data with color: ${bsColor}`);
 
             // 先處理基站本身數據
-            const bsData = this.getKpiData_for_chartJS(bs, bsColor, bs.name);
-            filteredData.push(...bsData);
+            const bsData = this.getKpiData_for_chartJS( bs, bsColor, bs.name );
+            filteredData.push( ...bsData );
 
             // 如為分佈式基站
-            if (bs.cellInfo && bs.cellInfo.length > 0) {
+            if ( bs.cellInfo && bs.cellInfo.length > 0 ) {
 
-                bs.cellInfo.forEach((cell, cellIndex) => {
+                bs.cellInfo.forEach( ( cell, cellIndex ) => {
                     const cellName = `${bs.name} - Cell#${cellIndex + 1} (NCI=${cell.nci})`;
-                    if (!this.dataColorMap_bar.has(cellName)) {
+                    if ( !this.dataColorMap_bar.has( cellName ) ) {
                         const cellColorIndex = colorIndex % colorScheme.domain.length;
-                        this.dataColorMap_bar.set(cellName, cellColorIndex);
+                        this.dataColorMap_bar.set( cellName, cellColorIndex );
                         colorIndex++;
                     }
-                    const cellColorIndex = this.dataColorMap_bar.get(cellName);
-                    if (cellColorIndex !== undefined) {
+                    const cellColorIndex = this.dataColorMap_bar.get( cellName );
+                    if ( cellColorIndex !== undefined ) {
                         const cellColor = colorScheme.domain[cellColorIndex];
                         console.log(`In filterData_for_chartJS_barChart() - Cell#${cellIndex + 1} Adding data with color: ${cellColor}`);
                         const cellData = this.getKpiData_for_chartJS(cell, cellColor, bs.name, `Cell#${cellIndex + 1} (NCI=${cell.nci})`);
-                        filteredData.push(...cellData);
+                        filteredData.push( ...cellData );
                     }
                 });
             } else {
                 // 處理一體式基站
-                const defaultNci = this.allSimplifiedBsInfo.find(info => info.id === bs.id)?.nci;
+                const defaultNci = this.allSimplifiedBsInfo.find( info => info.id === bs.id )?.nci;
                 const cellName = `${bs.name} - Cell#1 (NCI=0x${defaultNci})`;
-                if (!this.dataColorMap_bar.has(cellName)) {
+                if ( !this.dataColorMap_bar.has( cellName ) ) {
                     const cellColorIndex = colorIndex % colorScheme.domain.length;
-                    this.dataColorMap_bar.set(cellName, cellColorIndex);
+                    this.dataColorMap_bar.set( cellName, cellColorIndex );
                     colorIndex++;
                 }
-                const cellColorIndex = this.dataColorMap_bar.get(cellName);
-                if (cellColorIndex !== undefined) {
+                const cellColorIndex = this.dataColorMap_bar.get( cellName );
+                if ( cellColorIndex !== undefined ) {
                     const cellColor = colorScheme.domain[cellColorIndex];
                     console.log(`In filterData_for_chartJS_barChart() - 一體式基站 - Cell#1 Adding data with color: ${cellColor}`);
                     const series = this.getKpiData_for_chartJS( bs, cellColor, cellName );
-                    filteredData.push(...series);
+                    filteredData.push( ...series );
                 }
             }
         }
     });
 
-    return filteredData.filter(item => item !== null && item !== undefined && !isNaN(item.value)); // 返回過濾後的有效數據
+    return filteredData.filter( item => item !== null && item !== undefined && !isNaN( item.value ) ); // 返回過濾後的有效數據
   }
 
 
-// ng2-charts 圖表設定區 @2024/06/25 Update ↑
+// ng2-charts 圖表設定區 @2024/06/27 Update ↑
   
   
 // ngx-charts - Horizontal Bar Chart 用 ( @2024/06/06 - 已不使用 ) ↓
@@ -6243,7 +6271,7 @@ export class FieldInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-// For 場域效能報表 @2024/06/26 Update ↑
+// For 場域效能報表 @2024/06/27 Update ↑
 
 
 // For 場域優化 @2024/04/12 Update ↓
