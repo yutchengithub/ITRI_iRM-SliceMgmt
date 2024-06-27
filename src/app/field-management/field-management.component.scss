@@ -225,7 +225,7 @@ mat-stepper {
 ::ng-deep #fieldSnapshotSetWindow .mat-expansion-indicator::after ,
 ::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel-header-title,
 ::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel-header-description,
-::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel table th,
+/* ::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel table th, */
 ::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel table td {
   /* white-space: nowrap; */
   color: #fff;
@@ -238,6 +238,7 @@ mat-stepper {
 }
 ::ng-deep #fieldSnapshotSetWindow .mat-expansion-panel table {
   margin: -20px 0 0 0;
+  max-width: 100% !important;
 }
 .Snapshot_UI02 {
   position: relative;

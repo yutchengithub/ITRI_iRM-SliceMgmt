@@ -1035,7 +1035,8 @@ p-calendar #time {
   background: #ffffff !important;
   color: #000 !important;
 }
-.mat-button-toggle-standalone.mat-button-toggle-appearance-standard, .mat-button-toggle-group-appearance-standard {
+.mat-button-toggle-standalone.mat-button-toggle-appearance-standard,
+.mat-button-toggle-group-appearance-standard {
  border: 0!important;
 }
 h4 {
@@ -1400,10 +1401,13 @@ body.tw #accountCreateModal ul li > label {
 #fieldSnapshotSetWindow .mat-expansion-panel {
   background: transparent;
 }
-#fieldSnapshotSetWindow .mat-expansion-panel table th,
+/* #fieldSnapshotSetWindow .mat-expansion-panel table th, */
 #fieldSnapshotSetWindow .mat-expansion-panel table td {
   white-space: nowrap;
   color: #fff;
+}
+#fieldSnapshotSetWindow table thead tr th:nth-child(2) {
+  width: 50%;
 }
 body.tw #fieldSnapshotSetWindow .Snapshot_UI02 .save_name input {
   width: 20.5em !important;
@@ -1818,7 +1822,8 @@ body.tw #fault_statusModal ul li > label {
 }
 #fieldPMReportWindow {
   position: relative;
-  width: 96em;
+  /* width: 96em; */
+  min-width: 103em;
 }
 #fault_statusModal h5 mat-button-toggle-group ,
 #fieldPMReportWindow mat-button-toggle-group {
@@ -1879,7 +1884,7 @@ body.tw #fault_statusModal ul li > label {
 
 #fieldPMReportWindow .Overview {
   min-width: 80em;
-  max-height: 50em;
+  max-height: 55em;
   overflow: auto;
 }
 #fieldPMReportWindow .filter  {
@@ -1895,7 +1900,7 @@ body.tw #fault_statusModal ul li > label {
   margin: 0 3px;
 }
 #fieldPMReportWindow canvas {
-  margin: 1em 3em;
+  margin: 0;
 }
 #fieldPMReportWindow .filter .material-icons,
 #fieldPMReportWindow .filter .material-symbols-outlined {
@@ -1903,6 +1908,7 @@ body.tw #fault_statusModal ul li > label {
   border: 1px solid #ddd;
   background: #4180b7;
   font-size: 20px;
+  margin: 0 0.1em 0 .85em;
 }
 #fieldPMReportWindow .table table {
   max-height: 14em;
@@ -1919,6 +1925,7 @@ body.tw #fault_statusModal ul li > label {
 #fieldPMReportWindow table th {
   font-size: .9em;
   line-height: 1em;
+  min-width: 13em;
 }
 #fieldPMReportWindow table td {
   text-align: center;
@@ -1978,7 +1985,7 @@ body.tw #fault_statusModal ul li > label {
 }
 #fieldPMReportWindow .canvas.chart-container {
   display: block;
-  width: 85%;
+  width: 75%;
   margin: auto;
 }
 body.tw .performance table th.relative span:last-child {
