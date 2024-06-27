@@ -12,16 +12,15 @@
       <ul class="Software_info">
         <h3>{{ languageService.i18n['basic.info'] }}</h3>
         <li><label>{{ languageService.i18n['type'] }}</label>{{ mapUploadType(softwareInfo.uploadtype) }}</li>
-        <li><label>{{ languageService.i18n['manufacturer'] }}</label>{{ softwareInfo.firm }}</li>
+        <li><label>{{ languageService.i18n['version'] }}</label>{{ softwareInfo.uploadversion }}</li>
         <li><label>{{ languageService.i18n['model'] }}</label>{{ softwareInfo.modelname }}</li>
+        <li><label>{{ languageService.i18n['manufacturer'] }}</label>{{ softwareInfo.firm }}</li>
         <!-- <li><label>{{languageService.i18n['model']}}</label><input type="text" [(ngModel)]="softwareInfo.modelname"/></li> -->
         <!-- <li><label>{{languageService.i18n['type']}}</label>
           <select [(ngModel)]="softwareInfo.uploadtype" >
             <option *ngFor="let opt of uploadtypeUI" [value]="opt.value">{{opt.displayName}}</option>
           </select>
         </li> -->
-        <li><label>{{ languageService.i18n['version'] }}</label>{{ softwareInfo.uploadversion }}</li>
-        
         <li><label>{{ languageService.i18n['notes'] }}</label>{{ softwareInfo.description }}</li>
       </ul>
       <ul class="file_url_info">
