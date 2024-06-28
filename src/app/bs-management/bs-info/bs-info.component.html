@@ -354,7 +354,7 @@
             <form>
               <div class="filter">
                 <span>
-                  <label>Cell:</label>
+                  <label>Cell :</label>
                   <select [(ngModel)]="selectedNci" name="selectedNci" (change)="onBsParamSelectedNciChange()">
                     <option *ngFor="let nci of nciList" [value]="nci">
                       Cell#{{ nciList.indexOf(nci) + 1 }} (NCI=0x{{ nci }})
@@ -4677,7 +4677,7 @@
           <form>
             <div class="filter">
               <span>
-                <label>Cell:</label>
+                <label>Cell :</label>
                 <select [(ngModel)]="selectedNeighborNci" name="selectedNeighborNci" (change)="onNeighborSelectedNciChange()">
                   <option *ngFor="let nci of nciList" [value]="nci">
                     Cell#{{ nciList.indexOf(nci) + 1 }} (NCI=0x{{ nci }})
@@ -4923,7 +4923,7 @@
     </ng-template>
 
 
-    <div class="alarms"><!-- 基站告警 -->
+    <div class="alarms"><!-- 基站告警 @2024/06/28 Update -->
       <span>{{ languageService.i18n['BS.alarms'] }}</span>
       <input id="faultMsg" class="toggle" type="checkbox">
       <label for="faultMsg" class="lbl-toggle"></label>
@@ -4933,14 +4933,14 @@
           <form [formGroup]="alarmSearchForm">
             <div class="filter">
               <span>
-                <label>{{ languageService.i18n['fm.severity'] }}</label>
+                <label>{{ languageService.i18n['fm.severity'] }} :</label>
                 <select formControlName="severity">
                   <option value="All">All</option>
                   <option *ngFor="let severit of severitys" [value]="severit">{{ commonService.textTransfer( severit ) }}</option>
                 </select>
               </span>
               <span>
-                <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}</label>
+                <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }} :</label>
                 <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
               </span>
               <span>
@@ -4955,10 +4955,10 @@
             <div class="filterBY">
               <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
               <span *ngIf="afterAlarmSearchForm.controls['severity'].value">
-                <label>{{ languageService.i18n['fm.severity'] }}:&nbsp;</label>{{ afterAlarmSearchForm.controls['severity'].value }}
+                <label>{{ languageService.i18n['fm.severity'] }} :&nbsp;</label>{{ afterAlarmSearchForm.controls['severity'].value }}
               </span>
               <span *ngIf="afterAlarmSearchForm.controls['from'].value || afterAlarmSearchForm.controls['to'].value">
-                <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}:&nbsp;</label>
+                <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }} :&nbsp;</label>
                 {{ afterAlarmSearchForm.controls['from'].value ? (commonService.dealPostDate(afterAlarmSearchForm.controls['from'].value) + ' ~ ') : '' }}
                 {{ afterAlarmSearchForm.controls['to'].value ? commonService.dealPostDate(afterAlarmSearchForm.controls['to'].value) : '' }}
               </span>
@@ -5091,7 +5091,7 @@
       </div>
     </div>
 
-    <!-- 基站效能區 @2024/06/09 Update -->
+    <!-- 基站效能區 @2024/06/28 Update -->
     <div class="performance">
       <span>{{ languageService.i18n['BS.performance'] }}
           <!-- 刷新基站效能資訊按鈕 @2024/05/15 Add -->
@@ -5107,19 +5107,19 @@
         <div class="content-inner">
             <div class="filter">
               <span><!-- 檢視模式-->
-                <label>{{ languageService.i18n['BS.viewMode'] }}:</label>
+                <label>{{ languageService.i18n['BS.viewMode'] }} :</label>
                 <select [(ngModel)]="selectedViewMode" (ngModelChange)="prepareAndUpdateChartData()">
                   <option *ngFor="let mode of viewModes" [value]="mode.value">{{ mode.displayName }}</option>
                 </select>
               </span>
               <span><!-- KPI 類別選項 -->
-                <label>{{ languageService.i18n['BS.viewKPICategory'] }}:</label>
+                <label>{{ languageService.i18n['BS.viewKPICategory'] }} :</label>
                 <select [(ngModel)]="selectedKpiCategory" (ngModelChange)="onKpiCategoryChange()">
                   <option *ngFor="let category of kpiCategories" [value]="category.value">{{ category.displayName }}</option>
                 </select>
               </span>
               <span><!-- KPI 子類別選項 -->
-                <label>{{ languageService.i18n['BS.viewKPISubcategory'] }}:</label>
+                <label>{{ languageService.i18n['BS.viewKPISubcategory'] }} :</label>
                 <select [(ngModel)]="selectedKpiSubcategory" (ngModelChange)="prepareAndUpdateChartData()" [hidden]="kpiSubcategories.length === 0">
                   <option *ngFor="let subcategory of kpiSubcategories" [value]="subcategory.value">{{ subcategory.displayName }}</option>
                 </select>

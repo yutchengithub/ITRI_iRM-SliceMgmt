@@ -269,13 +269,13 @@
         <div class="content-inner hasFilter">
           <form [formGroup]="alarmSearchForm">
             <div class="filter">
-              <span><label>{{languageService.i18n['fm.severity']}}</label>
+              <span><label>{{ languageService.i18n['fm.severity'] }} :</label>
                 <select formControlName="severity">
                   <option value="All">All</option>
                   <option *ngFor="let severit of severitys" [value]="severit">{{commonService.textTransfer(severit)}}</option>
                 </select>
               </span>
-              <span><label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}</label>
+              <span><label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }} :</label>
                 <p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
               </span>
               <span><label>{{ languageService.i18n['BS.alarmLatestUpdateTimeRangeEnd'] }}&ensp;</label>
@@ -288,10 +288,10 @@
              <div class="filterBY">
               <span class="material-symbols-outlined">info</span>{{ languageService.i18n['search_criteria'] }}&nbsp;
               <span *ngIf="afterAlarmSearchForm.controls['severity'].value">
-                <label>{{ languageService.i18n['fm.severity'] }}:&nbsp;</label>{{ afterAlarmSearchForm.controls['severity'].value }}
+                <label>{{ languageService.i18n['fm.severity'] }} :&nbsp;</label>{{ afterAlarmSearchForm.controls['severity'].value }}
               </span>
               <span *ngIf="afterAlarmSearchForm.controls['from'].value || afterAlarmSearchForm.controls['to'].value">
-                <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }}:&nbsp;</label>
+                <label>{{ languageService.i18n['BS.alarmLatestUpdateTime'] }} :&nbsp;</label>
                 {{ afterAlarmSearchForm.controls['from'].value ? (commonService.dealPostDate(afterAlarmSearchForm.controls['from'].value) + ' ~ ') : '' }}
                 {{ afterAlarmSearchForm.controls['to'].value ? commonService.dealPostDate(afterAlarmSearchForm.controls['to'].value) : '' }}
               </span>
