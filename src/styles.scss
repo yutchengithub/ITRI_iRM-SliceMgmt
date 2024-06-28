@@ -716,7 +716,7 @@ border-radius: 5px;
 }
 
 .filter > span {
-  margin: 0 .5em 0 0;
+  margin: 0 .35em 0 0;
   }
 .filter select {
   min-width: 5em;
@@ -980,7 +980,7 @@ height: initial;
 p-calendar #time {
   width: 10.06em;
   padding: 5px 6px;
-  margin: 0 2px;
+  margin: 0 6px;
 }
 .p-datepicker table th {
   background: #d8e5f5!important;
@@ -1897,7 +1897,7 @@ body.tw #fault_statusModal ul li > label {
 }
 #fieldPMReportWindow .filter select {
   width: auto;
-  margin: 0 3px;
+  margin: 0 6px;
 }
 #fieldPMReportWindow canvas {
   margin: 0;
@@ -1912,7 +1912,7 @@ body.tw #fault_statusModal ul li > label {
 }
 #fieldPMReportWindow .table table {
   max-height: 14em;
-  width: 97%;
+  width: 96.5%;
   border: 0;
   white-space: nowrap;
 }
