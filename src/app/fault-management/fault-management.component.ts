@@ -185,7 +185,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   selectedMsg: FaultMessages = {} as FaultMessages;
   modifyMsg: FaultMessages = {} as FaultMessages;
-  modifySatus?: string;
+  //modifySatus?: string;
   nullList: string[] = [];  // 給頁籤套件使用
   @ViewChild('itemDetail') itemDetail: any;
   @ViewChild('statusModal') statusModal: any;
@@ -243,6 +243,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   queryCurrentFieldFaultMessage: any;
   queryCurrentBsFaultMessage: any;
   queryCurrentBsComFaultMessage: any;
+  queryCurrentFilterFaultMessage: any;
 
   ngOnDestroy() {
     clearTimeout( this.refreshTimeout );
@@ -287,22 +288,6 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     });
   }
 
-           p: number = 1;  // 當前頁數
-    pageSize: number = 10; // 每頁幾筆
-  totalItems: number = 0;  // 總筆數
-
-  displayMode: string = '';
-  pageChanged( page: number ) {
-    this.p = page;
-    console.log( "Current faultList displayMode:", this.displayMode+", Page:", this.p );
-
-    // @2024/03/13 Add
-    // 如非 Local 模式，切換每頁時才呼叫 API 取得 log 資訊 
-    if ( !this.commonService.isLocal ) {
-      this.getFaultList();
-    }
-  }
-
   /**
    * @2024/06/19 Add
    * 將時間戳格式化為 "YYYY-MM-DD HH:mm:ss" 格式的字串
@@ -326,7 +311,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
     // 獲取小時，並確保是兩位數字
     const hours = String( date.getHours() ).padStart( 2, '0' );
- 
+  
     // 獲取分鐘，並確保是兩位數字
     const minutes = String( date.getMinutes() ).padStart( 2, '0');
 
@@ -337,13 +322,65 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 
-  // @2024/06/03 Add
+  // 將日期只保留年月日
+  extractDateOnly( dateTimeString: string ): string {
+    // 使用正則表達式匹配日期部分
+    const dateMatch = dateTimeString.match(/^\d{4}-\d{2}-\d{2}/);
+    
+    if (dateMatch) {
+        // 如果匹配成功，返回匹配到的日期部分
+        return dateMatch[0];
+    } else {
+        // 如果沒有匹配到合適的日期格式，拋出錯誤
+        throw new Error("Invalid date format. Expected format: YYYY-MM-DD HH:mm");
+    }
+  }
+
+           p: number = 1;  // 當前頁數
+    pageSize: number = 10; // 每頁幾筆
+  totalItems: number = 0;  // 總筆數
+
+  displayMode: string = '';
+  pageChanged( page: number ) {
+    this.p = page;
+    console.log( "Current faultList displayMode:", this.displayMode+", Page:", this.p );
+
+    // @2024/03/13 Add
+    // 如非 Local 模式，切換每頁時才呼叫 API 取得 log 資訊 
+    if ( !this.commonService.isLocal ) {
+      this.getFaultList();
+    }
+  }
+
+  // @2024/07/02 Update
   faultList: FaultList = {} as FaultList;
   filteredFaultList: FaultMessages_new[] = [];
   getFaultList() {
     console.log('getFaultList() - Start');
+    this.showLoadingSpinner();              // 顯示加載中的提示
 
     clearTimeout( this.refreshTimeout );
+
+    const method = 'desc';
+    const fieldname = this.searchForm.controls['fieldName'].value;
+    const bsname = this.searchForm.controls['BSName'].value;
+    const compname = this.searchForm.controls['neName'].value;
+    const fname = this.searchForm.controls['alarmName'].value;
+    const urgency = this.searchForm.controls['severity'].value;
+    const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
+    const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
+    //const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
+    const acktype = 0;
+    const offset = ( this.p - 1 ) * this.pageSize;
+    const limit = this.pageSize;
+    const orderby = 0;
+    const orderbyDesc = 1;
+
+    // 蒐集 POST 給後端的 BODY
+    const params = {
+
+    };
+    console.log("POST BODY for get faultList:", params);
 
    if ( this.commonService.isLocal ) {
       /* local file test */
@@ -352,32 +389,27 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
       this.faultList = this.faultList_LocalFiles.faultList_local;
       this.faultMessagesDeal();
 
-    } else {
-      const fieldName = this.searchForm.controls['fieldName'].value;
-      const BSName = this.searchForm.controls['BSName'].value;
-      const compName = this.searchForm.controls['neName'].value;
-      const alarmName = this.searchForm.controls['alarmName'].value;
-      const severity = this.searchForm.controls['severity'].value;
-      const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
-      const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
-      //const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
-      const offset = ( this.p - 1 ) * this.pageSize;
-      const limit = 10;
+      this.hideSpinner();  // 隱藏加載提示
 
-      if ( this.queryCurrentAllFaultMessage ) this.queryCurrentAllFaultMessage.unsubscribe();
-      this.queryCurrentAllFaultMessage = this.API_Fault.queryCurrentAllFaultMessage({
-        fieldName, 
-        BSName, 
-        compName, 
-        alarmName, 
-        severity, 
-        start, 
-        end, 
-        offset, 
-        limit
-      }).subscribe(res => {
+    } else {
+      this.queryCurrentFilterFaultMessage = this.API_Fault.queryCurrentFilterFaultMessage({
+        method: method,
+        // fieldname: fieldname,
+        // bsname: bsname,
+        // compname: compname,
+        // fname: fname,
+        // urgency: urgency,
+        start: this.extractDateOnly( start ),
+        end: this.extractDateOnly( end ),
+        acktype: acktype,
+        offset: offset,
+        limit: limit,
+        orderby: orderby,
+        orderbyDesc: orderbyDesc
+      }).subscribe( res => {
         this.faultList = res;
         this.faultMessagesDeal();
+        this.hideSpinner();  // 隱藏加載提示
       });
     }
 
@@ -386,7 +418,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   faultMessagesDeal() {
     //this.p = 1;
-    this.totalItems = this.faultList.faultMessage.length;
+    this.totalItems = this.faultList.totalMessageNumber;
     this.nullList = new Array( this.totalItems );
     this.refreshTimeout = window.setTimeout(() => {
       if ( this.p === 1 ) {
@@ -408,45 +440,72 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   openFaultDetail( faultMessages: FaultMessages_new ) {
     // this.show200Msg = false;
     // this.show500Msg = false;
+    
     this.selectedFaultMsg = faultMessages;
 
-    this.getFMstatus().then((value) => {
-      this.statusModalRef = this.dialog.open(this.itemDetail, { id: 'itemDetail' });
-      this.statusModalRef.afterClosed().subscribe(() => {
+    this.statusModalRef = this.dialog.open(this.itemDetail, { id: 'itemDetail' });
+    this.statusModalRef.afterClosed().subscribe(() => {
 
-      });
-    });  
+    });
   }
 
   search() {
     console.log( 'search() - Start' );
+
+    this.showLoadingSpinner(); // 顯示加載中的提示
 
     // 更新顯示的搜尋條件
     this.afterSearchForm = this.searchForm.value;
 
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
 
+    const method = 'desc';
     const field_name = this.searchForm.get('fieldName')?.value || '';
     const BS_name = this.searchForm.get('BSName')?.value || '';
     const ne_name = this.searchForm.get('neName')?.value || '';
-    const alarm_name = this.searchForm.get('alarmName')?.value || '';
+    const fname = this.searchForm.get('alarmName')?.value || '';
     const severity_lv = this.searchForm.get('severity')?.value;
     const status_type = this.searchForm.get('status')?.value;
     const situ_type = this.searchForm.get('situation')?.value;
-    const from = this.searchForm.get('from')?.value;
-    const to = this.searchForm.get('to')?.value;
+    const start = this.searchForm.get('from')?.value;
+    const end = this.searchForm.get('to')?.value;
     const owner_name = this.searchForm.get('ackOwner')?.value || '';
+    const acktype = 0;
+    const offset = ( this.p - 1 ) * this.pageSize;
+    const limit = this.pageSize;
+    const orderby = 0;
+    const orderbyDesc = 1;
     console.log("seach field_name:", field_name);
 
     // 格式化日期為所需的格式
-    const formattedFrom = this.commonService.dealPostDate(from);
-    const formattedTo = this.commonService.dealPostDate(to);
+    const formattedFrom = this.commonService.dealPostDate( start );
+    const formattedTo = this.commonService.dealPostDate( end );
 
     // 清除以前的搜尋結果
     this.filteredFaultList = [];
     this.isSearch = false;
 
-    this.afterSearchForm = _.cloneDeep(this.searchForm); // 更新顯示的搜尋條件
+    this.afterSearchForm = _.cloneDeep( this.searchForm ); // 更新顯示的搜尋條件
+
+    // 蒐集 POST 給後端的 BODY
+    const params = {
+      method: method,
+      fieldname: field_name,
+      //bsname: BS_name,
+      //compname: ne_name,
+      //fname: fname,
+      urgency: severity_lv,
+      //status: status_type,
+      //situation: situ_type,
+      start: this.extractDateOnly( formattedFrom ),
+      end: this.extractDateOnly( formattedTo ),
+      acktype: acktype,
+      offset: offset,
+      limit: limit,
+      orderby: orderby,
+      orderbyDesc: orderbyDesc
+    };
+    console.log("POST BODY for searching fault:", params);
 
     if ( this.commonService.isLocal ) {
 
@@ -456,7 +515,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
         const isFieldMatch = !field_name || msg.fieldName.includes( field_name );
         const isBSMatch = !BS_name || msg.bsName.includes( BS_name );
         const isNEMatch = !ne_name || msg.compname.includes( ne_name );
-        const isAlarmMatch = !alarm_name || msg.probablecause.includes(alarm_name);
+        const isAlarmMatch = !fname || msg.probablecause.includes( fname );
         const isSeverityMatch = severity_lv === 'All' || msg.perceivedseverity === severity_lv;
         const isStatusMatch = status_type === 'All' || msg.notificationtype === status_type;
         const isSituMatch = situ_type === 'All' || msg.processstatus === situ_type;
@@ -471,26 +530,17 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
       this.isSearch = true; // Local Search 完畢，設置標記為 true
       this.totalItems = this.filteredFaultList.length; // 確保更新 totalItems 以更新左下角統計數量，反映搜尋結果的數量
+      
+      this.hideSpinner();  // 隱藏加載提示
 
     } else {
-      const params = {
-        fieldName: field_name,
-        BSName: BS_name,
-        compName: ne_name,
-        alarmName: alarm_name,
-        severity: severity_lv,
-        status: status_type,
-        situation: situ_type,
-        from: formattedFrom,
-        to: formattedTo,
-        offset: (this.p - 1) * this.pageSize,
-        limit: this.pageSize
-      };
 
-      this.queryCurrentAllFaultMessage = this.API_Fault.queryCurrentAllFaultMessage( params ).subscribe( res => {
+      this.queryCurrentFilterFaultMessage = this.API_Fault.queryCurrentFilterFaultMessage( params ).subscribe( res => {
         this.filteredFaultList = res.faultMessage;
         this.totalItems = res.totalMessageNumber;
         this.isSearch = true;
+
+        this.hideSpinner();  // 隱藏加載提示
       });
     }
 
@@ -518,43 +568,48 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     // this.show500Msg = false;
     this.selectedMsg = faultMessages;
 
-    this.getFMstatus().then((value) => {
-      this.statusModalRef = this.dialog.open(this.itemDetail, { id: 'itemDetail' });
-      this.statusModalRef.afterClosed().subscribe(() => {
+    this.statusModalRef = this.dialog.open(this.itemDetail, { id: 'itemDetail' });
+    this.statusModalRef.afterClosed().subscribe(() => {
 
-      });
-    });  
+    });
   }
 
+  modifySatus: 'PENDING' | 'RESOLVE' = 'PENDING';
+
   openStatusModal( faultMessages: FaultMessages_new ) {
-    if ( faultMessages.processstatus === 1 ) {
-
-      this.fmStatus = {} as FmStatus;
-      this.type = 'add_situation';
-      // this.show200Msg = false;
-      // this.show500Msg = false;
-
-      //this.selectedMsg = faultMessages;
-
-      this.selectedFaultMsg = faultMessages;
-      this.selectedHistories = this.selectedMsg.histories;
-
-      this.getFMstatus().then((value) => {
-        this.statusModalRef = this.dialog.open(this.statusModal, { id: 'fault_statusModal' });
-        this.statusModalRef.afterClosed().subscribe(() => {
-
-        });
-      });
+    this.fmStatus = {} as FmStatus;
+    this.type = 'add_situation';
+  
+    this.selectedFaultMsg = faultMessages;
+    this.selectedHistories = this.selectedMsg.histories;
+  
+    // 根據 processstatus 設置默認值
+    if (this.selectedFaultMsg.processstatus === 1 || this.selectedFaultMsg.processstatus === '1') {
+      this.modifySatus = 'RESOLVE';
+    } else if (this.selectedFaultMsg.processstatus === '' || 
+               this.selectedFaultMsg.processstatus === 0 || 
+               this.selectedFaultMsg.processstatus === '0') {
+      this.modifySatus = 'PENDING';
+    } else {
+      // 如果 processstatus 不符合上述任何條件，可以設置一個默認值
+      this.modifySatus = 'PENDING';
     }
+  
+    this.getFaultProcessList();
+  
+    this.statusModalRef = this.dialog.open(this.statusModal, { id: 'fault_statusModal' });
+    this.statusModalRef.afterClosed().subscribe(() => {
+      // 關閉後的操作
+    });
   }
 
   type: string = 'add_situation';
   changeType( e: MatButtonToggleChange ) {
     console.log( this.type );
     if ( this.type === 'add_situation' ) {
-      //this.getFMstatus();
+
     } else {
-      this.getFaultProcessList();
+      // this.getFaultProcessList();
     }
   }
 

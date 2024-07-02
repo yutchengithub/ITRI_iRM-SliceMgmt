@@ -119,8 +119,8 @@
           <label *ngIf=" opt.notificationtype === 1 ">{{ languageService.i18n['fm.excluded'] }}</label>
         </td>
         <td class="icon state">
-          <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" opt.processstatus === 1 " class="greenLight" (click)="openStatusModal(opt)"></label>
-          <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf=" opt.processstatus === '' " class="redLight" (click)="openStatusModal(opt)"></label>
+          <label tooltip="{{ languageService.i18n['resolved'] }}" *ngIf=" opt.processstatus === 1 || opt.processstatus === '1' " class="greenLight" (click)="openStatusModal(opt)"></label>
+          <label tooltip="{{ languageService.i18n['pending_error'] }}" *ngIf=" opt.processstatus === '' || opt.processstatus === 0 || opt.processstatus === '0' " class="redLight" (click)="openStatusModal(opt)"></label>
           {{ opt.processresult }}
         </td>
         <td>{{ owner }}</td>
@@ -179,8 +179,8 @@
     <li>
       <label>{{languageService.i18n['fm.situation']}}: </label>
       <span>
-        <label tooltip="{{languageService.i18n['resolved']}}" *ngIf=" selectedFaultMsg.processstatus === 1 " class="greenLight"></label>
-        <label tooltip="{{languageService.i18n['pending_error']}}" *ngIf=" selectedFaultMsg.processstatus === '' " class="redLight"></label>
+        <label tooltip="{{ languageService.i18n['resolved'] }}" *ngIf=" selectedFaultMsg.processstatus === 1 || selectedFaultMsg.processstatus === '1' " class="greenLight"></label>
+        <label tooltip="{{ languageService.i18n['pending_error'] }}" *ngIf=" selectedFaultMsg.processstatus === '' || selectedFaultMsg.processstatus === 0 || selectedFaultMsg.processstatus === '0' " class="redLight"></label>
         {{ selectedFaultMsg.processresult }}
       </span>
     </li>
@@ -232,8 +232,8 @@
             <td>{{ ( record_p - 1 ) * record_pageSize + i + 1 }}</td> <!-- 動態生成每條訊息的編號 -->
             <td>{{ opt.createtime }}</td>
             <td class="icon state">
-              <label *ngIf="opt.processstatus === 0" class="greenLight"></label>
-              <label *ngIf="opt.processstatus === 1" class="redLight"></label>
+              <label *ngIf="opt.processstatus === 0" class="redLight"></label>
+              <label *ngIf="opt.processstatus === 1" class="greenLight"></label>
               {{ opt.processresult }}
             </td>
             <td>{{ owner }}</td>
