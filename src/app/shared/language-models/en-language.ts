@@ -642,6 +642,7 @@ export const Enlanguage = {
   'cm.BS' : 'BS',
   'cm.bsInUseCannotDelete': 'BS in use, cannot be deleted.',
   'cm.belongBS':'Affiliated BS',
+  'cm.alarms':'NE Alarms',
 
   // Account Management
   'user_account':'User',
