@@ -112,9 +112,9 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   // @2024/06/16 Add
   // 定義所有的類型及其對應的 processstatus
   situationTypes: SituationType[] = [
-    { displayName: 'All', value: 'All' },
-    { displayName: this.languageService.i18n['pending_error'], value: '' },
+    { displayName: 'All', value: 0 },
     { displayName: this.languageService.i18n['resolved'], value: 1 },
+    { displayName: this.languageService.i18n['pending_error'], value: 2 },
   ];
 
   /**
@@ -281,7 +281,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
       'alarmName': new FormControl(''),
       'severity': new FormControl('All'),
       'status': new FormControl('All'),
-      'situation': new FormControl('All'),
+      'situation': new FormControl(0),
       //'ackOwner': new FormControl(''),
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),   // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`))  // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
@@ -352,69 +352,87 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  // @2024/07/02 Update
+  // @2024/07/11 Update
   faultList: FaultList = {} as FaultList;
   filteredFaultList: FaultMessages_new[] = [];
   getFaultList() {
     console.log('getFaultList() - Start');
-    this.showLoadingSpinner();              // 顯示加載中的提示
-
-    clearTimeout( this.refreshTimeout );
-
+    this.showLoadingSpinner(); // 顯示加載中的提示
+  
+    clearTimeout(this.refreshTimeout);
+  
+    
     const method = 'desc';
-    const fieldname = this.searchForm.controls['fieldName'].value;
-    const bsname = this.searchForm.controls['BSName'].value;
-    const compname = this.searchForm.controls['neName'].value;
-    const fname = this.searchForm.controls['alarmName'].value;
-    const urgency = this.searchForm.controls['severity'].value;
-    const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
-    const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
-    //const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
-    const acktype = 0;
-    const offset = ( this.p - 1 ) * this.pageSize;
-    const limit = this.pageSize;
-    const orderby = 0;
-    const orderbyDesc = 1;
-
-    // 蒐集 POST 給後端的 BODY
-    const params = {
-
+    const params: any = {
+      method: method,
+      acktype: this.searchForm.get('situation')?.value,
+      offset: (this.p - 1) * this.pageSize,
+      limit: this.pageSize,
+      orderby: 0,
+      orderbyDesc: 1
     };
+  
+    const fieldName = this.searchForm.controls['fieldName'].value;
+    if (fieldName) {
+      params.fieldname = fieldName;
+    }
+  
+    const bsName = this.searchForm.controls['BSName'].value;
+    if (bsName) {
+      params.bsname = bsName;
+    }
+  
+    const compName = this.searchForm.controls['neName'].value;
+    if (compName) {
+      params.compname = compName;
+    }
+  
+    const fname = this.searchForm.controls['alarmName'].value;
+    if (fname) {
+      params.fname = fname;
+    }
+  
+    const urgency = this.searchForm.controls['severity'].value;
+    if (urgency && urgency !== 'All') {
+      params.urgency = urgency;
+    }
+  
+    //const ackType = this.searchForm.get('situation')?.value;
+    // if (ackType) {
+    //   params.acktype = ackType;
+    // }
+  
+    const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
+    if (start) {
+      params.start = this.extractDateOnly(start);
+    }
+  
+    const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
+    if (end) {
+      params.end = this.extractDateOnly(end);
+    }
+  
     console.log("POST BODY for get faultList:", params);
-
-   if ( this.commonService.isLocal ) {
+  
+    if (this.commonService.isLocal) {
       /* local file test */
-
-      // 引入正確 local file @2024/06/03 Add 
+  
       this.faultList = this.faultList_LocalFiles.faultList_local;
       this.faultMessagesDeal();
-
-      this.hideSpinner();  // 隱藏加載提示
-
+  
+      this.hideSpinner(); // 隱藏加載提示
+  
     } else {
-      this.queryCurrentFilterFaultMessage = this.API_Fault.queryCurrentFilterFaultMessage({
-        method: method,
-        // fieldname: fieldname,
-        // bsname: bsname,
-        // compname: compname,
-        // fname: fname,
-        // urgency: urgency,
-        start: this.extractDateOnly( start ),
-        end: this.extractDateOnly( end ),
-        acktype: acktype,
-        offset: offset,
-        limit: limit,
-        orderby: orderby,
-        orderbyDesc: orderbyDesc
-      }).subscribe( res => {
+      this.queryCurrentFilterFaultMessage = this.API_Fault.queryCurrentFilterFaultMessage(params).subscribe(res => {
         this.faultList = res;
         this.faultMessagesDeal();
-        this.hideSpinner();  // 隱藏加載提示
+        this.hideSpinner(); // 隱藏加載提示
       });
     }
-
+  
     console.log('getFaultList() - End');
   }
+  
 
   faultMessagesDeal() {
     //this.p = 1;
@@ -430,10 +448,16 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     }, 60000 ); // 設定 60000 ms ( 60s ) 後執行
   }
 
+  // 用於顯示的 faultList 數據
   get faultListToDisplay(): FaultMessages_new[] {
-    // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
-    // 否則，顯示全部 this.faultList.faultMessage
-    return this.isSearch ? this.filteredFaultList : this.faultList.faultMessage;
+    
+    // 確保 faultList 和 faultList.faultMessage 存在
+    if ( this.faultList && Array.isArray( this.faultList.faultMessage ) ) {
+
+      // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 filteredFaultList
+      return this.isSearch ? this.filteredFaultList : this.faultList.faultMessage;
+    }
+    return []; // 如果數據還沒有載入，則返回一個空數組
   }
 
   selectedFaultMsg: FaultMessages_new = {} as FaultMessages_new;
@@ -449,106 +473,214 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     });
   }
 
+  // search() {
+  //   console.log( 'search() - Start' );
+
+  //   this.showLoadingSpinner(); // 顯示加載中的提示
+
+  //   // 更新顯示的搜尋條件
+  //   this.afterSearchForm = this.searchForm.value;
+
+  //   this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
+
+  //   const method = 'desc';
+  //   const field_name = this.searchForm.get('fieldName')?.value || '';
+  //   const BS_name = this.searchForm.get('BSName')?.value || '';
+  //   const ne_name = this.searchForm.get('neName')?.value || '';
+  //   const fname = this.searchForm.get('alarmName')?.value || '';
+  //   const severity_lv = this.searchForm.get('severity')?.value;
+  //   const status_type = this.searchForm.get('status')?.value;
+  //   const acktype = this.searchForm.get('situation')?.value;
+  //   const start = this.searchForm.get('from')?.value;
+  //   const end = this.searchForm.get('to')?.value;
+  //   const owner_name = this.searchForm.get('ackOwner')?.value || '';
+  //   const offset = ( this.p - 1 ) * this.pageSize;
+  //   const limit = this.pageSize;
+  //   const orderby = 0;
+  //   const orderbyDesc = 1;
+  //   console.log("seach field_name:", field_name);
+
+  //   // 格式化日期為所需的格式
+  //   const formattedFrom = this.commonService.dealPostDate( start );
+  //   const formattedTo = this.commonService.dealPostDate( end );
+
+  //   // 清除以前的搜尋結果
+  //   this.filteredFaultList = [];
+  //   this.isSearch = false;
+
+  //   this.afterSearchForm = _.cloneDeep( this.searchForm ); // 更新顯示的搜尋條件
+
+  //   // 蒐集 POST 給後端的 BODY
+  //   const params = {
+  //     method: method,
+  //     fieldname: field_name,
+  //     bsname: BS_name,
+  //     compname: ne_name,
+  //     fname: fname,
+  //     urgency: severity_lv,
+  //     status: status_type,
+  //     acktype: acktype,
+  //     start: this.extractDateOnly( formattedFrom ),
+  //     end: this.extractDateOnly( formattedTo ),
+  //     offset: offset,
+  //     limit: limit,
+  //     orderby: orderby,
+  //     orderbyDesc: orderbyDesc
+  //   };
+  //   console.log("POST BODY for searching fault:", params);
+
+  //   if ( this.commonService.isLocal ) {
+
+  //     /* local file test */
+
+  //     this.filteredFaultList = this.faultList.faultMessage.filter( msg => {
+  //       const isFieldMatch = !field_name || msg.fieldName.includes( field_name );
+  //       const isBSMatch = !BS_name || msg.bsName.includes( BS_name );
+  //       const isNEMatch = !ne_name || msg.compname.includes( ne_name );
+  //       const isAlarmMatch = !fname || msg.probablecause.includes( fname );
+  //       const isSeverityMatch = severity_lv === 'All' || msg.perceivedseverity === severity_lv;
+  //       const isStatusMatch = status_type === 'All' || msg.notificationtype === status_type;
+  //       const isSituMatch = acktype === 'All' || msg.processstatus === acktype;
+  //       const msgDate = new Date(msg.timestamp);
+  //       const isAfterFrom = msgDate >= new Date(formattedFrom);
+  //       const isBeforeTo = msgDate <= new Date(formattedTo);
+  //       //const isOwnerMatch = !owner_name || msg.acknowledgeOwner.includes(owner_name);
+
+  //       return isFieldMatch && isBSMatch && isNEMatch && isAlarmMatch && isSeverityMatch 
+  //               && isStatusMatch && isSituMatch && isAfterFrom && isBeforeTo;
+  //     });
+
+  //     this.isSearch = true; // Local Search 完畢，設置標記為 true
+  //     this.totalItems = this.filteredFaultList.length; // 確保更新 totalItems 以更新左下角統計數量，反映搜尋結果的數量
+      
+  //     this.hideSpinner();  // 隱藏加載提示
+
+  //   } else {
+
+  //     this.queryCurrentFilterFaultMessage = this.API_Fault.queryCurrentFilterFaultMessage( params ).subscribe( res => {
+  //       this.filteredFaultList = res.faultMessage;
+  //       this.totalItems = res.totalMessageNumber;
+  //       this.isSearch = true;
+
+  //       this.hideSpinner();  // 隱藏加載提示
+  //     });
+  //   }
+
+  //   // 檢查搜尋表單的值
+  //   console.log( 'Search criteria for fault mgmt:', this.afterSearchForm.value );
+
+  //   console.log( "search() - End" );
+  // }
+
   search() {
-    console.log( 'search() - Start' );
-
+    console.log('search() - Start');
+  
     this.showLoadingSpinner(); // 顯示加載中的提示
-
+  
     // 更新顯示的搜尋條件
     this.afterSearchForm = this.searchForm.value;
-
+  
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
-
+  
     const method = 'desc';
-    const field_name = this.searchForm.get('fieldName')?.value || '';
-    const BS_name = this.searchForm.get('BSName')?.value || '';
-    const ne_name = this.searchForm.get('neName')?.value || '';
-    const fname = this.searchForm.get('alarmName')?.value || '';
-    const severity_lv = this.searchForm.get('severity')?.value;
-    const status_type = this.searchForm.get('status')?.value;
-    const situ_type = this.searchForm.get('situation')?.value;
-    const start = this.searchForm.get('from')?.value;
-    const end = this.searchForm.get('to')?.value;
-    const owner_name = this.searchForm.get('ackOwner')?.value || '';
-    const acktype = 0;
-    const offset = ( this.p - 1 ) * this.pageSize;
-    const limit = this.pageSize;
-    const orderby = 0;
-    const orderbyDesc = 1;
-    console.log("seach field_name:", field_name);
-
-    // 格式化日期為所需的格式
-    const formattedFrom = this.commonService.dealPostDate( start );
-    const formattedTo = this.commonService.dealPostDate( end );
-
-    // 清除以前的搜尋結果
-    this.filteredFaultList = [];
-    this.isSearch = false;
-
-    this.afterSearchForm = _.cloneDeep( this.searchForm ); // 更新顯示的搜尋條件
-
-    // 蒐集 POST 給後端的 BODY
-    const params = {
+    const ackType = this.searchForm.get('situation')?.value;
+    const params: any = {
       method: method,
-      fieldname: field_name,
-      //bsname: BS_name,
-      //compname: ne_name,
-      //fname: fname,
-      urgency: severity_lv,
-      //status: status_type,
-      //situation: situ_type,
-      start: this.extractDateOnly( formattedFrom ),
-      end: this.extractDateOnly( formattedTo ),
-      acktype: acktype,
-      offset: offset,
-      limit: limit,
-      orderby: orderby,
-      orderbyDesc: orderbyDesc
+      acktype: ackType,
+      offset: ( this.p - 1 ) * this.pageSize,
+      limit: this.pageSize,
+      orderby: 0,
+      orderbyDesc: 1
     };
+  
+    const fieldName = this.searchForm.get('fieldName')?.value;
+    if (fieldName) {
+      params.fieldname = fieldName;
+    }
+  
+    const bsName = this.searchForm.get('BSName')?.value;
+    if (bsName) {
+      params.bsname = bsName;
+    }
+  
+    const compName = this.searchForm.get('neName')?.value;
+    if (compName) {
+      params.compname = compName;
+    }
+  
+    const fname = this.searchForm.get('alarmName')?.value;
+    if (fname) {
+      params.fname = fname;
+    }
+  
+    const severityLv = this.searchForm.get('severity')?.value;
+    if (severityLv && severityLv !== 'All') {
+      params.urgency = severityLv;
+    }
+  
+    const statusType = this.searchForm.get('status')?.value;
+    if (statusType && statusType !== 'All') {
+      params.status = statusType;
+    }
+  
+    // const ackType = this.searchForm.get('situation')?.value;
+    // if (ackType) {
+    //   params.acktype = ackType;
+    // }
+  
+    const start = this.searchForm.get('from')?.value;
+    if (start) {
+      params.start = this.extractDateOnly(this.commonService.dealPostDate(start));
+    }
+  
+    const end = this.searchForm.get('to')?.value;
+    if (end) {
+      params.end = this.extractDateOnly(this.commonService.dealPostDate(end));
+    }
+  
     console.log("POST BODY for searching fault:", params);
-
-    if ( this.commonService.isLocal ) {
-
+  
+    if (this.commonService.isLocal) {
       /* local file test */
-
-      this.filteredFaultList = this.faultList.faultMessage.filter( msg => {
-        const isFieldMatch = !field_name || msg.fieldName.includes( field_name );
-        const isBSMatch = !BS_name || msg.bsName.includes( BS_name );
-        const isNEMatch = !ne_name || msg.compname.includes( ne_name );
-        const isAlarmMatch = !fname || msg.probablecause.includes( fname );
-        const isSeverityMatch = severity_lv === 'All' || msg.perceivedseverity === severity_lv;
-        const isStatusMatch = status_type === 'All' || msg.notificationtype === status_type;
-        const isSituMatch = situ_type === 'All' || msg.processstatus === situ_type;
+  
+      this.filteredFaultList = this.faultList.faultMessage.filter(msg => {
+        const isFieldMatch = !fieldName || msg.fieldName.includes(fieldName);
+        const isBSMatch = !bsName || msg.bsName.includes(bsName);
+        const isNEMatch = !compName || msg.compname.includes(compName);
+        const isAlarmMatch = !fname || msg.probablecause.includes(fname);
+        const isSeverityMatch = severityLv === 'All' || msg.perceivedseverity === severityLv;
+        const isStatusMatch = statusType === 'All' || msg.notificationtype === statusType;
+        const isSituMatch = ackType === 'All' || msg.processstatus === ackType;
         const msgDate = new Date(msg.timestamp);
-        const isAfterFrom = msgDate >= new Date(formattedFrom);
-        const isBeforeTo = msgDate <= new Date(formattedTo);
+        const isAfterFrom = !start || msgDate >= new Date(this.commonService.dealPostDate(start));
+        const isBeforeTo = !end || msgDate <= new Date(this.commonService.dealPostDate(end));
         //const isOwnerMatch = !owner_name || msg.acknowledgeOwner.includes(owner_name);
-
-        return isFieldMatch && isBSMatch && isNEMatch && isAlarmMatch && isSeverityMatch 
-                && isStatusMatch && isSituMatch && isAfterFrom && isBeforeTo;
+  
+        return isFieldMatch && isBSMatch && isNEMatch && isAlarmMatch && isSeverityMatch
+          && isStatusMatch && isSituMatch && isAfterFrom && isBeforeTo;
       });
-
+  
       this.isSearch = true; // Local Search 完畢，設置標記為 true
       this.totalItems = this.filteredFaultList.length; // 確保更新 totalItems 以更新左下角統計數量，反映搜尋結果的數量
-      
-      this.hideSpinner();  // 隱藏加載提示
-
+  
+      this.hideSpinner(); // 隱藏加載提示
+  
     } else {
-
-      this.queryCurrentFilterFaultMessage = this.API_Fault.queryCurrentFilterFaultMessage( params ).subscribe( res => {
+      this.queryCurrentFilterFaultMessage = this.API_Fault.queryCurrentFilterFaultMessage(params).subscribe(res => {
         this.filteredFaultList = res.faultMessage;
         this.totalItems = res.totalMessageNumber;
         this.isSearch = true;
-
-        this.hideSpinner();  // 隱藏加載提示
+  
+        this.hideSpinner(); // 隱藏加載提示
       });
     }
-
+  
     // 檢查搜尋表單的值
-    console.log( 'Search criteria for fault mgmt:', this.afterSearchForm.value );
-
-    console.log( "search() - End" );
+    console.log('Search criteria for fault mgmt:', this.afterSearchForm.value);
+  
+    console.log("search() - End");
   }
+  
 
   clear_search() {
 
