@@ -1300,7 +1300,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
   search_NELogs() {
     console.log( 'search_NELogs() - Start' );
 
-    // NELogsList 是否已加載 @12/04 Add
+    // 確認 NELogsList 是否已加載 @12/04 Add
     if ( !this.NELogsList || !this.NELogsList.loginfo ) {
       console.error( 'NELogsList.loginfo is not loaded yet.' );
       return;
@@ -1353,7 +1353,7 @@ export class LogManagementComponent implements OnInit, OnDestroy {
           // @11/20 Add isUserIdMatch | @11/22 Add isnEnameMatch
           return isUserIdMatch && isnEnameMatch && isAfterFrom && isBeforeTo && isTypeMatch && isKeywordMatch; 
       });
-      this.isSearch_neLogs = true;  // 本地 Search 完畢，設置標記為 true
+      this.isSearch_neLogs = true;  // Local Search 完畢，設置標記為 true
 
       this.totalLogs = this.filtered_NELogs.length; // 確保更新 totalLogs 以反映搜尋結果的數量
 
