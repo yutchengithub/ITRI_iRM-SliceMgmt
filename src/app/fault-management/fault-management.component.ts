@@ -91,14 +91,30 @@ interface SituationType {
 export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sessionId: string = '';
-
   refreshTimeout: any;
+
+  // @2024/06/03 Add
+  // Show Spinner of Loading Title 
+  showLoadingSpinner() {
+    this.spinnerService.isLoading = true;
+    this.spinnerService.show();
+  }
+
+  // @2024/06/03 Add
+  // Show Spinner of Processing Title
+  showProcessingSpinner() {
+    this.spinnerService.isLoading = false;
+    this.spinnerService.show();
+  }
+  
+  // @2024/06/03 Add
+  // Hide Spinner
+  hideSpinner() {
+    this.spinnerService.hide();
+  }
 
   // @2024/06/04 Add
   owner: string = ""; // 用於儲存回應人員
-
-  isSearch: boolean = false;
-
   severitys: string[] = [];
 
   // @2024/06/16 Add
@@ -112,9 +128,9 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
   // @2024/06/16 Add
   // 定義所有的類型及其對應的 processstatus
   situationTypes: SituationType[] = [
-    { displayName: 'All', value: 'All' },
-    { displayName: this.languageService.i18n['pending_error'], value: '' },
+    { displayName: 'All', value: 0 },
     { displayName: this.languageService.i18n['resolved'], value: 1 },
+    { displayName: this.languageService.i18n['pending_error'], value: 2 },
   ];
 
   /**
@@ -138,27 +154,6 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
       { displayName: this.languageService.i18n['resolved'], value: 1 },  // 顯示已解決的選項
     ];
 
-  }
-
-  
-  // @2024/06/03 Add
-  // Show Spinner of Loading Title 
-  showLoadingSpinner() {
-    this.spinnerService.isLoading = true;
-    this.spinnerService.show();
-  }
-
-  // @2024/06/03 Add
-  // Show Spinner of Processing Title
-  showProcessingSpinner() {
-    this.spinnerService.isLoading = false;
-    this.spinnerService.show();
-  }
-  
-  // @2024/06/03 Add
-  // Hide Spinner
-  hideSpinner() {
-    this.spinnerService.hide();
   }
 
   constructor(
@@ -185,7 +180,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   selectedMsg: FaultMessages = {} as FaultMessages;
   modifyMsg: FaultMessages = {} as FaultMessages;
-  modifySatus?: string;
+  //modifySatus?: string;
   nullList: string[] = [];  // 給頁籤套件使用
   @ViewChild('itemDetail') itemDetail: any;
   @ViewChild('statusModal') statusModal: any;
@@ -220,13 +215,13 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
       }
     });
 
-    this.createSearchForm();
-
     // 建立 searchForm 的深層複本 ( Deep Copy )，以保留原始表單狀態，供後續搜尋使用。
     this.afterSearchForm = _.cloneDeep( this.searchForm );
 
     // 取得告警列表數據
     this.getFaultList();
+
+    this.createSearchForm();
 
     // @2024/06/16 Add
     // 訂閱語系切換事件，以便在語言變更時更新告警下拉選單選項語系
@@ -237,12 +232,14 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   ngAfterViewInit() {
     this.owner = this.commonService.getUserId();
+    this.createSearchForm();
   }
 
   queryCurrentAllFaultMessage: any;
   queryCurrentFieldFaultMessage: any;
   queryCurrentBsFaultMessage: any;
   queryCurrentBsComFaultMessage: any;
+  queryCurrentFilterFaultMessage: any;
 
   ngOnDestroy() {
     clearTimeout( this.refreshTimeout );
@@ -280,27 +277,11 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
       'alarmName': new FormControl(''),
       'severity': new FormControl('All'),
       'status': new FormControl('All'),
-      'situation': new FormControl('All'),
+      'situation': new FormControl(0),
       //'ackOwner': new FormControl(''),
       'from': new FormControl(new Date(`${nowTime.year}-01-01 00:00`)),   // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
       'to': new FormControl(new Date(`${nowTime.year}-${nowTime.month}-${nowTime.day} ${nowTime.hour}:${nowTime.minute}`))  // [Validators.pattern(/^\d{4}\/\d{2}\/\d{2}$/)]
     });
-  }
-
-           p: number = 1;  // 當前頁數
-    pageSize: number = 10; // 每頁幾筆
-  totalItems: number = 0;  // 總筆數
-
-  displayMode: string = '';
-  pageChanged( page: number ) {
-    this.p = page;
-    console.log( "Current faultList displayMode:", this.displayMode+", Page:", this.p );
-
-    // @2024/03/13 Add
-    // 如非 Local 模式，切換每頁時才呼叫 API 取得 log 資訊 
-    if ( !this.commonService.isLocal ) {
-      this.getFaultList();
-    }
   }
 
   /**
@@ -326,7 +307,7 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
 
     // 獲取小時，並確保是兩位數字
     const hours = String( date.getHours() ).padStart( 2, '0' );
- 
+  
     // 獲取分鐘，並確保是兩位數字
     const minutes = String( date.getMinutes() ).padStart( 2, '0');
 
@@ -337,57 +318,163 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 
-  // @2024/06/03 Add
+  // 將日期只保留年月日
+  extractDateOnly( dateTimeString: string ): string {
+    // 使用正則表達式匹配日期部分
+    const dateMatch = dateTimeString.match(/^\d{4}-\d{2}-\d{2}/);
+    
+    if (dateMatch) {
+        // 如果匹配成功，返回匹配到的日期部分
+        return dateMatch[0];
+    } else {
+        // 如果沒有匹配到合適的日期格式，拋出錯誤
+        throw new Error("Invalid date format. Expected format: YYYY-MM-DD HH:mm");
+    }
+  }
+
+           p: number = 1;  // 當前頁數
+    pageSize: number = 10; // 每頁幾筆
+  totalItems: number = 0;  // 總筆數
+
+  displayMode: string = '';
+  pageChanged( page: number ) {
+    this.p = page;
+    console.log( "Current faultList displayMode:", this.displayMode+", Page:", this.p );
+
+    // @2024/03/13 Add
+    // 如非 Local 模式，切換每頁時才呼叫 API 取得 log 資訊 
+    if ( !this.commonService.isLocal ) {
+      this.getFaultList();
+    }
+  }
+
+  // @2024/08/05 Update
   faultList: FaultList = {} as FaultList;
-  filteredFaultList: FaultMessages_new[] = [];
+
+  /**
+   * @2024/08/05 Update
+   * 用於控制顯示於頁面上 faultList 數據
+   * @property faultListToDisplay
+   * @description
+   *    - 返回 faultList 的數據，如果已進行搜尋，則顯示 filteredFaultList。
+   *    - 確保 faultList 和 faultList.faultMessage 存在。
+   */
+  get faultListToDisplay(): FaultMessages_new[] {
+    // 確保 faultList 和 faultList.faultMessage 存在
+    if (this.faultList && Array.isArray(this.faultList.faultMessage)) {
+      // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 filteredFaultList
+      return this.isSearch ? this.filteredFaultList : this.faultList.faultMessage;
+    }
+    return []; // 如果數據還沒有載入，則返回一個空數組
+  }
+
+  /**
+   * @2024/08/05 Update
+   * 獲取故障列表數據
+   * @method getFaultList
+   * @description
+   *    - 獲取並處理 faultList 數據。
+   *    - 根據搜尋條件向服務器發送請求，並根據結果更新 faultList。
+   */
   getFaultList() {
     console.log('getFaultList() - Start');
+    this.showLoadingSpinner(); // 顯示加載中的提示
 
-    clearTimeout( this.refreshTimeout );
+    clearTimeout( this.refreshTimeout ); // 清除刷新計時器
 
-   if ( this.commonService.isLocal ) {
-      /* local file test */
+    const method = 'desc'; // 設置請求方法為 'desc'
+    const params: any = {
+      method: method,
+      acktype: this.searchForm.get('situation')?.value, // 獲取情況篩選條件
+      offset: ( this.p - 1 ) * this.pageSize, // 頁數切換時，取得指定筆數的數據
+      limit: this.pageSize,                   // 設置每頁顯示的數量
+      orderby: 0,
+      orderbyDesc: 1
+    };
 
-      // 引入正確 local file @2024/06/03 Add 
+    const fieldName = this.searchForm.controls['fieldName'].value; // 獲取欄位名篩選條件
+    if ( fieldName && fieldName.value !== '' ) { // 如果 fieldName 存在且不為空
+      params.fieldname = fieldName; // 設置請求參數中的 fieldname
+    }
+
+    const bsName = this.searchForm.controls['BSName'].value; // 獲取基站名稱篩選條件
+    if ( bsName && bsName.value !== '' ) { // 如果 bsName 存在且不為空
+      params.bsname = bsName; // 設置請求參數中的 bsname
+    }
+
+    const compName = this.searchForm.controls['neName'].value; // 獲取公司名稱篩選條件
+    if ( compName && compName.value !== '' ) { // 如果 compName 存在且不為空
+      params.compname = compName; // 設置請求參數中的 compname
+    }
+
+    const fname = this.searchForm.controls['alarmName'].value; // 獲取警報名稱篩選條件
+    if ( fname && fname.value !== '' ) { // 如果 fname 存在且不為空
+      params.fname = fname; // 設置請求參數中的 fname
+    }
+
+    const urgency = this.searchForm.controls['severity'].value; // 獲取嚴重程度篩選條件
+    if ( urgency && urgency !== 'All' ) { // 如果 urgency 存在且不為 'All'
+      params.urgency = urgency; // 設置請求參數中的 urgency
+    }
+
+    // const ackType = this.searchForm.get('situation')?.value;
+    // if (ackType) {
+    //   params.acktype = ackType;
+    // }
+
+    const start = this.commonService.dealPostDate( this.searchForm.controls['from'].value ); // 獲取開始日期篩選條件
+    if ( start ) { // 如果 start 存在
+      params.start = this.extractDateOnly( start ); // 設置請求參數中的 start 日期
+    }
+
+    const end = this.commonService.dealPostDate( this.searchForm.controls['to'].value ); // 獲取結束日期篩選條件
+    if ( end ) { // 如果 end 存在
+      params.end = this.extractDateOnly( end ); // 設置請求參數中的 end 日期
+    }
+
+    console.log("POST BODY for get faultList:", params);
+
+    if ( this.commonService.isLocal ) {
+      // 本地文件測試
       this.faultList = this.faultList_LocalFiles.faultList_local;
       this.faultMessagesDeal();
-
+      this.hideSpinner(); // 隱藏加載提示
     } else {
-      const fieldName = this.searchForm.controls['fieldName'].value;
-      const BSName = this.searchForm.controls['BSName'].value;
-      const compName = this.searchForm.controls['neName'].value;
-      const alarmName = this.searchForm.controls['alarmName'].value;
-      const severity = this.searchForm.controls['severity'].value;
-      const start = this.commonService.dealPostDate(this.searchForm.controls['from'].value);
-      const end = this.commonService.dealPostDate(this.searchForm.controls['to'].value);
-      //const acknowledgeOwner = this.searchForm.controls['acknowledgeOwner'].value;
-      const offset = ( this.p - 1 ) * this.pageSize;
-      const limit = 10;
-
-      if ( this.queryCurrentAllFaultMessage ) this.queryCurrentAllFaultMessage.unsubscribe();
-      this.queryCurrentAllFaultMessage = this.API_Fault.queryCurrentAllFaultMessage({
-        fieldName, 
-        BSName, 
-        compName, 
-        alarmName, 
-        severity, 
-        start, 
-        end, 
-        offset, 
-        limit
-      }).subscribe(res => {
-        this.faultList = res;
-        this.faultMessagesDeal();
+      // 向服務器發送請求
+      this.queryCurrentFilterFaultMessage = this.API_Fault.queryCurrentFilterFaultMessage( params ).subscribe({
+        next: ( res ) => {
+          console.log('In queryCurrentFilterFaultMessage() - res:', res);
+          this.faultList = res;
+          this.faultMessagesDeal();
+        },
+        error: ( error ) => {
+          console.error('Error fetching fault messages:', error);
+          this.hideSpinner(); // 錯誤時隱藏加載提示
+        },
+        complete: () => {
+          console.log('Fault messages fetch completed');
+          this.hideSpinner(); // 完成後隱藏加載提示
+        }
       });
     }
 
     console.log('getFaultList() - End');
   }
-
+  
+  /**
+   * @2024/08/05 Update
+   * 處理 faultList 數據
+   * @method faultMessagesDeal
+   * @description
+   *    - 更新總消息數量並設置刷新計時器。
+   *    - 根據當前頁數決定是否刷新數據。
+   */
   faultMessagesDeal() {
     //this.p = 1;
-    this.totalItems = this.faultList.faultMessage.length;
-    this.nullList = new Array( this.totalItems );
+    this.totalItems = this.faultList.totalMessageNumber; // 更新總消息數量
+    this.nullList = new Array(this.totalItems); // 初始化空列表
+
+    // 設置刷新計時器
     this.refreshTimeout = window.setTimeout(() => {
       if ( this.p === 1 ) {
         console.log(`page[${this.p}] ===> refresh.`);
@@ -395,169 +482,255 @@ export class FaultManagementComponent implements OnInit, AfterViewInit, OnDestro
       } else {
         console.log(`page[${this.p}] ===> no refresh.`);
       }
-    }, 60000 ); // 設定 60000 ms ( 60s ) 後執行
-  }
-
-  get faultListToDisplay(): FaultMessages_new[] {
-    // 如 isSearch 為 true，則表示已經進行了搜尋，應該顯示 
-    // 否則，顯示全部 this.faultList.faultMessage
-    return this.isSearch ? this.filteredFaultList : this.faultList.faultMessage;
+    }, 60000); // 設定 60000 ms (60s) 後執行
   }
 
   selectedFaultMsg: FaultMessages_new = {} as FaultMessages_new;
   openFaultDetail( faultMessages: FaultMessages_new ) {
     // this.show200Msg = false;
     // this.show500Msg = false;
+    
     this.selectedFaultMsg = faultMessages;
 
-    this.getFMstatus().then((value) => {
-      this.statusModalRef = this.dialog.open(this.itemDetail, { id: 'itemDetail' });
-      this.statusModalRef.afterClosed().subscribe(() => {
+    this.statusModalRef = this.dialog.open(this.itemDetail, { id: 'itemDetail' });
+    this.statusModalRef.afterClosed().subscribe(() => {
 
-      });
-    });  
+    });
   }
 
+  /**
+   * @2024/08/05 Update
+   * 用於搜尋 faultList
+   * @property filteredFaultList
+   * @description
+   *    - 用於存儲篩選後的 faultList 數據。
+   *    - 當進行搜尋時，設置 isSearch 為 true。
+   */
+  filteredFaultList: FaultMessages_new[] = []; // 用於存儲篩選後的 faultList 數據
+  isSearch: boolean = false; // 標記是否進行了搜尋
+
+  /**
+   * @2024/08/05 Update
+   * 搜尋故障列表數據
+   * @method search
+   * @description
+   *    - 根據搜尋條件篩選 faultList 數據。
+   *    - 更新顯示的搜尋條件並發送請求。
+   */
   search() {
-    console.log( 'search() - Start' );
+    console.log('search() - Start');
+
+    // 確認 faultList 是否已加載
+    if (!this.faultList || !this.faultList.faultMessage) {
+      console.error('faultList.faultMessage is not loaded yet.');
+      return;
+    }
 
     // 更新顯示的搜尋條件
     this.afterSearchForm = this.searchForm.value;
 
     this.p = 1; // 當點擊搜尋時，將顯示頁數預設為 1
 
-    const field_name = this.searchForm.get('fieldName')?.value || '';
-    const BS_name = this.searchForm.get('BSName')?.value || '';
-    const ne_name = this.searchForm.get('neName')?.value || '';
-    const alarm_name = this.searchForm.get('alarmName')?.value || '';
-    const severity_lv = this.searchForm.get('severity')?.value;
-    const status_type = this.searchForm.get('status')?.value;
-    const situ_type = this.searchForm.get('situation')?.value;
-    const from = this.searchForm.get('from')?.value;
-    const to = this.searchForm.get('to')?.value;
-    const owner_name = this.searchForm.get('ackOwner')?.value || '';
-    console.log("seach field_name:", field_name);
+    const method = 'desc'; // 設置請求方法為 'desc'
+    const ackType = this.searchForm.get('situation')?.value; // 獲取情況篩選條件
+    const params: any = {
+      method: method,
+      acktype: ackType,
+      offset: ( this.p - 1 ) * this.pageSize, // 頁數切換時，取得指定筆數的數據
+      limit: this.pageSize, // 設置每頁顯示的數量
+      orderby: 0,
+      orderbyDesc: 1
+    };
 
-    // 格式化日期為所需的格式
-    const formattedFrom = this.commonService.dealPostDate(from);
-    const formattedTo = this.commonService.dealPostDate(to);
+    const fieldName = this.searchForm.get('fieldName')?.value; // 獲取欄位名篩選條件
+    if ( fieldName && fieldName.value !== '' ) { // 如果 fieldName 存在且不為空
+      params.fieldname = fieldName; // 設置請求參數中的 fieldname
+    }
+
+    const bsName = this.searchForm.get('BSName')?.value; // 獲取基站名稱篩選條件
+    if ( bsName && bsName.value !== '' ) { // 如果 bsName 存在且不為空
+      params.bsname = bsName; // 設置請求參數中的 bsname
+    }
+
+    const compName = this.searchForm.get('neName')?.value; // 獲取公司名稱篩選條件
+    if ( compName && compName.value !== '' ) { // 如果 compName 存在且不為空
+      params.compname = compName; // 設置請求參數中的 compname
+    }
+
+    const fname = this.searchForm.get('alarmName')?.value; // 獲取警報名稱篩選條件
+    if ( fname && fname.value !== '' ) { // 如果 fname 存在且不為空
+      params.fname = fname; // 設置請求參數中的 fname
+    }
+
+    const urgency = this.searchForm.get('severity')?.value; // 獲取嚴重程度篩選條件
+    if ( urgency && urgency !== 'All' ) { // 如果 urgency 存在且不為 'All'
+      params.urgency = urgency; // 設置請求參數中的 urgency
+    }
+
+    const statusType = this.searchForm.get('status')?.value; // 獲取狀態篩選條件
+    if ( statusType && statusType !== 'All' ) { // 如果 statusType 存在且不為 'All'
+      params.status = statusType; // 設置請求參數中的 status
+    }
+
+    // const ackType = this.searchForm.get('situation')?.value;
+    // if (ackType) {
+    //   params.acktype = ackType;
+    // }
+
+    const start = this.searchForm.get('from')?.value; // 獲取開始日期篩選條件
+    if ( start && start.value !== '' ) { // 如果 start 存在且不為空
+      params.start = this.extractDateOnly( this.commonService.dealPostDate( start ) ); // 設置請求參數中的 start 日期
+    }
+
+    const end = this.searchForm.get('to')?.value; // 獲取結束日期篩選條件
+    if ( end && end.value !== '' ) { // 如果 end 存在且不為空
+      params.end = this.extractDateOnly( this.commonService.dealPostDate( end ) ); // 設置請求參數中的 end 日期
+    }
+
+    console.log("POST BODY for searching fault:", params);
 
     // 清除以前的搜尋結果
     this.filteredFaultList = [];
     this.isSearch = false;
 
-    this.afterSearchForm = _.cloneDeep(this.searchForm); // 更新顯示的搜尋條件
+    /**
+     * 複製搜尋表單的值以便在搜尋後使用
+     * @method _.cloneDeep
+     * @description
+     *    - 使用 _.cloneDeep 函數深拷貝 searchForm 物件，以確保 afterSearchForm 的值不受後續操作影響。
+     *    - 用於顯示當下使用的搜尋條件給使用者查看。
+     */
+    this.afterSearchForm = _.cloneDeep( this.searchForm );
+
+    this.showProcessingSpinner(); // 顯示 Loading Spinner
 
     if ( this.commonService.isLocal ) {
-
-      /* local file test */
-
+      // 本地文件測試
       this.filteredFaultList = this.faultList.faultMessage.filter( msg => {
-        const isFieldMatch = !field_name || msg.fieldName.includes( field_name );
-        const isBSMatch = !BS_name || msg.bsName.includes( BS_name );
-        const isNEMatch = !ne_name || msg.compname.includes( ne_name );
-        const isAlarmMatch = !alarm_name || msg.probablecause.includes(alarm_name);
-        const isSeverityMatch = severity_lv === 'All' || msg.perceivedseverity === severity_lv;
-        const isStatusMatch = status_type === 'All' || msg.notificationtype === status_type;
-        const isSituMatch = situ_type === 'All' || msg.processstatus === situ_type;
-        const msgDate = new Date(msg.timestamp);
-        const isAfterFrom = msgDate >= new Date(formattedFrom);
-        const isBeforeTo = msgDate <= new Date(formattedTo);
-        //const isOwnerMatch = !owner_name || msg.acknowledgeOwner.includes(owner_name);
+        const isFieldMatch = !fieldName || msg.fieldName.includes( fieldName );
+        const isBSMatch = !bsName || msg.bsName.includes( bsName );
+        const isNEMatch = !compName || msg.compname.includes( compName );
+        const isAlarmMatch = !fname || msg.probablecause.includes( fname );
+        const isSeverityMatch = urgency === 'All' || msg.perceivedseverity === urgency;
+        const isStatusMatch = statusType === 'All' || msg.notificationtype === statusType;
+        const isSituMatch = ackType === 'All' || msg.processstatus === ackType;
+        const msgDate = new Date( msg.timestamp );
+        const isAfterFrom = !start || msgDate >= new Date( this.commonService.dealPostDate( start ) );
+        const isBeforeTo = !end || msgDate <= new Date( this.commonService.dealPostDate( end ) );
+        //const isOwnerMatch = !owner_name || msg.acknowledgeOwner.includes( owner_name );
 
-        return isFieldMatch && isBSMatch && isNEMatch && isAlarmMatch && isSeverityMatch 
-                && isStatusMatch && isSituMatch && isAfterFrom && isBeforeTo;
+        return isFieldMatch && isBSMatch && isNEMatch && isAlarmMatch && isSeverityMatch
+          && isStatusMatch && isSituMatch && isAfterFrom && isBeforeTo;
       });
-
       this.isSearch = true; // Local Search 完畢，設置標記為 true
+
       this.totalItems = this.filteredFaultList.length; // 確保更新 totalItems 以更新左下角統計數量，反映搜尋結果的數量
 
-    } else {
-      const params = {
-        fieldName: field_name,
-        BSName: BS_name,
-        compName: ne_name,
-        alarmName: alarm_name,
-        severity: severity_lv,
-        status: status_type,
-        situation: situ_type,
-        from: formattedFrom,
-        to: formattedTo,
-        offset: (this.p - 1) * this.pageSize,
-        limit: this.pageSize
-      };
+      console.log( "In search() in Local mode - faultListToDisplay:", this.faultListToDisplay );
 
-      this.queryCurrentAllFaultMessage = this.API_Fault.queryCurrentAllFaultMessage( params ).subscribe( res => {
-        this.filteredFaultList = res.faultMessage;
-        this.totalItems = res.totalMessageNumber;
-        this.isSearch = true;
-      });
+      this.hideSpinner(); // 隱藏加載提示
+
+    } else {
+
+      // 向服務器發送請求
+      this.queryCurrentFilterFaultMessage =
+        this.API_Fault.queryCurrentFilterFaultMessage( params ).subscribe({
+          next: ( res ) => {
+            console.log( 'In search() - res:', res );
+
+            this.filteredFaultList = res.faultMessage;
+            this.totalItems = res.totalMessageNumber;
+            this.isSearch = true; // Search 完畢，設置標記為 true，以便 faultListToDisplay 切換成顯示 filtered_UserLogs
+
+            // 輸出搜尋後顯示於頁面列表上的故障列表
+            console.log( "In search() - faultListToDisplay:", this.faultListToDisplay );
+          },
+          error: ( error ) => {
+            console.error('Error searching fault messages:', error); // 錯誤的 callback
+            this.hideSpinner(); // 錯誤時隱藏加載提示
+          },
+          complete: () => {
+            console.log('Fault message search completed'); // 完成的 callback
+            this.hideSpinner(); // 完成後隱藏加載提示
+          }
+        });
     }
 
     // 檢查搜尋表單的值
-    console.log( 'Search criteria for fault mgmt:', this.afterSearchForm.value );
+    console.log( 'Search criteria for Fault List:', this.afterSearchForm.value );
 
-    console.log( "search() - End" );
+    console.log("search() - End");
   }
 
+  /**
+   * @2024/08/05 Update
+   * 清除搜尋條件
+   * @method clear_search
+   * @description
+   *    - 重置搜尋表單並重載故障列表。
+   */
   clear_search() {
+    this.isSearch = false; // 設置 isSearch 為 false
 
-    this.isSearch = false;
-
-    this.searchForm.reset();
-    this.createSearchForm();
-    this.afterSearchForm = _.cloneDeep( this.searchForm );
+    this.searchForm.reset(); // 重置搜尋表單
+    this.createSearchForm(); // 重新創建搜尋表單
+    this.afterSearchForm = _.cloneDeep( this.searchForm ); // 複製搜尋表單的初始值( 用於顯示當下使用的搜尋條件 )
 
     this.p = 1; // 當點擊重置搜尋時，將顯示頁數預設為 1
 
-    this.getFaultList();
-  } 
+    this.getFaultList(); // 重新獲取故障列表
+  }
+
 
   openItemDetail( faultMessages: FaultMessages ) {
     // this.show200Msg = false;
     // this.show500Msg = false;
     this.selectedMsg = faultMessages;
 
-    this.getFMstatus().then((value) => {
-      this.statusModalRef = this.dialog.open(this.itemDetail, { id: 'itemDetail' });
-      this.statusModalRef.afterClosed().subscribe(() => {
+    this.statusModalRef = this.dialog.open(this.itemDetail, { id: 'itemDetail' });
+    this.statusModalRef.afterClosed().subscribe(() => {
 
-      });
-    });  
+    });
   }
 
+  modifySatus: 'PENDING' | 'RESOLVE' = 'PENDING';
+
   openStatusModal( faultMessages: FaultMessages_new ) {
-    if ( faultMessages.processstatus === 1 ) {
-
-      this.fmStatus = {} as FmStatus;
-      this.type = 'add_situation';
-      // this.show200Msg = false;
-      // this.show500Msg = false;
-
-      //this.selectedMsg = faultMessages;
-
-      this.selectedFaultMsg = faultMessages;
-      this.selectedHistories = this.selectedMsg.histories;
-
-      this.getFMstatus().then((value) => {
-        this.statusModalRef = this.dialog.open(this.statusModal, { id: 'fault_statusModal' });
-        this.statusModalRef.afterClosed().subscribe(() => {
-
-        });
-      });
+    this.fmStatus = {} as FmStatus;
+    this.type = 'add_situation';
+  
+    this.selectedFaultMsg = faultMessages;
+    this.selectedHistories = this.selectedMsg.histories;
+  
+    // 根據 processstatus 設置默認值
+    if ( this.selectedFaultMsg.processstatus === 1 || this.selectedFaultMsg.processstatus === '1' ) {
+      this.modifySatus = 'RESOLVE';
+    } else if (this.selectedFaultMsg.processstatus === '' || 
+               this.selectedFaultMsg.processstatus === 0 || 
+               this.selectedFaultMsg.processstatus === '0') {
+      this.modifySatus = 'PENDING';
+    } else {
+      // 如果 processstatus 不符合上述任何條件，可以設置一個默認值
+      this.modifySatus = 'PENDING';
     }
+  
+    this.getFaultProcessList();
+  
+    this.statusModalRef = this.dialog.open( this.statusModal, { id: 'fault_statusModal' } );
+    this.statusModalRef.afterClosed().subscribe(() => {
+      // 關閉後的操作
+    });
   }
 
   type: string = 'add_situation';
   changeType( e: MatButtonToggleChange ) {
     console.log( this.type );
     if ( this.type === 'add_situation' ) {
-      //this.getFMstatus();
+
     } else {
-      this.getFaultProcessList();
+      // this.getFaultProcessList();
     }
   }
-
 
   faultProcessList: FaultProcessList = {} as FaultProcessList;
   isLoadingFaultProcessList = true;    // 表示是否正在加載 "處理狀況" 歷史列表

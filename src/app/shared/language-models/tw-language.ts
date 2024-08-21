@@ -659,7 +659,7 @@ export const TwLanguage = {
   'cm.BS' : '基站',
   'cm.bsInUseCannotDelete': '有基站使用中，無法刪除。',
   'cm.belongBS':'隸屬基站',
-
+  'cm.alarms':'網元告警',
   
   // Account Management (帳號管理)
   'user_account':'帳號',
