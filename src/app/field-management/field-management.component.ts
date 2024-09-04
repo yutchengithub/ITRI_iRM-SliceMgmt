@@ -136,7 +136,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
   // queryFieldList 用於管理 HTTP 的訂閱請求，'!' 確保在使用前已賦值。
   queryFieldList!: Subscription;  // @11/30 Add by yuchen
 
-  /** @2024/06/24 Update by yuchen
+  /** @2024/09/05 Update by yuchen
    *  用於獲取場域列表。
    *  根據是否處於 Local 模式，它會從 Local 文件或通過 API 從伺服器獲取場域資訊。
    */
@@ -151,6 +151,7 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 
       //  Local 模式: 使用 Local 文件提供的數據
       this.fieldList = this.fieldList_LocalFiles.fieldList_local;
+      this.FieldListDeal(); // 調用處理函數，進行數據處理（如分頁）
       console.log( 'In local - getQueryFieldList:', this.fieldList );
 
       this.isLoading = false; //  Local 模式下，數據加載快速完成，直接設置為 false
