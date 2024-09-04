@@ -1285,13 +1285,3 @@ export class FieldManagementComponent implements OnInit, OnDestroy {
 // For Field Snapshot Set @2024/03/07 Update by yuchen ↑
 
 }
-
-// 此頁面開發完會刪除
-export interface OCloudList {
-  id: string;
-  name: string;
-  dmsCount: number;
-  nfCount: number;
-  imsEndpoint: string;
-  deployStatus: string;
-}

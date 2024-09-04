@@ -3,11 +3,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { OCloudList } from '../field-management/field-management.component';
-import { Nf } from '../nf-management/nf-management.component';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import { OCloudPerformanceComponent } from './o-cloud-performance/o-cloud-performance.component';
-import { NfPerformanceComponent } from './nf-performance/nf-performance.component';
 import * as _ from 'lodash';
 
 // Services
@@ -33,14 +29,10 @@ export class PerformanceManagementComponent implements OnInit {
   pageSize: number = 5;    // 每頁幾筆
   totalItems: number = 0;  // 總筆數
 
-  @ViewChild('oCloudPerformanceComponent') oCloudPerformanceComponent!: OCloudPerformanceComponent;
-  @ViewChild('NfPerformanceComponent') nfPerformanceComponent!: NfPerformanceComponent;
   refreshTimeout!: any;
   refreshTime: number = 300;
   searchForm!: FormGroup;
   
-  ocloudList: OCloudList[] = [];
-  nfList: Nf[] = [];
   afterSearchOcloudId = '';
   afterSearchOcloudName = '';
   afterSearchNfId = '';

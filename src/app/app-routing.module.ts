@@ -27,9 +27,7 @@ import { ComponentInfoComponent }       from './component-management/component-i
 import { FaultManagementComponent } from './fault-management/fault-management.component';  
 
 // 效能管理 頁
-import { PerformanceManagementComponent } from './performance-management/performance-management.component';  
-import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
-import { NfPerformanceInfoComponent }     from './performance-management/nf-performance-info/nf-performance-info.component';
+import { PerformanceManagementComponent } from './performance-management/performance-management.component';
 
 // 切片管理 頁 @2024/05/03 Add by Yuchen
 import { SliceManagementComponent } from './slice-management/slice-management.component';     
@@ -49,10 +47,6 @@ import { LogManagementComponent }     from './log-management/log-management.comp
 // 帳號管理 頁
 import { AccountManagementComponent } from './account-management/account-management.component';      
 import { AccountInfoComponent }       from './account-management/account-info/account-info.component';
-
-// O2 的 ( 最後刪掉 )
-import { NfManagementComponent } from './nf-management/nf-management.component';   // NF 管理
-import { NfInfoComponent }       from './nf-management/nf-info/nf-info.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -126,15 +120,7 @@ const routes: Routes = [
           { path: '', component: AccountManagementComponent },
           { path: 'info/:cloudId/:cloudName', component: AccountInfoComponent }
         ]
-      },
-      { 
-        path: 'nf-mgr', children: [
-          { path: '', component: NfManagementComponent },
-          { path: 'info/:nfId/:dmsId', component: NfInfoComponent },
-        ]
-      },
-      { path: 'o-cloud-performance-info/:cloudId/:name', component: OCloudPerformanceInfoComponent },
-      { path: 'nf-performance-info/:nfId/:name', component: NfPerformanceInfoComponent }
+      }
     ]
   },
 ];

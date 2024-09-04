@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-// 底畫面 ( 網頁整體最下層有 Bar 那塊 )
+// 底畫面 ( 網頁整體最底層有 Bar 那塊 )
 import { MainComponent } from './main/main.component';
 
 // 登入畫面
@@ -32,9 +32,7 @@ import { ComponentInfoComponent } from './component-management/component-info/co
 import { FaultManagementComponent } from './fault-management/fault-management.component';  
 
 // 效能管理 頁
-import { PerformanceManagementComponent } from './performance-management/performance-management.component';  
-import { OCloudPerformanceInfoComponent } from './performance-management/o-cloud-performance-info/o-cloud-performance-info.component';
-import { NfPerformanceInfoComponent } from './performance-management/nf-performance-info/nf-performance-info.component';
+import { PerformanceManagementComponent } from './performance-management/performance-management.component';
 
 // 切片管理 頁 @2024/05/03 Add by Yuchen
 import { SliceManagementComponent } from './slice-management/slice-management.component';     
@@ -54,12 +52,6 @@ import { LogManagementComponent } from './log-management/log-management.componen
 // 帳號管理 頁
 import { AccountManagementComponent } from './account-management/account-management.component';      
 import { AccountInfoComponent } from './account-management/account-info/account-info.component';
-
-// O2 的 ( 最後刪掉 )
-import { NfManagementComponent } from './nf-management/nf-management.component';      // NF管理
-import { NfInfoComponent } from './nf-management/nf-info/nf-info.component';
-import { NfPerformanceComponent } from './performance-management/nf-performance/nf-performance.component';
-import { OCloudPerformanceComponent } from './performance-management/o-cloud-performance/o-cloud-performance.component';
 
 import { DxCircularGaugeModule } from 'devextreme-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -198,18 +190,11 @@ import { localUnusedNEList }    from './shared/local-files/NE/For_queryUnusedNeL
     AccountInfoComponent,
     
     // Pipe 管道
-    TruncatePipe, // @11/16 Add by yuchen 
-    FilterByPipe, // @2024/03/27 Add by yuchen 
+    TruncatePipe,       // @11/16 Add by yuchen 
+    FilterByPipe,       // @2024/03/27 Add by yuchen 
     ParsePositionPipe,  // @2024/04/14 Add
 
     DatePickerFormatDirective,
-
-    NfManagementComponent,
-    NfInfoComponent,
-    NfPerformanceComponent,
-    NfPerformanceInfoComponent,
-    OCloudPerformanceComponent,
-    OCloudPerformanceInfoComponent
   ],
   imports: [
     BrowserModule,

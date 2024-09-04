@@ -17,7 +17,7 @@ export class MainComponent implements OnInit {
   title = 'Dashboard';
 
   page: 'dashboard' | 'component-management' | 'field-management' | 'bs-management' /* @12/27 Add by yuchen */ | 'fault-management' | 'performance-management' | 'slice-management' /* @2024/05/03 Add by yuchen */ |
-   'software-management' | 'schedule-management' /* @11/20 Add by yuchen */ | 'log-management' /* @10/25 Add by yuchen */ | 'account-management' | 'nf-management' = 'dashboard';
+   'software-management' | 'schedule-management' /* @11/20 Add by yuchen */ | 'log-management' /* @10/25 Add by yuchen */ | 'account-management' = 'dashboard';
   styles: style[] = [
     { displayName: 'Dark Style', value: 'black' },
     { displayName: 'Light Style', value: 'bright' }
@@ -35,8 +35,7 @@ export class MainComponent implements OnInit {
     'software-management': '/main/software-mgr',
     'schedule-management': '/main/schedule-mgr',   // @11/20 Add by yuchen
     'log-management': '/main/log-mgr',             // @10/25 Add by yuchen
-    'account-management': '/main/account-mgr',
-    'nf-management': '/main/nf-mgr'
+    'account-management': '/main/account-mgr'
   }
   userRole: number | null = null;
   constructor(private router: Router, private route: ActivatedRoute, private commonService: CommonService, public languageService: LanguageService) { }
@@ -58,8 +57,8 @@ export class MainComponent implements OnInit {
       }
     });
 
-    // 初始時根據語言加載對應的樣式表 @2024/01/24 Add
-    //this.languageService.changeLanguageStylesheet( this.languageService.language );
+    // 初始構建時根據語言加載對應的樣式表 @2024/01/24 Add
+    // this.languageService.changeLanguageStylesheet( this.languageService.language );
 
     // init menu foucs
     this.reloadTitle( this.router.url );
@@ -115,9 +114,6 @@ export class MainComponent implements OnInit {
     } else if ( routerUrl.indexOf('/main/account-mgr') >= 0 ) {
       this.title = 'Account Management';
       this.page = 'account-management';
-    } else if ( routerUrl.indexOf('/main/nf-mgr') >= 0 ) {
-      this.title = 'NF List';
-      this.page = 'nf-management';
     }
   }
 
