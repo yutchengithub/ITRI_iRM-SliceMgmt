@@ -55,8 +55,8 @@
           </ul>
         </td>
       </tr>    
-      <!-- @2024/06/26 Add -->
-      <tr class="notFind" *ngIf="fieldList.fields.length === 0">
+      <!-- fieldList.fields.length -> totalItems @2024/09/04 Update -->
+      <tr class="notFind" *ngIf="totalItems === 0">
         <td colspan="12">{{ languageService.i18n['pm.noPerformanceInfo'] }}</td>
       </tr>
     </tbody>

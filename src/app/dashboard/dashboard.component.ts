@@ -138,8 +138,9 @@ export class DashboardComponent implements OnInit {
       /* local file test */
 
       this.fieldList = this.fieldList_LocalFiles.fieldList_local;
+      this.FieldListDeal(); // 調用處理函數，進行數據處理
 
-      this.isFieldListLoading = false; //  Local 模式下，數據加載快速完成，直接設置為 false
+      //this.isFieldListLoading = false; //  Local 模式下，數據加載快速完成，直接設置為 false
       this.hideSpinner();  // 完成後隱藏 spinner
 
     } else {
@@ -151,12 +152,25 @@ export class DashboardComponent implements OnInit {
 
           console.log( 'queryFieldList:', res );
           this.fieldList = res as FieldList;
+          this.FieldListDeal(); // 調用處理函數，進行數據處理
 
-          this.isFieldListLoading = false; // 數據加載完成
+          //this.isFieldListLoading = false; // 數據加載完成
           this.hideSpinner();  // 完成後隱藏 spinner
         }
       );
     }
+  }
+  
+  totalItems: number = 0;    // 總筆數 - 整個數據集的總條目數，用於計算分頁總數。
+  FieldListDeal() {
+
+    // 輸出檢查點 - 打印場域列表的長度
+    console.log('Field list length:', this.fieldList.fields?.length);
+
+    // 計算 fields 數組中元素的數量，即場域的總數
+    // 使用可選鏈和空值合併運算符來避免 undefined 或 null
+    this.totalItems = this.fieldList.fields?.length || 0;
+    console.log('Total items:', this.totalItems);
   }
 
   ueNumList: string[] = [];

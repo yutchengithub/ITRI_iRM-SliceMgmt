@@ -29,9 +29,9 @@ import { localFieldList }   from '../shared/local-files/Field/For_queryFieldList
 
 export class PerformanceManagementComponent implements OnInit {
   sessionId: string = '';
-  p: number = 1;            // 當前頁數
+  p: number = 1;           // 當前頁數
   pageSize: number = 5;    // 每頁幾筆
-  totalItems: number = 0;   // 總筆數
+  totalItems: number = 0;  // 總筆數
 
   @ViewChild('oCloudPerformanceComponent') oCloudPerformanceComponent!: OCloudPerformanceComponent;
   @ViewChild('NfPerformanceComponent') nfPerformanceComponent!: NfPerformanceComponent;
@@ -132,8 +132,9 @@ export class PerformanceManagementComponent implements OnInit {
 
       /* local file test */
       this.fieldList = this.fieldList_LocalFiles.fieldList_local;
+      this.FieldListDeal(); // 調用處理函數，進行數據處理
 
-      this.hideSpinner();  // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
+      this.hideSpinner();   // 因為 Local 模式數據加載通常很快，所以立即隱藏 spinner
 
     } else {
 
@@ -143,11 +144,23 @@ export class PerformanceManagementComponent implements OnInit {
           
           console.log( 'queryFieldList:', res );
           this.fieldList = res as FieldList;
+          this.FieldListDeal(); // 調用處理函數，進行數據處理
 
           this.hideSpinner();  // 完成後隱藏 spinner
         }
       );
     }
+  }
+
+  FieldListDeal() {
+
+    // 輸出檢查點 - 打印場域列表的長度
+    console.log('Field list length:', this.fieldList.fields?.length);
+
+    // 計算 fields 數組中元素的數量，即場域的總數
+    // 使用可選鏈和空值合併運算符來避免 undefined 或 null
+    this.totalItems = this.fieldList.fields?.length || 0;
+    console.log('Total items:', this.totalItems);
   }
 
   changeType( e: MatButtonToggleChange ) {

@@ -72,8 +72,8 @@
           <mat-icon tooltip="{{languageService.i18n['delItem']}}" (click)="openDelectModal(opt)">delete_forever</mat-icon>
         </td>
       </tr>
-      <!-- @2024/06/23 Add by yuchen -->
-      <tr class="notFind" *ngIf="msgToDisplay.length === 0">
+      <!-- msgToDisplay.length -> totalItems @2024/09/04 Update -->
+      <tr class="notFind" *ngIf="totalItems === 0">
         <td colspan="12">{{ languageService.i18n['no_results'] }}</td>
       </tr>
     </tbody>
