@@ -1,8 +1,7 @@
-
 <div class="ocloudInfo">
 	<h5>
 		<button (click)="back()">
-		  <span class="material-icons back">arrow_back</span>{{ languageService.i18n['back'] }}
+			<span class="material-icons back">arrow_back</span>{{ languageService.i18n['back'] }}
 		</button>
 
 		<!-- <span>{{languageService.i18n['field.info']}} – {{fieldName}}</span> -->
@@ -16,7 +15,8 @@
 
 			<!-- 如非地圖模式，就隱藏 @12/13 ADD *ngIf="showMapModel --> <!-- 新增非激活狀態對應顯示之 Button 樣式 @2024/01/15 Add -->
 			<button mat-button *ngIf="showMapModel" [ngClass]="{'button-active': activeButton_fieldImage === 'fieldImage', 
-																	'button-inactive': activeButton_fieldImage !== 'fieldImage'}" (click)="setActiveButton_fieldImage('fieldImage')">
+																	'button-inactive': activeButton_fieldImage !== 'fieldImage'}"
+				(click)="setActiveButton_fieldImage('fieldImage')">
 				<mat-icon>photo_camera_back</mat-icon>
 				<span class="material-symbols-outlined">done</span>
 				{{ languageService.i18n['field.image'] }}
@@ -45,12 +45,13 @@
 				<span class="material-symbols-outlined">done</span>
 				{{ languageService.i18n['field.sinrMap'] }}
 			</button>
-			  
+
 			<!-- @12/12 Add button with a menu -->
 			<!-- 常駐顯示 -->
-			<button mat-icon-button class="more" [matMenuTriggerFor]="menu" aria-label="icon-button with a menu" tooltip="{{ languageService.i18n['field.MapOption'] }}"
-					[class.button-active]="activeButton_menu === 'menu'" (click)="setActiveButton_menu('menu')">
-					<span class="material-symbols-outlined">more_horiz</span>
+			<button mat-icon-button class="more" [matMenuTriggerFor]="menu" aria-label="icon-button with a menu"
+				tooltip="{{ languageService.i18n['field.MapOption'] }}"
+				[class.button-active]="activeButton_menu === 'menu'" (click)="setActiveButton_menu('menu')">
+				<span class="material-symbols-outlined">more_horiz</span>
 			</button>
 			<mat-menu #menu="matMenu">
 				<!-- Field Configuration @2024/01/11 Update -->
@@ -58,36 +59,51 @@
 					<!-- <mat-icon>build_circle</mat-icon> -->
 					<span>{{ languageService.i18n['field.config'] }}</span>
 				</h3>
-					<button mat-menu-item (click)="openfieldEditWindow()">
-						<span class="material-symbols-outlined">
-							tune
-						</span>
-						<span>{{ languageService.i18n['field.edit'] }}</span>
-					</button>
-					<!-- 新增場域圖片編輯的選單  @2024/04/18 Add -->
-					<!-- <button mat-menu-item (click)="openFieldImageEditWindow()">
+				<button mat-menu-item (click)="openfieldEditWindow()">
+					<span class="material-symbols-outlined">
+						tune
+					</span>
+					<span>{{ languageService.i18n['field.edit'] }}</span>
+				</button>
+				<!-- 新增場域圖片編輯的選單  @2024/04/18 Add -->
+				<!-- <button mat-menu-item (click)="openFieldImageEditWindow()">
 						<span class="material-symbols-outlined">image</span>
 						<span>{{ languageService.i18n['field.fieldImageEdit'] }}</span>
 					</button> -->
-					<!-- PM Parameter Setting @2024/02/05 Update -->
-					<button mat-menu-item (click)="openPMgmtParameterSetWindow()">
-						<span class="material-symbols-outlined">
-							tune
-						</span>
-						<span>{{ languageService.i18n['field.configPMset'] }}</span>
-					</button>
-	
+				<!-- PM Parameter Setting @2024/02/05 Update -->
+				<button mat-menu-item (click)="openPMgmtParameterSetWindow()">
+					<span class="material-symbols-outlined">
+						tune
+					</span>
+					<span>{{ languageService.i18n['field.configPMset'] }}</span>
+				</button>
+				<!-- Slice Configuration @2024/09/06 Add -->
+				<!-- <button mat-menu-item>
+					<span class="material-symbols-outlined">
+						tune
+					</span>
+					<span>Slice Configuration</span>
+				</button> -->
+
+				<!-- Slice Creation @2024/09/06 Add -->
+				<!-- <button mat-menu-item>
+					<span class="material-symbols-outlined">
+						tune
+					</span>
+					<span>Slice Creation</span>
+				</button> -->
+
 				<!-- Field Reports -->
 				<h3>
-				  <!-- <mat-icon>report</mat-icon> -->
-				  <span>{{ languageService.i18n['field.report'] }}</span>
+					<!-- <mat-icon>report</mat-icon> -->
+					<span>{{ languageService.i18n['field.report'] }}</span>
 				</h3>
-					<button mat-menu-item (click)="openfieldPMReportWindow()">
-						<span class="material-symbols-outlined">
-							wysiwyg
-						</span>
-						<span>{{ languageService.i18n['field.performance'] }}</span>
-					</button>
+				<button mat-menu-item (click)="openfieldPMReportWindow()">
+					<span class="material-symbols-outlined">
+						wysiwyg
+					</span>
+					<span>{{ languageService.i18n['field.performance'] }}</span>
+				</button>
 				<!-- @12/13 Add click goFaultMgr() -->
 				<!-- <button mat-menu-item (click)="goFaultMgr()">
 					<span class="material-symbols-outlined">
@@ -96,37 +112,94 @@
 					<span>{{ languageService.i18n['field.reportFM'] }}</span>
 				</button> -->
 
+				<!-- Slice Performance @2024/09/06 Add -->
+				<!-- <button mat-menu-item>
+					<span class="material-symbols-outlined">
+						wysiwyg
+					</span>
+					<span>Slice Performance</span>
+				</button> -->
+
 				<!-- Field Optimization -->
 				<h3>
 					<!-- <mat-icon>settings_suggest</mat-icon> -->
 					<span>{{ languageService.i18n['field.optim'] }}</span>
 				</h3>
-					<button mat-menu-item (click)="openfieldOptimizationWindow()">
-						<span class="material-symbols-outlined">
-							play_circle
-						</span>
-						<span>{{ languageService.i18n['field.optimSON'] }}</span>
-					</button>
+				<button mat-menu-item (click)="openfieldOptimizationWindow()">
+					<span class="material-symbols-outlined">
+						play_circle
+					</span>
+					<span>{{ languageService.i18n['field.optimSON'] }}</span>
+				</button>
+				<!-- Slice Optimization @2024/09/06 Add -->
+				<!-- <button mat-menu-item>
+					<span class="material-symbols-outlined">
+						play_circle
+					</span>
+					<span>Slice Optimization</span>
+				</button> -->
 
-				<!-- Mode Switch @2024/04/12 Add -->
+				<!-- Slice Configuration @2024/09/06 Add -->
+				<h3>
+					<span>Slice Management</span>
+					<!-- <mat-icon>add_circle_outline</mat-icon> -->
+				</h3>
+
+				<!-- Slice Creation @2024/09/06 Add -->
+				<!-- <button mat-menu-item>
+					<span class="material-symbols-outlined">
+						tune
+					</span>
+					<span>Slice Creation</span>
+				</button> -->
+				<!-- Slice List @2024/09/06 Add -->
+				<button mat-menu-item>
+					<mat-icon>table_rows</mat-icon>
+					<span>Slice List</span>
+				</button>
+
+				<!-- Slice Performance @2024/09/06 Add -->
+				<button mat-menu-item>
+					<span class="material-symbols-outlined">
+						wysiwyg
+					</span>
+					<span>Slice Performance</span>
+				</button>
+
+				<!-- Slice Optimization @2024/09/06 Add -->
+				<!-- <button mat-menu-item>
+									<span class="material-symbols-outlined">
+										play_circle
+									</span>
+									<span>Slice Optimization</span>
+								</button> -->
+
+
+				<!-- Mode Switch @2024/09/06 Update -->
 				<h3>
 					<!-- <mat-icon>settings_suggest</mat-icon> -->
 					<span>{{ languageService.i18n['field.modeSwitch'] }}</span>
 				</h3>
-					<!-- 當 showMapModel 為 true 時顯示 BS 列表按鈕 @12/13 Add -->
-					<button mat-menu-item *ngIf="showMapModel" (click)="toggleMenuButton()">
-							<mat-icon svgIcon="BaseStation" class="svg-icon_BS"></mat-icon>
-							<span>{{ languageService.i18n['field.bsList'] }}</span>
-					</button>
+				<!-- 當 showMapModel 為 true 時顯示 BS 列表按鈕 @12/13 Add -->
+				<button mat-menu-item *ngIf="showMapModel" (click)="toggleMenuButton()">
+					<mat-icon svgIcon="BaseStation" class="svg-icon_BS"></mat-icon>
+					<span>{{ languageService.i18n['field.bsList'] }}</span>
+				</button>
 
-					<!-- 當 showMapModel 為 false 時顯示地圖模式按鈕 @12/13 Add -->
-					<button mat-menu-item *ngIf="!showMapModel" (click)="toggleMenuButton()">
-							<mat-icon>place</mat-icon>
-							<span>{{ languageService.i18n['field.mapModel'] }}</span>
-					</button>
+				<!-- 當 showMapModel 為 false 時顯示地圖模式按鈕 @12/13 Add -->
+				<button mat-menu-item *ngIf="!showMapModel" (click)="toggleMenuButton()">
+					<mat-icon>place</mat-icon>
+					<span>{{ languageService.i18n['field.mapModel'] }}</span>
+				</button>
+
+				<!-- Slice List @2024/09/06 Add -->
+				<!-- <button mat-menu-item>
+					<mat-icon>table_rows</mat-icon>
+					<span>Slice List</span>
+				</button> -->
 
 			</mat-menu>
-					
+
 			<!-- 告警鈴鐺 -->
 			<span (click)="goFaultMgr()" class="badge" tooltip="{{ languageService.i18n['field.faultInfo'] }}">
 				<!-- 顯示 CRITICAL 告警的數量，如果大於 99 則顯示 99+ -->
@@ -135,21 +208,22 @@
 				<span class="material-symbols-outlined">notifications</span>
 				<!-- 滑鼠懸停時顯示的告警詳情信息 -->
 				<div class="hoverInfo">
-				<!-- 循環遍歷每種嚴重程度的告警並顯示其百分比和數量 -->
-				<span class="percent {{ severityText_forCSS(severity) }}" *ngFor="let severity of severitys; let i = index">
-					<!-- 顯示告警種類的文字 -->
-					<label>{{ severityText( severity ) }}</label>
-					<!-- 顯示對應告警種類的數量 -->
-					<span>{{ severityCount( severity ) }}</span>
-				</span>
+					<!-- 循環遍歷每種嚴重程度的告警並顯示其百分比和數量 -->
+					<span class="percent {{ severityText_forCSS(severity) }}"
+						*ngFor="let severity of severitys; let i = index">
+						<!-- 顯示告警種類的文字 -->
+						<label>{{ severityText( severity ) }}</label>
+						<!-- 顯示對應告警種類的數量 -->
+						<span>{{ severityCount( severity ) }}</span>
+					</span>
 				</div>
 			</span>
 
 		</span>
 	</h5>
-	
+
 	<div class="main_content">
-		
+
 		<div class="left_area">
 			<!-- Field Map (場域地圖) -->
 			<div class="mapWindow">
@@ -158,13 +232,14 @@
 					<span class="title-container" *ngIf="showMapModel"></span>
 					<!-- <span class="title-container" *ngIf="!showMapModel">{{ languageService.i18n['field.bsList'] }}</span> -->
 				</label>
-				
+
 				<!-- 只有當 showMapModel 變量為 true 時，場域 Google Maps 才會顯示 -->
-				<google-map *ngIf="showMapModel" width="100%" height="52em" [center]="center" [options]="mapOptions" id="google-map-container" #For_IRM_FieldMap>
-		
+				<google-map *ngIf="showMapModel" width="100%" height="52em" [center]="center" [options]="mapOptions"
+					id="google-map-container" #For_IRM_FieldMap>
+
 					<!-- 如果 polyPath 陣列長度大於 0，則顯示多邊形 -->
 					<map-polygon *ngIf="polyPath.length > 0" [paths]="polyPath" [options]="polyOptions"></map-polygon>
-					
+
 					<!-- @2024/02/28 Update -->
 					<!-- 迭代 allSimplifiedBsInfo 陣列中的基站資訊，為每一個基站創建地圖標記 -->
 					<!-- 設置標記位置，圖標，並在點擊、滑鼠懸停和滑鼠移出時處理事件 -->
@@ -174,16 +249,13 @@
 					<!-- (mapMouseover) - 滑鼠懸停時顯示基站資訊 -->
 					<!--  (mapMouseout) - 滑鼠移出時隱藏基站資訊 -->
 					<!--  	 (mapClick) - 點擊標記時觸發選擇基站資訊的函數 -->
-					<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" 
-								#markerElem="mapMarker"  
-								[position]="parsePosition(bsInfo.position)"  
-								[icon]="bsInfo.iconUrl"
-								(mapMouseover)="onMouseOverBsInfo( markerElem, bsInfo )"
-								(mapMouseout)="onMouseOutBsInfo()"
-								(mapClick)="onSelectBsInfo( markerElem, bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">
+					<map-marker *ngFor="let bsInfo of allSimplifiedBsInfo" #markerElem="mapMarker"
+						[position]="parsePosition(bsInfo.position)" [icon]="bsInfo.iconUrl"
+						(mapMouseover)="onMouseOverBsInfo( markerElem, bsInfo )" (mapMouseout)="onMouseOutBsInfo()"
+						(mapClick)="onSelectBsInfo( markerElem, bsInfo, bsInfo.name, bsInfo.bstype, bsInfo.status )">
 					</map-marker>
 
-					<!-- Google Maps APIs Mouseover 視窗 @2024/06/21 Update -->	
+					<!-- Google Maps APIs Mouseover 視窗 @2024/06/21 Update -->
 					<!-- 在 Google 地圖的資訊視窗中使用 Angular Material 的摺疊面板 -->
 					<map-info-window>
 						<!-- 判斷是否有基站資訊可顯示 -->
@@ -194,15 +266,16 @@
 								<mat-expansion-panel-header class="custom-panel-header" (click)="togglePanel()">
 									<!-- 顯示基站的名稱 -->
 									<mat-panel-title class="custom-panel-title">
-									  {{ displayBsInfo_for_googleMapInfoWindow.name }}
+										{{ displayBsInfo_for_googleMapInfoWindow.name }}
 									</mat-panel-title>
 									<!-- 顯示基站的類型，根據 bstype 屬性顯示不同的文字 -->
 									<mat-panel-description class="custom-panel-description">
-									  {{ displayBsInfo_for_googleMapInfoWindow.bstype === 1 ? 'All-in-one: [CU + DU + RU]' : 'Disaggregated: [CU] + [DU] + [RU]' }}
-									  <!-- {{ displayBsInfo_for_googleMapInfoWindow.bstype === 1 ? languageService.i18n['BS.all-in-one'] : languageService.i18n['BS.dist'] }} -->
+										{{ displayBsInfo_for_googleMapInfoWindow.bstype === 1 ? 'All-in-one: [CU + DU +
+										RU]' : 'Disaggregated: [CU] + [DU] + [RU]' }}
+										<!-- {{ displayBsInfo_for_googleMapInfoWindow.bstype === 1 ? languageService.i18n['BS.all-in-one'] : languageService.i18n['BS.dist'] }} -->
 									</mat-panel-description>
 								</mat-expansion-panel-header>
-								  
+
 								<!-- 當面板展開時顯示的詳細資訊 -->
 								<ul class="custom-panel-content">
 									<!-- 顯示經度資訊 -->
@@ -237,17 +310,24 @@
 									</li>
 									<li>
 										<label>PLMN ID: </label>
-										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc === 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc === 'none' ">
+										<span
+											*ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc === 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc === 'none' ">
 											{{ languageService.i18n['field.none'] }}
 										</span>
-										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc === 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc !== 'none' ">
-											{{ languageService.i18n['field.none'] }} {{ displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc }}
+										<span
+											*ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc === 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc !== 'none' ">
+											{{ languageService.i18n['field.none'] }} {{
+											displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc }}
 										</span>
-										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc !== 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc === 'none' ">
-											{{ displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc }} {{ languageService.i18n['field.none'] }} 
+										<span
+											*ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc !== 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc === 'none' ">
+											{{ displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc }} {{
+											languageService.i18n['field.none'] }}
 										</span>
-										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc !== 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc !== 'none' ">
-											{{ displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc }}{{ displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc }}
+										<span
+											*ngIf="displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc !== 'none' && displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc !== 'none' ">
+											{{ displayBsInfo_for_googleMapInfoWindow['plmn-id'].mcc }}{{
+											displayBsInfo_for_googleMapInfoWindow['plmn-id'].mnc }}
 										</span>
 									</li>
 									<li>
@@ -267,8 +347,8 @@
 										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['nrarfcn-ul'] === -1 ">
 											{{ languageService.i18n['field.none'] }}
 										</span>
-									</li> 
-									<li> 
+									</li>
+									<li>
 										<label>NR-ARFCN-DL: </label>
 										<span *ngIf="displayBsInfo_for_googleMapInfoWindow['nrarfcn-dl'] !== -1 ">
 											{{ displayBsInfo_for_googleMapInfoWindow['nrarfcn-dl'] }}
@@ -281,19 +361,19 @@
 							</mat-expansion-panel>
 						</mat-accordion>
 					</map-info-window>
-					  
+
 					<!-- 圖例 -->
 					<div class="map-legend">
 						<div>
-						<img src="/assets/img/bs_icons_v3/gnb_online_nonselected.png">
-						<span>{{ languageService.i18n['field.legend_all-in-one_bs'] }}</span>
+							<img src="/assets/img/bs_icons_v3/gnb_online_nonselected.png">
+							<span>{{ languageService.i18n['field.legend_all-in-one_bs'] }}</span>
 						</div>
 						<div>
-						<img src="/assets/img/bs_icons_v3/dist_gnb_online_default.png">
-						<span>{{ languageService.i18n['field.legend_dist_bs'] }}</span>
+							<img src="/assets/img/bs_icons_v3/dist_gnb_online_default.png">
+							<span>{{ languageService.i18n['field.legend_dist_bs'] }}</span>
 						</div>
 					</div>
-					
+
 				</google-map>
 
 				<!-- 自製 BS 詳細資訊顯示窗 ( MouseOver ) @2024/02/29 Update -->
@@ -322,7 +402,7 @@
 							<span>{{ displayBsInfoPosition.lat }}</span>
 						</li>
 						<!-- 以下資訊在按鈕點擊後才顯示 -->
-    					<div *ngIf="isAdditionalInfoVisible">
+						<div *ngIf="isAdditionalInfoVisible">
 							<li>
 								<label>PCI: </label>
 								<span>{{ displayBsInfo.pci }}</span>
@@ -350,7 +430,8 @@
 								<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
 							</li>
 						</div>
-						<button mat-icon-button tooltip="{{languageService.i18n['field.moreBsInfos']}}" (click)="toggleAdditionalInfo()">
+						<button mat-icon-button tooltip="{{languageService.i18n['field.moreBsInfos']}}"
+							(click)="toggleAdditionalInfo()">
 							<mat-icon>more_horiz</mat-icon>
 						</button>
 					</ul>
@@ -360,7 +441,7 @@
 				<!-- <div *ngIf="isMarkersLoading" class="spinner-container">
 					<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
 				</div> -->
-				
+
 				<!-- 在地圖下方放置進度指示器，當 isfieldImage_or_RsrpSinrMapLoading 為 true 時顯示 -->
 				<!-- <div *ngIf="isfieldImage_or_RsrpSinrMapLoading" class="spinner-container">
 					<mat-progress-spinner mode="indeterminate" [diameter]="230" [strokeWidth]="16"></mat-progress-spinner>
@@ -391,7 +472,8 @@
 									<td>
 										<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
 										<!-- <label *ngIf="opt.bstype === 1"> All-in-one: [CU + DU + RU] </label> -->
-										<label *ngIf="opt.bstype === 1">{{ languageService.i18n['BS.all-in-one'] }}</label>
+										<label *ngIf="opt.bstype === 1">{{ languageService.i18n['BS.all-in-one']
+											}}</label>
 
 										<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
 										<!-- <label *ngIf="opt.bstype === 2"> Disaggregated: [CU] + [DU] + [RU] </label> -->
@@ -406,10 +488,12 @@
 										<label *ngIf="opt.status === 2" class="greenLight"></label>
 									</td>
 									<td>
-										<mat-icon tooltip="{{ languageService.i18n['field.view'] }}" (click)="viewBSDetailInfo( opt )">remove_red_eye</mat-icon>
+										<mat-icon tooltip="{{ languageService.i18n['field.view'] }}"
+											(click)="viewBSDetailInfo( opt )">remove_red_eye</mat-icon>
 									</td>
 									<td>
-										<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}" (click)="goFaultMgr()">warning</mat-icon>
+										<mat-icon tooltip="{{ languageService.i18n['field.bsAlarm'] }}"
+											(click)="goFaultMgr()">warning</mat-icon>
 									</td>
 								</tr>
 								<tr class="notFind" *ngIf="allSimplifiedBsInfo.length === 0">
@@ -425,13 +509,17 @@
 					<span class="colorbar-title">RSRP</span>
 					<div class="colorbar"></div>
 					<!-- RSRP Colorbar -->
-					<div class="RSRP_values"> <span>-130</span> <span>-120</span> <span>-110</span> <span>-100</span> <span>-90</span> <span>-80</span> </div>
+					<div class="RSRP_values"> <span>-130</span> <span>-120</span> <span>-110</span> <span>-100</span>
+						<span>-90</span> <span>-80</span>
 					</div>
+				</div>
 				<div class="SINR" *ngIf="currentColorbar === 'SINR'">
 					<span class="colorbar-title">SINR</span>
 					<div class="colorbar"></div>
 					<!-- SINR Colorbar -->
-					<div class="SINR_values"> <span>-10</span> <span>0</span> <span>10</span> <span>20</span> <span>30</span> </div>
+					<div class="SINR_values"> <span>-10</span> <span>0</span> <span>10</span> <span>20</span>
+						<span>30</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -439,18 +527,19 @@
 		<!-- Message prompt window when the O1 system has no field image @2024/01/22 Add -->
 		<ng-template #promptWindow_noFieldImage>
 			<div>
-				<h5><mat-icon style="background-color: none;">warning</mat-icon>{{ languageService.i18n['field.noFieldImageAvailableTitle'] }}</h5>
-			</div>  
+				<h5><mat-icon style="background-color: none;">warning</mat-icon>{{
+					languageService.i18n['field.noFieldImageAvailableTitle'] }}</h5>
+			</div>
 			<label class="label-centered">
 				{{ languageService.i18n['field.noFieldImageAvailableMessage'] }}
 			</label>
 			<div class="buttons buttons-centered">
-			<button type="button" mat-dialog-close>
-				{{ languageService.i18n['close'] }}
-			</button>
+				<button type="button" mat-dialog-close>
+					{{ languageService.i18n['close'] }}
+				</button>
 			</div>
-		</ng-template>	  
-	
+		</ng-template>
+
 		<!-- Field Alarms Information ( 場域告警資訊 ) -->
 		<!-- <div class="BOX">
 			<label class="boxTitle">{{ languageService.i18n['field.faultInfo'] }}
@@ -468,43 +557,43 @@
 			
 			<div class="performance_percent">
 				<div class="item"> -->
-					<!-- @12/10 update to get fieldInfo.handoverRate -->
-					<!-- <img src="assets/img/access.svg">
+		<!-- @12/10 update to get fieldInfo.handoverRate -->
+		<!-- <img src="assets/img/access.svg">
 					<span class="label-container">
 						{{ languageService.i18n['field.handoverRate'] }}
 						<span>{{ mobilityAsNumber }}%</span>
 					</span> -->
-					<!-- @12/18 Update coverage -> mobility -->
-					<!-- <circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress> -->
-				<!-- </div>
+		<!-- @12/18 Update coverage -> mobility -->
+		<!-- <circle-progress [percent]="mobilityAsNumber" [subtitle]="mobilityAsNumber + '%'"></circle-progress> -->
+		<!-- </div>
 				<div class="item"> -->
-					<!-- @12/10 update to get fieldInfo.accessibility -->
-					<!-- <img src="assets/img/handover.svg">
+		<!-- @12/10 update to get fieldInfo.accessibility -->
+		<!-- <img src="assets/img/handover.svg">
 					<span class="label-container">
 						{{ languageService.i18n['field.accessRate'] }}
 						<span>{{ accessibilityAsNumber }}%</span>
 					</span> -->
-					<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
-				<!-- </div>
+		<!-- <circle-progress [percent]="accessibilityAsNumber" [subtitle]="accessibilityAsNumber + '%'"></circle-progress> -->
+		<!-- </div>
 				<hr>
 				<div class="item"> -->
-					<!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
-					<!-- <img src="assets/img/cpu.png">
+		<!-- @12/10 update to get fieldInfo.utilization.resourceProcess -->
+		<!-- <img src="assets/img/cpu.png">
 					<span class="label-container">
 						{{ languageService.i18n['field.CPU_Utilization'] }}
 						<span>{{ resourceProcess }}%</span>
 					</span> -->
-					<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
-				<!-- </div>
+		<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
+		<!-- </div>
 				<div class="item"> -->
-					<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
-					<!-- <img src="assets/img/memory.png">
+		<!-- @12/10 update to get fieldInfo.utilization.resourceMemory -->
+		<!-- <img src="assets/img/memory.png">
 					<span class="label-container">
 						{{ languageService.i18n['field.Memory_Utilization'] }}
 						<span>{{ resourceMemory }}%</span>
 					</span> -->
-					<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
-				<!-- </div>
+		<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
+		<!-- </div>
 			</div>
 		</div> -->
 
@@ -517,7 +606,7 @@
 				<label for="baseInfo" class="lbl-toggle"></label>
 				<div class="collapsible-content">
 					<div class="content-inner">
-						
+
 						<div class="performance_percent">
 							<div class="item">
 								<!-- 存取成功率 -->
@@ -558,8 +647,8 @@
 							</div>
 							<hr>
 							<!-- <div class="item"> -->
-								<!-- 能源消耗量 @2024/05/27 Add -->
-								<!-- <img src="assets/img/energy.png">
+							<!-- 能源消耗量 @2024/05/27 Add -->
+							<!-- <img src="assets/img/energy.png">
 								<span class="label-container">
 									{{ languageService.i18n['field.energyConsumption'] }}
 									<span>{{ energyConsumptionAsNumber }}&thinsp;J</span>
@@ -574,25 +663,25 @@
 								</span>
 							</div>
 							<!-- <div class="item"> -->
-								<!-- CPU 使用率 -->
-								<!-- <img src="assets/img/cpu.png">
+							<!-- CPU 使用率 -->
+							<!-- <img src="assets/img/cpu.png">
 								<span class="label-container">
 									{{ languageService.i18n['field.CPU_Utilization'] }}
 									<span>{{ resourceProcess }}%</span>
 								</span> -->
-								<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
+							<!-- <circle-progress [percent]="resourceProcess" [subtitle]="resourceProcess + '%'"></circle-progress> -->
 							<!-- </div> -->
 							<!-- <div class="item"> -->
-								<!-- Memory 使用率 -->
-								<!-- <img src="assets/img/memory.png">
+							<!-- Memory 使用率 -->
+							<!-- <img src="assets/img/memory.png">
 								<span class="label-container">
 									{{ languageService.i18n['field.Memory_Utilization'] }}
 									<span>{{ resourceMemory }}%</span>
 								</span> -->
-								<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
+							<!-- <circle-progress [percent]="resourceMemory" [subtitle]="resourceMemory + '%'"></circle-progress> -->
 							<!-- </div> -->
 						</div>
-						
+
 					</div>
 				</div>
 			</div>
@@ -600,107 +689,107 @@
 
 
 		<!-- BS Information (基站資訊) @12/28 Update -->
-		<div class="BOX basicInfo bsWindow" style="display: none;" >
-				<label class="boxTitle">
-					{{ languageService.i18n['field.bsInfo'] }}
-				</label>
-				<div>
-					<!-- 顯示進度條 -->
-					<!-- <ng-container *ngIf="isMarkersLoading"> -->
-						<!-- 加載中顯示 spinner -->
-						<!-- <div class="spinner-container">
+		<div class="BOX basicInfo bsWindow" style="display: none;">
+			<label class="boxTitle">
+				{{ languageService.i18n['field.bsInfo'] }}
+			</label>
+			<div>
+				<!-- 顯示進度條 -->
+				<!-- <ng-container *ngIf="isMarkersLoading"> -->
+				<!-- 加載中顯示 spinner -->
+				<!-- <div class="spinner-container">
 							<mat-progress-spinner mode="indeterminate" diameter="150"></mat-progress-spinner>
 						</div>
 					</ng-container> -->
 
-					<!-- 數據加載完畢後顯示基站資訊 -->
-					<!-- <ng-container *ngIf="!isMarkersLoading"> -->
-						<ul *ngIf="displayBsInfo">
-							<li>
-								<label>{{ languageService.i18n['field.BSname'] }}</label>
-								<span>{{ displayBsInfo.name }}</span>
-							</li>
-							<li>
-								<label>{{languageService.i18n['field.BStype']}}</label>
-								<span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
-								<span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
-							</li>
-							<li>
-								<label>NCI</label>
-								<span>{{ displayBsInfo.nci }}</span>
-							</li>
-							<li>
-								<label>PCI</label>
-								<span>{{ displayBsInfo.pci }}</span>
-							</li>
-								<li>
-								<label>PLMN ID</label>
-								<span>
-									{{ displayBsInfo['plmn-id'].mcc }} {{ displayBsInfo['plmn-id'].mnc }}
-								</span>
-							</li>
-							<li>
-								<label>Tx Power (dBm)</label>
-								<span>{{ displayBsInfo['tx-power'] }}</span>
-							</li>
-							<li>
-								<label>NR-ARFCN-UL</label>
-								<span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
-							</li>
-							<li>
-								<label>NR-ARFCN-DL</label>
-								<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
-							</li>
+				<!-- 數據加載完畢後顯示基站資訊 -->
+				<!-- <ng-container *ngIf="!isMarkersLoading"> -->
+				<ul *ngIf="displayBsInfo">
+					<li>
+						<label>{{ languageService.i18n['field.BSname'] }}</label>
+						<span>{{ displayBsInfo.name }}</span>
+					</li>
+					<li>
+						<label>{{languageService.i18n['field.BStype']}}</label>
+						<span *ngIf="displayBsInfo.bstype === 1">All-in-one: [CU + DU + RU]</span>
+						<span *ngIf="displayBsInfo.bstype === 2">Disaggregated: [CU] + [DU] + [RU]</span>
+					</li>
+					<li>
+						<label>NCI</label>
+						<span>{{ displayBsInfo.nci }}</span>
+					</li>
+					<li>
+						<label>PCI</label>
+						<span>{{ displayBsInfo.pci }}</span>
+					</li>
+					<li>
+						<label>PLMN ID</label>
+						<span>
+							{{ displayBsInfo['plmn-id'].mcc }} {{ displayBsInfo['plmn-id'].mnc }}
+						</span>
+					</li>
+					<li>
+						<label>Tx Power (dBm)</label>
+						<span>{{ displayBsInfo['tx-power'] }}</span>
+					</li>
+					<li>
+						<label>NR-ARFCN-UL</label>
+						<span>{{ displayBsInfo['nrarfcn-ul'] }}</span>
+					</li>
+					<li>
+						<label>NR-ARFCN-DL</label>
+						<span>{{ displayBsInfo['nrarfcn-dl'] }}</span>
+					</li>
 
-							<!-- 使用 displayBsInfoPosition getter 獲取經度 -->
-							<li>
-								<label>{{languageService.i18n['field.Longitude']}}</label>
-								<span>{{ displayBsInfoPosition.lng }}</span>
-							</li>
+					<!-- 使用 displayBsInfoPosition getter 獲取經度 -->
+					<li>
+						<label>{{languageService.i18n['field.Longitude']}}</label>
+						<span>{{ displayBsInfoPosition.lng }}</span>
+					</li>
 
-							<!-- 使用 displayBsInfoPosition getter 獲取緯度 -->
-							<li>
-								<label>{{languageService.i18n['field.Latitude']}}</label>
-								<span>{{ displayBsInfoPosition.lat }}</span>
-							</li>
-						</ul>
-						<!-- 修改配置按鈕 -->
-						<div *ngIf="displayBsInfo" class="button-and-success-message-container">
-							<div class="button-container">
-							<button mat-flat-button class="button-modifyConfiguration" (click)="openModifyConfigWindow()">
-								{{ languageService.i18n['field.modifyConfiguration'] }}
-							</button>
-							<div class="success-message-placeholder" *ngIf="!isModifySuccess"></div>
-							</div>
-							
-							<!-- 成功訊息與圖標 -->
-							<div *ngIf="isModifySuccess" class="success-message">
-							<mat-icon>check_circle</mat-icon>{{ languageService.i18n['field.modifySuccess'] }} !
-							</div>
+					<!-- 使用 displayBsInfoPosition getter 獲取緯度 -->
+					<li>
+						<label>{{languageService.i18n['field.Latitude']}}</label>
+						<span>{{ displayBsInfoPosition.lat }}</span>
+					</li>
+				</ul>
+				<!-- 修改配置按鈕 -->
+				<div *ngIf="displayBsInfo" class="button-and-success-message-container">
+					<div class="button-container">
+						<button mat-flat-button class="button-modifyConfiguration" (click)="openModifyConfigWindow()">
+							{{ languageService.i18n['field.modifyConfiguration'] }}
+						</button>
+						<div class="success-message-placeholder" *ngIf="!isModifySuccess"></div>
+					</div>
 
-							<!-- 錯誤訊息與圖標 -->
-							<div *ngIf="isModifyError" class="error-message">
-								<mat-icon>error</mat-icon>{{ languageService.i18n['field.modifyError'] }} !
-							</div>
+					<!-- 成功訊息與圖標 -->
+					<div *ngIf="isModifySuccess" class="success-message">
+						<mat-icon>check_circle</mat-icon>{{ languageService.i18n['field.modifySuccess'] }} !
+					</div>
 
-							<!-- "Nothing changed" 訊息與圖標 @2024/01/15 Add -->
-							<div *ngIf="isNothingChanged" class="info-message">
-								<mat-icon>info</mat-icon>{{ languageService.i18n['field.nothingChanged'] }} !
-							</div>
-						</div>
-					<!-- </ng-container> -->
+					<!-- 錯誤訊息與圖標 -->
+					<div *ngIf="isModifyError" class="error-message">
+						<mat-icon>error</mat-icon>{{ languageService.i18n['field.modifyError'] }} !
+					</div>
+
+					<!-- "Nothing changed" 訊息與圖標 @2024/01/15 Add -->
+					<div *ngIf="isNothingChanged" class="info-message">
+						<mat-icon>info</mat-icon>{{ languageService.i18n['field.nothingChanged'] }} !
+					</div>
 				</div>
-				<div>
-					<label class="boxTitle">{{ languageService.i18n['field.neighboringBSList'] }}</label>
-					<!-- Neighboring BS List @12/28 Update - Add Loading spinner -->
-					<div class="table">
+				<!-- </ng-container> -->
+			</div>
+			<div>
+				<label class="boxTitle">{{ languageService.i18n['field.neighboringBSList'] }}</label>
+				<!-- Neighboring BS List @12/28 Update - Add Loading spinner -->
+				<div class="table">
 					<table>
 						<thead>
-						<tr>
-							<th>PLMN ID</th>
-							<th>NCI</th>
-							<th>PCI</th>
-						</tr>
+							<tr>
+								<th>PLMN ID</th>
+								<th>NCI</th>
+								<th>PCI</th>
+							</tr>
 						</thead>
 						<tbody>
 							<!-- 顯示進度條 -->
@@ -708,28 +797,28 @@
 								<tr>
 									<td colspan="6">
 										<div class="progress-spinner-container"> -->
-																											<!-- diameter: 指示器大小-->
-											<!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+							<!-- diameter: 指示器大小-->
+							<!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
 										</div>
 									</td>
 								</tr>
 							</ng-container> -->
 
 							<!-- 顯示數據 -->
-							<ng-container *ngIf="!isMarkersLoading  && displayBsInfo">	
+							<ng-container *ngIf="!isMarkersLoading  && displayBsInfo">
 								<!-- 使用 *ngFor 來迭代 displayBsInfo.neighbors 數組中的每一個 neighbor 對象 -->
 								<tr *ngFor="let neighbor of displayBsInfo.neighbors"> <!-- @12/25 Update -->
 									<td>
-									<!-- 顯示每個 neighbor 對象的 PLMN ID -->
-									{{ neighbor['plmn-id'].mcc }}{{ neighbor['plmn-id'].mnc }}
+										<!-- 顯示每個 neighbor 對象的 PLMN ID -->
+										{{ neighbor['plmn-id'].mcc }}{{ neighbor['plmn-id'].mnc }}
 									</td>
 									<td>
-									<!-- 顯示每個 neighbor 對象的 NCI -->
-									{{ neighbor.nci }}
+										<!-- 顯示每個 neighbor 對象的 NCI -->
+										{{ neighbor.nci }}
 									</td>
 									<td>
-									<!-- 顯示每個 neighbor 對象的 PCI -->
-									{{ neighbor.pci }}
+										<!-- 顯示每個 neighbor 對象的 PCI -->
+										{{ neighbor.pci }}
 									</td>
 								</tr>
 							</ng-container>
@@ -742,64 +831,72 @@
 
 	<!-- Window of Modify Configuration ( 目前版本已沒顯示該功能 ) -->
 	<ng-template #modifyConfigWindow>
-		<h5 *ngIf="displayBsInfo">{{ languageService.i18n['field.modifyConfiguration'] }} – {{ displayBsInfo.name }}</h5>
+		<h5 *ngIf="displayBsInfo">{{ languageService.i18n['field.modifyConfiguration'] }} – {{ displayBsInfo.name }}
+		</h5>
 		<form [formGroup]="modifyConfigForm">
 			<ul *ngIf="displayBsInfo">
 				<li>
 					<label>{{ languageService.i18n['field.BSname'] }}</label>
 					<span>
-						<input type="text" formControlName="bsName" placeholder="{{ displayBsInfo.name }}" class="{{formValidated&&modifyConfigForm.controls['bsName'].invalid?'required':''}}">
+						<input type="text" formControlName="bsName" placeholder="{{ displayBsInfo.name }}"
+							class="{{formValidated&&modifyConfigForm.controls['bsName'].invalid?'required':''}}">
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>PCI</label>
 					<span>
-						<input type="text" formControlName="pci" placeholder="{{ displayBsInfo.pci }}" class="{{formValidated&&modifyConfigForm.controls['pci'].invalid?'required':''}}">
+						<input type="text" formControlName="pci" placeholder="{{ displayBsInfo.pci }}"
+							class="{{formValidated&&modifyConfigForm.controls['pci'].invalid?'required':''}}">
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<!-- <li> -->
-					<!-- <label>PLMN ID</label> -->
-					<!-- <span class="input_2"> -->
-						<!-- <input type="text" formControlName="mcc" placeholder="{{ displayBsInfo['plmn-id'].mcc }}" class="{{formValidated&&modifyConfigForm.controls['mcc'].invalid?'required':''}}"> -->
-						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-						<!-- <input type="text" formControlName="mnc" placeholder="{{ displayBsInfo['plmn-id'].mnc }}" class="{{formValidated&&modifyConfigForm.controls['mnc'].invalid?'required':''}}"> -->
-						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
-					<!-- </span> -->
+				<!-- <label>PLMN ID</label> -->
+				<!-- <span class="input_2"> -->
+				<!-- <input type="text" formControlName="mcc" placeholder="{{ displayBsInfo['plmn-id'].mcc }}" class="{{formValidated&&modifyConfigForm.controls['mcc'].invalid?'required':''}}"> -->
+				<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+				<!-- <input type="text" formControlName="mnc" placeholder="{{ displayBsInfo['plmn-id'].mnc }}" class="{{formValidated&&modifyConfigForm.controls['mnc'].invalid?'required':''}}"> -->
+				<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
+				<!-- </span> -->
 				<!-- </li> -->
 				<li>
 					<label>Tx Power (dBm)</label>
 					<span>
-						<input type="text" formControlName="txPower" placeholder="{{ displayBsInfo['tx-power'] }}" class="{{formValidated&&modifyConfigForm.controls['txPower'].invalid?'required':''}}">
+						<input type="text" formControlName="txPower" placeholder="{{ displayBsInfo['tx-power'] }}"
+							class="{{formValidated&&modifyConfigForm.controls['txPower'].invalid?'required':''}}">
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>NR-ARFCN-UL</label>
 					<span>
-						<input type="text" formControlName="nrarfcnul" placeholder="{{ displayBsInfo['nrarfcn-ul'] }}" class="{{formValidated&&modifyConfigForm.controls['nrarfcnul'].invalid?'required':''}}">
+						<input type="text" formControlName="nrarfcnul" placeholder="{{ displayBsInfo['nrarfcn-ul'] }}"
+							class="{{formValidated&&modifyConfigForm.controls['nrarfcnul'].invalid?'required':''}}">
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>NR-ARFCN-DL</label>
 					<span>
-						<input type="text" formControlName="nrarfcndl" placeholder="{{ displayBsInfo['nrarfcn-dl'] }}" class="{{formValidated&&modifyConfigForm.controls['nrarfcndl'].invalid?'required':''}}">
+						<input type="text" formControlName="nrarfcndl" placeholder="{{ displayBsInfo['nrarfcn-dl'] }}"
+							class="{{formValidated&&modifyConfigForm.controls['nrarfcndl'].invalid?'required':''}}">
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>{{ languageService.i18n['field.Longitude'] }}</label>
 					<span>
-						<input type="text" formControlName="longitude" placeholder="{{ displayBsInfoPosition.lng }}" class="{{formValidated&&modifyConfigForm.controls['longitude'].invalid?'required':''}}">
+						<input type="text" formControlName="longitude" placeholder="{{ displayBsInfoPosition.lng }}"
+							class="{{formValidated&&modifyConfigForm.controls['longitude'].invalid?'required':''}}">
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
 				<li>
 					<label>{{ languageService.i18n['field.Latitude'] }}</label>
 					<span>
-						<input type="text" formControlName="latitude" placeholder="{{ displayBsInfoPosition.lat }}" class="{{formValidated&&modifyConfigForm.controls['latitude'].invalid?'required':''}}">
+						<input type="text" formControlName="latitude" placeholder="{{ displayBsInfoPosition.lat }}"
+							class="{{formValidated&&modifyConfigForm.controls['latitude'].invalid?'required':''}}">
 						<!-- <mat-error *ngIf="modifyConfigForm.controls['latitude'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 					</span>
 				</li>
@@ -814,14 +911,17 @@
 			</div>
 		</form>
 	</ng-template>
-	
+
 	<!-- Window of Field Editing -->
 	<ng-template #fieldEditWindow>
-		<div><h5>{{ languageService.i18n['field.edit'] }}</h5></div>			
+		<div>
+			<h5>{{ languageService.i18n['field.edit'] }}</h5>
+		</div>
 		<div class="fieldEditTab">
-			<mat-button-toggle-group name="fieldEditType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldEditType" (change)="changefieldEditType($event)">
-				<mat-button-toggle value="Field_Infos" >{{ languageService.i18n['field.editInfo'] }}</mat-button-toggle>
-				<mat-button-toggle value="BS_List" >{{ languageService.i18n['field.bsList'] }}</mat-button-toggle>
+			<mat-button-toggle-group name="fieldEditType" [ngModelOptions]="{standalone: true}"
+				[(ngModel)]="fieldEditType" (change)="changefieldEditType($event)">
+				<mat-button-toggle value="Field_Infos">{{ languageService.i18n['field.editInfo'] }}</mat-button-toggle>
+				<mat-button-toggle value="BS_List">{{ languageService.i18n['field.bsList'] }}</mat-button-toggle>
 			</mat-button-toggle-group>
 		</div>
 
@@ -835,39 +935,43 @@
 								<label>{{ languageService.i18n['field.name'] }}:</label>
 								<span>
 									<input type="text" formControlName="fieldName" placeholder="{{ fieldInfo.name }}"
-											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldName'].invalid?'required':''}}">
 									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldName'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 								</span>
 							</li>
 							<li>
 								<label>{{ languageService.i18n['field.northBound'] }}:</label>
 								<span>
-									<input type="text" formControlName="fieldBound_North" placeholder="{{ fieldBounds.north }}"
-											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
+									<input type="text" formControlName="fieldBound_North"
+										placeholder="{{ fieldBounds.north }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_North'].invalid?'required':''}}">
 									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_North'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 								</span>
 							</li>
 							<li>
 								<label>{{ languageService.i18n['field.southBound'] }}:</label>
 								<span>
-									<input type="text" formControlName="fieldBound_South" placeholder="{{ fieldBounds.south }}"
-											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
+									<input type="text" formControlName="fieldBound_South"
+										placeholder="{{ fieldBounds.south }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_South'].invalid?'required':''}}">
 									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_South'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 								</span>
 							</li>
 							<li>
 								<label>{{ languageService.i18n['field.westBound'] }}:</label>
 								<span>
-									<input type="text" formControlName="fieldBound_West" placeholder="{{ fieldBounds.west }}"
-											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
+									<input type="text" formControlName="fieldBound_West"
+										placeholder="{{ fieldBounds.west }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_West'].invalid?'required':''}}">
 									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_West'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 								</span>
 							</li>
 							<li>
 								<label>{{ languageService.i18n['field.eastBound'] }}:</label>
 								<span>
-									<input type="text" formControlName="fieldBound_East" placeholder="{{ fieldBounds.east }}"
-											class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
+									<input type="text" formControlName="fieldBound_East"
+										placeholder="{{ fieldBounds.east }}"
+										class="{{fieldEditFormValidated&&fieldEditForm.controls['fieldBound_East'].invalid?'required':''}}">
 									<!-- <mat-error *ngIf="fieldEditForm.controls['fieldBound_East'].errors?.invalidLatitude">Invalid latitude</mat-error> -->
 								</span>
 							</li>
@@ -899,26 +1003,32 @@
 							<!-- 顯示進度條 -->
 							<!-- <ng-container *ngIf="isFieldImageOnFieldEditLoading">
 								<div class="progress-spinner-container"> -->
-																									<!-- diameter: 指示器大小-->
-									<!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="35"></mat-progress-spinner>
+							<!-- diameter: 指示器大小-->
+							<!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="35"></mat-progress-spinner>
 								</div>
 							</ng-container> -->
 							<!-- 顯示場域圖片 -->
 							<!-- <ng-container *ngIf="!isFieldImageOnFieldEditLoading"> -->
-								<!-- For local @2024/01/23 Add -->
-								<div class="preview">
-									<div class="center">{{ languageService.i18n['field.preview'] }}</div>
-									<mat-icon title="{{ languageService.i18n['field.DeletefieldImage'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon>
-									<img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}">
-									<img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}">
-								</div>
-								<div id="noImageMessage" style="display: none;">
-									<span class="material-symbols-outlined">
-										error
-									</span>
-									{{ languageService.i18n['field.fieldImageNotUploaded1'] }}<br>
-									{{ languageService.i18n['field.fieldImageNotUploaded2'] }}
-								</div>
+							<!-- For local @2024/01/23 Add -->
+							<div class="preview">
+								<div class="center">{{ languageService.i18n['field.preview'] }}</div>
+								<mat-icon title="{{ languageService.i18n['field.DeletefieldImage'] }}"
+									*ngIf="have_FieldImage_flag" class="delete-icon"
+									(click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon>
+								<img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage"
+									title="{{ languageService.i18n['field.image'] }}"
+									alt="{{ languageService.i18n['field.image'] }}">
+								<img *ngIf="!commonService.isLocal" id="uploadedImage" src=""
+									title="{{ languageService.i18n['field.image'] }}"
+									alt="{{ languageService.i18n['field.image'] }}">
+							</div>
+							<div id="noImageMessage" style="display: none;">
+								<span class="material-symbols-outlined">
+									error
+								</span>
+								{{ languageService.i18n['field.fieldImageNotUploaded1'] }}<br>
+								{{ languageService.i18n['field.fieldImageNotUploaded2'] }}
+							</div>
 							<!-- </ng-container> -->
 						</div>
 						<div class="button-container">
@@ -927,9 +1037,10 @@
 								{{ languageService.i18n['field.fieldImageUpload'] }}
 							</button>
 							<!-- 隱藏的文件輸入元素，僅接受 PNG 和 JPG 圖片 -->
-							<input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".png, .jpg, .jpeg">
+							<input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)"
+								accept=".png, .jpg, .jpeg">
 						</div>
-					</span>	  
+					</span>
 				</span>
 			</div>
 		</div>
@@ -937,16 +1048,15 @@
 		<div *ngIf="fieldEditType === 'BS_List'">
 			<!-- BS List -->
 			<ul *ngIf="fieldEditType === 'BS_List'">
-				
+
 				<!-- 控制顯示所有 BS/隱藏未在場域的 BS 按鈕 @2024/01/28 Update -->
-				<button mat-flat-button
-						[ngClass]="{'field-Edit-bsList-button-active': displayAllBSFlag,
-										'field-Edit-bsList-button-inactive': !displayAllBSFlag}"
-						(click)="toggleAllBSVisibility()">
-						{{ displayAllBSFlag ? languageService.i18n['field.showFieldBS'] : languageService.i18n['field.showAllBS'] }}
+				<button mat-flat-button [ngClass]="{'field-Edit-bsList-button-active': displayAllBSFlag,
+										'field-Edit-bsList-button-inactive': !displayAllBSFlag}" (click)="toggleAllBSVisibility()">
+					{{ displayAllBSFlag ? languageService.i18n['field.showFieldBS'] :
+					languageService.i18n['field.showAllBS'] }}
 				</button>
 
-				<!-- 基站列表 For field Edit @2024/06/23 Update by yuchen -->	
+				<!-- 基站列表 For field Edit @2024/06/23 Update by yuchen -->
 				<div class="table">
 					<table class="center">
 						<thead>
@@ -968,61 +1078,63 @@
 								<tr>
 									<td colspan="6">
 									<div class="progress-spinner-container"> -->
-																										<!-- diameter: 指示器大小-->
-										<!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
+							<!-- diameter: 指示器大小-->
+							<!-- <mat-progress-spinner class="custom-spinner-color" mode="indeterminate" [diameter]="90"></mat-progress-spinner>
 									</div>
 									</td>
 								</tr>
 							</ng-container> -->
 							<!-- 顯示數據 -->
 							<!-- <ng-container *ngIf="!isGetQueryBsListLoading"> -->
-								<!-- <tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;"> -->
-								
-								<!-- 根據 displayAllBSFlag 旗標選擇迭代的數據來源 ( .ts 進行控制 ) -->
-								<tr *ngFor="let opt of displayedBasestations" style="overflow-y: auto;">
+							<!-- <tr *ngFor="let opt of bsList.basestation" style="overflow-y: auto;"> -->
 
-									<!-- 根據條件顯示 Checkbox @2024/01/26 Update -->
-									<td>
-										<input type="checkbox" [checked]="opt.selected" (change)="onBsSelectionChange( opt.id, $event )" [disabled]="!displayAllBSFlag" >
-									</td>  
-									<td>
-										<!-- 顯示 "基站名稱" -->
-										{{ opt.name }}
-									</td>
-									<td>
-										<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
-										<!-- <label *ngIf="opt.bstype === 1"> A </label> -->
-										<label *ngIf="opt.bstype === 1">{{ languageService.i18n['BS.all-in-one'] }}</label>
-										
-										<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
-										<!-- <label *ngIf="opt.bstype === 2"> D </label> -->
-										<span *ngIf=" opt.bstype === 2">{{ languageService.i18n['BS.dist'] }}</span>
-									</td>
-									<td>
-										{{ opt.gNBId }}
-									</td>
-									<td>
-										{{ opt.gNBIdLength }}
-									</td>
-									<td>
-										<label>{{ commonService.formatPosition( opt.position ) }}</label>
-									</td>
-									<td class="icon">
-										<label *ngIf="opt.status === 0 || opt.status === 1" class="redLight"></label>
-										<label *ngIf="opt.status === 2" class="greenLight"></label>
-									</td>
-								</tr>
-								<tr class="notFind" *ngIf="displayedBasestations.length === 0">
-									<td colspan="12">
-										{{ displayAllBSFlag ? languageService.i18n['field.noBSForConfiguration'] : languageService.i18n['field.noBSInField'] }}
-									</td>
-								</tr>
+							<!-- 根據 displayAllBSFlag 旗標選擇迭代的數據來源 ( .ts 進行控制 ) -->
+							<tr *ngFor="let opt of displayedBasestations" style="overflow-y: auto;">
+
+								<!-- 根據條件顯示 Checkbox @2024/01/26 Update -->
+								<td>
+									<input type="checkbox" [checked]="opt.selected"
+										(change)="onBsSelectionChange( opt.id, $event )" [disabled]="!displayAllBSFlag">
+								</td>
+								<td>
+									<!-- 顯示 "基站名稱" -->
+									{{ opt.name }}
+								</td>
+								<td>
+									<!-- 如果 opt.bstype 等於 1，顯示 "All-in-one: [CU + DU + RU]" -->
+									<!-- <label *ngIf="opt.bstype === 1"> A </label> -->
+									<label *ngIf="opt.bstype === 1">{{ languageService.i18n['BS.all-in-one'] }}</label>
+
+									<!-- 如果 opt.bstype 等於 2，顯示 "Disaggregated: [CU] + [DU] + [RU]" -->
+									<!-- <label *ngIf="opt.bstype === 2"> D </label> -->
+									<span *ngIf=" opt.bstype === 2">{{ languageService.i18n['BS.dist'] }}</span>
+								</td>
+								<td>
+									{{ opt.gNBId }}
+								</td>
+								<td>
+									{{ opt.gNBIdLength }}
+								</td>
+								<td>
+									<label>{{ commonService.formatPosition( opt.position ) }}</label>
+								</td>
+								<td class="icon">
+									<label *ngIf="opt.status === 0 || opt.status === 1" class="redLight"></label>
+									<label *ngIf="opt.status === 2" class="greenLight"></label>
+								</td>
+							</tr>
+							<tr class="notFind" *ngIf="displayedBasestations.length === 0">
+								<td colspan="12">
+									{{ displayAllBSFlag ? languageService.i18n['field.noBSForConfiguration'] :
+									languageService.i18n['field.noBSInField'] }}
+								</td>
+							</tr>
 							<!-- </ng-container> -->
 						</tbody>
 					</table>
 				</div>
 			</ul>
-		</div>		
+		</div>
 
 		<div class="buttons">
 			<!-- @2024/04/18 Update -->
@@ -1051,67 +1163,80 @@
 				<!-- 顯示場域圖片 -->
 				<!-- <ng-container *ngIf="!isFieldImageOnFieldEditLoading"> -->
 				<!-- <ng-container> -->
-					<div class="preview">
-						<div class="center">{{ languageService.i18n['field.preview'] }}</div>
-						<mat-icon title="{{ languageService.i18n['field.DeletefieldImage'] }}" *ngIf="have_FieldImage_flag" class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon> <img *ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}"> <img *ngIf="!commonService.isLocal" id="uploadedImage" src="" title="{{ languageService.i18n['field.image'] }}" alt="{{ languageService.i18n['field.image'] }}"> </div>
-					<div id="noImageMessage" style="display: none;"> <span class="material-symbols-outlined"> error </span> {{ languageService.i18n['field.fieldImageNotUploaded1'] }}
-						<br> {{ languageService.i18n['field.fieldImageNotUploaded2'] }}
-					</div>
+				<div class="preview">
+					<div class="center">{{ languageService.i18n['field.preview'] }}</div>
+					<mat-icon title="{{ languageService.i18n['field.DeletefieldImage'] }}" *ngIf="have_FieldImage_flag"
+						class="delete-icon" (click)="openConfirmDeleteWindow_For_fieldEdit()">delete</mat-icon> <img
+						*ngIf="commonService.isLocal" [src]="imageSrcLocal" id="uploadedImage"
+						title="{{ languageService.i18n['field.image'] }}"
+						alt="{{ languageService.i18n['field.image'] }}"> <img *ngIf="!commonService.isLocal"
+						id="uploadedImage" src="" title="{{ languageService.i18n['field.image'] }}"
+						alt="{{ languageService.i18n['field.image'] }}">
+				</div>
+				<div id="noImageMessage" style="display: none;"> <span class="material-symbols-outlined"> error </span>
+					{{ languageService.i18n['field.fieldImageNotUploaded1'] }}
+					<br> {{ languageService.i18n['field.fieldImageNotUploaded2'] }}
+				</div>
 				<!-- </ng-container> -->
 			</div>
 			<div class="button-container">
 				<!-- 按鈕，用於觸發隱藏的 input 元素 -->
-				<button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()"> {{ languageService.i18n['field.fieldImageUpload'] }} </button>
+				<button mat-flat-button class="button-modifyConfiguration" (click)="triggerFileInput()"> {{
+					languageService.i18n['field.fieldImageUpload'] }} </button>
 				<!-- 隱藏的文件輸入元素，僅接受 PNG 和 JPG 圖片 -->
-				<input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)" accept=".png, .jpg, .jpeg"> </div>
+				<input type="file" #fileInput style="display: none;" (change)="onFileSelected($event)"
+					accept=".png, .jpg, .jpeg">
 			</div>
+		</div>
 	</ng-template>
-	
+
 	<!-- Window of confirm-delete-dialog for Field Editing @2024/01/28 Update -->
 	<ng-template #confirmDeleteWindow_For_fieldEdit>
 		<div>
 			<h5>{{ languageService.i18n['confirm'] }}</h5>
-		</div>  
+		</div>
 		<label class="label-centered">
 			{{ languageService.i18n['field.confirmDeletefieldImage'] }}
 		</label>
 		<div class="buttons buttons-centered">
 			<button type="button" (click)="removeIndoorImage()" mat-dialog-close>
-			{{ languageService.i18n['confirm'] }}
+				{{ languageService.i18n['confirm'] }}
 			</button>
 			<button type="button" mat-dialog-close>
-			{{ languageService.i18n['cancel'] }}
+				{{ languageService.i18n['cancel'] }}
 			</button>
 		</div>
-	</ng-template>	  
-	
+	</ng-template>
+
 	<!-- Confirm Window for Field Editing @2024/01/28 Add -->
 	<ng-template #confirmFieldEditWindow>
 		<div>
-		<h5>{{ languageService.i18n['confirm'] }}</h5>
-		</div>  
+			<h5>{{ languageService.i18n['confirm'] }}</h5>
+		</div>
 		<label class="label-centered">
 			{{ languageService.i18n['field.confirmFieldEditField'] }}
 		</label>
 		<div class="buttons buttons-centered">
-		<button type="button" (click)="UpdateFieldEditing_Submit()" mat-dialog-close>
-			{{ languageService.i18n['confirm'] }}
-		</button>
-		<button type="button" mat-dialog-close>
-			{{ languageService.i18n['cancel'] }}
-		</button>
+			<button type="button" (click)="UpdateFieldEditing_Submit()" mat-dialog-close>
+				{{ languageService.i18n['confirm'] }}
+			</button>
+			<button type="button" mat-dialog-close>
+				{{ languageService.i18n['cancel'] }}
+			</button>
 		</div>
 	</ng-template>
-	  
+
 
 	<!-- Window of PM Parameter Setting @2024/02/22 Update -->
 	<ng-template class="my-dialog-container" #PMgmtParameterSetWindow>
-		<div><h5>{{ languageService.i18n['field.configPMset'] }}</h5></div>
+		<div>
+			<h5>{{ languageService.i18n['field.configPMset'] }}</h5>
+		</div>
 		<div class="content">
 			<!-- 顯示進度條 -->
 			<!-- <ng-container *ngIf="getQueryPmFtpInfo_Loading"> -->
-				<!-- 加載中顯示 spinner -->
-				<!-- <div class="progress-spinner-container-for-getQueryPmFtpInfo">
+			<!-- 加載中顯示 spinner -->
+			<!-- <div class="progress-spinner-container-for-getQueryPmFtpInfo">
 					<mat-progress-spinner mode="indeterminate" diameter="135"></mat-progress-spinner>
 				</div>
 			</ng-container> -->
@@ -1127,73 +1252,86 @@
 									<label>{{ languageService.i18n['field.pmIP'] }}:</label>
 									<span>
 										<input type="text" formControlName="pmIP" placeholder="{{ PmFtpInfo.ftpip }}"
-												class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmIP'].invalid?'required':''}}">
+											class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmIP'].invalid?'required':''}}">
 									</span>
 								</li>
 								<li>
 									<label>{{ languageService.i18n['field.folderPath'] }}:</label>
 									<span>
-										<input type="text" formControlName="folderPath" placeholder="{{ PmFtpInfo.folderpath }}"
-												class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['folderPath'].invalid?'required':'' }}">
+										<input type="text" formControlName="folderPath"
+											placeholder="{{ PmFtpInfo.folderpath }}"
+											class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['folderPath'].invalid?'required':'' }}">
 									</span>
 								</li>
 								<li>
 									<label>{{ languageService.i18n['field.pmID'] }}:</label>
 									<span>
 										<input type="text" formControlName="pmID" placeholder="{{ PmFtpInfo.ftpid }}"
-												class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmID'].invalid?'required':'' }}">
+											class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['pmID'].invalid?'required':'' }}">
 									</span>
 								</li>
 								<li> <!-- @2024/02/15 Add - 加入密碼隱藏/顯示功能 -->
 									<label>{{ languageService.i18n['field.pmKey'] }}:</label>
 									<span class="pw">
-									<!-- 使用 span 標籤來群組輸入框和圖標 -->
-									<input [type]="hidePassword ? 'password' : 'text'" formControlName="pmKey" [placeholder]="PmFtpInfo.ftpkey"
+										<!-- 使用 span 標籤來群組輸入框和圖標 -->
+										<input [type]="hidePassword ? 'password' : 'text'" formControlName="pmKey"
+											[placeholder]="PmFtpInfo.ftpkey"
 											[class]="PMgmtParameterSetFormValidated && PMgmtParameterSetForm.controls['pmKey'].invalid ? 'required' : ''">
-									<!-- 密碼輸入框，輸入類型根據 hidePassword 變數來切換 password 和 text -->
-									<i class="material-icons" (click)="togglePasswordVisibility()">
-										<!-- 點擊可以切換密碼可見性的圖標 -->
-										{{ hidePassword ? 'visibility_off' : 'visibility' }}
-										<!-- 根據 hidePassword 屬性切換圖標 -->
-									</i>
+										<!-- 密碼輸入框，輸入類型根據 hidePassword 變數來切換 password 和 text -->
+										<i class="material-icons" (click)="togglePasswordVisibility()">
+											<!-- 點擊可以切換密碼可見性的圖標 -->
+											{{ hidePassword ? 'visibility_off' : 'visibility' }}
+											<!-- 根據 hidePassword 屬性切換圖標 -->
+										</i>
 									</span>
-								</li> 
+								</li>
 								<li>
 									<label>{{ languageService.i18n['field.MeasurementInterval_pmint'] }}:</label>
 									<span>
-										<input type="text" formControlName="MeasurementInterval_pmint" placeholder="{{ PmFtpInfo.pmint }}"
-												class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].invalid?'required':'' }}">
+										<input type="text" formControlName="MeasurementInterval_pmint"
+											placeholder="{{ PmFtpInfo.pmint }}"
+											class="{{ PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['MeasurementInterval_pmint'].invalid?'required':'' }}">
 									</span>
 								</li>
 								<li>
 									<label>{{ languageService.i18n['field.UploadInterval_fmint'] }}:</label>
 									<span>
-										<input type="text" formControlName="UploadInterval_fmint" placeholder="{{ PmFtpInfo.fmint }}"
+										<input type="text" formControlName="UploadInterval_fmint"
+											placeholder="{{ PmFtpInfo.fmint }}"
 											class="{{PMgmtParameterSetFormValidated&&PMgmtParameterSetForm.controls['UploadInterval_fmint'].invalid?'required':''}}">
 									</span>
 								</li>
-								<li> 
+								<li>
 									<!-- "量測類型"欄位 @2024/02/16 Add -->
 									<label>{{ languageService.i18n['field.measurementType'] }}:</label>
 									<span>
 										<!-- "量測類型"欄位的 Radio Buttons -->
-										<mat-radio-group formControlName="measurementType" (change)="logClickMeasurementType($event.value)" >
-											<mat-radio-button value="">{{ languageService.i18n['field.off'] }}</mat-radio-button>
-											<mat-radio-button value="default">{{ languageService.i18n['field.default'] }}</mat-radio-button>
-											<mat-radio-button value="selfDefined">{{ languageService.i18n['field.selfDefined'] }}</mat-radio-button>
+										<mat-radio-group formControlName="measurementType"
+											(change)="logClickMeasurementType($event.value)">
+											<mat-radio-button value="">{{ languageService.i18n['field.off']
+												}}</mat-radio-button>
+											<mat-radio-button value="default">{{ languageService.i18n['field.default']
+												}}</mat-radio-button>
+											<mat-radio-button value="selfDefined">{{
+												languageService.i18n['field.selfDefined'] }}</mat-radio-button>
 										</mat-radio-group>
 
 										<!-- 自定義參數輸入欄位，只有當 'selfDefined' 被選擇時才顯示 -->
-										<div *ngIf="measurementType === 'selfDefined'"  formArrayName="selfDefinedParameters" class="measurement_Type">
-											<div *ngFor="let selfDefinedParamGroup of selfDefinedParameters.controls; let i = index" [formGroupName]="i">
-												<button type="button" (click)="removeSelfDefinedParameterInput(i)" class="delete">
+										<div *ngIf="measurementType === 'selfDefined'"
+											formArrayName="selfDefinedParameters" class="measurement_Type">
+											<div *ngFor="let selfDefinedParamGroup of selfDefinedParameters.controls; let i = index"
+												[formGroupName]="i">
+												<button type="button" (click)="removeSelfDefinedParameterInput(i)"
+													class="delete">
 													<span class="material-symbols-outlined ">
 														check_indeterminate_small
-														</span>
+													</span>
 												</button>
 												<!-- 確保這裡使用 formControlName='selfDefinedParameter_input' 與 FormGroup 中的名稱對應 -->
-												<input type="text" formControlName="selfDefinedParameter_input" placeholder="{{ languageService.i18n['field.enterSelfDefinedParam'] }}">
-												<button type="button" (click)="addSelfDefinedParameterInput()" class="add">
+												<input type="text" formControlName="selfDefinedParameter_input"
+													placeholder="{{ languageService.i18n['field.enterSelfDefinedParam'] }}">
+												<button type="button" (click)="addSelfDefinedParameterInput()"
+													class="add">
 													<span class="material-symbols-outlined ">
 														add
 													</span>
@@ -1208,7 +1346,7 @@
 				</div>
 			</ng-container>
 		</div>
-		
+
 		<div class="buttons">
 			<button type="button" (click)="openConfirmPMgmtParameterSetWindow()">
 				{{ languageService.i18n['field.apply'] }}
@@ -1223,7 +1361,7 @@
 	<ng-template #confirmPMgmtParameterSetWindow>
 		<div>
 			<h5><mat-icon>warning_amber</mat-icon>{{ languageService.i18n['field.applyReminder'] }}</h5>
-		</div>  
+		</div>
 		<label class="label-centered">
 			{{ languageService.i18n['field.confirmPMgmtParameterSet'] }}
 		</label>
@@ -1239,12 +1377,15 @@
 
 	<!-- Window of Field Performance Analysis @2024/06/27 Update -->
 	<ng-template #fieldPMReportWindow>
-		
-			<h5>{{ languageService.i18n['field.performance'] }}</h5>
-			<mat-button-toggle-group name="fieldPMReportType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldPMReportType" (change)="changeFieldPMReportType($event)">
-				<mat-button-toggle value="Performance_Overview">{{ languageService.i18n['field.performanceOverview'] }}</mat-button-toggle>
-				<mat-button-toggle value="Performance_History">{{ languageService.i18n['field.HistorySearch'] }}</mat-button-toggle>
-			</mat-button-toggle-group>
+
+		<h5>{{ languageService.i18n['field.performance'] }}</h5>
+		<mat-button-toggle-group name="fieldPMReportType" [ngModelOptions]="{standalone: true}"
+			[(ngModel)]="fieldPMReportType" (change)="changeFieldPMReportType($event)">
+			<mat-button-toggle value="Performance_Overview">{{ languageService.i18n['field.performanceOverview']
+				}}</mat-button-toggle>
+			<mat-button-toggle value="Performance_History">{{ languageService.i18n['field.HistorySearch']
+				}}</mat-button-toggle>
+		</mat-button-toggle-group>
 		<div class="Overview">
 			<div *ngIf="fieldPMReportType === 'Performance_Overview'">
 				<div *ngIf="fieldInfo">
@@ -1254,47 +1395,48 @@
 							<!-- 檢視模式 @2024/06/27 Add -->
 							<label>{{ languageService.i18n['BS.viewMode'] }} :</label>
 							<select [(ngModel)]="selectedViewMode_bar" (ngModelChange)="onViewModeChange_bar()">
-							  <option *ngFor="let mode of viewModes_bar" [value]="mode.value">{{ mode.displayName }}</option>
+								<option *ngFor="let mode of viewModes_bar" [value]="mode.value">{{ mode.displayName }}
+								</option>
 							</select>
 						</span>
 						<span>
 							<!-- KPI 類別下拉選單 -->
 							<label>{{ languageService.i18n['BS.viewKPICategory'] }} :</label>
-							<select [(ngModel)]="selectedKpiCategory_bar" (ngModelChange)="onKpiCategoryChange_for_chartJS_barChart()">
-								<option *ngFor="let category of kpiCategories_bar" [value]="category.value">{{ category.displayName }}</option>
+							<select [(ngModel)]="selectedKpiCategory_bar"
+								(ngModelChange)="onKpiCategoryChange_for_chartJS_barChart()">
+								<option *ngFor="let category of kpiCategories_bar" [value]="category.value">{{
+									category.displayName }}</option>
 							</select>
 						</span>
 						<span>
 							<!-- KPI 子類別下拉選單 -->
 							<label>{{ languageService.i18n['BS.viewKPISubcategory'] }} :</label>
-							<select [(ngModel)]="selectedKpiSubcategory_bar" (ngModelChange)="prepareAndUpdateChartData_for_chartJS_barChart()" [hidden]="kpiSubcategories_bar.length === 0">
-								<option *ngFor="let subcategory of kpiSubcategories_bar" [value]="subcategory.value">{{ subcategory.displayName }}</option>
+							<select [(ngModel)]="selectedKpiSubcategory_bar"
+								(ngModelChange)="prepareAndUpdateChartData_for_chartJS_barChart()"
+								[hidden]="kpiSubcategories_bar.length === 0">
+								<option *ngFor="let subcategory of kpiSubcategories_bar" [value]="subcategory.value">{{
+									subcategory.displayName }}</option>
 							</select>
 						</span>
 						<span class="past24">
 							<label>{{ languageService.i18n['BS.dataTimePast24Hours'] }}</label>
-							<mat-icon matTooltip="{{ languageService.i18n['field.refreshOverviewInfo'] }}" (click)="refreshFieldInfo()">
+							<mat-icon matTooltip="{{ languageService.i18n['field.refreshOverviewInfo'] }}"
+								(click)="refreshFieldInfo()">
 								autorenew
 							</mat-icon>
-							
+
 							<!-- 加入倒數秒數後自動刷新 @2024/06/26 Add -->
 							{{ languageService.i18n['BS.refreshCountdown'].replace( '{0}', countdown ) }}
 						</span>
-						
+
 					</div>
-				
+
 					<!-- ng2-charts - Bar Chart @2024/06/14 Update -->
-					<canvas #barChart_Overview 
-							baseChart 
-							width="1000" 
-							height="400"
-							[data]="barChartData"
-							[options]="barChartOptions"
-							[plugins]="allChartPlugins"
-							[legend]="barChartLegend"
-							[type]="'bar'">
+					<canvas #barChart_Overview baseChart width="1000" height="400" [data]="barChartData"
+						[options]="barChartOptions" [plugins]="allChartPlugins" [legend]="barChartLegend"
+						[type]="'bar'">
 					</canvas>
-					
+
 					<!-- ngx-charts - Horizontal Bar Chart @2024/06/06 - 已不使用 -->
 					<!-- <ngx-charts-bar-horizontal
 						[view]="view"
@@ -1336,54 +1478,60 @@
 						<form [formGroup]="dateForm_line">
 							<span>
 								<label>{{ languageService.i18n['BS.timeInterval'] }} :</label>
-								<p-calendar formControlName="from" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
+								<p-calendar formControlName="from" [showTime]="true" inputId="time"
+									dateFormat="yy-mm-dd"></p-calendar>
 							</span>
 							<span>
 								<label>{{ languageService.i18n['BS.alarmLatestUpdateTimeRangeEnd'] }}</label>
-								<p-calendar formControlName="to" [showTime]="true" inputId="time" dateFormat="yy-mm-dd"></p-calendar>
-								<span tooltip="{{languageService.i18n['search']}}" class="material-icons" (click)="searchFieldKpiInfo()">search</span>
-								<span tooltip="{{languageService.i18n['clear_search']}}" class="material-symbols-outlined" (click)="clearSearch()">clear</span>
+								<p-calendar formControlName="to" [showTime]="true" inputId="time"
+									dateFormat="yy-mm-dd"></p-calendar>
+								<span tooltip="{{languageService.i18n['search']}}" class="material-icons"
+									(click)="searchFieldKpiInfo()">search</span>
+								<span tooltip="{{languageService.i18n['clear_search']}}"
+									class="material-symbols-outlined" (click)="clearSearch()">clear</span>
 							</span>
-							<span tooltip="{{ languageService.i18n['field.exportPerformanceHistory'] }}" class="material-icons">
+							<span tooltip="{{ languageService.i18n['field.exportPerformanceHistory'] }}"
+								class="material-icons">
 								<mat-icon svgIcon="export_to_xlsx"></mat-icon>
 							</span>
 						</form>
-						
+
 						<form [formGroup]="viewModeForm_line">
 							&nbsp;
 							<span class="border-left">
 								<!-- 檢視模式-->
 								<label>{{ languageService.i18n['BS.viewMode'] }} :</label>
-								<select formControlName="viewMode_line" [(ngModel)]="selectedViewMode_line" (change)="onViewModeChange_line()">
-									<option *ngFor="let mode of viewModes_line" [value]="mode.value">{{ mode.displayName }}</option>
+								<select formControlName="viewMode_line" [(ngModel)]="selectedViewMode_line"
+									(change)="onViewModeChange_line()">
+									<option *ngFor="let mode of viewModes_line" [value]="mode.value">{{ mode.displayName
+										}}</option>
 								</select>
 							</span>
 							<span>
 								<!-- KPI 類別選項 -->
 								<label>{{ languageService.i18n['BS.viewKPICategory'] }} :</label>
-								<select formControlName="kpiCategory_line" [(ngModel)]="selectedKpiCategory_line" (change)="onKpiCategoryChange_line()">
-									<option *ngFor="let category of kpiCategories_line" [value]="category.value">{{ category.displayName }}</option>
+								<select formControlName="kpiCategory_line" [(ngModel)]="selectedKpiCategory_line"
+									(change)="onKpiCategoryChange_line()">
+									<option *ngFor="let category of kpiCategories_line" [value]="category.value">{{
+										category.displayName }}</option>
 								</select>
 							</span>
 							<span>
 								<!-- KPI 子類別選項 -->
 								<label>{{ languageService.i18n['BS.viewKPISubcategory'] }} :</label>
-								<select formControlName="kpiSubcategory_line" [(ngModel)]="selectedKpiSubcategory_line" (change)="prepareAndUpdateChartData_line()" [hidden]="kpiSubcategories_line.length === 0">
-									<option *ngFor="let subcategory of kpiSubcategories_line" [value]="subcategory.value">{{ subcategory.displayName }}</option>
+								<select formControlName="kpiSubcategory_line" [(ngModel)]="selectedKpiSubcategory_line"
+									(change)="prepareAndUpdateChartData_line()"
+									[hidden]="kpiSubcategories_line.length === 0">
+									<option *ngFor="let subcategory of kpiSubcategories_line"
+										[value]="subcategory.value">{{ subcategory.displayName }}</option>
 								</select>
 							</span>
 						</form>
 					</div>
 					<!-- 圖表區 -->
 					<div class="canvas chart-container" *ngIf="displayOnTableChartData_line.length !== 0">
-						<canvas #lineChart
-								baseChart
-								width="1200" 
-								height="475"
-								[type]="'line'"
-								[data]="lineChartData"
-								[options]="lineChartOptions"
-								[legend]="lineChartLegend">
+						<canvas #lineChart baseChart width="1200" height="475" [type]="'line'" [data]="lineChartData"
+							[options]="lineChartOptions" [legend]="lineChartLegend">
 						</canvas>
 					</div>
 					<!-- 表格區 -->
@@ -1406,8 +1554,10 @@
 								<tr *ngFor="let series of displayOnTableChartData_line">
 									<td>{{ series.name }}</td>
 									<td *ngFor="let dataPoint of series.series">
-										<span *ngIf="dataPoint.value !== null">{{ dataPoint.value }}&thinsp;{{ dataPoint.unit }}</span>
-										<span *ngIf="dataPoint.value === null">{{ languageService.i18n['BS.kpiValueNone'] }}</span>
+										<span *ngIf="dataPoint.value !== null">{{ dataPoint.value }}&thinsp;{{
+											dataPoint.unit }}</span>
+										<span *ngIf="dataPoint.value === null">{{
+											languageService.i18n['BS.kpiValueNone'] }}</span>
 									</td>
 								</tr>
 							</tbody>
@@ -1418,7 +1568,7 @@
 					</div>
 				</div>
 			</div>
-			
+
 			<div class="buttons buttons-centered">
 				<button type="button" mat-dialog-close>
 					{{ languageService.i18n['close'] }}
@@ -1453,12 +1603,12 @@
 								<span>
 									<select formControlName="ccoSetParameters">
 										<option value="maxCoverageRange">
-										  {{ languageService.i18n['field.maxCoverageRange'] }}
+											{{ languageService.i18n['field.maxCoverageRange'] }}
 										</option>
 										<option value="ratioAverageSINR">
-										  {{ languageService.i18n['field.maxSINR'] }}
+											{{ languageService.i18n['field.maxSINR'] }}
 										</option>
-									  </select>
+									</select>
 									<!-- <mat-radio-group formControlName="ccoSetParameters">
 										<mat-radio-button value="maxCoverageRange">{{ languageService.i18n['field.maxCoverageRange'] }}</mat-radio-button>
 										<mat-radio-button value="ratioAverageSINR">{{ languageService.i18n['field.maxSINR'] }}</mat-radio-button>
@@ -1530,7 +1680,7 @@
 					</div>
 				</div>
 			</span>
-	
+
 			<!-- Calculation Categories 欄位 -->
 			<!-- <label>{{ languageService.i18n['field.calculationCategories'] }}</label>
 			<span *ngIf="calculationCategories.length > 0">
@@ -1566,20 +1716,25 @@
 				</h4>
 
 				<div class="tabs">
-					
+
 					<!-- @2024/05/02 Update - 依據選擇的計算項目控制顯示/隱藏頁籤 -->
-					<mat-button-toggle-group name="fieldOptimizationResultType" [ngModelOptions]="{standalone: true}" [(ngModel)]="fieldOptimizationResultType" (change)="changefieldOptimizationResultType($event)">
-						<mat-button-toggle *ngIf="calculationCategories.includes('cco')" value="cco">CCO</mat-button-toggle>
-						<mat-button-toggle *ngIf="calculationCategories.includes('anr')" value="anr">ANR</mat-button-toggle>
-						<mat-button-toggle *ngIf="calculationCategories.includes('pci')" value="pci">PCI</mat-button-toggle>
+					<mat-button-toggle-group name="fieldOptimizationResultType" [ngModelOptions]="{standalone: true}"
+						[(ngModel)]="fieldOptimizationResultType" (change)="changefieldOptimizationResultType($event)">
+						<mat-button-toggle *ngIf="calculationCategories.includes('cco')"
+							value="cco">CCO</mat-button-toggle>
+						<mat-button-toggle *ngIf="calculationCategories.includes('anr')"
+							value="anr">ANR</mat-button-toggle>
+						<mat-button-toggle *ngIf="calculationCategories.includes('pci')"
+							value="pci">PCI</mat-button-toggle>
 					</mat-button-toggle-group>
 				</div>
-				
+
 				<!-- 當優化正在計算時顯示加載進度條 -->
 				<ng-container *ngIf="calculateSON_Loading">
 					<div class="progressBar">
 						<!-- 進度條 Bar -->
-						<div>{{ languageService.i18n['field.calculating'] }}<span class="material-symbols-outlined">sort</span></div>
+						<div>{{ languageService.i18n['field.calculating'] }}<span
+								class="material-symbols-outlined">sort</span></div>
 						<mat-progress-bar mode="indeterminate"></mat-progress-bar>
 					</div>
 				</ng-container>
@@ -1590,7 +1745,7 @@
 					<!-- CCO 結果 ( 已完整 ) @2024/04/09 -->
 					<div class="Field_Infos" *ngIf=" fieldOptimizationResultType === 'cco' ">
 						<div *ngIf="isCcoClass">
-							
+
 							<label>
 								<div class="table">
 									<table>
@@ -1599,7 +1754,8 @@
 												<th>{{ languageService.i18n['field.BSname'] }}</th>
 												<th>{{ languageService.i18n['field.originalTxPower'] }} (dBm)</th>
 												<th><span class="material-symbols-outlined after">east</span></th>
-												<th class="new">{{ languageService.i18n['field.newTxPower'] }} (dBm)</th>
+												<th class="new">{{ languageService.i18n['field.newTxPower'] }} (dBm)
+												</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -1638,20 +1794,22 @@
 									</thead>
 									<tbody>
 										<tr *ngFor="let result of processedAnrResults">
-										<td matTooltip="NCI = {{ result.nci }}">{{ result.name }}</td>
-										<td class="orig">
-											<label *ngFor="let neighbor of result.originalNeighbors">
-											<span matTooltip="NCI = {{ neighbor.nci }}">{{ neighbor.name }}</span>
-											</label>
-										</td>
-										<td>
-											<span class="material-symbols-outlined after">east</span>
-										</td>
-										<td class="new" >
-											<label *ngFor="let neighbor of result.newNeighbors">
-											<span matTooltip="NCI = {{ neighbor.nci }}">{{ neighbor.name }}</span>
-											</label>
-										</td>
+											<td matTooltip="NCI = {{ result.nci }}">{{ result.name }}</td>
+											<td class="orig">
+												<label *ngFor="let neighbor of result.originalNeighbors">
+													<span matTooltip="NCI = {{ neighbor.nci }}">{{ neighbor.name
+														}}</span>
+												</label>
+											</td>
+											<td>
+												<span class="material-symbols-outlined after">east</span>
+											</td>
+											<td class="new">
+												<label *ngFor="let neighbor of result.newNeighbors">
+													<span matTooltip="NCI = {{ neighbor.nci }}">{{ neighbor.name
+														}}</span>
+												</label>
+											</td>
 										</tr>
 									</tbody>
 									<!-- <tbody>
@@ -1678,7 +1836,7 @@
 							</div>
 						</label>
 					</div>
-					
+
 					<!-- PCI 結果 ( 已完整 @2024/04/11 ) -->
 					<div class="Field_Infos" *ngIf="fieldOptimizationResultType === 'pci'">
 						<div *ngIf="isPciClass">
@@ -1695,7 +1853,8 @@
 										</thead>
 										<tbody>
 											<tr *ngFor="let result of gnbsPci">
-												<td matTooltip="NCI = {{ getMatchingBsInfo( result.gNBId )?.nci }}">{{ getMatchingBsInfo(result.gNBId)?.name }}</td>
+												<td matTooltip="NCI = {{ getMatchingBsInfo( result.gNBId )?.nci }}">{{
+													getMatchingBsInfo(result.gNBId)?.name }}</td>
 												<td>{{ getMatchingBsInfo(result.gNBId)?.pci }}</td>
 												<td><span class="material-symbols-outlined after">east</span></td>
 												<td class="new">{{ result.nrPCI }}</td>
@@ -1707,13 +1866,16 @@
 							<div>
 								<h6>{{ languageService.i18n['field.pciCollisions'] }}</h6>
 								<label>
-									<div>{{ languageService.i18n['field.uniDirectionalPairCountCollisions'] }} = {{ originalPciCollisionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{ originalPciCollisionRatio }} %</div>
+									<div>{{ languageService.i18n['field.uniDirectionalPairCountCollisions'] }} = {{
+										originalPciCollisionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{
+										originalPciCollisionRatio }} %</div>
 									<div class="table pci">
 										<table>
 											<thead>
 												<tr>
 													<th rowspan="2">PCI</th>
-													<th colspan="2">{{ languageService.i18n['field.originalCollisionPairs'] }}</th>
+													<th colspan="2">{{
+														languageService.i18n['field.originalCollisionPairs'] }}</th>
 												</tr>
 												<tr>
 													<th>{{ languageService.i18n['field.source'] }}</th>
@@ -1721,14 +1883,19 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr *ngIf="originalPciCollisionTotalCount === 0 && originalPciCollisionRatio === 0; else originalCollisionData">
+												<tr
+													*ngIf="originalPciCollisionTotalCount === 0 && originalPciCollisionRatio === 0; else originalCollisionData">
 													<td colspan="3">{{ languageService.i18n['field.none'] }}</td>
 												</tr>
 												<ng-template #originalCollisionData>
 													<tr *ngFor="let collision of originalPciCollisions">
 														<td>{{ collision.collision_pci }}</td>
-														<td matTooltip="NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.source_gNBId)?.name }}</td>
-														<td matTooltip="NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.target_gNBId)?.name }}</td>
+														<td
+															matTooltip="NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }}">
+															{{ getMatchingBsInfo(collision.source_gNBId)?.name }}</td>
+														<td
+															matTooltip="NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }}">
+															{{ getMatchingBsInfo(collision.target_gNBId)?.name }}</td>
 													</tr>
 												</ng-template>
 											</tbody>
@@ -1736,13 +1903,16 @@
 									</div>
 								</label> <span class="material-symbols-outlined after">east</span>
 								<label>
-									<div>{{ languageService.i18n['field.uniDirectionalPairCountCollisions'] }} = {{ newPciCollisionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{ newPciCollisionRatio }} %</div>
+									<div>{{ languageService.i18n['field.uniDirectionalPairCountCollisions'] }} = {{
+										newPciCollisionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{
+										newPciCollisionRatio }} %</div>
 									<div class="table pci">
 										<table>
 											<thead>
 												<tr>
 													<th rowspan="2">PCI</th>
-													<th colspan="2">{{ languageService.i18n['field.newCollisionPairs'] }}</th>
+													<th colspan="2">{{ languageService.i18n['field.newCollisionPairs']
+														}}</th>
 												</tr>
 												<tr>
 													<th>{{ languageService.i18n['field.source'] }}</th>
@@ -1750,14 +1920,19 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr *ngIf="newPciCollisionTotalCount === 0 && newPciCollisionRatio === 0; else newCollisionData">
+												<tr
+													*ngIf="newPciCollisionTotalCount === 0 && newPciCollisionRatio === 0; else newCollisionData">
 													<td colspan="3">{{ languageService.i18n['field.none'] }}</td>
 												</tr>
 												<ng-template #newCollisionData>
 													<tr *ngFor="let collision of newPciCollisions">
 														<td>{{ collision.collision_pci }}</td>
-														<td matTooltip="NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.source_gNBId)?.name }}</td>
-														<td matTooltip="NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }}">{{ getMatchingBsInfo(collision.target_gNBId)?.name }}</td>
+														<td
+															matTooltip="NCI = {{ getMatchingBsInfo(collision.source_gNBId)?.nci }}">
+															{{ getMatchingBsInfo(collision.source_gNBId)?.name }}</td>
+														<td
+															matTooltip="NCI = {{ getMatchingBsInfo(collision.target_gNBId)?.nci }}">
+															{{ getMatchingBsInfo(collision.target_gNBId)?.name }}</td>
 													</tr>
 												</ng-template>
 											</tbody>
@@ -1768,13 +1943,16 @@
 							<div>
 								<h6>{{ languageService.i18n['field.pciConfusions'] }}</h6>
 								<label>
-									<div>{{ languageService.i18n['field.uniDirectionalPairCountConfusions'] }} = {{ originalPciConfusionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{ originalPciConfusionRatio }} %</div>
+									<div>{{ languageService.i18n['field.uniDirectionalPairCountConfusions'] }} = {{
+										originalPciConfusionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{
+										originalPciConfusionRatio }} %</div>
 									<div class="table pci">
 										<table>
 											<thead>
 												<tr>
 													<th rowspan="2">PCI</th>
-													<th colspan="3">{{ languageService.i18n['field.originalConfusionPairs'] }}</th>
+													<th colspan="3">{{
+														languageService.i18n['field.originalConfusionPairs'] }}</th>
 												</tr>
 												<tr>
 													<th>{{ languageService.i18n['field.source'] }}</th>
@@ -1783,15 +1961,22 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr *ngIf="originalPciConfusionTotalCount === 0 && originalPciConfusionRatio === 0; else originalConfusionData">
+												<tr
+													*ngIf="originalPciConfusionTotalCount === 0 && originalPciConfusionRatio === 0; else originalConfusionData">
 													<td colspan="4">{{ languageService.i18n['field.none'] }}</td>
 												</tr>
 												<ng-template #originalConfusionData>
 													<tr *ngFor="let confusion of originalPciConfusions">
 														<td>{{ confusion.confusion_pci }}</td>
-														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}</td>
-														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}</td>
-														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}</td>
+														<td
+															matTooltip="NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }}">
+															{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}</td>
+														<td
+															matTooltip="NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }}">
+															{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}</td>
+														<td
+															matTooltip="NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }}">
+															{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}</td>
 													</tr>
 												</ng-template>
 											</tbody>
@@ -1800,13 +1985,16 @@
 								</label>
 								<span class="material-symbols-outlined after">east</span>
 								<label>
-									<div>{{ languageService.i18n['field.uniDirectionalPairCountConfusions'] }} = {{ newPciConfusionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{ newPciConfusionRatio }} %</div>
+									<div>{{ languageService.i18n['field.uniDirectionalPairCountConfusions'] }} = {{
+										newPciConfusionTotalCount }}{{ languageService.i18n['field.ratio'] }} = {{
+										newPciConfusionRatio }} %</div>
 									<div class="table pci">
 										<table>
 											<thead>
 												<tr>
 													<th rowspan="2">PCI</th>
-													<th colspan="3">{{ languageService.i18n['field.newConfusionPairs'] }}</th>
+													<th colspan="3">{{ languageService.i18n['field.newConfusionPairs']
+														}}</th>
 												</tr>
 												<tr>
 													<th>{{ languageService.i18n['field.source'] }}</th>
@@ -1815,15 +2003,22 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr *ngIf="newPciConfusionTotalCount === 0 && newPciConfusionRatio === 0; else newConfusionData">
+												<tr
+													*ngIf="newPciConfusionTotalCount === 0 && newPciConfusionRatio === 0; else newConfusionData">
 													<td colspan="4">{{ languageService.i18n['field.none'] }}</td>
 												</tr>
 												<ng-template #newConfusionData>
 													<tr *ngFor="let confusion of newPciConfusions">
 														<td>{{ confusion.confusion_pci }}</td>
-														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}</td>
-														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}</td>
-														<td matTooltip="NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }}">{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}</td>
+														<td
+															matTooltip="NCI = {{ getMatchingBsInfo(confusion.source_gNBId)?.nci }}">
+															{{ getMatchingBsInfo(confusion.source_gNBId)?.name }}</td>
+														<td
+															matTooltip="NCI = {{ getMatchingBsInfo(confusion.confused_gNBId)?.nci }}">
+															{{ getMatchingBsInfo(confusion.confused_gNBId)?.name }}</td>
+														<td
+															matTooltip="NCI = {{ getMatchingBsInfo(confusion.target_gNBId)?.nci }}">
+															{{ getMatchingBsInfo(confusion.target_gNBId)?.name }}</td>
 													</tr>
 												</ng-template>
 											</tbody>
@@ -1852,22 +2047,22 @@
 						{{ languageService.i18n['field.clearAndReset'] }}
 					</button>
 				</div>
-			</span>			
+			</span>
 		</div>
-  
+
 		<!-- 關閉 Field Optimization 視窗按鈕 -->
 		<!-- <div class="buttons buttons-centered">
 			<button type="button" (click)="" mat-dialog-close>
 				{{ languageService.i18n['close'] }}
 			</button>
 		</div> -->
-  	</ng-template>
+	</ng-template>
 
 	<!-- Confirm Window for SON Optimization Application @2024/04/12 Add -->
 	<ng-template #confirmApplySonWindow>
 		<div>
 			<h5>{{ languageService.i18n['confirm'] }}</h5>
-		</div>  
+		</div>
 		<label class="label-centered">
 			{{ languageService.i18n['field.confirmApplySonField'] }}
 		</label>
