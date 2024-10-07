@@ -1,2 +1,2 @@
-# iRM_ITRI
-ITRI iRM with o-cloud GUI style project
+# ITRI_iRM
+ITRI iRM ( O1 ) with Slice Management Project
